@@ -134,7 +134,7 @@
       </div>
     {% endif %}
 
-    {{ include('AppBundle:Pratiche/summary/parts:payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
+    {{ include('@App/Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
 
     {% set securityFields = [] %}
     {% if pratica.authenticationData|length > 0 %}

@@ -8,7 +8,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\DBALException;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -27,7 +27,7 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 class DocumentController extends Controller
 {
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
 
@@ -48,11 +48,11 @@ class DocumentController extends Controller
   /**
    * DocumentController constructor.
    * @param TranslatorInterface $translator
-   * @param EntityManager $em
+   * @param EntityManagerInterface $em
    * @param LoggerInterface $logger
    * @param BreadcrumbsService $breadcrumbsService
    */
-  public function __construct(TranslatorInterface $translator, EntityManager $em, LoggerInterface $logger, BreadcrumbsService $breadcrumbsService)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, LoggerInterface $logger, BreadcrumbsService $breadcrumbsService)
   {
     $this->translator = $translator;
     $this->em = $em;

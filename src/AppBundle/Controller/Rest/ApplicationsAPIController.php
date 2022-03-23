@@ -1313,7 +1313,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         'title' => 'There was an error during save process',
         'description' => 'Contact technical support at support@opencontent.it',
       ];
-      $this->get('logger')->error(
+      $this->logger->error(
         $e->getMessage(),
         ['request' => $request]
       );

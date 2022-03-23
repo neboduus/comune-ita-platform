@@ -7,7 +7,7 @@ use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
 use AppBundle\Model\SubscriberMessage;
 use AppBundle\Services\MailerService;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Omines\DataTablesBundle\Adapter\ArrayAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -28,7 +28,7 @@ class SubscriberController extends Controller
 
   private $defaultSender;
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $entityManager;
 
@@ -37,7 +37,7 @@ class SubscriberController extends Controller
    */
   private $JWTTokenManager;
 
-  public function __construct(EntityManager $entityManager, MailerService $mailer, JWTTokenManagerInterface $JWTTokenManager, $defaultSender)
+  public function __construct(EntityManagerInterface $entityManager, MailerService $mailer, JWTTokenManagerInterface $JWTTokenManager, $defaultSender)
   {
     $this->entityManager = $entityManager;
     $this->mailer = $mailer;

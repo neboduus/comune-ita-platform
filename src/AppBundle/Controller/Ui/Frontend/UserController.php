@@ -10,7 +10,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\PraticaRepository;
 use AppBundle\Entity\ServizioRepository;
 use AppBundle\Form\IdCardType;
-use AppBundle\FormIO\SchemaFactory;
+use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Helpers\MunicipalityConverter;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Security\CPSAuthenticator;
@@ -18,7 +18,7 @@ use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\CPSUserProvider;
 use AppBundle\Services\RemoteContentProviderServiceInterface;
 use DateTime;
-use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -51,10 +51,10 @@ class UserController extends Controller
   /** @var RemoteContentProviderServiceInterface */
   private $remoteContentProviderService;
 
-  /** @var Serializer */
+  /** @var SerializerInterface */
   private $serializer;
 
-  /** @var SchemaFactory */
+  /** @var SchemaFactoryInterface */
   private $schemaFactory;
   /**
    * @var BreadcrumbsService
@@ -71,8 +71,8 @@ class UserController extends Controller
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    * @param RemoteContentProviderServiceInterface $remoteContentProviderService
-   * @param Serializer $serializer
-   * @param SchemaFactory $schemaFactory
+   * @param SerializerInterface $serializer
+   * @param SchemaFactoryInterface $schemaFactory
    * @param BreadcrumbsService $breadcrumbsService
    * @param ApplicationDto $applicationDto
    */
@@ -80,8 +80,8 @@ class UserController extends Controller
     TranslatorInterface $translator,
     LoggerInterface $logger,
     RemoteContentProviderServiceInterface $remoteContentProviderService,
-    Serializer $serializer,
-    SchemaFactory $schemaFactory,
+    SerializerInterface $serializer,
+    SchemaFactoryInterface $schemaFactory,
     BreadcrumbsService $breadcrumbsService,
     ApplicationDto $applicationDto
   )

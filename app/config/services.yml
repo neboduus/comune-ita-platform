@@ -16,10 +16,14 @@ services:
           key: '%s3_key%'
           secret: "%s3_secret%"
 
+  Aws\S3\S3Client: '@ocsdc.s3_client'
+
   ocsdc.filesystem:
     class: AppBundle\Services\FileSystemService
     arguments: [ '@League\Flysystem\FilesystemInterface' ]
     public: true
+
+  AppBundle\Services\FileSystemService: "@ocsdc.filesystem"
 
   AppBundle\Services\FileService:
     autowire: true
@@ -32,6 +36,8 @@ services:
     autowire: true
     arguments:
       $defaultSender: "%default_from_email_address%"
+
+  AppBundle\Services\MeetingService: '@ocsdc.meeting_service'
 
   ocsdc.meeting_eventlistener:
     class: AppBundle\EventListener\MeetingLifeCycleListener
@@ -315,6 +321,8 @@ services:
     class: AppBundle\Services\Manager\BackofficeManager
     autowire: true
 
+  AppBundle\Services\Manager\BackofficeManager: "@ocsdc.backoffice_manager"
+
   AppBundle\Services\Manager\MessageManager:
     autowire: true
     arguments:
@@ -455,6 +463,8 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: -200 }
 
+  AppBundle\EventListener\LocaleRewriteListener: "@ocsdc.locale_rewrite_listener"
+
   ocsdc.locale_api_listener:
     class: AppBundle\EventListener\LocaleApiListener
     autowire: true
@@ -464,6 +474,8 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: -10 }
       - { name: kernel.event_listener, event: kernel.response, priority: -10 }
+
+  AppBundle\EventListener\LocaleApiListener: "@ocsdc.locale_api_listener"
 
   ocsdc.cps.terms_acceptance_listener:
     class: AppBundle\EventListener\TermsAcceptListener
@@ -515,6 +527,8 @@ services:
     autowire: true
     #arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', "@ocsdc.io_service", "@ocsdc.pratica_placeholder_service" ]
 
+  AppBundle\Services\MailerService: "@ocsdc.mailer"
+
   ocsdc.subscriptions_service:
     class: AppBundle\Services\SubscriptionsService
     arguments:
@@ -528,6 +542,8 @@ services:
       - '%ocsdc_host%'
       - '%default_from_email_address%'
 
+  AppBundle\Services\SubscriptionsService: "@ocsdc.subscriptions_service"
+
   AppBundle\Services\ModuloPdfBuilderService:
     autowire: true
     arguments:
@@ -539,6 +555,8 @@ services:
     class: AppBundle\Services\WebhookService
     autowire: true
 
+  AppBundle\Services\WebhookService: "@ocsdc.webhook_service"
+
   ocsdc.kafka_service:
     class: AppBundle\Services\KafkaService
     autowire: true
@@ -547,15 +565,21 @@ services:
       $kafkaEventVersion: "%kafka_event_version%"
       $topics: "%kafka_topics%"
 
+  AppBundle\Services\KafkaService: "@ocsdc.kafka_service"
+
   ocsdc.reminder_service:
     class: AppBundle\Services\ReminderService
     autowire: true
+
+  AppBundle\Services\ReminderService: "@ocsdc.reminder_service"
 
   ocsdc.io_service:
     class: AppBundle\Services\IOService
     autowire: true
     arguments:
       - "%io_api_url%"
+
+  AppBundle\Services\IOService: "@ocsdc.io_service"
 
   ocsdc.modulo_pdf_builder: '@AppBundle\Services\ModuloPdfBuilderService'
 
@@ -686,6 +710,8 @@ services:
     autowire: true
     tags:
       - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 120 }
+
+  AppBundle\EventListener\PaymentReminderListener: "@ocsdc.pratica_listeners.payment_reminder"
 
   ocsdc.form.flow.storage_key_generator:
     class: AppBundle\Form\UserSessionStorageKeyGenerator
@@ -1035,10 +1061,14 @@ services:
 
   ocsdc.remote_content_provider: "@ocsdc.comunweb_content_provider"
 
+  AppBundle\Services\RemoteContentProviderServiceInterface: "@ocsdc.comunweb_content_provider"
+
   ocsdc.messages.client: "@guzzle.client.messages"
   ocsdc.messages_adapter:
     class: AppBundle\Services\MessagesAdapterService
     arguments: [ "@ocsdc.messages.client", "@logger", "@doctrine", "%messages_enabled%" ]
+
+  AppBundle\Services\MessagesAdapterService: "@ocsdc.messages_adapter"
 
   AppBundle\Twig\AppExtension:
     autowire: true
@@ -1103,6 +1133,8 @@ services:
   ocsdc.version_service:
     class: AppBundle\Services\VersionService
     autowire: true
+
+  AppBundle\Services\VersionService: "@ocsdc.version_service"
 
   ocsdc.form.flow.occupazionesuolopubblico:
     class: AppBundle\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow
@@ -1169,8 +1201,11 @@ services:
 
   ocsdc.allegati.dematerialized_attacher:
     class: AppBundle\Services\DematerializedFormAllegatiAttacherService
+    autowire: true
     arguments:
       - '@doctrine.orm.entity_manager'
+
+  AppBundle\Services\DematerializedFormAllegatiAttacherService: "@ocsdc.allegati.dematerialized_attacher"
 
   ocsdc.protocollo_success_giscom_subscriber:
     class: AppBundle\EventListener\GiscomSendPraticaListener
@@ -1182,16 +1217,22 @@ services:
     class: AppBundle\Services\ScheduleActionService
     arguments: [ "@doctrine.orm.entity_manager","@logger" ]
 
+  AppBundle\Services\ScheduleActionService: "@ocsdc.schedule_action_service"
+
   ocsdc.giscom_api.mapper:
     class: AppBundle\Services\GiscomAPIMapperService
     arguments:
       - '@doctrine.orm.entity_manager'
       - '@router'
 
+  AppBundle\Services\GiscomAPIMapperService: "@ocsdc.giscom_api.mapper"
+
   ocsdc.status_mapper.giscom:
     class: AppBundle\Mapper\Giscom\GiscomStatusMapper
     tags:
       - { name: 'ocsdc.status_mapper' }
+
+  AppBundle\Mapper\Giscom\GiscomStatusMapper: "@ocsdc.status_mapper.giscom"
 
   ocsdc.pratica_integration_service:
     class: AppBundle\Services\PraticaIntegrationService
@@ -1200,6 +1241,8 @@ services:
       - '@logger'
       - '@ocsdc.pratica_status_service'
       - "@ocsdc.modulo_pdf_builder"
+
+  AppBundle\Services\PraticaIntegrationService: "@ocsdc.pratica_integration_service"
 
   AppBundle\Services\FormServerApiAdapterService:
     arguments: [ "%formserver_private_url%", "%formserver_public_url%", "@logger" ]
@@ -1246,6 +1289,8 @@ services:
   formio.expression_validator:
     class: AppBundle\FormIO\ExpressionValidator
     arguments: [ '@form.factory', '@formio.factory', '@doctrine.orm.entity_manager', '@logger' ]
+
+  AppBundle\FormIO\ExpressionValidator: "@formio.expression_validator"
 
   AppBundle\FormIO\SchemaFactoryInterface: '@formio.factory'
 
@@ -1296,6 +1341,8 @@ services:
   ocsdc.pratica_placeholder_service:
     class: AppBundle\Services\PraticaPlaceholderService
     autowire: true
+
+  AppBundle\Services\PraticaPlaceholderService: "@ocsdc.pratica_placeholder_service"
 
   security.access.users_voter:
     class: AppBundle\Security\Voters\UserVoter

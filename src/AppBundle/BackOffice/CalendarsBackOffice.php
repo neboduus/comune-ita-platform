@@ -9,7 +9,7 @@ use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\Pratica;
 use AppBundle\Services\MeetingService;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -22,7 +22,7 @@ class CalendarsBackOffice implements BackOfficeInterface
   const PATH = 'operatori_calendars_index';
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
 
@@ -56,7 +56,7 @@ class CalendarsBackOffice implements BackOfficeInterface
    */
   private $logger;
 
-  public function __construct(EntityManager $em, MeetingService $meetingService, TranslatorInterface $translator, LoggerInterface $logger)
+  public function __construct(EntityManagerInterface $em, MeetingService $meetingService, TranslatorInterface $translator, LoggerInterface $logger)
   {
     $this->translator = $translator;
     $this->meetingService = $meetingService;

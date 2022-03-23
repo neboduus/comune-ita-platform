@@ -60,6 +60,10 @@ class ServiziController extends Controller
    * @var BreadcrumbsService
    */
   private $breadcrumbsService;
+  /**
+   * @var ServizioHandlerRegistry
+   */
+  private $servizioHandlerRegistry;
 
 
   /**
@@ -71,7 +75,8 @@ class ServiziController extends Controller
    * @param CategoryManager $categoryManager
    * @param BreadcrumbsService $breadcrumbsService
    */
-  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, EntityManagerInterface $entityManager, LoggerInterface $logger, CategoryManager $categoryManager, BreadcrumbsService $breadcrumbsService)
+  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, EntityManagerInterface $entityManager, LoggerInterface $logger, CategoryManager $categoryManager, BreadcrumbsService $breadcrumbsService,
+                              ServizioHandlerRegistry $servizioHandlerRegistry)
   {
     $this->instanceService = $instanceService;
     $this->translator = $translator;
@@ -79,6 +84,7 @@ class ServiziController extends Controller
     $this->logger = $logger;
     $this->categoryManager = $categoryManager;
     $this->breadcrumbsService = $breadcrumbsService;
+    $this->servizioHandlerRegistry = $servizioHandlerRegistry;
   }
 
 
@@ -149,7 +155,7 @@ class ServiziController extends Controller
       ->setMaxResults(5)
       ->getQuery()->execute();
 
-    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
+    $handler = $this->servizioHandlerRegistry->getByName($servizio->getHandler());
     $ente = $this->instanceService->getCurrentInstance();
 
     if (!$ente instanceof Ente) {

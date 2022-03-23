@@ -46,7 +46,7 @@
     <div class="tab-content" id="TabContent">
       <!-- Anagrafica -->
       <div class="tab-pane p-1 fade {% if not tab or tab == 'user' %} show active {% endif %}" id="user" role="tabpanel" aria-labelledby="user-tab" >
-        {{ include('AppBundle:Subscriber/parts:subscriberDetail.html.twig', {'subscriber': subscriber}) }}
+        {{ include('@App/Subscriber/parts/subscriberDetail.html.twig', {'subscriber': subscriber}) }}
       </div>
       <!-- Pagamenti -->
       <div class="tab-pane p-1 fade {% if tab and tab == 'payments' %} show active {% endif %}" id="payments" role="tabpanel" aria-labelledby="payments-tab">

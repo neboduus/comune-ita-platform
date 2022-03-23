@@ -8,7 +8,7 @@
 namespace AppBundle\Form\I18n;
 
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Translatable\TranslatableListener;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -21,7 +21,7 @@ class I18nDataMapper implements I18nDataMapperInterface
 
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
 
@@ -44,7 +44,7 @@ class I18nDataMapper implements I18nDataMapperInterface
   private $property_names = [];
 
 
-  public function __construct(EntityManager $entityManager, TranslationRepository $repository = null)
+  public function __construct(EntityManagerInterface $entityManager, TranslationRepository $repository = null)
   {
 
     $this->em = $entityManager;

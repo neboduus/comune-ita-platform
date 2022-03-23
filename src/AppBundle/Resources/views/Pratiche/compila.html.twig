@@ -114,10 +114,10 @@
 
           {% if currentStep.formType == "AppBundle\\Form\\Base\\SummaryType" %}
             <p>{{ 'steps.common.conferma.payment_help_text_top' | trans }}</p>
-            {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+            {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
             <p><b>{{ 'steps.common.conferma.help_text_top'|trans }}</b></p>
-            {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+            {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% endif %}
           {{ form_rest(form) }}
 
@@ -179,16 +179,20 @@
         {% endif %}
 
         {# Info compilazione specificate nel servizio #}
-        {{ include('AppBundle:Pratiche/parts:compilation_info.html.twig') }}
+        {{ include('@App/Pratiche/parts/compilation_info.html.twig') }}
 
         {# Note compilazione per utente #}
-        {{ include('AppBundle:Pratiche/parts:user_compilation_notes.html.twig') }}
+        {{ include('@App/Pratiche/parts/user_compilation_notes.html.twig') }}
+
+        {#{% if threads and flow.getCurrentStepNumber() >= 2 %}
+            {{ include('@App/Default/parts/chat.html.twig') }}
+        {% endif %}#}
       </div>
     </div>
   </section>
 
   {# Modal di conferma #}
-  {{ include('AppBundle:Pratiche/parts:confirm_modal.html.twig') }}
+  {{ include('@App/Pratiche/parts/confirm_modal.html.twig') }}
 
 {% endblock %}
 

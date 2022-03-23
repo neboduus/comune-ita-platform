@@ -56,7 +56,7 @@
            data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
       </div>
     {% else %}
-      {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
+      {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
     {% endif %}
   </div>
   <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
@@ -65,19 +65,19 @@
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel"
        aria-labelledby="messaggi-tab">
     {% if feature('feature_application_detail') %}
-      {{ include('AppBundle:Operatori/parts:messaggi.html.twig', {'pratica':pratica}) }}
+      {{ include('@App/Operatori/parts/messaggi.html.twig', {'pratica':pratica}) }}
     {% else %}
-      {{ include('AppBundle:Operatori/parts:commenti.html.twig', {'pratica':pratica}) }}
+      {{ include('@App/Operatori/parts/commenti.html.twig', {'pratica':pratica}) }}
     {% endif %}
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
        aria-labelledby="pagamento-tab">
-    {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
+    {{ include('@App/Operatori/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'protocollo' %} show active {% endif %}" id="protocollo" role="tabpanel"
        aria-labelledby="protocollo-tab">
     <div class="m-3">
-      {{ include('AppBundle:Operatori/parts:dati_protocollo.html.twig', {'pratica':pratica}) }}
+      {{ include('@App/Operatori/parts/dati_protocollo.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
   {% if ente.isLinkableApplicationMeetings %}
@@ -85,7 +85,7 @@
          aria-labelledby="meetings-tab">
       <div class="m-3">
         <div id="hidden" class="hidden" data-token='{{ token }}'></div>
-        {{ include('AppBundle:Operatori/parts:meetings.html.twig', {'pratica':pratica}) }}
+        {{ include('@App/Operatori/parts/meetings.html.twig', {'pratica':pratica}) }}
       </div>
     </div>
   {% endif %}

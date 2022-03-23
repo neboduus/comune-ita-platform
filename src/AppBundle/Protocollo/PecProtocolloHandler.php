@@ -15,7 +15,7 @@ use Hoa\Event\Exception;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Bundle\TwigBundle\TwigEngine;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -49,7 +49,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
   private $translator;
 
   /**
-   * @var TwigEngine
+   * @var EngineInterface
    */
   private $templating;
 
@@ -75,11 +75,11 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    * @param string $password
    * @param string $sender
    * @param TranslatorInterface $translator
-   * @param TwigEngine $templating
+   * @param EngineInterface $templating
    * @param LoggerInterface $logger
    * @param FileService $fileService
    */
-  public function __construct(string $host, string $port, string  $user, string  $password, string $sender, TranslatorInterface $translator, TwigEngine $templating, LoggerInterface $logger, FileService $fileService)
+  public function __construct(string $host, string $port, string  $user, string  $password, string $sender, TranslatorInterface $translator, EngineInterface $templating, LoggerInterface $logger, FileService $fileService)
   {
     $this->host = $host;
     $this->port = $port;
@@ -301,7 +301,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       ->setTo($receiver, $ente->getName())
       ->setBody(
         $this->templating->render(
-          'AppBundle:Emails/Pec:content.html.twig',
+          '@App/Emails/Pec/content.html.twig',
           array(
             'pratica' => $pratica,
             'type'    => $type
@@ -311,7 +311,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       )
       ->addPart(
         $this->templating->render(
-          'AppBundle:Emails/Pec:content.html.twig',
+          '@App/Emails/Pec/content.html.twig',
           array(
             'pratica' => $pratica,
             'type'    => $type

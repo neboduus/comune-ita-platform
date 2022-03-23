@@ -30,7 +30,7 @@
             {{ pratica.servizio.finalIndications | raw }}
           </div>
         {% endif %}
-        {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
+        {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
       </div>
 
       <div class="col-lg-3 offset-lg-1 pt-3 pt-lg-0">
@@ -50,12 +50,12 @@
           {% endif %}
           <div class="col-12">
 
-            {{ include('AppBundle:Pratiche/parts:pratica_actions.html.twig', {'pratica':pratica}) }}
+            {{ include('@App/Pratiche/parts/pratica_actions.html.twig', {'pratica':pratica}) }}
 
             {% if pratica.type != 'form_io' %}
               <div class="row">
                 <div class="col-12">
-                  {{ include('AppBundle:Pratiche/parts:pratica_iter.html.twig', {'pratica':pratica}) }}
+                  {{ include('@App/Pratiche/parts/pratica_iter.html.twig', {'pratica':pratica}) }}
                 </div>
               </div>
             {% endif %}

@@ -4,7 +4,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Entity\FormIO;
 use AppBundle\Entity\Pratica;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -23,7 +23,7 @@ class PraticaPlaceholderService
    */
   private $translator;
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
   /**
@@ -33,12 +33,12 @@ class PraticaPlaceholderService
 
   /**
    * PraticaPlaceholderService constructor.
-   * @param EntityManager $entityManager
+   * @param EntityManagerInterface $entityManager
    * @param RouterInterface $router
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    */
-  public function __construct(EntityManager $entityManager, RouterInterface $router, TranslatorInterface $translator, LoggerInterface $logger) {
+  public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, TranslatorInterface $translator, LoggerInterface $logger) {
     $this->em = $entityManager;
     $this->router = $router;
     $this->translator = $translator;
