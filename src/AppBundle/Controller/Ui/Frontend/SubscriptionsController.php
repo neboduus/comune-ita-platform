@@ -13,10 +13,11 @@ use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
 use AppBundle\Services\BreadcrumbsService;
+use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\ModuloPdfBuilderService;
 use AppBundle\Services\SubscriptionsService;
 use Doctrine\DBAL\Driver\Exception;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -47,7 +48,7 @@ class SubscriptionsController extends Controller
 
   private $subscriptionsBackOffice;
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $entityManager;
   /**
@@ -74,9 +75,13 @@ class SubscriptionsController extends Controller
    * @var JWTTokenManagerInterface
    */
   private $JWTTokenManager;
+  /**
+   * @var PraticaManager
+   */
+  private $praticaManager;
 
   /**
-   * @param EntityManager $entityManager
+   * @param EntityManagerInterface $entityManager
    * @param LoggerInterface $logger
    * @param TranslatorInterface $translator
    * @param SubcriptionsBackOffice $subscriptionsBackOffice
@@ -85,7 +90,8 @@ class SubscriptionsController extends Controller
    * @param BreadcrumbsService $breadcrumbsService,
    * @param JWTTokenManagerInterface $JWTTokenManager
    */
-  public function __construct(EntityManager $entityManager, LoggerInterface $logger, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice, SubscriptionsService $subscriptionsService, ModuloPdfBuilderService $pdfBuilderService, BreadcrumbsService $breadcrumbsService, JWTTokenManagerInterface $JWTTokenManager)
+  public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TranslatorInterface $translator, SubcriptionsBackOffice $subscriptionsBackOffice, SubscriptionsService $subscriptionsService, ModuloPdfBuilderService $pdfBuilderService, BreadcrumbsService $breadcrumbsService, JWTTokenManagerInterface $JWTTokenManager,
+  PraticaManager $praticaManager)
   {
     $this->subscriptionsBackOffice = $subscriptionsBackOffice;
     $this->entityManager = $entityManager;
@@ -95,6 +101,7 @@ class SubscriptionsController extends Controller
     $this->pdfBuilderService = $pdfBuilderService;
     $this->breadcrumbsService = $breadcrumbsService;
     $this->JWTTokenManager = $JWTTokenManager;
+    $this->praticaManager = $praticaManager;
   }
 
   /**
@@ -294,7 +301,7 @@ class SubscriptionsController extends Controller
         $results = $this->subscriptionsService->getDraftsApplicationForUser($user, $service, $uniqueId);
 
         if (!$results) {
-          $application = $this->get('ocsdc.pratica_manager')->createDraftApplication($service, $user, $dematerializedData);
+          $application = $this->praticaManager->createDraftApplication($service, $user, $dematerializedData);
           $this->logger->info("Payment draft application created for user " . $user->getId() . "and identifier " . $paymentConfig->getPaymentIdentifier());
           $applications[] = $application;
           $this->subscriptionsService->sendEmailForDraftApplication($application, $subscription);

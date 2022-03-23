@@ -325,8 +325,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     }
 
     $content = $this->renderForPraticaIntegrationAnswer($pratica, $integrationRequest, $messages);
-
     $fileName = uniqid() . '.pdf';
+
     $attachment = new RispostaIntegrazione();
     $attachment->setPayload($payload);
     $attachment->setOwner($pratica->getUser());
@@ -668,7 +668,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   public function renderForSubscriptionPayment(SubscriptionPayment $payment)
   {
     // Certificato di default
-    $html = $this->templating->render('AppBundle:Subscriptions/pdf:Payment.html.twig', [
+    $html = $this->templating->render('@App/Subscriptions/pdf/Payment.html.twig', [
       "payment"=>$payment,
     ]);
 

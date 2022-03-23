@@ -107,6 +107,10 @@ class PraticheController extends Controller
    */
   private $breadcrumbsService;
   /**
+   * @var ServizioHandlerRegistry
+   */
+  private $servizioHandlerRegistry;
+  /**
    * @var MessageManager
    */
   private $messageManager;
@@ -126,6 +130,7 @@ class PraticheController extends Controller
    * @param FormServerApiAdapterService $formServerService
    * @param EntityManagerInterface $entityManager
    * @param BreadcrumbsService $breadcrumbsService
+   * @param ServizioHandlerRegistry $servizioHandlerRegistry
    * @param MessageManager $messageManager
    */
   public function __construct(
@@ -142,6 +147,7 @@ class PraticheController extends Controller
     FormServerApiAdapterService $formServerService,
     EntityManagerInterface      $entityManager,
     BreadcrumbsService          $breadcrumbsService,
+    ServizioHandlerRegistry     $servizioHandlerRegistry,
     MessageManager              $messageManager
   )
   {
@@ -157,8 +163,8 @@ class PraticheController extends Controller
     $this->praticaManager = $praticaManager;
     $this->formServerService = $formServerService;
     $this->entityManager = $entityManager;
-
     $this->breadcrumbsService = $breadcrumbsService;
+    $this->servizioHandlerRegistry = $servizioHandlerRegistry;
     $this->messageManager = $messageManager;
   }
 
@@ -288,7 +294,7 @@ class PraticheController extends Controller
    */
   public function newAction(Request $request, Servizio $servizio)
   {
-    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
+    $handler = $this->servizioHandlerRegistry->getByName($servizio->getHandler());
 
     $ente = $this->instanceService->getCurrentInstance();
 
@@ -377,7 +383,7 @@ class PraticheController extends Controller
       );
     }
 
-    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($pratica->getServizio()->getHandler());
+    $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
     try {
       $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
     } catch (ForbiddenAccessException $e) {

@@ -20,7 +20,7 @@ use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Form\Operatore\Base\ApplicationOutcomeType;
 use AppBundle\Form\Operatore\Base\PraticaOperatoreFlow;
 use AppBundle\FormIO\Schema;
-use AppBundle\FormIO\SchemaFactory;
+use AppBundle\FormIO\SchemaFactoryInterface;
 use AppBundle\Logging\LogConstants;
 use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
@@ -33,7 +33,7 @@ use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Flagception\Manager\FeatureManagerInterface;
-use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
@@ -70,10 +70,10 @@ use Symfony\Component\Validator\Constraints\NotNull;
 class OperatoriController extends Controller
 {
 
-  /** @var SchemaFactory */
+  /** @var SchemaFactoryInterface */
   private $schemaFactory;
 
-  /** @var Serializer */
+  /** @var SerializerInterface */
   private $serializer;
 
   /** @var TranslatorInterface */
@@ -116,8 +116,8 @@ class OperatoriController extends Controller
 
   /**
    * OperatoriController constructor.
-   * @param SchemaFactory $schemaFactory
-   * @param Serializer $serializer
+   * @param SchemaFactoryInterface $schemaFactory
+   * @param SerializerInterface $serializer
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    * @param PraticaStatusService $praticaStatusService
@@ -131,8 +131,8 @@ class OperatoriController extends Controller
    * @param ApplicationDto $applicationDto
    */
   public function __construct(
-    SchemaFactory $schemaFactory,
-    Serializer $serializer,
+    SchemaFactoryInterface $schemaFactory,
+    SerializerInterface $serializer,
     TranslatorInterface $translator,
     LoggerInterface $logger,
     PraticaStatusService $praticaStatusService,

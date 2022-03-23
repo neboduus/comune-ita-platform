@@ -8,7 +8,7 @@ use AppBundle\Event\PraticaOnChangeStatusEvent;
 use AppBundle\Model\Transition;
 use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\PraticaPlaceholderService;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -32,7 +32,7 @@ class StatusMessagePraticaListener
   private $translator;
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $entityManager;
 
@@ -56,13 +56,13 @@ class StatusMessagePraticaListener
 
 
   /**
-   * @param EntityManager $entityManager
+   * @param EntityManagerInterface $entityManager
    * @param PraticaManager $praticaManager
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    * @param PraticaPlaceholderService $praticaPlaceholderService
    */
-  public function __construct(EntityManager $entityManager, PraticaManager $praticaManager, TranslatorInterface $translator, LoggerInterface $logger, PraticaPlaceholderService $praticaPlaceholderService)
+  public function __construct(EntityManagerInterface $entityManager, PraticaManager $praticaManager, TranslatorInterface $translator, LoggerInterface $logger, PraticaPlaceholderService $praticaPlaceholderService)
   {
     $this->entityManager = $entityManager;
     $this->translator = $translator;

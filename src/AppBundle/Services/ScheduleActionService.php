@@ -18,7 +18,7 @@ class ScheduleActionService
     protected $logger;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $entityManager;
 

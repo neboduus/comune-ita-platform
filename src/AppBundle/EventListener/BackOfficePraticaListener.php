@@ -7,7 +7,7 @@ use AppBundle\Entity\DematerializedFormPratica;
 use AppBundle\Event\PraticaOnChangeStatusEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class BackOfficePraticaListener
 {
@@ -18,7 +18,7 @@ class BackOfficePraticaListener
   private $container;
 
   /**
-   * @var Session
+   * @var SessionInterface
    */
   private $session;
 
@@ -27,7 +27,7 @@ class BackOfficePraticaListener
    */
   private $logger;
 
-  public function __construct(Container $container, LoggerInterface $logger, Session $session)
+  public function __construct(Container $container, LoggerInterface $logger, SessionInterface $session)
   {
     $this->container = $container;
     $this->logger = $logger;

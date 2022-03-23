@@ -38,6 +38,9 @@ framework:
     formats:
       text: [ 'text/plain' ]
 
+#parameters:
+#  container.autowiring.strict_mode: true
+
 # Fos User Configuration
 fos_user:
   registration:
@@ -195,7 +198,7 @@ fos_rest:
   serializer:
     serialize_null: true
   exception:
-    enabled: true
+    enabled: false #Deprecated in Symfony 4.0
   format_listener:
     rules:
       - { path: ^/%prefix%/api, prefer_extension: true, fallback_format: json, priorities: [ 'json' ] }

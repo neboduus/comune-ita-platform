@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -71,6 +72,14 @@ class PraticheAnonimeController extends Controller
    * @var BreadcrumbsService
    */
   private $breadcrumbsService;
+  /**
+   * @var SessionInterface
+   */
+  private $session;
+  /**
+   * @var ServizioHandlerRegistry
+   */
+  private $servizioHandlerRegistry;
 
   /**
    * PraticheAnonimeController constructor.
@@ -94,7 +103,9 @@ class PraticheAnonimeController extends Controller
     $hashValidity,
     ExpressionValidator $expressionValidator,
     FileService $fileService,
-    BreadcrumbsService $breadcrumbsService
+    BreadcrumbsService $breadcrumbsService,
+    SessionInterface $session,
+    ServizioHandlerRegistry $servizioHandlerRegistry
   ) {
     $this->logger = $logger;
     $this->translator = $translator;
@@ -105,6 +116,8 @@ class PraticheAnonimeController extends Controller
     $this->expressionValidator = $expressionValidator;
     $this->fileService = $fileService;
     $this->breadcrumbsService = $breadcrumbsService;
+    $this->session = $session;
+    $this->servizioHandlerRegistry = $servizioHandlerRegistry;
   }
 
   /**
@@ -117,7 +130,7 @@ class PraticheAnonimeController extends Controller
    */
   public function newAction(Request $request, Servizio $servizio)
   {
-    $handler = $this->get(ServizioHandlerRegistry::class)->getByName($servizio->getHandler());
+    $handler = $this->servizioHandlerRegistry->getByName($servizio->getHandler());
 
     $ente = $this->instanceService->getCurrentInstance();
 
@@ -164,7 +177,7 @@ class PraticheAnonimeController extends Controller
   public function showAction(Request $request, Pratica $pratica)
   {
     if ($pratica->isValidHash($this->getHash($request), $this->hashValidity)) {
-      
+
       $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
 
       return $this->render( '@App/PraticheAnonime/show.html.twig', [
@@ -178,7 +191,7 @@ class PraticheAnonimeController extends Controller
 
   private function getHash(Request $request)
   {
-    $session = $this->get('session');
+    $session = $this->session;
     if (!$session->isStarted()) {
       $session->start();
     }

@@ -43,7 +43,7 @@
            data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
       </div>
     {% else %}
-      {{ include('AppBundle:Pratiche/parts:pratica_summary.html.twig', {'pratica':pratica}) }}
+      {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
     {% endif %}
   </div>
   <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
@@ -55,7 +55,7 @@
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
        aria-labelledby="pagamento-tab">
-    {{ include('AppBundle:Operatori/parts:dati_pagamento.html.twig', {'pratica':pratica}) }}
+    {{ include('@App/Operatori/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
   </div>
   {% if ente.isLinkableApplicationMeetings %}
     <div class="tab-pane py-4 fade {% if tab == 'meetings' %} show active {% endif %}" id="meetings" role="tabpanel"
