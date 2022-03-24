@@ -137,9 +137,18 @@ class I18nDataMapper implements I18nDataMapperInterface
    */
   public function mapDataToForms($data, $forms)
   {
+
+    $accessor = PropertyAccess::createPropertyAccessor();
+
     foreach ($forms as $form) {
       $this->translations = [];
       $translations = $this->getTranslations($data);
+
+
+      // Fix per traduzione vecchi oggetti
+      if (empty($translations[$this->required_locale][$form->getName()]) && !empty($accessor->getValue($data, $form->getName()))) {
+        $translations[$this->required_locale][$form->getName()] = $accessor->getValue($data, $form->getName());
+      }
 
       if (false !== in_array($form->getName(), $this->property_names)) {
         $values = [];
@@ -154,7 +163,6 @@ class I18nDataMapper implements I18nDataMapperInterface
         if (false === $form->getConfig()->getOption("mapped") || null === $form->getConfig()->getOption("mapped")) {
           continue;
         }
-        $accessor = PropertyAccess::createPropertyAccessor();
         $form->setData($accessor->getValue($data, $form->getName()));
       }
     }

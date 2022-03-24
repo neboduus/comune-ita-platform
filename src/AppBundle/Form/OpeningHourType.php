@@ -32,7 +32,7 @@ class OpeningHourType extends AbstractType
    */
   private $translator;
 
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, MeetingService $meetingService)
+  public function __construct(TranslatorInterface $translator)
   {
     $this->translator = $translator;
   }

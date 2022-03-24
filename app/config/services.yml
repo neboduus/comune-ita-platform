@@ -31,13 +31,10 @@ services:
       $s3Bucket: '%s3_bucket%'
       $uploadDestination: '%upload_destination%'
 
-  ocsdc.meeting_service:
-    class: AppBundle\Services\MeetingService
+  AppBundle\Services\MeetingService:
     autowire: true
     arguments:
       $defaultSender: "%default_from_email_address%"
-
-  AppBundle\Services\MeetingService: '@ocsdc.meeting_service'
 
   ocsdc.meeting_eventlistener:
     class: AppBundle\EventListener\MeetingLifeCycleListener
@@ -237,6 +234,9 @@ services:
 
   AppBundle\Form\Admin\CategoryType:
     autowire: true
+    arguments:
+      $locale: "%locale%"
+      $locales: "%app_locales%"
     tags:
       - { name: form.type }
 
@@ -279,10 +279,7 @@ services:
       - { name: form.type }
 
   AppBundle\Form\OpeningHourType:
-    arguments:
-      - "@translator"
-      - "@doctrine.orm.entity_manager"
-      - "@ocsdc.meeting_service"
+    autowire: true
     tags:
       - { name: form.type }
 
@@ -306,7 +303,10 @@ services:
     tags:
       - { name: form.type }
 
-  ocsdc.pratica_manager: '@AppBundle\Services\Manager\PraticaManager'
+  AppBundle\Form\Api\CategoryApiType:
+    autowire: true
+    tags:
+      - { name: form.type }
 
   AppBundle\Services\Manager\PraticaManager:
     autowire: true
@@ -317,11 +317,8 @@ services:
   AppBundle\Services\Manager\ServiceManager:
     autowire: true
 
-  ocsdc.backoffice_manager:
-    class: AppBundle\Services\Manager\BackofficeManager
+  AppBundle\Services\Manager\BackofficeManager:
     autowire: true
-
-  AppBundle\Services\Manager\BackofficeManager: "@ocsdc.backoffice_manager"
 
   AppBundle\Services\Manager\MessageManager:
     autowire: true
@@ -525,7 +522,6 @@ services:
   ocsdc.mailer:
     class: AppBundle\Services\MailerService
     autowire: true
-    #arguments: [ "@mailer", "@translator", "@templating", "@doctrine", '@logger', "@ocsdc.io_service", "@ocsdc.pratica_placeholder_service" ]
 
   AppBundle\Services\MailerService: "@ocsdc.mailer"
 
@@ -551,21 +547,15 @@ services:
       $dateTimeFormat: "%ocsdc_default_datetime_format%"
       $printablePassword: "%ez_password%"
 
-  ocsdc.webhook_service:
-    class: AppBundle\Services\WebhookService
+  AppBundle\Services\WebhookService:
     autowire: true
 
-  AppBundle\Services\WebhookService: "@ocsdc.webhook_service"
-
-  ocsdc.kafka_service:
-    class: AppBundle\Services\KafkaService
+  AppBundle\Services\KafkaService:
     autowire: true
     arguments:
       $kafkaUrl: "%kafka_url%"
       $kafkaEventVersion: "%kafka_event_version%"
       $topics: "%kafka_topics%"
-
-  AppBundle\Services\KafkaService: "@ocsdc.kafka_service"
 
   ocsdc.reminder_service:
     class: AppBundle\Services\ReminderService
@@ -1338,11 +1328,8 @@ services:
     tags:
       - { name: prometheus_metrics_bundle.metrics_generator }
 
-  ocsdc.pratica_placeholder_service:
-    class: AppBundle\Services\PraticaPlaceholderService
+  AppBundle\Services\PraticaPlaceholderService:
     autowire: true
-
-  AppBundle\Services\PraticaPlaceholderService: "@ocsdc.pratica_placeholder_service"
 
   security.access.users_voter:
     class: AppBundle\Security\Voters\UserVoter
