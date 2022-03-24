@@ -8,6 +8,7 @@ use AppBundle\Services\InstanceService;
 use AppBundle\Services\UserSessionService;
 use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,15 +30,23 @@ class CasAuthenticator extends AbstractAuthenticator
   /**
    * @var InstanceService
    */
+
   private $instanceService;
+
   /**
    * @var MetricsGeneratorInterface
    */
   private $userMetrics;
+
   private $casLoginUrl;
+
   private $casValidationUrl;
 
   private $userdata = [];
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
 
   /**
    * OpenLoginAuthenticator constructor.
@@ -49,6 +58,7 @@ class CasAuthenticator extends AbstractAuthenticator
    * @param JWTTokenManagerInterface $JWTTokenManager
    * @param $casLoginUrl
    * @param $casValidationUrl
+   * @param LoggerInterface $logger
    */
   public function __construct(
     UrlGeneratorInterface $urlGenerator,
@@ -58,7 +68,8 @@ class CasAuthenticator extends AbstractAuthenticator
     MetricsGeneratorInterface $userMetrics,
     JWTTokenManagerInterface $JWTTokenManager,
     $casLoginUrl,
-    $casValidationUrl
+    $casValidationUrl,
+    LoggerInterface $logger
   )
   {
     $this->urlGenerator = $urlGenerator;
@@ -69,6 +80,7 @@ class CasAuthenticator extends AbstractAuthenticator
     $this->JWTTokenManager = $JWTTokenManager;
     $this->casLoginUrl = $casLoginUrl;
     $this->casValidationUrl = $casValidationUrl;
+    $this->logger = $logger;
   }
 
   /**
@@ -146,6 +158,8 @@ class CasAuthenticator extends AbstractAuthenticator
       }*/
       return $this->userdata;
     }
+
+    $this->logger->info(self::LOGIN_ROUTE, ['validation_response' => $string]);
 
     return null;
   }

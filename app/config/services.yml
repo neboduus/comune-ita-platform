@@ -433,6 +433,7 @@ services:
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
       - "%cas_login_url%"
       - "%cas_validation_url%"
+      - "@logger"
 
   AppBundle\Security\DedaLogin\DedaLoginClient:
     public: true

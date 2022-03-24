@@ -16,6 +16,20 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ProtocolloConfigureCommand extends ContainerAwareCommand
 {
+
+  private $slugServices = [
+    'autorizzazione-paesaggistica-sindaco',
+    'comunicazione-inizio-lavori',
+    'comunicazione-inizio-lavori-asseverata',
+    'comunicazione-opere-libere',
+    'dichiarazione-ultimazione-lavori',
+    'domanda-permesso-di-costruire',
+    'domanda-permesso-di-costruire-in-sanatoria',
+    'scia-pratica-edilizia',
+    'segnalazione-certificata-di-agibilita',
+    's-c-i-a-pratica-edilizia',
+  ];
+
   /**
    * @var EntityManager
    */
@@ -46,6 +60,7 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
 
   private function configureEnte(Ente $ente)
   {
+
     $choice = $this->chooseServizio();
 
     if ($choice != '*' && $choice != 'Tutti') {
@@ -173,8 +188,9 @@ class ProtocolloConfigureCommand extends ContainerAwareCommand
   private function getServizi()
   {
     $repo = $this->em->getRepository('AppBundle:Servizio');
-
-    return $repo->findAll();
+    return $repo->findBy([
+      'slug' => $this->slugServices
+    ]);
   }
 
   /**

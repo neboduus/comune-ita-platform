@@ -156,7 +156,7 @@ class ServizioCreateCommand extends ContainerAwareCommand
                 ->setStatus($status)
                 ->setEnte($ente);
 
-            $area = $categoryRepo->findOneByTreeId($area);
+            $area = $categoryRepo->findOneBySlug('edilizia-e-urbanistica');
             if ($area instanceof Categoria) {
                 $servizio->setTopics($area);
             }
