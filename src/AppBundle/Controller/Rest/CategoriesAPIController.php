@@ -168,7 +168,7 @@ class CategoriesAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
     $item = new Categoria();
-    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
+    $form = $this->createForm('AppBundle\Form\Api\CategoryApiType', $item);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -263,7 +263,7 @@ class CategoriesAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
+    $form = $this->createForm('AppBundle\Form\Api\CategoryApiType', $item);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -357,7 +357,7 @@ class CategoriesAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('AppBundle\Form\Admin\CategoryType', $item);
+    $form = $this->createForm('AppBundle\Form\Api\CategoryApiType', $item);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {

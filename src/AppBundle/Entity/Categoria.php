@@ -5,10 +5,12 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Swagger\Annotations as SWG;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -16,7 +18,7 @@ use Swagger\Annotations as SWG;
  * @ORM\Table(name="categoria")
  * @ORM\HasLifecycleCallbacks
  */
-class Categoria
+class Categoria implements Translatable
 {
   /**
    * @ORM\Column(type="guid")
@@ -29,8 +31,11 @@ class Categoria
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="string", length=255)
    * @Serializer\Type("string")
+   * @Assert\NotBlank(message="name")
+   * @Assert\NotNull()
    * @SWG\Property(description="Category name")
    * @Groups({"read", "write"})
    */
@@ -49,6 +54,7 @@ class Categoria
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @Serializer\Type("string")
    * @SWG\Property(description="Category description")
