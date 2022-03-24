@@ -1,16 +1,10 @@
 <?php
 
 
-namespace AppBundle\Form\Admin;
+namespace AppBundle\Form\Api;
 
 use AppBundle\Entity\Categoria;
-use AppBundle\Entity\Servizio;
-use AppBundle\Form\I18n\AbstractI18nType;
-use AppBundle\Form\I18n\I18nDataMapperInterface;
-use AppBundle\Form\I18n\I18nTextareaType;
-use AppBundle\Form\I18n\I18nTextType;
 use AppBundle\Services\Manager\CategoryManager;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -23,7 +17,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class CategoryType extends AbstractI18nType
+class CategoryApiType extends AbstractType
 {
   /**
    * @var CategoryManager
@@ -35,15 +29,12 @@ class CategoryType extends AbstractI18nType
   private $translator;
 
   /**
-   * @param I18nDataMapperInterface $dataMapper
-   * @param $locale
-   * @param $locales
+   * CategoryType constructor.
    * @param CategoryManager $categoryManager
    * @param TranslatorInterface $translator
    */
-  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, CategoryManager $categoryManager, TranslatorInterface $translator)
+  public function __construct(CategoryManager $categoryManager, TranslatorInterface $translator)
   {
-    parent::__construct($dataMapper, $locale, $locales);
     $this->categoryManager = $categoryManager;
     $this->translator = $translator;
   }
@@ -64,15 +55,15 @@ class CategoryType extends AbstractI18nType
       $categories[$c['spaced_name']] = $c['id'];
     }
 
-    $this->createTranslatableMapper($builder, $options)
-      ->add("name", I18nTextType::class, [
-        "label" => 'general.nome'
-      ])
-      ->add("description", I18nTextareaType::class, [
-        "label" => 'general.descrizione'
-      ]);
-
     $builder
+      ->add('name', TextType::class, [
+        'label' => 'general.nome',
+        'required' => true
+      ])
+      ->add('description', TextareaType::class, [
+        'label' => 'general.descrizione',
+        'required' => false
+      ])
       ->add('parent', HiddenType::class, [
         'empty_data' => null
       ])
@@ -96,7 +87,7 @@ class CategoryType extends AbstractI18nType
     $category = $event->getForm()->getData();
     $data = $event->getData();
 
-    if ($category->getId() == $data['parent_id']) {
+    if (isset($data['parent_id']) && $category->getId() == $data['parent_id']) {
       $event->getForm()->addError(
         new FormError($this->translator->trans('categories.error_reference_parent'))
       );
@@ -104,7 +95,7 @@ class CategoryType extends AbstractI18nType
 
     $children = $this->categoryManager->getCategoryTree($category->getId());
 
-    if (array_key_exists($data['parent_id'], $children)) {
+    if (isset($data['parent_id']) && array_key_exists($data['parent_id'], $children)) {
       $event->getForm()->addError(
         new FormError($this->translator->trans('categories.error_reference_children'))
       );
@@ -129,6 +120,5 @@ class CategoryType extends AbstractI18nType
       'allow_extra_fields' => true,
       'csrf_protection' => false
     ));
-    $this->configureTranslationOptions($resolver);
   }
 }
