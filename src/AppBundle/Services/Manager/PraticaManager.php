@@ -203,7 +203,7 @@ class PraticaManager
    */
   public function assign(Pratica $pratica, User $user)
   {
-    if ($pratica->getOperatore() !== null) {
+    if ($pratica->getOperatore()->getFullName() === $user->getFullName()) {
       throw new BadRequestHttpException(
         "La pratica è già assegnata a {$pratica->getOperatore()->getFullName()}"
       );

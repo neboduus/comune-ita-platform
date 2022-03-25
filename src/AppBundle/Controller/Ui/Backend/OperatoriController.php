@@ -678,17 +678,7 @@ class OperatoriController extends Controller
       }
 
       $oldUser = $pratica->getOperatore();
-      $pratica->setOperatore($user);
-
-      // Update application history
-      $date = new \DateTime(null, new \DateTimeZone('Europe/Rome'));
-      $timestamp = $date->getTimestamp();
-      /** @var StatusChange $statusChange */
-      $statusChange[0][0] = $pratica->getStatus();
-      $statusChange[0][1]["operatore"] = $user->getFullName();
-      $statusChange[0][1]["timestamp"] = $timestamp;
-      $pratica->getStoricoStati()->set($timestamp, $statusChange);
-
+      $this->praticaManager->assign($pratica, $user);
       $this->entityManager->flush($pratica);
 
       $this->logger->info(
