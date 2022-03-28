@@ -56,6 +56,11 @@ class MyPayService
       if (isset($data['flattened'][PaymentDataType::PAYMENT_FINANCIAL_REPORT])) {
         $paymentData[PaymentDataType::PAYMENT_FINANCIAL_REPORT] = $data['flattened'][PaymentDataType::PAYMENT_FINANCIAL_REPORT];
       }
+      if (isset($data['flattened'][PaymentDataType::PAYMENT_DESCRIPTION]) && !empty($data['flattened'][PaymentDataType::PAYMENT_DESCRIPTION])) {
+        $paymentData[PaymentDataType::PAYMENT_DESCRIPTION] = $data['flattened'][PaymentDataType::PAYMENT_DESCRIPTION];
+      } else {
+        $paymentData[PaymentDataType::PAYMENT_DESCRIPTION] = $pratica->getId() . ' - ' . $pratica->getUser()->getCodiceFiscale();
+      }
       return $paymentData;
     }
 
@@ -165,6 +170,8 @@ class MyPayService
       throw new \InvalidArgumentException('Missing amount');
     }
 
+    $description = $data[PaymentDataType::PAYMENT_DESCRIPTION];
+
     /** @var CPSUser $user */
     $user = $pratica->getUser();
 
@@ -197,7 +204,7 @@ class MyPayService
       'codIpaEnte' => $paymentParameters['gateways']['mypay']['parameters']['codIpaEnte'],
       'password' => $paymentParameters['gateways']['mypay']['parameters']['password'],
       'identificativoUnivocoDovuto' => $this->calculateIUDFromPratica($pratica),
-      'causaleVersamento' => "Pratica: " . $pratica->getId(),
+      'causaleVersamento' => $description,
       'datiSpecificiRiscossione' => $paymentParameters['gateways']['mypay']['parameters']['datiSpecificiRiscossione'],
       'importoSingoloVersamento' => $amount,
       'identificativoTipoDovuto' => $paymentParameters['gateways']['mypay']['parameters']['identificativoTipoDovuto'],

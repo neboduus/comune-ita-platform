@@ -31,6 +31,7 @@ class PaymentDataType extends AbstractType
 
   const PAYMENT_AMOUNT = 'payment_amount';
   const PAYMENT_FINANCIAL_REPORT = 'payment_financial_report';
+  const PAYMENT_DESCRIPTION = 'payment_description';
 
   /**
    * @var EntityManager

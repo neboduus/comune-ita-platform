@@ -667,9 +667,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   public function renderForSubscriptionPayment(SubscriptionPayment $payment)
   {
+    $pratica = $this->em->getRepository(Pratica::class)->find($payment->getExternalKey());
     // Certificato di default
     $html = $this->templating->render('@App/Subscriptions/pdf/Payment.html.twig', [
       "payment"=>$payment,
+      "pratica"=>$pratica
     ]);
 
     return $this->generatePdf($html);
