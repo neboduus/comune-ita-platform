@@ -591,7 +591,7 @@ class Application
   /**
    * @return DateTime
    */
-  public function getSubmittedAt(): DateTime
+  public function getSubmittedAt(): ?DateTime
   {
     return $this->submittedAt;
   }
@@ -599,7 +599,7 @@ class Application
   /**
    * @param DateTime $submittedAt
    */
-  public function setSubmittedAt(DateTime $submittedAt)
+  public function setSubmittedAt(?DateTime $submittedAt)
   {
     $this->submittedAt = $submittedAt;
   }
@@ -703,7 +703,7 @@ class Application
   /**
    * @return DateTime
    */
-  public function getProtocolledAt()
+  public function getProtocolledAt(): ?DateTime
   {
     return $this->protocolledAt;
   }
@@ -711,7 +711,7 @@ class Application
   /**
    * @param DateTime $protocolledAt
    */
-  public function setProtocolledAt(DateTime $protocolledAt)
+  public function setProtocolledAt(?DateTime $protocolledAt)
   {
     $this->protocolledAt = $protocolledAt;
   }
@@ -823,7 +823,7 @@ class Application
   /**
    * @param array $outcomeProtocolNumbers
    */
-  public function setOutcomeProtocolNumbers(array $outcomeProtocolNumbers)
+  public function setOutcomeProtocolNumbers(?array $outcomeProtocolNumbers)
   {
     $this->outcomeProtocolNumbers = $outcomeProtocolNumbers;
   }
@@ -847,7 +847,7 @@ class Application
   /**
    * @return DateTime
    */
-  public function getOutcomeProtocolledAt()
+  public function getOutcomeProtocolledAt(?DateTime)
   {
     return $this->outcomeProtocolledAt;
   }
@@ -855,7 +855,7 @@ class Application
   /**
    * @param DateTime $outcomeProtocolledAt
    */
-  public function setOutcomeProtocolledAt(DateTime $outcomeProtocolledAt)
+  public function setOutcomeProtocolledAt(?DateTime $outcomeProtocolledAt)
   {
     $this->outcomeProtocolledAt = $outcomeProtocolledAt;
   }
