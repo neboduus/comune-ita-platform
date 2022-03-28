@@ -3,6 +3,7 @@ FROM ${php_image} as php
 
 FROM caddy:2
 
+COPY compose_conf/caddy/docker-entrypoint.sh /docker-entrypoint.sh
 COPY Caddyfile /etc/caddy/Caddyfile
 
 COPY --from=php /var/www/html/web /srv
@@ -10,3 +11,4 @@ COPY --from=php /var/www/html/web /srv
 #HEALTHCHECK --start-period=2s --interval=30s --timeout=3s \
 #        CMD curl --fail localhost/health || exit 1
 
+ENTRYPOINT [ "/docker-entrypoint.sh" ]

@@ -161,6 +161,8 @@ services:
       default:
         aliases:
           - stanzadelcittadino.localtest.me
+    environment:
+      PHPFPM_HOST: php:9000
     labels:
       traefik.enable: 'true'
       traefik.docker.network: 'default'
