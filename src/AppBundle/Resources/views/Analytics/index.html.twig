@@ -1,0 +1,26 @@
+{% extends '@App/Default/index.html.twig' %}
+{% set ente = instance_service.getCurrentInstance() %}
+
+{% block stylesheets %}
+  {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  {% if feature('feature_analytics') %}
+    <script src="{{ asset('bundles/app/js/pages/analytics/analytics.js') }}"></script>
+  {% endif %}
+{% endblock %}
+
+{% block main_content %}
+  <section class="container px-4 my-4">
+    <div class="row">
+      <div class="col-12">
+        <app-analytics></app-analytics>
+        {% if not feature('feature_analytics') %}
+          <h3>{{ 'analytics.not_enabled' | trans }}</h3>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

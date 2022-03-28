@@ -137,3 +137,4 @@ security:
     - { path: ^/%prefix%/(%app_locales%)/admin, role: ROLE_ADMIN }
     - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
     - { path: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/analytics, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }

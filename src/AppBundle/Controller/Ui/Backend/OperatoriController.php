@@ -1372,4 +1372,13 @@ class OperatoriController extends Controller
       return new JsonResponse(['status' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
   }
+
+  /**
+   * @Route("/analytics", name="analytics_index")
+   * @return Response
+   */
+  public function analyticsAction()
+  {
+    return $this->render('@App/Analytics/index.html.twig');
+  }
 }

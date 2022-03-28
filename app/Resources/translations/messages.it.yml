@@ -2493,3 +2493,5 @@ search:
   topics: 'Argomenti'
   recipients: 'Destinatari'
   geographic_areas: 'Aree geografiche'
+analytics:
+  not_enabled: 'Questa sezione è accessibile solo ad account Premium'

@@ -275,6 +275,9 @@ flagception:
     feature_calendar_type:
       default: true
       env: FEATURE_CALENDAR_TYPE
+    feature_analytics:
+      default: true
+      env: FEATURE_ANALYTICS
 
 # Prometheus
 artprima_prometheus_metrics:
