@@ -30,7 +30,7 @@ Nasce da un progetto condiviso con il Consorzio Comuni Trentini - ANCI Trentino,
 
 ## Struttura del progetto
 
-Il software è realizzato da una componente principale sviluppata con 
+Il software è realizzato da una componente principale sviluppata con
 [Symfony](https://symfony.com/) e da varie componenti accessorie, che sono
 facilmente sostituibili in caso di necessità:
 
@@ -45,7 +45,7 @@ facilmente sostituibili in caso di necessità:
   * CAS Autentication
 
 Altre dipendenze:
-  * il database principale utilizzato è *PostgreSQL*, versione 10 (ma supporta fino alla 12 senza problemi). E' compatibile anche 
+  * il database principale utilizzato è *PostgreSQL*, versione 10 (ma supporta fino alla 12 senza problemi). E' compatibile anche
     con il servizio [Aurora Serverless v1 di AWS](https://aws.amazon.com/it/rds/aurora/serverless/) che usiamo con soddisfazione
     in produzione sulla nostra installazione principale.
   * secondariamente sono usati anche *MongoDB* (persistenza principale di form-server) e *Redis* (usato per la condivisione delle
@@ -136,6 +136,17 @@ Una volta fatto il primo setup, se si inizia a configurare il tenant di prova è
 impostare a `FALSE` la variabile `ENABLE_INSTANCE_CONFIG` nel `docker-compose.yml`.
 
 In caso di problemi è possibile trovare maggiori infomazioni nel [wiki](https://gitlab.com/opencontent/stanza-del-cittadino/core/-/wikis/Informazioni-per-sviluppatori/Ambiente-di-sviluppo).
+
+#### Integrazione con Kafka
+Il software è già pronto all'integrazione con Kafka, Apache Kafka è una piattaforma di data streaming che consente di dare vita a pipeline di dati e ad applicazioni.
+Per semplicità di configurazione è stato aggiunto un file già pronto all'abilitazione dell'integrazione con kafka `docker-compose.kafka.yml`.
+
+Aggiungendo questo file in fase di build del progetto partiranno in automatico tutti i microservizi necessari all'integrazione.
+Nel file sono già presenti le configurazioni minime per interfacciare i 2 applciativi.
+Dopo aver avviato i servizi per l'integrazione con Kafka sarà possibile verificare i messaggi presenti nella coda all'indirizzo:
+
+kowl.localtest.me
+
 
 ### Senza l'ausilio di docker
 
