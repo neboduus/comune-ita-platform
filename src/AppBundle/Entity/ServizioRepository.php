@@ -209,6 +209,8 @@ class ServizioRepository extends EntityRepository
     $qb = $this->createQueryBuilder('s')
       ->where('s.paymentRequired IS NOT NULL')
       ->andWhere('s.integrations IS NOT NULL')
+      ->andWhere('s.status NOT IN (:notAvailableStatues)')
+      ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_SUSPENDED])
       ->orderBy('s.name', 'ASC');
 
     return $qb->getQuery()->getResult();

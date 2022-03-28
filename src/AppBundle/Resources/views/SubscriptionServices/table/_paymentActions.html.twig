@@ -18,7 +18,7 @@
           </a>
         </li>
         <li>
-          <a class="list-item left-icon" href="{{ path('admin_servizio_edit', { 'id': payment.id, 'step': 'messages' }) }}">
+          <a class="list-item left-icon" href="{{ path('operatori_subscriber_show', { 'subscriber': payment.subscription.subscriber.id }) }}">
             <span class="text-primary"><i class="fa fa-user fa-lg"></i> {{ 'iscrizioni.subscriber' | trans }}</span>
           </a>
         </li>
