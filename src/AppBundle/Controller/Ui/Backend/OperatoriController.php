@@ -678,7 +678,7 @@ class OperatoriController extends Controller
       }
 
       $oldUser = $pratica->getOperatore();
-      $pratica->setOperatore($user);
+      $this->praticaManager->assign($pratica, $user);
       $this->entityManager->flush($pratica);
 
       $this->logger->info(

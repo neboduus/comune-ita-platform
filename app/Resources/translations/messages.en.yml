@@ -305,6 +305,7 @@ pratica:
       indirizzo: 'Address'
     stato_50000: 'Canceled'
     or: 'Oppure'
+    cambio_operatore: 'Cambio operatore'
   messaggi:
     oggetto: 'New message request numer %pratica%'
     messaggio: '%message% <img src="%link%">'

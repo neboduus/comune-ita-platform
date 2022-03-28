@@ -7,14 +7,14 @@
         <div class="point-list-content">
           <div class="card card-teaser rounded p-2">
             <div class="card-body">
-              <b>{{ ('pratica.dettaglio.stato_'~change[0])| trans }}</b>
+            <b>{{ ('pratica.dettaglio.stato_'~change[0])| trans }}</b>
               <small class="d-block">il {{ timestamp|date('d/m/Y') }} alle {{ timestamp|date('H:i') }}</small>
               {% if change[1] is defined and change[1].operatore is defined %}
               <small>
                 <svg class="icon icon-xs icon-secondary">
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
                 </svg>
-                {{ change[1].operatore }}
+                  {{ change[1].operatore }}
               </small>
               {% endif %}
               {% if change[1] is defined and change[1].message is defined %}
