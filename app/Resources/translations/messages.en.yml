@@ -2234,3 +2234,5 @@ general:
   stato: ''
   url: ''
   alert_elimina: ""
+analytics:
+  not_enabled: 'Questa sezione è accessibile solo ad account Premium'

@@ -180,6 +180,9 @@ Feature disponibili:
    sostituisce l'interfaccia di dettaglio ad uso del cittadino, migliorandone la user experience.
    Consente inoltre lo scambio di messaggi tra operatore e cittadino.
 
+   - Interfaccia per operatori e admin, si abilita tramite la variabile d'ambiente `FEATURE_ANALYTICS`:
+     abilita la pagina operatori/analytics mostrando dati statistici della stanza.
+
 ## Restrizioni di accesso ai servizi
 
 Mediante la variabile d'ambiente `BROWSERS_RESTRICTIONS` è possibile limitare l'accesso di una specifica versione di un browser ai servizi.

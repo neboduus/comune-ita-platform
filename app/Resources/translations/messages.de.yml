@@ -2321,3 +2321,6 @@ ente:
 buttons:
   draft: 'Salva bozza'
   last_save: 'Ultimo salvataggio:'
+
+analytics:
+  not_enabled: 'Questa sezione è accessibile solo ad account Premium'
