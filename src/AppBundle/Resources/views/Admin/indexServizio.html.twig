@@ -66,14 +66,14 @@
             {% for item in items %}
               <tr>
                 <td class="w-60">
-                  {% if item.serviceGroup %}
+                  {% if item.serviceGroup and item.serviceGroup %}
                     <a href="{{ path('admin_service_group_edit', {'id': item.serviceGroup.id}) }}">{{ item.serviceGroup.name }}</a>
                     <i class="fa fa-caret-right px-2" aria-hidden="true"></i>
                   {% endif %}
                   <a class="" href="{{ path('admin_servizio_edit', { 'id': item.id }) }}">{{ item.name }}</a>
                 </td>
                 <td>
-                  {% if item.sharedWithGroup %}
+                  {% if item.sharedWithGroup and item.serviceGroup %}
                     {{ (item.serviceGroup.topics) ? item.serviceGroup.topics.name : '' }}
                   {% else %}
                     {{ (item.topics) ? item.topics.name : '' }}

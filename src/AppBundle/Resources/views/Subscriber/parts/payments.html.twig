@@ -1,66 +1,63 @@
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
-<script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
-
 <script>
     $(function () {
-        $('#payments_table').initDataTables({{ datatable_settings(datatable) }}, {
-            dom: 'fBrtip',
-            searching: true,
-            orderable: true,
-            paging: true,
-            pagingType: 'simple_numbers',
-            "language": {
-                "sEmptyTable": "Nessun dato presente nella tabella",
-                "sInfo": "Vista da _START_ a _END_ di _TOTAL_ elementi",
-                "sInfoEmpty": "Vista da 0 a 0 di 0 elementi",
-                "sInfoFiltered": "(filtrati da _MAX_ elementi totali)",
-                "sInfoPostFix": "",
-                "sInfoThousands": ".",
-                "sLengthMenu": "Visualizza _MENU_ elementi",
-                "sLoadingRecords": "Caricamento...",
-                "sProcessing": '<div class="progress-spinner progress-spinner-double progress-spinner-active">\n' +
-                    '        <div class="progress-spinner-inner"></div>\n' +
-                    '        <div class="progress-spinner-inner"></div>\n' +
-                    '        <span class="sr-only">Caricamento...</span>\n' +
-                    '      </div>',
-                "sSearch": "Ricerca",
-                "sZeroRecords": "La ricerca non ha portato alcun risultato.",
-                "oPaginate": {
-                    "sFirst": "Inizio",
-                    "sPrevious": "Precedente",
-                    "sNext": "Successivo",
-                    "sLast": "Fine"
-                },
-                "oAria": {
-                    "sSortAscending": ": attiva per ordinare la colonna in ordine crescente",
-                    "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
-                }
-            },
-            "serverSide": true,
-            initComplete: function () {
-                // Add data-title attribute
-                $('#payments_table thead tr th').each(function (index, element) {
-                    index += 1;
-                    $('tr td:nth-child(' + index + ')').attr('data-title', element.innerHTML);
-                });
-
-                // Use bootstrap buttons for pagination
-                $('a.paginate_button').addClass('btn');
-                // Add margin bottom to datatables info
-                $('#dt_info').css('margin-bottom', '0.85em')
-            }
-        }).then(function (dt) {})
-    });
+      $('#payments_table').DataTable({
+        "order": [[0, "asc"]],
+        columnDefs: [
+          {orderable: false, targets: 5}
+        ],
+        language: {
+          url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/it_it.json'
+        },
+        stateSave: true,
+        dom: "<'row'<'col-6 pt-2'l><'col-6'f>>" +
+          "<'row'<'col-12'tr>>" +
+          "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 mt-2'p>>"
+      });
+    })
 </script>
 
 <div class="mt-4">
-  <h3>Pagamenti</h3>
+  <h3>{{ 'backoffice.integration.subscription_service.payments' | trans }}</h3>
 </div>
-<div class="col-lg-12 px-lg-4 py-lg-2 my-4">
-  <div id="no-more-tables" class="table-striped">
-    <div id="payments_table"></div>
-  </div>
+<div class="col-lg-12 py-lg-2">
+  <table id="payments_table" class="table table-hover mt-3">
+    <thead>
+    <tr>
+      <th>{{ 'backoffice.integration.subscription_service.payment.reason'|trans }}</th>
+      <th>{{ 'backoffice.integration.subscription_service.payment.type'|trans }}</th>
+      <th>{{ 'backoffice.integration.subscription_service.subscription_service'|trans }}</th>
+      <th>{{ 'backoffice.integration.subscription_service.payment.execution_date'|trans }}</th>
+      <th>{{ 'backoffice.integration.subscription_service.payment.amount'|trans }}</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for subscription in subscriber.subscriptions %}
+      {% for item in subscription.subscriptionPayments %}
+        <tr>
+          <td>
+            <a
+              href="{{ path('operatori_subscriber_show', { 'subscriber': item.subscription.subscriber.id, 'tab': 'subscriptions', 'show_subscription': item.subscription.id}) }}">
+              <span data-toggle="tooltip" title="{{ item.description }}">{{ item.description }}</span>
+            </a>
+          </td>
+          <td>{% if identifiers[item.subscription.subscriptionService.code][item.name] is defined %} {{ ('backoffice.integration.subscription_service.payment.text_' ~ identifiers[item.subscription.subscriptionService.code][item.name]) | trans }} {% endif %}</td>
+          <td>{{ subscription.subscriptionService.name }}</td>
+          <td>{{ item.paymentDate | date('Y-m-d') }}</td>
+          <td><code>{{ item.amount }}€</code></td>
+          <td class="d-none d-none d-lg-table-cell align-middle">
+            <div class="float-right">
+              <a id="downloadCertificate" href="{{ path('payment_certificate_download_operatore', {"subscriptionId": item.subscription.id, "subscriptionPaymentId": item.id }) }}" download="">
+                <svg class="icon icon-primary">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                </svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+    </tbody>
+  </table>
 </div>

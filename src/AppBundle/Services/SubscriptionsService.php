@@ -195,4 +195,16 @@ class SubscriptionsService
     $stmt->execute();
     return $stmt->fetchAll();
   }
+
+  public function getPaymentSettingIdententifiers() {
+    $subscriptionServices =  $this->em->getRepository('AppBundle:SubscriptionService')->findAll();
+    $subscriptionServiceIdentifiers = [];
+    foreach ($subscriptionServices as $subscriptionService) {
+      $subscriptionServiceIdentifiers[$subscriptionService->getCode()] = [];
+      foreach ($subscriptionService->getSubscriptionPayments() as $paymentSetting) {
+        $subscriptionServiceIdentifiers[$subscriptionService->getCode()][$paymentSetting->getPaymentIdentifier()] = $paymentSetting->getType();
+      }
+    }
+    return $subscriptionServiceIdentifiers;
+  }
 }

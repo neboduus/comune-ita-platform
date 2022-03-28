@@ -13,9 +13,7 @@
                   aria-controls="collapse_{{ subscription.id }}">
             <div class="row">
               <div class="col-8">
-                <a href="{{ path('operatori_subscriptions', {'subscriptionService': subscription.subscriptionService.id }) }}">
-                  {{ subscription.subscriptionService.name }}
-                </a>
+                {{ subscription.subscriptionService.name }}
               </div>
               <div class="col-4">
                 <div class="chip {% if subscription.isActive %} chip-primary {% else %} chip-simple {% endif %} float-right">

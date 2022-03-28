@@ -9,6 +9,7 @@ use AppBundle\Entity\Subscription;
 use AppBundle\Entity\SubscriptionPayment;
 use AppBundle\Entity\SubscriptionService;
 use AppBundle\Entity\User;
+use AppBundle\Services\SubscriptionsService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
@@ -50,16 +51,21 @@ class SubscriptionServicesController extends Controller
    * @var SubcriptionsBackOffice
    */
   private $subcriptionsBackOffice;
+  /**
+   * @var SubscriptionsService
+   */
+  private $subscriptionsService;
 
   /**
    * SubscriptionServicesController constructor.
    * @param EntityManagerInterface $entityManager
    */
-  public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator, SubcriptionsBackOffice $subcriptionsBackOffice)
+  public function __construct(EntityManagerInterface $entityManager, TranslatorInterface $translator, SubcriptionsBackOffice $subcriptionsBackOffice, SubscriptionsService $subscriptionsService)
   {
     $this->em = $entityManager;
     $this->translator = $translator;
     $this->subcriptionsBackOffice = $subcriptionsBackOffice;
+    $this->subscriptionsService = $subscriptionsService;
   }
 
   /**
@@ -358,19 +364,10 @@ class SubscriptionServicesController extends Controller
   {
     $items = $this->em->getRepository('AppBundle:SubscriptionPayment')->findBy([], ['paymentDate' => 'DESC']);
 
-    $subscriptionServices =  $this->em->getRepository('AppBundle:SubscriptionService')->findAll();
-    $subscriptionServiceIdentifiers = [];
-    foreach ($subscriptionServices as $subscriptionService) {
-      $subscriptionServiceIdentifiers[$subscriptionService->getCode()] = [];
-      foreach ($subscriptionService->getSubscriptionPayments() as $paymentSetting) {
-        $subscriptionServiceIdentifiers[$subscriptionService->getCode()][$paymentSetting->getPaymentIdentifier()] = $paymentSetting->getType();
-      }
-    }
-
     return $this->render('@App/SubscriptionServices/indexSubscriptionServicePayments.html.twig', [
       'user' => $this->getUser(),
       'items' => $items,
-      'identifiers' => $subscriptionServiceIdentifiers
+      'identifiers' => $this->subscriptionsService->getPaymentSettingIdententifiers()
     ]);
   }
 
