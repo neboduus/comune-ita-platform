@@ -6,7 +6,7 @@ Per i test che seguono fare riferimento al documento dei [Test Manuali](https://
 
 - [ ] Test PEO, creazione pratica e protocollazione
 - [ ] Test PEO, richiesta integrazione
-- [ ] Test prenotazione in [calendario a intervalli fissi](https://devsdc.opencontent.it/comune-di-bugliano/it/servizi/prenotazione-appuntamento-su-calendario-di-prova)
+- [ ] Test prenotazione in [calendario a intervalli fissi](https://devsdc.opencontent.it/comune-di-bugliano/it/servizi/prenotazione-calendario-intervalli-fissi)
 - [ ] Test prenotazione in [calendario intervalli liberi](https://devsdc.opencontent.it/comune-di-bugliano/it/servizi/prenotazione-calendario-intervalli-liberi)
 
 ## Test su nuovi sviluppi
