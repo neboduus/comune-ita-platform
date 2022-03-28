@@ -289,6 +289,7 @@ $('.modal-edit').on('click', function editMeeting() {
 });
 
 $('.modal-delete').on('click', function () {
+  let id = $('#modalDraftId').html();
   let url = $(this).attr('data-url');
   let token = $('#hidden').attr('data-token');
   url = url.replace("meeting_id", id);
