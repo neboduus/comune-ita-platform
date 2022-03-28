@@ -189,6 +189,8 @@ class ApplicationDto extends AbstractDto
       } catch (\Exception $e) {
         $application->setSubmittedAt($pratica->getSubmissionTime());
       }
+    } else {
+      $application->setSubmittedAt(null);
     }
 
     $application->setLatestStatusChangeTime($pratica->getLatestStatusChangeTimestamp());
@@ -199,6 +201,8 @@ class ApplicationDto extends AbstractDto
       } catch (\Exception $e) {
         $application->setLatestStatusChangeAt($pratica->getLatestStatusChangeTimestamp());
       }
+    } else {
+      $application->setLatestStatusChangeAt(null);
     }
 
     $application->setProtocolFolderNumber($pratica->getNumeroFascicolo());
@@ -215,6 +219,8 @@ class ApplicationDto extends AbstractDto
       } catch (\Exception $e) {
         $application->setProtocolledAt($pratica->getProtocolTime());
       }
+    } else {
+      $application->setProtocolledAt(null);
     }
 
     $application->setOutcome($pratica->getEsito());
@@ -232,6 +238,11 @@ class ApplicationDto extends AbstractDto
           $application->setOutcomeProtocolledAt($pratica->getRispostaOperatore()->getProtocolTime());
         }
       }
+    } else {
+      $application->setOutcomeProtocolNumber(null);
+      $application->setOutcomeProtocolDocumentId(null);
+      $application->setOutcomeProtocolNumbers(null);
+      $application->setOutcomeProtocolledAt(null);
     }
 
     $application->setPaymentType($pratica->getPaymentType());
@@ -254,10 +265,9 @@ class ApplicationDto extends AbstractDto
         $application->getAuthentication()->offsetSet('instant', $sessionData['shibAuthenticationIstant']);
       }
     }
+
     $application->setLinks($this->getAvailableTransitions($pratica, $attachmentEndpointUrl, $version));
-
     $application->setIntegrations($this->prepareIntegrations($pratica));
-
     $application->setFlowChangedAt($pratica->getFlowChangedAt());
 
     return $application;
