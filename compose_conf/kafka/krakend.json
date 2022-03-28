@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "name": "lambda-protocol",
+  "endpoints": [
+    {
+      "endpoint": "/applications",
+      "method": "POST",
+      "backend": [
+        {
+          "host": "kafka://",
+          "disable_host_sanitize": true,
+          "extra_config": {
+            "github.com/devopsfaith/krakend-pubsub/publisher": {
+              "topic_url": "applications"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/services",
+      "method": "POST",
+      "backend" : [
+        {
+          "host": "kafka://",
+          "disable_host_sanitize": true,
+          "extra_config": {
+            "github.com/devopsfaith/krakend-pubsub/publisher": {
+              "topic_url": "services"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
