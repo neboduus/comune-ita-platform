@@ -242,10 +242,11 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
 
     $paymentIdentifier = $gateway->getIdentifier();
 
-    $amount = $data[PaymentDataType::PAYMENT_AMOUNT];
-    if (!$amount) {
+    $amount = $data[PaymentDataType::PAYMENT_AMOUNT];if (!$amount) {
       throw new \Exception('Missing amount');
     }
+
+    $description = $data[PaymentDataType::PAYMENT_DESCRIPTION];
 
     /** @var CPSUser $user */
     $user = $pratica->getUser();
@@ -279,7 +280,7 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
 
     $request = array(
       'amount' => $amount,
-      'reason' => "Pratica: " . $pratica->getId(),
+      'reason' => $description,
       'type' => $paymentParameters['gateways'][$paymentIdentifier]['parameters']['identificativoTipoDovuto'],
       'tenant_id' => $pratica->getServizio()->getEnte()->getId(),
       'order_id' => $this->calculateIUDFromPratica($pratica),

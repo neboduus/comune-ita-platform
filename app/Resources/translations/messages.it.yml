@@ -520,7 +520,7 @@ iscrizioni:
   certificato: "Certificato"
   certificato_pagamento:
     testo: "Su richiesta dell'interessato, visti gli atti d'ufficio, si dichiara che lo studente/la studentessa <b>%completeName%</b>, nato/a a <b>%placeOfBirth%</b> il <b>%dateOfBirth%</b> C.F. <b>%fiscalCode%</b> nell'anno %paymentYear% ha sostenuto la seguente spesa:"
-    importo: "Euro <b>%amount%</b> quale %description%"
+    importo: "Euro <b>%amount%</b> quale %description% per %service%"
   data_iscrizione: "Data di iscrizione"
   num_condivisioni: "%num% condivisioni"
   condivisioni: "Condivisioni"

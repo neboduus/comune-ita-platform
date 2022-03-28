@@ -123,6 +123,12 @@ abstract class AbstractPaymentData implements PaymentDataInterface
       if (isset($data['flattened'][PaymentDataType::PAYMENT_FINANCIAL_REPORT])) {
         $paymentData[PaymentDataType::PAYMENT_FINANCIAL_REPORT] = $data['flattened'][PaymentDataType::PAYMENT_FINANCIAL_REPORT];
       }
+
+      if (isset($data['flattened'][PaymentDataType::PAYMENT_DESCRIPTION]) && !empty($data['flattened'][PaymentDataType::PAYMENT_DESCRIPTION])) {
+        $paymentData[PaymentDataType::PAYMENT_DESCRIPTION] = $data['flattened'][PaymentDataType::PAYMENT_DESCRIPTION];
+      } else {
+        $paymentData[PaymentDataType::PAYMENT_DESCRIPTION] = $pratica->getId() . ' - ' . $pratica->getUser()->getCodiceFiscale();
+      }
       return $paymentData;
     }
 
