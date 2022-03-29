@@ -65,7 +65,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 
 /**
- * Class AdmninController
+ * Class AdminController
  * @Route("/admin")
  */
 class AdminController extends Controller
@@ -111,7 +111,7 @@ class AdminController extends Controller
   private $serviceManager;
   private $locales;
   /**
-   * @var MailerService
+   * @var MailerInterface
    */
   private $mailer;
 
@@ -128,6 +128,8 @@ class AdminController extends Controller
    * @param DataTableFactory $dataTableFactory
    * @param LoggerInterface $logger
    * @param ServiceManager $serviceManager
+   * @param MailerInterface $mailer
+   * @param $locales
    */
   public function __construct(
     InstanceService $instanceService,
@@ -141,7 +143,7 @@ class AdminController extends Controller
     DataTableFactory $dataTableFactory,
     LoggerInterface $logger,
     ServiceManager $serviceManager,
-    MailerService $mailer,
+    MailerInterface $mailer,
     $locales
   )
   {
