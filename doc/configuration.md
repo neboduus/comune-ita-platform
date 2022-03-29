@@ -58,7 +58,7 @@
 | KAFKA_TOPIC_APPLICATIONS     | No       | applications    | Nome del topic a cui vengono inviati gli eventi relativi alle Pratiche |
 | KAFKA_TOPIC_SERVICES         | No       | services        | Nome del topic a cui vengono inviati gli eventi relativi ai Servici |
 | API_VERSION                  | No       | 1               | Versione delle API service in caso non venga specificato
-
+| SKIP_CACHE_WARMUP	       | No       | false           | Salta la creazione anticipata della cache all'avvio del container
 
 ## Grafica generale
 
