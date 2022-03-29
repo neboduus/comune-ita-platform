@@ -312,6 +312,8 @@ services:
   AppBundle\Services\Manager\PraticaManager:
     autowire: true
 
+  ocsdc.pratica_manager: '@AppBundle\Services\Manager\PraticaManager'
+
   AppBundle\Services\Manager\CategoryManager:
     autowire: true
 
@@ -527,8 +529,7 @@ services:
 
   AppBundle\Services\MailerService: "@ocsdc.mailer"
 
-  ocsdc.subscriptions_service:
-    class: AppBundle\Services\SubscriptionsService
+  AppBundle\Services\SubscriptionsService:
     arguments:
       - '@doctrine.orm.default_entity_manager'
       - '@ocsdc.instance_service'
@@ -540,7 +541,7 @@ services:
       - '%ocsdc_host%'
       - '%default_from_email_address%'
 
-  AppBundle\Services\SubscriptionsService: "@ocsdc.subscriptions_service"
+  ocsdc.subscriptions_service: '@AppBundle\Services\SubscriptionsService'
 
   AppBundle\Services\ModuloPdfBuilderService:
     autowire: true
