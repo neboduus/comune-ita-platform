@@ -552,12 +552,16 @@ services:
   AppBundle\Services\WebhookService:
     autowire: true
 
+  ocsdc:webhook_service: '@AppBundle\Services\WebhookService'
+
   AppBundle\Services\KafkaService:
     autowire: true
     arguments:
       $kafkaUrl: "%kafka_url%"
       $kafkaEventVersion: "%kafka_event_version%"
       $topics: "%kafka_topics%"
+
+  ocsdc:kafka_service: '@AppBundle\Services\KafkaService'
 
   ocsdc.reminder_service:
     class: AppBundle\Services\ReminderService
