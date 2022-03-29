@@ -847,7 +847,7 @@ class Application
   /**
    * @return DateTime
    */
-  public function getOutcomeProtocolledAt(?DateTime)
+  public function getOutcomeProtocolledAt(): ?Datetime
   {
     return $this->outcomeProtocolledAt;
   }
