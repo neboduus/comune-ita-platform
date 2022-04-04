@@ -18,15 +18,42 @@ class HotFixI18nSyncCommand extends ContainerAwareCommand
 {
   private $defaultLocale = 'it';
   private $servicesI18nFields = [
-    'name' => 'name',
-    'description' => 'description',
-    'who' => 'who',
-    'howto' => 'howto',
-    'special_cases' => 'specialCases',
-    'more_info' => 'moreInfo',
-    'compilation_info' => 'compilationInfo',
-    'final_indications' => 'finalIndications',
-    //'feedback_messages' => 'feedbackMessages'
+    'name' => [
+      'ext_field' => 'name',
+      'type' => 'string',
+    ],
+    'description' => [
+      'ext_field' => 'description',
+      'type' => 'string',
+    ],
+    'who' => [
+      'ext_field' => 'who',
+      'type' => 'string',
+    ],
+    'howto' => [
+      'ext_field' => 'howto',
+      'type' => 'string',
+    ],
+    'special_cases' => [
+      'ext_field' => 'specialCases',
+      'type' => 'string',
+    ],
+    'more_info' => [
+      'ext_field' => 'moreInfo',
+      'type' => 'string',
+    ],
+    'compilation_info' => [
+      'ext_field' => 'compilationInfo',
+      'type' => 'string',
+    ],
+    'final_indications' => [
+      'ext_field' => 'finalIndications',
+      'type' => 'string',
+    ],
+    'feedback_messages' =>  [
+      'ext_field' => 'feedbackMessages',
+      'type' => 'json',
+    ]
   ];
 
   protected function configure()
@@ -49,34 +76,47 @@ class HotFixI18nSyncCommand extends ContainerAwareCommand
       $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
       foreach ($this->servicesI18nFields as $k => $v) {
-        $sql = "select s.id, s." . $k . ", e.content from servizio as s
-              left join ext_translations as e on s.id::text = e.foreign_key and e.field = '" . $v . "' and e.locale = '" . $this->defaultLocale . "'
-              where s." . $k . "::text != e.content";
+        $sql = "select s.id, s.".$k.", e.content from servizio as s
+              left join ext_translations as e on s.id::text = e.foreign_key and e.field = '".$v['ext_field']."' and e.locale = '".$this->defaultLocale."'
+              where s.".$k."::text != e.content";
 
         try {
 
           $stmt = $entityManager->getConnection()->executeQuery($sql);
           $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
-          $this->symfonyStyle->note('Servizi da sincronizzare per il campo:' . $k);
-          $this->symfonyStyle->note($result);
+          $this->symfonyStyle->note('Ci sono '. count($result) .' servizi da sincronizzare per il campo: '.$k);
+          //$this->symfonyStyle->note(print_r($result, 1));
 
           if (!$dryRun) {
-            foreach ($result as $r) {
-              $sql = "update servizio as s set " . $k . " =
-                      (select t.content from ext_translations as t where t.field = '" . $v . "' and t.foreign_key = s.id::text and t.locale = '" . $this->defaultLocale . "')
-                      where s.id = '" . $r['id'] . "'";
-              $entityManager->getConnection()->executeQuery($sql);
-
-              $this->symfonyStyle->note('Aggiornato servizio: ' . $r['id'] . ' campo: ' . $k);
+            if (!empty($result)) {
+              foreach ($result as $r) {
+                if ( $r[$k] != $r['content'] ) {
+                  if ($v['type'] === 'json') {
+                    $sql = "update servizio set " . $k . " = (
+                        select t.content::json from ext_translations as t
+                        where t.field = '" . $v['ext_field'] . "' and t.foreign_key = servizio.id::text and t.locale = '" . $this->defaultLocale . "')
+                        where id = '" . $r['id'] . "'";
+                  } else {
+                    $sql = "update servizio set ".$k." =
+                      (select t.content from ext_translations as t where t.field = '". $v['ext_field'] ."' and t.foreign_key = servizio.id::text and t.locale = '".$this->defaultLocale."')
+                      where id = '".$r['id']."'";
+                  }
+                  $entityManager->getConnection()->executeQuery($sql);
+                  $this->symfonyStyle->success('Aggiornato servizio: '.$r['id'].' campo: '.$k);
+                }
+              }
             }
           }
         } catch (DBALException $e) {
-          $this->symfonyStyle->error('Errore in aggiornamento servizio: ' . $r['id'] . ' campo: ' . $k . ' - ' . $e->getMessage());
+          $this->symfonyStyle->error(
+            'Errore in aggiornamento servizio: '.$r['id'].' campo: '.$k.' - '.$e->getMessage()
+          );
         }
       }
 
     } catch (\Exception $e) {
-      $this->symfonyStyle->error('Error: ' . $e->getMessage());
+      $this->symfonyStyle->error('Error: '.$e->getMessage());
+
       return 1;
     }
   }
