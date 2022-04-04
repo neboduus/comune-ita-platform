@@ -33,8 +33,9 @@ class LocaleApiListener
 
   public function onKernelRequest(GetResponseEvent $event)
   {
+    // Se abilitato la lingua di default (nel nostro caso it) viene letta e salvata nella tabella delle traduzioni e non nella tabella principale
     // Persist DefaultLocale in translation table
-    $this->translatableListener->setPersistDefaultLocaleTranslation(true);
+    // $this->translatableListener->setPersistDefaultLocaleTranslation(true);
 
     $request = $event->getRequest();
 

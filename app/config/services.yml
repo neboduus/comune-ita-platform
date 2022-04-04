@@ -490,6 +490,14 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: -100 }
 
+  AppBundle\EventListener\LocaleCommandListener:
+    autowire: true
+    arguments:
+      $defaultLocale: "%locale%"
+      $availableLocales: "%app_locales%"
+    tags:
+      - { name: kernel.event_listener, event: console.command }
+
   ocsdc.redirect.after.login:
     class: AppBundle\Handlers\Auth\AfterLoginRedirection
     arguments: [ '@router','@security.authorization_checker' ]
