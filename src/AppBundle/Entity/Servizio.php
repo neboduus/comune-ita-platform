@@ -1347,7 +1347,7 @@ class Servizio implements Translatable
   public function isIOEnabled(): bool
   {
     $parameters = $this->getIOServiceParameters();
-    if (!$parameters || !($parameters['IOserviceId'] && $parameters['primaryKey'] && $parameters['secondaryKey'])) return false;
+    if (!$parameters || !($parameters['IOserviceId'] && $parameters['primaryKey'])) return false;
 
     return true;
   }
