@@ -299,14 +299,14 @@ $(document).ready(function () {
     let data = identifier_el.attr('data-payment');
     if (data) {
       data = JSON.parse(data);
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_date`).attr('value', moment(data["date"]).format("YYYY-MM-DD"))
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_amount`).attr('value', data["amount"])
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_identifier`).attr('value', data["payment_identifier"])
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_reason`).attr('value', data["payment_reason"])
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_service`).val(data["payment_service"]).change()
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_create_draft`).attr('checked', data["create_draft"])
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_meta`).text(JSON.stringify(data["meta"]))
-      $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_type`).find(`.type_${data["type"]}`).first().attr('checked', true).change();
+        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_date`).val(moment(data["date"]).format("YYYY-MM-DD"))
+        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_amount`).val(data["amount"])
+        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_identifier`).val(data["payment_identifier"])
+        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_reason`).val(data["payment_reason"])
+        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_service`).val(data["payment_service"]).change()
+        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_create_draft`).prop('checked', data["create_draft"])
+        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_meta`).text(JSON.stringify(data["meta"]))
+        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_type`).find(`.type_${data["type"]}`).first().prop('checked', true).change();
     }
   })
 
