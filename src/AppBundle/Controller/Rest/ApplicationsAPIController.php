@@ -10,6 +10,7 @@ use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
+use AppBundle\Entity\Message;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
@@ -47,6 +48,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use League\Csv\Exception;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -1922,6 +1924,18 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="Messages",
+   *     in="body",
+   *     type="json",
+   *     description="Array of message's uuid to include in integration request response",
+   *     required=false,
+   *     @SWG\Schema(
+   *        type="object",
+   *        @SWG\Property(property="messages", type="array", @SWG\Items(type="string"))
+   *     )
+   * )
+   *
    * @SWG\Response(
    *     response=204,
    *     description="Updated"
@@ -1946,6 +1960,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   {
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
+      /** @var Pratica $application */
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -1956,7 +1971,26 @@ class ApplicationsAPIController extends AbstractFOSRestController
         throw new Exception('Application is not in the correct state');
       }
 
-      $this->praticaManager->acceptIntegration($application, $this->getUser());
+      $messages = [];
+      $messagesID = $request->get('messages', []);
+      if (!empty($messagesID)) {
+        $messageRepository = $this->em->getRepository('AppBundle:Message');
+        foreach ($messagesID as $id) {
+          if (!Uuid::isValid($id)) {
+            throw new Exception("$id not is a valid Uuid");
+          }
+          $message = $messageRepository->findBy([
+            'id' => $id,
+            'application' => $application->getId()
+          ]);
+          if (!$message instanceof Message) {
+            throw new Exception("Message $id not found");
+          }
+          $messages[]= $message;
+        }
+      }
+
+      $this->praticaManager->acceptIntegration($application, $this->getUser(), $messages);
 
     } catch (\Exception $e) {
       $data = [

@@ -987,6 +987,7 @@ class OperatoriController extends Controller
   /**
    * @Route("/{pratica}/acceptIntegration",name="operatori_accept_integration")
    * @param Pratica|DematerializedFormPratica $pratica
+   * @deprecated deprecated since version 1.9.0
    * @return array|RedirectResponse
    */
   public function acceptIntegrationAction(Pratica $pratica)
@@ -1008,73 +1009,6 @@ class OperatoriController extends Controller
   }
 
   /**
-   * @Route("/{pratica}/elabora",name="operatori_elabora_pratica")
-   * @param Pratica $pratica
-   *
-   * @return array|RedirectResponse
-   */
-  public function elaboraPraticaAction(Pratica $pratica)
-  {
-    if ($pratica->getStatus() == Pratica::STATUS_COMPLETE || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
-      return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
-    }
-
-    /** @var OperatoreUser $user */
-    $user = $this->getUser();
-    $this->checkUserCanAccessPratica($user, $pratica);
-
-    $praticaFlowService = null;
-    $praticaFlowServiceName = $pratica->getServizio()->getPraticaFlowOperatoreServiceName();
-
-    if ($praticaFlowServiceName) {
-      /** @var PraticaOperatoreFlow $praticaFlowService */
-      $praticaFlowService = $this->get($praticaFlowServiceName);
-    } else {
-      // Default pratica flow
-      $praticaFlowService = $this->get('ocsdc.form.flow.standardoperatore');
-    }
-
-    $praticaFlowService->setInstanceKey($user->getId());
-
-    $praticaFlowService->bind($pratica);
-
-    if ($pratica->getInstanceId() == null) {
-      $pratica->setInstanceId($praticaFlowService->getInstanceId());
-    }
-
-    $form = $praticaFlowService->createForm();
-    if ($praticaFlowService->isValid($form)) {
-
-      $praticaFlowService->saveCurrentStepData($form);
-      $pratica->setLastCompiledStep($praticaFlowService->getCurrentStepNumber());
-
-      if ($praticaFlowService->nextStep()) {
-        $this->getDoctrine()->getManager()->flush();
-        $form = $praticaFlowService->createForm();
-      } else {
-
-        try {
-          $this->praticaManager->finalize($pratica, $user);
-        } catch (\Exception $e) {
-          $this->addFlash('error', $e->getMessage());
-        }
-
-        $praticaFlowService->getDataManager()->drop($praticaFlowService);
-        $praticaFlowService->reset();
-
-        return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
-      }
-    }
-
-    return $this->render( '@App/Operatori/elaboraPratica.html.twig', [
-      'form' => $form->createView(),
-      'pratica' => $praticaFlowService->getFormData(),
-      'flow' => $praticaFlowService,
-      'user' => $user,
-    ]);
-  }
-
-  /**
    * @Route("/list",name="operatori_list_by_ente")
    * @Security("has_role('ROLE_OPERATORE_ADMIN')")
    * @return array
@@ -1089,40 +1023,6 @@ class OperatoriController extends Controller
     );
     return $this->render( '@App/Operatori/listOperatoriByEnte.html.twig', [
       'operatori' => $operatori,
-      'user' => $this->getUser(),
-    ]);
-  }
-
-  /**
-   * @Route("/detail/{operatore}",name="operatori_detail")
-   * @Security("has_role('ROLE_OPERATORE_ADMIN')")
-   * @param Request $request
-   * @param OperatoreUser $operatore
-   * @return array|RedirectResponse
-   */
-  public function detailOperatoreAction(Request $request, OperatoreUser $operatore)
-  {
-    /** @var OperatoreUser $user */
-    $user = $this->getUser();
-    $this->checkUserCanAccessOperatore($user, $operatore);
-    $form = $this->setupOperatoreForm($operatore)->handleRequest($request);
-
-    if ($form->isSubmitted()) {
-      $data = $form->getData();
-      $operatore->setAmbito($data['ambito']);
-      $this->getDoctrine()->getManager()->persist($operatore);
-      try {
-        $this->getDoctrine()->getManager()->flush();
-        $this->logger->info(LogConstants::OPERATORE_ADMIN_HAS_CHANGED_OPERATORE_AMBITO, ['operatore_admin' => $this->getUser()->getId(), 'operatore' => $operatore->getId()]);
-      } catch (\Exception $e) {
-        $this->logger->error($e->getMessage());
-      }
-      return $this->redirectToRoute('operatori_detail', ['operatore' => $operatore->getId()]);
-    }
-
-    return $this->render( '@App/Operatori/detailOperatore.html.twig.twig', [
-      'operatore' => $operatore,
-      'form' => $form->createView(),
       'user' => $this->getUser(),
     ]);
   }
@@ -1157,38 +1057,10 @@ class OperatoriController extends Controller
    */
   private function setupCommentForm(Pratica $pratica)
   {
-    $data = array();
-    $translator = $this->translator;
-
-    if ($this->featureManager->isActive('feature_application_detail')) {
-      $message = new Message();
-      $message->setApplication($pratica);
-      $message->setAuthor($this->getUser());
-      $form = $this->createForm('AppBundle\Form\ApplicationMessageType', $message);
-    } else {
-      $formBuilder = $this->createFormBuilder($data)
-        ->add('text', TextareaType::class, [
-          'label' => false,
-          'required' => true,
-          'attr' => [
-            'rows' => '5',
-            'class' => 'form-control input-inline',
-          ],
-        ])
-        ->add('createdAt', HiddenType::class, ['data' => time()])
-        ->add('creator', HiddenType::class, [
-          'data' => $this->getUser()->getFullName(),
-        ])
-        ->add('save', SubmitType::class, [
-          'label' => $translator->trans('operatori.aggiungi_commento'),
-          'attr' => [
-            'class' => 'btn btn-primary',
-          ],
-        ]);
-      $form = $formBuilder->getForm();
-    }
-
-    return $form;
+    $message = new Message();
+    $message->setApplication($pratica);
+    $message->setAuthor($this->getUser());
+    return $this->createForm('AppBundle\Form\ApplicationMessageType', $message);
   }
 
   /**
@@ -1200,17 +1072,6 @@ class OperatoriController extends Controller
     $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
     if (!$isEnabled) {
       throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
-    }
-  }
-
-  /**
-   * @param OperatoreUser $user
-   * @param OperatoreUser $operatore
-   */
-  private function checkUserCanAccessOperatore(OperatoreUser $user, OperatoreUser $operatore)
-  {
-    if ($user->getEnte() != $operatore->getEnte()) {
-      throw new UnauthorizedHttpException("User can not read operatore {$operatore->getId()}");
     }
   }
 

@@ -1,6 +1,4 @@
-import '../../css/app.scss';
 import '../core';
-
 
 import Calendar from '../Calendar';
 import DynamicCalendar from '../DynamicCalendar';
@@ -11,6 +9,7 @@ import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
 import {TextEditor} from "../utils/TextEditor";
 import moment from "moment";
+import RequestIntegration from "../utils/RequestIntegration";
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
@@ -130,8 +129,9 @@ $(document).ready(function () {
       payload['draft_expiration'] = newExpiration.format()
     }
 
-    if ($.isEmptyObject(payload))
+    if ($.isEmptyObject(payload)) {
       return;
+    }
 
     let errorEl = el.closest('div').find('.update_error');
     errorEl.addClass('d-none');
@@ -174,10 +174,7 @@ $(document).ready(function () {
     }
   });
 
-  $('#write-to-citizen').click(function (e) {
-    e.preventDefault();
-    $('#messaggi-tab').tab('show');
-  })
+  RequestIntegration.init()
 
   //Init TextArea
   TextEditor.init();

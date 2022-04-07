@@ -16,6 +16,7 @@ $primary-b: 74;
 @import "calendars";
 @import "components/messages";
 @import "~outdated-browser-rework/style";
+//@import "sweetalert2/dist/sweetalert2.min.css";
 @import "~@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css";
 
 .iter-timeline-wrapper {

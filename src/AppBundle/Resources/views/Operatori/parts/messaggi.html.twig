@@ -1,29 +1,14 @@
+{% set request_integration_time = false %}
+{% if not pratica.servizio.legacy and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and pratica.richiestaDiIntegrazioneAttiva is defined %}
+  {%  set request_integration_time = pratica.richiestaDiIntegrazioneAttiva.createdAt|date('U') %}
+{% endif %}
+
 <div class="row">
   <div class="col-md-12">
-    <ul class="list-unstyled">
-      {% for commento in pratica.commenti %}
-        <li class="mb-4">
-          <div class="rounded rounded-lg p-3 shadow bg-blanchedalmond">
-            <div class="d-inline-block  align-top">
-              <div class="avatar mx-2 bg-white">
-                <svg class="icon icon-secondary">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
-                </svg>
-              </div>
-            </div>
-            <div class="d-inline-block">
-              <p class="mb-0 font-weight-bold text-secondary">{{ commento.creator }}</p>
-              <small class="font-italic text-secondary">{{ commento.createdAt|date(ocsdc_default_datetime_format) }}</small>
-              <p class="my-4">{{ commento.text }}</p>
-            </div>
-          </div>
-        </li>
+    <ul class="messages-list">
+      {% for message in pratica.messages %}
+        {{ include('@App/Message/message.html.twig', {'request_integration_time': request_integration_time}) }}
       {% endfor %}
-      {% if feature('feature_application_detail') %}
-        {% for message in pratica.messages %}
-          {{ include('@App/Message/message.html.twig') }}
-        {% endfor %}
-      {% endif %}
     </ul>
     <div>
       {{ form_start(messageForm) }}

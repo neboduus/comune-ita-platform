@@ -1,3 +1,4 @@
+<div id="hidden" class="hidden" data-token='{{ token }}'></div>
 <nav>
   <div class="nav nav-tabs auto nav-tabs-scroll" id="pratica-details" role="tablist">
     <a class="nav-item nav-link {% if not tab or tab == 'modulo' %} active {% endif %}" id="modulo-tab"
@@ -12,32 +13,26 @@
       {{ 'operatori.allegati' | trans }}
       <span class="badge badge-light ml-1">{{ pratica.moduliCompilati.count + pratica.allegati.count + messageAttachments|length }}</span>
     </a>
-    <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %} " id="messaggi-tab" data-toggle="tab"
-       href="#messaggi" role="tab"
+    <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %} " id="messaggi-tab" data-toggle="tab" href="#messaggi" role="tab"
        aria-controls="messaggi" aria-selected="{{ tab and tab == 'note' }}">
-      {% if feature('feature_application_detail') %}
-        {{ 'operatori.messaggi.titolo' | trans }}
-        <span class="badge badge-light ml-1">
-        {{ pratica.commenti.count + pratica.messages | length }}
-      </span>
-      {% else %}
-        {{ 'operatori.note_interne' | trans }}
-        <span class="badge badge-light ml-1">
-        {{ pratica.commenti.count }}
-      </span>
-      {% endif %}
+      {{ 'operatori.messaggi.titolo' | trans }}
+      <span class="badge badge-light ml-1">{{ pratica.messages | length }}</span>
     </a>
-    <a class="nav-item nav-link {% if tab == 'pagamento' %} active {% endif %}" id="pagamento-tab" data-toggle="tab"
-       href="#pagamento" role="tab"
-       aria-controls="pagamento" aria-selected="{{ tab and tab == 'pagamento' }}">
-      {{ 'operatori.pagamento' | trans }}
-    </a>
-    <a class="nav-item nav-link {% if tab == 'protocollo' %} active {% endif %}" id="protocollo-tab" data-toggle="tab"
-       href="#protocollo" role="tab"
-       aria-controls="protocollo" aria-selected="{{ tab and tab == 'protocollo' }}">
-      {{ 'operatori.protocollo' | trans }}
-    </a>
-    {% if ente.isLinkableApplicationMeetings %}
+    {% if pratica.servizio.paymentRequired %}
+      <a class="nav-item nav-link {% if tab == 'pagamento' %} active {% endif %}" id="pagamento-tab" data-toggle="tab"
+         href="#pagamento" role="tab"
+         aria-controls="pagamento" aria-selected="{{ tab and tab == 'pagamento' }}">
+        {{ 'operatori.pagamento' | trans }}
+      </a>
+    {% endif %}
+    {% if pratica.servizio.protocolRequired or pratica.numeroProtocollo %}
+      <a class="nav-item nav-link {% if tab == 'protocollo' %} active {% endif %}" id="protocollo-tab" data-toggle="tab"
+         href="#protocollo" role="tab"
+         aria-controls="protocollo" aria-selected="{{ tab and tab == 'protocollo' }}">
+        {{ 'operatori.protocollo' | trans }}
+      </a>
+    {% endif %}
+    {% if pratica.meetings|length > 0 %}
       <a class="nav-item nav-link {% if tab == 'meetings' %} active {% endif %}" id="meetings-tab" data-toggle="tab"
          href="#meetings" role="tab"
          aria-controls="meetings" aria-selected="{{ tab and tab == 'meetings' }}">
@@ -62,29 +57,27 @@
   <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
     {{ include('@App/Allegato/parts/_application_attachments.html.twig', {'pratica':pratica}) }}
   </div>
-  <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel"
-       aria-labelledby="messaggi-tab">
-    {% if feature('feature_application_detail') %}
-      {{ include('@App/Operatori/parts/messaggi.html.twig', {'pratica':pratica}) }}
-    {% else %}
-      {{ include('@App/Operatori/parts/commenti.html.twig', {'pratica':pratica}) }}
-    {% endif %}
+  <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel" aria-labelledby="messaggi-tab">
+    {{ include('@App/Operatori/parts/messaggi.html.twig', {'pratica':pratica}) }}
   </div>
-  <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
-       aria-labelledby="pagamento-tab">
-    {{ include('@App/Operatori/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
-  </div>
+  {% if pratica.servizio.paymentRequired %}
+    <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
+         aria-labelledby="pagamento-tab">
+      {{ include('@App/Operatori/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
+    </div>
+  {% endif %}
+  {% if pratica.servizio.protocolRequired or pratica.numeroProtocollo %}
   <div class="tab-pane py-4 fade {% if tab == 'protocollo' %} show active {% endif %}" id="protocollo" role="tabpanel"
        aria-labelledby="protocollo-tab">
     <div class="m-3">
       {{ include('@App/Operatori/parts/dati_protocollo.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
-  {% if ente.isLinkableApplicationMeetings %}
+  {% endif %}
+  {% if pratica.meetings|length > 0 %}
     <div class="tab-pane py-4 fade {% if tab == 'meetings' %} show active {% endif %}" id="meetings" role="tabpanel"
          aria-labelledby="meetings-tab">
       <div class="m-3">
-        <div id="hidden" class="hidden" data-token='{{ token }}'></div>
         {{ include('@App/Operatori/parts/meetings.html.twig', {'pratica':pratica}) }}
       </div>
     </div>
