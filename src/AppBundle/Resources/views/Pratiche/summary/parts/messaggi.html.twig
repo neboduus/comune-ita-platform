@@ -1,3 +1,7 @@
+{% set request_integration_time = false %}
+{% if not pratica.servizio.legacy and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and pratica.richiestaDiIntegrazioneAttiva is defined %}
+  {%  set request_integration_time = pratica.richiestaDiIntegrazioneAttiva.createdAt|date('U') %}
+{% endif %}
 <div class="row">
   <div class="col-md-12">
     {% if not user %}
@@ -6,9 +10,9 @@
       <div class="alert alert-info mb-5">{{ 'operatori.messaggi.no_operator' | trans }}</div>
     {% endif %}
 
-    <ul class="list-unstyled px-3 mt-2">
+    <ul class="messages-list">
       {% for message in pratica.publicMessages %}
-        {{ include('@App/Message/message.html.twig') }}
+        {{ include('@App/Message/message.html.twig', {'request_integration_time': request_integration_time}) }}
       {% endfor %}
     </ul>
 

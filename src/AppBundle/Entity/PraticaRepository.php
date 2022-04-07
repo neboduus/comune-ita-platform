@@ -881,6 +881,25 @@ class PraticaRepository extends EntityRepository
     return $qb->getQuery()->getResult();
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return void
+   */
+  public function getLastMessageByApplicationOwner(Pratica $pratica)
+  {
+    $qb = $this->getEntityManager()->createQueryBuilder()
+      ->select('message')
+      ->from('AppBundle:Message', 'message')
+      ->where('message.application = :application')
+      ->setParameter('application', $pratica)
+      ->andWhere('message.author = :user')
+      ->setParameter('user', $pratica->getUser())
+      ->orderBy('message.createdAt', 'DESC')
+      ->setMaxResults(1);
+
+    return $qb->getQuery()->getSingleResult();
+  }
+
 
   public function getMessageAttachments($filters, Pratica $pratica)
   {

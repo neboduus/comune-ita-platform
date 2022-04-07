@@ -1,7 +1,14 @@
 {% set ente = instance_service.getCurrentInstance() %}
-{% set class = message.visibility == 'internal' ? 'internal' : message.author == user ? 'mine' : 'others' %}
+{% set class = message.visibility %}
+{% set class = class ~ (message.author == user ? ' mine' : ' others') %}
 <li class="mb-4 message">
-  <div class="rounded p-3 shadow {{ class }}">
+  <div class="check-container">
+    <div class="form-check">
+      <input id="m-{{ message.id }}" class="checkbox-message" data-message-id="{{ message.id }}" type="checkbox" {% if request_integration_time and message.createdAt >= request_integration_time %}checked="checked"{% endif %}>
+      <label for="m-{{ message.id }}" class="sr-only">Seleziona messaggio {{ message.id }}</label>
+    </div>
+  </div>
+  <div class="rounded p-3 shadow w-100 {{ class }}">
     <div class="message-header">
       <span class="avatar">
         <svg class="icon icon-secondary">
@@ -11,8 +18,8 @@
       <span class="mx-2 text-secondary">
         <strong>
           {# if user or no author (system generated message) hide message author #}
-          {% if (user != pratica.user and message.author ) or (user == pratica.user and class == 'mine') %}
-          {{ message.author.fullName }}
+          {% if (user != pratica.user and message.author ) or (user == pratica.user and user == message.author) %}
+            {{ message.author.fullName }}
           {% else %}
             {{ ente.name }}
           {% endif %}
@@ -26,7 +33,7 @@
     <div class="message-body">
       <small>{{ message.message|purify }}</small>
       {# Show pixel if user is the applicant and different from message author, or if user is the operator and message author is the applicant #}
-      {% if (user == pratica.user and message.author != user) or (user == pratica.operatore and message.author == pratica.user) %}
+      {% if ((user == pratica.user and message.author != user) or (user == pratica.operatore and message.author == pratica.user)) and not message.readAt %}
         <img class="d-none" src="{{ path('track_message', {'id':message.id}) }}">
       {% endif %}
     </div>
@@ -44,70 +51,68 @@
 
     <div class="row">
       <div class="col-12 text-right">
-        <a data-toggle="collapse"
-           data-target="#info_{{ message.id }}" aria-expanded="false"
-           aria-controls="info_{{ message.id }}" role="button">
-          <svg class="icon icon-xs">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
-          </svg>
-        </a>
-        <small class="font-italic text-secondary">{{ message.createdAt|time_ago }}
-          {% if message.readAt %}
-            <i class="fas fa-check-double mx-1" style="color: dodgerblue"
-               title="Messaggio letto il {{ message.readAt | date(ocsdc_default_datetime_format) }}"></i>
-          {% elseif message.sentAt %}
-            <i class="fa fa-check text-100 mx-1"
-               title="Messaggio creato il {{ message.createdAt | date(ocsdc_default_datetime_format) }}"></i>
-          {% else %}
-            <i class="fas fa-check-double text-100 mx-1"
-               title="Messaggio consegnato il {{ message.sentAt | date(ocsdc_default_datetime_format) }}"></i>
-          {% endif %}
-        </small>
+        {% if message.author == user or (user == pratica.operatore and not message.author) %}
+          <a data-toggle="collapse" data-target="#info_{{ message.id }}" aria-expanded="false"
+             aria-controls="info_{{ message.id }}" role="button">
+            <svg class="icon icon-xs">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
+            </svg>
+          </a>
+          <small class="font-italic text-secondary">{{ message.createdAt|time_ago }}
+            {% if message.readAt %}
+              <span class="msg-status read"
+                    title="Messaggio letto il {{ message.readAt | date(ocsdc_default_datetime_format) }}"></span>
+            {% elseif message.sentAt %}
+              <span class="msg-status"
+                    title="Messaggio creato il {{ message.createdAt | date(ocsdc_default_datetime_format) }}"></span>
+            {% else %}
+              <span class="msg-status sent"
+                    title="Messaggio consegnato il {{ message.sentAt | date(ocsdc_default_datetime_format) }}"></span>
+            {% endif %}
+          </small>
+        {% endif %}
       </div>
     </div>
 
+    {# Info del messaggio #}
     <div id="info_{{ message.id }}" class="collapse mt-1">
-      <div class="row">
-        <div class="col-6">
-          <small class="font-weight-bold">Inviato:</small>
-        </div>
-        <div class="col-6 text-right">
-          <small>
-            {% if message.sentAt %}
-              {{ message.sentAt |date(ocsdc_default_datetime_format) }}
-            {% else %}
-              --
-            {% endif %}
-          </small>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <small class="font-weight-bold">Letto:</small>
-        </div>
-        <div class="col-6 text-right">
-          <small>{% if message.readAt %}
-              {{ message.readAt |date(ocsdc_default_datetime_format) }}
-            {% else %}
-              --
-            {% endif %}</small>
-        </div>
-      </div>
-      {% if message.author != pratica.user %}
+      {% if message.author == user or (user == pratica.operatore and not message.author) %}
         <div class="row">
           <div class="col-6">
-            <small class="font-weight-bold">{{ 'operatori.messaggi.emails' | trans }}</small>
+            <small class="font-weight-bold">Inviato:</small>
           </div>
           <div class="col-6 text-right">
             <small>
-              {% if message.email %}
-                <a href="mailto:{{ message.email }}">{{ message.email }}</a>
-              {% else %}
-                {{ 'operatori.messaggi.no_emails_info' | trans }}
-              {% endif %}
+              {{ message.sentAt ? message.sentAt|date(ocsdc_default_datetime_format) : '--' }}
             </small>
           </div>
         </div>
+        <div class="row">
+          <div class="col-6">
+            <small class="font-weight-bold">Letto:</small>
+          </div>
+          <div class="col-6 text-right">
+            <small>
+              {{ message.readAt ? message.readAt|date(ocsdc_default_datetime_format) : '--' }}
+            </small>
+          </div>
+        </div>
+        {% if message.author != pratica.user %}
+          <div class="row">
+            <div class="col-6">
+              <small class="font-weight-bold">{{ 'operatori.messaggi.emails' | trans }}</small>
+            </div>
+            <div class="col-6 text-right">
+              <small>
+                {% if message.email %}
+                  <a href="mailto:{{ message.email }}">{{ message.email }}</a>
+                {% else %}
+                  {{ 'operatori.messaggi.no_emails_info' | trans }}
+                {% endif %}
+              </small>
+            </div>
+          </div>
+        {% endif %}
       {% endif %}
     </div>
   </div>

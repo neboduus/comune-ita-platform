@@ -73,6 +73,12 @@ Encore
       {from: './node_modules/bootstrap-italia/dist/svg/', to: '../../bootstrap-italia/dist/svg/'}
     ]
   }))
+  /*.copyFiles({
+    from: './assets/images/',
+    //to: '../bundles/app/[path][name].[hash:8].[ext]',
+    to: 'images/[path][name].[ext]',
+    pattern: /\.(ico|png|jpg|jpeg|svg|gif)$/,
+  })*/
 ;
 
 module.exports = Encore.getWebpackConfig();

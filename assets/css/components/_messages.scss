@@ -1,28 +1,76 @@
+.messages-list {
+  padding-left: 0;
+  list-style: none;
 
-.message {
+  .message {
+    display: flex !important;
+    align-items: center !important;
 
-  .message-body {
-    margin-top: .8rem;
-  }
+    .msg-status {
+      display: inline-block;
+      width: 16px;
+      height: 13px;
+      background-color: #3d4955;
+      -webkit-mask-image: url("../../images/msg-check.svg");
+      mask-image: url("../../images/msg-check.svg");
 
-  .mine {
-    margin-left: 20%;
-    .message-header {
-      display: flex;
-      flex-direction: row-reverse;
+      &.sent {
+        -webkit-mask-image: url("../../images/msg-double-check.svg");
+        mask-image: url("../../images/msg-double-check.svg");
+      }
+
+      &.read {
+        background-color: dodgerblue;
+        -webkit-mask-image: url("../../images/msg-double-check.svg");
+        mask-image: url("../../images/msg-double-check.svg");
+      }
     }
-  }
 
-  .others {
-    background-color: #f0f8ff;
-    margin-right: 20%;
-
-    .avatar {
-      background-color: #fff;
+    .check-container {
+      display: none;
+      padding-right: 20px;
     }
-  }
 
-  .internal {
-    background-color: #ffebcd;
+    .message-body {
+      margin-top: .8rem;
+    }
+
+    .mine {
+      margin-left: 20%;
+      .message-header {
+        display: flex;
+        flex-direction: row-reverse;
+      }
+    }
+
+    .others {
+      background-color: #f0f8ff;
+      margin-right: 20%;
+
+      .avatar {
+        background-color: #fff;
+      }
+    }
+
+    .internal {
+      background-color: #ffebcd;
+    }
+
+  }
+  &.checkbox-enabled {
+    .message {
+      .check-container {
+        display: block;
+      }
+    }
   }
 }
+
+#accept-integration-dialog {
+  position: -webkit-sticky; /* Safari & IE */
+  position: sticky;
+  top: 4em;
+}
+
+
+

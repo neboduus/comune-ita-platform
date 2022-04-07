@@ -546,7 +546,6 @@ class PraticheController extends Controller
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'can_compile' => $this->isGranted(ApplicationVoter::COMPILE, $pratica),
       'can_withdraw' => $this->isGranted(ApplicationVoter::WITHDRAW, $pratica)
-      //'threads' => $thread,
     ];
 
     if ($pratica instanceof GiscomPratica) {
@@ -636,7 +635,7 @@ class PraticheController extends Controller
       'can_withdraw' => $this->isGranted(ApplicationVoter::WITHDRAW, $pratica),
       'meetings' => $repository->findOrderedMeetings($pratica),
       'module_files' => $this->praticaManager->getGroupedModuleFiles($pratica),
-      //'threads' => $thread,
+      'last_owner_message' => $repository->getLastMessageByApplicationOwner($pratica)
     ];
 
     if ($pratica instanceof GiscomPratica) {

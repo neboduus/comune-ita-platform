@@ -413,14 +413,14 @@ class PraticaManager
   /**
    * @param Pratica $pratica
    * @param User $user
-   * @throws Exception
+   * @param $messages
+   * @return void
+   * @throws \League\Flysystem\FileExistsException
    */
-  public function acceptIntegration(Pratica $pratica, User $user)
+  public function acceptIntegration(Pratica $pratica, User $user, $messages = [])
   {
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
-
-    $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione($pratica);
-
+    $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione($pratica, $messages);
     $pratica->addAllegato($integrationsAnswer);
 
     if (!$user instanceof CPSUser) {

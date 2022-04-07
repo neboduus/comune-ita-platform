@@ -850,6 +850,8 @@ operatori:
   allegati_messaggi: 'Documenti allegati nei messaggi'
   richieste_integrazioni: 'Richieste integrazioni'
   risposte_integrazioni: 'Risposte integrazioni'
+  how_accept_integrations_title: 'Come accettare le integrazioni'
+  how_accept_integrations_text: 'Seleziona i messaggi tramite la casella al lato e clicca su <strong>"Accetta integrazioni"</strong>.<br>I messaggi selezionati verranno inclusi nel pdf di risposta alle integrazioni.'
   messaggi:
     titolo: 'Messaggi'
     emails: 'Recapitato a'

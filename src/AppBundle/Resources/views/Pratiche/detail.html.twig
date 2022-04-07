@@ -77,17 +77,20 @@
             </div>
           </div>
         {% endif %}
-        {% if pratica.type == 'form_io' and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and pratica.richiestaDiIntegrazioneAttiva is defined %}
+
+        {% if not pratica.servizio.legacy and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and pratica.richiestaDiIntegrazioneAttiva is defined %}
           <div class="alert alert-warning">
             <h5>{{ 'pratica.dettaglio.integrazioni.alert'|trans }}</h5>
             {% if pratica.richiestaDiIntegrazioneAttiva.description is defined %}
               {{ pratica.richiestaDiIntegrazioneAttiva.description | raw }}
             {% endif %}
-            <div class="text-right my-3">
-              <button id="answer-integration" type="button" class="btn btn-sm btn-outline-primary">
-                {{ 'pratica.dettaglio.integrazioni.button'|trans }}
-              </button>
-            </div>
+            {% if last_owner_message is not defined or last_owner_message.createdAt < pratica.richiestaDiIntegrazioneAttiva.createdAt|date('U') %}
+              <div class="text-right my-3">
+                <button id="answer-integration" type="button" class="btn btn-sm btn-outline-primary">
+                  {{ 'pratica.dettaglio.integrazioni.button'|trans }}
+                </button>
+              </div>
+            {% endif %}
           </div>
         {% endif %}
         {{ include('@App/Pratiche/summary/detail_summary.html.twig', {'pratica':pratica}) }}

@@ -300,7 +300,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @return RispostaIntegrazione
    * @throws \League\Flysystem\FileExistsException
    */
-  public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica, $messages = [])
+  public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica, array $messages = [])
   {
 
     $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
@@ -399,10 +399,10 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   /**
    * @param Pratica $pratica
    * @param RichiestaIntegrazione $integrationRequest
-   * @param $messages
+   * @param array $messages
    * @return string
    */
-  private function renderForPraticaIntegrationAnswer(Pratica $pratica, RichiestaIntegrazione $integrationRequest, $messages = [])
+  private function renderForPraticaIntegrationAnswer(Pratica $pratica, RichiestaIntegrazione $integrationRequest, array $messages = [])
   {
 
     /** @var IntegrazioneRepository $integrationRepo */
