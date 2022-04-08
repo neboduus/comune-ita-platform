@@ -276,7 +276,7 @@ flagception:
       default: true
       env: FEATURE_CALENDAR_TYPE
     feature_analytics:
-      default: true
+      default: false
       env: FEATURE_ANALYTICS
 
 # Prometheus
