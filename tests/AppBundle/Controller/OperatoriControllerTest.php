@@ -381,47 +381,6 @@ class OperatoriControllerTest extends AbstractAppTestCase
     /**
      * @test
      */
-    public function testICanCommentMyPratica()
-    {
-        $password = 'pa$$word';
-        $username = 'username';
-
-        $operatore = $this->createOperatoreUser($username, $password);
-        $user = $this->createCPSUser();
-        $pratica = $this->setupPraticheForUserWithOperatoreAndStatus($user, $operatore, Pratica::STATUS_PENDING);
-
-        $mockLogger = $this->getMockLogger();
-        $mockLogger->expects($this->once())
-                   ->method('info')
-                   ->with(LogConstants::PRATICA_COMMENTED);
-
-        static::$kernel->setKernelModifier(function (KernelInterface $kernel) use ($mockLogger) {
-            $kernel->getContainer()->set('logger', $mockLogger);
-        });
-
-        $detailPraticaUrl = $this->router->generate('operatori_show_pratica', ['pratica' => $pratica->getId()]);
-
-        $crawler = $this->client->request('GET', $detailPraticaUrl, array(), array(), array(
-            'PHP_AUTH_USER' => $username,
-            'PHP_AUTH_PW' => $password,
-        ));
-        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-
-        $text = 'ma quante belle figlie madamadorè';
-        $form = $crawler->selectButton($this->translator->trans('operatori.aggiungi_commento'))->form();
-        $crawler = $this->client->submit($form);
-
-        $this->assertEquals(302, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-
-        $pratica = $this->em->getRepository('AppBundle:Pratica')->find($pratica->getId());
-        foreach($pratica->getCommenti() as $commento){
-            $this->assertEquals($commento['text'], $text);
-        }
-    }
-
-    /**
-     * @test
-     */
     public function testICannotAccessOperatoriListAsNormalOperatore()
     {
         $password = 'pa$$word';

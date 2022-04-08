@@ -131,19 +131,19 @@ class OperatoriController extends Controller
    * @param ApplicationDto $applicationDto
    */
   public function __construct(
-    SchemaFactoryInterface $schemaFactory,
-    SerializerInterface $serializer,
-    TranslatorInterface $translator,
-    LoggerInterface $logger,
-    PraticaStatusService $praticaStatusService,
-    InstanceService $instanceService,
-    EntityManagerInterface $entityManager,
-    FeatureManagerInterface $featureManager,
-    PraticaManager $praticaManager,
-    MessageManager $messageManager,
-    JWTTokenManagerInterface $JWTTokenManager,
+    SchemaFactoryInterface      $schemaFactory,
+    SerializerInterface         $serializer,
+    TranslatorInterface         $translator,
+    LoggerInterface             $logger,
+    PraticaStatusService        $praticaStatusService,
+    InstanceService             $instanceService,
+    EntityManagerInterface      $entityManager,
+    FeatureManagerInterface     $featureManager,
+    PraticaManager              $praticaManager,
+    MessageManager              $messageManager,
+    JWTTokenManagerInterface    $JWTTokenManager,
     FormServerApiAdapterService $formServerService,
-    ApplicationDto $applicationDto
+    ApplicationDto              $applicationDto
   )
   {
     $this->schemaFactory = $schemaFactory;
@@ -201,7 +201,7 @@ class OperatoriController extends Controller
       $stati[] = $state;
     }
 
-    return $this->render( '@App/Operatori/index.html.twig', [
+    return $this->render('@App/Operatori/index.html.twig', [
       'servizi' => $result,
       'stati' => $stati,
       'user' => $this->getUser(),
@@ -246,7 +246,7 @@ class OperatoriController extends Controller
       }
     }
 
-    return $this->render( '@App/Operatori/newApplication.html.twig', [
+    return $this->render('@App/Operatori/newApplication.html.twig', [
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'user' => $this->getUser(),
       'token' => $this->JWTTokenManager->create($this->getUser()),
@@ -578,7 +578,7 @@ class OperatoriController extends Controller
     }
 
     $statusServices = $this->populateSelectStatusServicesPratiche();
-    return $this->render( '@App/Operatori/usage.html.twig', [
+    return $this->render('@App/Operatori/usage.html.twig', [
       'servizi' => $servizi,
       'pratiche' => $result,
       'user' => $this->getUser(),
@@ -615,7 +615,7 @@ class OperatoriController extends Controller
       }
     }
 
-    return $this->render( '@App/Operatori/showProtocolli.html.twig', [
+    return $this->render('@App/Operatori/showProtocolli.html.twig', [
       'pratica' => $pratica,
       'allegati' => $allegati,
       'user' => $user
@@ -628,7 +628,7 @@ class OperatoriController extends Controller
    */
   public function impostazioniProtocolloListAction()
   {
-    return $this->render( '@App/Operatori/impostazioniProtocollo.html.twig', [
+    return $this->render('@App/Operatori/impostazioniProtocollo.html.twig', [
       'parameters' => $this->instanceService->getCurrentInstance()->getProtocolloParameters()
     ]);
   }
@@ -704,58 +704,47 @@ class OperatoriController extends Controller
    */
   public function showPraticaAction(Pratica $pratica, Request $request)
   {
-    $translator = $this->translator;
 
     /** @var OperatoreUser $user */
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($user, $pratica);
     $tab = $request->query->get('tab');
 
-    $attachments = $this->getDoctrine()->getRepository('AppBundle:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->entityManager->getRepository('AppBundle:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
 
     /** @var CPSUser $applicant */
     $applicant = $pratica->getUser();
 
-    $messageForm = $this->setupCommentForm($pratica);
+    $messageForm = $this->setupMessageForm($pratica);
     $messageForm->handleRequest($request);
     if ($messageForm->isSubmitted()) {
-      // Check if application detail feature is enabled
-      if ($this->featureManager->isActive('feature_application_detail')) {
-        $visibility = $messageForm->getClickedButton()->getName();
 
-        // Funzionalità non disponibile agli utenti anonimi
-        $authData = $pratica->getAuthenticationData();
-        if (isset($authData['authenticationMethod']) && $authData['authenticationMethod'] == CPSUser::IDP_NONE && $visibility == Message::VISIBILITY_APPLICANT) {
-          $messageForm->addError(new FormError($translator->trans('operatori.messaggi.non_disponibile_anonimo')));
-        }
+      $visibility = $messageForm->getClickedButton()->getName();
+      // Funzionalità non disponibile agli utenti anonimi
+      $authData = $pratica->getAuthenticationData();
+      if (isset($authData['authenticationMethod']) && $authData['authenticationMethod'] == CPSUser::IDP_NONE && $visibility == Message::VISIBILITY_APPLICANT) {
+        $messageForm->addError(new FormError($this->translator->trans('operatori.messaggi.non_disponibile_anonimo')));
+      }
 
-        // E' necessario prendere in carico la pratica per inviare messaggi pubblici
-        if (!$pratica->getOperatore() && $visibility == Message::VISIBILITY_APPLICANT) {
-          $messageForm->addError(new FormError($translator->trans('operatori.messaggi.prendi_in_carico_per_abilitare')));
-        }
+      // E' necessario prendere in carico la pratica per inviare messaggi pubblici
+      if (!$pratica->getOperatore() && $visibility == Message::VISIBILITY_APPLICANT) {
+        $messageForm->addError(new FormError($this->translator->trans('operatori.messaggi.prendi_in_carico_per_abilitare')));
+      }
 
-        if ($messageForm->isValid()) {
-          /** @var Message $message */
-          $message = $messageForm->getData();
+      if ($messageForm->isValid()) {
+        /** @var Message $message */
+        $message = $messageForm->getData();
 
-          $callToActions = [
-            ['label' => 'view', 'link' => $this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
-            ['label' => 'reply', 'link' => $this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
-          ];
+        $callToActions = [
+          ['label' => 'view', 'link' => $this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+          ['label' => 'reply', 'link' => $this->generateUrl('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note'], UrlGeneratorInterface::ABSOLUTE_URL)],
+        ];
 
-          $message->setProtocolRequired(false);
-          $message->setVisibility($visibility);
-          $message->setCallToAction($callToActions);
+        $message->setProtocolRequired(false);
+        $message->setVisibility($visibility);
+        $message->setCallToAction($callToActions);
 
-          $this->messageManager->save($message);
-
-          return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note']);
-        }
-
-      } else {
-        $commento = $messageForm->getData();
-        $pratica->addCommento($commento);
-        $this->getDoctrine()->getManager()->flush();
+        $this->messageManager->save($message);
 
         return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica, 'tab' => 'note']);
       }
@@ -870,7 +859,7 @@ class OperatoriController extends Controller
       }
     }
 
-    return $this->render( '@App/Operatori/showPratica.html.twig', [
+    return $this->render('@App/Operatori/showPratica.html.twig', [
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
       'messageAttachments' => $attachments,
@@ -889,41 +878,6 @@ class OperatoriController extends Controller
       'incoming_meetings' => $repository->findIncomingMeetings($pratica),
       'module_files' => $this->praticaManager->getGroupedModuleFiles($pratica),
     ]);
-  }
-
-  /**
-   * @Route("/{pratica}/reopen",name="operatori_show_reopen")
-   * @param Pratica|DematerializedFormPratica $pratica
-   * @return RedirectResponse
-   */
-  public function reopenPraticaAction(Pratica $pratica)
-  {
-    /** @var OperatoreUser $user */
-    $user = $this->getUser();
-    $this->checkUserCanAccessPratica($user, $pratica);
-    if ($pratica->isInFinalStates() && $pratica->getServizio()->isAllowReopening()) {
-      try {
-        $pratica->setEsito(null);
-        $pratica->setMotivazioneEsito(null);
-        $pratica->removeRispostaOperatore();
-
-        $statusChange = new StatusChange();
-        $statusChange->setEvento('Riapertura pratica');
-        $statusChange->setOperatore($user->getFullName());
-
-        $this->praticaStatusService->setNewStatus(
-          $pratica,
-          Pratica::STATUS_PENDING,
-          $statusChange
-        );
-        $this->addFlash('success', 'Pratica riaperta correttamente');
-      } catch (\Exception $e) {
-        $this->addFlash('error', 'Si è verificato un errore durante la riapertura della pratica.');
-      }
-    } else {
-      $this->addFlash('error', 'La pratica non può essere riaperta.');
-    }
-    return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
   }
 
   /**
@@ -947,7 +901,7 @@ class OperatoriController extends Controller
     if ($pratica->getServizio()->isAllowReopening()) {
       try {
 
-        if ($pratica->getEsito() !== null && $pratica->getMotivazioneEsito() !== null && $newStatus < Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE ) {
+        if ($pratica->getEsito() !== null && $pratica->getMotivazioneEsito() !== null && $newStatus < Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE) {
           $pratica->setEsito(null);
           $pratica->setMotivazioneEsito(null);
           $pratica->removeRispostaOperatore();
@@ -987,8 +941,8 @@ class OperatoriController extends Controller
   /**
    * @Route("/{pratica}/acceptIntegration",name="operatori_accept_integration")
    * @param Pratica|DematerializedFormPratica $pratica
-   * @deprecated deprecated since version 1.9.0
    * @return array|RedirectResponse
+   * @deprecated deprecated since version 1.9.0
    */
   public function acceptIntegrationAction(Pratica $pratica)
   {
@@ -1021,7 +975,7 @@ class OperatoriController extends Controller
         'ente' => $this->getUser()->getEnte(),
       ]
     );
-    return $this->render( '@App/Operatori/listOperatoriByEnte.html.twig', [
+    return $this->render('@App/Operatori/listOperatoriByEnte.html.twig', [
       'operatori' => $operatori,
       'user' => $this->getUser(),
     ]);
@@ -1055,7 +1009,7 @@ class OperatoriController extends Controller
   /**
    * @return FormInterface
    */
-  private function setupCommentForm(Pratica $pratica)
+  private function setupMessageForm(Pratica $pratica)
   {
     $message = new Message();
     $message->setApplication($pratica);
