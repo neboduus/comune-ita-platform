@@ -304,12 +304,6 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   /**
    * @var string
-   * @ORM\Column(type="text", nullable=true)
-   */
-  private $commenti;
-
-  /**
-   * @var string
    */
   private $statusName;
 
@@ -1247,60 +1241,6 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
-   * @return ArrayCollection
-   */
-  public function getCommenti()
-  {
-    if (!$this->commenti instanceof ArrayCollection) {
-      $this->parseCommenti();
-    }
-
-    return $this->commenti;
-  }
-
-  /**
-   * @param string $commenti
-   *
-   * @return Pratica
-   */
-  public function setCommenti($commenti)
-  {
-    $this->commenti = $commenti;
-
-    return $this;
-  }
-
-  /**
-   * @param array $commento
-   *
-   * @return Pratica
-   */
-  public function addCommento(array $commento)
-  {
-    if (!$this->getCommenti()->exists(function ($key, $value) use ($commento) {
-      return $value['text'] == $commento['text'];
-    })
-    ) {
-      $this->getCommenti()->add($commento);
-    }
-
-    return $this;
-  }
-
-
-  /**
-   * @ORM\PreFlush()
-   */
-  public function convertCommentiToString()
-  {
-    $data = [];
-    foreach ($this->getCommenti() as $commento) {
-      $data[] = serialize($commento);
-    }
-    $this->commenti = implode('##', $data);
-  }
-
-  /**
    * @ORM\PreFlush()
    */
   public function serializeStatuses()
@@ -1416,38 +1356,6 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     }
 
     return $latestTimestamp;
-  }
-
-  /**
-   * @param $commentoSerialized
-   */
-  private function parseCommentStringIntoArrayCollection($commentoSerialized)
-  {
-    $commento = unserialize($commentoSerialized);
-    if (is_array($commento) && isset($commento['text']) && !empty($commento['text'])) {
-      if (!$this->commenti->exists(function ($key, $value) use ($commento) {
-        return $value['text'] == $commento['text'];
-      })
-      ) {
-        $this->commenti->add($commento);
-      }
-    }
-  }
-
-  /**
-   * @ORM\PostLoad()
-   * @ORM\PostUpdate()
-   */
-  private function parseCommenti()
-  {
-    $data = [];
-    if ($this->commenti !== null) {
-      $data = explode('##', $this->commenti);
-    }
-    $this->commenti = new ArrayCollection();
-    foreach ($data as $commentoSeriliazed) {
-      $this->parseCommentStringIntoArrayCollection($commentoSeriliazed);
-    }
   }
 
   /**
