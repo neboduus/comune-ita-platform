@@ -686,4 +686,25 @@ class Ente
     $this->navigationType = $navigationType;
   }
 
+  public static function fromEntity(Ente $ente)
+  {
+    $dto = new self();
+    $dto->id = $ente->getId();
+    $dto->name = $ente->getName();
+    $dto->slug = $ente->getSlug();
+    $dto->meta = json_decode($ente->getMeta(), true);
+    $dto->codiceMeccanografico = $ente->getCodiceMeccanografico();
+    $dto->protocolloParameters = null;
+    $dto->siteUrl = $ente->getSiteUrl();
+    $dto->codiceAmministrativo = $ente->getCodiceAmministrativo();
+    $dto->contatti = $ente->getContatti();
+    $dto->email = $ente->getEmail();
+    $dto->emailCertificata = $ente->getEmailCertificata();
+    $dto->gateways = [];
+    $dto->backofficeEnabledIntegrations = [];
+    $dto->mailers = [];
+
+    return $dto;
+  }
+
 }

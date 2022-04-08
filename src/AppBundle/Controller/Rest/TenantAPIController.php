@@ -4,6 +4,7 @@ namespace AppBundle\Controller\Rest;
 
 use AppBundle\Dto\Service;
 use AppBundle\Dto\Tenant;
+use AppBundle\Entity\Ente;
 use AppBundle\Services\InstanceService;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -17,6 +18,7 @@ use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
@@ -46,6 +48,52 @@ class TenantAPIController extends AbstractFOSRestController
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
+  }
+
+  /**
+   * Get info Tenant
+   * @Rest\Get("/info", name="tenants_api_info")
+   *
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Tenant info"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Tenant not found"
+   * )
+   *
+   * @SWG\Tag(name="Tenants")
+   */
+  public function getTenantInfoAction(Request $request)
+  {
+    try {
+      $tenant = $this->is->getCurrentInstance();
+
+      if (!$tenant) {
+        return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
+      }
+
+      $tenantDto = Ente::fromEntity($tenant);
+
+      return $this->view($tenantDto, Response::HTTP_OK);
+    } catch (NotFoundHttpException $e) {
+      return $this->view([$e->getMessage()], Response::HTTP_NOT_FOUND);
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during get process',
+        'description' => 'Contact technical support at support@opencontent.it',
+      ];
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
+
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
   }
 
   /**

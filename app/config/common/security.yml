@@ -39,7 +39,7 @@ security:
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
     api_secure:
-      pattern: /%prefix%/api/(folders|documents|users|meetings|applications|tenants|subscriptions|subscribers|subscription-services\/.{36}\/subscriptions)
+      pattern: /%prefix%/api/(folders|documents|users|meetings|applications|subscriptions|subscribers|subscription-services\/.{36}\/subscriptions)
       stateless: true
       provider: fos_userbundle
       guard:
@@ -47,7 +47,7 @@ security:
           - lexik_jwt_authentication.jwt_token_authenticator
 
     api:
-      pattern: /%prefix%/api/(services|services-groups|calendars|status|subscription-services|categories|recipients|geographic-areas)
+      pattern: /%prefix%/api/(services|services-groups|calendars|status|subscription-services|categories|recipients|geographic-areas|tenants)
       methods: [ POST, PUT, PATCH, DELETE ]
       stateless: true
       provider: fos_userbundle
@@ -123,6 +123,7 @@ security:
 
     - { path: ^/%prefix%/(%app_locales%)/(pratiche|terms_accept|user|documenti|subscriptions)/, role: ROLE_USER }
     - { path: ^/%prefix%/api/session-auth, role: ROLE_USER }
+
     - { path: ^/%prefix%/api/v\d+\.\d+/user/.*, role: ROLE_USER }
 
     - { path: ^/%prefix%/(%app_locales%)/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
@@ -138,4 +139,3 @@ security:
     - { path: ^/%prefix%/(%app_locales%)/admin, role: ROLE_ADMIN }
     - { path: ^/%prefix%/api/v\d+\.\d+/pratica/.*/.*, role: ROLE_GISCOM }
     - { path: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*, role: ROLE_EZ }
-
