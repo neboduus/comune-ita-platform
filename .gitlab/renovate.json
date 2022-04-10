@@ -1,0 +1,13 @@
+{
+  "extends": [
+    "config:base",
+    ":labels(renovate)"
+  ],
+  "repositories": [
+    "opencontent/stanza-del-cittadino/core"
+  ],
+  "recreateClosed": false,
+  "major": {
+    "enabled": false
+  }
+}
