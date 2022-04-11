@@ -9,8 +9,6 @@ wait-for-it ${DB_HOST}:${DB_PORT}
 if [[ $ENABLE_MIGRATIONS == 'true' ]]; then
 
   echo "==> Running migrations"
-  # migrations on default db 'sdc_multi'
-  bin/console --no-interaction doctrine:migrations:migrate
 
   # initialization && migrations on municipalities
   for identifier in $(./bin/tenants); do
@@ -24,7 +22,6 @@ fi
 
 # first-time initialization of tenant
 if [[ $ENABLE_INSTANCE_CONFIG == 'true' ]]; then
-
 
   echo "==> First-time instance initialization"
 

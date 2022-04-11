@@ -143,7 +143,7 @@ parameters:
   env(DB_DRIVER): 'pdo_pgsql'
   env(DB_HOST): 'postgres'
   env(DB_PORT): '5432'
-  env(DB_NAME): 'sdc_multi'
+  env(DB_NAME): 'sdc'
   env(DB_USER): 'sdc'
   env(DB_PASSWORD): 'sdc'
   env(MAILER_TRANSPORT): 'smtp'

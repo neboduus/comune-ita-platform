@@ -42,7 +42,6 @@
 | LOGIN_ROUTE                  | No       | login_pat | Autenticazione di default, sovrascribile per tenant
 | SINGLE_LOGOUT_URL            | No       | /Shibboleth.sso/Logout | Url a cui rendirizzare dopo il logout
 | BROWSERS_RESTRICTIONS        | No       | null            | 
-| IO_API_URL                   | No       | https://api.io.italia.it/api/v1
 | CACHE_MAX_AGE                | No       | 0               | Valore degli header `cache-control` restituiti dai path che consentono il caching
 | METRICS_TYPE                 | No       | in_memory       | Alternativa: redis
 | METRICS_REDIS_HOST           | No       | redis           |
@@ -81,6 +80,7 @@
 | QUEUEIT_SECRET               | No       |                 | Your 72 char secret key as specified in Go Queue-it self-service platform |
 | QUEUEIT_CONFIG_FILE          | No       |                 | Absolute path of [Queue-it configuration file](https://github.com/queueit/KnownUser.V3.PHP/blob/master/Documentation/README.md)
 | MYPAY_ADAPTER_URL            | No       |                 | Indirizzo del MyPay Soap Proxy
+| IO_API_URL                   | No       | https://api.io.italia.it/api/v1 | Url a cui effettuare le chiamate per l'App.IO: e' possibile con questa variabile indirizzare le chiamate a un proprio proxy interno |
 
 ## Configurazioni di PHP e PHP-FPM
 
