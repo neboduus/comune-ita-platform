@@ -300,13 +300,13 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @return RispostaIntegrazione
    * @throws \League\Flysystem\FileExistsException
    */
-  public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica, array $messages = [])
+  public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica, array $messages = null)
   {
 
     $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
     $payload[RichiestaIntegrazione::TYPE_DEFAULT] = $integrationRequest->getId();
 
-    if (empty($messages)) {
+    if ($messages === null) {
       $repo = $this->em->getRepository('AppBundle:Pratica');
       $filters['from_date'] = $integrationRequest->getCreatedAt();
       $filters['visibility'] = Message::VISIBILITY_APPLICANT;
@@ -399,10 +399,10 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   /**
    * @param Pratica $pratica
    * @param RichiestaIntegrazione $integrationRequest
-   * @param array $messages
+   * @param array|null $messages
    * @return string
    */
-  private function renderForPraticaIntegrationAnswer(Pratica $pratica, RichiestaIntegrazione $integrationRequest, array $messages = [])
+  private function renderForPraticaIntegrationAnswer(Pratica $pratica, RichiestaIntegrazione $integrationRequest, ?array $messages)
   {
 
     /** @var IntegrazioneRepository $integrationRepo */
@@ -415,7 +415,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       'pratica' => $pratica,
       'richiesta_integrazione' => $integrationRequest,
       'integrazioni' => $integrations,
-      'messages' => $messages,
+      'messages' => $messages ?? [],
       'user' => $pratica->getUser(),
     ]);
     return $this->generatePdf($html);
@@ -429,7 +429,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @throws RequestException
    * @throws ReflectionException
    */
-  private function renderForPratica(Pratica $pratica)
+  public function renderForPratica(Pratica $pratica)
   {
 
     $className = (new ReflectionClass($pratica))->getShortName();

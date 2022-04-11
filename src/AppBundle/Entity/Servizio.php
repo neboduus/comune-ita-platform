@@ -60,7 +60,7 @@ class Servizio implements Translatable
   /**
    * @var string
    * @Gedmo\Translatable
-   * @ORM\Column(type="string", length=255, unique=true)
+   * @ORM\Column(type="string", length=255)
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
    * @Assert\Length(max="255")

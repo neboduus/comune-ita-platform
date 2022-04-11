@@ -778,11 +778,11 @@ class PraticheController extends Controller
    * @return Response
    * @throws \Exception
    */
-  public function showPdfAction(Pratica $pratica)
+  public function showPdfAction(Pratica $pratica): Response
   {
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
-    $fileContent = $this->pdfBuilderService->generatePdfUsingGotemberg($pratica);
+    $fileContent = $this->pdfBuilderService->renderForPratica($pratica);
 
     // Provide a name for your file with extension
     $filename = time() . '.pdf';

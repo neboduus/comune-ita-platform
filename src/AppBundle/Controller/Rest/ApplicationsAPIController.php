@@ -1971,7 +1971,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         throw new Exception('Application is not in the correct state');
       }
 
-      $messages = [];
+      $messages = null;
       $messagesID = $request->get('messages', []);
       if (!empty($messagesID)) {
         $messageRepository = $this->em->getRepository('AppBundle:Message');

@@ -417,7 +417,7 @@ class PraticaManager
    * @return void
    * @throws \League\Flysystem\FileExistsException
    */
-  public function acceptIntegration(Pratica $pratica, User $user, $messages = [])
+  public function acceptIntegration(Pratica $pratica, User $user, $messages = null)
   {
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
     $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione($pratica, $messages);
