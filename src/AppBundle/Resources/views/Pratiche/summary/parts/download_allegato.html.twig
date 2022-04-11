@@ -1,14 +1,18 @@
 {% if allegato_id|length > 0 %}
   {% if pratica.relatedCFs| length > 0 and user.codiceFiscale is defined and user.codiceFiscale in pratica.relatedCFs %}
     {% set download_allegato_path = 'allegati_download_cpsuser' %}
-{% else%}
-  {% set download_allegato_path = user.id == pratica.user.id  ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
+  {% else %}
+    {% set download_allegato_path = user.id == pratica.user.id  ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
   {% endif %}
+
   {% if pratica.status >= constant('STATUS_REGISTERED', pratica) %}
-        <a href="{{ path( download_allegato_path, {'allegato': allegato_id}) }}" class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a>
-    {% elseif pratica.status == constant('STATUS_DRAFT', pratica) %}
-        <a href="{{ path( download_allegato_path, {'allegato': allegato_id}) }}" class="btn btn-xs btn-link">{{ 'allegato.scarica_allegato_bozza'|trans }}</a>
-    {% else %}
-        <a href="{{ path( download_allegato_path, {'allegato': allegato_id}) }}" class="btn btn-xs btn-link">{{ 'allegato.scarica_allegato_in_attesa_di_protocollazione'|trans }}</a>
-    {% endif %}
+    <a href="{{ path( download_allegato_path, {'allegato': allegato_id}) }}"
+       class="btn btn-xs btn-info">{{ 'allegato.scarica_allegato'|trans }}</a>
+  {% elseif pratica.status == constant('STATUS_DRAFT', pratica) %}
+    <a href="{{ path( download_allegato_path, {'allegato': allegato_id}) }}"
+       class="btn btn-xs btn-link">{{ 'allegato.scarica_allegato_bozza'|trans }}</a>
+  {% else %}
+    <a href="{{ path( download_allegato_path, {'allegato': allegato_id}) }}"
+       class="btn btn-xs btn-link">{{ 'allegato.scarica_allegato_in_attesa_di_protocollazione'|trans }}</a>
+  {% endif %}
 {% endif %}

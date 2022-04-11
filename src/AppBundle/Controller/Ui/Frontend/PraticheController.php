@@ -46,6 +46,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -766,5 +767,39 @@ class PraticheController extends Controller
     }
 
     return JsonResponse::create($response, Response::HTTP_OK);
+  }
+
+  /**
+   * @Route("/{pratica}/pdf", name="pratiche_show_pdf")
+   * @ParamConverter("pratica", class="AppBundle:Pratica")
+   * @param Request $request
+   * @param Pratica $pratica
+   *
+   * @return Response
+   * @throws \Exception
+   */
+  public function showPdfAction(Pratica $pratica)
+  {
+    $user = $this->getUser();
+    $this->checkUserCanAccessPratica($pratica, $user);
+    $fileContent = $this->pdfBuilderService->generatePdfUsingGotemberg($pratica);
+
+    // Provide a name for your file with extension
+    $filename = time() . '.pdf';
+
+    // Return a response with a specific content
+    $response = new Response($fileContent);
+
+    // Create the disposition of the file
+    $disposition = $response->headers->makeDisposition(
+      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+      $filename
+    );
+
+    // Set the content disposition
+    $response->headers->set('Content-Disposition', $disposition);
+
+    // Dispatch request
+    return $response;
   }
 }
