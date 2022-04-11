@@ -1,19 +1,18 @@
 {% if is_granted('ROLE_OPERATORE') %}
-  {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
-    {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo and pratica.moduliCompilati|length > 0 %}
-        {% for allegato in pratica.moduliCompilati %}
-          <div class="col-sm-4">
-            <strong>{{ allegato.description }}</strong>
-          </div>
-          <div class="col-sm-8 py-2">
-            <a href="{{ path(download_allegato_path, {'allegato': allegato.id}) }}" class="btn btn-sm btn-info">
-              {% if pratica.status >= constant('STATUS_REGISTERED', pratica) %}
-                {{ 'operatori.scarica_modulo_compilato'|trans }}
-              {% else %}
-                {{ 'operatori.scarica_ricevuta_provvisoria'|trans }}
-              {% endif %}
-            </a>
-          </div>
-        {% endfor %}
-    {% endif %}
+  {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo and pratica.moduliCompilati|length > 0 %}
+    {% for allegato in pratica.moduliCompilati %}
+      <div class="col-sm-4">
+        <strong>{{ allegato.description }}</strong>
+      </div>
+      <div class="col-sm-8 py-2">
+        <a href="{{ path('allegati_download', {'allegato': allegato.id}) }}" class="btn btn-sm btn-info">
+          {% if pratica.status >= constant('STATUS_REGISTERED', pratica) %}
+            {{ 'operatori.scarica_modulo_compilato'|trans }}
+          {% else %}
+            {{ 'operatori.scarica_ricevuta_provvisoria'|trans }}
+          {% endif %}
+        </a>
+      </div>
+    {% endfor %}
+  {% endif %}
 {% endif %}

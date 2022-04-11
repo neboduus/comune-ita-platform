@@ -6,13 +6,13 @@
   {% endif %}
   {% if user is defined and not user is null %}
     {% set attachment = pratica.moduliCompilati|first %}
-    {% if is_granted('ROLE_OPERATORE') %}
-      <a href="{{ path('allegati_download_operatore', {'allegato': attachment}) }}" class="btn btn-primary" download>
+    {% if pratica.numeroProtocollo %}
+      <a href="{{ path('pratiche_show_pdf', {'pratica': pratica}) }}" class="btn btn-primary" download>
         <i class="fa fa-download"></i>
         {{ button_text }}
       </a>
     {% else %}
-      <a href="{{ path('allegati_download_cpsuser', {'allegato': attachment.id}) }}" class="btn btn-primary" download>
+      <a href="{{ path('allegati_download', {'allegato': attachment.id}) }}" class="btn btn-primary" download>
         <i class="fa fa-download"></i>
         {{ button_text }}
       </a>
