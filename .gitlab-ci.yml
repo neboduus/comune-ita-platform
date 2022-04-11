@@ -9,6 +9,7 @@ stages:
   - test
   - build_apache
   - push
+  - renovate
 
 variables:
   DOCKER_BUILDKIT: 1
@@ -182,6 +183,43 @@ push_caddy_latest:
     - docker push "$CADDY_IMAGE_NAME:latest"
   only:
     - master
+
+
+renovate:
+  stage: renovate
+  image: renovate/renovate:32.17-slim
+  variables:
+    RENOVATE_BASE_DIR: $CI_PROJECT_DIR/renovate
+    RENOVATE_ENDPOINT: $CI_API_V4_URL
+    RENOVATE_PLATFORM: gitlab
+    RENOVATE_GIT_AUTHOR: Renovate Bot <bot@renovateapp.com>
+    RENOVATE_OPTIMIZE_FOR_DISABLED: "true"
+    RENOVATE_REPOSITORY_CACHE: "true"
+    RENOVATE_REQUIRE_CONFIG: "true"
+    RENOVATE_ONBOARDING: "false"
+    RENOVATE_ONBOARDING_CONFIG: '{"$$schema": "https://docs.renovatebot.com/renovate-schema.json", "extends": ["config:base"] }'
+    RENOVATE_IGNORE_PR_AUTHOR: "true"
+    RENOVATE_TOKEN: $RENOVATE_TOKEN
+    RENOVATE_EXTENDS: "github>whitesource/merge-confidence:beta"
+    #LOG_LEVEL: debug
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375
+  before_script:
+    - cp .gitlab/renovate.json /tmp/renovate.json
+  script:
+    - export RENOVATE_CONFIG_FILE=/tmp/renovate.json
+    - renovate
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}-renovate
+    paths:
+      - $CI_PROJECT_DIR/renovate
+  only:
+    - master
+  artifacts:
+    when: always
+    paths:
+      - renovate.json
 
 ###################################################################################################################
 #
