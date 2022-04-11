@@ -26,7 +26,7 @@
     "php": ">=7.3.0",
     "symfony/symfony": "3.4.49",
     "doctrine/orm": "2.7.3",
-    "doctrine/doctrine-bundle": "1.12.0",
+    "doctrine/doctrine-bundle": "1.12.13",
     "doctrine/doctrine-cache-bundle": "1.4.0",
     "doctrine/doctrine-fixtures-bundle": "2.4.1",
     "doctrine/data-fixtures": "1.4.4",
