@@ -87,9 +87,9 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     $type = $request->query->get('type');
     if ($type) {
-      $calendars = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findBy(['type' => $type]);
+      $calendars = $this->em->getRepository('AppBundle:Calendar')->findBy(['type' => $type]);
     } else {
-      $calendars = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findAll();
+      $calendars = $this->em->getRepository('AppBundle:Calendar')->findAll();
     }
     return $this->view($calendars, Response::HTTP_OK);
   }
@@ -122,7 +122,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     );
 
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
+      $repository = $this->em->getRepository('AppBundle:Calendar');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -200,16 +200,16 @@ class CalendarsAPIController extends AbstractFOSRestController
       $selectedOpeningHours = explode(',', $selectedOpeningHours);
     }
     try {
-      $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
+      $calendar = $this->em->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($calendar === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
       /** @var OpeningHour[] $openingHours */
       if ($selectedOpeningHours) {
-        $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id, 'id' => $selectedOpeningHours]);
+        $openingHours = $this->em->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id, 'id' => $selectedOpeningHours]);
       } else {
-        $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
+        $openingHours = $this->em->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
       }
 
       // Compute availabilities
@@ -317,7 +317,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       $selectedOpeningHours = explode(',', $selectedOpeningHours);
     }
 
-    $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
+    $calendar = $this->em->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
     if ($calendar === null) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
@@ -330,8 +330,8 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     try {
       /** @var OpeningHour[] $openingHours */
-      $openingHours = $this->getDoctrine()->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
-      $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
+      $openingHours = $this->em->getRepository('AppBundle:OpeningHour')->findBy(['calendar' => $id]);
+      $calendar = $this->em->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ($openingHours === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
@@ -421,11 +421,9 @@ class CalendarsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $em = $this->getDoctrine()->getManager();
-
     try {
-      $em->persist($calendar);
-      $em->flush();
+      $this->em->persist($calendar);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [
@@ -500,7 +498,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
+    $repository = $this->em->getRepository('AppBundle:Calendar');
     $calendar = $repository->find($id);
 
     if (!$calendar) {
@@ -522,11 +520,9 @@ class CalendarsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $em = $this->getDoctrine()->getManager();
-
     try {
-      $em->persist($calendar);
-      $em->flush();
+      $this->em->persist($calendar);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [
@@ -601,7 +597,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
+    $repository = $this->em->getRepository('AppBundle:Calendar');
     $calendar = $repository->find($id);
 
     if (!$calendar) {
@@ -624,9 +620,8 @@ class CalendarsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($calendar);
-      $em->flush();
+      $this->em->persist($calendar);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [
@@ -680,17 +675,13 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->find($id);
+    $calendar = $this->em->getRepository('AppBundle:Calendar')->find($id);
     if ($calendar) {
       $this->denyAccessUnlessGranted(CalendarVoter::DELETE, $calendar);
 
-      // debated point: should we 404 on an unknown nickname?
-      // or should we just return a nice 204 in all cases?
-      // we're doing the latter
-      $em = $this->getDoctrine()->getManager();
       try {
-        $em->remove($calendar);
-        $em->flush();
+        $this->em->remove($calendar);
+        $this->em->flush();
       } catch (\Exception $e) {
         return $this->view(["There was an error during delete process"], Response::HTTP_NOT_FOUND);
       }
@@ -763,7 +754,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     );
 
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:Calendar');
+      $repository = $this->em->getRepository('AppBundle:Calendar');
       $calendar = $repository->find($calendar_id);
       if ($calendar === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -807,7 +798,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     );
 
     try {
-      $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
+      $repository = $this->em->getRepository('AppBundle:OpeningHour');
       $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
       if ($openingHour === null) {
@@ -857,17 +848,13 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
+    $repository = $this->em->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
     if ($openingHour) {
       $this->denyAccessUnlessGranted(CalendarVoter::DELETE, $openingHour->getCalendar());
 
-      // debated point: should we 404 on an unknown nickname?
-      // or should we just return a nice 204 in all cases?
-      // we're doing the latter
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($openingHour);
-      $em->flush();
+      $this->em->remove($openingHour);
+      $this->em->flush();
     }
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
@@ -1027,7 +1014,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
+    $repository = $this->em->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
     if (!$openingHour) {
@@ -1050,9 +1037,8 @@ class CalendarsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($openingHour);
-      $em->flush();
+      $this->em->persist($openingHour);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [
@@ -1129,7 +1115,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->getDoctrine()->getRepository('AppBundle:OpeningHour');
+    $repository = $this->em->getRepository('AppBundle:OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
     $openingHour->setDaysOfWeek([]);
@@ -1154,9 +1140,8 @@ class CalendarsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->persist($openingHour);
-      $em->flush();
+      $this->em->persist($openingHour);
+      $this->em->flush();
     } catch (\Exception $e) {
 
       $data = [
@@ -1211,7 +1196,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $calendar = $this->getDoctrine()->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
+      $calendar = $this->em->getRepository('AppBundle:Calendar')->findOneBy(['id' => $id]);
       if ( $calendar === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }

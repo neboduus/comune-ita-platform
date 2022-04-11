@@ -832,7 +832,7 @@ operatori:
     approved: 'Confermato'
     refused: 'Rifiutato'
     missed: 'Assente'
-    complete: 'Avvenuto'
+    done: 'Avvenuto'
     cancelled: 'Annullato'
     draft: 'Bozza'
   gateway: "Metodo di pagamento"
@@ -2213,6 +2213,14 @@ calendars:
       overlap: "L'orario di apertura %behinHour1%-%endHour1% si sovrappone con l'orario %behinHour2%-%endHour2% nei giorni %days%"
       cannot_change: 'Non è possibile modificare la durata o l intervallo tra i meeting fintanto che esistono dei meeting gia fissati. Le consigliamo di creare un orario di apertura a partire dalla prima data disponibile (next_availability)'
 meetings:
+  status:
+    pending: 'In attesa di approvazione'
+    approved: 'Confermato'
+    refused: 'Rifiutato'
+    missed: 'Assente'
+    done: 'Avvenuto'
+    cancelled: 'Annullato'
+    draft: 'Bozza'
   labels:
     calendar: "Calendario"
     user: "Utente"

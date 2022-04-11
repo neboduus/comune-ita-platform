@@ -22,49 +22,49 @@
                       <svg class="icon icon-xs icon-warning">
                         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning"></use>
                       </svg>
-                      <span class="chip-label">{{ 'operatori.meeting_status.pending' | trans }}</span>
+                      <span class="chip-label">{{ 'meetings.status.pending' | trans }}</span>
                     </div>
                   {% elseif meeting.status == 1 %}
                     <div class="chip chip-success">
                       <svg class="icon icon-xs icon-success">
                         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
                       </svg>
-                      <span class="chip-label">{{ 'operatori.meeting_status.approved' | trans }}</span>
+                      <span class="chip-label">{{ 'meetings.status.approved' | trans }}</span>
                     </div>
                   {% elseif meeting.status == 2 %}
                     <div class="chip chip-danger">
                       <svg class="icon icon-xs icon-danger">
                         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
                       </svg>
-                      <span class="chip-label">{{ 'operatori.meeting_status.refused' | trans }}</span>
+                      <span class="chip-label">{{ 'meetings.status.refused' | trans }}</span>
                     </div>
                   {% elseif meeting.status == 3 %}
                     <div class="chip chip-danger">
                       <svg class="icon icon-xs icon-danger">
                         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-circle"></use>
                       </svg>
-                      <span class="chip-label">{{ 'operatori.meeting_status.missed' | trans }}</span>
+                      <span class="chip-label">{{ 'meetings.status.missed' | trans }}</span>
                     </div>
                   {% elseif meeting.status == 4 %}
                     <div class="chip chip-success">
                       <svg class="icon icon-xs icon-success">
                         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use>
                       </svg>
-                      <span class="chip-label">{{ 'operatori.meeting_status.complete' | trans }}</span>
+                      <span class="chip-label">{{ 'meetings.status.done' | trans }}</span>
                     </div>
                   {% elseif meeting.status == 5 %}
                     <div class="chip chip-danger">
                       <svg class="icon icon-xs icon-danger">
                         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
                       </svg>
-                      <span class="chip-label">{{ 'operatori.meeting_status.cancelled' | trans }}</span>
+                      <span class="chip-label">{{ 'meetings.status.cancelled' | trans }}</span>
                     </div>
                   {% else %}
                     <div class="chip">
                       <svg class="icon icon-xs icon-secondary">
                         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clock"></use>
                       </svg>
-                      <span class="chip-label">{{ 'operatori.meeting_status.draft' | trans }}</span>
+                      <span class="chip-label">{{ 'meetings.status.draft' | trans }}</span>
                     </div>
                   {% endif %}
                 </div>

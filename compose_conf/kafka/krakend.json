@@ -34,6 +34,21 @@
           }
         }
       ]
+    },
+    {
+      "endpoint": "/meetings",
+      "method": "POST",
+      "backend" : [
+        {
+          "host": "kafka://",
+          "disable_host_sanitize": true,
+          "extra_config": {
+            "github.com/devopsfaith/krakend-pubsub/publisher": {
+              "topic_url": "meetings"
+            }
+          }
+        }
+      ]
     }
   ]
 }

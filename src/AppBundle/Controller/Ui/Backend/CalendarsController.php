@@ -507,8 +507,7 @@ class CalendarsController extends Controller
     if ($form->isSubmitted() && $form->isValid()) {
       try {
         $meeting->setStatus(Meeting::STATUS_CANCELLED);
-        $em->persist($meeting);
-        $em->flush();
+        $this->meetingService->save($meeting);
 
         $this->addFlash('feedback', $this->translator->trans('meetings.email.cancel_success'));
       } catch (\Exception $exception) {
@@ -545,9 +544,9 @@ class CalendarsController extends Controller
       ]);
     }
 
-    if (!$meeting->getEmail())
+    if (!$meeting->getEmail()) {
       $this->addFlash('warning', $this->translator->trans('meetings.no_email_warning'));
-
+    }
 
     $form = $this->createFormBuilder(null, array('csrf_protection' => false))
       ->add('approve', SubmitType::class, [
@@ -585,8 +584,7 @@ class CalendarsController extends Controller
         }
       }
       try {
-        $em->persist($meeting);
-        $em->flush();
+        $this->meetingService->save($meeting);
 
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
       } catch (\Exception $exception) {
@@ -617,6 +615,10 @@ class CalendarsController extends Controller
     $openingHourId = $request->get('opening_hour');
     $calendarId = $request->get('calendar');
     $meetingId = $request->get('meeting');
+    $firstAvailableDate = $request->get('first_available_date', null);
+    $firstAvailableStartTime = $request->get('first_available_start_time', null);
+    $firstAvailableEndTime = $request->get('first_available_end_time', null);
+    $firstAvailabilityUpdatedAt = $request->get('first_availability_updated_at', null);
 
     if (!($date && $slot && $calendarId)) {
       return new JsonResponse([
@@ -624,6 +626,7 @@ class CalendarsController extends Controller
       ], Response::HTTP_BAD_REQUEST);
     }
 
+    /** @var Calendar $calendar */
     $calendar = $this->em->getRepository('AppBundle:Calendar')->find($calendarId);
     if (!$calendar) {
       return new JsonResponse([
@@ -650,8 +653,9 @@ class CalendarsController extends Controller
       $meeting = $this->em->getRepository('AppBundle:Meeting')->find($meetingId);
     }
 
-    if ($user)
+    if ($user) {
       $meeting->setUser($user);
+    }
     $meeting->setFromTime($fromTime);
     $meeting->setToTime($toTime);
     $meeting->setCalendar($calendar);
@@ -659,12 +663,26 @@ class CalendarsController extends Controller
     $meeting->setUserMessage($this->translator->trans('meetings.default_draft_message'));
     $meeting->setStatus(Meeting::STATUS_DRAFT);
     $meeting->setDraftExpiration(new \DateTime('+' . ($calendar->getDraftsDuration() ?? Calendar::DEFAULT_DRAFT_DURATION) . 'seconds'));
+    if ($firstAvailableDate !== null) {
+      $meeting->setFirstAvailableDate(DateTime::createFromFormat('Y-m-d', $firstAvailableDate));
+    }
+
+    if ($firstAvailableStartTime !== null) {
+      $meeting->setFirstAvailableStartTime(DateTime::createFromFormat('H:i', $firstAvailableStartTime));
+    }
+
+    if ($firstAvailableEndTime !== null) {
+      $meeting->setFirstAvailableEndTime(DateTime::createFromFormat('H:i', $firstAvailableEndTime));
+    }
+
+    if ($firstAvailabilityUpdatedAt !== null) {
+      $meeting->setFirstAvailabilityUpdatedAt(new DateTime($firstAvailabilityUpdatedAt));
+    }
 
     try {
       $errors = $this->meetingService->getMeetingErrors($meeting);
       if (empty($errors)) {
-        $this->em->persist($meeting);
-        $this->em->flush();
+        $this->meetingService->save($meeting);
       } else {
         $this->em->remove($meeting);
         $this->em->flush();

@@ -7,6 +7,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Swagger\Annotations as SWG;
@@ -23,6 +26,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Meeting
 {
 
+  use TimestampableEntity;
+
   const STATUS_PENDING = 0;
   const STATUS_APPROVED = 1;
   const STATUS_REFUSED = 2;
@@ -35,6 +40,7 @@ class Meeting
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @SWG\Property(description="Meeting's uuid", type="string")
+   * @Groups({"read", "kafka"})
    */
   private $id;
 
@@ -43,7 +49,7 @@ class Meeting
  * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
  * @Assert\NotBlank(message="Questo campo è obbligatorio (calendar)")
  * @SWG\Property(description="Meeting's calendar id", type="string")
- * @Serializer\Exclude()
+ * @Groups({"kafka"})
  */
   private $calendar;
 
@@ -51,7 +57,7 @@ class Meeting
    * @ORM\ManyToOne(targetEntity="AppBundle\Entity\OpeningHour", inversedBy="meetings")
    * @ORM\JoinColumn(name="opening_hour_id", referencedColumnName="id", nullable=true)
    * @SWG\Property(description="Meeting's opening hour id", type="string")
-   * @Serializer\Exclude()
+   * @Groups({"kafka"})
    */
   private $openingHour;
 
@@ -60,6 +66,7 @@ class Meeting
    *
    * @ORM\Column(name="email", type="string", length=255, nullable=true)
    * @SWG\Property(description="Meeting's user email", type="string")
+   * @Groups({"read", "write", "kafka"})
    */
   private $email;
 
@@ -68,6 +75,7 @@ class Meeting
    *
    * @ORM\Column(name="phone_number", type="string", nullable=true)
    * @SWG\Property(description="Meeting's user phone number", type="string")
+   * @Groups({"read", "write", "kafka"})
    */
   private $phoneNumber;
 
@@ -76,6 +84,7 @@ class Meeting
    *
    * @ORM\Column(name="fiscal_code", type="string", length=16, nullable=true)
    * @SWG\Property(description="Meeting's user fiscal code", type="string")
+   * @Groups({"read", "write", "kafka"})
    */
   private $fiscalCode;
 
@@ -83,7 +92,8 @@ class Meeting
    * @var string
    *
    * @ORM\Column(name="name", type="string", length=255, nullable=true)
-   * @SWG\Property(description="Meeting's user name", type="string", )
+   * @SWG\Property(description="Meeting's user name", type="string")
+   * @Groups({"read", "write", "kafka"})
    */
   private $name;
 
@@ -101,6 +111,7 @@ class Meeting
    * @ORM\Column(name="from_time", type="datetime")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (from Time)")
    * @SWG\Property(description="Meeting's from Time")
+   * @Groups({"read", "write", "kafka"})
    */
   private $fromTime;
 
@@ -110,6 +121,7 @@ class Meeting
    * @ORM\Column(name="to_time", type="datetime")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (to Time)")
    * @SWG\Property(description="Meeting's to Time")
+   * @Groups({"read", "write", "kafka"})
    */
   private $toTime;
 
@@ -118,6 +130,7 @@ class Meeting
    *
    * @ORM\Column(name="user_message", type="text", nullable=true)
    * @SWG\Property(description="Meeting's User Message", type="string")
+   * @Groups({"read", "write", "kafka"})
    */
   private $userMessage;
 
@@ -126,6 +139,7 @@ class Meeting
    *
    * @ORM\Column(name="motivation_outcome", type="text", nullable=true)
    * @SWG\Property(description="Meeting's Operator Message", type="string")
+   * @Groups({"read", "write", "kafka"})
    */
   private $motivationOutcome;
 
@@ -141,6 +155,7 @@ class Meeting
    * @ORM\Column(name="videoconference_link", type="string", nullable=true)
    * @Assert\Url(message="url non valido (videoconferenceLink)")
    * @SWG\Property(description="Meeting's videoconference link", type="string")
+   * @Groups({"read", "write", "kafka"})
    */
   private $videoconferenceLink;
 
@@ -149,12 +164,14 @@ class Meeting
    * @Assert\NotBlank(message="Seleziona un'opzione. Lo stato è un parametro obbligatorio")
    * @Assert\NotNull()
    * @SWG\Property(description="Meeting's status", type="integer")
+   * @Groups({"read", "write"})
    */
   private $status;
 
   /**
    * @ORM\Column(type="integer", nullable=false)
    * @SWG\Property(description="Meeting's rescheduled times", type="integer")
+   * @Groups({"read", "write", "kafka"})
    */
   private $rescheduled;
 
@@ -172,25 +189,64 @@ class Meeting
    *
    * @ORM\Column(name="draft_expiration", type="datetime", nullable=true)
    * @SWG\Property(description="Meeting draft expiration time")
+   * @Groups({"read", "write", "kafka"})
    */
   private $draftExpiration;
 
   /**
-   * @ORM\Column(type="datetime")
-   * @SWG\Property(description="Meeting's creation date")
+   * @var \DateTime
+   * @ORM\Column(type="date", nullable=true)
+   * @SWG\Property(description="First available date when meeting was created, format Y-m-d")
+   * @Serializer\Type("DateTime<'Y-m-d'>")
+   * @Groups({"read", "write", "kafka"})
    */
-  private $createdAt;
+  private $firstAvailableDate;
 
   /**
-   * @ORM\Column(type="datetime")
-   * @SWG\Property(description="Meeting's last modified date")
+   * @var \DateTime
+   * @ORM\Column(type="time", nullable=true)
+   * @SWG\Property(description="First available end time")
+   * @Serializer\Exclude()
    */
-  private $updatedAt;
+  private $firstAvailableStartTime;
+
+  /**
+   * @var \DateTime
+   * @ORM\Column(type="time", nullable=true)
+   * @SWG\Property(description="First available end time")
+   * @Serializer\Exclude()
+   */
+  private $firstAvailableEndTime;
+
+  /**
+   * @var \DateTime
+   * @ORM\Column(type="datetime", nullable=true)
+   * @SWG\Property(description="Datetime when first availability was stored")
+   * @Groups({"read", "write", "kafka"})
+   */
+  private $firstAvailabilityUpdatedAt;
+
+  /**
+   * @var \DateTime
+   * @Gedmo\Timestampable(on="create")
+   * @ORM\Column(type="datetime")
+   * @Groups({"read", "kafka"})
+   */
+  protected $createdAt;
+
+  /**
+   * @var \DateTime
+   * @Gedmo\Timestampable(on="update")
+   * @ORM\Column(type="datetime")
+   * @Groups({"read", "kafka"})
+   */
+  protected $updatedAt;
 
   /**
    * Meeting constructor.
    * @throws \Exception
    */
+
   public function __construct()
   {
     if (!$this->id) {
@@ -234,9 +290,10 @@ class Meeting
   }
 
   /**
-   * @Serializer\VirtualProperty(name="calendar")
+   * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("calendar")
+   * @Groups({"read", "write"})
    */
   public function getCalendarId(): string
   {
@@ -244,9 +301,10 @@ class Meeting
   }
 
   /**
-   * @Serializer\VirtualProperty(name="application")
+   * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("application")
+   * @Groups({"read", "write"})
    */
   public function getApplicationId(): ?string
   {
@@ -255,6 +313,81 @@ class Meeting
       $applicationId = $this->getApplications()->last()->getId();
     }
     return $applicationId;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("application_id")
+   * @Groups({"kafka"})
+   */
+  public function getApplicationIdKafka(): ?string
+  {
+    $applicationId = null;
+    if ($this->getApplications()->count() > 0) {
+      $applicationId = $this->getApplications()->last()->getId();
+    }
+    return $applicationId;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("user")
+   * @Groups({"read", "write"})
+   */
+  public function getUserId(): ?string
+  {
+    if ($this->user){
+      return $this->user->getId();
+    }
+    return null;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("user_id")
+   * @Groups({"kafka"})
+   */
+  public function getUserIdKafka(): ?string
+  {
+    if ($this->user){
+      return $this->user->getId();
+    }
+    return null;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("first_available_slot")
+   * @Groups({"read", "write", "kafka"})
+   */
+  public function getFirstAvailableSlot()
+  {
+    if ($this->firstAvailableStartTime !== null && $this->firstAvailableEndTime !== null) {
+      return $this->firstAvailableStartTime->format('H:i') . '-' . $this->firstAvailableEndTime->format('H:i');
+    }
+    return null;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("status_name")
+   * @Groups({"kafka"})
+   */
+  public function getStatusName()
+  {
+    $class = new \ReflectionClass(__CLASS__);
+    $constants = $class->getConstants();
+    foreach ($constants as $name => $value) {
+      if ($value == $this->status) {
+        return strtolower($name);
+      }
+    }
+    return null;
   }
 
   /**
@@ -401,19 +534,6 @@ class Meeting
   }
 
   /**
-   * @Serializer\VirtualProperty(name="user")
-   * @Serializer\Type("string")
-   * @Serializer\SerializedName("user")
-   * @Serializer\Exclude(if="!object.getUser()")
-   */
-  public function getUserId(): ?string
-  {
-    if ($this->user)
-      return $this->user->getId();
-    else return null;
-  }
-
-  /**
    * Set fromTime.
    *
    * @param \DateTime $fromTime
@@ -469,35 +589,6 @@ class Meeting
   public function getStatus()
   {
     return $this->status;
-  }
-
-  public function getStatusName()
-  {
-    switch ($this->status) {
-      case 0:
-        return 'In attesa di conferma';
-        break;
-      case 1:
-        return 'Approvato';
-        break;
-      case 2:
-        return 'Rifiutato';
-        break;
-      case 3:
-        return 'Assente';
-        break;
-      case 4:
-        return 'Concluso';
-        break;
-      case 5:
-        return 'Annullato';
-        break;
-      case 6:
-        return 'Bozza';
-        break;
-      default:
-        return 'Errore';
-    }
   }
 
   /**
@@ -683,50 +774,86 @@ class Meeting
   }
 
   /**
-   * Get createdAt.
-   *
-   * @return \DateTime
+   * @return mixed
    */
-  public function getCreatedAt(): ?\DateTimeInterface
+  public function getFirstAvailableDate()
   {
-    return $this->createdAt;
+    return $this->firstAvailableDate;
   }
 
   /**
-   * Set createdAt
-   *
-   * @param \DateTimeInterface $created_at
-   * @return $this
+   * @param mixed $firstAvailableDate
    */
-  public function setCreatedAt(\DateTimeInterface $created_at): self
+  public function setFirstAvailableDate($firstAvailableDate): void
   {
-    $this->createdAt = $created_at;
+    $this->firstAvailableDate = $firstAvailableDate;
+  }
 
+  /**
+   * @return mixed
+   */
+  public function getFirstAvailableStartTime()
+  {
+    return $this->firstAvailableStartTime;
+  }
+
+  /**
+   * @param mixed $firstAvailableStartTime
+   */
+  public function setFirstAvailableStartTime($firstAvailableStartTime): Meeting
+  {
+    $this->firstAvailableStartTime = $firstAvailableStartTime;
     return $this;
   }
 
   /**
-   * Get updatedAt
-   *
-   * @return \DateTimeInterface|null
+   * @return mixed
    */
-  public function getUpdatedAt(): ?\DateTimeInterface
+  public function getFirstAvailableEndTime()
   {
-    return $this->updatedAt;
+    return $this->firstAvailableEndTime;
   }
 
   /**
-   * Set updatedAt
-   *
-   * @param \DateTimeInterface $updated_at
-   *
-   * @return $this
+   * @param mixed $firstAvailableEndTime
    */
-  public function setUpdatedAt(\DateTimeInterface $updated_at): self
+  public function setFirstAvailableEndTime($firstAvailableEndTime): Meeting
   {
-    $this->updatedAt = $updated_at;
-
+    $this->firstAvailableEndTime = $firstAvailableEndTime;
     return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getFirstAvailabilityUpdatedAt()
+  {
+    return $this->firstAvailabilityUpdatedAt;
+  }
+
+  /**
+   * @param mixed $firstAvailabilityUpdatedAt
+   */
+  public function setFirstAvailabilityUpdatedAt($firstAvailabilityUpdatedAt): Meeting
+  {
+    $this->firstAvailabilityUpdatedAt = $firstAvailabilityUpdatedAt;
+    return $this;
+  }
+
+  public static function getStatuses()
+  {
+    $statuses = [];
+    $class = new \ReflectionClass(__CLASS__);
+    $constants = $class->getConstants();
+    foreach ($constants as $name => $value) {
+      if (strpos($name, 'STATUS_') === 0) {
+        $statuses[$value] = [
+          'id' => $value,
+          'identifier' => $name,
+        ];
+      }
+    }
+    return $statuses;
   }
 }
 

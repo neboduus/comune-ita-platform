@@ -5,6 +5,7 @@ namespace AppBundle\Services;
 
 
 use AppBundle\Dto\ApplicationDto;
+use AppBundle\Entity\Meeting;
 use AppBundle\Dto\Service;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ScheduledAction;
@@ -65,6 +66,10 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @var ApplicationDto
    */
   private $applicationDto;
+  /**
+   * @var InstanceService
+   */
+  private $instanceService;
 
   /**
    * WebhookService constructor.
@@ -75,6 +80,7 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @param LoggerInterface $logger
    * @param FormServerApiAdapterService $formServerApiAdapterService
    * @param ApplicationDto $applicationDto
+   * @param InstanceService $instanceService
    * @param $kafkaUrl
    * @param $kafkaEventVersion
    * @param $topics
@@ -87,6 +93,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     LoggerInterface $logger,
     FormServerApiAdapterService $formServerApiAdapterService,
     ApplicationDto $applicationDto,
+    InstanceService $instanceService,
     $kafkaUrl,
     $kafkaEventVersion,
     $topics
@@ -102,6 +109,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     $this->topics = $topics;
     $this->formServerApiAdapterService = $formServerApiAdapterService;
     $this->applicationDto = $applicationDto;
+    $this->instanceService = $instanceService;
   }
 
 
@@ -151,15 +159,25 @@ class KafkaService implements ScheduledActionHandlerInterface
     } elseif ($item instanceof Servizio) {
       $content = Service::fromEntity($item, $this->formServerApiAdapterService->getFormServerPublicUrl());
       $topic = $this->topics['services'];
+    } elseif ($item instanceof Meeting) {
+      $content = $item;
+      $topic = $this->topics['meetings'];
     } else {
       $topic = 'default';
       $content = $item;
     }
 
     $context = new SerializationContext();
+    $context->setGroups('kafka');
     $context->setSerializeNull(true);
 
     $data = json_decode($this->serializer->serialize($content, 'json', $context), true);
+
+    // todo: fix veloce, prevedere tenaant_id nelle entità per il multi tenant
+    if (!isset($data['tenant_id'])) {
+      $data['tenant_id'] = $this->instanceService->getCurrentInstance()->getId();
+    }
+
     $data['event_id'] = Uuid::uuid4()->toString();
     $date = new DateTime();
     $data['event_created_at'] = $date->format(DateTime::W3C);
@@ -205,7 +223,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     /** @var GuzzleResponse $response */
     $response = $client->send($request, ['timeout' => 2]);
 
-    //$this->logger->info('KAFKA-EVENT', $params);
+    $this->logger->info('KAFKA-EVENT', $params);
 
     if (!in_array($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_CREATED])) {
       throw new \Exception("Error sending kafka message: " . $response->getBody());

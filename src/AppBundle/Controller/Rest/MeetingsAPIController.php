@@ -10,7 +10,9 @@ use AppBundle\Entity\User;
 use AppBundle\Security\Voters\BackofficeVoter;
 use AppBundle\Security\Voters\MeetingVoter;
 use AppBundle\Services\InstanceService;
+use AppBundle\Services\MeetingService;
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
@@ -18,7 +20,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
@@ -47,11 +48,23 @@ class MeetingsAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   private $logger;
 
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, LoggerInterface $logger)
+  /**
+   * @var MeetingService
+   */
+  private $meetingService;
+
+  /**
+   * @param TranslatorInterface $translator
+   * @param EntityManagerInterface $em
+   * @param LoggerInterface $logger
+   * @param MeetingService $meetingService
+   */
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, LoggerInterface $logger, MeetingService $meetingService)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->logger = $logger;
+    $this->meetingService = $meetingService;
   }
 
 
@@ -64,7 +77,7 @@ class MeetingsAPIController extends AbstractFOSRestController
    *     description="Retrieve list of meetings",
    *     @SWG\Schema(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Meeting::class))
+   *         @SWG\Items(ref=@Model(type=Meeting::class, groups={"read"}))
    *     )
    * )
    *
@@ -75,7 +88,7 @@ class MeetingsAPIController extends AbstractFOSRestController
    *
    * @SWG\Tag(name="meetings")
    */
-  public function getMeetingsAction()
+  public function getMeetingsAction(Request $request)
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -85,10 +98,12 @@ class MeetingsAPIController extends AbstractFOSRestController
 
     /** @var User $user */
     $user = $this->getUser();
+    $statusParameter = $request->get('status', false);
+
 
     $builder = $this->em->createQueryBuilder();
     $builder
-      ->select('meeting.id')
+      ->select('meeting')
       ->from(Meeting::class, 'meeting')
       ->leftJoin('meeting.calendar', 'calendar');
 
@@ -102,16 +117,19 @@ class MeetingsAPIController extends AbstractFOSRestController
         ->setParameter('user', $user);
     }
 
-
+    $meetingStatuses = array_keys(Meeting::getStatuses());
+    if (!in_array($statusParameter, $meetingStatuses)) {
+      return $this->view(
+        ["Status code not present, chose one between: " . implode(',', $meetingStatuses)],
+        Response::HTTP_BAD_REQUEST
+      );
+    }
+    $builder
+      ->where('meeting.status = :status')
+      ->setParameter('status', $statusParameter);
 
     $results = $builder->getQuery()->getResult();
-    $meetings = array();
-
-    foreach ($results as $result) {
-      $meetings[] = $this->getDoctrine()->getRepository('AppBundle:Meeting')->find($result);
-    }
-
-    return $this->view($meetings, Response::HTTP_OK);
+    return $this->view($results, Response::HTTP_OK);
   }
 
   /**
@@ -121,7 +139,7 @@ class MeetingsAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Meeting",
-   *     @Model(type=Meeting::class)
+   *     @Model(type=Meeting::class, groups={"read"})
    * )
    *
    * @SWG\Response(
@@ -189,7 +207,7 @@ class MeetingsAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Meeting::class)
+   *         ref=@Model(type=Meeting::class, groups={"write"})
    *     )
    * )
    *
@@ -229,7 +247,6 @@ class MeetingsAPIController extends AbstractFOSRestController
       ];
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
-    $em = $this->getDoctrine()->getManager();
 
     try {
       if (!$meeting->getFiscalCode() && !$meeting->getUser()) {
@@ -247,17 +264,17 @@ class MeetingsAPIController extends AbstractFOSRestController
           ->setEnabled(true)
           ->setPassword('');
 
-        $em->persist($user);
+        $this->em->persist($user);
         $meeting->setUser($user);
       } else if ($meeting->getFiscalCode() && !$meeting->getUser()) {
-        $result = $em->createQueryBuilder()
+        $result = $this->em->createQueryBuilder()
           ->select('user.id')
           ->from('AppBundle:User', 'user')
           ->where('upper(user.username) = upper(:username)')
           ->setParameter('username', $meeting->getFiscalCode())
           ->getQuery()->getResult();
         if (!empty($result)) {
-          $repository = $em->getRepository('AppBundle:CPSUser');
+          $repository = $this->em->getRepository('AppBundle:CPSUser');
           /**
            * @var CPSUser $user
            */
@@ -267,9 +284,9 @@ class MeetingsAPIController extends AbstractFOSRestController
         }
         if (!$user) {
           $user = new CPSUser();
-          $user->setEmail($meeting->getEmail() ? $meeting->getEmail() : '');
-          $user->setEmailContatto($meeting->getEmail() ? $meeting->getEmail() : '');
-          $user->setNome($meeting->getName() ? $meeting->getName() : '');
+          $user->setEmail($meeting->getEmail() ?: '');
+          $user->setEmailContatto($meeting->getEmail() ?: '');
+          $user->setNome($meeting->getName() ?: '');
           $user->setCognome('');
           $user->setCodiceFiscale($meeting->getFiscalCode());
           $user->setUsername($meeting->getFiscalCode());
@@ -279,14 +296,15 @@ class MeetingsAPIController extends AbstractFOSRestController
             ->setEnabled(true)
             ->setPassword('');
 
-          $em->persist($user);
+          $this->em->persist($user);
           $meeting->setUser($user);
         } else {
           $meeting->setUser($user);
         }
       }
-      $em->persist($meeting);
-      $em->flush();
+
+      $this->meetingService->save($meeting, false);
+      $this->em->flush();
 
       if ($meeting->getUser()->getEmail())
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
@@ -337,7 +355,7 @@ class MeetingsAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Meeting::class)
+   *         ref=@Model(type=Meeting::class, groups={"write"})
    *     )
    * )
    *
@@ -400,14 +418,12 @@ class MeetingsAPIController extends AbstractFOSRestController
     try {
       $dateChanged = $oldMeeting->getFromTime() != $meeting->getFromTime();
 
-      $em = $this->getDoctrine()->getManager();
       // Auto approve meeting when changing date
       if ($dateChanged && $oldMeeting->getStatus() == Meeting::STATUS_PENDING) {
         $meeting->setStatus(Meeting::STATUS_APPROVED);
       }
 
-      $em->persist($meeting);
-      $em->flush();
+      $this->meetingService->save($meeting);
 
       if ($meeting->getUser()->getEmail())
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
@@ -458,7 +474,7 @@ class MeetingsAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Meeting::class)
+   *         ref=@Model(type=Meeting::class, groups={"write"})
    *     )
    * )
    *
@@ -521,14 +537,12 @@ class MeetingsAPIController extends AbstractFOSRestController
     try {
       $dateChanged = $oldMeeting->getFromTime() != $meeting->getFromTime();
 
-      $em = $this->getDoctrine()->getManager();
       // Auto approve meeting when changing date
       if ($dateChanged && $oldMeeting->getStatus() == Meeting::STATUS_PENDING) {
         $meeting->setStatus(Meeting::STATUS_APPROVED);
       }
 
-      $em->persist($meeting);
-      $em->flush();
+      $this->meetingService->save($meeting);
 
       if ($meeting->getUser()->getEmail())
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
@@ -604,8 +618,8 @@ class MeetingsAPIController extends AbstractFOSRestController
       // we're doing the latter
       $em = $this->getDoctrine()->getManager();
       try {
-        $em->remove($meeting);
-        $em->flush();
+        $this->em->remove($meeting);
+        $this->em->flush();
 
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
 
