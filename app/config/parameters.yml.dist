@@ -65,7 +65,7 @@ parameters:
     ocsdc_default_time_format: "H:i:s"
 
     ocsdc_scheme: 'https'
-    ocsdc_host:  localtest.me 
+    ocsdc_host:  localtest.me
 
     generate_p7m_thumbnail: true
     gsbinary: 'gs'
@@ -92,6 +92,7 @@ parameters:
       - gif: image/gif
       - p7m: application/pkcs7-mime
       - xp7m: application/x-pkcs7-mime
+      - zip: application/zip
 
     hash_validity: 1
 

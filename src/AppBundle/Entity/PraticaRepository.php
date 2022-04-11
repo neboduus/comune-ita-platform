@@ -8,6 +8,8 @@ use AppBundle\Services\JsonSelect;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use PHPStan\Process\CpuCoreCounter;
 use Ramsey\Uuid\Uuid;
 
@@ -897,7 +899,12 @@ class PraticaRepository extends EntityRepository
       ->orderBy('message.createdAt', 'DESC')
       ->setMaxResults(1);
 
-    return $qb->getQuery()->getSingleResult();
+    try {
+      return $qb->getQuery()->getSingleResult();
+    } catch (NoResultException $e) {
+    } catch (NonUniqueResultException $e) {
+      return null;
+    }
   }
 
 
