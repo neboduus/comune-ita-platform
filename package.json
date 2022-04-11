@@ -46,7 +46,7 @@
     "leaflet-draw": "^1.0.4",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-groupedlayercontrol": "^0.6.1",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "moment": "2.29.1",
     "outdated-browser-rework": "3.0.1",
     "owl.carousel": "2.3.4",
