@@ -115,7 +115,7 @@ $('#meetings_table').DataTable( {
               <td>{{ t.fiscalCode }}</td>
               <td>{{ t.phoneNumber }}</td>
               <td>{{ t.rescheduled }}</td>
-              <td>{{ t.getStatusName() }}</td>
+              <td>{{ ('meetings.' ~ t.getStatusName()) | trans }}</td>
             </tr>
           {% endfor %}
           </tbody>

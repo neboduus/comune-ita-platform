@@ -43,10 +43,10 @@ class MeetingLifeCycleListener
       if (!empty($errors)) {
         throw new ValidatorException($this->translator->trans('meetings.error.invalid_meeting') . ': ' . implode(', ', $errors));
       }
-      $dateTimeNow = new DateTime();
 
+      /*$dateTimeNow = new DateTime();
       $meeting->setUpdatedAt($dateTimeNow);
-      $meeting->setCreatedAt($dateTimeNow);
+      $meeting->setCreatedAt($dateTimeNow);*/
       $meeting->setRescheduled(0);
     }
   }
@@ -80,7 +80,7 @@ class MeetingLifeCycleListener
       if (!empty($errors)) {
         throw new ValidatorException($this->translator->trans('meetings.error.invalid_meeting') . ': ' . implode(', ', $errors));
       }
-      $meeting->setUpdatedAt(new DateTime());
+      //$meeting->setUpdatedAt(new DateTime());
 
 
       if (!$draft && ($args->hasChangedField('fromTime') || $args->hasChangedField('toTime'))) {

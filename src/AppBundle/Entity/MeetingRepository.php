@@ -45,4 +45,26 @@ class MeetingRepository extends EntityRepository
       ->getQuery()->getSingleScalarResult();
   }
 
+  public function getMeetings($parameters = [],$onlyCount = false,$order = 'createdAt', $sort = 'ASC',  $offset = 0, $limit = 10) {
+    $qb = $this->createQueryBuilder('meeting')->join('meeting.openingHour', 'openingHour');
+
+    if (isset($parameters['status'])) {
+      $qb->where('meeting.status = :status')->setParameter('status', $parameters['status']);
+    } else {
+      $qb->where('meeting.status != :status')->setParameter('status', Meeting::STATUS_DRAFT);
+    }
+
+    if ($onlyCount) {
+      $qb->select('COUNT(meeting.id)');
+      return $qb->getQuery()->getSingleScalarResult();
+    } else {
+      $qb
+        ->orderBy('meeting.' . $order, $sort)
+        ->setFirstResult($offset)
+        ->setMaxResults($limit);
+    }
+
+    return $qb->getQuery()->execute();
+  }
+
 }

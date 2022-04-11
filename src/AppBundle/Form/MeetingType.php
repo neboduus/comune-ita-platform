@@ -12,17 +12,18 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 
 class MeetingType extends AbstractType
@@ -55,66 +56,82 @@ class MeetingType extends AbstractType
       ->add('user', EntityType::class, [
         'class' => 'AppBundle\Entity\CPSUser',
         'required' => false,
-        'label' => 'meetings.labels.user'
+        'label' => 'meetings.labels.user',
       ])
       ->add('opening_hour', EntityType::class, [
         'class' => 'AppBundle\Entity\OpeningHour',
         'required' => false,
-        'label' => 'meetings.labels.opening_hour'
+        'label' => 'meetings.labels.opening_hour',
       ])
       ->add('opening_hour', EntityType::class, [
         'class' => 'AppBundle\Entity\OpeningHour',
         'required' => false,
-        'label' => 'Orario di apertura'
+        'label' => 'Orario di apertura',
       ])
       ->add('email', EmailType::class, [
         'required' => false,
-        'label' => 'meetings.labels.email'
+        'label' => 'meetings.labels.email',
       ])
       ->add('fiscal_code', TextType::class, [
         'required' => false,
-        'label' => 'meetings.labels.fiscal_code'
+        'label' => 'meetings.labels.fiscal_code',
       ])
       ->add('name', TextType::class, [
         'required' => false,
-        'label' => 'meetings.labels.name'
+        'label' => 'meetings.labels.name',
       ])
       ->add('phone_number', TelType::class, [
         'required' => false,
-        'label' => 'meetings.labels.phone_number'
+        'label' => 'meetings.labels.phone_number',
       ])
       ->add('from_time', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'meetings.labels.from_time'
+        'label' => 'meetings.labels.from_time',
       ])
       ->add('to_time', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'meetings.labels.to_time'
+        'label' => 'meetings.labels.to_time',
       ])
       ->add('status', ChoiceType::class, [
         'label' => 'meetings.labels.status',
         'required' => true,
-        'choices' => $statuses
+        'choices' => $statuses,
       ])
       ->add('user_message', TextareaType::class, [
         'required' => false,
-        'label' => 'meetings.labels.user_message'
+        'label' => 'meetings.labels.user_message',
       ])
       ->add('motivation_outcome', TextareaType::class, [
         'required' => false,
-        'label' => 'meetings.labels.motivation_outcome'
+        'label' => 'meetings.labels.motivation_outcome',
       ])
       ->add('videoconference_link', UrlType::class, [
         'required' => false,
-        'label' => 'meetings.labels.videoconference_link'
+        'label' => 'meetings.labels.videoconference_link',
       ])
       ->add('draft_expiration', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => false,
-        'label' => 'meetings.labels.draft_expiration'
+        'label' => 'meetings.labels.draft_expiration',
       ])
+      /*->add('first_available_date', DateType::class, [
+        'widget' => 'single_text',
+        'required' => false,
+      ])
+      ->add('first_available_start_time', TimeType::class, [
+        'widget' => 'single_text',
+        'required' => false,
+      ])
+      ->add('first_available_end_time', TimeType::class, [
+        'widget' => 'single_text',
+        'required' => false,
+      ])
+      ->add('first_availability_updated_at', DateTimeType::class, [
+        'widget' => 'single_text',
+        'required' => false,
+      ])*/
       ->addEventListener(FormEvents::SUBMIT, array($this, 'onSubmit'));
   }
 
@@ -131,7 +148,7 @@ class MeetingType extends AbstractType
   {
     $resolver->setDefaults(array(
       'data_class' => 'AppBundle\Entity\Meeting',
-      'csrf_protection' => false
+      'csrf_protection' => false,
     ));
   }
 

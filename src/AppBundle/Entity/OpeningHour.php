@@ -6,6 +6,7 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Swagger\Annotations as SWG;
@@ -45,6 +46,7 @@ class OpeningHour
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @SWG\Property(description="Opening Hour's uuid", type="string")
+   * @Groups({"kafka"})
    */
   private $id;
 
@@ -54,6 +56,7 @@ class OpeningHour
    *
    * @ORM\Column(name="name", type="string", length=255, nullable=true)
    * @SWG\Property(description="Opening hour's name", type="string")
+   * @Groups({"kafka"})
    */
   private $name;
 
@@ -73,6 +76,7 @@ class OpeningHour
    * @Assert\NotBlank(message="Questo campo è obbligatorio (startDate)")
    * @Assert\LessThanOrEqual(propertyPath="endDate", message="La data di inizio deve essere minore della data di fine")
    * @SWG\Property(description="Opening Hour's start date")
+   * @Groups({"kafka"})
    */
   private $startDate;
 
@@ -83,6 +87,7 @@ class OpeningHour
    * @Assert\NotBlank(message="Questo campo è obbligatorio (endDate)")
    * @Assert\GreaterThanOrEqual(propertyPath="startDate",  message="La data di fine deve essere maggiore della data di inizio")
    * @SWG\Property(description="Opening Hour's end date")
+   * @Groups({"kafka"})
    */
   private $endDate;
 
@@ -91,6 +96,7 @@ class OpeningHour
    *
    * @ORM\Column(name="days_of_week", type="array")
    * @SWG\Property(description="Opening Hour's days of week: 1:Monday - 7:Sunday", type="array", type="array", @SWG\Items(type="integer"))
+   * @Groups({"kafka"})
    */
   private $daysOfWeek;
 
@@ -102,6 +108,7 @@ class OpeningHour
    * @Assert\LessThan(propertyPath="endHour",  message="L'orario di inizio deve essere minore dell'orario di fine")
    * @SWG\Property(description="Opening Hour's begin hour")
    * @Serializer\Type("DateTime<'H:i'>")
+   * @Groups({"kafka"})
    */
   private $beginHour;
 
@@ -113,6 +120,7 @@ class OpeningHour
    * @Assert\GreaterThan(propertyPath="beginHour",  message="L'orario di fine deve essere maggiore dell'orario di inizio")
    * @SWG\Property(description="Opening Hour's end hour")
    * @Serializer\Type("DateTime<'H:i'>")
+   * @Groups({"kafka"})
    */
   private $endHour;
 
@@ -121,6 +129,7 @@ class OpeningHour
    *
    * @ORM\Column(name="is_moderated", type="boolean", options={"default" : 0})
    * @SWG\Property(description="Calendar's moderation mode", type="boolean")
+   * @Groups({"kafka"})
    */
   private $isModerated;
 
@@ -130,6 +139,7 @@ class OpeningHour
    * @ORM\Column(name="meeting_minutes", type="integer",options={"default" : 30})
    * @Assert\NotBlank(message="Questo campo è obbligatorio (meetingMinutes)")
    * @SWG\Property(description="Opening Hour's meeting minutes", type="integer")
+   * @Groups({"kafka"})
    */
   private $meetingMinutes;
 
@@ -138,6 +148,7 @@ class OpeningHour
    *
    * @ORM\Column(name="interval_minutes", type="integer",options={"default" : 0}, nullable=true)
    * @SWG\Property(description="Opening Hour's interval minutes between meetings", type="integer")
+   * @Groups({"kafka"})
    */
   private $intervalMinutes;
 
@@ -154,18 +165,21 @@ class OpeningHour
    * @Assert\GreaterThanOrEqual(1)
    * @Assert\NotNull(message="Questo valore è obbligatorio (meetingQueue)")
    * @SWG\Property(description="Opening Hour's meeting queue", type="integer")
+   * @Groups({"kafka"})
    */
   private $meetingQueue = 1;
 
   /**
    * @ORM\Column(type="datetime")
    * @SWG\Property(description="Calendar's creation date")
+   * @Groups({"kafka"})
    */
   private $createdAt;
 
   /**
    * @ORM\Column(type="datetime")
    * @SWG\Property(description="Calendar's last modified date")
+   * @Groups({"kafka"})
    */
   private $updatedAt;
 

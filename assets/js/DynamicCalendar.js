@@ -18,6 +18,10 @@ export default class FormioCalendar extends Base {
     this.meeting_expiration_time = null;
     this.opening_hour = null;
     this.min_duration = null;
+    this.first_available_date = null;
+    this.first_available_start_time = null;
+    this.first_available_end_time = null;
+    this.first_availability_updated_at = null;
     this.loaderTpl = '<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span></div>';
   }
 
@@ -129,6 +133,8 @@ export default class FormioCalendar extends Base {
             self.container.find('.date-picker').append(self.loaderTpl);
           },
           success: function (data, status, xhr) {   // success callback function
+            self.getFirstAvailableSlot(data);
+
             $('#loader').remove();
             self.calendar = self.container.find('.date-picker').datepicker({
               minDate: new Date(data.sort((a, b) => a.date.localeCompare(b.date))[0]),
@@ -236,6 +242,40 @@ export default class FormioCalendar extends Base {
     if (self.meeting_expiration_time) {
       let expiration = `${self.meeting_expiration_time.format("DD/MM/YYYY")} alle ore ${self.meeting_expiration_time.format("HH:mm")}`;
       $('#draft-expiration').html(`<i>Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno ${expiration}. Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati</i>`)
+    }
+  }
+
+  /**
+   * Get first available slot from calendar
+   * @param availabilities
+   */
+  getFirstAvailableSlot(availabilities) {
+    availabilities = availabilities.sort((a, b) => a.date.localeCompare(b.date));
+    $(availabilities).each((i, e) => {
+      if (e.available) {
+        this.first_available_date = e.date;
+        return false;
+      }
+    });
+    if (this.first_available_date !== null) {
+      let self = this,
+        calendarID = this.component.calendarId,
+        location = window.location,
+        explodedPath = location.pathname.split("/");
+
+      $.ajax(`${location.origin}/${explodedPath[1]}/api/calendars/${calendarID}/availabilities/${this.first_available_date}?available=true`,
+        {
+          dataType: 'json',
+          success: function (data, status, xhr) {   // success callback function
+            let slot = data[0];
+            self.first_available_start_time = slot.start_time;
+            self.first_available_end_time = slot.end_time;
+            self.first_availability_updated_at= moment().format()
+          },
+          error: function (jqXhr, textStatus, errorMessage) { // error callback
+            console.log('Impossibile selezionare prima disponibilità')
+          }
+        });
     }
   }
 
@@ -432,7 +472,11 @@ export default class FormioCalendar extends Base {
           "slot": self.slot,
           "calendar": this.component.calendarId,
           "opening_hour": self.opening_hour,
-          "meeting": self.meeting
+          "meeting": self.meeting,
+          "first_available_date": self.first_available_date,
+          "first_available_start_time": self.first_available_start_time,
+          "first_available_end_time": self.first_available_end_time,
+          "first_availability_updated_at": self.first_availability_updated_at,
         },
         dataType: 'json', // type of response data
         success: function (data, status, xhr) {   // success callback function

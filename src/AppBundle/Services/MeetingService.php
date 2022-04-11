@@ -8,6 +8,8 @@ use AppBundle\Entity\Calendar;
 use AppBundle\Entity\Meeting;
 use AppBundle\Entity\OpeningHour;
 use AppBundle\Entity\Pratica;
+use AppBundle\Entity\Servizio;
+use AppBundle\Event\KafkaEvent;
 use DateInterval;
 use DatePeriod;
 use DateTime;
@@ -15,6 +17,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -50,15 +53,30 @@ class MeetingService
    * @var LoggerInterface
    */
   private $logger;
+  /**
+   * @var EventDispatcherInterface
+   */
+  private $dispatcher;
 
 
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param InstanceService $instanceService
+   * @param MailerService $mailer
+   * @param $defaultSender
+   * @param TranslatorInterface $translator
+   * @param UrlGeneratorInterface $router
+   * @param LoggerInterface $logger
+   * @param EventDispatcherInterface $dispatcher
+   */
   public function __construct(
     EntityManagerInterface $entityManager,
     InstanceService        $instanceService,
     MailerService          $mailer, $defaultSender,
     TranslatorInterface    $translator,
     UrlGeneratorInterface  $router,
-    LoggerInterface        $logger
+    LoggerInterface        $logger,
+    EventDispatcherInterface $dispatcher
   )
   {
     $this->entityManager = $entityManager;
@@ -68,10 +86,23 @@ class MeetingService
     $this->translator = $translator;
     $this->router = $router;
     $this->logger = $logger;
+    $this->dispatcher = $dispatcher;
   }
 
   /**
-   * Cheks if given slot is available
+   * @param Meeting $meeting
+   */
+  public function save(Meeting $meeting, $flush = true)
+  {
+    $this->entityManager->persist($meeting);
+    if ($flush) {
+      $this->entityManager->flush();
+    }
+    $this->dispatcher->dispatch(KafkaEvent::NAME, new KafkaEvent($meeting));
+  }
+
+  /**
+   * Checks if given slot is available
    * @param Meeting $meeting
    *
    * @return bool
