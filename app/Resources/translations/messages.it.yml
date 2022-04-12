@@ -861,7 +861,7 @@ operatori:
     anonymous: 'Questa funzionalità non è disponibile agli utenti anonimi'
     no_operator: 'Non è possibile inviare o ricevere messaggi finchè la pratica non viene presa in carico da un operatore'
     allega_label: "Documenti allegati"
-    allega_help: "Allega eventuali documenti in formato pdf, jpg, jpeg o p7m"
+    allega_help: "Allega eventuali documenti in formato pdf, zip, jpg, jpeg o p7m"
     aggiungi_nota_privata: 'Aggiungi nota interna'
     invia: 'Invia messaggio'
     non_disponibile_anonimo: 'Funzionalità non dispobibile per gli utenti anonimi'
@@ -919,7 +919,7 @@ operatori:
         esito_help: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al/il cittadino"
         payment_amount_help: "Se già presente, l'importo è stato calcolato nel modulo o dalle impostazioni del servizio. Se necessario, si può inserire un importo diverso impostando il valore 0 l'utente sarà esentato dal pagamento e la pratica verrà direttamente approvata."
         allega_label: "Documenti allegati"
-        allega_help: "Allega eventuali documenti in formato pdf, jpg, jpeg o p7m"
+        allega_help: "Allega eventuali documenti in formato pdf, zip, jpg, jpeg o p7m"
     upload_risposta_firmata:
       testo_descrittivo: 'Scarica la risposta dal seguente <strong><a href="%link_download_risposta%">link</a></strong> e ricaricala firmata digitalmente <hr/>'
       guida_alla_compilazione: 'Scarica la risposta da firmare digitalmente'
