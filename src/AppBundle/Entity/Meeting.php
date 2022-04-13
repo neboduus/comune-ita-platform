@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use _PHPStan_76800bfb5\Symfony\Component\Console\Application;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -323,11 +324,23 @@ class Meeting
    */
   public function getApplicationIdKafka(): ?string
   {
-    $applicationId = null;
+    return $this->getApplicationId();
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("service_id")
+   * @Groups({"kafka"})
+   */
+  public function getServiceId(): ?string
+  {
     if ($this->getApplications()->count() > 0) {
-      $applicationId = $this->getApplications()->last()->getId();
+      /** @var Pratica $application */
+      $application = $this->getApplications()->last();
+      return $application->getServizio()->getId();
     }
-    return $applicationId;
+    return null;
   }
 
   /**
