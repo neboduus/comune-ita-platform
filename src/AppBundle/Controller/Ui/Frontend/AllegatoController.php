@@ -452,6 +452,10 @@ class AllegatoController extends Controller
     $uploadedFile = $request->files->get('file');
     if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions)) {
       if (!in_array($uploadedFile->getClientMimeType(), $this->allowedExtensions)) {
+        $this->logger->error('mime_type_invalid', [
+          'mime_type' => $uploadedFile->getMimeType(),
+          'client_mime_type' => $uploadedFile->getClientMimeType(),
+        ]);
         return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
       }
     }
@@ -508,6 +512,10 @@ class AllegatoController extends Controller
 
     if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions)) {
       if (!in_array($uploadedFile->getClientMimeType(), $this->allowedExtensions)) {
+        $this->logger->error('mime_type_invalid', [
+          'mime_type' => $uploadedFile->getMimeType(),
+          'client_mime_type' => $uploadedFile->getClientMimeType(),
+        ]);
         return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
       }
     }
