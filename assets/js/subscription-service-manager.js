@@ -61,8 +61,12 @@ $(document).ready(function () {
 
   // On subscriptions end date change, change all subription fee payments due date
   $('#appbundle_subscriptionservice_subscription_end').on('change', function () {
+
     $('.due-date input').each(function (index, item) {
-      $(item).val($('#appbundle_subscriptionservice_subscription_end').val());
+      let paymentItem = item.closest('.js-payment-item');
+      if ($(paymentItem).find('.type_subscription_fee').first().prop('checked')) {
+        $(item).val($('#appbundle_subscriptionservice_subscription_end').val());
+      }
     });
   })
 
