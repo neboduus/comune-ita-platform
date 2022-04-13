@@ -70,6 +70,7 @@ parameters:
     - gif: image/gif
     - p7m: application/pkcs7-mime
     - xp7m: application/x-pkcs7-mime
+    - p7c: application/pkcs7
     - zip: application/zip
   token_ttl: '%env(TOKEN_TTL)%'
   recaptcha_key: '%env(RECAPTCHA_KEY)%'

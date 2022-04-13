@@ -92,6 +92,7 @@ parameters:
       - gif: image/gif
       - p7m: application/pkcs7-mime
       - xp7m: application/x-pkcs7-mime
+      - p7c: application/pkcs7
       - zip: application/zip
 
     hash_validity: 1
