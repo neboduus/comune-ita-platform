@@ -160,7 +160,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       }
       try {
         foreach ($linkedMeetings as $meeting) {
-          $this->em->persist($meeting);
+          $this->meetingService->save($meeting);
         }
         $this->em->flush();
         return $_meeting;
@@ -262,10 +262,9 @@ class CalendarsBackOffice implements BackOfficeInterface
       else
         $meeting->setStatus(Meeting::STATUS_APPROVED);
 
-      $this->em->persist($meeting);
-
+      $this->meetingService->save($meeting);
       $pratica->addMeeting($meeting);
-      $this->em->persist($meeting);
+      $this->em->persist($pratica);
       $this->em->flush();
 
       return $meeting;
