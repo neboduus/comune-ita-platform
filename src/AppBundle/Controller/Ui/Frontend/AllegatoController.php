@@ -450,7 +450,7 @@ class AllegatoController extends Controller
     }
 
     $uploadedFile = $request->files->get('file');
-    if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions)) {
+    if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions) || !array_key_exists($uploadedFile->getClientOriginalExtension(),$this->allowedExtensions)) {
       if (!in_array($uploadedFile->getClientMimeType(), $this->allowedExtensions)) {
         return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
       }
@@ -506,11 +506,12 @@ class AllegatoController extends Controller
     /** @var UploadedFile $uploadedFile */
     $uploadedFile = $request->files->get('file');
 
-    if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions)) {
+    if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions) || !array_key_exists($uploadedFile->getClientOriginalExtension(),$this->allowedExtensions)) {
       if (!in_array($uploadedFile->getClientMimeType(), $this->allowedExtensions)) {
         return new JsonResponse($this->translator->trans(ValidMimeType::TRANSLATION_ID), Response::HTTP_BAD_REQUEST);
       }
     }
+
 
     $allegato = new AllegatoMessaggio();
     $allegato->setOriginalFilename($uploadedFile->getClientOriginalName());
