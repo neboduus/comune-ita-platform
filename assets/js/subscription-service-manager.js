@@ -299,7 +299,6 @@ $(document).ready(function () {
     let data = identifier_el.attr('data-payment');
     if (data) {
       data = JSON.parse(data);
-        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_date`).val(moment(data["date"]).format("YYYY-MM-DD"))
         $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_amount`).val(data["amount"])
         $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_identifier`).val(data["payment_identifier"])
         $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_reason`).val(data["payment_reason"])
@@ -307,6 +306,7 @@ $(document).ready(function () {
         $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_create_draft`).prop('checked', data["create_draft"])
         $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_meta`).text(JSON.stringify(data["meta"]))
         $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_type`).find(`.type_${data["type"]}`).first().prop('checked', true).change();
+        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_date`).val(moment(data["date"]).format("YYYY-MM-DD"))
     }
   })
 
