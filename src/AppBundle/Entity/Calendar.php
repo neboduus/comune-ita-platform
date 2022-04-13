@@ -62,7 +62,7 @@ class Calendar
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @SWG\Property(description="Calendar's uuid", type="string")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $id;
 
@@ -81,7 +81,7 @@ class Calendar
    * @ORM\Column(name="title", type="string", length=255, unique=true)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (title)")
    * @SWG\Property(description="Calendar's title", type="string")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $title;
 
@@ -91,7 +91,7 @@ class Calendar
    * @ORM\Column(name="type", type="string", length=255, options={"default" : Calendar::TYPE_TIME_FIXED})
    * @Assert\Choice(choices=Calendar::CALENDAR_TYPES, message="Choose a valid type.")
    * @SWG\Property(description="Calendar's slots type", type="string")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $type = self::TYPE_TIME_FIXED;
 
@@ -101,7 +101,7 @@ class Calendar
    * @ORM\Column(name="contact_email", type="string", length=255, nullable=true)
    * @Assert\Email(message="Email non valida")
    * @SWG\Property(description="Calendar's contact email", type="string")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $contactEmail;
 
@@ -111,7 +111,7 @@ class Calendar
    * @ORM\Column(name="rolling_days", type="integer")
    * @Assert\LessThanOrEqual(message="Maximum window is 180 days", value=180)
    * @SWG\Property(description="Calendar's rolling days", type="integer")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $rollingDays;
 
@@ -145,7 +145,7 @@ class Calendar
    *     "this.getRollingDays() * 24 > value",
    *     message="Must be less than rolling days"
    * )
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $minimumSchedulingNotice;
 
@@ -154,7 +154,7 @@ class Calendar
    *
    * @ORM\Column(name="allow_cancel_days", type="integer", nullable=true)
    * @SWG\Property(description="Calendar's minimum days to allow cancel", type="integer")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $allowCancelDays;
 
@@ -164,7 +164,7 @@ class Calendar
    *
    * @ORM\Column(name="allow_overlaps", type="boolean", options={"default" : 0})
    * @SWG\Property(description="Allow calendar's opening hours overlaps", type="boolean")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $allowOverlaps;
 
@@ -173,7 +173,7 @@ class Calendar
    *
    * @ORM\Column(name="is_moderated", type="boolean")
    * @SWG\Property(description="Calendar's moderation mode", type="boolean")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $isModerated;
 
@@ -201,14 +201,14 @@ class Calendar
    * @ORM\Column(name="location", type="text")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (location)")
    * @SWG\Property(description="Calendar's location", type="string")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $location;
 
   /**
    * @ORM\Column(name="external_calendars", type="json", nullable=true)
    * @SWG\Property(description="Calendar's external calendars", type="array", @SWG\Items(ref=@Model(type=ExternalCalendar::class)))
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $externalCalendars;
 
@@ -217,21 +217,21 @@ class Calendar
    *
    * @ORM\Column(name="closing_periods", type="json", nullable=true)
    * @SWG\Property(description="Calendar's closing periods", type="array", @SWG\Items(ref=@Model(type=DateTimeInterval::class)))
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $closingPeriods;
 
   /**
    * @ORM\Column(type="datetime")
    * @SWG\Property(description="Calendar's creation date")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $createdAt;
 
   /**
    * @ORM\Column(type="datetime")
    * @SWG\Property(description="Calendar's last modified date")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   private $updatedAt;
 
@@ -338,12 +338,23 @@ class Calendar
   }
 
   /**
-   * @Serializer\VirtualProperty(name="owner")
+   * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("owner")
-   * @Groups({"kafka"})
+   * @Groups({"read"})
    */
   public function getOwnerId(): string
+  {
+    return $this->owner->getId();
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("owner_id")
+   * @Groups({"kafka"})
+   */
+  public function getOwnerIdKafka(): string
   {
     return $this->owner->getId();
   }
@@ -564,16 +575,27 @@ class Calendar
    * @Serializer\Type("array")
    * @SWG\Items(type="string")
    * @Serializer\SerializedName("moderators")
-   * @Groups({"kafka"})
+   * @Groups({"read"})
    */
   public function getModeratorsId(): array
   {
     $moderators = [];
-    foreach ($this->getModerators() as $moderator)
-    {
+    foreach ($this->getModerators() as $moderator) {
       $moderators[] = $moderator->getId();
     }
     return $moderators;
+  }
+
+  /**
+   * @Serializer\VirtualProperty(name="moderator_ids")
+   * @Serializer\Type("array")
+   * @SWG\Items(type="string")
+   * @Serializer\SerializedName("moderator_ids")
+   * @Groups({"kafka"})
+   */
+  public function getModeratorsIdKafka(): array
+  {
+    return $this->getModeratorsId();
   }
 
   /**
@@ -625,7 +647,7 @@ class Calendar
    * @Serializer\VirtualProperty(name="opening_hours")
    * @Serializer\Type("array<array>")
    * @Serializer\SerializedName("opening_hours")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   public function getOpeningHoursList(): array
   {
@@ -779,7 +801,7 @@ class Calendar
    * @Serializer\VirtualProperty(name="drafts_duration")
    * @Serializer\Type("int")
    * @Serializer\SerializedName("drafts_duration")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   public function getDraftDurationInMinutes()
   {
@@ -790,7 +812,7 @@ class Calendar
    * @Serializer\VirtualProperty(name="drafts_duration_increment")
    * @Serializer\Type("int")
    * @Serializer\SerializedName("drafts_duration_increment")
-   * @Groups({"kafka"})
+   * @Groups({"read", "kafka"})
    */
   public function getDraftDurationIncrementInDays()
   {

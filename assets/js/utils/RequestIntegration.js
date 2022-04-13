@@ -30,7 +30,7 @@ class RequestIntegration {
     const self = this;
     let data = this.getSelectedMessages();
     console.log(data);
-    self.els.$submitBtn.html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Invio integrazioni...');
+    self.els.$submitBtn.html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Salvataggio...');
 
     $.ajax({
       url: self.els.$triggerBtn.data('url'),
