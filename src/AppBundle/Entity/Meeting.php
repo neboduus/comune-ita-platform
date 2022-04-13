@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use _PHPStan_76800bfb5\Symfony\Component\Console\Application;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\LifecycleEventArgs;
