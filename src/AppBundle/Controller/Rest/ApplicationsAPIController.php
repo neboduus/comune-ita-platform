@@ -1979,7 +1979,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
           if (!Uuid::isValid($id)) {
             throw new Exception("$id not is a valid Uuid");
           }
-          $message = $messageRepository->findBy([
+          $message = $messageRepository->findOneBy([
             'id' => $id,
             'application' => $application->getId()
           ]);

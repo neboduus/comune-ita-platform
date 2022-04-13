@@ -63,7 +63,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     description="Retrieve list of calendars",
    *     @SWG\Schema(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Calendar::class))
+   *         @SWG\Items(ref=@Model(type=Calendar::class, groups={"read"}))
    *     )
    * )
    *
@@ -101,7 +101,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Calendar",
-   *     @Model(type=Calendar::class)
+   *     @Model(type=Calendar::class, groups={"read"})
    * )
    *
    * @SWG\Response(
