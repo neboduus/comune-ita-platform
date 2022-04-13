@@ -154,7 +154,7 @@ class KafkaService implements ScheduledActionHandlerInterface
 
     // Todo: va creato un registry con i mapper delle singole entità
     if ($item instanceof Pratica) {
-      $content = $this->applicationDto->fromEntity($item);
+      $content = $this->applicationDto->fromEntity($item, $this->kafkaEventVersion);
       $topic = $this->topics['applications'];
     } elseif ($item instanceof Servizio) {
       $content = Service::fromEntity($item, $this->formServerApiAdapterService->getFormServerPublicUrl());
@@ -173,7 +173,7 @@ class KafkaService implements ScheduledActionHandlerInterface
 
     $data = json_decode($this->serializer->serialize($content, 'json', $context), true);
 
-    // todo: fix veloce, prevedere tenaant_id nelle entità per il multi tenant
+    // todo: fix veloce, prevedere tenant_id nelle entità per il multi tenant
     if (!isset($data['tenant_id'])) {
       $data['tenant_id'] = $this->instanceService->getCurrentInstance()->getId();
     }
