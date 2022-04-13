@@ -861,7 +861,7 @@ operatori:
     anonymous: 'Questa funzionalità non è disponibile agli utenti anonimi'
     no_operator: 'Non è possibile inviare o ricevere messaggi finchè la pratica non viene presa in carico da un operatore'
     allega_label: "Documenti allegati"
-    allega_help: "Allega eventuali documenti in formato pdf, zip, jpg, jpeg o p7m"
+    allega_help: "Allega eventuali documenti in uno dei seguenti formati: doc, docx, odt, pdf, txt, jpeg, png, gif, p7m, xp7m, zip."
     aggiungi_nota_privata: 'Aggiungi nota interna'
     invia: 'Invia messaggio'
     non_disponibile_anonimo: 'Funzionalità non dispobibile per gli utenti anonimi'
@@ -919,7 +919,7 @@ operatori:
         esito_help: "Utilizza questo campo per aggiungere una motivazione o dare indicazioni specifiche al/il cittadino"
         payment_amount_help: "Se già presente, l'importo è stato calcolato nel modulo o dalle impostazioni del servizio. Se necessario, si può inserire un importo diverso impostando il valore 0 l'utente sarà esentato dal pagamento e la pratica verrà direttamente approvata."
         allega_label: "Documenti allegati"
-        allega_help: "Allega eventuali documenti in formato pdf, zip, jpg, jpeg o p7m"
+        allega_help: "Allega eventuali documenti in uno dei seguenti formati: doc, docx, odt, pdf, txt, jpeg, png, gif, p7m, xp7m, zip."
     upload_risposta_firmata:
       testo_descrittivo: 'Scarica la risposta dal seguente <strong><a href="%link_download_risposta%">link</a></strong> e ricaricala firmata digitalmente <hr/>'
       guida_alla_compilazione: 'Scarica la risposta da firmare digitalmente'
@@ -946,7 +946,7 @@ allegato:
   scarica_allegato_in_attesa_di_protocollazione: 'Scarica file inviato alla protocollazione'
   scarica_allegato_richiesta_integrazione: "Scarica file contenente la richiesta  d'integrazione"
   crea_allegato: 'Carica un allegato'
-  non_supportato: 'Il file che stai cercando di caricare non è di un tipo supportato. I tipi supportati sono pdf, jpg, jpeg, gif, png, p7m'
+  non_supportato: "Il file che stai cercando di caricare non e' di un tipo supportato. I tipi supportati sono doc, docx, odt, pdf, txt, jpeg, png, gif, p7m, xp7m, zip."
   guida_alla_compilazione:
     crea: 'Seleziona il file da caricare. Deve essere una immagine (png bmp gif jpg) o un file pdf. Dai al file una descrizione che ti aiuti a identificarlo'
   non_cancellabile: 'Questo allegato è presente in moduli correttamente inviati e perciò non è cancellabile'
@@ -1781,7 +1781,7 @@ steps:
           description: parere/autorizzazione per interventi ricadenti nelle fasce di rispetto di altro tipo
         VIN_IMPIANTI:
           title: ''
-          description: telecomunicazioni	autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
+          description: telecomunicazioni autorizzazione per la realizzazione di impianti di telecomunicazione ai sensi della l.p. n. 9/1997
         VIN_PREVENZIONE_INCENDI:
           title: ''
           description: parere di prevenzione incendi per attività soggetti ai sensi del dpr 151/2001
