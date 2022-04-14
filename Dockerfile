@@ -9,7 +9,8 @@ COPY package.json package.json yarn.lock yarn.lock webpack.config.js ./
 RUN yarn install
 
 COPY assets ./assets
-RUN yarn encore production
+RUN npx browserslist@latest --update-db && \
+    yarn encore production
 RUN ls -l web
 
 # prepare the vendor dir for symfony
