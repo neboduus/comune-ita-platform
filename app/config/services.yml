@@ -569,6 +569,7 @@ services:
       $kafkaUrl: "%kafka_url%"
       $kafkaEventVersion: "%kafka_event_version%"
       $topics: "%kafka_topics%"
+      $kafkaRequestTimeout: "%kafka_request_timeout%"
 
   ocsdc.kafka_service: '@AppBundle\Services\KafkaService'
 

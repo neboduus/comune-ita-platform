@@ -159,6 +159,7 @@ parameters:
     deda_login_env: 'prod'
     kafka_url: null
     kafka_event_version: 1
+    kafka_request_timeout: 2
     kafka_topics:
       applications: 'applications'
       services: 'services'
