@@ -22,6 +22,7 @@ class ProduceKafkaMessagesCommand extends ContainerAwareCommand
   {
     $this
       ->setName('ocsdc:kafka:produce-messages')
+      ->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Id of the application')
       ->addOption('date', null, InputOption::VALUE_OPTIONAL, 'If specified, only applications with an update date before to the date entered will be considered. Format yyyy-mm-dd')
       ->addOption('dry-run', null, InputOption::VALUE_NONE, 'Dry run')
       ->setDescription('Produce kafka messages from applications');
@@ -32,6 +33,7 @@ class ProduceKafkaMessagesCommand extends ContainerAwareCommand
 
     $this->symfonyStyle = new SymfonyStyle($input, $output);
 
+    $id = $input->getOption('id');
     $date = $input->getOption('date');
     $dryRun = $input->getOption('dry-run');
 
@@ -52,6 +54,11 @@ class ProduceKafkaMessagesCommand extends ContainerAwareCommand
       ->from('AppBundle:Pratica', 'pratica')
       ->where('pratica.status NOT IN (:status)')
       ->setParameter('status', $notAllowedStatuses);
+
+    if (!empty($id)) {
+      $qb->andWhere('pratica.id = :id')
+        ->setParameter('id', $id);
+    }
 
     if ($date instanceof DateTime) {
       $qb->andWhere('pratica.updated_at <= :date')
