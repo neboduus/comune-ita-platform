@@ -157,6 +157,9 @@ class KafkaService implements ScheduledActionHandlerInterface
       return;
     }
 
+    $context = new SerializationContext();
+    $context->setSerializeNull(true);
+
     // Todo: va creato un registry con i mapper delle singole entità
     if ($item instanceof Pratica) {
       $content = $this->applicationDto->fromEntity($item, $this->kafkaEventVersion);
@@ -165,16 +168,13 @@ class KafkaService implements ScheduledActionHandlerInterface
       $content = Service::fromEntity($item, $this->formServerApiAdapterService->getFormServerPublicUrl());
       $topic = $this->topics['services'];
     } elseif ($item instanceof Meeting) {
+      $context->setGroups('kafka');
       $content = $item;
       $topic = $this->topics['meetings'];
     } else {
       $topic = 'default';
       $content = $item;
     }
-
-    $context = new SerializationContext();
-    $context->setGroups('kafka');
-    $context->setSerializeNull(true);
 
     $data = json_decode($this->serializer->serialize($content, 'json', $context), true);
 
