@@ -71,6 +71,8 @@ class KafkaService implements ScheduledActionHandlerInterface
    */
   private $instanceService;
 
+  private $kafkaRequestTimeout;
+
   /**
    * WebhookService constructor.
    * @param ScheduleActionService $scheduleActionService
@@ -84,6 +86,7 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @param $kafkaUrl
    * @param $kafkaEventVersion
    * @param $topics
+   * @param $kafkaRequestTimeout
    */
   public function __construct(
     ScheduleActionService $scheduleActionService,
@@ -96,7 +99,8 @@ class KafkaService implements ScheduledActionHandlerInterface
     InstanceService $instanceService,
     $kafkaUrl,
     $kafkaEventVersion,
-    $topics
+    $topics,
+    $kafkaRequestTimeout
   )
   {
     $this->scheduleActionService = $scheduleActionService;
@@ -110,6 +114,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     $this->formServerApiAdapterService = $formServerApiAdapterService;
     $this->applicationDto = $applicationDto;
     $this->instanceService = $instanceService;
+    $this->kafkaRequestTimeout = $kafkaRequestTimeout;
   }
 
 
@@ -221,7 +226,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     );
 
     /** @var GuzzleResponse $response */
-    $response = $client->send($request, ['timeout' => 2]);
+    $response = $client->send($request, ['timeout' => $this->kafkaRequestTimeout]);
 
     $this->logger->info('KAFKA-EVENT', $params);
 
