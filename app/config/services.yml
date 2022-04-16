@@ -1136,11 +1136,10 @@ services:
 
   ocsdc.instance_service: '@AppBundle\Services\InstanceService'
 
-  ocsdc.version_service:
-    class: AppBundle\Services\VersionService
+  AppBundle\Services\VersionService:
     autowire: true
-
-  AppBundle\Services\VersionService: "@ocsdc.version_service"
+    arguments:
+      $version: "%version%"
 
   ocsdc.form.flow.occupazionesuolopubblico:
     class: AppBundle\Form\OccupazioneSuoloPubblico\OccupazioneSuoloPubblicoFlow
