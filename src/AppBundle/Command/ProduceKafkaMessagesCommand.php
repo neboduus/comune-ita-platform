@@ -33,6 +33,10 @@ class ProduceKafkaMessagesCommand extends ContainerAwareCommand
 
     $this->symfonyStyle = new SymfonyStyle($input, $output);
 
+    $context = $this->getContainer()->get('router')->getContext();
+    $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
+    $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
+
     $id = $input->getOption('id');
     $date = $input->getOption('date');
     $dryRun = $input->getOption('dry-run');
