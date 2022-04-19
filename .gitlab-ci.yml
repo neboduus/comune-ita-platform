@@ -201,7 +201,7 @@ renovate:
     RENOVATE_IGNORE_PR_AUTHOR: "true"
     RENOVATE_TOKEN: $RENOVATE_TOKEN
     RENOVATE_EXTENDS: "github>whitesource/merge-confidence:beta"
-    RENOVATE_LOG_FILE: renovate-log.ndjson
+    RENOVATE_LOG_FILE: /tmp/renovate-log.json
     RENOVATE_LOG_FILE_LEVEL: debug
     LOG_LEVEL: info
     DOCKER_DRIVER: overlay2
@@ -218,11 +218,11 @@ renovate:
       - renovate/cache/renovate/repository/**/*.json
   only:
     - master
-  #artifacts:
-  #  when: always
-  #  expire_in: 1d
-  #  paths:
-  #    - '$RENOVATE_LOG_FILE'
+  artifacts:
+    when: always
+    expire_in: 1d
+    paths:
+      - '$RENOVATE_LOG_FILE'
 
 
 
