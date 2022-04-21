@@ -37,6 +37,11 @@ class Form {
         }
       })
         .then(function (form) {
+
+          form.formReady.then(() => {
+           Form.checkWizardNavCancelButton()
+          });
+
           if (form.hasOwnProperty('wizard')) {
             $('.craue_formflow_current_step.active').addClass('wizard');
           }
@@ -110,6 +115,7 @@ class Form {
       }).then(function (form) {
         form.formReady.then(() => {
           setTimeout(disableApplicant, 1000);
+          Form.checkWizardNavCancelButton();
 
           const draftButton = $('#save-draft');
           const draftInfo = $('.save-draft-info');
@@ -233,9 +239,15 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         readOnly: true,
+        buttonSettings: {
+          showCancel: false
+        }
         //renderMode: 'html'
       })
         .then(function (form) {
+          form.formReady.then(() => {
+           Form.checkWizardNavCancelButton()
+          });
           // Recupero i dati della pratica se presenti
           if ($('#formio_render_dematerialized_forms').val() != '') {
             form.submission = {
@@ -256,7 +268,14 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         readOnly: false,
+        buttonSettings: {
+          showCancel: false
+        }
         //renderMode: 'html'
+      }).then(function (form) {
+        form.formReady.then(() => {
+          Form.checkWizardNavCancelButton();
+        });
       });
     });
   }
@@ -304,6 +323,13 @@ class Form {
     // Init form summary
     if ($('#' + containerId + '.formio-summary').length > 0) {
       this.initSummary(containerId);
+    }
+  }
+
+  static checkWizardNavCancelButton(){
+    // Check if Cancel button is shown
+    if($('.btn-wizard-nav-cancel').length > 0) {
+      $('.btn-wizard-nav-cancel').attr('type','button')
     }
   }
 
