@@ -12,7 +12,7 @@
   <script>
     // Datatable
     $('#payments-table').DataTable({
-      "order": [[2, "desc"]],
+      "order": [[3, "desc"]],
       columnDefs: [
         {orderable: true, targets: 0},
         {orderable: true, targets: 1},
@@ -88,7 +88,7 @@
                   <td>{{ payment.subscription.subscriber.name }} {{ payment.subscription.subscriber.surname }}</td>
                   <td>{{ payment.subscription.subscriber.fiscalCode }}</td>
                   <td>{{ payment.description }}</td>
-                  <td>{{ payment.paymentDate | date('Y-m-d') }}</td>
+                  <td>{% if payment.paymentDate %}{{ payment.paymentDate | date('Y-m-d') }}{% endif %}</td>
                   <td>{{ payment.amount }} €</td>
                   <td>
                     {{ include('@App/SubscriptionServices/table/_paymentActions.html.twig', {'payment': payment}) }}
