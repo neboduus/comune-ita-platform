@@ -11,6 +11,7 @@ registrati_per_accedere_al_servizio: 'Service is reserved to logged in users'
 servizi_pending: 'Services with submitted applications'
 esplora_i_servizi: 'Explore services'
 servizi_primo_piano: 'Main services'
+tutti_i_servizi: 'All services'
 lista_pratiche: 'My applications'
 bozze_servizio: 'Draft applications for this service'
 msg_bozze_servizio: 'Attention, there are some practices to be filled in for the selected service.'
@@ -35,7 +36,6 @@ operatore: "Operator"
 credits: "The Stanza del cittadino is an experimental project initiative of %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Update your e-mail to continue'
-practice_of: 'Pratice of'
 nav:
   home: 'Homepage'
   dashboard: 'My room'
@@ -53,37 +53,37 @@ nav:
     protocollo: 'Protocol Configuration'
     usage: 'Statistics'
   admin:
-    impostazioni_istanza: 'Impostazioni'
-    impostazioni_istanza_descrizione: "Configurazioni generali dell'ente"
-    ente: 'Ente'
-    categorie: 'Categorie'
-    operatori: 'Operatori'
-    servizi: 'Servizi'
-    servizi_descrizione: 'Gestione dei servizi'
-    operatori_descrizione: 'Gestione degli operatori'
-    gruppo_servizi: 'Gruppo di servizi'
-    gruppo_servizi_descrizione: 'Gestione dei gruppi di servizi'
-    webhook: 'Webhook'
-    webhook_descrizione: 'Gestione dei webhook'
-    metodi_pagamento: 'Metodi di pagamento'
-    strumenti: 'Strumenti'
-    azioni_programmate: 'Azioni programmate'
-    azioni_programmate_descrizione: 'Visualizza azioni programmate'
-    logs: 'Logs'
-    logs_descrizione: 'Logs sicurezza'
-    integrazioni: 'Funzionalità avanzate'
-    statistiche: 'Statistiche'
-    statistiche_descrizione: 'Visualizza le statistiche'
-    title: 'Benvenuto nella dashboard di amministrazione'
+    impostazioni_istanza: 'instance_settings'
+    operatori: 'operators'
+    servizi: 'services'
+    gruppo_servizi: 'service_group'
+    webhook: 'webhook'
+    metodi_pagamento: 'payment_methods'
+    strumenti: 'tools'
+    azioni_programmate: 'programmed_actions'
+    logs: 'logs'
+    integrazioni: 'integrations'
     tenant:
-      protocollo: 'Protocollo'
-      pagamenti: 'Pagamenti'
-      opzioni: 'Opzioni'
-      webhooks: 'Webhooks'
+      protocollo: 'protocol'
+      pagamenti: 'payment'
+      opzioni: 'options'
+      webhooks: 'webhooks'
+    ente: 'body'
+    categorie: 'categories'
+    impostazioni_istanza_descrizione: ""
+    servizi_descrizione: ''
+    operatori_descrizione: ''
+    gruppo_servizi_descrizione: ''
+    webhook_descrizione: ''
+    azioni_programmate_descrizione: ''
+    logs_descrizione: ''
+    statistiche: ''
+    statistiche_descrizione: ''
+    title: ''
   backoffices:
-    servizi_sottoscrizione: ''
-    prenotazione_appuntamenti: ''
-    pagamenti_servizi_sottoscrizione: ''
+    servizi_sottoscrizione: 'subscription_services'
+    prenotazione_appuntamenti: 'booking_appointments'
+    pagamenti_servizi_sottoscrizione: 'payments_subscription_services'
 terms:
   title: 'Acceptance of terms of use'
 servizio:
@@ -119,7 +119,7 @@ servizio:
   copertura: "Geographic coverage"
   copertura_helper: "Geographical coverage - (if more than one enter the values ​​separated by commas)"
   accedere: "Service Login"
-  casi_particolari: "Special cases"
+  casi_particolari: "Specific cases"
   maggiori_info: "More info"
   in_evidenza: "In evidence?"
   info_compilazione: "Information displayed when filling out the service"
@@ -134,11 +134,42 @@ servizio:
   consenti_riapertura: "Allow operators to manually change the status of a case"
   consenti_ritiro: "Allow the citizen to cancel the submission of the file"
   flusso: "Workflow"
-  bozza_successo: ''
-  nessun_template: ''
-  importa: ''
-  machine_readable: 'Get machine readable'
-  name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
+  bozza_successo: 'draft_success'
+  nessun_template: 'no_template'
+  importa: 'import'
+  destinatari: ""
+  sottotitolo: ''
+  aree_geografiche: ""
+  consenti_richiesta_integrazione: ""
+  no_topics: ''
+  no_recipients: ''
+  no_geographic_areas: ''
+  shared_with_group_message: ''
+  shared_with_group_action: ''
+  sottotitolo_categorie: ""
+  generali: ""
+  modulo_utente: ""
+  modulo_backoffice: ""
+  id_pratica: ""
+  nome_servizio: ""
+  nome_completo: ""
+  data_corrente: ""
+  data_acquisizione: ""
+  ora_acquisizione: ""
+  protocollo: ""
+  data_protocollo: ""
+  ora_protocollo: ""
+  messaggio_personale: ""
+  nome_utente: ""
+  indirizzo_utente: ""
+  machine_readable: ''
+  preview: ''
+  print: ''
+  name_service_warning: ""
+  i18n:
+    default_language_module_alert: ''
+    string: ''
+    translation: ''
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
@@ -162,7 +193,7 @@ gruppo_di_servizi:
   copertura: "Geographic coverage"
   copertura_helper: "Geographical coverage - (if more than one enter the values ​​separated by commas)"
   accedere: "Service Login"
-  casi_particolari: "Special cases"
+  casi_particolari: "Specific cases"
   maggiori_info: "More info"
   in_evidenza: "In evidence?"
   protocolla_in_fascicolo: "Register within the same dossier?"
@@ -178,6 +209,9 @@ webhook:
   no_services: 'No service specified'
   active: 'Active'
   not_Active: 'Inactive'
+  filters_label: ''
+  headers: ''
+  version: ''
 pratica:
   guida_utente: 'Guide'
   email:
@@ -190,7 +224,7 @@ pratica:
   nuova_pratica: 'new file: %name%'
   integrazione_pratica: 'File integration: %name%'
   integrazione_pratica_description: "Some additions have been requested for the practice you sent: correct all the fields shown marked with an asterisk (*)"
-  passo_uno_di_tanti: ''
+  passo_uno_di_tanti: 'Step %current% of %total%'
   riprendi_pratica: "Resume filling"
   empty: 'There are no files in your name.'
   protocollo: 'Protocol'
@@ -238,9 +272,11 @@ pratica:
     dichiarazione_cambiamenti: 'promptly inform the %comune% of any change regarding the household composition and the family''s economical situation'
     dichiarazione_cambiamenti_detail: "In the event of a false declaration, the declarant is aware that he will be punished according to the Criminal Code following the provisions of the art. 76 of the Presidential Decree 445/2000. Moreover, if the check carried out reveals the untruthfulness of the content of any of the declarations made, the subject will lose the benefits resulting from any provision issued based on the untruthful statement (Article 75 of Presidential Decree 445/2000). The declarant is informed and authorizes data collection to issue the administrative provision under art. 13 of the Legislative Decree 196/2003."
     luogo: 'Place'
-    riferimento_sdc: ''
+    riferimento_sdc: 'Reference in Citizen''s Room:'
+    allegati_protocollo: ''
+    allegati_no_protocollo: ''
   dettaglio:
-    data_ora_presentazione: ''
+    data_ora_presentazione: 'Request submitted on'
     alle: 'to'
     stato: 'Current status'
     servizio: 'Service'
@@ -304,8 +340,17 @@ pratica:
       data_nascita: 'Birthdate'
       indirizzo: 'Address'
     stato_50000: 'Canceled'
-    or: 'Oppure'
-    cambio_operatore: 'Cambio operatore'
+    lista_allegati:
+      descrizione_modulo: ''
+      descrizione_messaggi: ''
+      descrizione_risposta: ''
+      descrizione_richieste_integrazioni: ''
+      descrizione_risposte_integrazioni: ''
+    integrazioni:
+      alert: ""
+      button: ''
+    or: ''
+    cambio_operatore: ''
   messaggi:
     oggetto: 'New message request numer %pratica%'
     messaggio: '%message% <img src="%link%">'
@@ -319,8 +364,12 @@ pratica:
   noteDiCompilazione: 'Notes'
   le_tue_note: 'Your notes'
   crea_nuova_pratica: 'Create new practice'
-  vedi_tutte: 'Show all'
-  pratiche_in_evidenzia: 'Highlight pratices'
+  vai_al_pagamento: ''
+  payment_reminder:
+    message: ""
+    subject: ""
+  vedi_tutte: ''
+  pratiche_in_evidenzia: ''
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
@@ -342,6 +391,7 @@ STATUS_PENDING_AFTER_INTEGRATION: 'Taking charge following integrations'
 STATUS_PROCESSING: 'Processing'
 STATUS_WITHDRAW: 'Withdrawed'
 iscrizioni:
+  iscrizioni: "Subscriptions"
   le_mie_iscrizioni: "My subscriptions"
   iscrizioni_delegate: "Available subscriptions"
   no_iscrizioni: "No subscriptions available"
@@ -352,56 +402,14 @@ iscrizioni:
   modifica_negata: "You don't have the permission to edit this subscriptionq"
   torna_alle_iscrizioni: "Back to subscriptions"
   torna_all_iscrizione: "Back to the subscription"
-  back_to_service: "Torna al servizio"
-  back_to_list: "Torna alla lista"
-  payments: "Pagamenti"
-  subscriptions: "Iscrizioni"
-  subscriber_data: "Scheda personale"
-  messages: "Messaggi"
-  import: 'Importazioni'
-  export: 'Esportazioni'
-  import_payments: 'Importa pagamenti'
-  import_subscriptions: 'Importa iscrizioni'
-  import_success: "Importazione avvenuta con successo"
-  import_error: "Si è verificato un errore durante l'importazione"
-  import_invalid_code: "Il codice %code% non coincide con il servizio selezionato"
-  missing_file: "Nessun file selezionato"
-  invalid_file: "Il file selezionato non è valido"
-  empty_file: "Il file selezionato è vuoto"
-  subscriptions_limit_reached: "Il numero di iscrizioni è superiore al numero massimo consentito"
-  no_payments_config: "Nessun sono presenti configurazioni di pagamento"
-  missing_payment_config: "Nessun pagamento trovato con identificativo %identifier%"
-  no_payment_service: 'Il servizio specificato nella configurazione di pagamento non esiste'
-  missing_subscriber: 'Non è stato trovato un iscritto con codice fiscale %fiscal_code%'
-  missing_subscription: "L'utente %fiscal_code% non risulta iscritto a questo servizio a sottoscrizione"
-  application_already_exists: "La pratica di pagamento a nome di %user_fiscal_code% per l'iscritto %subscriber_fiscal_code% è già presente"
-  drafts_created: '%num_applications% pratiche create correttamente'
-  subscriptions_created: '%num_subscriptions% iscrizioni importate correttamente'
-  select_payment_config: 'Seleziona una configurazione di pagamento'
-  cancel: 'Annulla'
-  send: 'Invia'
-  upload_csv: 'Carica file csv'
-  modals:
-    payments_header: 'In questa sezione è possibile importare pagamenti e creare delle pratiche di pagamento in bozza
-                attraverso un file di tipo CSV ben definito. Per procedere:'
-    subscriptions_header: 'In questa sezione è possibile importare iscrizioni attraverso un file di tipo CSV ben definito. Per
-                procedere:'
-    download_template: 'scaricare il template'
-    open_in_excel: 'aprilo con un foglio di calcolo come Excel o Openoffice'
-    payments_edit_file: "inserisci il codice fiscale degli iscritti e l'importo del pagamento uno per ogni riga, avendo cura di inserire tutte e sole le colonne indicate"
-    subscriptions_edit_file: "inserisci i dati degli iscritti uno per ogni riga, avendo cura di inserire tutte e sole le colonne indicate"
-    save_and_upload: 'salva il file e caricalo usando il pulsante Carica in questa pagina'
-    payments_check_errors: "controlla e correggi eventuali errori indicati al termine dell'importazione"
-    subscriptions_check_errors: "controlla nell'Elenco degli Iscritti che gli iscritti sono stati importati correttamente"
   condividi: "Share"
   condividi_con: "Share with"
   condividi_iscrizione: "Share subscription"
   descrizione_condividi: "To share this registration information with other people, please indicate their social security numbers in the space above"
   cf_non_valido: "The Tax Code %fiscal_code% is not valid"
-  share_helper: "Inserisci una lista di codici fiscali separati da virgola"
-  copy_application_helper: "Clicca per copiare l'id della pratica alla quale è associato il pagamento"
   data_inizio: "Starting date"
   data_fine: "Ending date"
+  pagamenti: "Payments"
   nome: "name"
   codice: "Code"
   descrizione: "Description"
@@ -422,7 +430,7 @@ iscrizioni:
     cf_beneficiario: "Beneficiary's tax code"
   certificato_pagamento:
     testo: "At the request of the interested party, having regard to the official documents, we declare that the student <b>%completeName%</b>, born in <b>%placeOfBirth%</b> on the <b>%dateOfBirth%</b>  F.C <b>% fiscalCode%</b> in the year %paymentYear% incurred the following expense:"
-    importo: ""
+    importo: "Euro <b>%amount% /b> as %name%\n"
   data_iscrizione: "Registration date"
   num_condivisioni: "Shares %num%"
   condivisioni: "Shares"
@@ -434,14 +442,90 @@ iscrizioni:
   status_1: "Active"
   status_2: "Inactive"
   errore_salvataggio: "An error has occurred while saving the subscription"
+  back_to_service: ""
+  back_to_list: ""
+  payments: ""
+  subscriptions: ""
+  subscriber_data: ""
+  messages: ""
+  import: ''
+  export: ''
+  import_payments: ''
+  import_subscriptions: ''
+  import_success: ""
+  import_error: ""
+  import_invalid_code: ""
+  missing_file: ""
+  invalid_file: ""
+  empty_file: ""
+  subscriptions_limit_reached: ""
+  no_payments_config: ""
+  missing_payment_config: ""
+  no_payment_service: ''
+  missing_subscriber: ''
+  missing_subscription: ""
+  application_already_exists: ""
+  drafts_created: ''
+  subscriptions_created: ''
+  select_payment_config: ''
+  cancel: ''
+  send: ''
+  upload_csv: ''
+  modals:
+    payments_header: ''
+    subscriptions_header: ''
+    download_template: ''
+    open_in_excel: ''
+    payments_edit_file: ""
+    subscriptions_edit_file: ""
+    save_and_upload: ''
+    payments_check_errors: ""
+    subscriptions_check_errors: ""
+    edit_subscription: ''
+    confirm_edit:
+      description_title: ''
+      description_text: ''
+    delete_subscription: ''
+    confirm_delete:
+      description_title: ''
+      description_text: ""
+    withdraw_subscription: ''
+    confirm_withdraw:
+      description_title: ''
+      description_text: ""
+    activate_subscription: ''
+    confirm_activate:
+      description_title: ''
+      description_text: ""
+  share_helper: ""
+  copy_application_helper: ""
   subscribers:
-    show: 'Mostra'
-    name: 'Nome'
-    surname: 'Cognome'
-    fiscal_code: 'Codice fiscale'
-    email_address: 'Email'
-    created_at: 'Data iscrizione'
-    actions: 'Azioni'
+    show: ''
+    name: ''
+    surname: ''
+    fiscal_code: ''
+    date_of_birth: ''
+    email_address: ''
+    created_at: ''
+    actions: ''
+    completename: ""
+    registry: ''
+    place_of_birth: ''
+    address: ''
+    house_number: ''
+    municipality: ''
+    postal_code: ''
+  subscriber: ""
+  certificato: ""
+  back_to_subscriber: ""
+  edit_registry: ''
+  duration: ""
+  subscriptions_available: ""
+  subscribers_number: ""
+  no_payment_settings: ""
+  status_active: ""
+  status_withdraw: ""
+  withdraw_description: ""
 documenti:
   i_miei_documenti: "My documents"
   no_documenti: "No documents available"
@@ -652,6 +736,11 @@ user:
     salva_informazioni_contatto: 'Save contact information'
     salva_informazioni_profilo: 'Save profile information'
     salva: 'Save'
+    genere:
+      maschio: ''
+      femmina: ''
+  welcome: 'welcome'
+  welcome_msg: 'welcome_msg'
 admin:
   usage:
     user_title: 'User number'
@@ -677,7 +766,7 @@ operatori:
   elabora: 'Process'
   scrivi_al_cittadino: "Write to citizen"
   riapri_pratica: "Fill the practice"
-  richiedi_integrazioni: 'Request integrations'
+  richiedi_intergrazioni: 'Request integrations'
   chiudi_richiesta_integrazione: 'Close integration request'
   richiedi_integrazioni_tpl: "Dear <b>%user_name% </b> <br/> we inform you that an integration to the data of your request for the <b>%service%</b> service is required. <br/> [Insert reason] <br/> Enter your citizen room to complete the integration"
   modulo: 'Module'
@@ -807,10 +896,23 @@ operatori:
     complete: 'Complete'
     cancelled: 'Cancelled'
     draft: 'Draft'
+    done: ''
   dati_generali: "General Data"
   cambio_stato: "Status change"
-  servizi_abilitati: ""
-  ultima_modifica_password: ''
+  servizi_abilitati: "services_enabled"
+  ultima_modifica_password: 'last_modify_password'
+  pagamento_posticipato_previsto: ""
+  pagamento_posticipato: ""
+  pagamento_posticipato_richiesto: ""
+  draft_description: ""
+  in_questo_fascicolo: ""
+  richiedi_integrazioni: ''
+  protocollazione_richiesta_integrazione: ''
+  protocollazione_risposta_integrazione: ''
+  richieste_integrazioni: ''
+  risposte_integrazioni: ''
+  how_accept_integrations_title: ''
+  how_accept_integrations_text: ''
 allegato:
   nome_file: 'File name'
   descrizione_file: 'File description'
@@ -825,6 +927,10 @@ allegato:
   non_cancellabile: 'This attachment is present in correctly sent forms and therefore cannot be deleted'
   aggiungi: 'Add an attachment'
   cancellato: 'The attachment has been properly deleted'
+  protocollo:
+    protocollato: ''
+    in_attesa: ''
+    non_richiesto: ''
 email:
   detail_link: 'link'
   pratica:
@@ -875,6 +981,7 @@ email:
         draft: 'draft'
         withdraw: "user <strong>%user_pratica%</strong> request for service <strong>%servizio%</strong> has been withdrawn."
         revoked: "user <strong>%user_pratica% </strong> request for service <strong>%servizio% </strong> has been canceled."
+        draft.for.integration: ""
 messages:
   pratica:
     status:
@@ -892,9 +999,11 @@ messages:
       8000: '8000'
       9000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been refused, the request number is <strong>%pratica_id%</strong>. <br /> With the following message: <br />%messaggio_personale%<br /> Thank you for your cooperation."
       20000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been successfully withdrawn, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications relating to your request. <br /> Thank you for your cooperation."
-      50000: "Dear <strong>%user_name%</strong>,<br/> we inform you that your request for the <strong>%servizio%</strong> service has been canceled. The request number is <strong>%pratica_id%</strong>. Always refer to this identifier in case of communications relating to your request."
-      1000: ""
+      1000: "1000"
+      50000: ""
     no_reason: '<i>No message specified</i>'
+  subject_label: ''
+  message_label: ''
 messaggi:
   messaggio: 'Message'
   invia: 'Send'
@@ -1597,7 +1706,7 @@ steps:
           description: impact assessment for interventions involving special conservation areas or other protected areas referred to in the l.p. 11/2007
         VIN_AREE:
           title: 'titolo'
-          description: agricultural authorization for interventions in the agricultural areas of the pup
+          description: "agricultural authorization for interventions in the agricultural areas of the pup"
         VIN_UTILIZZO_ACQUE_PUBBLICHE:
           title: 'titolo'
           description: authorization for the purpose of compatibility with reference to the general plan for the use of public waters (pguap) of the autonomous province of Trient. The documents are certified in the cases referred to in Article 15, paragraph 3 of the Italian Law n. 15/2015
@@ -1909,12 +2018,12 @@ protocollo:
   sipal_proxy_host: 'Host proxy'
   sipal_proxy_port: 'Proxy port'
   sipal_proxy_login: 'Proxy username'
-  sipal_proxy_password: ''
-  sipal_username: ''
-  sipal_token: ''
-  sipal_registro: ''
-  sipal_classificazione: ''
-  sipal_destinatario_interno: ''
+  sipal_proxy_password: 'Proxy password'
+  sipal_username: 'Username'
+  sipal_token: 'Token'
+  sipal_registro: 'Registry'
+  sipal_classificazione: 'Classification'
+  sipal_destinatario_interno: 'Internal recipient'
 gateway:
   bollo:
     identifier: 'Identifier'
@@ -1926,13 +2035,13 @@ gateway:
     download_button: "Download payment notice"
     download_receipt_button: "Download payment receipt"
     download_text: "Use the button below to download the PDF document (Payment Notice) that you can pay at a post office, a bank ATM, a Sisal office, on the IO App or Satispay."
-  add: ""
-  name: ""
-  description: ""
-  url: ""
-  enabled: ""
-  disabled: ""
-  delete_alert: ""
+  add: Add payment method
+  name: Name
+  description: Description
+  url: Url
+  enabled: Enabled
+  disabled: Disabled
+  delete_alert: "Are you sure to proceed? The payment gateway will be permanently deleted."
 calendars:
   new: "Create new calendar"
   moderators: "Coorinators"
@@ -1969,55 +2078,90 @@ calendars:
     error:
       overlap: "The opening hours %behinHour1%-%endHour1% overlaps with the opening hours %behinHour2%-%endHour2% on days %days%\n"
       cannot_change: 'It is not possible to change the duration or the interval between meetings as long as there are already scheduled meetings. We recommend that you create an opening time from the earliest available date (next_availability)'
-    name: ""
-    name_helper: ""
-    start_date: ""
-    end_date: ""
-    days_of_week: ""
-    begin_hour: ""
-    end_hour: ""
-    is_moderated: ""
-    meeting_minutes: ""
-    interval_minutes: ""
-    meeting_queue: ""
-    add: ""
-    remove: ""
-    no_opening_hours: ""
-    opening_hours: ""
+    name: "Name"
+    name_helper: "Tip: Use this field to easily distinguish opening hours"
+    start_date: "Start date"
+    end_date: "End date"
+    days_of_week: "Days of the week"
+    begin_hour: "Opening hours"
+    end_hour: "Closing time"
+    is_moderated: "Does it require moderation?"
+    meeting_minutes: "Duration of the meeting"
+    interval_minutes: "Interval between meetings"
+    meeting_queue: "Number of parallel meetings"
+    add: "Add opening hours"
+    remove: "Delete opening"
+    no_opening_hours: "There are no opening hours"
+    opening_hours: "Opening hours"
     months:
       short:
-        Jan: ''
-        Feb: ''
-        Mar: ''
-        Apr: ''
-        May: ''
-        Jun: ''
-        Jul: ''
-        Aug: ''
-        Sep: ''
-        Oct: ''
-        Nov: ''
-        Dec: ''
+        Jan: 'Jan'
+        Feb: 'Feb'
+        Mar: 'Mar'
+        Apr: 'Apr'
+        May: 'May'
+        Jun: 'Jun'
+        Jul: 'Jul'
+        Aug: 'Aug'
+        Sep: 'Sep'
+        Oct: 'Oct'
+        Nov: 'Nov'
+        Dec: 'Dec'
     short_weeks:
-      week_day_1: ""
-      week_day_2: ""
-      week_day_3: ""
-      week_day_4: ""
-      week_day_5: ""
-      week_day_6: ""
-      week_day_7: ""
-  allow_overlaps: ""
+      week_day_1: "Mon"
+      week_day_2: "Tue"
+      week_day_3: "Wed"
+      week_day_4: "Thu"
+      week_day_5: "Fri"
+      week_day_6: "Sat"
+      week_day_7: "Sun"
+    errors:
+      greater_than_begin_hour: ""
+      greater_than_start_date: ""
+      less_than_end_hour: ""
+      less_than_end_date: ""
+      end_date_limit: ""
+  allow_overlaps: "Do you allow overlapping of opening hours?"
   type:
-    label: ""
-    time_fixed_slots: ""
-    time_variable_slots: ""
+    label: "Type of appointment"
+    time_fixed_slots: "Fixed duration appointments"
+    time_variable_slots: "Appointments with variable duration"
+  edit: ""
+  cant_edit_tooltip: ""
+  cant_delete_tooltip: ""
+  delete: ""
+  cancel: ""
+  permanently_delete: ""
+  table:
+    title: ""
+    owner: ""
+    moderated: ""
+    actions: ""
+  moderated: ""
+  not_moderated: ""
+  confirm_delete:
+    title: ""
+    description_title: ""
+    description_text: ""
+    type_name: ""
+    type_name_placeholder: ""
+    future_meetings_alert: ""
+  calendar: ''
+  calendars: ''
+  meetings: ''
+  detail: ''
+  back_to_calendars: ''
+  print: ''
+  info: ''
 meetings:
   error:
     slot_unavailable: "The selected range is not available"
     slot_invalid: "The selected range is not valid"
-    no_slots_available: ""
-    no_slots_available_for_opening_hor: ""
-    no_opening_hour_with_overlaps: ""
+    no_slots_available: "There are no times available at the selected date and time"
+    no_slots_available_for_opening_hor: "There are no hours available on the date and time selected for the selected opening hours"
+    no_opening_hour_with_overlaps: "The opening hours are mandatory if the calendar foresees overlaps"
+    invalid_meeting: ""
+    not_unique: ""
   no_email_warning: 'Attention: there is no e-mail address. In case of changes, it is advisable to notify the citizen through the telephone number provided'
   default_draft_message: "Appointment in draft"
   no_info: "<i> Information not available </i>"
@@ -2027,10 +2171,6 @@ meetings:
     delete: "Delete draft"
   email:
     operatori:
-      meeting_details: '</br><p><b>Dettagli appuntamento:</b></p><table><tr><td>Nome e cognome</td><td>%completename%</td></tr><tr><td>Inizio</td><td>%start%</td></tr><tr><td>Fine</td><td>%end%</td></tr><tr><td>Motivazione</td><td><i>%reason%</i></td></r></table>'
-      meeting_rescheduled:
-        subject: 'Spostamento appuntamento - %calendar%'
-        message: "<h3>%calendar%</h3><p>L'appuntamento del giorno <b>%old_date%</b> alle ore <b>%old_hour%</b> è stato <b>spostato</b> al giorno <b>%new_date%</b> alle ore <b>%new_hour%</b><p>"
       meeting_cancelled:
         subject: 'Appointment cancellation'
         message: "<p>The appointment of the day <b>date</b> at <b>hour</b> has been <b>canceled</b><p>\n"
@@ -2041,7 +2181,14 @@ meetings:
         subject: 'New appointment'
         message: "<p>New appointment request in the name of <b>name</b> for the day <b>date</b> at <b>hour</b>. <p> <p>Reason:<b > user_message </b> </p>\n"
         approve_link: '<br><p>Click on the following link to approve: <a href="approve_link"> <b>Approve</b></a></p>'
-        reason: ""
+        reason: "<p>Reason for the appointment: <br><b>%user_message%</b></p>\n"
+      meeting_details: ''
+      meeting_rescheduled:
+        subject: ''
+        message: ""
+      meeting_refused:
+        subject: ''
+        message: ""
     new_meeting:
       pending: "<p>We inform you that your request has been <b>taken care of</b>. </p><p>You will receive a confirmation email as soon as your request is confirmed.</p>\n"
       approved: "<p>We inform you that your request has been <b>confirmed</b>. </p> <p>We invite you to arrive at <b>hour</b> of the day <b>date</ b > at <b>location</b> </p>\n"
@@ -2070,56 +2217,71 @@ meetings:
       removed: "<p>We inform you that it is no longer possible to remotely participate in the appointment using the link previously provided<p>\n"
     success: 'A notification was sent to the citizen successfully'
     cancel_success: 'Appointment canceled successfully'
-    motivation_outcome: ''
+    motivation_outcome: '<p>%motivation_outcome%</p>'
+    service_detail: ""
+    service_detail_with_group: ""
   labels:
-    calendar: ""
-    user: ""
-    opening_hour: ""
-    email: ""
-    fiscal_code: ""
-    name: ""
-    phone_number: ""
-    from_time: ""
-    to_time: ""
-    status: ""
-    user_message: ""
-    motivation_outcome: ""
-    videoconference_link: ""
-    complete_name: ""
-    backoffice_user_message: ""
-    select_slot: ""
-    select_slot_start: ""
-    select_slot_end: ""
+    calendar: "Calendar"
+    user: "User"
+    opening_hour: "Opening hour"
+    email: "E-mail address"
+    fiscal_code: "Tax Code"
+    name: "Name"
+    phone_number: "Phone number"
+    from_time: "Starting time"
+    to_time: "End time"
+    status: "Status"
+    user_message: "Message"
+    motivation_outcome: "Motivation outcome"
+    videoconference_link: "Videoconference link"
+    complete_name: "Name and surname"
+    backoffice_user_message: "Object ... (created by the office)"
+    select_slot: "Select slot"
+    select_slot_start: "From"
+    select_slot_end: "To"
+    draft_expiration: ""
   legend:
-    title: ""
-    approved: ""
-    pending: ""
-    missed: ""
-    done: ""
-    closure: ""
-    availability: ""
-    draft: ""
+    title: "Appointment status"
+    approved: "Confirmed / Does not require moderation"
+    pending: "Pending confirmation"
+    missed: "Not happened / Absent"
+    done: "Done"
+    closure: "Closure"
+    availability: "Availability"
+    draft: "Draft"
   modal:
-    create: ""
-    save: ""
-    confirm: ""
-    refuse: ""
-    done: ""
-    absent: ""
-    cancel: ""
-    all: ""
-    warning: ""
-    notification_alert: ""
-    notification_alert_confirm: ""
-    motivation_outcome_helper: ""
-    status_change_helper: ""
-    no_status_actions: ""
+    create: "Create"
+    save: "Save"
+    confirm: "Confirm"
+    refuse: "Refuse"
+    done: "Done"
+    absent: "Absent"
+    cancel: "Cancel"
+    all: "All"
+    warning: "Warning"
+    notification_alert: "the change of status will involve sending a notification to the citizen"
+    notification_alert_confirm: "the modification of the date will result in the sending of a notification to the citizen and the automatic confirmation of the appointment"
+    motivation_outcome_helper: "Use this field to add a reason or give specific indications to the citizen in case of approval, rejection or cancellation of the appointment"
+    status_change_helper: "You can register if the appointment went as expected"
+    no_status_actions: "There are no actions available for this appointment"
     confirm_edit:
-      status_1: ""
-      status_2: ""
-      status_4: ""
-      status_3: ""
-      status_5: ""
+      status_1: "Approval of the appointment will result in sending a notification to the citizen. Are you sure you want to proceed?"
+      status_2: "Refusal of the appointment will result in a notification being sent to the citizen. Are you sure you want to proceed?"
+      status_4: "The appointment will be marked as completed, a notification will NOT be sent to the citizen. Are you sure you want to proceed?"
+      status_3: "The appointment will be marked as NOT completed, a notification will NOT be sent to the citizen. Are you sure you want to proceed?"
+      status_5: "The cancellation of the appointment will result in the sending of a notification to the citizen. Are you sure you want to proceed?"
+      extend: ""
+      save: ""
+    extend_draft_for_days: ''
+    extend_draft_for_one_day: ''
+  status:
+    pending: ''
+    approved: ''
+    refused: ''
+    missed: ''
+    done: ''
+    cancelled: ''
+    draft: ''
 backoffice:
   entity:
     mailers: 'Sending messages'
@@ -2146,7 +2308,9 @@ backoffice:
       limit_error: 'Maximum registration limit reached. User user not enrolled in the code course'
       save_subscriber_error: 'An error occurred while saving the user user'
       save_subscription_error: "An error occurred while saving the subscription for the user user"
-      duplicate_error: ""
+      duplicate_error: "the user user is already registered to the service_name service"
+      update_subscription_error: ""
+      delete_subscription_error: ""
     subscription_service:
       payment:
         due_date: "Payment due date"
@@ -2158,20 +2322,35 @@ backoffice:
         remove: "Delete payment"
         add: "Add payment"
         no_payments: "There are no payments"
-        required: ""
-        create_draft: ""
-        meta_available_placeholders: 'Sono disponibili i seguenti placeholders: %fiscal_code%, %name%, %surname%, %amount%, %payment_reason%, %payment_identifier%, %code%'
-        select_service: ""
-        select_payment: ""
-        select: ""
-        import: ""
-        no_payments_to_import: ""
-        no_payment_config: ""
-        import_configuration: ""
+        required: "Is payment mandatory for all members?"
+        create_draft: "Automatically create a draft payment case before the deadline?"
+        select_service: "Select subscription service"
+        select_payment: "Select payment"
+        select: "Select option"
+        import: "Import payment from service"
+        no_payments_to_import: "Payments not found for the selected service"
+        no_payment_config: "Configuration not found for the selected payment"
+        import_configuration: "Import configuration"
+        meta_available_placeholders: ''
+        execution_date: ""
+        payments_made: ""
+        missing_payments: ""
+        type: ""
+        type_subscription_fee: ""
+        type_additional_fee: ""
+        type_optional: ""
+        text_subscription_fee: ""
+        text_additional_fee: ""
+        text_optional: ""
+        subscription_fee: ""
+        subscription_fee_description: ""
+        advanced_settings: ""
+        meta_helper: ""
+        import_helper: ""
       invalid_service: "The identifier %service_id% is not valid\n"
       invalid_meta: "Incorrect meta: the entered value must be a valid json"
       no_service: "The %service_id% identifier does not correspond to an existing service"
-      duplicate_identifier: 'Identifier %identifier% duplicate not allowed for payment set for the day %date% with reason "%payment_reason%"'
+      duplicate_identifier: "Identifier %identifier% duplicate not allowed for payment set for the day %date% with reason \"%payment_reason%\""
       no_payment: "Payment is not available for the %service_name% service"
       no_integration: "Integration with the 'Payments for subscription services' back office is not enabled for the %service_name% service"
       invalid_date: "Il formato della data %date% non è corretto"
@@ -2179,13 +2358,38 @@ backoffice:
       messages:
         new_draft: "Dear <b>%user_name%</b><br/> You are receiving this message because you are subscribed or delegated to <b>%subscription_service%</b>. We inform you that there is a new pending activity that requires your attention: %service%. <br>Use the button below to access the case or visit the section <i>My cases</i>"
         new_draft_subject: "New practice in draft"
-      payments: ""
-    invalid_action: ""
+      payments: "Payments"
+      subscription_services: ""
+      new: ""
+      search_results: ""
+      no_results: ""
+      search_error: ""
+      search: ""
+      search_subscribers_helper: ""
+      search_subscribers: ""
+      close: ""
+      loading: ""
+      all: ""
+      subscription_service: ""
+      links: ""
+      subscription_service_payments: ""
+      created: ""
+      duplicate_error: ""
+      deleted: ""
+      delete_error: ""
+      edited: ""
+      duplicate_code_error: ""
+      identifier_payments: ""
+      no_integration_subscription: ""
+      no_integration_additional_payment: ""
+    invalid_action: "The selected action is not available"
+    related_payments_error: ""
+    edit_integration_error: ""
 login_type:
   none: 'None'
   login_pat: 'Spid PAT'
   login_open: 'Openlogin'
-  label: ''
+  label: 'label'
 app_io:
   service_id: 'Service identifier'
   primary_key: 'Primary key'
@@ -2202,37 +2406,106 @@ app_io:
 STATUS_REVOKED: 'Canceled'
 ente:
   linkable_application_meetings:
-    label: ''
-    helper: ""
-  codice_meccanografico: ''
-  site_url: ''
-  codice_amministrativo: ''
-  impostazioni_protocollo: ''
-  certificato: ''
-  chiave_certificato: ''
-  password_certifcato: ''
-  app_io: ''
-  backoffices: ''
+    label: 'Enable the connection between practices and appointments'
+    helper: "By enabling this option it will be possible to view and interact with the bookings connected to the practice in the detail section of the practice itself"
+  codice_meccanografico: 'mechanical_code'
+  site_url: 'site_url'
+  codice_amministrativo: 'administrative_code'
+  impostazioni_protocollo: 'protocol_settings'
+  certificato: 'certificate'
+  chiave_certificato: 'certificate_key'
+  password_certifcato: 'certificate_password'
+  app_io: 'app_io'
+  backoffices: 'backoffices'
   mailers:
-    title: ''
-    helper: ""
+    title: 'title'
+    helper: "helper"
   pagamenti:
-    label: ""
-    panel_title: ''
+    label: "label"
+    panel_title: 'panel_title'
+  navigation_type:
+    label: ''
+    services: ''
+    categories: ''
 buttons:
-  draft: ''
-  last_save: ''
-aggiungi: ''
-annulla: ''
-modifica: ''
-read_more: ''
+  draft: 'Save draft'
+  last_save: 'Last saved:'
+aggiungi: 'Add'
+annulla: 'cancel'
+modifica: 'edit'
+read_more: 'read more'
 general:
-  nome: ''
-  cognome: ''
-  username: ''
-  email: ''
-  stato: ''
-  url: ''
-  alert_elimina: ""
+  nome: 'name'
+  cognome: 'surname'
+  username: 'username'
+  email: 'e-mail'
+  stato: 'status'
+  url: 'url'
+  alert_elimina: "alert_delete"
+  descrizione: 'description'
+  flash:
+    created: 'created'
+    updated: ''
+  search: ''
+avanti: 'next'
+categories:
+  title: 'title'
+  parent: 'parent'
+  all: ''
+  services_number: ''
+  services_group_number: ''
+  cant_delete_title: ''
+  cant_delete_content: ''
+  delete_success: ''
+  delete_service_error: ''
+  delete_service_group_error: ''
+  delete_subcategories_error: ''
+  related_title: ''
+  related_type: ''
+  service_remove_success: ''
+  service_remove_error: ""
+  error_reference_parent: ''
+  error_reference_children: ''
+load_more: ''
+recipients:
+  title: ''
+  all: ''
+  delete_success: ''
+  delete_error: ''
+lista: ''
+geographic_areas:
+  title: ''
+  all: ''
+  delete_success: ''
+  delete_error: ""
+  edit:
+    area: ''
+    import_area: ''
+    help: ''
+    help_title: ""
+    help_instruction_1: ''
+    help_instruction_2: ''
+    help_instruction_3: ''
+breadcrumbs:
+  list: ''
+  compile: ''
+Home: ''
+withdraw: ''
+activate: ''
+tutti: ''
+error_message_401: ""
+error_message_detail_401: ""
+practice_of: ''
+from_date_to_date: ""
+search:
+  label: ''
+  close: ''
+  filters: ''
+  apply_filters: ''
+  reset_filters: ''
+  results_count: ''
+  topics: ''
+  recipients: ''
+  geographic_areas: ''
 analytics:
-  not_enabled: 'Questa sezione è accessibile solo ad account Premium'
+  not_enabled: ''
