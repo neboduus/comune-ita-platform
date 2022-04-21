@@ -64,7 +64,7 @@
               <td>{{ item.subscription.subscriptionService.name }}</td>
               <td>{{ item.subscription.subscriber.name }} {{ item.subscription.subscriber.surname }}</td>
               <td>{{ item.subscription.subscriber.fiscalCode }}</td>
-              <td>{{ item.paymentDate | date('Y-m-d') }}</td>
+              <td>{% if item.paymentDate %}{{ item.paymentDate | date('Y-m-d') }}{% endif %}</td>
               <td>{{ item.amount }} €</td>
               <td class="text-right">
                 {{ include('@App/SubscriptionServices/table/_paymentActions.html.twig', {'payment': item}) }}

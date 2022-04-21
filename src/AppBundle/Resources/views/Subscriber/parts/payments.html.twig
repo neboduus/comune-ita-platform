@@ -2,7 +2,7 @@
 <script>
     $(function () {
       $('#payments_table').DataTable({
-        "order": [[0, "asc"]],
+        "order": [[3, "asc"]],
         columnDefs: [
           {orderable: false, targets: 5}
         ],
@@ -44,7 +44,7 @@
           </td>
           <td>{% if identifiers[item.subscription.subscriptionService.code][item.name] is defined %} {{ ('backoffice.integration.subscription_service.payment.text_' ~ identifiers[item.subscription.subscriptionService.code][item.name]) | trans }} {% endif %}</td>
           <td>{{ subscription.subscriptionService.name }}</td>
-          <td>{{ item.paymentDate | date('Y-m-d') }}</td>
+          <td>{% if item.paymentDate %}{{ item.paymentDate | date('Y-m-d') }}{% endif %}</td>
           <td><code>{{ item.amount }}€</code></td>
           <td class="d-none d-none d-lg-table-cell align-middle">
             <div class="float-right">
