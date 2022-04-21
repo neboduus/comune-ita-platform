@@ -32,11 +32,17 @@ services:
 
   php:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
+    #entrypoint: /bin/sleep 3600
     build: .
     volumes:
       - "uploads:/var/www/html/var/uploads"
     stop_grace_period: 90s
     environment:
+      INSTANCE_OVERRIDE: 'true'
+      INSTANCE_address: StanzaDelCittadino.localtest.me/comune-di-bugliano
+      INSTANCE_identifier: comune-di-bugliano
+      INSTANCE_database: sdc_bugliano
+      INSTANCE_codice_meccanografico: c_cbug
       OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       PHP_FPM_LOG_LEVEL: error
