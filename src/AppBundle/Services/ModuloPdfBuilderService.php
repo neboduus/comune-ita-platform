@@ -359,10 +359,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     if (isset($payload['FileRichiesta']) && !empty($payload['FileRichiesta'])) {
       $content = base64_decode($payload['FileRichiesta']);
       unset($payload['FileRichiesta']);
-      $fileName = uniqid() . '.p7m';
+      $uniqid = uniqid();
+      $fileName = $uniqid . '.p7m';
 
       $response->setOwner($pratica->getUser());
-      $response->setOriginalFilename((new DateTime())->format('Ymdhi'));
+      $response->setOriginalFilename($uniqid . '.pdf.p7m');
       $response->setDescription($rispostaOperatore->getMessage() ?? '');
 
       $destinationDirectory = $this->getDestinationDirectoryFromContext($response);
