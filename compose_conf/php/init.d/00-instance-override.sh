@@ -34,6 +34,9 @@ single_logout_url'
   if [[ -z $INSTANCE_address ]]; then
     echo "  Missing instance address, cannot continue without a variable INSTANCE_address"
     missing_values=true
+  else
+    # ensure lowercase address, http is case-insensitive
+    INSTANCE_address=$(echo $INSTANCE_address | tr '[:upper:]' '[:lower:]')
   fi
   if [[ -z $INSTANCE_identifier ]]; then
     echo "  Missing instance identifier, cannot continue without a variable INSTANCE_identifier"
@@ -47,7 +50,6 @@ single_logout_url'
     echo "  Missing codice_meccanografico, cannot continue without a variable INSTANCE_codice_meccanografico"
     missing_values=true
   fi
-
 
   [[ $missing_values == 'true' ]] && exit 1
 

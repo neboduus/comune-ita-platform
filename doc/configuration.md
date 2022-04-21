@@ -88,3 +88,17 @@ Il container di base utilizzato per la creazione dell'immagine PHP supporta nume
 si consiglia di fare riferimento alla pagina del progetto per vedere in dettaglio quali parametri e' possibile
 personalizzare: https://github.com/wodby/php
 
+## Configurazione tenants
+
+Il sistema è _multitenant-multiple-databases_, i tenant configurati sono nel file `app/instances_${SYMFONY_ENV}.yml`
+
+E' possibile sovrascrivere il file dei tenant con alcune variabili d'ambiente:
+
+|           Nome               | Required |     Default     | Note        |
+|------------------------------|----------|-----------------|-------------|
+| INSTANCE_OVERRIDE            | No       | false           | Impostare a true per abilitare la funzionalità |
+| INSTANCE_address             | No       |                 | Indirizzo completo dell'applicazione, es: stanzadelcittadino.localtest.me/comune-di-bugliano  |
+| INSTANCE_identifier          | No       |                 | Identificativo dell'ente sul database, es: comune-di-bugliano |
+| INSTANCE_database: 	       | No       |                 | Nome del database dell'istanza, es: sdc_bugliano |
+| INSTANCE_codice_meccanografico | No     |                 | Codice meccanografico, es: c_cbug (puo' essere un codice di fantasia) |
+
