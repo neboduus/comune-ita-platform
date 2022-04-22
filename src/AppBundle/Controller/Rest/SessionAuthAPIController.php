@@ -42,12 +42,14 @@ class SessionAuthAPIController extends AbstractFOSRestController
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="SessioAuth")
+   * @SWG\Tag(name="SessionAuth")
    *
    * @return View
    */
   public function getSessionAuthToken()
   {
+
+    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
     $user = $this->getUser();
     if ($user instanceof User) {
       return $this->view(['token' => $this->JWTTokenManager->create($user)]);

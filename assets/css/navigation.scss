@@ -12,6 +12,27 @@
   white-space: nowrap;
 }
 
+.user-menu {
+  overflow-x: hidden;
+  a {
+    text-decoration: none;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  @media (max-width: #{map-get($grid-breakpoints, md)}) {
+    //flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+    a {
+      &.active {
+        border-bottom: none;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
 .navbar .navbar-collapsable {
 
   &.expanded {
