@@ -38,13 +38,10 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\ORMException;
 use Exception;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PraticaManager
@@ -95,20 +92,11 @@ class PraticaManager
    * @var InstanceService
    */
   private $is;
-  /**
-   * @var RouterInterface
-   */
-  private $router;
 
   /**
    * @var TranslatorInterface
    */
   private $translator;
-
-  /**
-   * @var EventDispatcherInterface
-   */
-  private $dispatcher;
 
   /**
    * @var SchemaFactoryInterface
@@ -122,9 +110,7 @@ class PraticaManager
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
    * @param PraticaStatusService $praticaStatusService
    * @param TranslatorInterface $translator
-   * @param RouterInterface $router
    * @param LoggerInterface $logger
-   * @param EventDispatcherInterface $dispatcher
    * @param SchemaFactoryInterface $schemaFactory
    */
   public function __construct(
@@ -133,9 +119,7 @@ class PraticaManager
     ModuloPdfBuilderService $moduloPdfBuilderService,
     PraticaStatusService $praticaStatusService,
     TranslatorInterface $translator,
-    RouterInterface $router,
     LoggerInterface $logger,
-    EventDispatcherInterface $dispatcher,
     SchemaFactoryInterface $schemaFactory
   )
   {
@@ -144,9 +128,7 @@ class PraticaManager
     $this->logger = $logger;
     $this->entityManager = $entityManager;
     $this->is = $instanceService;
-    $this->router = $router;
     $this->translator = $translator;
-    $this->dispatcher = $dispatcher;
     $this->schemaFactory = $schemaFactory;
   }
 
@@ -356,7 +338,7 @@ class PraticaManager
   /**
    * @param Pratica $pratica
    * @param User $user
-   * @param string $text
+   * @param $data
    * @throws Exception
    */
   public function requestIntegration(Pratica $pratica, User $user, $data)
@@ -398,11 +380,6 @@ class PraticaManager
     $this->entityManager->persist($message);
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
-
-    /*$this->dispatcher->dispatch(
-      DispatchEmailFromMessageEvent::EVENT_IDENTIFIER,
-      new DispatchEmailFromMessageEvent($message)
-    );*/
 
     $statusChange = new StatusChange();
     $statusChange->setOperatore($user->getFullName());
@@ -780,12 +757,37 @@ class PraticaManager
     }
   }
 
+  /**
+   * @param Pratica $pratica
+   * @return int
+   */
+  public function countAttachments(Pratica $pratica)
+  {
+
+    /*
+      pratica.moduliCompilati.count + pratica.allegati.count + messageAttachments|length + pratica.allegatiOperatore.count +
+      pratica.richiesteIntegrazione|length + pratica.integrationAnswers|length + risposta
+    */
+
+    $count = 0;
+    $count += $pratica->getModuliCompilati()->count();
+    // Include sia allegati che che risposte ad integrazione
+    $count += $pratica->getAllegati()->count();
+
+    $count += $pratica->getRichiesteIntegrazione()->count();
+
+    if ($pratica->getRispostaOperatore()) {
+      $count ++;
+    }
+    $count += $pratica->getAllegatiOperatore()->count();
+    return $count;
+  }
 
   /**
    * @param Pratica $pratica
    * @return array
    */
-  public function getGroupedModuleFiles(Pratica $pratica)
+  public function getGroupedModuleFiles(Pratica $pratica): array
   {
     $files = [];
     $attachments = $pratica->getAllegatiWithIndex();

@@ -11,7 +11,7 @@
        data-toggle="tab" href="#allegati" role="tab"
        aria-controls="allegati" aria-selected="{{ tab and tab == 'allegati' }}">
       {{ 'operatori.allegati' | trans }}
-      <span class="badge badge-light ml-1">{{ pratica.moduliCompilati.count + pratica.allegati.count + messageAttachments|length }}</span>
+      <span class="badge badge-light ml-1">{{ attachments_count + messageAttachments|length }}</span>
     </a>
     <a class="nav-item nav-link {% if tab == 'note' %} active {% endif %} " id="messaggi-tab" data-toggle="tab" href="#messaggi" role="tab"
        aria-controls="messaggi" aria-selected="{{ tab and tab == 'note' }}">

@@ -622,16 +622,6 @@ class OperatoriController extends Controller
     ]);
   }
 
-  /**
-   * @Route("/parametri-protocollo", name="operatori_impostazioni_protocollo_list")
-   * @return array
-   */
-  public function impostazioniProtocolloListAction()
-  {
-    return $this->render('@App/Operatori/impostazioniProtocollo.html.twig', [
-      'parameters' => $this->instanceService->getCurrentInstance()->getProtocolloParameters()
-    ]);
-  }
 
   /**
    * @Route("/{pratica}/autoassign",name="operatori_autoassing_pratica")
@@ -862,6 +852,7 @@ class OperatoriController extends Controller
     return $this->render('@App/Operatori/showPratica.html.twig', [
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
+      'attachments_count' => $this->praticaManager->countAttachments($pratica),
       'messageAttachments' => $attachments,
       'messageForm' => $messageForm->createView(),
       'outcomeForm' => $outcomeForm->createView(),

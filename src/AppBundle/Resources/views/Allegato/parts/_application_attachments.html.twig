@@ -1,4 +1,4 @@
-{% if pratica.moduliCompilati.count + pratica.allegati.count + messageAttachments|length + pratica.allegatiOperatore.count  == 0 %}
+{% if attachments_count + messageAttachments|length  == 0 %}
     <div class="pt-2 font-italic text-center">{{ 'operatori.messaggi.no_attachments' | trans }}</div>
   {% else %}
     <div id="collapse-attachments" class="collapse-div collapse-left-icon" role="tablist">

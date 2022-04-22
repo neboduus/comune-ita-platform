@@ -626,6 +626,7 @@ class PraticheController extends Controller
     $result = [
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
+      'attachments_count' => $this->praticaManager->countAttachments($pratica),
       'messageAttachments' => $attachments,
       'messageForm' => $messageForm->createView(),
       'tab' => $tab,
