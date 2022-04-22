@@ -788,7 +788,8 @@ operatori:
   scrivi_al_cittadino: "BACKOFFICE"
   riapri_pratica: "Vorgang erneut öffnen"
   richiedi_intergrazioni: "BACKOFFICE\n\n"
-  chiudi_richiesta_integrazione: 'Ergänzungen annehmen'
+  annulla_richiesta_integrazione: 'Integrationsanfrage abbrechen'
+  accetta_richiesta_integrazione: 'Ergänzungen annehmen'
   richiedi_integrazioni_tpl: "Sehr geehrte/-r Frau/Herr <b>%user_name%, </b><br/> wir teilen Ihnen mit, dass die Daten zu Ihrer Anfrage betreffend <b>%servizio%</b> noch nicht vollständig sind.<br/>[Inserire motivazione]<br/>Steigen Sie in Ihr Bürgerservicekonto ein, um die Ergänzung vorzunehmen."
   modulo: "BACKOFFICE\n"
   richiesta: 'Anfrage'

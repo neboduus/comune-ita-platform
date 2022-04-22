@@ -796,7 +796,9 @@ operatori:
   scrivi_al_cittadino: "Scrivi al cittadino"
   riapri_pratica: "Riapri pratica"
   richiedi_integrazioni: 'Richiedi integrazioni'
-  chiudi_richiesta_integrazione: 'Accetta integrazioni'
+  annulla_richiesta_integrazione: 'Annulla richiesta integrazioni'
+  accetta_richiesta_integrazione: 'Accetta integrazioni'
+  tooltip_accetta_richiesta_disabilitato: "Deve essere presente almeno un messaggio del cittadino per poter accettare l'integrazione"
   protocollazione_richiesta_integrazione: 'Richiesta integrazioni in attesa di protocollazione'
   protocollazione_risposta_integrazione: 'Integrazioni in attesa di protocollazione'
   richiedi_integrazioni_tpl: "Gentile <b>%user_name%</b><br/>le comunichiamo che è necessaria un'integrazione ai dati della sua richiesta per il servizio <b>%servizio%</b>.<br/>[Inserire motivazione]<br/>Entri nella sua stanza del cittadino per effettuare l'integrazione"

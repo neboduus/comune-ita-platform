@@ -2007,6 +2007,70 @@ class ApplicationsAPIController extends AbstractFOSRestController
   }
 
   /**
+   * Cancel integration request on an application
+   * @Rest\Post("/{id}/transition/cancel-integration", name="application_api_post_transition_cancel_integration")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   *
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function applicationTransitionCancelIntegrationAction($id, Request $request)
+  {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      /** @var Pratica $application */
+      $application = $repository->find($id);
+      if ($application === null) {
+        throw new Exception('Application not found');
+      }
+      $this->denyAccessUnlessGranted(ApplicationVoter::ACCEPT_OR_REJECT, $application);
+
+      if ($application->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+        throw new Exception('Application is not in the correct state');
+      }
+
+      $this->praticaManager->cancelIntegration($application, $this->getUser());
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    return $this->view([], Response::HTTP_NO_CONTENT);
+  }
+
+  /**
    * Withdraw an application
    * @Rest\Post("/{id}/transition/withdraw", name="application_api_post_transition_withdraw")
    *
