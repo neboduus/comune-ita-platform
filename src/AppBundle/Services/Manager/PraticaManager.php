@@ -393,6 +393,28 @@ class PraticaManager
    * @param $messages
    * @return void
    * @throws \League\Flysystem\FileExistsException
+   * @throws Exception
+   */
+  public function cancelIntegration(Pratica $pratica, User $user)
+  {
+    $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
+    $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione($pratica, [], true);
+    $pratica->addAllegato($integrationsAnswer);
+
+    if (!$user instanceof CPSUser) {
+      $statusChange = new StatusChange();
+      $statusChange->setOperatore($user->getFullName());
+    }
+    $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION, $statusChange);
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param User $user
+   * @param $messages
+   * @return void
+   * @throws \League\Flysystem\FileExistsException
+   * @throws Exception
    */
   public function acceptIntegration(Pratica $pratica, User $user, $messages = null)
   {

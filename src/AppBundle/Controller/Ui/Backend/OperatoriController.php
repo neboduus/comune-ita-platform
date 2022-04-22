@@ -868,6 +868,7 @@ class OperatoriController extends Controller
       'meetings' => $repository->findOrderedMeetings($pratica),
       'incoming_meetings' => $repository->findIncomingMeetings($pratica),
       'module_files' => $this->praticaManager->getGroupedModuleFiles($pratica),
+      'last_owner_message' => $repository->getLastMessageByApplicationOwner($pratica)
     ]);
   }
 

@@ -300,12 +300,13 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @return RispostaIntegrazione
    * @throws \League\Flysystem\FileExistsException
    */
-  public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica, array $messages = null)
+  public function creaModuloProtocollabilePerRispostaIntegrazione(Pratica $pratica, array $messages = null, $cancel = false)
   {
 
     $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
     $payload[RichiestaIntegrazione::TYPE_DEFAULT] = $integrationRequest->getId();
 
+    //Se messages è  null recupero i messaggi in automatico, per retrocompatibilità su prima versione
     if ($messages === null) {
       $repo = $this->em->getRepository('AppBundle:Pratica');
       $filters['from_date'] = $integrationRequest->getCreatedAt();
@@ -324,14 +325,20 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       }
     }
 
-    $content = $this->renderForPraticaIntegrationAnswer($pratica, $integrationRequest, $messages);
-    $fileName = uniqid() . '.pdf';
+    if ($cancel) {
+      $content = $this->renderForPraticaIntegrationAnswer($pratica, $integrationRequest, $messages, $cancel);
+      $description = 'Cancellazione richiesta integrazione: ' . $integrationRequest->getId();
+    } else {
+      $content = $this->renderForPraticaIntegrationAnswer($pratica, $integrationRequest, $messages, $cancel);
+      $description = 'Risposta a richiesta integrazione: ' . $integrationRequest->getId();
+    }
 
+    $fileName = uniqid() . '.pdf';
     $attachment = new RispostaIntegrazione();
     $attachment->setPayload($payload);
     $attachment->setOwner($pratica->getUser());
     $attachment->setOriginalFilename($fileName);
-    $attachment->setDescription('Risposta a richiesta integrazione: ' . $integrationRequest->getId());
+    $attachment->setDescription($description);
 
     $destinationDirectory = $this->getDestinationDirectoryFromContext($attachment);
     $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
@@ -403,7 +410,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param array|null $messages
    * @return string
    */
-  private function renderForPraticaIntegrationAnswer(Pratica $pratica, RichiestaIntegrazione $integrationRequest, ?array $messages)
+  private function renderForPraticaIntegrationAnswer(Pratica $pratica, RichiestaIntegrazione $integrationRequest, ?array $messages, $cancel)
   {
 
     /** @var IntegrazioneRepository $integrationRepo */
@@ -412,13 +419,22 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     /** @var Integrazione[] $integrations */
     $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());
 
-    $html = $this->templating->render('AppBundle:Pratiche:pdf/parts/answer_integration.html.twig', [
-      'pratica' => $pratica,
-      'richiesta_integrazione' => $integrationRequest,
-      'integrazioni' => $integrations,
-      'messages' => $messages ?? [],
-      'user' => $pratica->getUser(),
-    ]);
+    if ($cancel) {
+      $html = $this->templating->render('AppBundle:Pratiche:pdf/parts/cancel_integration.html.twig', [
+        'pratica' => $pratica,
+        'richiesta_integrazione' => $integrationRequest,
+        'user' => $pratica->getUser(),
+      ]);
+    } else {
+      $html = $this->templating->render('AppBundle:Pratiche:pdf/parts/answer_integration.html.twig', [
+        'pratica' => $pratica,
+        'richiesta_integrazione' => $integrationRequest,
+        'integrazioni' => $integrations,
+        'messages' => $messages ?? [],
+        'user' => $pratica->getUser(),
+      ]);
+    }
+
     return $this->generatePdf($html);
   }
 

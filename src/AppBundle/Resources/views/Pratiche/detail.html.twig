@@ -84,7 +84,7 @@
             {% if pratica.richiestaDiIntegrazioneAttiva.description is defined %}
               {{ pratica.richiestaDiIntegrazioneAttiva.description | raw }}
             {% endif %}
-            {% if last_owner_message is not defined or last_owner_message.createdAt < pratica.richiestaDiIntegrazioneAttiva.createdAt|date('U') %}
+            {% if last_owner_message is null or (last_owner_message is not null and last_owner_message.createdAt < pratica.richiestaDiIntegrazioneAttiva.createdAt|date('U')) %}
               <div class="text-right my-3">
                 <button id="answer-integration" type="button" class="btn btn-sm btn-outline-primary">
                   {{ 'pratica.dettaglio.integrazioni.button'|trans }}
