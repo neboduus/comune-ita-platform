@@ -155,11 +155,17 @@ class ApplicationVoter extends Voter
 
   private function canWithdraw(Pratica $pratica, User $user)
   {
-    // se il servizio ha un workflow di tipo inoltro e la pratica è stata "inoltrata" NON deve comparire il pulsante ritira.
-    if ($pratica->getServizio()->getWorkflow() == Servizio::WORKFLOW_FORWARD && $pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
+    // NOn è possibile ritirare una pratica se non è abilitato il ritiro, se è presente un dovuto di pagamento o se l'utente non è il richiedente
+    if (!$pratica->getServizio()->isAllowWithdraw() || !empty($pratica->getPaymentData()) || $pratica->getUser()->getId() !== $user->getId()) {
       return false;
     }
-    return in_array($pratica->getStatus(),  [Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING]) && empty($pratica->getPaymentData()) && $pratica->getServizio()->isAllowWithdraw() && $pratica->getUser()->getId() == $user->getId();
+
+    // se il servizio ha un workflow di tipo inoltro e la pratica è stata "inoltrata" NON deve comparire il pulsante ritira.
+    if ($pratica->getServizio()->getWorkflow() == Servizio::WORKFLOW_FORWARD &&  $pratica->getStatus() !== Pratica::STATUS_PRE_SUBMIT) {
+      return false;
+    }
+
+    return in_array($pratica->getStatus(),  [Pratica::STATUS_PRE_SUBMIT, Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING]);
   }
 
   private function canCompile(Pratica $pratica, User $user)
