@@ -327,7 +327,9 @@ class UserController extends Controller
 
     if (!$user->getLuogoNascita()) {
       $formBuilder->add('luogo_nascita', ChoiceType::class,
-        ['label' => false, 'required' => true, 'choices' => array_flip(MunicipalityConverter::getCodes())]
+        ['label' => false, 'required' => true, 'choices' => MunicipalityConverter::getCodes(),  'choice_label' => function ($value) {
+          return $value;
+        },]
       );
     }
 
