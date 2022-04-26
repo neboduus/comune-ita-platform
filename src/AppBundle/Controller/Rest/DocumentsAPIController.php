@@ -99,7 +99,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     description="Retrieve list of documents",
    *     @SWG\Schema(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Document::class))
+   *         @SWG\Items(ref=@Model(type=Document::class, groups={"read"}))
    *     )
    * )
    *
@@ -167,7 +167,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Document",
-   *     @Model(type=Document::class)
+   *     @Model(type=Document::class, groups={"read"})
    * )
    *
    * @SWG\Response(
@@ -221,7 +221,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Document::class),
+   *         ref=@Model(type=Document::class, groups={"write"}),
    *         additionalProperties=true
    *     )
    * )
@@ -317,7 +317,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Document::class)
+   *         ref=@Model(type=Document::class, groups={"write"})
    *     )
    * )
    *
@@ -411,7 +411,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     required=true,
    *     @SWG\Schema(
    *         type="object",
-   *         ref=@Model(type=Document::class)
+   *         ref=@Model(type=Document::class, groups={"write"})
    *     )
    * )
    *
