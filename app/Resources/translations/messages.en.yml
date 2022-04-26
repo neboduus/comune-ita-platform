@@ -173,6 +173,7 @@ servizio:
   azioni: "Vedi azioni"
   indice: "Indice della pagina"
   machine_readable: 'JSON Object'
+  condividi: "Condividi"
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'

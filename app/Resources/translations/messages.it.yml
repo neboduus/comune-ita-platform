@@ -200,6 +200,7 @@ servizio:
     bozza: 'Bozza'
     sospeso: 'Sospeso'
     schedulato: 'Programmato'
+  condividi: "Condividi"
 gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppo di servizi'
   nome: 'Nome'
