@@ -10,11 +10,11 @@
 {% endblock %}
 
 {% block main_content %}
-
   <section class="container">
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
         <h1>{{ servizio.name }}</h1>
+        <p>{{ servizio.description | abstract }}</p>
         {# todo: usare constant() #}
         {% if not can_access %}
           <div class="alert alert-danger" role="alert">
@@ -40,11 +40,6 @@
                 </ul>
               </div>
             {% endif %}
-            <p>
-              <a href="{{ serviceUrl }}" class="btn btn-primary btn-lg">
-                <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-              </a>
-            </p>
           </div>
         {% endif %}
         {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale is defined %}
@@ -62,6 +57,65 @@
       </div>
       <div class="col-lg-3 offset-lg-1">
         <div class="dropdown d-inline">
+          <button class="btn btn-dropdown dropdown-toggle" type="button" id="shareActions" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-share"></use>
+            </svg>
+            <small>{{ 'servizio.condividi' | trans }}</small>
+          </button>
+          <div class="dropdown-menu shadow-lg" aria-labelledby="shareActions">
+            <div class="link-list-wrapper">
+              <ul class="link-list">
+                <li>
+                  <a class="list-item"
+                     href="https://facebook.com/sharer/sharer.php?u={{app.request.uri}}"
+                     target="_blank" rel="noopener" aria-label="Share on Facebook">
+                    <svg class="icon">
+                      <use
+                        xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-facebook"></use>
+                    </svg>
+                    <span>Facebook</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="list-item"
+                     href="https://twitter.com/intent/tweet/?text={{app.request.uri}}"
+                     target="_blank" rel="noopener" aria-label="Share on Twitter">
+                    <svg class="icon">
+                      <use
+                        xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-twitter"></use>
+                    </svg>
+                    <span>Twitter</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="list-item"
+                     href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{app.request.uri}}&amp;title={{servizio.name}}&amp;summary={{servizio.description | abstract}}&amp;source={{ servizio.name }} - Stanza del cittadino"
+                     target="_blank" rel="noopener">
+                    <svg class="icon">
+                      <use
+                        xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-linkedin"></use>
+                    </svg>
+                    <span>Linkedin</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="list-item"
+                     href="whatsapp://send?text={{app.request.uri}}"
+                     target="_blank" rel="noopener" aria-label="Share on Whatsapp">
+                    <svg class="icon">
+                      <use
+                        xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-whatsapp"></use>
+                    </svg>
+                    <span>Whatsapp</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="dropdown d-inline">
           <button class="btn btn-dropdown dropdown-toggle" type="button" id="viewActions" data-toggle="dropdown"
                   aria-haspopup="true" aria-expanded="false">
             <svg class="icon">
@@ -73,11 +127,12 @@
             <div class="link-list-wrapper">
               <ul class="link-list">
                 <li>
-                  <a class="list-item left-icon" href="{{ absolute_url(path('service_api_get', { 'id': servizio.id })) }}">
+                  <a class="list-item left-icon"
+                     href="{{ absolute_url(path('service_api_get', { 'id': servizio.id })) }}">
                     <svg class="icon icon-primary left">
                       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-code-circle"></use>
                     </svg>
-                  {{ 'servizio.machine_readable'|trans }}
+                    {{ 'servizio.machine_readable'|trans }}
                   </a>
                 </li>
               </ul>
@@ -85,33 +140,31 @@
           </div>
         </div>
         <div class="mt-4 mb-4">
-          {% if servizio.recipients %}
-            {% if servizio.recipients|length > 0 %}
-              <article class="mb-4">
-                <h6><small>{{ 'recipients.title' | trans }}</small></h6>
+          <article class="mb-4">
+            <h6><small>{{ 'search.topics' | trans }}</small></h6>
+            <div class="chip chip-primary chip-simple mr-2">
+              <span class="chip-label">{{ servizio.topics.name }}</span>
+            </div>
+            {% if servizio.recipients %}
+              {% if servizio.recipients|length > 0 %}
                 {% for r in servizio.recipients %}
                   <div class="chip chip-primary chip-simple mr-2">
                     <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span
                         class="chip-label">{{ r.name }}</span></a>
                   </div>
                 {% endfor %}
-              </article>
+              {% endif %}
             {% endif %}
-          {% endif %}
-        </div>
-        <div class="mt-4 mb-4">
-          {% if servizio.coverage %}
-            {% if servizio.coverage|length > 0 %}
-              <article class="mb-4">
-                <h6><small>{{ 'servizio.copertura' | trans }}</small></h6>
+            {% if servizio.coverage %}
+              {% if servizio.coverage|length > 0 %}
                 {% for c in servizio.coverage %}
                   <div class="chip chip-primary chip-simple mr-2">
                     <span class="chip-label">{{ c }}</span>
                   </div>
                 {% endfor %}
-              </article>
+              {% endif %}
             {% endif %}
-          {% endif %}
+          </article>
         </div>
       </div>
     </div>
@@ -124,13 +177,23 @@
               <span class="it-list"></span>{{ 'servizio.indice' | trans }}
             </button>
             <div class="navbar-collapsable" id="navbarNav">
+              <div class="overlay"></div>
+              <div class="close-div sr-only">
+                <button class="btn close-menu" type="button"><span class="it-close"></span>close</button>
+              </div>
+              <a class="it-back-button" href="#">
+                <svg class="icon icon-sm icon-primary align-top">
+                  <use href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left" xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
+                </svg>
+                <span>Back</span>
+              </a>
               <div class="menu-wrapper">
                 <div class="link-list-wrapper menu-link-list">
                   <h3 class="no_toc">{{ 'servizio.indice' | trans }}</h3>
                   <ul class="link-list">
                     {% if servizio.description|striptags|trim != '' %}
                       <li class="nav-item">
-                        <a class="nav-link" href="#description" aria-selected="true"  aria-disabled="true" tabindex="-1"><span>
+                        <a class="nav-link" href="#description" aria-selected="true" aria-disabled="true" tabindex="-1"><span>
                           {{ 'servizio.cos_e' | trans }}
                         </span>
                         </a>
@@ -138,29 +201,34 @@
                     {% endif %}
                     {% if servizio.who|striptags|trim != '' %}
                       <li class="nav-item">
-                        <a class="nav-link" href="#who" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.a_chi_si_rivolge' | trans }}</span></a>
-                      </li>
-                    {% endif %}
-                    {% if servizio.howto|striptags|trim != '' %}
-                      <li class="nav-item">
-                        <a class="nav-link" href="#howto" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.accedere' | trans }}</span></a>
+                        <a class="nav-link" href="#who" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.a_chi_si_rivolge' | trans }}</span></a>
                       </li>
                     {% endif %}
                     {% if servizio.specialCases|striptags|trim != '' %}
                       <li class="nav-item">
-                        <a class="nav-link" href="#special-cases" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.casi_particolari' | trans }}</span></a>
+                        <a class="nav-link" href="#special-cases" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.casi_particolari' | trans }}</span></a>
                       </li>
                     {% endif %}
                     {% if servizio.moreInfo|striptags|trim != '' %}
                       <li class="nav-item">
-                        <a class="nav-link" href="#more-info" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.maggiori_info' | trans }}</span></a>
+                        <a class="nav-link" href="#more-info" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.maggiori_info' | trans }}</span></a>
                       </li>
                     {% endif %}
                     {% if servizi_area|length > 0 and servizio.topics %}
                       <li class="nav-item">
-                        <a class="nav-link" href="#other-services" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.altri_servizi_disponibili' | trans }} {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}</span></a>
+                        <a class="nav-link" href="#other-services" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.altri_servizi_disponibili' | trans }} {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}</span></a>
                       </li>
-                    {% endif%}
+                    {% endif %}
+                    {% if servizio.howto|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#howto" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.accedere' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                   </ul>
                 </div>
               </div>
@@ -168,55 +236,88 @@
           </nav>
         </div>
       </aside>
-      <section class="col-lg-8">
+      <section class="col-lg-8 it-page-sections-container">
         {% if servizio.description|striptags|trim != '' %}
-          <article id="description" class="anchor-offset">
-            <h4>{{ 'servizio.cos_e' | trans }}</h4>
+          <article id="description" >
+            <h4 class="it-page-section">{{ 'servizio.cos_e' | trans }}</h4>
             {{ servizio.description|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
         {% if servizio.who|striptags|trim != '' %}
-          <article id="who" class="anchor-offset">
-            <h4>{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
+          <article id="who" >
+            <h4 class="it-page-section">{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
             {{ servizio.who|cleanMarkup|raw|nl2br }}
-          </article>
-        {% endif %}
-        {% if servizio.howto|striptags|trim != '' %}
-          <article id="howto" class="anchor-offset">
-            <h4>{{ 'servizio.accedere' | trans }}</h4>
-            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            {% if servizio.coverage %}
+              {% if servizio.coverage|length > 0 %}
+                <article class="mb-4">
+                  <h5>{{ 'servizio.copertura' | trans }}</h5>
+                  {% for c in servizio.coverage %}
+                    <div class="chip chip-secondary chip-simple chip-lg mr-2">
+                      <span class="chip-label">{{ c }}</span>
+                    </div>
+                  {% endfor %}
+                </article>
+              {% endif %}
+            {% endif %}
+
+            {% if servizio.recipients %}
+              {% if servizio.recipients|length > 0 %}
+                <article class="mb-4">
+                  <h5>{{ 'recipients.title' | trans }}</h5>
+                  {% for r in servizio.recipients %}
+                    <div class="chip chip-secondary chip-simple chip-lg mr-2">
+                      <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span
+                          class="chip-label">{{ r.name }}</span></a>
+                    </div>
+                  {% endfor %}
+                </article>
+              {% endif %}
+            {% endif %}
           </article>
         {% endif %}
         {% if servizio.specialCases|striptags|trim != '' %}
-          <article id="special-cases" class="anchor-offset">
-            <h4>{{ 'servizio.casi_particolari' | trans }}</h4>
+          <article id="special-cases" >
+            <h4 class="it-page-section">{{ 'servizio.casi_particolari' | trans }}</h4>
             {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
         {% if servizio.moreInfo|striptags|trim != '' %}
-          <article id="more-info" class="anchor-offset">
-            <h4>{{ 'servizio.maggiori_info' | trans }}</h4>
+          <article id="more-info" >
+            <h4 class="it-page-section">{{ 'servizio.maggiori_info' | trans }}</h4>
             {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
         {% if servizi_area|length > 0 and servizio.topics %}
-          <article id="other-services" class="anchor-offset">
-            <h4>{{ 'servizio.altri_servizi_disponibili' | trans }} {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}</h4>
+          <article id="other-services" >
+            <h4 class="it-page-section">{{ 'servizio.altri_servizi_disponibili' | trans }} {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}</h4>
             <div class="card-wrapper card-teaser-wrapper card-teaser-wrapper-equal card-teaser-block-2">
               {% for s in servizi_area %}
-              <div class="card card-teaser shadow p-4">
-                <svg class="icon">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
-                </svg>
-                <div class="card-body">
-                  <h5 class="card-title {% if s.id == servizio.id %} active{% endif %}">
-                    <a href="{{ path('servizi_show', {'slug': s.slug}) }}">{{ s.name }}</a>
-                  </h5>
+                <div class="card card-teaser shadow p-4">
+                  <svg class="icon">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
+                  </svg>
+                  <div class="card-body">
+                    <h5 class="card-title {% if s.id == servizio.id %} active{% endif %}">
+                      <a href="{{ path('servizi_show', {'slug': s.slug}) }}">{{ s.name }}</a>
+                    </h5>
+                  </div>
                 </div>
-              </div>
               {% endfor %}
             </div>
           </article>
+        {% endif %}
+        {% if servizio.howto|striptags|trim != '' %}
+          <article id="howto" >
+            <h4 class="it-page-section">{{ 'servizio.accedere' | trans }}</h4>
+            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+          </article>
+        {% endif %}
+        {% if can_access %}
+          <p>
+            <a href="{{ serviceUrl }}" class="btn btn-success btn-lg">
+              <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
+            </a>
+          </p>
         {% endif %}
       </section>
     </div>

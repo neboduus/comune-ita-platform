@@ -172,6 +172,7 @@ servizio:
     default_language_module_alert: 'Default_Warnmeldung_Sprachmodul'
     string: 'String'
     translation: 'Übersetzung'
+  condividi: "Condividi"
 gruppo_di_servizi:
   gruppo_di_servizi: 'Kategorie von Diensten'
   nome: 'Name'
