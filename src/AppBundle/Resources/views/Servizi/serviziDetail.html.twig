@@ -11,76 +11,42 @@
 
 {% block main_content %}
 
-
   <section class="container">
     <div class="row">
-      <div class="col-12 px-lg-4 py-lg-2">
-        <h1>{{ servizio.name }}</h1>
-      </div>
       <div class="col-lg-8 px-lg-4 py-lg-2">
-
-        {% if servizio.description|striptags|trim != '' %}
-          <article class="mb-4">
-            <h4>{{ 'servizio.cos_e' | trans }}</h4>
-            {{ servizio.description|cleanMarkup|raw|nl2br }}
-          </article>
+        <h1>{{ servizio.name }}</h1>
+        {# todo: usare constant() #}
+        {% if not can_access %}
+          <div class="alert alert-danger" role="alert">
+            <i class="fa fa-times" aria-hidden="true"></i> {{ deny_access_message }}
+          </div>
+        {% else %}
+          <div>
+            {% set serviceUrl = path('pratiche_anonime_new', {'servizio': servizio.slug}) %}
+            {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
+              {% set serviceUrl = path('pratiche_new', {'servizio': servizio.slug}) %}
+            {% endif %}
+            {% if servizio.enti|length > 1 %}
+              <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}
+                  :</strong>
+                <ul class="list-unstyled">
+                  {% for ente in servizio.enti %}
+                    <li>
+                      <a href="{{ ente.siteUrl }}">
+                        <small>{{ ente.name }}</small>
+                      </a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+            <p>
+              <a href="{{ serviceUrl }}" class="btn btn-primary btn-lg">
+                <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
+              </a>
+            </p>
+          </div>
         {% endif %}
-
-        {% if servizio.who|striptags|trim != '' %}
-          <article class="mb-4">
-            <h4>{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
-            {{ servizio.who|cleanMarkup|raw|nl2br }}
-          </article>
-        {% endif %}
-
-        {% if servizio.coverage %}
-          {% if servizio.coverage|length > 0 %}
-            <article class="mb-4">
-              <h4>{{ 'servizio.copertura' | trans }}</h4>
-              {% for c in servizio.coverage %}
-                <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary">
-                  <span class="chip-label">{{ c }}</span>
-                </div>
-              {% endfor %}
-            </article>
-          {% endif %}
-        {% endif %}
-
-        {% if servizio.recipients %}
-          {% if servizio.recipients|length > 0 %}
-            <article class="mb-4">
-              <h4>{{ 'recipients.title' | trans }}</h4>
-              {% for r in servizio.recipients %}
-                <div class="chip chip-primary chip-lg mr-2">
-                  <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span
-                      class="chip-label">{{ r.name }}</span></a>
-                </div>
-              {% endfor %}
-            </article>
-          {% endif %}
-        {% endif %}
-
-        {% if servizio.howto|striptags|trim != '' %}
-          <article class="mb-4">
-            <h4>{{ 'servizio.accedere' | trans }}</h4>
-            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-          </article>
-        {% endif %}
-
-        {% if servizio.specialCases|striptags|trim != '' %}
-          <article class="mb-4">
-            <h4>{{ 'servizio.casi_particolari' | trans }}</h4>
-            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-          </article>
-        {% endif %}
-
-        {% if servizio.moreInfo|striptags|trim != '' %}
-          <article class="mb-4">
-            <h4>{{ 'servizio.maggiori_info' | trans }}</h4>
-            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-          </article>
-        {% endif %}
-
         {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale is defined %}
           <br/>
           <div class="alert alert-info">
@@ -93,78 +59,166 @@
             </p>
           </div>
         {% endif %}
-
-        <div class="row">
-          <div class="col-md-12">
-            {# todo: usare constant() #}
-            {% if not can_access %}
-              <div class="alert alert-danger" role="alert">
-                <i class="fa fa-times" aria-hidden="true"></i> {{ deny_access_message }}
-              </div>
-            {% else %}
-              <div>
-                {% set serviceUrl = path('pratiche_anonime_new', {'servizio': servizio.slug}) %}
-                {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
-                  {% set serviceUrl = path('pratiche_new', {'servizio': servizio.slug}) %}
-                {% endif %}
-                <p class="text-center">
-                  <a href="{{ serviceUrl }}" class="btn btn-success btn-lg">
-                    <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
-                  </a>
-                </p>
-
-                {% if servizio.enti|length > 1 %}
-                  <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}
-                      :</strong>
-                    <ul class="list-unstyled">
-                      {% for ente in servizio.enti %}
-                        <li>
-                          <a href="{{ ente.siteUrl }}">
-                            <small>{{ ente.name }}</small>
-                          </a>
-                        </li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                {% endif %}
-
-              </div>
-            {% endif %}
+      </div>
+      <div class="col-lg-3 offset-lg-1">
+        <div class="dropdown d-inline">
+          <button class="btn btn-dropdown dropdown-toggle" type="button" id="viewActions" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-items"></use>
+            </svg>
+            <small>{{ 'servizio.azioni' | trans }}</small>
+          </button>
+          <div class="dropdown-menu shadow-lg" aria-labelledby="viewActions">
             <div class="link-list-wrapper">
               <ul class="link-list">
-                <li><a class="list-item active icon-left" href="{{ absolute_url(path('service_api_get', { 'id': servizio.id })) }}">
-                    <svg class="icon icon-primary"><use href="/bootstrap-italia/dist/svg/sprite.svg#it-code-circle"></use></svg>
-                    <span>{{ 'servizio.machine_readable'|trans }}</span></a>
+                <li>
+                  <a class="list-item left-icon" href="{{ absolute_url(path('service_api_get', { 'id': servizio.id })) }}">
+                    <svg class="icon icon-primary left">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-code-circle"></use>
+                    </svg>
+                  {{ 'servizio.machine_readable'|trans }}
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
         </div>
-      </div>
-
-      {% if servizi_area|length > 0 and servizio.topics %}
-        <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
-          <div class="border-left border-light pl-5 pb-4">
-            <h6>{% if servizio.topics %}Altri servizi disponibili in {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}{% endif %}</h6>
-            <div class="link-list-wrapper">
-              <ul class="link-list">
-                {% for s in servizi_area %}
-                  <li>
-                    <a class="list-item icon-left pr-0{% if s.id == servizio.id %} active{% endif %}"
-                       href="{{ path('servizi_show', {'slug': s.slug}) }}">
-                      <svg class="icon icon-primary">
-                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
-                      </svg>
-                      <span style="line-height: 1.7">{{ s.name }}</span>
-                    </a>
-                  </li>
+        <div class="mt-4 mb-4">
+          {% if servizio.recipients %}
+            {% if servizio.recipients|length > 0 %}
+              <article class="mb-4">
+                <h6><small>{{ 'recipients.title' | trans }}</small></h6>
+                {% for r in servizio.recipients %}
+                  <div class="chip chip-primary chip-simple mr-2">
+                    <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span
+                        class="chip-label">{{ r.name }}</span></a>
+                  </div>
                 {% endfor %}
-              </ul>
-            </div>
-          </div>
+              </article>
+            {% endif %}
+          {% endif %}
         </div>
-      {% endif %}
-
+        <div class="mt-4 mb-4">
+          {% if servizio.coverage %}
+            {% if servizio.coverage|length > 0 %}
+              <article class="mb-4">
+                <h6><small>{{ 'servizio.copertura' | trans }}</small></h6>
+                {% for c in servizio.coverage %}
+                  <div class="chip chip-primary chip-simple mr-2">
+                    <span class="chip-label">{{ c }}</span>
+                  </div>
+                {% endfor %}
+              </article>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="row border-top row-column-border row-column-menu-left">
+      <aside class="col-lg-4" style="position: relative;">
+        <div class="sticky-wrapper navbar-wrapper">
+          <nav class="navbar it-navscroll-wrapper it-top-navscroll navbar-expand-lg">
+            <button class="custom-navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation" data-target="#navbarNav">
+              <span class="it-list"></span>{{ 'servizio.indice' | trans }}
+            </button>
+            <div class="navbar-collapsable" id="navbarNav">
+              <div class="menu-wrapper">
+                <div class="link-list-wrapper menu-link-list">
+                  <h3 class="no_toc">{{ 'servizio.indice' | trans }}</h3>
+                  <ul class="link-list">
+                    {% if servizio.description|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#description" aria-selected="true"  aria-disabled="true" tabindex="-1"><span>
+                          {{ 'servizio.cos_e' | trans }}
+                        </span>
+                        </a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.who|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#who" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.a_chi_si_rivolge' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.howto|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#howto" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.accedere' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.specialCases|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#special-cases" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.casi_particolari' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.moreInfo|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#more-info" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.maggiori_info' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizi_area|length > 0 and servizio.topics %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#other-services" aria-selected="false"  aria-disabled="true" tabindex="-1"><span>{{ 'servizio.altri_servizi_disponibili' | trans }} {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}</span></a>
+                      </li>
+                    {% endif%}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </aside>
+      <section class="col-lg-8">
+        {% if servizio.description|striptags|trim != '' %}
+          <article id="description" class="anchor-offset">
+            <h4>{{ 'servizio.cos_e' | trans }}</h4>
+            {{ servizio.description|cleanMarkup|raw|nl2br }}
+          </article>
+        {% endif %}
+        {% if servizio.who|striptags|trim != '' %}
+          <article id="who" class="anchor-offset">
+            <h4>{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
+            {{ servizio.who|cleanMarkup|raw|nl2br }}
+          </article>
+        {% endif %}
+        {% if servizio.howto|striptags|trim != '' %}
+          <article id="howto" class="anchor-offset">
+            <h4>{{ 'servizio.accedere' | trans }}</h4>
+            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+          </article>
+        {% endif %}
+        {% if servizio.specialCases|striptags|trim != '' %}
+          <article id="special-cases" class="anchor-offset">
+            <h4>{{ 'servizio.casi_particolari' | trans }}</h4>
+            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+          </article>
+        {% endif %}
+        {% if servizio.moreInfo|striptags|trim != '' %}
+          <article id="more-info" class="anchor-offset">
+            <h4>{{ 'servizio.maggiori_info' | trans }}</h4>
+            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+          </article>
+        {% endif %}
+        {% if servizi_area|length > 0 and servizio.topics %}
+          <article id="other-services" class="anchor-offset">
+            <h4>{{ 'servizio.altri_servizi_disponibili' | trans }} {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}</h4>
+            <div class="card-wrapper card-teaser-wrapper card-teaser-wrapper-equal card-teaser-block-2">
+              {% for s in servizi_area %}
+              <div class="card card-teaser shadow p-4">
+                <svg class="icon">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
+                </svg>
+                <div class="card-body">
+                  <h5 class="card-title {% if s.id == servizio.id %} active{% endif %}">
+                    <a href="{{ path('servizi_show', {'slug': s.slug}) }}">{{ s.name }}</a>
+                  </h5>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </article>
+        {% endif %}
+      </section>
     </div>
   </section>
 

@@ -5,59 +5,111 @@
 
   <section class="container">
     <div class="row">
-      <div class="col-12 px-lg-4 py-lg-2">
+      <div class="col-lg-8 px-lg-4 py-lg-2">
         <h1>{{ servizio.name }}</h1>
       </div>
-      <div class="col-lg-8 px-lg-4 py-lg-2">
-
+      <div class="col-lg-3 offset-lg-1">
+        <div class="mt-4 mb-4">
+          {% if servizio.coverage %}
+            {% if servizio.coverage|length > 0 %}
+              <article class="mb-4">
+                <h6><small>{{ 'gruppo_di_servizi.copertura' | trans }}</small></h6>
+                {% for c in servizio.coverage %}
+                  <div class="chip chip-primary chip-simple mr-2">
+                    <span class="chip-label">{{ c }}</span>
+                  </div>
+                {% endfor %}
+              </article>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="row border-top row-column-border row-column-menu-left">
+      <aside class="col-lg-4" style="position: relative;">
+        <div class="sticky-wrapper navbar-wrapper">
+          <nav class="navbar it-navscroll-wrapper it-top-navscroll navbar-expand-lg">
+            <button class="custom-navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false"
+                    aria-label="Toggle navigation" data-target="#navbarNav">
+              <span class="it-list"></span>{{ 'servizio.indice' | trans }}
+            </button>
+            <div class="navbar-collapsable" id="navbarNav">
+              <div class="menu-wrapper">
+                <div class="link-list-wrapper menu-link-list">
+                  <h3 class="no_toc">{{ 'servizio.indice' | trans }}</h3>
+                  <ul class="link-list">
+                    {% if servizio.description|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" aria-selected="true"  aria-disabled="true" tabindex="-1"
+                           href="#description"><span>
+                          {{ 'gruppo_di_servizi.cos_e' | trans }}
+                        </span>
+                        </a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.who|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" aria-selected="true"  aria-disabled="true" tabindex="-1"
+                           href="#who"><span>{{ 'gruppo_di_servizi.a_chi_si_rivolge' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.howto|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" aria-selected="true"  aria-disabled="true" tabindex="-1"
+                           href="#howto"><span>{{ 'gruppo_di_servizi.accedere' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.specialCases|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" aria-selected="true"  aria-disabled="true" tabindex="-1"
+                           href="#special-cases"><span>{{ 'gruppo_di_servizi.casi_particolari' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.moreInfo|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" aria-selected="true"  aria-disabled="true" tabindex="-1"
+                           href="#more-info"><span>{{ 'gruppo_di_servizi.maggiori_info' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </aside>
+      <section class="col-lg-8">
         {% if servizio.description|striptags|trim != '' %}
-          <article class="mb-3">
-            <h4>{{ 'gruppo_di_servizi.cos_e' | trans }}</h4>
+          <article id="description" class="anchor-offset">
+            <h4>{{ 'servizio.cos_e' | trans }}</h4>
             {{ servizio.description|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
-
         {% if servizio.who|striptags|trim != '' %}
-          <article class="mb-3">
-            <h4>{{ 'gruppo_di_servizi.a_chi_si_rivolge' | trans }}</h4>
+          <article id="who" class="anchor-offset">
+            <h4>{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
             {{ servizio.who|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
-
-        {% if servizio.coverage %}
-          {% if servizio.coverage|length > 0 %}
-            <article class="mb-3">
-              <h5>{{ 'gruppo_di_servizi.copertura' | trans }}</h5>
-              {% for c in servizio.coverage %}
-                <div class="text-sans-serif chip chip-lg mr-2 chip-simple chip-secondary">
-                  <span class="chip-label">{{ c }}</span>
-                </div>
-              {% endfor %}
-            </article>
-          {% endif %}
-        {% endif %}
-
         {% if servizio.howto|striptags|trim != '' %}
-          <article class="mb-3">
-            <h4>{{ 'gruppo_di_servizi.accedere' | trans }}</h4>
+          <article id="howto" class="anchor-offset">
+            <h4>{{ 'servizio.accedere' | trans }}</h4>
             {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
-
         {% if servizio.specialCases|striptags|trim != '' %}
-          <article class="mb-3">
-            <h4>{{ 'gruppo_di_servizi.casi_particolari' | trans }}</h4>
+          <article id="special-cases" class="anchor-offset">
+            <h4>{{ 'servizio.casi_particolari' | trans }}</h4>
             {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
-
         {% if servizio.moreInfo|striptags|trim != '' %}
-          <article class="mb-3">
-            <h4>{{ 'gruppo_di_servizi.maggiori_info' | trans }}</h4>
+          <article id="more-info" class="anchor-offset">
+            <h4>{{ 'servizio.maggiori_info' | trans }}</h4>
             {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
           </article>
         {% endif %}
-      </div>
+      </section>
     </div>
   </section>
 
@@ -70,15 +122,13 @@
         {% endif %}
         <div class="col-12 col-md-6 px-lg-4 mb-2">
           <a href="{{ serviceUrl }}"
-             class="btn btn-success btn-lg d-flex flex-column justify-content-center h-100 service-access-button">
+             class="btn btn-primary btn-lg d-flex flex-column justify-content-center h-100 service-access-button">
             {{ sharedService.name }}
           </a>
         </div>
       {% endfor %}
     </div>
   </section>
-
-
 
   {% if servizio.getStickyServices.count > 0 %}
     <section class="container-fluid py-5 bg-light">
@@ -93,7 +143,6 @@
       </div>
     </section>
   {% endif %}
-
 
   {% if servizio.getNotStickyServices.count > 0 %}
     <section class="container py-5">

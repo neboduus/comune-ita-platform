@@ -162,14 +162,17 @@ servizio:
   messaggio_personale: ""
   nome_utente: ""
   indirizzo_utente: ""
-  machine_readable: ''
   preview: ''
   print: ''
-  name_service_warning: ""
   i18n:
     default_language_module_alert: ''
     string: ''
     translation: ''
+  name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
+  altri_servizi_disponibili: "Altri servizi disponibili in"
+  azioni: "Vedi azioni"
+  indice: "Indice della pagina"
+  machine_readable: 'JSON Object'
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'

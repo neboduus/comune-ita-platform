@@ -102,6 +102,11 @@ servizio:
   torna: "Zurück zum Onlinedienst"
   il_servizio: 'Der Onlinedienst'
   area_tematica: 'Themenbereich'
+  machine_readable: 'JSON Object'
+  indice: "Indice della pagina"
+  azioni: "Vedi azioni"
+  altri_servizi_disponibili: "Altri servizi disponibili in"
+  name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
   imis:
     download_pdf_imis: 'Laden Sie das PDF %name% herunter'
   statutes:
@@ -161,10 +166,8 @@ servizio:
   messaggio_personale: "Persönliche Meldung"
   nome_utente: "Benutzername"
   indirizzo_utente: "Benutzeradresse"
-  machine_readable: 'machine_readable'
   preview: 'Preview'
   print: 'drucken'
-  name_service_warning: "Warnhinweis Onlinedienstname"
   i18n:
     default_language_module_alert: 'Default_Warnmeldung_Sprachmodul'
     string: 'String'
