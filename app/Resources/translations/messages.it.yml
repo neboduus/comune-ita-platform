@@ -181,7 +181,10 @@ servizio:
   no_geographic_areas: 'Non è stata specificata nessuna area geografica'
   shared_with_group_message: 'Questo servizio condivide la scheda con il gruppo di servizi, di seguito sono mostrati i contenuti del gruppo di servizi associato.'
   shared_with_group_action: 'Modifica il gruppo di servizi'
-  machine_readable: 'Definizione machine readable'
+  machine_readable: 'JSON Object'
+  indice: "Indice della pagina"
+  azioni: "Vedi azioni"
+  altri_servizi_disponibili: "Altri servizi disponibili in"
   preview: 'Anteprima'
   print: 'Stampa'
   name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
