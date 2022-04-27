@@ -13,16 +13,21 @@
 }
 
 .user-menu {
-  overflow-x: hidden;
+  flex-wrap: wrap;
   a {
     text-decoration: none;
     &:hover {
       text-decoration: underline;
     }
   }
-  @media (max-width: #{map-get($grid-breakpoints, md)}) {
+  -ms-overflow-style: none; /* for Internet Explorer, Edge */
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  @media (max-width: #{map-get($grid-breakpoints, lg)}) {
     //flex-direction: column;
-    flex-wrap: wrap;
+
     justify-content: flex-start !important;
     a {
       &.active {
