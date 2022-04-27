@@ -124,9 +124,12 @@ class MeetingsAPIController extends AbstractFOSRestController
         Response::HTTP_BAD_REQUEST
       );
     }
-    $builder
-      ->where('meeting.status = :status')
-      ->setParameter('status', $statusParameter);
+
+    if ($statusParameter) {
+      $builder
+        ->where('meeting.status = :status')
+        ->setParameter('status', $statusParameter);
+    }
 
     $results = $builder->getQuery()->getResult();
     return $this->view($results, Response::HTTP_OK);
