@@ -130,7 +130,7 @@
                           <code>{{ payment.amount }} €</code>
                         </td>
                         <td class="d-none d-none d-lg-table-cell align-middle">
-                          {{ payment.paymentDate | date(ocsdc_default_date_format) }}
+                          {% if payment.paymentDate %}{{ payment.paymentDate | date('Y-m-d') }}{% endif %}
                         </td>
                         <td class="d-none d-none d-lg-table-cell align-middle">
                           <div class="float-right">
