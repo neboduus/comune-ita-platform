@@ -34,7 +34,7 @@
     "datatables.net-bs4": "1.10.23",
     "dropzone": "^6.0.0-beta.2",
     "element-ui": "2.15.0",
-    "formiojs": "^4.13.0",
+    "formiojs": "^4.14.6",
     "highcharts": "9.0.1",
     "ion-rangeslider": "^2.3.1",
     "jquery": "3.5.1",
