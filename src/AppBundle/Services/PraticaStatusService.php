@@ -147,6 +147,7 @@ class PraticaStatusService
       [Pratica::STATUS_CANCELLED => Pratica::STATUS_CANCELLED],
 
       // Ritiro
+      [Pratica::STATUS_PRE_SUBMIT => Pratica::STATUS_WITHDRAW],
       [Pratica::STATUS_SUBMITTED => Pratica::STATUS_WITHDRAW],
       [Pratica::STATUS_REGISTERED => Pratica::STATUS_WITHDRAW],
       [Pratica::STATUS_PENDING => Pratica::STATUS_WITHDRAW],
