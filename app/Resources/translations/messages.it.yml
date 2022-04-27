@@ -315,6 +315,7 @@ pratica:
       descrizione_richieste_integrazioni: 'Qui sono elencati i file di richiesta integrazione.'
       descrizione_risposte_integrazioni: 'Qui sono elencati i file di risposta integrazione.'
       descrizione_risposta: 'Qui sono elencati il file di risposta alla pratica e relativi allegati.'
+      descrizione_ritiro: 'Qui sono elencati il file di ritiro e/o annullamento della pratica.'
     data_ora_presentazione: 'Richiesta presentata il'
     alle: 'alle'
     stato: 'Stato corrente'
@@ -915,6 +916,7 @@ operatori:
   scarica_richiesta_protocollata: 'Scarica la richiesta protocollata'
   scarica_ricevuta: 'Scarica la ricevuta'
   scarica_risposta_firmata: 'File di risposta'
+  scarica_ritiro: 'File di ritiro'
   torna_alla_lista_operatori: 'Torna alla lista operatori'
   flow:
     approva_o_rigetta:
