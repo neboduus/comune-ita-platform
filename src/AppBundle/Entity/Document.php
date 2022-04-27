@@ -86,10 +86,10 @@ class Document
    * @var string
    * @Assert\NotBlank(message="Questo campo è obbligatorio (original Filename)")
    * @ORM\Column(name="original_filename", type="string", length=255, nullable=false)
-   * @SWG\Property(property="original_filename", description="Document's original file name", type="string")
+   * @SWG\Property(description="Document's original file name", type="string")
    * @Groups({"read", "write"})
    */
-  private $originalFileName;
+  private $originalFilename;
 
   /**
    * @var string|null
@@ -336,6 +336,19 @@ class Document
   }
 
   /**
+   * @Serializer\VirtualProperty(name="file")
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Base64 file to be imported", type="string")
+   * @Serializer\SerializedName("file")
+   * @Groups({"write"})
+   *
+   */
+  public function getFile(): string
+  {
+    return "";
+  }
+
+  /**
    * Get Folder
    *
    * @return Folder|null
@@ -476,7 +489,7 @@ class Document
    */
   public function setOriginalFilename($originalFilename = null)
   {
-    $this->originalFileName = $originalFilename;
+    $this->originalFilename = $originalFilename;
 
     return $this;
   }
@@ -488,7 +501,7 @@ class Document
    */
   public function getOriginalFilename()
   {
-    return $this->originalFileName;
+    return $this->originalFilename;
   }
 
   /**
