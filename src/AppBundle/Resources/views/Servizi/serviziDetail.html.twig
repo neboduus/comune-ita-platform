@@ -142,9 +142,11 @@
         <div class="mt-4 mb-4">
           <article class="mb-4">
             <h6><small>{{ 'search.topics' | trans }}</small></h6>
+            {% if servizio.topics.name is defined %}
             <div class="chip chip-primary chip-simple mr-2">
               <span class="chip-label">{{ servizio.topics.name }}</span>
             </div>
+            {% endif %}
             {% if servizio.recipients %}
               {% if servizio.recipients|length > 0 %}
                 {% for r in servizio.recipients %}

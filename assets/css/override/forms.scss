@@ -117,6 +117,19 @@ input.form-control::placeholder {
     .pagination {
       margin-bottom: 0 !important;
 
+      .page-item{
+        &.active{
+          .page-link{
+            background-color: $primary !important;
+            border-color: $primary !important;
+            color: #fff !important;
+          }
+        }
+        .page-link{
+          color: $primary;
+        }
+      }
+
       li {
         border: 1px solid #ccc;
         background-color: $white;

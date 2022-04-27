@@ -31,16 +31,9 @@ class Form {
       Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
         noAlerts: true,
         language: $container.data('locale'),
-        i18n: data,
-        buttonSettings: {
-          showCancel: false
-        }
+        i18n: data
       })
         .then(function (form) {
-
-          form.formReady.then(() => {
-           Form.checkWizardNavCancelButton()
-          });
 
           if (form.hasOwnProperty('wizard')) {
             $('.craue_formflow_current_step.active').addClass('wizard');
@@ -109,14 +102,9 @@ class Form {
         noAlerts: true,
         language: $container.data('locale'),
         i18n: data,
-        buttonSettings: {
-          showCancel: false
-        }
       }).then(function (form) {
         form.formReady.then(() => {
           setTimeout(disableApplicant, 1000);
-          Form.checkWizardNavCancelButton();
-
           const draftButton = $('#save-draft');
           const draftInfo = $('.save-draft-info');
           const draftTextInfo = draftInfo.find('span');
@@ -239,15 +227,9 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         readOnly: true,
-        buttonSettings: {
-          showCancel: false
-        }
         //renderMode: 'html'
       })
         .then(function (form) {
-          form.formReady.then(() => {
-           Form.checkWizardNavCancelButton()
-          });
           // Recupero i dati della pratica se presenti
           if ($('#formio_render_dematerialized_forms').val() != '') {
             form.submission = {
@@ -268,13 +250,9 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         readOnly: false,
-        buttonSettings: {
-          showCancel: false
-        }
         //renderMode: 'html'
       }).then(function (form) {
         form.formReady.then(() => {
-          Form.checkWizardNavCancelButton();
         });
       });
     });
@@ -325,14 +303,6 @@ class Form {
       this.initSummary(containerId);
     }
   }
-
-  static checkWizardNavCancelButton(){
-    // Check if Cancel button is shown
-    if($('.btn-wizard-nav-cancel').length > 0) {
-      $('.btn-wizard-nav-cancel').attr('type','button')
-    }
-  }
-
 }
 
 export default Form;
