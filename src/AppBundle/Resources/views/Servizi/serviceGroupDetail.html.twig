@@ -22,7 +22,7 @@
               <ul class="link-list">
                 <li>
                   <a class="list-item"
-                     href="https://facebook.com/sharer/sharer.php?u={{app.request.uri}}"
+                     href="https://facebook.com/sharer/sharer.php?u={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
                      target="_blank" rel="noopener" aria-label="Share on Facebook">
                     <svg class="icon">
                       <use
@@ -33,7 +33,7 @@
                 </li>
                 <li>
                   <a class="list-item"
-                     href="https://twitter.com/intent/tweet/?text={{app.request.uri}}"
+                     href="https://twitter.com/intent/tweet/?text={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
                      target="_blank" rel="noopener" aria-label="Share on Twitter">
                     <svg class="icon">
                       <use
@@ -44,7 +44,7 @@
                 </li>
                 <li>
                   <a class="list-item"
-                     href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{app.request.uri}}&amp;title={{servizio.name}}&amp;summary={{servizio.description | abstract}}&amp;source={{ servizio.name }} - Stanza del cittadino"
+                     href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
                      target="_blank" rel="noopener">
                     <svg class="icon">
                       <use
@@ -55,7 +55,7 @@
                 </li>
                 <li>
                   <a class="list-item"
-                     href="whatsapp://send?text={{app.request.uri}}"
+                     href="whatsapp://send?text={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
                      target="_blank" rel="noopener" aria-label="Share on Whatsapp">
                     <svg class="icon">
                       <use
@@ -81,15 +81,6 @@
                 <div class="chip chip-primary chip-simple mr-2">
                   <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span
                       class="chip-label">{{ r.name }}</span></a>
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endif %}
-          {% if servizio.coverage %}
-            {% if servizio.coverage|length > 0 %}
-              {% for c in servizio.coverage %}
-                <div class="chip chip-primary chip-simple mr-2">
-                  <span class="chip-label">{{ c }}</span>
                 </div>
               {% endfor %}
             {% endif %}
@@ -164,31 +155,56 @@
         {% if servizio.description|striptags|trim != '' %}
           <article id="description">
             <h4 class="it-page-section">{{ 'servizio.cos_e' | trans }}</h4>
-            {{ servizio.description|cleanMarkup|raw|nl2br }}
+            <span class="text-serif">{{ servizio.description|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
         {% if servizio.who|striptags|trim != '' %}
           <article id="who">
             <h4 class="it-page-section">{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
-            {{ servizio.who|cleanMarkup|raw|nl2br }}
+            <span class="text-serif">{{ servizio.who|cleanMarkup|raw|nl2br }}</span>
+            {% if servizio.coverage %}
+              {% if servizio.coverage|length > 0 %}
+                <article class="mb-4">
+                  <h5>{{ 'servizio.copertura' | trans }}</h5>
+                  {% for c in servizio.coverage %}
+                    <div class="chip chip-secondary chip-simple chip-lg mr-2">
+                      <span class="chip-label">{{ c }}</span>
+                    </div>
+                  {% endfor %}
+                </article>
+              {% endif %}
+            {% endif %}
+            {% if servizio.recipients %}
+              {% if servizio.recipients|length > 0 %}
+                <article class="mb-4">
+                  <h5>{{ 'recipients.title' | trans }}</h5>
+                  {% for r in servizio.recipients %}
+                    <div class="chip chip-secondary chip-simple chip-lg mr-2">
+                      <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span
+                          class="chip-label">{{ r.name }}</span></a>
+                    </div>
+                  {% endfor %}
+                </article>
+              {% endif %}
+            {% endif %}
           </article>
         {% endif %}
         {% if servizio.specialCases|striptags|trim != '' %}
           <article id="special-cases">
             <h4 class="it-page-section">{{ 'servizio.casi_particolari' | trans }}</h4>
-            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            <span class="text-serif">{{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
         {% if servizio.moreInfo|striptags|trim != '' %}
           <article id="more-info">
             <h4 class="it-page-section">{{ 'servizio.maggiori_info' | trans }}</h4>
-            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            <span class="text-serif">{{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
         {% if servizio.howto|striptags|trim != '' %}
           <article id="howto">
             <h4 class="it-page-section">{{ 'servizio.accedere' | trans }}</h4>
-            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            <span class="text-serif">{{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
         <div class="row d-flex flex-wrap">
@@ -233,5 +249,7 @@
       </div>
     </section>
   {% endif %}
-
+  <a href="#" aria-hidden="true" data-attribute="back-to-top" class="back-to-top shadow back-to-top-show" aria-label="torna all'inizio del contenuto">
+    <svg class="icon icon-light"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg>
+  </a>
 {% endblock %}

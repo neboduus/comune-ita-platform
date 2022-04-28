@@ -69,7 +69,7 @@
               <ul class="link-list">
                 <li>
                   <a class="list-item"
-                     href="https://facebook.com/sharer/sharer.php?u={{app.request.uri}}"
+                     href="https://facebook.com/sharer/sharer.php?u={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
                      target="_blank" rel="noopener" aria-label="Share on Facebook">
                     <svg class="icon">
                       <use
@@ -80,7 +80,7 @@
                 </li>
                 <li>
                   <a class="list-item"
-                     href="https://twitter.com/intent/tweet/?text={{app.request.uri}}"
+                     href="https://twitter.com/intent/tweet/?text={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
                      target="_blank" rel="noopener" aria-label="Share on Twitter">
                     <svg class="icon">
                       <use
@@ -91,7 +91,7 @@
                 </li>
                 <li>
                   <a class="list-item"
-                     href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{app.request.uri}}&amp;title={{servizio.name}}&amp;summary={{servizio.description | abstract}}&amp;source={{ servizio.name }} - Stanza del cittadino"
+                     href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
                      target="_blank" rel="noopener">
                     <svg class="icon">
                       <use
@@ -102,7 +102,7 @@
                 </li>
                 <li>
                   <a class="list-item"
-                     href="whatsapp://send?text={{app.request.uri}}"
+                     href="whatsapp://send?text={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
                      target="_blank" rel="noopener" aria-label="Share on Whatsapp">
                     <svg class="icon">
                       <use
@@ -157,22 +157,13 @@
                 {% endfor %}
               {% endif %}
             {% endif %}
-            {% if servizio.coverage %}
-              {% if servizio.coverage|length > 0 %}
-                {% for c in servizio.coverage %}
-                  <div class="chip chip-primary chip-simple mr-2">
-                    <span class="chip-label">{{ c }}</span>
-                  </div>
-                {% endfor %}
-              {% endif %}
-            {% endif %}
           </article>
         </div>
       </div>
     </div>
-    <div class="row border-top row-column-border row-column-menu-left">
+    <div class="row border-top row-column-border row-column-menu-left attribute-list">
       <aside class="col-lg-4" style="position: relative;">
-        <div class="sticky-wrapper navbar-wrapper">
+        <div class="sticky-wrapper navbar-wrapper is-sticky" style="top: auto; bottom: 0px;">
           <nav class="navbar it-navscroll-wrapper it-top-navscroll navbar-expand-lg">
             <button class="custom-navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false"
                     aria-label="Toggle navigation" data-target="#navbarNav">
@@ -219,13 +210,7 @@
                            tabindex="-1"><span>{{ 'servizio.maggiori_info' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizi_area|length > 0 and servizio.topics %}
-                      <li class="nav-item">
-                        <a class="nav-link" href="#other-services" aria-selected="false" aria-disabled="true"
-                           tabindex="-1"><span>{{ 'servizio.altri_servizi_disponibili' | trans }} {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}</span></a>
-                      </li>
-                    {% endif %}
-                    {% if servizio.howto|striptags|trim != '' %}
+                    {% if can_access %}
                       <li class="nav-item">
                         <a class="nav-link" href="#howto" aria-selected="false" aria-disabled="true"
                            tabindex="-1"><span>{{ 'servizio.accedere' | trans }}</span></a>
@@ -242,13 +227,13 @@
         {% if servizio.description|striptags|trim != '' %}
           <article id="description" >
             <h4 class="it-page-section">{{ 'servizio.cos_e' | trans }}</h4>
-            {{ servizio.description|cleanMarkup|raw|nl2br }}
+            <span class="text-serif">{{ servizio.description|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
         {% if servizio.who|striptags|trim != '' %}
           <article id="who" >
             <h4 class="it-page-section">{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
-            {{ servizio.who|cleanMarkup|raw|nl2br }}
+            <span class="text-serif">{{ servizio.who|cleanMarkup|raw|nl2br }}</span>
             {% if servizio.coverage %}
               {% if servizio.coverage|length > 0 %}
                 <article class="mb-4">
@@ -280,38 +265,19 @@
         {% if servizio.specialCases|striptags|trim != '' %}
           <article id="special-cases" >
             <h4 class="it-page-section">{{ 'servizio.casi_particolari' | trans }}</h4>
-            {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            <span class="text-serif">{{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
         {% if servizio.moreInfo|striptags|trim != '' %}
           <article id="more-info" >
             <h4 class="it-page-section">{{ 'servizio.maggiori_info' | trans }}</h4>
-            {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-          </article>
-        {% endif %}
-        {% if servizi_area|length > 0 and servizio.topics %}
-          <article id="other-services" >
-            <h4 class="it-page-section">{{ 'servizio.altri_servizi_disponibili' | trans }} {{ "servizio.servizi_area_title"|trans({'%area%': servizio.topics.name}) }}</h4>
-            <div class="card-wrapper card-teaser-wrapper card-teaser-wrapper-equal card-teaser-block-2">
-              {% for s in servizi_area %}
-                <div class="card card-teaser shadow p-4">
-                  <svg class="icon">
-                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use>
-                  </svg>
-                  <div class="card-body">
-                    <h5 class="card-title {% if s.id == servizio.id %} active{% endif %}">
-                      <a href="{{ path('servizi_show', {'slug': s.slug}) }}">{{ s.name }}</a>
-                    </h5>
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
+            <span class="text-serif">{{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
         {% if servizio.howto|striptags|trim != '' %}
           <article id="howto" >
             <h4 class="it-page-section">{{ 'servizio.accedere' | trans }}</h4>
-            {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            <span class="text-serif">{{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
         {% if can_access %}
@@ -324,5 +290,7 @@
       </section>
     </div>
   </section>
-
+  <a href="#" aria-hidden="true" data-attribute="back-to-top" class="back-to-top shadow back-to-top-show" aria-label="torna all'inizio del contenuto">
+    <svg class="icon icon-light"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg>
+  </a>
 {% endblock %}
