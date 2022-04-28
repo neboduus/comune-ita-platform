@@ -62,8 +62,10 @@ class WebhookApplicationListener
                (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array(Webhook::TRIGGER_ALL, $w->getFilters()))) {
             $this->webhookService->createApplicationWebhookAsync($pratica, $w);
           }
-        }catch (AlreadyScheduledException $e){
+        } catch (AlreadyScheduledException $e){
           $this->logger->error('Webhook is already scheduled', ['pratica' => $pratica->getId()]);
+        } catch (\Exception $e) {
+          $this->logger->error('There was an error creating webhook', ['pratica' => $pratica->getId(), 'message' => $e->getMessage()]);
         }
       }
     }
@@ -86,8 +88,10 @@ class WebhookApplicationListener
                (in_array($pratica->getServizio()->getId(), $w->getFilters()) || in_array(Webhook::TRIGGER_ALL, $w->getFilters()))) {
             $this->webhookService->createMessageWebhookAsync($message, $w);
           }
-        }catch (AlreadyScheduledException $e){
+        } catch (AlreadyScheduledException $e){
           $this->logger->error('Webhook is already scheduled', ['message' => $message->getId()]);
+        } catch (\Exception $e) {
+          $this->logger->error('There was an error creating webhook', ['pratica' => $pratica->getId(), 'message' => $e->getMessage()]);
         }
       }
     }
