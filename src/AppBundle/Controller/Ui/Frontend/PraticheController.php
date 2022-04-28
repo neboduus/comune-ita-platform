@@ -686,7 +686,7 @@ class PraticheController extends Controller
     }
 
     return $this->redirectToRoute(
-      'pratiche_show', ['pratica' => $pratica->getId()]
+      'pratica_show_detail', ['pratica' => $pratica->getId()]
     );
   }
 
