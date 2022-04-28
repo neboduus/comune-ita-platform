@@ -31,9 +31,15 @@ class Form {
       Formio.createForm(document.getElementById('formio'), $('#formio').data('formserver_url') + '/form/' + $('#formio_render_form_id').val(), {
         noAlerts: true,
         language: $container.data('locale'),
-        i18n: data
+        i18n: data,
+        buttonSettings: {showCancel: false}
       })
         .then(function (form) {
+
+          form.formReady.then(() => {
+            setTimeout(Form.disableBreadcrumbButton,500);
+            setTimeout(Form.checkWizardNavCancelButton,500);
+          })
 
           if (form.hasOwnProperty('wizard')) {
             $('.craue_formflow_current_step.active').addClass('wizard');
@@ -49,7 +55,15 @@ class Form {
 
           form.on('nextPage', function () {
             document.getElementById("formio").scrollIntoView();
+            setTimeout(Form.disableBreadcrumbButton,500);
+            setTimeout(Form.checkWizardNavCancelButton,500);
           });
+
+          form.on('prevPage', function () {
+            setTimeout(Form.disableBreadcrumbButton,500);
+            setTimeout(Form.checkWizardNavCancelButton,500);
+          });
+
           $('.btn-wizard-nav-cancel').on('click', function (e) {
             e.preventDefault()
             location.reload();
@@ -102,9 +116,12 @@ class Form {
         noAlerts: true,
         language: $container.data('locale'),
         i18n: data,
+        buttonSettings: {showCancel: false}
       }).then(function (form) {
+
         form.formReady.then(() => {
           setTimeout(disableApplicant, 1000);
+          setTimeout(Form.disableBreadcrumbButton,500);
           const draftButton = $('#save-draft');
           const draftInfo = $('.save-draft-info');
           const draftTextInfo = draftInfo.find('span');
@@ -128,7 +145,6 @@ class Form {
                 });
             });
           }
-
         });
 
         if (form.hasOwnProperty('wizard')) {
@@ -144,12 +160,17 @@ class Form {
         }
 
         form.on('nextPage', function () {
+          setTimeout(disableApplicant, 1000);
+          setTimeout(Form.disableBreadcrumbButton,500);
+          setTimeout(Form.checkWizardNavCancelButton,500);
           document.getElementById("formio").scrollIntoView();
           $('#save-draft').trigger('click');
         });
 
         form.on('prevPage', function () {
           setTimeout(disableApplicant, 1000);
+          setTimeout(Form.disableBreadcrumbButton,500);
+          setTimeout(Form.checkWizardNavCancelButton,500);
         });
 
         $('.btn-wizard-nav-cancel').on('click', function (e) {
@@ -203,7 +224,9 @@ class Form {
           }
         });
       }
+
     });
+
   }
 
   static autoCloseAlert(customErrorContainer) {
@@ -227,6 +250,7 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         readOnly: true,
+        buttonSettings: {showCancel: false}
         //renderMode: 'html'
       })
         .then(function (form) {
@@ -250,9 +274,12 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         readOnly: false,
+        buttonSettings: {showCancel: false}
         //renderMode: 'html'
       }).then(function (form) {
         form.formReady.then(() => {
+          setTimeout(Form.disableBreadcrumbButton,500);
+          setTimeout(Form.checkWizardNavCancelButton,500);
         });
       });
     });
@@ -301,6 +328,23 @@ class Form {
     // Init form summary
     if ($('#' + containerId + '.formio-summary').length > 0) {
       this.initSummary(containerId);
+    }
+  }
+
+  //Funzione per disabilitare i pulsanti Breadcrumb per il form wizard
+  static disableBreadcrumbButton() {
+    const $breadcrumb = $('button.page-link');
+    if($breadcrumb){
+      $('.pagination li').css('cursor','default')
+      $breadcrumb.css('cursor','default')
+      $breadcrumb.attr('disabled',true)
+    }
+  }
+
+  //Funzione per aggiungere l'attributo type=button al pulsante "Annulla" se è visibile
+  static checkWizardNavCancelButton(){
+    if($('.btn-wizard-nav-cancel').length > 0) {
+      $('.btn-wizard-nav-cancel').attr('type','button')
     }
   }
 }
