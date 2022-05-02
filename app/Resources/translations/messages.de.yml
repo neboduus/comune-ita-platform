@@ -173,6 +173,7 @@ servizio:
     string: 'String'
     translation: 'Übersetzung'
   condividi: "Condividi"
+  torna_indietro: "Zurück"
 gruppo_di_servizi:
   gruppo_di_servizi: 'Kategorie von Diensten'
   nome: 'Name'
