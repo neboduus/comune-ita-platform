@@ -155,13 +155,18 @@ class ApplicationVoter extends Voter
 
   private function canWithdraw(Pratica $pratica, User $user)
   {
-    // NOn è possibile ritirare una pratica se non è abilitato il ritiro, se è presente un dovuto di pagamento o se l'utente non è il richiedente
+    // Non è possibile ritirare una pratica se non è abilitato il ritiro, se è presente un dovuto di pagamento o se l'utente non è il richiedente
     if (!$pratica->getServizio()->isAllowWithdraw() || !empty($pratica->getPaymentData()) || $pratica->getUser()->getId() !== $user->getId()) {
       return false;
     }
 
-    // se il servizio ha un workflow di tipo inoltro e la pratica è stata "inoltrata" NON deve comparire il pulsante ritira.
+    // Se il servizio ha un workflow di tipo inoltro e la pratica è stata "inoltrata" NON deve comparire il pulsante ritira.
     if ($pratica->getServizio()->getWorkflow() == Servizio::WORKFLOW_FORWARD &&  $pratica->getStatus() !== Pratica::STATUS_PRE_SUBMIT) {
+      return false;
+    }
+
+    // Se il servizio ha la protocollazione attiva ed e la pratica è in STATUS_PRE_SUBMIT, altrimenti genera un errore in fase di protocollazzione del documento di ritiro
+    if ($pratica->getServizio()->isProtocolRequired() && $pratica->getStatus() === Pratica::STATUS_PRE_SUBMIT) {
       return false;
     }
 
