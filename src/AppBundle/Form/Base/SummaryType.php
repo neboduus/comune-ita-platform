@@ -4,8 +4,10 @@
 namespace AppBundle\Form\Base;
 
 
+use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Admin\Servizio\PaymentDataType;
+use AppBundle\Services\PaymentService;
 use AppBundle\Services\PraticaStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use EWZ\Bundle\RecaptchaBundle\Form\Type\EWZRecaptchaType;
@@ -32,11 +34,21 @@ class SummaryType extends AbstractType
    * @var
    */
   private $statusService;
+  /**
+   * @var PaymentService
+   */
+  private $paymentService;
 
-  public function __construct(EntityManagerInterface $entityManager, PraticaStatusService $statusService)
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param PraticaStatusService $statusService
+   * @param PaymentService $paymentService
+   */
+  public function __construct(EntityManagerInterface $entityManager, PraticaStatusService $statusService, PaymentService $paymentService)
   {
     $this->em = $entityManager;
     $this->statusService = $statusService;
+    $this->paymentService = $paymentService;
   }
 
   /**
@@ -75,6 +87,7 @@ class SummaryType extends AbstractType
     $application = $event->getForm()->getData();
     $data = $application->getDematerializedForms();
 
+    // Todo: attivare anche se payment_amount non è presente ma pè stato configurato il valore nel servizio, verificare per pagamento posticipato
     if (isset($data['flattened'][PaymentDataType::PAYMENT_AMOUNT]) && $data['flattened'][PaymentDataType::PAYMENT_AMOUNT] > 0) {
       $service = $application->getServizio();
       $paymentParameters = $service->getPaymentParameters();
@@ -86,10 +99,20 @@ class SummaryType extends AbstractType
           'identifier' => array_keys($selectedGateways)[0]
         ]);
         if (count($gateways) > 0) {
-          $application->setPaymentType($gateways[0]);
+          /** @var PaymentGateway $gateway */
+          $gateway = $gateways[0];
+          $application->setPaymentType($gateway);
           $this->em->persist($application);
           $this->em->flush();
           if ($identifier != 'bollo' && $application->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
+
+            // Temporaneo per supportare mypay e nuovo flusso di pagamento
+            if ($gateway->getFcqn() == 'AppBundle\Payment\Gateway\GenericExternalPay') {
+              $application->setPaymentData($this->paymentService->createPaymentData($application));
+              $this->em->persist($application);
+              $this->em->flush();
+            }
+
             $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_PENDING);
           }
         }

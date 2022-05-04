@@ -1013,6 +1013,85 @@ class ApplicationsAPIController extends AbstractFOSRestController
     return $response;
   }
 
+  /**
+   * Retrieve an Application paymnet's info
+   * @Rest\Get("/{id}/payment", name="application_api_payment_get")
+   *
+   * @SWG\Parameter(
+   *      name="test",
+   *      in="query",
+   *      type="string",
+   *      required=false,
+   *      description="Test parameter"
+   *  )
+   *
+   * @SWG\Response(
+   *     response=200,
+   *     description="Retrieve an Application"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function getApplicationPaymentAction($id, Request $request)
+  {
+
+    $test = $request->get('test', 'success');
+
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      /** @var Pratica $result */
+      $result = $repository->find($id);
+      if ($result === null) {
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+      }
+      $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
+
+      $data = [
+        "id" => Uuid::uuid4(),
+        "reason" => "string",
+        "created_at" => new \DateTime(),
+        "updated_at" => new \DateTime(),
+      ];
+
+      switch ($test) {
+        case 'pending':
+          $data['status'] = 'CREATION_PENDING';
+          break;
+
+        case 'failed':
+          $data['status'] = 'CREATION_FAILED';
+          break;
+
+        case 'success':
+        default:
+          $data['status'] = 'PAYMENT_PENDING';
+          $data['links'] = [
+            'online_payment_begin' => '',
+            'online_payment_landing' => '',
+            'offline_payment' => '',
+          ];
+          break;
+      }
+
+      return $this->view($data, Response::HTTP_OK);
+    } catch (\Exception $e) {
+      return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
+    }
+  }
+
 
   /**
    * Update payment data of an application
@@ -1254,12 +1333,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     // Todo: Passare alle transition prima possibile
     if ($application->getStatus() == Pratica::STATUS_REQUEST_INTEGRATION) {
-      $this->forward(ApplicationsAPIController::class . '::applicationTransitionRegisterIntegrationRequestAction', [
-        'id' => $application->getId()
+      $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationRequestAction', [
+        'id' => $application->getId(),
       ]);
     } elseif ($application->getStatus() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
-      $this->forward(ApplicationsAPIController::class . '::applicationTransitionRegisterIntegrationAnswerAction', [
-        'id' => $application->getId()
+      $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationAnswerAction', [
+        'id' => $application->getId(),
       ]);
     }
 
@@ -1274,6 +1353,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         'title' => 'There was a validation error',
         'errors' => $errors,
       ];
+
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
@@ -1981,12 +2061,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
           }
           $message = $messageRepository->findOneBy([
             'id' => $id,
-            'application' => $application->getId()
+            'application' => $application->getId(),
           ]);
           if (!$message instanceof Message) {
             throw new Exception("Message $id not found");
           }
-          $messages[]= $message;
+          $messages[] = $message;
         }
       }
 

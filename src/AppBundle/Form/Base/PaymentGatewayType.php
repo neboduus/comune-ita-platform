@@ -6,6 +6,7 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\AbstractPaymentData;
 use AppBundle\Payment\Gateway\Bollo;
+use AppBundle\Payment\Gateway\MyPay;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -53,7 +54,7 @@ class PaymentGatewayType extends AbstractType
             'required' => false,
           ]
         );
-    } else {
+    } elseif ($gatewayClassHandler === MyPay::class) {
       $pratica->setPaymentData(AbstractPaymentData::getSanitizedPaymentData($pratica));
       $builder
         ->add('payment_data', HiddenType::class,

@@ -331,6 +331,9 @@ services:
   AppBundle\Services\BreadcrumbsService:
     autowire: true
 
+  AppBundle\Services\PaymentService:
+    autowire: true
+
   AppBundle\Services\MyPayService:
     autowire: true
 

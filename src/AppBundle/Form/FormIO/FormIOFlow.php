@@ -89,6 +89,7 @@ class FormIOFlow extends PraticaFlow
           'label' => 'steps.common.select_payment_gateway.label',
           'form_type' => SelectPaymentGatewayType::class,
           'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
+
             return $flow->getFormData()->getStatus() == Pratica::STATUS_PAYMENT_PENDING && $flow->getFormData()->getPaymentType();
           },
         );
