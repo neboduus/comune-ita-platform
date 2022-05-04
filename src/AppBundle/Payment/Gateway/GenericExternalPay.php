@@ -33,7 +33,6 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
    */
   private $logger;
 
-
   /**
    * @var EntityManagerInterface
    */
@@ -99,20 +98,17 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
 
   public function onPreSetData(FormEvent $event)
   {
-    $form = $event->getForm();
-    /** @var Pratica $pratica */
     $pratica = $event->getData();
     $options = $event->getForm()->getConfig()->getOptions();
-    /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];
-    $data = $pratica->getPaymentData();
 
+    $text = '<div class="row mt-5"><div class="col-sm-4"><strong>'.$this->translator->trans('pratica.numero').'</strong></div><div class="col-sm-8 d-inline-flex"><code>'.$pratica->getId().'</code></div></div>';
+    $helper->setDescriptionText($text);
 
+    /*
     try {
       if (isset($data['response']) && $data['response']['esito'] == 'OK') {
-
         $url = $this->getPaymentUrl($pratica);
-        $helper->setDescriptionText($this->generatePaymentButtons($pratica, $url));
 
       } else {
 
@@ -126,7 +122,7 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
     } catch (\Exception $e) {
       $this->logger->error("Warning user about not being able to create a payment request for pratica " . $pratica->getId() . ' - ' . $e->getMessage());
       $helper->setDescriptionText("C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza.");
-    }
+    }*/
   }
 
   /**
@@ -134,15 +130,7 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
    */
   public function onPreSubmit(FormEvent $event)
   {
-    /** @var Pratica $application */
-    $application = $event->getForm()->getData();
-    $data = $application->getPaymentData();
 
-    if (!isset($data['response']) || empty($data['response'])) {
-      $event->getForm()->addError(
-        new FormError('Devi scegliere almeno un metodo di pagamento')
-      );
-    }
   }
 
   /**
