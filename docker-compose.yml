@@ -88,6 +88,7 @@ services:
       API_VERSION: ${API_VERSION:-1}
       KAFKA_URL: ${KAFKA_URL:-}
       KAFKA_REQUEST_TIMEOUT: ${KAFKA_REQUEST_TIMEOUT:-2}
+      KSQLDB_URL: ${KSQLDB_URL:-}
 
       # In assenza di una vera autenticazione basata su SPID si può simulare
       # un login di un utente con le seguenti variabili d'ambiente:

@@ -158,6 +158,7 @@ parameters:
     deda_login_secret: 'example'
     deda_login_env: 'prod'
     kafka_url: null
+    ksqldb_url: null
     kafka_event_version: 1
     kafka_request_timeout: 2
     kafka_topics:

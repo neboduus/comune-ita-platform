@@ -130,6 +130,7 @@ parameters:
   deda_login_secret: 'example'
   deda_login_env: 'prod'
   kafka_url: '%env(KAFKA_URL)%'
+  ksqldb_url: '%env(KSQLDB_URL)%'
   kafka_event_version: '%env(KAFKA_EVENT_VERSION)%'
   kafka_request_timeout: '%env(KAFKA_REQUEST_TIMEOUT)%'
   kafka_topics:
@@ -234,6 +235,7 @@ parameters:
   env(S3_SECRET): ''
   env(S3_BUCKET): 'test'
   env(KAFKA_URL): null
+  env(KSQLDB_URL): null
   env(KAFKA_EVENT_VERSION): 1
   env(KAFKA_REQUEST_TIMEOUT): 2
   env(KAFKA_TOPIC_APPLICATIONS): 'applications'
