@@ -1048,8 +1048,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function getApplicationPaymentAction($id, Request $request)
   {
 
-    $test = $request->get('test', 'success');
-
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
       /** @var Pratica $result */
@@ -1059,36 +1057,70 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
       $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
 
-      $data = [
-        "id" => Uuid::uuid4(),
-        "reason" => "string",
-        "created_at" => new \DateTime(),
-        "updated_at" => new \DateTime(),
+      // Todo: creare classe adhoc per comunicazione con ksql
+      $curl = curl_init();
+      $payload = [
+        'ksql' => "select id, reason, status, created_at, updated_at, online_payment_begin_url, online_payment_begin_method, online_payment_landing_url, online_payment_landing_method, offline_payment_url, offline_payment_method from payments_detail where remote_id = '{$id}';",
       ];
 
-      switch ($test) {
-        case 'pending':
-          $data['status'] = 'CREATION_PENDING';
-          break;
+      // Todo: eliminare
+      $ksqlDbìBUrl = $this->container->getParameter('ksqldb_url');
 
-        case 'failed':
-          $data['status'] = 'CREATION_FAILED';
-          break;
+      curl_setopt_array($curl, [
+        CURLOPT_PORT => "8088",
+        CURLOPT_URL => "http://$ksqlDbìBUrl/query",
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+        //CURLOPT_POSTFIELDS => "{ \n\t\"ksql\": \"select id, reason, created_at, updated_at, status, online_payment_begin_url, online_payment_begin_method, online_payment_landing_url, online_payment_landing_method, offline_payment_url, offline_payment_method from payments_detail where remote_id = '437c7546-3ba1-49ef-976c-631446c0014e';\", \n\t\"streamsProperties\": {} \n}",
+        CURLOPT_POSTFIELDS => json_encode($payload),
+        CURLOPT_HTTPHEADER => [
+          "Accept: application/vnd.ksql.v1+json",
+          "Content-Type: application/json"
+        ],
+      ]);
 
-        case 'success':
-        default:
-          $data['status'] = 'PAYMENT_PENDING';
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
+      curl_close($curl);
+
+      if ($err) {
+        //return $this->view(["cURL Error #:" . $err], Response::HTTP_BAD_REQUEST);
+        throw new \Exception("cURL Error #:" . $err);
+      } else {
+        $responseData = json_decode($response, true);
+        $data = [
+          "id" => $responseData[1]['row']['columns'][0],
+          "reason" => $responseData[1]['row']['columns'][1],
+          "status" => $responseData[1]['row']['columns'][2],
+          "created_at" => $responseData[1]['row']['columns'][3],
+          "updated_at" => $responseData[1]['row']['columns'][4],
+        ];
+
+        if (strtolower($data['status']) === 'PAYMENT_PENDING') {
           $data['links'] = [
-            'online_payment_begin' => '',
-            'online_payment_landing' => '',
-            'offline_payment' => '',
+            'online_payment_begin' => [
+              'url' => $responseData[1]['row']['columns'][5],
+              'method' => $responseData[1]['row']['columns'][6],
+            ],
+            'online_payment_landing' => [
+              'url' => $responseData[1]['row']['columns'][7],
+              'method' => $responseData[1]['row']['columns'][8],
+            ],
+            'offline_payment' => [
+              'url' => $responseData[1]['row']['columns'][9],
+              'method' => $responseData[1]['row']['columns'][10],
+            ],
           ];
-          break;
+        }
       }
-
       return $this->view($data, Response::HTTP_OK);
     } catch (\Exception $e) {
-      return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
+      $this->logger->error('Errer fetching payment of application: ' . $id . ' - ' . $e->getMessage());
+      return $this->view(["Error"], Response::HTTP_BAD_REQUEST);
     }
   }
 

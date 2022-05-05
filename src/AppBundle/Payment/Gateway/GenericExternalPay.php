@@ -64,10 +64,7 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
 
   public static function getPaymentParameters()
   {
-    return [
-      'identificativoTipoDovuto'  => 'Identificativo tipo dovuto',
-      'datiSpecificiRiscossione'  => 'Dati specifici riscossione'
-    ];
+    return [];
   }
 
   public static function getFields()
@@ -92,8 +89,7 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
    */
   public static function getSimplifiedData($data)
   {
-    // Todo: to be implemented
-    return [];
+    return $data;
   }
 
   public function onPreSetData(FormEvent $event)
