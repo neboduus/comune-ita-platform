@@ -1,5 +1,6 @@
 import './core';
 import Form from './Formio/Form';
+import Payment from "./Payment/Payment";
 
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 require("../css/app.scss");
@@ -42,4 +43,7 @@ $(document).ready(function () {
     Form.init('formio');
   }
 
+  if( $('form[name="pratica_payment_gateway"]').length > 0){
+    Payment.init();
+  }
 });

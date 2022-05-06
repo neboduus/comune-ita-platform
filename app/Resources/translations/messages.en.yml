@@ -36,6 +36,7 @@ operatore: "Operator"
 credits: "The Stanza del cittadino is an experimental project initiative of %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Update your e-mail to continue'
+loading: "Loading..."
 nav:
   home: 'Homepage'
   dashboard: 'My room'
@@ -375,6 +376,10 @@ pratica:
     subject: ""
   vedi_tutte: ''
   pratiche_in_evidenzia: ''
+  payment:
+    tipologie_pagamento: "Types of payment"
+    paga_online: "Pay online"
+    paga_offline: "Pay offline"
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
