@@ -128,6 +128,29 @@
           </div>
         </div>
 
+      {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and currentStep.label == 'steps.common.payment_gateway.label' %}
+        <div class="mt-5">
+          <div class="spinner-container">
+            <div class="d-flex justify-content-cente flex-column align-items-center">
+              <p class="mb-3"><h4 class="status"></h4></p>
+              <div class="progress-spinner progress-spinner-double">
+                <div class="progress-spinner-inner"></div>
+                <div class="progress-spinner-inner"></div>
+                <span class="sr-only">{{ 'loading'|trans() }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="d-none justify-content-center flex-column text-center actions-container">
+            <h4>{{ 'pratica.payment.tipologie_pagamento'|trans() }}</h4>
+            <div>
+              <a href="#" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true">{{ 'pratica.payment.paga_online'|trans() }}</a>
+              <a href="#" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true">{{ 'pratica.payment.paga_offline'|trans() }}</a>
+            </div>
+          </div>
+          <div class="alert alert-danger alert-error d-none" role="alert">
+          </div>
+        </div>
+      {% endif%}
 
       {% if currentStep.formType == "AppBundle\\Form\\FormIO\\FormIORenderType" %}
         <div id="formio"
@@ -145,7 +168,7 @@
           </button>
         </div>
 
-        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
+        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') and pratica.statusName != 'STATUS_PAYMENT_PENDING' and currentStep.label != 'steps.common.payment_gateway.label' %}
           <div class="mt-5">
             {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
           </div>

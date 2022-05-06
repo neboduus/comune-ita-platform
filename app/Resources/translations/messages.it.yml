@@ -49,6 +49,7 @@ powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl<
 fake_email_message: 'Per proseguire è necessario aggiornare la tua email'
 practice_of: 'Pratica del'
 from_date_to_date: "Dal %from% al %to%"
+loading: "Caricamento..."
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'
@@ -403,6 +404,10 @@ pratica:
   le_tue_note: 'Le tue note'
   vedi_tutte: 'Vedi tutte'
   pratiche_in_evidenzia: 'Pratiche in evidenza'
+  payment:
+    tipologie_pagamento: "Tipologie di pagamento"
+    paga_online: "Paga online"
+    paga_offline: "Paga offline"
 STATUS_CANCELLED: 'Rifiutata'
 STATUS_DRAFT: 'Bozza'
 STATUS_PRE_SUBMIT: 'Inviata'
@@ -1862,6 +1867,7 @@ steps:
         PROV_AR-APSS:
           title: "l) parere Azienda Provinciale per i Servizi Sanitari qualora previsto da specifiche normative di settore"
           description: ""
+        PROV_AR-ILLU:
         PROV_AR-ILLU:
           title: "m) autorizzazione del Comune per la realizzazione di impianti di illuminazione esterna, ai sensi del D.P.P. n. 2-34/Leg. del 2010 in materia di inquinamento luminoso"
           description: ""
