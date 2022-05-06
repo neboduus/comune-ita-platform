@@ -64,6 +64,10 @@ class PaymentService
       $paymentData['reason'] = $pratica->getId() . ' - ' . $pratica->getUser()->getCodiceFiscale();
     }
 
+    if (!isset($paymentData['split'])) {
+      $paymentData['split'] = [];
+    }
+
     $paymentDayLifeTime = 90;
     /*
       {
