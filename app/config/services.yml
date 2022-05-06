@@ -333,6 +333,8 @@ services:
 
   AppBundle\Services\PaymentService:
     autowire: true
+    arguments:
+      $ksqlDBUrl: "%ksqldb_url%"
 
   AppBundle\Services\MyPayService:
     autowire: true

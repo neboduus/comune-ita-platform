@@ -31,6 +31,7 @@ use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\InstanceService;
 use AppBundle\Services\Manager\PraticaManager;
 use AppBundle\Services\ModuloPdfBuilderService;
+use AppBundle\Services\PaymentService;
 use AppBundle\Services\PraticaStatusService;
 use AppBundle\Utils\FormUtils;
 use AppBundle\Utils\UploadedBase64File;
@@ -159,10 +160,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @var FormServerApiAdapterService
    */
   private $formServerService;
-  /**
-   * @var EventDispatcherInterface
-   */
-  private $dispatcher;
+
   /**
    * @var FileService
    */
@@ -174,6 +172,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
   private $applicationDto;
 
   /**
+   * @var PaymentService
+   */
+  private $paymentService;
+
+  /**
    * ApplicationsAPIController constructor.
    * @param EntityManagerInterface $em
    * @param InstanceService $is
@@ -183,8 +186,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param LoggerInterface $logger
    * @param PraticaManager $praticaManager
    * @param FormServerApiAdapterService $formServerService
-   * @param EventDispatcherInterface $dispatcher
    * @param FileService $fileService
+   * @param ApplicationDto $applicationDto
+   * @param PaymentService $paymentService
    */
   public function __construct(
     EntityManagerInterface $em,
@@ -195,9 +199,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
     LoggerInterface $logger,
     PraticaManager $praticaManager,
     FormServerApiAdapterService $formServerService,
-    EventDispatcherInterface $dispatcher,
     FileService $fileService,
-    ApplicationDto $applicationDto
+    ApplicationDto $applicationDto,
+    PaymentService $paymentService
   ) {
     $this->em = $em;
     $this->is = $is;
@@ -208,9 +212,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->logger = $logger;
     $this->praticaManager = $praticaManager;
     $this->formServerService = $formServerService;
-    $this->dispatcher = $dispatcher;
     $this->fileService = $fileService;
     $this->applicationDto = $applicationDto;
+    $this->paymentService = $paymentService;
   }
 
   /**
@@ -1057,66 +1061,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
       $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
 
-      // Todo: creare classe adhoc per comunicazione con ksql
-      $curl = curl_init();
-      $payload = [
-        'ksql' => "select id, reason, status, created_at, updated_at, online_payment_begin_url, online_payment_begin_method, online_payment_landing_url, online_payment_landing_method, offline_payment_url, offline_payment_method from payments_detail where remote_id = '{$id}';",
-      ];
+      $data = $this->paymentService->getPymentStatusByApplication($result);
 
-      // Todo: eliminare
-      $ksqlDbìBUrl = $this->container->getParameter('ksqldb_url');
-
-      curl_setopt_array($curl, [
-        CURLOPT_PORT => "8088",
-        CURLOPT_URL => "http://$ksqlDbìBUrl/query",
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 30,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        //CURLOPT_POSTFIELDS => "{ \n\t\"ksql\": \"select id, reason, created_at, updated_at, status, online_payment_begin_url, online_payment_begin_method, online_payment_landing_url, online_payment_landing_method, offline_payment_url, offline_payment_method from payments_detail where remote_id = '437c7546-3ba1-49ef-976c-631446c0014e';\", \n\t\"streamsProperties\": {} \n}",
-        CURLOPT_POSTFIELDS => json_encode($payload),
-        CURLOPT_HTTPHEADER => [
-          "Accept: application/vnd.ksql.v1+json",
-          "Content-Type: application/json"
-        ],
-      ]);
-
-      $response = curl_exec($curl);
-      $err = curl_error($curl);
-      curl_close($curl);
-
-      if ($err) {
-        //return $this->view(["cURL Error #:" . $err], Response::HTTP_BAD_REQUEST);
-        throw new \Exception("cURL Error #:" . $err);
-      } else {
-        $responseData = json_decode($response, true);
-        $data = [
-          "id" => $responseData[1]['row']['columns'][0],
-          "reason" => $responseData[1]['row']['columns'][1],
-          "status" => $responseData[1]['row']['columns'][2],
-          "created_at" => $responseData[1]['row']['columns'][3],
-          "updated_at" => $responseData[1]['row']['columns'][4],
-        ];
-
-        if (strtolower($data['status']) === 'PAYMENT_PENDING') {
-          $data['links'] = [
-            'online_payment_begin' => [
-              'url' => $responseData[1]['row']['columns'][5],
-              'method' => $responseData[1]['row']['columns'][6],
-            ],
-            'online_payment_landing' => [
-              'url' => $responseData[1]['row']['columns'][7],
-              'method' => $responseData[1]['row']['columns'][8],
-            ],
-            'offline_payment' => [
-              'url' => $responseData[1]['row']['columns'][9],
-              'method' => $responseData[1]['row']['columns'][10],
-            ],
-          ];
-        }
-      }
       return $this->view($data, Response::HTTP_OK);
     } catch (\Exception $e) {
       $this->logger->error('Errer fetching payment of application: ' . $id . ' - ' . $e->getMessage());
