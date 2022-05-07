@@ -19,6 +19,7 @@ use AppBundle\Services\GiscomAPIMapperService;
 use AppBundle\Services\PraticaIntegrationService;
 use AppBundle\Services\PraticaStatusService;
 use AppBundle\Services\UserSessionService;
+use AppBundle\Utils\StringUtils;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Monolog\Logger;
@@ -160,10 +161,9 @@ class GiscomAPIController extends Controller
   {
     $fileContent = $this->fileService->getAttachmentContent($attachment);
     // Provide a name for your file with extension
-    $filename = mb_convert_encoding($attachment->getOriginalFilename(), "ASCII", "auto");
-    // Return a response with a specific content
+    //$filename = mb_convert_encoding($attachment->getOriginalFilename(), "ASCII", "auto");
+    $filename = StringUtils::sanitizeFileName($attachment->getOriginalFilename());
     $response = new Response($fileContent);
-    // Create the disposition of the file
     $disposition = $response->headers->makeDisposition(
       ResponseHeaderBag::DISPOSITION_ATTACHMENT,
       $filename
@@ -452,7 +452,7 @@ class GiscomAPIController extends Controller
       $this->logger->error($e->getMessage() . ' - ' . $e->getTraceAsString());
       return new Response('Error creating integration', Response::HTTP_INTERNAL_SERVER_ERROR);
     }
-    
+
     return new Response(null, 201);
   }
 
