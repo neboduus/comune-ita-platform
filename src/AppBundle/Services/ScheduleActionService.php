@@ -162,7 +162,7 @@ class ScheduleActionService
     $dql = "UPDATE scheduled_action SET hostname = ?, updated_at = ?
               WHERE id IN (
                   SELECT id FROM scheduled_action
-                  WHERE ( hostname IS NULL OR ( created_at::timestamp + (power(coalesce(retry, 0), 2) * interval '{$minutes} minutes') < ? ) )
+                  WHERE ( hostname IS NULL OR ( created_at::timestamp + (power(2, coalesce(retry, 0)) * interval '{$minutes} minutes') < ? ) )
                     AND status = ?
                     AND (retry IS NULL OR retry < ?)
                   ORDER BY updated_at ASC LIMIT ?
