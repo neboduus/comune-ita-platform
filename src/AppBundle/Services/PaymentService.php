@@ -116,6 +116,7 @@ class PaymentService
    */
   public function getPymentStatusByApplication(Pratica $application): array
   {
+    $data = [];
     $curl = curl_init();
     $payload = [
       'ksql' => "SELECT id, reason, status, created_at, updated_at, online_payment_begin_url, online_payment_begin_method, online_payment_landing_url, online_payment_landing_method, offline_payment_url, offline_payment_method FROM payments_detail WHERE remote_id = '{$application->getId()}';",
@@ -145,6 +146,11 @@ class PaymentService
       throw new \Exception($err);
     } else {
       $responseData = json_decode($response, true);
+
+      if (!isset($responseData[1]) || empty($responseData[1])) {
+        return $data;
+      }
+
       $data = [
         "id" => $responseData[1]['row']['columns'][0],
         "reason" => $responseData[1]['row']['columns'][1],

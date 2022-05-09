@@ -980,23 +980,6 @@ class OperatoriController extends Controller
   {
   }
 
-  /**
-   * @param OperatoreUser $operatore
-   * @return \Symfony\Component\Form\FormInterface
-   */
-  private function setupOperatoreForm(OperatoreUser $operatore)
-  {
-    $formBuilder = $this->createFormBuilder()
-      ->add('ambito', TextType::class,
-        ['label' => false, 'data' => $operatore->getAmbito(), 'required' => false]
-      )
-      ->add('save', SubmitType::class,
-        ['label' => $this->translator->trans('operatori.profile.salva_modifiche')]
-      );
-    $form = $formBuilder->getForm();
-
-    return $form;
-  }
 
   /**
    * @return FormInterface
