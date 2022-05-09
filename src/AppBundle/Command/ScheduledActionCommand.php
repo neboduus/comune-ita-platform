@@ -24,8 +24,7 @@ class ScheduledActionCommand extends ContainerAwareCommand
       ->addOption('hostname', 'f', InputOption::VALUE_OPTIONAL, 'Inserisci hostname per forzare l\'esecuzione da altro host')
       ->addOption('old-reservation-minutes', 'o', InputOption::VALUE_OPTIONAL,
         'Esegue le azioni non ancora eseguite ma già riservate con data di modifica inferiore ad adesso meno i minuti che inserisci, default 60 minuti')
-      ->addOption('max-retry', 'm', InputOption::VALUE_OPTIONAL,
-        'Numero massimo di ripetizioni per un\'azione, default 10')
+      ->addOption('max-retry', 'm', InputOption::VALUE_OPTIONAL, 'Numero massimo di ripetizioni per un\'azione, default 10')
       ->setDescription('Execute all scheduled actions');
   }
 
