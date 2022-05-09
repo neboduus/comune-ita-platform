@@ -17,21 +17,24 @@ class Payment {
       "creation_failed": "Opss qualcosa è andato storto!",
       "timeout": "La richiesta sta impiegando più tempo del necessario.. <br><b>Riprova più tardi!</b>",
       "unauth": "Sessione scaduta <br><b>Effettua nuovamente il login</b>.",
-      "creation_failed_text": "La creazione del pagamento non è andata a buon fine riprova più tardi oppure contatta l'ufficio amministrativo."
+      "creation_failed_text": "La creazione del pagamento non è andata a buon fine riprova più tardi oppure contatta l'ufficio amministrativo.",
+      "not_found": "La pratica non è ancora pervenuta, la preghiamo di attendere!"
     },
     "en": {
       "creation_pending": "Payment creation in progress",
       "creation_failed": "Oops something went wrong!",
       "timeout": "The request is taking longer than necessary .. <br> <b> Please try again later! </b>",
       "unauth": "Session expired <br> <b> Please login again </b>.",
-      "creation_failed_text": "The creation of the payment was not successful, please try again later or contact the administrative office."
+      "creation_failed_text": "The creation of the payment was not successful, please try again later or contact the administrative office.",
+      "not_found": "The pratice has not yet been received, please wait!"
     },
     "de": {
       "creation_pending": "Zahlungserstellung läuft",
       "creation_failed": "OUps! Irgendwas lief schief!",
       "timeout": "Die Anfrage dauert länger als nötig. <br> <b> Bitte versuchen Sie es später erneut! </b>",
       "unauth": "Sitzung abgelaufen <br> <b> Bitte melden Sie sich erneut an </b>.",
-      "creation_failed_text": "Die Erstellung der Zahlung war nicht erfolgreich, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle."
+      "creation_failed_text": "Die Erstellung der Zahlung war nicht erfolgreich, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle.",
+      "not_found": "Die Datei wurde noch nicht empfangen, bitte warten!"
     }
   }
 
@@ -122,13 +125,18 @@ class Payment {
           Payment.handleSwitchStatus(data)
         },
         error: function (xmlhttprequest, textstatus, message) { // error logging
-          clearInterval(Payment.$pollInterval)
+
           if (textstatus === "timeout") {
             Payment.handleErrors(Payment.$translations[Payment.$language].timeout);
+            clearInterval(Payment.$pollInterval)
           } else if (xmlhttprequest.responseJSON.code === 401) {
             Payment.handleErrors(Payment.$translations[Payment.$language].unauth);
+            clearInterval(Payment.$pollInterval)
+          }else if(xmlhttprequest.responseJSON.code === 404){
+            Payment.$statusPayment.html(Payment.$translations[Payment.$language].not_found);
           } else {
             Payment.handleErrors(Payment.$translations[Payment.$language].creation_failed_text);
+            clearInterval(Payment.$pollInterval)
           }
         }
       });
