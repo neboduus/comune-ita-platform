@@ -104,7 +104,11 @@ class PaymentService
       'url' => $this->generateNotifyUrl($pratica),
       'method' => 'POST'
     ];
-    $paymentData['landing'] = $this->generateCallbackUrl($pratica);
+
+    $paymentData['landing'] = [
+      'url' => $this->generateCallbackUrl($pratica),
+      'method' => 'GET'
+    ];
 
     return $paymentData;
   }
