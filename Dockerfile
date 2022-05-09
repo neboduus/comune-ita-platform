@@ -46,6 +46,8 @@ RUN curl https://raw.githubusercontent.com/renatomefi/php-fpm-healthcheck/master
 RUN curl https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh> /usr/local/bin/wait-for-it && \
     chmod +x /usr/local/bin/wait-for-it
 
+RUN curl https://raw.githubusercontent.com/birdayz/kaf/master/godownloader.sh | BINDIR=/usr/bin bash
+
 USER wodby
 
 COPY --from=builder /var/www/html/vendor /var/www/html/vendor
