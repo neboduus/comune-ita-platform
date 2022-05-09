@@ -52,10 +52,12 @@
 | S3_KEY                       | No       |                 |
 | S3_SECRET                    | No       |                 |
 | S3_BUCKET                    | No       | test            |
+| KAFKA_BROKERS		       | No       |                 | Lista dei broker di kafka, necessaria per i check sui pagamenti
 | KAFKA_URL                    | No       | null            | Se configurato, gli eventi delle entità dell'applicativo vengono inviati al server Kafka
 | KAFKA_EVENT_VERSION          | No       | 1               | Versione dell'API che determina il formato dell'evento Kafka |
 | KAFKA_TOPIC_APPLICATIONS     | No       | applications    | Nome del topic a cui vengono inviati gli eventi relativi alle Pratiche |
-| KAFKA_TOPIC_SERVICES         | No       | services        | Nome del topic a cui vengono inviati gli eventi relativi ai Servici |
+| KAFKA_TOPIC_SERVICES         | No       | services        | Nome del topic a cui vengono inviati gli eventi relativi ai Servizi |
+| KAFKA_TOPIC_PAYMENTS         | No       | payments        | Nome del topic a cui vengono inviati gli eventi relativi ai Payments |
 | API_VERSION                  | No       | 1               | Versione delle API service in caso non venga specificato
 | SKIP_CACHE_WARMUP	       | No       | false           | Salta la creazione anticipata della cache all'avvio del container
 

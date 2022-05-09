@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  payments-check:
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
+    command: ./bin/payments-checks.sh
+    environments:
+      KAFKA_BROKERS: kafka:9092
+      #DEBUG: 1
+      VERBOSE: 1
+  
+
+  
