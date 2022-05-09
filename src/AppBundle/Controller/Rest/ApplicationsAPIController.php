@@ -1063,10 +1063,14 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       $data = $this->paymentService->getPymentStatusByApplication($result);
 
+      if (empty($data)) {
+        return $this->view(["Payment data not found"], Response::HTTP_NOT_FOUND);
+      }
+
       return $this->view($data, Response::HTTP_OK);
     } catch (\Exception $e) {
       $this->logger->error('Errer fetching payment of application: ' . $id . ' - ' . $e->getMessage());
-      return $this->view(["Error"], Response::HTTP_BAD_REQUEST);
+      return $this->view(['Errer fetching payment of application: ' . $id ], Response::HTTP_BAD_REQUEST);
     }
   }
 
@@ -1123,6 +1127,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *
    * @SWG\Tag(name="applications")
    *
+   * @param $id
    * @param Request $request
    * @return View
    */
@@ -1162,7 +1167,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     try {
 
-
       $paymentData = $application->getPaymentData();
       $serializer = SerializerBuilder::create()->build();
       $paymentData['outcome'] = $serializer->toArray($paymentOutcome);
@@ -1172,20 +1176,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       if ($paymentOutcome->getStatus() == 'OK') {
         $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_SUCCESS);
-
-        // Se la pratica ha già un esito significa che è una pratica con pagamento differito
-        if ($application->getEsito()) {
-          if ($application->getServizio()->isProtocolRequired()) {
-            $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE);
-          } else {
-            $this->statusService->setNewStatus($application, Pratica::STATUS_COMPLETE);
-          }
-        } else {
-          // Invio la pratica
-          $application->setSubmissionTime(time());
-          $this->statusService->setNewStatus($application, Pratica::STATUS_PRE_SUBMIT);
-        }
-
       } else {
         $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_ERROR);
       }
