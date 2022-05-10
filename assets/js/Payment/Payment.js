@@ -110,7 +110,7 @@ class Payment {
     // Start poll GET API
     Payment.$pollInterval = setInterval(function () { // run function every 2000 ms
       poll();
-    }, 2000);
+    }, 10000);
 
     const poll = function () {
       $.ajax({
@@ -125,14 +125,13 @@ class Payment {
           Payment.handleSwitchStatus(data)
         },
         error: function (xmlhttprequest, textstatus, message) { // error logging
-
           if (textstatus === "timeout") {
             Payment.handleErrors(Payment.$translations[Payment.$language].timeout);
             clearInterval(Payment.$pollInterval)
-          } else if (xmlhttprequest.responseJSON.code === 401) {
+          } else if (xmlhttprequest.status === 401) {
             Payment.handleErrors(Payment.$translations[Payment.$language].unauth);
             clearInterval(Payment.$pollInterval)
-          }else if(xmlhttprequest.responseJSON.code === 404){
+          }else if(xmlhttprequest.status === 404){
             Payment.$statusPayment.html(Payment.$translations[Payment.$language].not_found);
           } else {
             Payment.handleErrors(Payment.$translations[Payment.$language].creation_failed_text);
