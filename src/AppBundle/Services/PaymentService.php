@@ -163,7 +163,7 @@ class PaymentService
         "updated_at" => $responseData[1]['row']['columns'][4],
       ];
 
-      if (strtolower($data['status']) === 'PAYMENT_PENDING') {
+      if (strtoupper($data['status']) === 'PAYMENT_PENDING') {
         $data['links'] = [
           'online_payment_begin' => [
             'url' => $responseData[1]['row']['columns'][5],
