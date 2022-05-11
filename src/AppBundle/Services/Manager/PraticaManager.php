@@ -812,6 +812,9 @@ class PraticaManager
   public function getGroupedModuleFiles(Pratica $pratica): array
   {
     $files = [];
+    if ($pratica->getServizio()->isLegacy()) {
+      return $files;
+    }
     $attachments = $pratica->getAllegatiWithIndex();
     $schema = $this->schemaFactory->createFromFormId($pratica->getServizio()->getFormIoId());
     $filesComponents = $schema->getFileComponents();
