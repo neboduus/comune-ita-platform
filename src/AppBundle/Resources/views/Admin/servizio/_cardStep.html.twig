@@ -1,5 +1,5 @@
 <div class="row">
-  {% if servizio.isSharedWithGroup %}
+  {% if servizio.isSharedWithGroup and servizio.serviceGroup %}
     <div class="col-lg-12 px-lg-4">
       <div class="alert alert-info">
         <p>{{ 'servizio.shared_with_group_message'|trans }} <a class="d-block" href="{{ path('admin_service_group_edit', {'id': servizio.serviceGroup.id}) }}"><i class="fa fa-pencil"></i> {{ 'servizio.shared_with_group_action'|trans }}</a></p>
