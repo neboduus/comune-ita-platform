@@ -144,7 +144,6 @@ class I18nDataMapper implements I18nDataMapperInterface
       $this->translations = [];
       $translations = $this->getTranslations($data);
 
-
       // Fix per traduzione vecchi oggetti
       if (empty($translations[$this->required_locale][$form->getName()]) && !empty($accessor->getValue($data, $form->getName()))) {
         $translations[$this->required_locale][$form->getName()] = $accessor->getValue($data, $form->getName());

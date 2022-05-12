@@ -44,6 +44,7 @@ class FeedbackMessagesDataType extends AbstractType
   private $schemaFactory;
 
   private $locales = [];
+  private $defaultLocale;
 
   /**
    * FeedbackMessagesDataType constructor.
@@ -51,13 +52,15 @@ class FeedbackMessagesDataType extends AbstractType
    * @param EntityManagerInterface $entityManager
    * @param SchemaFactoryInterface $schemaFactory
    * @param $locales
+   * @param $defaultLocale
    */
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, SchemaFactoryInterface $schemaFactory, $locales)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, SchemaFactoryInterface $schemaFactory, $locales, $defaultLocale)
   {
     $this->translator = $translator;
     $this->entityManager = $entityManager;
     $this->schemaFactory = $schemaFactory;
     $this->locales = explode('|', $locales);
+    $this->defaultLocale = $defaultLocale;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -102,10 +105,16 @@ class FeedbackMessagesDataType extends AbstractType
     $translationsRepo = $this->entityManager->getRepository('Gedmo\Translatable\Entity\Translation');
     $translations = $translationsRepo->findTranslations($service);
 
+    // Fix per traduzione vecchi oggetti
+    if (empty($translations[$this->defaultLocale]['feedbackMessages']) && !empty($service->getFeedbackMessages())) {
+      $translations[$this->defaultLocale]['feedbackMessages'] = json_encode($service->getFeedbackMessages());
+    }
+
     $i18nMessages = [];
     foreach ($this->locales as $locale) {
 
       $savedFeedbackMessages = isset($translations[$locale]['feedbackMessages']) ? \json_decode($translations[$locale]['feedbackMessages'], 1) : [];
+
       foreach ($status as $k => $v) {
         $tempMessage = isset($savedFeedbackMessages[$k]) ? $savedFeedbackMessages[$k] : null;
         $temp = new FeedbackMessage();
@@ -187,6 +196,7 @@ class FeedbackMessagesDataType extends AbstractType
     $this->entityManager->persist($service);
 
     $repository = $this->entityManager->getRepository('Gedmo\\Translatable\\Entity\\Translation');
+
     foreach ($data['i18n'] as $k => $v) {
       $messages = [];
       foreach ($v['feedback_messages'] as $feedbackMessage) {

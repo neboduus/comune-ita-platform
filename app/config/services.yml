@@ -841,6 +841,7 @@ services:
     autowire: true
     arguments:
       $locales: "%app_locales%"
+      $defaultLocale: "%locale%"
     tags:
       - { name: form.type }
 
