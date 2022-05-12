@@ -52,6 +52,10 @@ class LocaleRewriteListener
     $request = $event->getRequest();
     $path = $request->getPathInfo();
 
+    if ( $request->getRequestUri() === '/' ) {
+      return;
+    }
+
     if (!$request->attributes->has('_locale') && $request->attributes->has('exception')) {
 
       $redirectUrl = str_replace($this->prefix, $this->prefix . '/' . $this->defaultLocale, $path);
