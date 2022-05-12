@@ -653,7 +653,7 @@ class CalendarsController extends Controller
       $meeting = $this->em->getRepository('AppBundle:Meeting')->find($meetingId);
     }
 
-    if ($user) {
+    if ($user instanceof CPSUser) {
       $meeting->setUser($user);
     }
     $meeting->setFromTime($fromTime);
