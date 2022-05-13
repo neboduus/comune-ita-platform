@@ -5,7 +5,8 @@ import FinancialReport from "../FinancialReport";
 import SdcFile from "../SdcFile";
 import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
-import 'axios'
+import axios from "axios";
+import Swal from "sweetalert2";
 //import FormioI18n from "../utils/FormioI18n";
 
 
@@ -16,6 +17,7 @@ Formio.registerComponent('financial_report', FinancialReport);
 Formio.registerComponent('sdcfile', SdcFile);
 
 class Form {
+
 
   static initEditableAnonymous(containerId) {
     const $container = $('#' + containerId);
@@ -32,13 +34,16 @@ class Form {
         noAlerts: true,
         language: $container.data('locale'),
         i18n: data,
-        buttonSettings: {showCancel: false}
+        buttonSettings: {showCancel: false},
+        hooks: {
+          beforeCancel: () => Form.handleBeforeSubmit(event)
+        }
       })
         .then(function (form) {
 
           form.formReady.then(() => {
-            setTimeout(Form.disableBreadcrumbButton,500);
-            setTimeout(Form.checkWizardNavCancelButton,500);
+            setTimeout(Form.disableBreadcrumbButton, 500);
+            setTimeout(Form.checkWizardNavCancelButton, 500);
           })
 
           if (form.hasOwnProperty('wizard')) {
@@ -55,13 +60,13 @@ class Form {
 
           form.on('nextPage', function () {
             document.getElementById("formio").scrollIntoView();
-            setTimeout(Form.disableBreadcrumbButton,500);
-            setTimeout(Form.checkWizardNavCancelButton,500);
+            setTimeout(Form.disableBreadcrumbButton, 500);
+            setTimeout(Form.checkWizardNavCancelButton, 500);
           });
 
           form.on('prevPage', function () {
-            setTimeout(Form.disableBreadcrumbButton,500);
-            setTimeout(Form.checkWizardNavCancelButton,500);
+            setTimeout(Form.disableBreadcrumbButton, 500);
+            setTimeout(Form.checkWizardNavCancelButton, 500);
           });
 
           $('.btn-wizard-nav-cancel').on('click', function (e) {
@@ -116,12 +121,15 @@ class Form {
         noAlerts: true,
         language: $container.data('locale'),
         i18n: data,
-        buttonSettings: {showCancel: false}
+        buttonSettings: {showCancel: false},
+        hooks: {
+          beforeCancel: () => Form.handleBeforeSubmit(event)
+        }
       }).then(function (form) {
 
         form.formReady.then(() => {
           setTimeout(disableApplicant, 1000);
-          setTimeout(Form.disableBreadcrumbButton,500);
+          setTimeout(Form.disableBreadcrumbButton, 500);
           const draftButton = $('#save-draft');
           const draftInfo = $('.save-draft-info');
           const draftTextInfo = draftInfo.find('span');
@@ -132,7 +140,7 @@ class Form {
               let text = draftButton.html();
               draftButton.html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Salvataggio in corso...')
               axios.post(draftButton.data('save-draft-url'), form.submission.data)
-                .then(function (reponse) {
+                .then(function (response) {
                   draftInfo.removeClass('d-none');
                   draftTextInfo.text('pochi secondi fa')
                 })
@@ -140,7 +148,7 @@ class Form {
                   draftInfo.removeClass('d-none');
                   draftTextInfo.text('si è verificato un errore durante il salvataggio')
                 })
-                .then(function () {
+                .finally(function () {
                   draftButton.html(text)
                 });
             });
@@ -161,22 +169,17 @@ class Form {
 
         form.on('nextPage', function () {
           setTimeout(disableApplicant, 1000);
-          setTimeout(Form.disableBreadcrumbButton,500);
-          setTimeout(Form.checkWizardNavCancelButton,500);
+          setTimeout(Form.disableBreadcrumbButton, 500);
+          setTimeout(Form.checkWizardNavCancelButton, 500);
           document.getElementById("formio").scrollIntoView();
           $('#save-draft').trigger('click');
         });
 
         form.on('prevPage', function () {
           setTimeout(disableApplicant, 1000);
-          setTimeout(Form.disableBreadcrumbButton,500);
-          setTimeout(Form.checkWizardNavCancelButton,500);
+          setTimeout(Form.disableBreadcrumbButton, 500);
+          setTimeout(Form.checkWizardNavCancelButton, 500);
         });
-
-        $('.btn-wizard-nav-cancel').on('click', function (e) {
-          e.preventDefault()
-          location.reload();
-        })
 
         let realSubmitButton = $('.craue_formflow_button_class_next');
         form.nosubmit = true;
@@ -250,7 +253,10 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         readOnly: true,
-        buttonSettings: {showCancel: false}
+        buttonSettings: {showCancel: false},
+        hooks: {
+          beforeCancel: () => Form.handleBeforeSubmit(event)
+        }
         //renderMode: 'html'
       })
         .then(function (form) {
@@ -274,12 +280,15 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         readOnly: false,
-        buttonSettings: {showCancel: false}
+        buttonSettings: {showCancel: false},
+        hooks: {
+          beforeCancel: () => Form.handleBeforeSubmit(event)
+        }
         //renderMode: 'html'
       }).then(function (form) {
         form.formReady.then(() => {
-          setTimeout(Form.disableBreadcrumbButton,500);
-          setTimeout(Form.checkWizardNavCancelButton,500);
+          setTimeout(Form.disableBreadcrumbButton, 500);
+          setTimeout(Form.checkWizardNavCancelButton, 500);
         });
       });
     });
@@ -334,17 +343,24 @@ class Form {
   //Funzione per disabilitare i pulsanti Breadcrumb per il form wizard
   static disableBreadcrumbButton() {
     const $breadcrumb = $('button.page-link');
-    if($breadcrumb){
-      $('.pagination li').css('cursor','default')
-      $breadcrumb.css('cursor','default')
-      $breadcrumb.attr('disabled',true)
+    if ($breadcrumb) {
+      $('.pagination li').css('cursor', 'default')
+      $breadcrumb.css('cursor', 'default')
+      $breadcrumb.attr('disabled', true)
     }
   }
 
   //Funzione per aggiungere l'attributo type=button al pulsante "Annulla" se è visibile
-  static checkWizardNavCancelButton(){
-    if($('.btn-wizard-nav-cancel').length > 0) {
-      $('.btn-wizard-nav-cancel').attr('type','button')
+  static checkWizardNavCancelButton() {
+    if ($('.btn-wizard-nav-cancel').length > 0) {
+      $('.btn-wizard-nav-cancel').attr('type', 'button')
+    }
+  }
+
+  // Refresh page on handle "cancel button"
+  static handleBeforeSubmit() {
+    if (confirm("Sei sicuro di voler annullare?")) {
+      document.location.reload()
     }
   }
 }
