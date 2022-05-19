@@ -65,7 +65,7 @@ class TenantAPIController extends AbstractFOSRestController
    *     description="Tenant not found"
    * )
    *
-   * @SWG\Tag(name="Tenants")
+   * @SWG\Tag(name="tenants")
    */
   public function getTenantInfoAction(Request $request)
   {

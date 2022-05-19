@@ -81,6 +81,9 @@ services:
   AppBundle\Controller\Rest\UsersAPIController:
     autowire: true
 
+  AppBundle\Controller\Rest\PaymentsAPIController:
+    autowire: true
+
   AppBundle\Controller\Rest\SubscriptionsAPIController:
     autowire: true
     arguments:
