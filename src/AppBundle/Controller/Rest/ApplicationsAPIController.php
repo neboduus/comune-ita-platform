@@ -1061,7 +1061,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
       $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
 
-      $data = $this->paymentService->getPymentStatusByApplication($result);
+      $data = $this->paymentService->getPaymentStatusByApplication($result);
 
       if (empty($data)) {
         return $this->view(["Payment data not found"], Response::HTTP_NOT_FOUND);
