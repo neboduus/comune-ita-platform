@@ -10,6 +10,7 @@ class Payment {
   $pollInterval; // Instance poll interval
   $language; // Browser language
   $alertError; // Html element alert errors
+  $tenant; // Tenant Slug
 
   static $translations = {
     "it": {
@@ -55,6 +56,8 @@ class Payment {
     Payment.$spinner.addClass('progress-spinner-active');
     Payment.$statusPayment.html(Payment.$translations[Payment.$language].creation_pending);
 
+    // Get tenant slug
+    Payment.$tenant = window.location.pathname.split('/')[1];
     // Get Auth token
     Payment.getAuthToken();
   }
@@ -92,7 +95,7 @@ class Payment {
 
   static getAuthToken() {
     $.ajax({
-      url: '/comune-di-bugliano/api/session-auth',
+      url: '/'+ Payment.$tenant+ '/api/session-auth',
       dataType: 'json',
       type: 'get',
       success: function (data) {
@@ -114,7 +117,7 @@ class Payment {
 
     const poll = function () {
       $.ajax({
-        url: '/comune-di-bugliano/api/applications/' + Payment.$application_id + '/payment',
+        url: '/' + Payment.$tenant + '/api/applications/' + Payment.$application_id + '/payment',
         dataType: 'json',
         type: 'get',
         // timeout: 100, // enable for simulate timeout
