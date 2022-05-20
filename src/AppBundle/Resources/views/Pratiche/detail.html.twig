@@ -4,6 +4,9 @@
 {% block title %}{{ pratica.servizio.name }} - Stanza del cittadino{% endblock %}
 {% block stylesheets %}
   {{ encore_entry_link_tags('user-show-application') }}
+  {% if pratica.paymentData is empty %}
+fgh
+  {% endif %}
   <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4.13/lib/theme-default/index.css">
 {% endblock %}
 

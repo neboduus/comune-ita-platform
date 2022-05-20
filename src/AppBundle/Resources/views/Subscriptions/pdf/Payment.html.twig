@@ -4,7 +4,7 @@
 </head>
 <body>
 {% set ente = instance_service.getCurrentInstance() %}
-
+adsdaad
 <main class="container-fluid" style="padding: 40px">
   <div class="row">
     <div class="col-12 text-center">
@@ -41,11 +41,11 @@
       </li>
     </ul>
   </div>
-  <div>
+  <div>33
     {% if pratica.paymentData is not empty %}
       <table class="table">
         <tr>
-          <td><b>{{ 'operatori.gateway'|trans }}</b></td>
+          <td><b>{{ 'operatori.gateway'|trans }}</b>fsdfd</td>
           <td>{{ pratica.paymentType }}</td>
         </tr>
         {% if pratica.paymentType.identifier == "mypay" %}
@@ -109,6 +109,8 @@
             <td>{{ paymentData.bollo_ora_emissione.hour }}:{{ paymentData.bollo_ora_emissione.minute }}
               :{{ paymentData.bollo_ora_emissione.second }}</td>
           </tr>
+        {% else %}
+        ok
         {% endif %}
       </table>
     {% endif %}

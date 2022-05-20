@@ -10,6 +10,7 @@ import 'formiojs/dist/formio.form.min.css';
 import {TextEditor} from "../utils/TextEditor";
 import moment from "moment";
 import RequestIntegration from "../utils/RequestIntegration";
+import InfoPayment from "../Payment/InfoPayment";
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
@@ -181,4 +182,9 @@ $(document).ready(function () {
 
   // Tooltips
   $('[data-toggle="tooltip"]').tooltip();
+
+  // Init Details Payment
+  if( $('.payment-list').length > 0){
+    InfoPayment.init();
+  }
 });

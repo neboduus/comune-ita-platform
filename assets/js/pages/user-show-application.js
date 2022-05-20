@@ -2,9 +2,11 @@ import '../../css/app.scss';
 import '../core';
 import {TextEditor} from "../utils/TextEditor";
 import Form from '../Formio/Form';
+import InfoPayment from "../Payment/InfoPayment";
 
 
 $(document).ready(function () {
+
   if ($('#answer-integration').length > 0) {
     $('#answer-integration').click(function (e) {
       e.preventDefault();
@@ -35,6 +37,11 @@ $(document).ready(function () {
   // Init formIo
   if ($('#formio_summary').length > 0) {
     Form.init('formio_summary');
+  }
+
+  // Init Details Payment
+  if( $('.payment-list').length > 0){
+    InfoPayment.init();
   }
 
 });

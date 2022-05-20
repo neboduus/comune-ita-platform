@@ -4,7 +4,7 @@
       <div class="table-responsive">
         <table class="table">
           <tr>
-            <td><b>{{ 'operatori.gateway'|trans }}</b></td>
+            <td><b>{{ 'operatori.gateway'|trans }}</b>111</td>
             <td>{{ pratica.paymentType }}</td>
           </tr>
           {% if pratica.paymentType.identifier == "mypay" %}
@@ -99,6 +99,22 @@
               <td>{{ paymentData.bollo_ora_emissione.hour }}:{{ paymentData.bollo_ora_emissione.minute }}
                 :{{ paymentData.bollo_ora_emissione.second }}</td>
             </tr>
+          {% else %}
+            <div class="spinner-container">
+              <div class="d-flex justify-content-center flex-column align-items-center">
+                <p class="mb-3"><h4 class="status"></h4></p>
+                <div class="progress-spinner progress-spinner-double">
+                  <div class="progress-spinner-inner"></div>
+                  <div class="progress-spinner-inner"></div>
+                  <span class="sr-only">{{ 'loading'|trans() }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row payment-list" data-id="{{ pratica.id }}">
+              <div class="col">
+                <div class="alert alert-danger alert-error d-none" role="alert"></div>
+              </div>
+            </div>
           {% endif %}
         </table>
       </div>
