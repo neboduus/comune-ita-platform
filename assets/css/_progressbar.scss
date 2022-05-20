@@ -84,7 +84,7 @@ $mobile-size: 400px !default;
     > li .bubble:after {
         display: block;
         position: absolute;
-        top: $bubble-size / 2 - $border-thickness;
+        top: $bubble-size * 0.5 - $border-thickness;
         width: 100%;
         height: $bubble-line-thickness;
         content: '';
@@ -164,7 +164,7 @@ $mobile-size: 400px !default;
         > li .bubble:before,
         > li .bubble:after {
             left: 50%;
-            margin-left: -$bubble-line-thickness / 2;
+            margin-left: -$bubble-line-thickness * 0.5;
             width: $bubble-line-thickness;
             height: 100%;
         }
@@ -189,7 +189,7 @@ $mobile-size: 400px !default;
         }
         > li .bubble:before,
         > li .bubble:after {
-            left: $bubble-size / 2;
+            left: $bubble-size * 0.5;
         }
         .stacked-text {
             width: auto !important;
