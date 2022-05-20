@@ -14,7 +14,7 @@
         La informiamo che la Sua richiesta è stata: <b>{% if pratica.esito %}accettata{% else %}rifiutata{% endif %}</b>
     </p>
     {% if pratica.motivazioneEsito is not empty %}
-        <p>{{ pratica.motivazioneEsito }}</p>
+      {{ pratica.motivazioneEsito|raw }}
     {% endif %}
     {% if pratica.allegatiOperatore|length > 0 %}
         <h2>Allegati alla risposta:</h2>
