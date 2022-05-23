@@ -15,9 +15,6 @@ $(function () {
 
     $('[data-toggle="popover"]').popover();
 
-    // Inizializza le select "bootstrap-select"
-    $('select').selectpicker();
-
 })
 
 

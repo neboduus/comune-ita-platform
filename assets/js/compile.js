@@ -4,7 +4,6 @@ import Payment from "./Payment/Payment";
 
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 require("../css/app.scss");
-require('@fortawesome/fontawesome-free/css/all.min.css')
 
 $(document).ready(function () {
   $('.summernote').summernote({
