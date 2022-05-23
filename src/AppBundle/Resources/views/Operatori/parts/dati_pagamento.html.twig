@@ -1,13 +1,13 @@
 <div class="row">
   <div class="col-md-12">
     {% if pratica.paymentData is not empty %}
-      <div class="table-responsive">
+      <div class="table-responsive-sm">
         <table class="table">
-          <tr>
-            <td><b>{{ 'operatori.gateway'|trans }}</b>111</td>
-            <td>{{ pratica.paymentType }}</td>
-          </tr>
           {% if pratica.paymentType.identifier == "mypay" %}
+            <tr>
+              <td><b>{{ 'operatori.gateway'|trans }}</b></td>
+              <td>{{ pratica.paymentType }}</td>
+            </tr>
             <tr>
               <td><b>{{ 'operatori.importo'|trans }}</b></td>
               <td>{{ pratica.paymentData.payment_amount }} €</td>
@@ -87,6 +87,10 @@
           {% elseif pratica.paymentType.identifier == "bollo" %}
             {% set paymentData = pratica.paymentData | json_decode %}
             <tr>
+              <td><b>{{ 'operatori.gateway'|trans }}</b></td>
+              <td>{{ pratica.paymentType }}</td>
+            </tr>
+            <tr>
               <td><b>{{ 'gateway.bollo.identifier'|trans }}</b></td>
               <td>{{ paymentData.bollo_identifier }}</td>
             </tr>
@@ -110,8 +114,8 @@
                 </div>
               </div>
             </div>
-            <div class="row payment-list" data-id="{{ pratica.id }}">
-              <div class="col">
+            <div class="row payment-list px-3" data-id="{{ pratica.id }}" data-gateway="{{ pratica.paymentType }}">
+              <div class="col-12">
                 <div class="alert alert-danger alert-error d-none" role="alert"></div>
               </div>
             </div>
