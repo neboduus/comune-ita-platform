@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Ui\Backend;
 
+use AppBundle\DataTable\Traits\FiltersTrait;
 use AppBundle\Controller\Rest\ServicesAPIController;
 use AppBundle\DataTable\ScheduledActionTableType;
 use AppBundle\Dto\Service;
@@ -71,6 +72,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class AdminController extends Controller
 {
   use DataTablesTrait;
+  use FiltersTrait;
 
   /** @var InstanceService */
   private $instanceService;
@@ -389,6 +391,8 @@ class AdminController extends Controller
    */
   public function indexScheduledActionsAction(Request $request)
   {
+
+    $filters = self::getFiltersFromRequest($request);
 
     $table = $this->dataTableFactory->createFromType(ScheduledActionTableType::class)->handleRequest($request);
 

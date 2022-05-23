@@ -41,6 +41,7 @@ class ScheduledActionTableType implements DataTableTypeInterface
           'giscom.askCFs' => 'Richiesta codici fiscali Giscom',
           'application_webhook' => 'Webhook',
           'application_payment_reminder' => 'Promemoria pagamento',
+          'produce_message' => 'Messaggio Kafka',
         ],
       ])
       ->add('params', TwigColumn::class, [
@@ -53,7 +54,7 @@ class ScheduledActionTableType implements DataTableTypeInterface
       ->add('hostname', TextColumn::class, [
         'label' => 'Host',
         'orderable' => false,
-        'searchable' => true
+        'searchable' => false
       ])
       ->add('retry', TextColumn::class, [
         'label' => '#',
@@ -74,13 +75,13 @@ class ScheduledActionTableType implements DataTableTypeInterface
       ])
       ->add('createdAt', DateTimeColumn::class, [
         'label' => 'Data di creazione',
-        'format' => 'd-m-Y H:i',
+        'format' => 'd/m/y H:i',
         'orderable' => true,
         'searchable' => false
       ])
       ->add('updatedAt', DateTimeColumn::class, [
         'label' => 'Ultimo aggiornamento',
-        'format' => 'd-m-Y H:i',
+        'format' => 'd/m/y H:i',
         'orderable' => true,
         'searchable' => false
       ])
