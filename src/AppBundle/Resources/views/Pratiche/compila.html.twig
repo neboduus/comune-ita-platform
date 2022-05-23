@@ -167,7 +167,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') and pratica.statusName != 'STATUS_PAYMENT_PENDING' and currentStep.label != 'steps.common.payment_gateway.label' and pratica.servizio.isLegacy %}
+        {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') and pratica.statusName != 'STATUS_PAYMENT_PENDING' and currentStep.label != 'steps.common.payment_gateway.label' %}
           <div class="mt-5">
             {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
           </div>
