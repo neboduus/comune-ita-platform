@@ -10,6 +10,7 @@ class InfoPayment {
   $language; // Browser language
   $alertError; // Html element alert errors
   $tenant; // Tenant Slug
+  $gateway; // Gateway details
 
   static $translations = {
     "it": {
@@ -19,12 +20,12 @@ class InfoPayment {
       "unauth": "Sessione scaduta <br><b>Effettua nuovamente il login</b>.",
       "get_failed": "Opss qualcosa è andato storto! <br> Riprova più tardi oppure contatta l'ufficio amministrativo.",
       "not_found": "Pagamento non trovato, riprova più tardi!",
-      "created_at": "Data ricevuta",
+      "created_at": "Data invio procedimento",
       "reason": "Causale versamento",
       "payer": "Intestatario",
       "address": "Indirizzo pagatore",
       "email": "Email pagatore",
-      "event_created_at": "Data di esecuzione",
+      "event_created_at": "Evento creato il",
       "type": "Metodo di pagamento",
       "iud": "Identificativo Unico del Dovuto (IUD)",
       "iuv": "Identificativo Univoco pagamento (IUV)",
@@ -40,6 +41,8 @@ class InfoPayment {
       "status_payment_confirmed": "Pagamento confermato",
       "status_expired": "Pagamento scaduto",
       "status_complete": "Pagamento completato",
+      "paid_at": "Pagato il",
+      "download_pdf": "Scarica ricevuta pagamento",
     },
     "en": {
       "get_payment": "Payment creation in progress",
@@ -48,12 +51,12 @@ class InfoPayment {
       "unauth": "Session expired <br> <b> Please login again </b>.",
       "get_failed": "Oops something went wrong!, please try again later or contact the administrative office.",
       "not_found": "Payment not found, try again later!",
-      "created_at": "Date payment receipt",
+      "created_at": "Procedure submission date",
       "reason": "Reason for payment",
       "payer": "Accountholder",
       "address": "Payer address",
       "email": "Payer email",
-      "event_created_at": "Execution date",
+      "event_created_at": "Event date",
       "type": "Payment method",
       "iud": "Identificativo Unico del Dovuto (IUD)",
       "iuv": "Identificativo Univoco pagamento (IUV)",
@@ -69,6 +72,8 @@ class InfoPayment {
       "status_payment_confirmed": "Pagamento confermato",
       "status_expired": "Pagamento scaduto",
       "status_complete": "Pagamento completato",
+      "paid_at": "Paid on",
+      "download_pdf": "Download payment receipt",
     },
     "de": {
       "get_payment": "Zahlungserstellung läuft",
@@ -77,12 +82,12 @@ class InfoPayment {
       "unauth": "Sitzung abgelaufen <br> <b> Bitte melden Sie sich erneut an </b>.",
       "get_failed": "OUps! Irgendwas lief schief!, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle.",
       "not_found": "Zahlung nicht gefunden, versuchen Sie es später erneut!",
-      "created_at": "Datum Zahlungsbeleg",
+      "created_at": "Einreichungsdatum des Verfahrens",
       "reason": "Zahlungsgrund",
       "payer": "Kontoinhaber",
       "address": "Zahleradresse",
       "email": "E-Mail des Zahlers",
-      "event_created_at": "Ausführungsdatum",
+      "event_created_at": "Veranstaltungsdatum",
       "type": "Bezahlverfahren",
       "iud": "Identificativo Unico del Dovuto (IUD)",
       "iuv": "Identificativo Univoco pagamento (IUV)",
@@ -98,6 +103,8 @@ class InfoPayment {
       "status_payment_confirmed": "Pagamento confermato",
       "status_expired": "Pagamento scaduto",
       "status_complete": "Pagamento completato",
+      "paid_at": "Bezahlt am",
+      "download_pdf": "Zahlungsbeleg herunterladen",
     }
   }
 
@@ -106,6 +113,7 @@ class InfoPayment {
 
     // Init value variables
     InfoPayment.$application_id = $('.payment-list').data('id');
+    InfoPayment.$gateway = $('.payment-list').data('gateway');
     InfoPayment.$spinner = $('.progress-spinner');
     InfoPayment.$spinnerContainer = $('.spinner-container');
     InfoPayment.$language = document.documentElement.lang.toString();
@@ -198,12 +206,12 @@ class InfoPayment {
     let output = "";
     for (let i = 0; i < data.length; i++) {
       output +=
-        `<div class="col">
+        `<div class="col-12">
             <!--start card-->
             <div class="card-wrapper card-space">
               <div class="card card-bg card-big no-after">
                 <div class="card-body">
-                  <div class="head-tags mb-0">
+                  <div class="head-tags mb-0 justify-content-md-between">
                     <div class="category-top">
                       <a class="category" href="javascript:void(0)">${InfoPayment.$translations[InfoPayment.$language].created_at}</a>
                       <span class="data">${moment(data[i].created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
@@ -228,8 +236,15 @@ class InfoPayment {
            <use href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use>
          </svg>`}
                   </div>
-                 <h5 class="card-title">${InfoPayment.$translations[InfoPayment.$language].amount}: <span>${data[i].payment.currency === 'EUR' ? '€' : data[i].payment.currency} ${data[i].payment.amount}</span></h5>
-                  <p class="card-text">${InfoPayment.$translations[InfoPayment.$language].reason}: <br><b>${data[i].reason}</b></p>
+                 <h5 class="card-title">${InfoPayment.$gateway}</h5>
+                    <p class="card-text">
+                    ${InfoPayment.$translations[InfoPayment.$language].amount}: <b>${data[i].payment.currency === 'EUR' ? '€' : data[i].payment.currency} ${data[i].payment.amount}</b>
+                    </p>
+                  <p class="card-text">
+                    ${InfoPayment.$translations[InfoPayment.$language].reason}:
+                    <br><b>${data[i].reason}</b>
+                  </p>
+
                   <div class="it-card-footer">
                     <span class="card-signature"></span>
                     <a class="btn btn-outline-primary btn-sm" href="#" data-toggle="collapse" data-target="#collapse1-sc${[i]}" aria-expanded="false" aria-controls="collapse1-sc${[i]}">${InfoPayment.$translations[InfoPayment.$language].other_details}</a>
@@ -247,23 +262,39 @@ class InfoPayment {
                           </li>   <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].address}</em> ${data[i].payer.street_name}, ${data[i].payer.building_number} - ${data[i].payer.postal_code} ${data[i].payer.town_name} (${data[i].payer.country_subdivision})</span>
+                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].address}</em>
+                                ${data[i].payer.street_name ? `${data[i].payer.street_name}, ${data[i].payer.building_number}` : ""}
+                                ${data[i].payer.postal_code ? `${data[i].payer.postal_code}` : ""}
+                                ${data[i].payer.town_name ? `${data[i].payer.town_name}` : ""}
+                                ${data[i].payer.country_subdivision ? `(${data[i].payer.country_subdivision})`: ""}
+                                </span>
                               </div>
                             </a>
                           </li>
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].email}</em> ${data[i].payer.email}</span>
+                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].email}</em> ${data[i].payment.email ? `${data[i].payer.email}`: "--"}</span>
                               </div>
                             </a>
                           </li>
+                          ${data[i].payment.paid_at ? `
+                          <li>
+                            <a href="javascript:void(0)" data-focus-mouse="true">
+                              <div class="it-right-zone">
+                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].paid_at}</em> ${moment(data[i].payment.paid_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
+                              </div>
+                            </a>
+                          </li>
+                          `:
+                          `<li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
                                 <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].event_created_at}</em> ${moment(data[i].event_created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                               </div>
                             </a>
                           </li>
+                            `}
                           </li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
@@ -294,6 +325,13 @@ class InfoPayment {
                         </ul>
                       </div>
                     </div>
+                    ${data[i].links.receipt && data[i].links.receipt.url !== "" ?
+                   `<div class="text-center mt-5">
+                        <a href="${data[i].links.receipt.url}" class="btn btn-primary" role="button" aria-disabled="true" download>
+                            ${InfoPayment.$translations[InfoPayment.$language].download_pdf}
+                        </a>
+                     </div>`
+                    : ""}
                   </div>
                 </div>
               </div>
