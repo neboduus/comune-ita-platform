@@ -144,7 +144,7 @@
             <h4>{{ 'pratica.payment.tipologie_pagamento'|trans() }}</h4>
             <div>
               <a href="#" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true">{{ 'pratica.payment.paga_online'|trans() }}</a>
-              <a href="#" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true">{{ 'pratica.payment.paga_offline'|trans() }}</a>
+              <a href="#" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download>{{ 'pratica.payment.paga_offline'|trans() }}</a>
             </div>
           </div>
           <div class="alert alert-danger alert-error d-none" role="alert">
@@ -167,8 +167,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-
-        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') and pratica.statusName != 'STATUS_PAYMENT_PENDING' and currentStep.label != 'steps.common.payment_gateway.label' %}
+        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') and pratica.statusName != 'STATUS_PAYMENT_PENDING' and currentStep.label != 'steps.common.payment_gateway.label' and pratica.servizio.isLegacy %}
           <div class="mt-5">
             {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
           </div>
