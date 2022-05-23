@@ -36,7 +36,7 @@ require('bootstrap-italia/src/js/plugins/timepicker');
 require('bootstrap-italia/src/js/plugins/input-number');
 //require('bootstrap-italia/src/js/plugins/carousel');
 require('bootstrap-italia/src/js/plugins/transfer');
-require('bootstrap-italia/src/js/plugins/select');
+//require('bootstrap-italia/src/js/plugins/select');
 //require('bootstrap-italia/src/js/plugins/custom-select');
 require('bootstrap-italia/src/js/plugins/rating');
 require('bootstrap-italia/src/js/plugins/dimmer');
