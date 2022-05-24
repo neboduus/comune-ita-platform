@@ -43,6 +43,8 @@ class InfoPayment {
       "status_complete": "Pagamento completato",
       "paid_at": "Pagato il",
       "download_pdf": "Scarica ricevuta pagamento",
+      "paga_online": "Paga online",
+      "paga_offline": "Paga offline"
     },
     "en": {
       "get_payment": "Payment creation in progress",
@@ -74,6 +76,8 @@ class InfoPayment {
       "status_complete": "Pagamento completato",
       "paid_at": "Paid on",
       "download_pdf": "Download payment receipt",
+      "paga_online": "Pay online",
+      "paga_offline": "Pay offline"
     },
     "de": {
       "get_payment": "Zahlungserstellung läuft",
@@ -105,6 +109,8 @@ class InfoPayment {
       "status_complete": "Pagamento completato",
       "paid_at": "Bezahlt am",
       "download_pdf": "Zahlungsbeleg herunterladen",
+      "paga_online": "Online bezahlen",
+      "paga_offline": "Offline bezahlen"
     }
   }
 
@@ -211,13 +217,13 @@ class InfoPayment {
             <div class="card-wrapper card-space">
               <div class="card card-bg card-big no-after">
                 <div class="card-body">
-                  <div class="head-tags mb-0 justify-content-md-between">
+                  <div class="head-tags mb-0 flex-column">
+                     <div class="mb-3 text-right">
+                      <a class="card-tag" href="javascript:void(0)">${InfoPayment.switchStatus(data[i].status)}</a>
+                    </div>
                     <div class="category-top">
                       <a class="category" href="javascript:void(0)">${InfoPayment.$translations[InfoPayment.$language].created_at}</a>
                       <span class="data">${moment(data[i].created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
-                    </div>
-                    <div>
-                      <a class="card-tag" href="javascript:void(0)">${InfoPayment.switchStatus(data[i].status)}</a>
                     </div>
                   </div>
                   <div class="top-icon mb-0">
@@ -263,7 +269,7 @@ class InfoPayment {
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
                                 <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].address}</em>
-                                ${data[i].payer.street_name ? `${data[i].payer.street_name}, ${data[i].payer.building_number}` : ""}
+                                ${data[i].payer.street_name ? `${data[i].payer.street_name}, ${data[i].payer.building_number}` : "--"}
                                 ${data[i].payer.postal_code ? `${data[i].payer.postal_code}` : ""}
                                 ${data[i].payer.town_name ? `${data[i].payer.town_name}` : ""}
                                 ${data[i].payer.country_subdivision ? `(${data[i].payer.country_subdivision})`: ""}
@@ -325,13 +331,18 @@ class InfoPayment {
                         </ul>
                       </div>
                     </div>
-                    ${data[i].links.receipt && data[i].links.receipt.url !== "" ?
+                    ${data[i].payment.paid_at  !== null ?
                    `<div class="text-center mt-5">
                         <a href="${data[i].links.receipt.url}" class="btn btn-primary" role="button" aria-disabled="true" download>
                             ${InfoPayment.$translations[InfoPayment.$language].download_pdf}
                         </a>
                      </div>`
-                    : ""}
+                    :
+                    `<div class="text-center mt-5">
+                       <a href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${InfoPayment.$translations[InfoPayment.$language].paga_online}</a>
+                       <a href="${data[i].links.offline_payment.url}" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download> ${InfoPayment.$translations[InfoPayment.$language].paga_offline}</a>
+                      </div>
+                    `}
                   </div>
                 </div>
               </div>
