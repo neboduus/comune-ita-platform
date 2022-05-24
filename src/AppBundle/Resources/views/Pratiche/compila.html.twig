@@ -128,7 +128,7 @@
           </div>
         </div>
 
-      {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and currentStep.label == 'steps.common.payment_gateway.label' %}
+      {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay' %}
         <div class="mt-5">
           <div class="spinner-container">
             <div class="d-flex justify-content-cente flex-column align-items-center">
