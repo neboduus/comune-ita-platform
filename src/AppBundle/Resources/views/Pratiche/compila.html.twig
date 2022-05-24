@@ -167,7 +167,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') and pratica.statusName != 'STATUS_PAYMENT_PENDING' and currentStep.label != 'steps.common.payment_gateway.label' %}
+        {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier == 'bollo') and pratica.statusName != 'STATUS_PAYMENT_PENDING' %}
           <div class="mt-5">
             {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
           </div>
@@ -218,8 +218,3 @@
 
 {% endblock %}
 
-
-{#{%- block checkbox_widget -%}
-    <input type="checkbox"
-           data-group-cls="btn-group-lg" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
-{%- endblock checkbox_widget -%}#}

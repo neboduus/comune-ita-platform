@@ -80,7 +80,8 @@ class FormIOFlow extends PraticaFlow
           'validation_groups' => 'recaptcha',
         ],
         'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
-          return $flow->getFormData()->getStatus() == Pratica::STATUS_PAYMENT_PENDING && $flow->getFormData()->getServizio()->isPaymentDeferred() && $flow->getFormData()->getEsito();
+          return ($flow->getFormData()->getStatus() == Pratica::STATUS_PAYMENT_PENDING && $flow->getFormData()->getServizio()->isPaymentDeferred() && $flow->getFormData()->getEsito())
+                 or ($flow->getFormData()->getStatus() == Pratica::STATUS_PAYMENT_PENDING && $flow->getFormData()->getPaymentType() && !empty($flow->getFormData()->getPaymentData()));
         },
       );
 
