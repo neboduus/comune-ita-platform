@@ -111,9 +111,9 @@ class Payment {
   static poolingPayment() {
 
     // Start poll GET API
-    Payment.$pollInterval = setInterval(function () { // run function every 2000 ms
+    Payment.$pollInterval = setInterval(function () { // run function every 4000 ms
       poll();
-    }, 10000);
+    }, 4000);
 
     const poll = function () {
       $.ajax({
