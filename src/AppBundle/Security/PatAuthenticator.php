@@ -75,16 +75,13 @@ class PatAuthenticator extends AbstractAuthenticator
   private function checkShibbolethUserData(Request $request)
   {
 
-    if (!$request->server->get($this->shibboletServerVarNames['spidCode']) &&
-      !(
-        $request->server->get($this->shibboletServerVarNames['x509certificate_issuerdn']) &&
-        $request->server->get($this->shibboletServerVarNames['x509certificate_subjectdn']) &&
-        $request->server->get($this->shibboletServerVarNames['x509certificate_base64'])
-      )
-      ||
-      !$request->server->get($this->shibboletServerVarNames['shibSessionId']) ||
-      !$request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']) ||
-      !$request->server->get($this->shibboletServerVarNames['shibSessionIndex'])
+    $spid = [];
+
+    $request->server->add($spid);
+
+    if ( !$request->server->get($this->shibboletServerVarNames['shibSessionId']) ||
+         !$request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']) ||
+         !$request->server->get($this->shibboletServerVarNames['shibSessionIndex'])
     ) {
       return false;
     }
@@ -135,7 +132,7 @@ class PatAuthenticator extends AbstractAuthenticator
     // Spid
     if (
       $request->server->has($this->shibboletServerVarNames['spidCode']) &&
-      !empty($request->server->has($this->shibboletServerVarNames['spidCode']))
+      !empty($request->server->get($this->shibboletServerVarNames['spidCode']))
     ) {
       $data = [
         'authenticationMethod' => CPSUser::IDP_SPID,
@@ -167,6 +164,24 @@ class PatAuthenticator extends AbstractAuthenticator
         'certificate' => $request->server->get($this->shibboletServerVarNames['x509certificate_base64']),
         'instant' => $request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']),
         'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex'])
+      ];
+
+      $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], '');
+      return UserAuthenticationData::fromArray($data);
+    }
+
+    // Cie
+    if ( $request->server->has($this->shibboletServerVarNames['shibAuthnContextClass'])
+         && $request->server->get($this->shibboletServerVarNames['shibAuthnContextClass']) == 'urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard'
+         && (!$request->server->has($this->shibboletServerVarNames['spidCode']) || empty($request->server->get($this->shibboletServerVarNames['spidCode'])))
+         && (!$request->server->has($this->shibboletServerVarNames['x509certificate_base64']) || empty($request->server->get($this->shibboletServerVarNames['x509certificate_base64'])))
+      ) {
+
+      $data = [
+        'authenticationMethod' => CPSUser::IDP_CIE,
+        'sessionId' => $request->server->get($this->shibboletServerVarNames['shibSessionId']),
+        'instant' => $request->server->get($this->shibboletServerVarNames['shibAuthenticationIstant']),
+        'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex']),
       ];
 
       $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], '');

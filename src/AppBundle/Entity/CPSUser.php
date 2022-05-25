@@ -22,6 +22,7 @@ class CPSUser extends User
   const IDP_NONE = "anonymous";
   const IDP_SPID = "spid";
   const IDP_CPS_OR_CNS = "cps/cns";
+  const IDP_CIE = "cie";
 
   /**
    * @var string
