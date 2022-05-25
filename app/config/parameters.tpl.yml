@@ -111,6 +111,7 @@ parameters:
     shibSessionId: '%env(SHIB_SESSION_ID)%'
     shibSessionIndex: '%env(SHIB_SESSION_INDEX)%'
     shibAuthenticationIstant: '%env(SHIB_AUTHENTICATION_INSTANT)%'
+    shibAuthnContextClass:  '%env(SHIB_AUTHN_CONTEXT_CLASS)%'
   sentry_dsn: '%env(SENTRY_DSN)%'
   login_route: '%env(LOGIN_ROUTE)%' #name of the route
   single_logout_url: '%env(SINGLE_LOGOUT_URL)%'
@@ -216,6 +217,7 @@ parameters:
   env(SHIB_SESSION_ID): 'shibb_Shib-Session-ID'
   env(SHIB_SESSION_INDEX): 'shibb_Shib-Session-Index'
   env(SHIB_AUTHENTICATION_INSTANT): 'shibb_Shib-Authentication-Instant'
+  env(SHIB_AUTHN_CONTEXT_CLASS): 'shibb_Shib-AuthnContext-Class'
   env(BOX_LOGIN_TITLE): 'Usi SPID o CPS?'
   env(BOX_LOGIN_TEXT): "Puoi autenticarti con SPID o Carta Provinciale dei Servizi per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)"
   env(BOX_LOGIN_BUTTON): 'Entra con SPID/CPS'
