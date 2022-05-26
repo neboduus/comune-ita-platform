@@ -29,13 +29,11 @@ class SubscriberType extends AbstractType
       ->add('date_of_birth', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'iscrizioni.subscribers.date_of_birth',
-        'disabled' => $options['is_edit']
+        'label' => 'iscrizioni.subscribers.date_of_birth'
       ])
       ->add('place_of_birth', TextType::class, [
         'required' => true,
-        'label' => 'iscrizioni.subscribers.place_of_birth',
-        'disabled' => $options['is_edit']
+        'label' => 'iscrizioni.subscribers.place_of_birth'
       ])
       ->add('fiscal_code', TextType::class, [
         'required' => true,
