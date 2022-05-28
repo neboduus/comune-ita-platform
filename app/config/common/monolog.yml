@@ -5,16 +5,12 @@ monolog:
       action_level: info
       level:        info
       handler:      nested
+      formatter: "monolog.formatter.json"
     nested:
       type:  stream
       path:  "%logs_path%"
       level: info
-      action_level: debug
+      action_level: info
+      formatter: "monolog.formatter.json"
     console:
       type:  console
-    #slack:
-    #  type:           slackwebhook
-    #  webhook_url:    '%slack_logs_webhook_url%'
-    #  action_level:   error
-    #  level:          error
-    #  formatter: '%logs_formatter%'

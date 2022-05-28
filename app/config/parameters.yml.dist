@@ -28,7 +28,6 @@ parameters:
     pec_delivery_address:
     default_from_email_address: sdc@opencontent.it
 
-    logs_formatter: 'monolog.formatter.line'
     logs_path: '%kernel.logs_dir%/%kernel.environment%.log'
 
     # A secret key that's used to generate certain security-related tokens

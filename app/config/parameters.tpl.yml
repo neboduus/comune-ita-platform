@@ -52,7 +52,6 @@ parameters:
   ocsdc_slim_datetime_format: 'd/m/y H:i'
   PasswordLifeTime: '%env(PASSWORD_LIFE_TIME)%' #365
   InactiveUserLifeTime: '%env(INACTIVE_USER_LIFE_TIME)%' #545
-  logs_formatter: 'monolog.formatter.line'
   logs_path: '%env(LOGS_PATH)%'
   formserver_private_url: '%env(FORMSERVER_PRIVATE_URL)%'
   formserver_public_url: '%env(FORMSERVER_PUBLIC_URL)%'

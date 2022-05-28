@@ -34,6 +34,7 @@ use ReflectionClass;
 use ReflectionException;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use TheCodingMachine\Gotenberg\Client;
@@ -627,9 +628,25 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $request->setPaperSize(GotembergRequest::A4);
     $request->setMargins([1,0,0,0]);
     //$request->setWaitTimeout(30);
-    //$request->setWaitDelay(5);
+    $request->setWaitDelay(20);
     $request->addRemoteURLHTTPHeader('Authorization', 'Basic '.base64_encode(implode(':', ['ez', $this->printablePassword])));
     $response =  $client->post($request);
+
+    if ($response->getStatusCode() != Response::HTTP_OK) {
+      $this->logger->error('Pdf Builder Service: Incorrect http status code from gotenberg', [
+        'status_code' => $response->getStatusCode(),
+        'application_id' => $pratica->getId()
+      ]);
+    }
+
+    $contentLength = $response->getHeaderLine('Content-Length');
+    if ($contentLength < 60000) {
+      $this->logger->error('Pdf Builder Service: generated file is too small', [
+        'content_length' => $contentLength,
+        'application_id' => $pratica->getId()
+      ]);
+    }
+
     $fileStream = $response->getBody();
     return $fileStream->getContents();
 
@@ -648,7 +665,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);
     $request->setMargins([1,0,0,0]);
-    //$request->setWaitDelay(5);
+    $request->setWaitDelay(20);
     $response =  $client->post($request);
     $fileStream = $response->getBody();
     return $fileStream->getContents();

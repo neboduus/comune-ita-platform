@@ -5,12 +5,12 @@ monolog:
       action_level: debug
       level:        debug
       handler:      nested
-      formatter: "%logs_formatter%"
+      formatter: "monolog.formatter.line"
     nested:
       type:  stream
       path:  "%logs_path%"
       level: debug
       action_level: debug
-      formatter: "%logs_formatter%"
+      formatter: "monolog.formatter.line"
     console:
       type:  console
