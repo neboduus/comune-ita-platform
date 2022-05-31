@@ -388,3 +388,14 @@ svg{
   }
 }
 
+.heading-border-bottom {
+  box-shadow: 0px 1px 0px #e6e9f2;
+}
+
+.video-wrapper-icon{
+  position: absolute;
+  top: -50px;
+  right: 0;
+  cursor: pointer;
+  z-index: 9999;
+}
