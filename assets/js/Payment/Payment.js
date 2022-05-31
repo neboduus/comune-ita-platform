@@ -1,11 +1,9 @@
 class Payment {
 
   $token; // Auth token
-  $form;  // HTMl Element Form
   $spinner; // Html Element Spinner
   $spinnerContainer; // Html Element Wrapper Spinner
   $callToActionButtons; // Html Element Wrapper Button Call to Actions
-  $application_id; // Application id
   $statusPayment; // Html Element Status payment
   $pollInterval; // Instance poll interval
   $language; // Browser language
@@ -43,14 +41,13 @@ class Payment {
   static init() {
 
     // Init value variables
-    Payment.$form = $('form[name="pratica_payment_gateway"]');
-    Payment.$application_id = this.$form.attr('action').split("/").pop();
     Payment.$spinner = $('.progress-spinner');
     Payment.$spinnerContainer = $('.spinner-container');
     Payment.$callToActionButtons = $('.actions-container');
     Payment.$statusPayment = $('.status');
     Payment.$language = document.documentElement.lang.toString();
     Payment.$alertError = $('.alert-error');
+
 
     // Active spinner animations
     Payment.$spinner.addClass('progress-spinner-active');
@@ -69,25 +66,23 @@ class Payment {
     Payment.$alertError.removeClass('d-none').addClass('d-block fade show');
   }
 
-  static handleSwitchStatus(data) {
+  static handleSwitchStatus(data,self) {
     switch (data.status) {
       case 'CREATION_PENDING':
         Payment.$statusPayment.html(Payment.$translations[Payment.$language].creation_pending);
+        Payment.retryPooling(self);
         break;
       case 'PAYMENT_PENDING':
-        clearInterval(Payment.$pollInterval); // stop poll function
         Payment.$spinnerContainer.addClass('d-none');
         $(".online_payment_begin").attr("href", data.links.online_payment_begin.url);
         $(".offline_payment").attr("href", data.links.offline_payment.url);
         Payment.$callToActionButtons.removeClass('d-none').addClass('d-flex');
         break;
       case 'CREATION_FAILED':
-        clearInterval(Payment.$pollInterval); // stop poll function
         Payment.$spinnerContainer.addClass('d-none');
         Payment.handleErrors(Payment.$translations[Payment.$language].creation_failed_text);
         break;
       default:
-        clearInterval(Payment.$pollInterval); // stop poll function
         console.log(`Status not found - ${data.status}.`);
     }
   }
@@ -108,42 +103,64 @@ class Payment {
     });
   }
 
+
+  static retryPooling(self){
+    self.tryCount++;
+    if (self.tryCount <= self.retryLimit) {
+      //try again every 2 seconds
+      setTimeout(() => {
+        $.ajax(self)
+      }, self.retryTimeout)
+    }else{
+      const timeout = self.retryTimeout * self.tryCount
+      if(timeout <=  self.limitTimeout){
+        setTimeout(() => {
+          $.ajax(self)
+        }, timeout)
+      }else{
+        // if I exceed the timeout I show a message
+        Payment.$spinnerContainer.addClass('d-none');
+        Payment.handleErrors(Payment.$translations[Payment.$language].timeout);
+      }
+    }
+  }
+
   static poolingPayment() {
 
-    // Start poll GET API
-    Payment.$pollInterval = setInterval(function () { // run function every 4000 ms
-      poll();
-    }, 4000);
-
-    const poll = function () {
+    function poolingAjaxRequest () {
       $.ajax({
-        url: '/' + Payment.$tenant + '/api/applications/' + Payment.$application_id + '/payment',
+        url: Payment.$callToActionButtons.data('api'),
         dataType: 'json',
         type: 'get',
         // timeout: 100, // enable for simulate timeout
+        tryCount: 0,
+        retryLimit: 5,
+        retryTimeout: 2000,
+        limitTimeout: 60000, // 1 minutes - 30 retry
         beforeSend: function (xhr) {
           xhr.setRequestHeader('Authorization', `Bearer ${Payment.$token}`);
         },
         success: function (data) {
-          Payment.handleSwitchStatus(data)
+          Payment.handleSwitchStatus(data,this)
         },
         error: function (xmlhttprequest, textstatus, message) { // error logging
           if (textstatus === "timeout") {
             Payment.handleErrors(Payment.$translations[Payment.$language].timeout);
-            clearInterval(Payment.$pollInterval)
           } else if (xmlhttprequest.status === 401) {
             Payment.handleErrors(Payment.$translations[Payment.$language].unauth);
-            clearInterval(Payment.$pollInterval)
-          }else if(xmlhttprequest.status === 404){
+          } else if (xmlhttprequest.status === 404) {
+            Payment.retryPooling(this);
             Payment.$statusPayment.html(Payment.$translations[Payment.$language].not_found);
           } else {
             Payment.handleErrors(Payment.$translations[Payment.$language].creation_failed_text);
-            clearInterval(Payment.$pollInterval)
           }
         }
       });
-    };
+    }
+    // Call pooling request
+    poolingAjaxRequest();
   }
+
 }
 
 export default Payment;
