@@ -106,9 +106,9 @@
         <div class="step-{{ flow.getCurrentStepNumber() }}">
           {{ form_errors(form) }}
 
-          {% if form.vars.helper.descriptionText|length > 0 %}
-            {{ form.vars.helper.descriptionText|raw }}
-          {% endif %}
+            {% if form.vars.helper.descriptionText|length > 0 and not (pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
+              {{ form.vars.helper.descriptionText|raw }}
+            {% endif %}
 
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
 
@@ -131,7 +131,7 @@
       {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay' %}
         <div class="mt-5">
           <div class="spinner-container">
-            <div class="d-flex justify-content-cente flex-column align-items-center">
+            <div class="d-flex justify-content-center flex-column align-items-center">
               <p class="mb-3"><h4 class="status"></h4></p>
               <div class="progress-spinner progress-spinner-double">
                 <div class="progress-spinner-inner"></div>
@@ -140,17 +140,266 @@
               </div>
             </div>
           </div>
-          <div class="d-none justify-content-center flex-column text-center actions-container">
-            <h4>{{ 'pratica.payment.tipologie_pagamento'|trans() }}</h4>
-            <div>
-              <a href="#" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true">{{ 'pratica.payment.paga_online'|trans() }}</a>
-              <a href="#" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download>{{ 'pratica.payment.paga_offline'|trans() }}</a>
+          <div class="d-none actions-container">
+            <div class="row">
+              <div class="col-12 col-md-8 mb-2 mb-md-4">
+                <h1 class="page-title">Scegli la modalità di pagamento</h1>
+                <div class="page-desc ">
+                  <p>Puoi gestire i tuoi pagamenti in modo semplice e immediato, verifica le
+                    opzioni disponibili e scegli quelle più adatte alle tue esigenze.
+                  </p>
+                </div>
+              </div>
+              <div class="col-12 col-md-6">
+                <!--start card-->
+                <div class="card-wrapper card-space">
+                  <div class="card card-bg no-after">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-center mb-3 h-80">
+                        <span class="h3 mb-0">
+                          <a href="#sezione-online" data-attribute="forward" class="text-forward">Paga online</a>
+                        </span>
+                        <img src="{{ asset('bundles/app/images/pictograms/notifica.svg')}}"
+                             alt="Icona Sui servizi di pagamento online" class="h-40" />
+                      </div>
+                      <p>
+                        Usa la tua carta di credito o debito e paga il tuo servizio velocemente online in pochi passi.
+                      </p>
+                      <div class="it-card-footer">
+                        <a href="#" class="btn btn-primary btn-sm online_payment_begin" role="button"
+                           aria-pressed="true">{{ 'pratica.payment.paga_online'|trans() }}</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--end card-->
+              </div>
+              <div class="col-12 col-md-6">
+                <!--start card-->
+                <div class="card-wrapper card-space">
+                  <div class="card card-bg no-after">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-center mb-3 h-80">
+                        <span class="h3 mb-0"><a href="#sezione-offline" data-attribute="forward" class="text-forward">Paga sul territorio</a></span>
+                        <img src="{{ asset('bundles/app/images/pictograms/posteitaliane.svg') }}"
+                             alt="Icona In ufficio postale" class="h-40">
+                      </div>
+                      <p >Potrai pagare successivamente il servizio richiesto, scaricando il modulo PDF
+                        tramite il pulsante sottostante.</p>
+                      <div class="it-card-footer">
+                        <a href="#" class="btn btn-primary btn-sm offline_payment" role="button" aria-pressed="true"
+                           download>{{ 'pratica.payment.paga_offline'|trans() }}</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!--end card-->
+              </div>
+              <div class="col-12 mb-5">
+                <div class="card-wrapper card-space">
+                  <div class="card card-bg no-after">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-baseline">
+                        <span class="h3 card-title">Paga con App IO</span>
+                        <img class="ml-auto" src="{{ asset('bundles/app/images/app-logo-appio.svg') }}"
+                             alt="Logo App IO"></div>
+                      <div class="d-flex flex-column">
+                        <ul class="list-unstyled mb-3 mb-md-5">
+                          <li class="list-item">
+                            <svg class="icon icon-success icon-sm mr-2">
+                              <use href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use>
+                            </svg>
+                            Usa i metodi di pagamento salvati nel tuo Portafoglio
+                          </li>
+                          <li class="list-item my-2">
+                            <svg class="icon icon-success icon-sm mr-2">
+                              <use href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use>
+                            </svg>
+                            Scegli il gestore della transazione (PSP) a te più conveniente
+                          </li>
+                          <li class="list-item">
+                            <svg class="icon icon-success icon-sm mr-2">
+                              <use href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use>
+                            </svg>
+                            Conserva le ricevute in un unico posto
+                          </li>
+                        </ul>
+                        <div class="mt-auto">
+                          <a role="button" href="https://io.italia.it" title="Scarica l'app"
+                             class="btn btn-sm btn-primary px-5 mr-md-2 mb-2 d-block d-md-inline">Scarica l'app</a>
+                          <a role="button" href="#" title="Guarda il video"
+                             class="btn btn-sm btn-outline-primary px-5 mb-2 mb-md-0 d-block d-md-inline"
+                             data-toggle="modal" data-target="#modalCenter">Guarda il video</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12" id="sezione-online">
+                <h3 class="heading-border-bottom pb-2 my-md-5" id="paga-online">Paga online</h3>
+                <div class="row my-3 my-md-5 img-64">
+                  <div class="d-lg-flex align-items-stretch flex-wrap">
+                    <div class="col-6 with-border by-4">
+                      <div class="h-100 d-flex flex-column">
+                        <div>
+                          <div>
+                            <div class="top-icon mb-3">
+                              <img src="{{ asset('bundles/app/images/pictograms/comune.svg') }}"
+                                   alt="Icona Sul sito del tuo Ente Creditore">
+                            </div>
+                            <h5>Sul sito del tuo Ente Creditore</h5>
+                            <div><p>Segui i passaggi richiesti dall’Ente e completa il pagamento tramite pagoPA.
+                                <strong>Potrai scegliere il gestore della transazione (PSP) a te più
+                                  conveniente</strong>.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 with-border by-4">
+                      <div class="h-100 d-flex flex-column">
+                        <div>
+                          <div>
+                            <div class="top-icon mb-3">
+                              <img src="{{ asset('bundles/app/images/pictograms/computer.svg') }}"
+                                   alt="Icona Sul tuo servizio di home banking">
+                            </div>
+                            <h5>Sul tuo servizio di home banking</h5>
+                            <div><p>Accedi al portale della tua banca, cerca nel menu pagoPA e paga con il tuo conto
+                                corrente.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 with-border by-4">
+                      <div class="h-100 d-flex flex-column">
+                        <div>
+                          <div>
+                            <div class="top-icon mb-3">
+                              <img src="{{ asset('bundles/app/images/pictograms/telefono.svg') }}"
+                                   alt="Icona Sulla tua app di pagamenti">
+                            </div>
+                            <h5>Sulla tua app di pagamenti</h5>
+                            <div><p>Apri la tua app di pagamenti preferita, cerca nel menu pagoPA e inquadra il codice
+                                QR del tuo avviso.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 by-4">
+                      <div class="h-100 d-flex flex-column">
+                        <div>
+                          <div>
+                            <div class="top-icon mb-3">
+                              <img src="{{ asset('bundles/app/images/pictograms/notifica.svg') }}"
+                                   alt="Icona Sui servizi di pagamento online">
+                            </div>
+                            <h5>Sui servizi di pagamento online</h5>
+                            <div><p>pagoPA è integrato anche nei principali servizi di pagamento online, che puoi
+                                utilizzare anche se non sei loro cliente.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12" id="sezione-offline">
+                <h3 class="heading-border-bottom pb-2 my-md-5" id="paga-sul-territorio">Paga sul territorio</h3>
+                <div class="my-3 my-md-5 img-64">
+                  <div class="d-lg-flex align-items-stretch flex-wrap ">
+                    <div class="col-12 col-sm-6 by-4">
+                      <div class="h-100 d-flex flex-column">
+                        <div>
+                          <div>
+                            <div class="top-icon mb-3">
+                              <img src="{{ asset('bundles/app/images/pictograms/banca.svg') }}" alt="Icona In banca">
+                            </div>
+                            <h5>In banca</h5>
+                            <div><p>Presso le filiali aderenti o gli sportelli ATM abilitati.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 with-border by-4">
+                      <div class="h-100 d-flex flex-column">
+                        <div>
+                          <div>
+                            <div class="top-icon mb-3">
+                              <img src="{{ asset('bundles/app/images/pictograms/posteitaliane.svg') }}"
+                                   alt="Icona In ufficio postale">
+                            </div>
+                            <h5>In ufficio postale</h5>
+                            <div><p>Utilizzando indifferentemente il codice QR pagoPA o il bollettino postale PA.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 with-border by-4">
+                      <div class="h-100 d-flex flex-column">
+                        <div>
+                          <div>
+                            <div class="top-icon mb-3">
+                              <img src="{{ asset('bundles/app/images/pictograms/negozio.svg') }}"
+                                   alt="Icona Presso gli esercenti convenzionati">
+                            </div>
+                            <h5>Presso gli esercenti convenzionati</h5>
+                            <div><p>Cerca il logo pagoPA nei bar, edicole, farmacie, ricevitorie, supermercati e
+                                tabaccherie convenzionati.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-12 col-sm-6 by-4">
+                      <div class="h-100 d-flex flex-column">
+                        <div>
+                          <div>
+                            <div class="top-icon mb-3">
+                              <img src="{{ asset('bundles/app/images/pictograms/lettera.svg') }}"
+                                   alt="Icona Presso i punti di posta privata">
+                            </div>
+                            <h5>Presso i punti di posta privata</h5>
+                            <div><p>Puoi pagare anche nelle agenzie che offrono servizi postali sul territorio.</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="alert alert-danger alert-error d-none" role="alert">
+          <div class="alert alert-danger alert-error d-none" role="alert"></div>
+          <!-- Modal -->
+          <div class="modal fade" tabindex="-1" role="dialog" id="modalCenter" aria-labelledby="modalCenterTitle">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                <div class="video-wrapper-icon">
+                  <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <svg class="icon icon-lg">
+                      <use href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                    </svg>
+                  </button>
+                </div>
+                <div class="modal-body p-0">
+                  <div class="embed-responsive embed-responsive-16by9">
+                    <iframe class="embed-responsive-item" title="Video YouTube"
+                            src="https://www.youtube.com/embed/RaHmGbBOP84" allowfullscreen></iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      {% endif%}
+      {% endif %}
 
       {% if currentStep.formType == "AppBundle\\Form\\FormIO\\FormIORenderType" %}
         <div id="formio"
@@ -162,51 +411,56 @@
         </div>
       {% endif %}
 
-        <div id="formio-custom-errors" class="alert alert-danger alert-dismissible" style="display: none" role="alert" auto-close="5000">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+      <div id="formio-custom-errors" class="alert alert-danger alert-dismissible" style="display: none" role="alert"
+           auto-close="5000">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier == 'bollo') and pratica.statusName != 'STATUS_PAYMENT_PENDING' %}
+        <div class="mt-5">
+          {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
         </div>
-        {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier == 'bollo') and pratica.statusName != 'STATUS_PAYMENT_PENDING' %}
-          <div class="mt-5">
-            {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
+      {% endif %}
+
+      {{ form_end(form) }}
+    </div>
+
+    <div class="col-lg-4 pt-5 pt-lg-2">
+      {% if form.vars.helper.guideText|length > 0 %}
+        <div class="callout">
+          <div class="callout-title">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
+            </svg>
+            {{ 'pratica.guida_utente'|trans }}
           </div>
-        {% endif %}
-
-        {{ form_end(form) }}
-      </div>
-
-      <div class="col-lg-4 pt-5 pt-lg-2">
-        {% if form.vars.helper.guideText|length > 0 %}
-          <div class="callout">
-            <div class="callout-title">
-              <svg class="icon">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
-              </svg>
-              {{ 'pratica.guida_utente'|trans }}
-            </div>
-            <div class="body">
-              <p>{{ form.vars.helper.guideText|raw }}</p>
-            </div>
+          <div class="body">
+            <p>{{ form.vars.helper.guideText|raw }}</p>
           </div>
-        {% endif %}
+        </div>
+      {% endif %}
 
-        {% if is_granted('ROLE_USER') %}
-          <div class="d-none" id="save-draft-container">
-            <button id="save-draft" class="btn btn-outline-primary w-100" data-save-draft-url="{{ path('pratiche_draft', {'pratica': pratica}) }}">
-              <i class="fa fa-floppy-o" aria-hidden="true"></i> {{ 'buttons.draft'|trans }}
-            </button>
-            <small class="save-draft-info w-100 mt-1 text-center text-info {% if pratica.dematerializedForms is not defined or pratica.dematerializedForms|length <= 0 %}d-none{% endif %}"><i class="fa fa-clock-o" aria-hidden="true"></i> {{ 'buttons.last_save'|trans }} <span>{{ pratica.updatedAt|date('U')|time_ago }}</span></small>
-          </div>
-        {% endif %}
+      {% if is_granted('ROLE_USER') %}
+        <div class="d-none" id="save-draft-container">
+          <button id="save-draft" class="btn btn-outline-primary w-100"
+                  data-save-draft-url="{{ path('pratiche_draft', {'pratica': pratica}) }}">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i> {{ 'buttons.draft'|trans }}
+          </button>
+          <small
+            class="save-draft-info w-100 mt-1 text-center text-info {% if pratica.dematerializedForms is not defined or pratica.dematerializedForms|length <= 0 %}d-none{% endif %}"><i
+              class="fa fa-clock-o" aria-hidden="true"></i> {{ 'buttons.last_save'|trans }}
+            <span>{{ pratica.updatedAt|date('U')|time_ago }}</span></small>
+        </div>
+      {% endif %}
 
-        {# Info compilazione specificate nel servizio #}
-        {{ include('@App/Pratiche/parts/compilation_info.html.twig') }}
+      {# Info compilazione specificate nel servizio #}
+      {{ include('@App/Pratiche/parts/compilation_info.html.twig') }}
 
-        {# Note compilazione per utente #}
-        {{ include('@App/Pratiche/parts/user_compilation_notes.html.twig') }}
+      {# Note compilazione per utente #}
+      {{ include('@App/Pratiche/parts/user_compilation_notes.html.twig') }}
 
-      </div>
+    </div>
     </div>
   </section>
 

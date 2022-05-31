@@ -231,4 +231,28 @@ display: none;
   flex:1
 }
 
+.text-forward{
+  color: $black;
+  text-decoration: none;
+  :focus{
+    text-decoration: none;
+  }
+}
+.h{
+  &-80{
+  height: 80px;
+}
+  &-70{
+    height: 70px;
+  }
+  &-60{
+    height: 60px;
+  }
+  &-50{
+    height: 50px;
+  }
+  &-40{
+    height: 40px;
+  }
+}
 
