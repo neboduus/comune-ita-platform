@@ -128,7 +128,7 @@
           </div>
         </div>
 
-      {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay' %}
+      {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType != 'mypay' %}
         <div class="mt-5">
           <div class="spinner-container">
             <div class="d-flex justify-content-center flex-column align-items-center">
@@ -417,7 +417,7 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier == 'bollo') and pratica.statusName != 'STATUS_PAYMENT_PENDING' %}
+      {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType == 'bollo') and pratica.statusName != 'STATUS_PAYMENT_PENDING' %}
         <div class="mt-5">
           {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
         </div>

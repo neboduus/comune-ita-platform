@@ -6,7 +6,7 @@
 
 {% block javascripts %}
   {{ encore_entry_script_tags('compile') }}
-  {% if pratica.status == 1900 or (pratica.status == 2000 and pratica.servizio.isProtocolRequired) %}
+  {# % if pratica.status == 1900 or (pratica.status == 2000 and pratica.servizio.isProtocolRequired) %}
     <script>
       (function() {
         setInterval(function() {
@@ -14,7 +14,7 @@
         }, 15000);
       })();
     </script>
-  {% endif %}
+  {% endif % #}
 {% endblock %}
 
 {% block main_content %}

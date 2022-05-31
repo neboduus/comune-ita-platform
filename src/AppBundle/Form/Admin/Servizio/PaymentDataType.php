@@ -8,7 +8,10 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\BlockQuoteType;
 use AppBundle\Form\PaymentParametersType;
 use AppBundle\Model\Gateway;
+use AppBundle\Payment\GatewayCollection;
+use AppBundle\Payment\PaymentDataInterface;
 use AppBundle\Services\FormServerApiAdapterService;
+use AppBundle\Services\PaymentService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\Self_;
@@ -47,11 +50,21 @@ class PaymentDataType extends AbstractType
    * @var
    */
   private $fields = [];
+  /**
+   * @var PaymentService
+   */
+  private $paymentService;
+  /**
+   * @var GatewayCollection
+   */
+  private $gatewayCollection;
 
-  public function __construct(EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService)
+  public function __construct(EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService, PaymentService $paymentService, GatewayCollection $gatewayCollection)
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
+    $this->paymentService = $paymentService;
+    $this->gatewayCollection = $gatewayCollection;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -76,6 +89,7 @@ class PaymentDataType extends AbstractType
     $selectedGatewaysIentifiers = [];
     $selectedGatewaysParameters = [];
 
+
     foreach ($selectedGateways as $s) {
       if ($s instanceof Gateway) {
         $selectedGatewaysIentifiers [] = $s->getIdentifier();
@@ -93,14 +107,15 @@ class PaymentDataType extends AbstractType
     }
     $tenantGateways = $normalizedTenantGateways;
 
-    // Gateways abilitati nel tenant
-    $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
-      'identifier' => array_keys($tenantGateways)
-    ]);
-    $gatewaysChoice = [];
-    foreach ($gateways as $g) {
-      $gatewaysChoice[$g->getName()] = $g->getIdentifier();
+    $availableGateways = $this->gatewayCollection->getAvailablePaymentGateways();
+    foreach ($tenantGateways as $g) {
+      $identifier = $g['identifier'];
+      if (isset($availableGateways[$identifier])) {
+        $gatewaysChoice[$availableGateways[$identifier]['name']] = $identifier;
+      }
     }
+
+    $gateways = $this->gatewayCollection->getHandlers();
 
     $paymentRequired = $service->getPaymentRequired();
     if ($paymentRequired == Servizio::PAYMENT_NOT_REQUIRED && $paymentRequired) {
@@ -131,18 +146,20 @@ class PaymentDataType extends AbstractType
         'attr' => (($fromForm && $paymentAmount > 0) ? ['readonly' => 'readonly'] : [])
       ])
       ->add('gateways', ChoiceType::class, [
+        //'data' => isset($selectedGatewaysIentifiers[0]) ?? '',
         'data' => $selectedGatewaysIentifiers,
         'choices' => $gatewaysChoice,
         'expanded' => true,
         'multiple' => true,
         'required' => false,
-        'label' => 'Seleziona i metodi di pagamento che saranno disponbili per il servizio',
+        'label' => 'steps.common.select_payment_gateway.label',
         'mapped' => false,
+        //'placeholder' => 'gateway.none_placeholder',
       ]);
 
-
+    /** @var PaymentDataInterface $g */
     foreach ($gateways as $g) {
-      $parameters = $g->getFcqn()::getPaymentParameters();
+      $parameters = $g::getPaymentParameters();
       if (count($parameters) > 0) {
         $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [
           'label' => false,
@@ -152,7 +169,7 @@ class PaymentDataType extends AbstractType
         ]);
 
         $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
-          'label' => 'Parametri necessari per ' . $g->getName()
+          'label' => 'Parametri necessari per ' . $availableGateways[$g->getIdentifier()]['name']
         ]);
 
         foreach ($parameters as $k => $v) {

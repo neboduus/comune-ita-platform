@@ -26,7 +26,6 @@ parameters:
   wkhtmltopdf_service: '%env(WKHTMLTOPDF_SERVICE)%'
   ez_password: '%env(EZ_PASSWORD)%'
   pitre_adapter_url: '%env(PITRE_ADAPTER_URL)%'
-  messages_backend_url: 'http://localhost:3000/'
   header_top_title: '%env(HEADER_TOP_TITLE)%'
   header_top_link: '%env(HEADER_TOP_LINK)%'
   footer_credits: '%env(FOOTER_CREDITS)%'
@@ -45,10 +44,8 @@ parameters:
   giscom_adapter_password: '%env(GISCOM_ADAPTER_PASSWORD)%'
   generate_p7m_thumbnail: true
   gsbinary: gs
-  messages_enabled: false
   ocsdc_default_moment_datetime_format: 'DD-MM-YYYY HH:mm:ss'
   mypay_adapter_url: '%env(MYPAY_ADAPTER_URL)%'
-  slack_logs_webhook_url: 'http://slack.com'
   ocsdc_slim_datetime_format: 'd/m/y H:i'
   PasswordLifeTime: '%env(PASSWORD_LIFE_TIME)%' #365
   InactiveUserLifeTime: '%env(INACTIVE_USER_LIFE_TIME)%' #545
@@ -141,7 +138,23 @@ parameters:
   api_version: 1
   cas_login_url: 'https://mycasserver/cas/'
   cas_validation_url: 'https://mycasserver/cas/serviceValidate'
-
+  # Payment gateways
+  payment_gateways:
+    bollo:
+      name: Bollo
+      url: null
+      handler: bollo # <-- identificativo dell'handler che gestisce il pagamento
+      enabled: true
+    efil:
+      name: Efil
+      url: efil.gateway.opencontent.io
+      handler: generic-external
+      enabled: true
+    mypay:
+      name: Mypay
+      url: mypay.gateway.opencontent.io
+      handler: mypay
+      enabled: true
   #Default fallback if env not set
   env(PREFIX): ''
   env(DB_DRIVER): 'pdo_pgsql'

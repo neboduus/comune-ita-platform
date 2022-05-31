@@ -113,7 +113,7 @@
           </button>
         </div>
 
-        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
+        {% if form.vars.id != 'pratica_payment_gateway' or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType != 'mypay') %}
           <div class="mt-5">
             {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
           </div>

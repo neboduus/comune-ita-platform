@@ -11,6 +11,7 @@ interface PaymentDataInterface
   const STATUS_PAYMENT_PAID = 'paid';
   const STATUS_PAYMENT_FAILED = 'failed';
 
+  public function getIdentifier(): string;
 
   /**
    * @return array

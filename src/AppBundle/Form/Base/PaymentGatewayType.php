@@ -7,7 +7,7 @@ use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\AbstractPaymentData;
 use AppBundle\Payment\Gateway\Bollo;
 use AppBundle\Payment\Gateway\MyPay;
-use Doctrine\ORM\EntityManager;
+use AppBundle\Payment\GatewayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
@@ -19,33 +19,37 @@ class PaymentGatewayType extends AbstractType
 {
 
   /** @var EntityManagerInterface */
-  private $em;
+  private $entityManager;
 
   /** @var ContainerInterface */
   private $container;
 
-  public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container)
+  /**@var GatewayCollection */
+  private $gatewayCollection;
+
+  public function __construct(EntityManagerInterface $entityManager, ContainerInterface $container, GatewayCollection $gatewayCollection)
   {
-    $this->em = $entityManager;
+    $this->entityManager = $entityManager;
     $this->container = $container;
+    $this->gatewayCollection = $gatewayCollection;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     /** @var Pratica $pratica */
     $pratica = $builder->getData();
-    $gateway = $pratica->getPaymentType();
-    $gatewayClassHandler = $gateway->getFcqn();
+    $availableGateways = $this->gatewayCollection->getHandlers();
+    $gatewayClassHandler = $availableGateways[$pratica->getPaymentType()];
 
     /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];
 
-    $helper->setStepTitle($gateway->getDescription());
-    $helper->setGuideText($gateway->getDisclaimer());
+    /*$helper->setStepTitle($gateway->getDescription());
+    $helper->setGuideText($gateway->getDisclaimer());*/
 
     $paymentData = $pratica->getPaymentData() ?? [];
 
-    if ($gatewayClassHandler === Bollo::class) {
+    if ($gatewayClassHandler instanceof Bollo) {
       $builder
         ->add('payment_data', HiddenType::class,
           [
@@ -54,7 +58,7 @@ class PaymentGatewayType extends AbstractType
             'required' => false,
           ]
         );
-    } elseif ($gatewayClassHandler === MyPay::class) {
+    } elseif ($gatewayClassHandler instanceof MyPay) {
       $pratica->setPaymentData(AbstractPaymentData::getSanitizedPaymentData($pratica));
       $builder
         ->add('payment_data', HiddenType::class,
@@ -65,7 +69,7 @@ class PaymentGatewayType extends AbstractType
         );
     }
 
-    $builder->addEventSubscriber($this->container->get($gatewayClassHandler));
+    $builder->addEventSubscriber($gatewayClassHandler);
   }
 
   public function getBlockPrefix()

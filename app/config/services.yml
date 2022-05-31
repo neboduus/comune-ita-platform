@@ -347,12 +347,20 @@ services:
 
   AppBundle\Payment\Gateway\Bollo:
     autowire: true
+    tags: [ 'app.gateway' ]
 
   AppBundle\Payment\Gateway\MyPay:
     autowire: true
+    tags: [ 'app.gateway' ]
 
   AppBundle\Payment\Gateway\GenericExternalPay:
     autowire: true
+    tags: [ 'app.gateway' ]
+
+  AppBundle\Payment\GatewayCollection:
+    arguments:
+      - !tagged app.gateway
+      - "%payment_gateways%"
 
   AppBundle\Validator\Constraints:
     autowire: true
@@ -1083,13 +1091,6 @@ services:
   ocsdc.remote_content_provider: "@ocsdc.comunweb_content_provider"
 
   AppBundle\Services\RemoteContentProviderServiceInterface: "@ocsdc.comunweb_content_provider"
-
-  ocsdc.messages.client: "@guzzle.client.messages"
-  ocsdc.messages_adapter:
-    class: AppBundle\Services\MessagesAdapterService
-    arguments: [ "@ocsdc.messages.client", "@logger", "@doctrine", "%messages_enabled%" ]
-
-  AppBundle\Services\MessagesAdapterService: "@ocsdc.messages_adapter"
 
   AppBundle\Twig\AppExtension:
     autowire: true

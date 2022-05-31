@@ -1,127 +1,13 @@
 <div class="row">
   <div class="col-md-12">
     {% if pratica.paymentData is not empty %}
-      <div class="table-responsive-sm">
-        <table class="table">
-          {% if pratica.paymentType.identifier == "mypay" %}
-            <tr>
-              <td><b>{{ 'operatori.gateway'|trans }}</b></td>
-              <td>{{ pratica.paymentType }}</td>
-            </tr>
-            <tr>
-              <td><b>{{ 'operatori.importo'|trans }}</b></td>
-              <td>{{ pratica.paymentData.payment_amount }} €</td>
-            </tr>
-            {% if pratica.paymentData.request is defined %}
-              <tr>
-                <td><b>{{ 'operatori.anagrafica_pagatore'|trans }}</b></td>
-                <td>
-                  <div>{{ pratica.paymentData.request.anagraficaPagatore }}</div>
-                  <div>{{ pratica.paymentData.request.codiceIdentificativoUnivoco }}</div>
-                  <div>{{ pratica.paymentData.request.indirizzoPagatore }} {{ pratica.paymentData.request.civicoPagatore }}</div>
-                  <div>
-                    {{ pratica.paymentData.request.capPagatore }}
-                    {{ pratica.paymentData.request.localitaPagatore }}
-                    ({{ pratica.paymentData.request.provinciaPagatore }})
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td><b>{{ 'operatori.email_pagatore'|trans }}</b></td>
-                <td>
-                  <a
-                    href="mailto:{{ pratica.paymentData.request['e-mailPagatore'] }}">{{ pratica.paymentData.request['e-mailPagatore'] }}</a>
-                </td>
-              </tr>
-              <tr>
-                <td><b>{{ 'operatori.causale'|trans }}</b></td>
-                <td><code>{{ pratica.paymentData.request.causaleVersamento }}</code></td>
-              </tr>
-              <tr>
-                <td><b>{{ 'operatori.data_esecuzione_pagamento'|trans }}</b></td>
-                <td>{{ pratica.paymentData.request.dataEsecuzionePagamento }}</td>
-              </tr>
-              <tr>
-                <td><b>{{ 'operatori.iud'|trans }}</b></td>
-                <td><code>{{ pratica.paymentData.request.identificativoUnivocoDovuto }}</code></td>
-              </tr>
-            {% endif %}
-            {% if pratica.paymentData.response is defined %}
-              <tr>
-                <td><b>{{ 'operatori.iuv'|trans }}</b></td>
-                <td><code>{{ pratica.paymentData.response.identificativoUnivocoVersamento }}</code></td>
-              </tr>
-              {# Se c'è l'esito del pagamento scarico la ricevuta altrimenti scarico l'avviso #}
-              {% if pratica.paymentData.outcome is defined %}
-                <tr>
-                  <td><b>{{ 'operatori.esito_pagamento'|trans }}</b></td>
-                  <td>{{ pratica.paymentData.outcome.status_message }}</td>
-                </tr>
-                {% if pratica.paymentData.outcome.data.dataOraMessaggioRicevuta is defined %}
-                  <tr>
-                    <td><b>{{ 'operatori.data_ora_ricevuta'|trans }}</b></td>
-                    <td>{{ pratica.paymentData.outcome.data.dataOraMessaggioRicevuta | date(ocsdc_default_datetime_format) }}</td>
-                  </tr>
-                {% endif %}
-                <tr>
-                  <td class="text-center border-0" colspan="2">
-                    <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
-                       class='btn btn-lg btn-primary'>
-                      {% if pratica.paymentData.outcome.status == 'OK' %}
-                        {{ 'gateway.mypay.download_receipt_button'|trans }}
-                      {% else %}
-                        {{ 'gateway.mypay.download_button'|trans }}
-                      {% endif %}
-                    </a>
-                  </td>
-                </tr>
-              {% else %}
-                <tr>
-                  <td class="text-center border-0" colspan="2">
-                    <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
-                       class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_button'|trans }}</a>
-                  </td>
-                </tr>
-              {% endif %}
-            {% endif %}
-          {% elseif pratica.paymentType.identifier == "bollo" %}
-            {% set paymentData = pratica.paymentData | json_decode %}
-            <tr>
-              <td><b>{{ 'operatori.gateway'|trans }}</b></td>
-              <td>{{ pratica.paymentType }}</td>
-            </tr>
-            <tr>
-              <td><b>{{ 'gateway.bollo.identifier'|trans }}</b></td>
-              <td>{{ paymentData.bollo_identifier }}</td>
-            </tr>
-            <tr>
-              <td><b>{{ 'gateway.bollo.data'|trans }}</b></td>
-              <td>{{ paymentData.bollo_data_emissione | date(ocsdc_default_date_format) }}</td>
-            </tr>
-            <tr>
-              <td><b>{{ 'gateway.bollo.ora'|trans }}</b></td>
-              <td>{{ paymentData.bollo_ora_emissione.hour }}:{{ paymentData.bollo_ora_emissione.minute }}
-                :{{ paymentData.bollo_ora_emissione.second }}</td>
-            </tr>
-          {% else %}
-            <div class="spinner-container">
-              <div class="d-flex justify-content-center flex-column align-items-center">
-                <p class="mb-3"><h4 class="status"></h4></p>
-                <div class="progress-spinner progress-spinner-double">
-                  <div class="progress-spinner-inner"></div>
-                  <div class="progress-spinner-inner"></div>
-                  <span class="sr-only">{{ 'loading'|trans() }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="row payment-list px-3" data-id="{{ pratica.id }}" data-gateway="{{ pratica.paymentType }}">
-              <div class="col-12">
-                <div class="alert alert-danger alert-error d-none" role="alert"></div>
-              </div>
-            </div>
-          {% endif %}
-        </table>
-      </div>
+      {% if pratica.paymentType == "mypay" %}
+        {{ include('@App/Gateway/summary/_mypay.html.twig', {'pratica':pratica}) }}
+      {% elseif pratica.paymentType == "bollo" %}
+        {{ include('@App/Gateway/summary/_bollo.html.twig', {'pratica':pratica}) }}
+      {% else %}
+        {{ include('@App/Gateway/summary/_generic-external.html.twig', {'pratica':pratica}) }}
+      {% endif %}
     {% else %}
       {% if pratica.isPaymentExempt %}
         <div class="font-italic text-center">{{ 'operatori.pagamento_esentato'|trans }}</div>

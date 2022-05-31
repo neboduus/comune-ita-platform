@@ -11,8 +11,8 @@
       </div>
     </div>
 
-    <p class='mt-3'>{{ 'gateway.mypay.redirect_text'|trans({'%gateway_name%': pratica.paymentType.name})|raw }}</p>
-    {% if pratica.paymentType.identifier == 'mypay' %}
+    <p class='mt-3'>{{ 'gateway.mypay.redirect_text'|trans({'%gateway_name%': 'MyPay'})|raw }}</p>
+    {% if pratica.paymentType == 'mypay' %}
       <div class='text-center mt-5'>
         <a href="{{ pratica.paymentData.response.url }}" class='btn btn-lg btn-primary'>{{ 'gateway.mypay.redirect_button'|trans }}</a>
       </div>

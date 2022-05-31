@@ -7,9 +7,12 @@ use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\Gateway\MyPay;
+use AppBundle\Payment\GatewayCollection;
+use AppBundle\Services\PaymentService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\FormError;
@@ -21,7 +24,6 @@ use AppBundle\Services\PraticaStatusService;
 
 class SelectPaymentGatewayType extends AbstractType
 {
-  private $gatewaysMap;
 
   /**
    * @var EntityManagerInterface
@@ -33,10 +35,16 @@ class SelectPaymentGatewayType extends AbstractType
    */
   private $statusService;
 
-  public function __construct(EntityManagerInterface $entityManager, PraticaStatusService $statusService)
+  /**
+   * @var GatewayCollection
+   */
+  private $gatewayCollection;
+
+  public function __construct(EntityManagerInterface $entityManager, PraticaStatusService $statusService, GatewayCollection $gatewayCollection)
   {
     $this->em = $entityManager;
     $this->statusService = $statusService;
+    $this->gatewayCollection = $gatewayCollection;
   }
 
 
@@ -55,39 +63,30 @@ class SelectPaymentGatewayType extends AbstractType
       $normalizedTenantGateways [$s['identifier']] = $s;
     }
     $tenantGateways = $normalizedTenantGateways;
-    $availableGateways = array_keys($tenantGateways);
 
-    $paymnetParameters = $pratica->getServizio()->getPaymentParameters();
-    if ($paymnetParameters && !empty($paymnetParameters['gateways'])) {
-      $availableGateways = array_keys($paymnetParameters['gateways']);
+    $availableGateways = $this->gatewayCollection->getAvailablePaymentGateways();
+    $gateways = [];
+    foreach ($tenantGateways as $g) {
+      $identifier = $g['identifier'];
+      if (isset($availableGateways[$identifier])) {
+        $gateways[$availableGateways[$identifier]['name']] = $identifier;
+      }
     }
 
-    // Gateways abilitati
-    $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
-      'identifier' => $availableGateways
-    ]);
-    
-    /** @var PaymentGateway $g */
-    foreach ($gateways as $g) {
-      $this->gatewaysMap[$g->getId()] = $g->getIdentifier();
-    }
-
-    $builder->add('payment_type', EntityType::class, [
-      'class' => 'AppBundle\Entity\PaymentGateway',
+    $builder->add('payment_type', ChoiceType::class, [
       'choices' => $gateways,
-      'choice_label' => 'name',
       'expanded' => true,
       'multiple' => false,
       'required' => true,
       'label' => 'Seleziona il metodo di pagamento',
-      'choice_attr' => function($choice, $key, $value) {
-        return ['data-identifier' => $choice->getIdentifier()];
-      }
     ]);
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
 
+  /**
+   * @throws \Exception
+   */
   public function onPreSubmit(FormEvent $event)
   {
     /** @var Pratica $pratica */
@@ -102,10 +101,9 @@ class SelectPaymentGatewayType extends AbstractType
     }
 
     $this->em->persist($pratica);
-    if ($this->gatewaysMap[$data['payment_type']] != 'bollo' && $pratica->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
+    if ($data['payment_type'] != 'bollo' && $pratica->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_PAYMENT_PENDING);
     }
-
 
   }
 

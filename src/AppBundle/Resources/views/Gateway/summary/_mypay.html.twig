@@ -1,0 +1,84 @@
+<div class="table-responsive-sm">
+  <table class="table">
+    <tr>
+      <td><b>{{ 'operatori.gateway'|trans }}</b></td>
+      <td>{{ pratica.paymentType }}</td>
+    </tr>
+    <tr>
+      <td><b>{{ 'operatori.importo'|trans }}</b></td>
+      <td>{{ pratica.paymentData.payment_amount }} €</td>
+    </tr>
+    {% if pratica.paymentData.request is defined %}
+      <tr>
+        <td><b>{{ 'operatori.anagrafica_pagatore'|trans }}</b></td>
+        <td>
+          <div>{{ pratica.paymentData.request.anagraficaPagatore }}</div>
+          <div>{{ pratica.paymentData.request.codiceIdentificativoUnivoco }}</div>
+          <div>{{ pratica.paymentData.request.indirizzoPagatore }} {{ pratica.paymentData.request.civicoPagatore }}</div>
+          <div>
+            {{ pratica.paymentData.request.capPagatore }}
+            {{ pratica.paymentData.request.localitaPagatore }}
+            ({{ pratica.paymentData.request.provinciaPagatore }})
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><b>{{ 'operatori.email_pagatore'|trans }}</b></td>
+        <td>
+          <a
+            href="mailto:{{ pratica.paymentData.request['e-mailPagatore'] }}">{{ pratica.paymentData.request['e-mailPagatore'] }}</a>
+        </td>
+      </tr>
+      <tr>
+        <td><b>{{ 'operatori.causale'|trans }}</b></td>
+        <td><code>{{ pratica.paymentData.request.causaleVersamento }}</code></td>
+      </tr>
+      <tr>
+        <td><b>{{ 'operatori.data_esecuzione_pagamento'|trans }}</b></td>
+        <td>{{ pratica.paymentData.request.dataEsecuzionePagamento }}</td>
+      </tr>
+      <tr>
+        <td><b>{{ 'operatori.iud'|trans }}</b></td>
+        <td><code>{{ pratica.paymentData.request.identificativoUnivocoDovuto }}</code></td>
+      </tr>
+    {% endif %}
+    {% if pratica.paymentData.response is defined %}
+      <tr>
+        <td><b>{{ 'operatori.iuv'|trans }}</b></td>
+        <td><code>{{ pratica.paymentData.response.identificativoUnivocoVersamento }}</code></td>
+      </tr>
+      {# Se c'è l'esito del pagamento scarico la ricevuta altrimenti scarico l'avviso #}
+      {% if pratica.paymentData.outcome is defined %}
+        <tr>
+          <td><b>{{ 'operatori.esito_pagamento'|trans }}</b></td>
+          <td>{{ pratica.paymentData.outcome.status_message }}</td>
+        </tr>
+        {% if pratica.paymentData.outcome.data.dataOraMessaggioRicevuta is defined %}
+          <tr>
+            <td><b>{{ 'operatori.data_ora_ricevuta'|trans }}</b></td>
+            <td>{{ pratica.paymentData.outcome.data.dataOraMessaggioRicevuta | date(ocsdc_default_datetime_format) }}</td>
+          </tr>
+        {% endif %}
+        <tr>
+          <td class="text-center border-0" colspan="2">
+            <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
+               class='btn btn-lg btn-primary'>
+              {% if pratica.paymentData.outcome.status == 'OK' %}
+                {{ 'gateway.mypay.download_receipt_button'|trans }}
+              {% else %}
+                {{ 'gateway.mypay.download_button'|trans }}
+              {% endif %}
+            </a>
+          </td>
+        </tr>
+      {% else %}
+        <tr>
+          <td class="text-center border-0" colspan="2">
+            <a href="{{ pratica.paymentData.response.urlFileAvviso|htmlspecialchars_decode }}"
+               class='btn btn-lg btn-primary'>{{ 'gateway.mypay.download_button'|trans }}</a>
+          </td>
+        </tr>
+      {% endif %}
+    {% endif %}
+  </table>
+</div>

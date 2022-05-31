@@ -48,8 +48,6 @@ parameters:
     ez_password: ez
 
     pitre_adapter_url: http://localhost:8080/
-    messages_enabled: false
-    messages_backend_url: http://localhost:3000/
 
     header_top_title: Provincia autonoma di Trento
     header_top_link: http://www.provincia.tn.it/
@@ -72,7 +70,6 @@ parameters:
 
     mypay_adapter_url: 'http://localhost:3000'
 
-    slack_logs_webhook_url: 'http://slack.com'
     PasswordLifeTime: 30
     InactiveUserLifeTime: 60
 

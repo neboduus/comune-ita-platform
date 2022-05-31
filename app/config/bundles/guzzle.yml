@@ -1,11 +1,5 @@
 guzzle:
   clients:
-    messages:
-      base_url: '%messages_backend_url%'
-      options:
-        timeout: 1
-      headers:
-        Accept: 'application/json'
     protocollo_cct:
       base_url: '%pitre_adapter_url%'
       options:

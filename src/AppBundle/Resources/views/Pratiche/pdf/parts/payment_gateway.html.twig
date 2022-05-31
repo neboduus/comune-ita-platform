@@ -1,11 +1,6 @@
-{% if pratica.paymentType %}
+{% if pratica.paymentType and pratica.paymentType == 'bollo' %}
     <div class="payment">
         <p><strong>{{ 'pratica.pagamento'|trans }}</strong></p>
-
-        <p><strong>{{ pratica.paymentType.name }}</strong></p>
-        {%  set fcqn_parts = pratica.paymentType.fcqn | split('\\') %}
-        {% set class_name = fcqn_parts|last %}
-        {{ include('@App/Gateway/pdf/' ~ class_name ~ '.html.twig', {'pratica':pratica, 'user': user}) }}
-
+        {{ include('@App/Gateway/pdf/_bollo.html.twig', {'pratica':pratica}) }}
     </div>
 {% endif %}
