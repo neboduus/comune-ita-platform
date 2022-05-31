@@ -45,10 +45,10 @@ adsdaad
     {% if pratica.paymentData is not empty %}
       <table class="table">
         <tr>
-          <td><b>{{ 'operatori.gateway'|trans }}</b>fsdfd</td>
+          <td><b>{{ 'operatori.gateway'|trans }}</b></td>
           <td>{{ pratica.paymentType }}</td>
         </tr>
-        {% if pratica.paymentType.identifier == "mypay" %}
+        {% if pratica.paymentType == "mypay" %}
           {% if pratica.paymentData.request is defined %}
             <tr>
               <td><b>{{ 'operatori.anagrafica_pagatore'|trans }}</b></td>
@@ -94,7 +94,7 @@ adsdaad
               {% endif %}
             {% endif %}
           {% endif %}
-        {% elseif pratica.paymentType.identifier == "bollo" %}
+        {% elseif pratica.paymentType == "bollo" %}
           {% set paymentData = pratica.paymentData | json_decode %}
           <tr>
             <td><b>{{ 'gateway.bollo.identifier'|trans }}</b></td>

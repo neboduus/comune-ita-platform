@@ -10,7 +10,10 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\BlockQuoteType;
 use AppBundle\Model\DefaultProtocolSettings;
 use AppBundle\Model\Gateway;
+use AppBundle\Payment\GatewayCollection;
+use AppBundle\Payment\PaymentDataInterface;
 use AppBundle\Services\BackOfficeCollection;
+use AppBundle\Services\PaymentService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
@@ -40,10 +43,23 @@ class EnteType extends AbstractType
    */
   private $backOfficeCollection;
 
-  public function __construct(EntityManagerInterface $entityManager, BackOfficeCollection $backOffices)
+
+  /**
+   * @var GatewayCollection
+   */
+  private $gatewayCollection;
+
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param BackOfficeCollection $backOffices
+   * @param PaymentService $paymentService
+   * @param GatewayCollection $gatewayCollection
+   */
+  public function __construct(EntityManagerInterface $entityManager, BackOfficeCollection $backOffices, GatewayCollection $gatewayCollection)
   {
     $this->em = $entityManager;
     $this->backOfficeCollection = $backOffices;
+    $this->gatewayCollection = $gatewayCollection;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -57,23 +73,21 @@ class EnteType extends AbstractType
 
     /** @var Ente $ente */
     $ente = $builder->getData();
-    $availableGateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
-      'enabled' => 1
-    ]);
+    $handlers = $this->gatewayCollection->getHandlers();
 
     $settings = new DefaultProtocolSettings();
     if ($ente->getDefaultProtocolSettings() != null) {
       $settings = DefaultProtocolSettings::fromArray($ente->getDefaultProtocolSettings());
     }
 
+    $availablePaymentGateways = $this->gatewayCollection->getAvailablePaymentGateways();
     $gateways = [];
-    foreach ($availableGateways as $g) {
-      $gateways[$g->getName()] = $g->getIdentifier();
+    foreach ($availablePaymentGateways as $g) {
+      $gateways[$g['name']] = $g['handler'];
     }
 
     $selectedGateways = $ente->getGateways();
-    $selectedGatewaysIentifiers = [];
-    $selectedGatewaysParameters = [];
+    $selectedGatewaysIentifiers = $selectedGatewaysParameters = [];
 
     foreach ($selectedGateways as $s) {
       if ($s instanceof Gateway) {
@@ -84,6 +98,7 @@ class EnteType extends AbstractType
         $selectedGatewaysParameters [$s['identifier']] = $s['parameters'];
       }
     }
+
 
     $backOfficesData = [];
     /** @var BackOfficeInterface $b */
@@ -140,32 +155,34 @@ class EnteType extends AbstractType
       'label' => 'ente.pagamenti.label',
     ]);
 
+    /** @var PaymentDataInterface $g */
+    foreach ($handlers as $g) {
+      if (isset($availablePaymentGateways[$g->getIdentifier()])) {
+        $parameters = $g::getPaymentParameters();
+        if (count($parameters) > 0) {
 
-    foreach ($availableGateways as $g) {
-      $parameters = $g->getFcqn()::getPaymentParameters();
-      if (count($parameters) > 0) {
+          $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [
+            'label' => false,
+            'mapped' => false,
+            'required' => false,
+            'attr' => ['class' => 'gateway-form-type d-none']
+          ]);
 
-        $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [
-          'label' => false,
-          'mapped' => false,
-          'required' => false,
-          'attr' => ['class' => 'gateway-form-type d-none']
-        ]);
+          $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
+            'label' => 'Parametri necessari per ' . $availablePaymentGateways[$g->getIdentifier()]['name'] . ' ( lasciare in bianco se si desidera impostare i valori a livello di servizio)'
+          ]);
 
-        $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
-          'label' => 'Parametri necessari per ' . $g->getName() . ' ( lasciare in bianco se si desidera impostare i valori a livello di servizio)'
-        ]);
-
-        foreach ($parameters as $k => $v) {
-          $gatewaySubform->add($k, TextType::class, [
-              'label' => $v,
-              'required' => false,
-              'data' => isset($selectedGatewaysParameters[$g->getIdentifier()][$k]) ? $selectedGatewaysParameters[$g->getIdentifier()][$k] : '',
-              'mapped' => false
-            ]
-          );
+          foreach ($parameters as $k => $v) {
+            $gatewaySubform->add($k, TextType::class, [
+                'label' => $v,
+                'required' => false,
+                'data' => isset($selectedGatewaysParameters[$g->getIdentifier()][$k]) ? $selectedGatewaysParameters[$g->getIdentifier()][$k] : '',
+                'mapped' => false
+              ]
+            );
+          }
+          $builder->add($gatewaySubform);
         }
-        $builder->add($gatewaySubform);
       }
     }
 

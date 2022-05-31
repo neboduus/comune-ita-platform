@@ -119,7 +119,11 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
           throw new InvalidArgumentException('The "parameters" key should contain an array. Check your YAML syntax.');
         }
         foreach ($instanceParameters as $key => $value) {
-          $container->setParameter($key, $value);
+          if (is_array($value)) {
+            $container->setParameter($key, array_merge($container->getParameter($key), $value));
+          } else {
+            $container->setParameter($key, $value);
+          }
         }
       }
     );

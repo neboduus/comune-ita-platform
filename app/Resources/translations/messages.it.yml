@@ -2108,17 +2108,22 @@ gateway:
   url: Url
   enabled: Abilitato
   disabled: Disabilitato
+  none_placeholder: 'Nessun gateway selezionato'
   delete_alert: "Sei sicuro di procedere? Il gateway di pagamento verrà eliminato definitivamente."
   bollo:
+    name: 'Bollo'
     identifier: 'Identificatore'
     data: 'Data emissione'
     ora: 'Ora emissione'
   mypay:
+    name: 'MyPay'
     redirect_button: "Paga adesso online"
     redirect_text: "Usa il pulsante che segue per pagare online sul sito di %gateway_name%.<br />A pagamento effettuato tornerai su questo sito per la conferma che la tua pratica è stata inoltrata correttamente all'Ente."
     download_button: "Scarica avviso di pagamento"
     download_receipt_button: "Scarica ricevuta di pagamento"
     download_text: "Usa il pulsante che segue per scaricare il documento PDF (Avviso di Pagamento) che potrai pagare presso un ufficio postale, un ATM Bancario, ricevitoria Sisal, l'App IO o Satispay."
+  efil:
+    name: 'Efil'
 calendars:
   calendar: 'Calendario'
   calendars: 'Calendari'

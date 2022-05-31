@@ -62,6 +62,11 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
     $this->translator = $translator;
   }
 
+  public function getIdentifier(): string
+  {
+    return 'generic-external';
+  }
+
   public static function getPaymentParameters()
   {
     return [];

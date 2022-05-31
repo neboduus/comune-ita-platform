@@ -1,0 +1,22 @@
+{% set paymentData = pratica.paymentData | json_decode %}
+<div class="table-responsive-sm">
+  <table class="table table-sm">
+    <tr>
+      <td><b>{{ 'operatori.gateway'|trans }}</b></td>
+      <td>{{ pratica.paymentType }}</td>
+    </tr>
+    <tr>
+      <td><b>{{ 'gateway.bollo.identifier'|trans }}</b></td>
+      <td>{{ paymentData.bollo_identifier }}</td>
+    </tr>
+    <tr>
+      <td><b>{{ 'gateway.bollo.data'|trans }}</b></td>
+      <td>{{ paymentData.bollo_data_emissione | date(ocsdc_default_date_format) }}</td>
+    </tr>
+    <tr>
+      <td><b>{{ 'gateway.bollo.ora'|trans }}</b></td>
+      <td>{{ paymentData.bollo_ora_emissione.hour }}:{{ paymentData.bollo_ora_emissione.minute }}
+        :{{ paymentData.bollo_ora_emissione.second }}</td>
+    </tr>
+  </table>
+</div>

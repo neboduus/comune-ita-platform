@@ -98,6 +98,11 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
     $this->translator = $translator;
   }
 
+  public function getIdentifier(): string
+  {
+    return 'mypay';
+  }
+
   public static function getPaymentParameters()
   {
     return [

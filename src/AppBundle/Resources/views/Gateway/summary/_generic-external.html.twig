@@ -1,0 +1,15 @@
+<div class="spinner-container">
+  <div class="d-flex justify-content-center flex-column align-items-center">
+    <p class="mb-3"><h4 class="status"></h4></p>
+    <div class="progress-spinner progress-spinner-double">
+      <div class="progress-spinner-inner"></div>
+      <div class="progress-spinner-inner"></div>
+      <span class="sr-only">{{ 'loading'|trans() }}</span>
+    </div>
+  </div>
+</div>
+<div class="row payment-list px-3" data-id="{{ pratica.id }}" data-gateway="{{ pratica.paymentType }}">
+  <div class="col-12">
+    <div class="alert alert-danger alert-error d-none" role="alert"></div>
+  </div>
+</div>

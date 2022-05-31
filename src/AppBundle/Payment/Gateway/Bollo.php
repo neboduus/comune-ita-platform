@@ -17,6 +17,12 @@ use Symfony\Component\VarDumper\VarDumper;
 
 class Bollo extends AbstractPaymentData implements EventSubscriberInterface
 {
+
+  public function getIdentifier(): string
+  {
+    return 'bollo';
+  }
+
   public static function getPaymentParameters()
   {
     return [];

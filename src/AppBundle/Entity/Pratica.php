@@ -465,8 +465,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $relatedCFs;
 
   /**
-   * @ORM\ManyToOne(targetEntity="PaymentGateway")
-   * @ORM\JoinColumn(name="payment_type", referencedColumnName="id", nullable=true)
+   * @ORM\Column(type="string", nullable=true)
    */
   private $paymentType;
 
@@ -1888,7 +1887,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
-   * @return PaymentGateway
+   * @return mixed
    */
   public function getPaymentType()
   {
