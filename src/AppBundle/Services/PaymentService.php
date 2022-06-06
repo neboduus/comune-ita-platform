@@ -316,12 +316,12 @@ class PaymentService
   {
     $cf = $pratica->getUser()->getCodiceFiscale();
     if ($this->isPayerAnonymous($cf)) {
-      return $this->router->generate('pratiche_anonime_payment_callback', [
+      return $this->router->generate('pratiche_anonime_show', [
         'pratica' => $pratica->getId(),
         'hash' => $pratica->getHash()
       ], RouterInterface::ABSOLUTE_URL);
     } else {
-      return $this->router->generate('pratiche_payment_callback', [
+      return $this->router->generate('pratica_show_detail', [
         'pratica' => $pratica->getId()
       ], RouterInterface::ABSOLUTE_URL);
     }
