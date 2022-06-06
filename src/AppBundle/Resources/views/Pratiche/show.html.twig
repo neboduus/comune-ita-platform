@@ -29,8 +29,12 @@
           <div class="alert alert-info">
             {{ pratica.servizio.finalIndications | raw }}
           </div>
+          <div id="application-container-top"></div>
         {% endif %}
         {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
+        {% if pratica.servizio.finalIndications and pratica.status >= 1900 and pratica.status <= 3000 %}
+          <div id="application-container-bottom"></div>
+        {% endif %}
       </div>
 
       <div class="col-lg-3 offset-lg-1 pt-3 pt-lg-0">
