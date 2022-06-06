@@ -12,6 +12,7 @@ use AppBundle\Entity\RispostaIntegrazione;
 use AppBundle\Entity\RispostaIntegrazioneRepository;
 use AppBundle\Entity\UserSession;
 use AppBundle\Form\Admin\Servizio\FormIOI18nType;
+use AppBundle\Payment\GatewayCollection;
 use AppBundle\Payment\PaymentDataInterface;
 use AppBundle\Services\PraticaStatusService;
 use DateTime;
@@ -39,16 +40,22 @@ class ApplicationDto extends AbstractDto
   private $baseUrl;
 
   private $version;
+  /**
+   * @var GatewayCollection
+   */
+  private $gatewayCollection;
 
 
   /**
    * @param EntityManagerInterface $entityManager
    * @param RouterInterface $router
+   * @param GatewayCollection $gatewayCollection
    */
-  public function __construct(EntityManagerInterface $entityManager, RouterInterface $router)
+  public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, GatewayCollection $gatewayCollection)
   {
     $this->entityManager = $entityManager;
     $this->router = $router;
+    $this->gatewayCollection = $gatewayCollection;
   }
 
   /**
@@ -403,11 +410,8 @@ class ApplicationDto extends AbstractDto
   public function preparePaymentData($pratica)
   {
     if (!empty($pratica->getPaymentData())) {
-      $gateway = $pratica->getPaymentType();
-      /** @var PaymentDataInterface $gatewayClassHandler */
-      $gatewayClassHandler = $gateway->getFcqn();
-
-
+      $availableGateways = $this->gatewayCollection->getAvailablePaymentGateways();
+      $gatewayClassHandler = $availableGateways[$pratica->getPaymentType()];
       return $gatewayClassHandler::getSimplifiedData($pratica->getPaymentData());
     }
     return [];
