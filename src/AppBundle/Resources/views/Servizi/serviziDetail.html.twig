@@ -284,6 +284,26 @@
               class="text-serif">{{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
+        {% if servizio.maxResponseTime or servizio.status == '4' %}
+          <div id="maxResponseTime">
+            <h4 class="it-page-section">{{ 'servizio.stages_and_deadlines' | trans }}</h4>
+            <ul>
+            {% if servizio.maxResponseTime %}
+            <li class="text-serif">
+                {{ 'servizio.max_response_time_text' | trans({'%time%': servizio.maxResponseTime}) }}
+            </li>
+            {% endif %}
+            {% if servizio.status == '4' %}
+            <li class="text-serif">
+                {{ 'servizio.active_from_date_to_date' | trans({
+                  '%from%': servizio.scheduledFrom|date(ocsdc_default_date_format),
+                  '%to%': servizio.scheduledTo|date(ocsdc_default_date_format)
+                }) }}
+            </li>
+            {% endif %}
+            <ul>
+          </div>
+        {% endif %}
         {% if can_access %}
           <div class="mt-5">
             <p>

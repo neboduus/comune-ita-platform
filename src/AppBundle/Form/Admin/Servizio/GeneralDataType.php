@@ -12,6 +12,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -201,7 +202,17 @@ class GeneralDataType extends AbstractI18nType
           'label' => 'servizio.flusso',
           'choices' => $workflows,
         ]
-      );
+      )
+      ->add(
+        'max_response_time', 
+        IntegerType::class,
+        [
+          'label' => 'servizio.max_response_time',
+          'required' => false,
+          'attr' => array('min' => 1, 'max' => 999)
+        ]
+      )
+      ;
   }
 
   public function configureOptions(OptionsResolver $resolver)

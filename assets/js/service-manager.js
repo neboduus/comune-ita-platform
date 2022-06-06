@@ -68,6 +68,19 @@ $(document).ready(function () {
   })
 
 
+  const workflow = $('#general_data_workflow');
+  const maxResponseTime = $('#general_data_max_response_time');
+  const hideMaxResponseTime = function (){
+    if(workflow.val() === '0'){
+      maxResponseTime.closest('div').show();
+    } else {
+      maxResponseTime.removeAttr('value');
+      maxResponseTime.closest('div').hide();
+    }
+  };
+  hideMaxResponseTime();
+  workflow.change(function () { hideMaxResponseTime() });
+
   let serviceGroup = $('#general_data_service_group');
   let sharedCheckbox = $('#general_data_shared_with_group');
   if (serviceGroup.val()) {
