@@ -38,8 +38,8 @@ class PaymentGatewayType extends AbstractType
   {
     /** @var Pratica $pratica */
     $pratica = $builder->getData();
-    $availableGateways = $this->gatewayCollection->getHandlers();
-    $gatewayClassHandler = $availableGateways[$pratica->getPaymentType()];
+    $availableGateways = $this->gatewayCollection->getAvailablePaymentGateways();
+    $gatewayClassHandler = $availableGateways[$pratica->getPaymentType()]['handler'];
 
     /** @var TestiAccompagnatoriProcedura $helper */
     $helper = $options["helper"];

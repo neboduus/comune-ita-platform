@@ -106,7 +106,7 @@
         <div class="step-{{ flow.getCurrentStepNumber() }}">
           {{ form_errors(form) }}
 
-            {% if form.vars.helper.descriptionText|length > 0 and not (pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType.identifier != 'mypay') %}
+            {% if form.vars.helper.descriptionText|length > 0 and not (pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType != 'mypay') %}
               {{ form.vars.helper.descriptionText|raw }}
             {% endif %}
 

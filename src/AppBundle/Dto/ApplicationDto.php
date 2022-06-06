@@ -411,7 +411,7 @@ class ApplicationDto extends AbstractDto
   {
     if (!empty($pratica->getPaymentData())) {
       $availableGateways = $this->gatewayCollection->getAvailablePaymentGateways();
-      $gatewayClassHandler = $availableGateways[$pratica->getPaymentType()];
+      $gatewayClassHandler = $availableGateways[$pratica->getPaymentType()]['handler'];
       return $gatewayClassHandler::getSimplifiedData($pratica->getPaymentData());
     }
     return [];

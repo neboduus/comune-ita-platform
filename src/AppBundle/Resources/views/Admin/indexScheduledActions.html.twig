@@ -23,9 +23,11 @@
             <label>Filtra per stato</label>
             <select id="filter-status" class="form-control" name="filters[status]">
               <option value="">Tutti</option>
-              <option value="1" {% if filters.status is defined and filters.status == 1 %}selected{% endif %}>In attesa</option>
-              <option value="3" {% if filters.status is defined and filters.status == 3 %}selected{% endif %}>Completata</option>
-              <option value="4" {% if filters.status is defined and filters.status == 4 %}selected{% endif %}>Non valida</option>
+              {% for k,v in statuses  %}
+                {% if v.count > 0 %}
+                  <option value="{{ k }}" {% if filters.status is defined and filters.status == k %}selected{% endif %}>{{ v.label }} ({{ v.count }})</option>
+                {% endif %}
+              {% endfor %}
             </select>
           </div>
         </form>

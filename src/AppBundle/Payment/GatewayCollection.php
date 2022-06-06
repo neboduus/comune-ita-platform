@@ -30,6 +30,9 @@ class GatewayCollection
     foreach ($paymentGatewaysParameters as $k => $v) {
       if (isset($v['enabled']) && $v['enabled']) {
         $this->availablePaymentGateways[$k] = $v;
+        if (isset($this->handlers[$v['handler']])) {
+          $this->availablePaymentGateways[$k]['handler'] = $this->handlers[$v['handler']];
+        }
       }
     }
   }

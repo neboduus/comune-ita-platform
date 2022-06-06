@@ -401,19 +401,31 @@ class AdminController extends Controller
   public function indexScheduledActionsAction(Request $request)
   {
 
-    $statusNames = [
-      ScheduledAction::STATUS_PENDING => 'In attesa',
-      ScheduledAction::STATUS_DONE => 'Completata',
-      ScheduledAction::STATUS_INVALID => 'Non valida',
+    $statuses = [
+      ScheduledAction::STATUS_PENDING => [
+        'label' => 'In attesa',
+        'count' => 0,
+      ],
+      ScheduledAction::STATUS_DONE => [
+        'label' => 'Completata',
+        'count' => 0,
+      ],
+      ScheduledAction::STATUS_INVALID => [
+        'label' => 'Non valida',
+        'count' => 0,
+      ],
     ];
 
     $sql = "SELECT count(id) as count, status FROM scheduled_action GROUP BY status";
     try {
       $stmt = $this->entityManager->getConnection()->prepare($sql);
-      $stmt->execute();
-      $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
+      $stmt->executeQuery();
+      $result = $stmt->fetchAllAssociative();
+      foreach ($result as $r) {
+        $statuses[$r['status']]['count'] = $r['count'];
+      }
 
-    } catch (DBALException $e) {
+    } catch (\Exception $e) {
       $this->logger->error($e->getMessage());
     }
 
@@ -428,7 +440,8 @@ class AdminController extends Controller
     return $this->render('@App/Admin/indexScheduledActions.html.twig', [
       'user' => $this->getUser(),
       'datatable' => $table,
-      'filters' => $options['filters'] ?? []
+      'filters' => $options['filters'] ?? [],
+      'statuses' => $statuses,
     ]);
   }
 
