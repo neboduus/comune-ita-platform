@@ -14,13 +14,15 @@ $(document).ready(function () {
       "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>",
     searching: true,
     paging: true,
-    pagingType: 'simple_numbers',
+    pagingType: 'simple_numbers'
   };
 
-  $('#scheduled-actions').initDataTables(datatableSetting, datatableOptions)
+  const table = $('#scheduled-actions').initDataTables(datatableSetting, datatableOptions)
     .then(function (dt) {
       // dt contains the initialized instance of DataTables
       dt.on('draw', function () {
+        $('[data-toggle="popover"]').popover();
+
         $('.action-log').on('click', function (e) {
           e.preventDefault();
           let target = $(this);
@@ -31,6 +33,33 @@ $(document).ready(function () {
             showConfirmButton: false,
           })
         });
+
+        $('#filter-status').change(function (e){
+          console.log($(this).val())
+          dt.column(5).search($(this).val()).draw();
+          //$(this).parents('form').submit();
+        });
+
+        $('.scheduled-action-retry').on('click', function (e) {
+          e.preventDefault();
+          $.ajax({
+            url: $(this).data('retry-url'),
+            dataType: 'json',
+            cache: false,
+            type: 'GET',
+            success: function (response, textStatus, jqXhr) {
+              dt.draw();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!'
+              })
+            }
+          });
+        });
+
       })
     });
 });

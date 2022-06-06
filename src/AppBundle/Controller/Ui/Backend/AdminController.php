@@ -38,6 +38,7 @@ use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use FOS\UserBundle\Mailer\MailerInterface;
 use FOS\UserBundle\Util\TokenGenerator;
 use GuzzleHttp\Client;
@@ -111,11 +112,16 @@ class AdminController extends Controller
    * @var ServiceManager
    */
   private $serviceManager;
+
   private $locales;
   /**
    * @var MailerInterface
    */
   private $mailer;
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
 
 
   /**
@@ -131,22 +137,24 @@ class AdminController extends Controller
    * @param LoggerInterface $logger
    * @param ServiceManager $serviceManager
    * @param MailerInterface $mailer
+   * @param EntityManagerInterface $entityManager
    * @param $locales
    */
   public function __construct(
-    InstanceService $instanceService,
+    InstanceService             $instanceService,
     FormServerApiAdapterService $formServer,
-    TokenGenerator $tokenGenerator,
-    TranslatorInterface $translator,
-    ServiceFlow $serviceFlow,
-    SchemaFactoryInterface $schemaFactory,
-    IOService $ioService,
-    RouterInterface $router,
-    DataTableFactory $dataTableFactory,
-    LoggerInterface $logger,
-    ServiceManager $serviceManager,
-    MailerInterface $mailer,
-    $locales
+    TokenGenerator              $tokenGenerator,
+    TranslatorInterface         $translator,
+    ServiceFlow                 $serviceFlow,
+    SchemaFactoryInterface      $schemaFactory,
+    IOService                   $ioService,
+    RouterInterface             $router,
+    DataTableFactory            $dataTableFactory,
+    LoggerInterface             $logger,
+    ServiceManager              $serviceManager,
+    MailerInterface             $mailer,
+    EntityManagerInterface      $entityManager,
+                                $locales
   )
   {
     $this->instanceService = $instanceService;
@@ -162,6 +170,7 @@ class AdminController extends Controller
     $this->serviceManager = $serviceManager;
     $this->locales = explode('|', $locales);
     $this->mailer = $mailer;
+    $this->entityManager = $entityManager;
   }
 
 
@@ -392,9 +401,25 @@ class AdminController extends Controller
   public function indexScheduledActionsAction(Request $request)
   {
 
-    $filters = self::getFiltersFromRequest($request);
+    $statusNames = [
+      ScheduledAction::STATUS_PENDING => 'In attesa',
+      ScheduledAction::STATUS_DONE => 'Completata',
+      ScheduledAction::STATUS_INVALID => 'Non valida',
+    ];
 
-    $table = $this->dataTableFactory->createFromType(ScheduledActionTableType::class)->handleRequest($request);
+    $sql = "SELECT count(id) as count, status FROM scheduled_action GROUP BY status";
+    try {
+      $stmt = $this->entityManager->getConnection()->prepare($sql);
+      $stmt->execute();
+      $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
+
+    } catch (DBALException $e) {
+      $this->logger->error($e->getMessage());
+    }
+
+    $options = self::getFiltersFromRequest($request);
+    $table = $this->dataTableFactory->createFromType(ScheduledActionTableType::class, $options)
+      ->handleRequest($request);
 
     if ($table->isCallback()) {
       return $table->getResponse();
@@ -402,8 +427,32 @@ class AdminController extends Controller
 
     return $this->render('@App/Admin/indexScheduledActions.html.twig', [
       'user' => $this->getUser(),
-      'datatable' => $table
+      'datatable' => $table,
+      'filters' => $options['filters'] ?? []
     ]);
+  }
+
+  /**
+   * Reset retry of a scheduled action
+   * @Route("/scheduled-actions/{id}/retry", name="admin_scheduled_actions_retry")
+   * @Method({"GET"})
+   */
+  public function retryScheduledActionsAction(Request $request, ScheduledAction $scheduledAction): JsonResponse
+  {
+    try {
+      $scheduledAction->setRetry(0);
+      $scheduledAction->setHostname(null);
+      $this->entityManager->persist($scheduledAction);
+      $this->entityManager->flush();
+
+      return new JsonResponse(['status' => 'succes']);
+    } catch (\Exception $e) {
+      return new JsonResponse([
+          'status' => 'error',
+          'message' => $e->getMessage()
+        ]
+      );
+    }
 
   }
 
@@ -578,59 +627,59 @@ class AdminController extends Controller
       'template' => [
         'label' => 'Template del form',
         'class' => FormIOTemplateType::class,
-        'icon'  => 'fa-clone',
+        'icon' => 'fa-clone',
       ],
       'general' => [
         'label' => 'Dati generali',
         'class' => GeneralDataType::class,
-        'icon'  => 'fa-file-o',
+        'icon' => 'fa-file-o',
       ],
       'card' => [
         'label' => 'Scheda',
         'class' => CardDataType::class,
         'template' => 'AppBundle:Admin/servizio:_cardStep.html.twig',
-        'icon'  => 'fa-file-text-o',
+        'icon' => 'fa-file-text-o',
       ],
       'formio' => [
         'label' => 'Modulo',
         'class' => FormIOBuilderRenderType::class,
         'template' => 'AppBundle:Admin/servizio:_formIOBuilderStep.html.twig',
-        'icon'  => 'fa-server',
+        'icon' => 'fa-server',
       ],
       'formioI18n' => [
         'label' => 'Traduzioni modulo',
         'class' => FormIOI18nType::class,
         'template' => 'AppBundle:Admin/servizio:_formIOI18nStep.html.twig',
-        'icon'  => 'fa-language',
+        'icon' => 'fa-language',
       ],
       'messages' => [
         'label' => 'Messaggi',
         'class' => FeedbackMessagesDataType::class,
         'template' => 'AppBundle:Admin/servizio:_feedbackMessagesStep.html.twig',
-        'icon'  => 'fa-envelope-o',
+        'icon' => 'fa-envelope-o',
       ],
       'app-io' => [
         'label' => 'App IO',
         'class' => IOIntegrationDataType::class,
         'template' => 'AppBundle:Admin/servizio:_ioIntegrationStep.html.twig',
-        'icon'  => 'fa-bullhorn',
+        'icon' => 'fa-bullhorn',
       ],
       'payments' => [
         'label' => 'Dati pagamento',
         'class' => PaymentDataType::class,
         'template' => 'AppBundle:Admin/servizio:_paymentsStep.html.twig',
-        'icon'  => 'fa-credit-card',
+        'icon' => 'fa-credit-card',
       ],
       'backoffices' => [
         'label' => 'Integrazioni',
         'class' => IntegrationsDataType::class,
         'template' => 'AppBundle:Admin/servizio:_backofficesStep.html.twig',
-        'icon'  => 'fa-cogs',
+        'icon' => 'fa-cogs',
       ],
       'protocol' => [
         'label' => 'Dati protocollo',
         'class' => ProtocolDataType::class,
-        'icon'  => 'fa-folder-open-o',
+        'icon' => 'fa-folder-open-o',
       ]
     ];
 
