@@ -396,6 +396,13 @@ class Servizio implements Translatable
   private $geographicAreas;
 
   /**
+   * @var integer
+   * @ORM\Column(type="integer", nullable=true)
+   * @SWG\Property(description="Maximum service delivery time in days. The service will be answered within <maxResponseTime> days.")
+   */
+  private $maxResponseTime;
+
+  /**
    * @Gedmo\Locale
    * Used locale to override Translation listener`s locale
    * this is not a mapped field of entity metadata, just a simple property
@@ -1475,4 +1482,29 @@ class Servizio implements Translatable
     }
     return $this->name;
   }
+
+  /**
+   * Get the value of maxResponseTime
+   *
+   * @return  int
+   */ 
+  public function getMaxResponseTime()
+  {
+    return $this->maxResponseTime;
+  }
+  
+  /**
+   * Set the value of maxResponseTime
+   *
+   * @param  int  $maxResponseTime
+   *
+   * @return  self
+   */ 
+  public function setMaxResponseTime($maxResponseTime)
+  {
+    $this->maxResponseTime = $maxResponseTime;
+
+    return $this;
+  }
+  
 }

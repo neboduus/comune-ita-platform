@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
@@ -120,6 +121,7 @@ class ServizioFormType extends AbstractType
         ]
       )
       ->add('workflow')
+      ->add('max_response_time')
       ->add('recipients_id', CollectionType::class, [
         'entry_type' => TextType::class,
         "allow_add" => true,

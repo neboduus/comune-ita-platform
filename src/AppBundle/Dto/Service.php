@@ -344,6 +344,15 @@ class Service
   private $geographicAreasId;
 
   /**
+   * @var integer
+   * @Serializer\Type("integer")
+   * @SWG\Property(description="Maximum service delivery time in days. The service will be answered within <maxResponseTime> days.")
+   * @Groups({"read", "write"})
+   */
+  private $maxResponseTime;
+  
+
+  /**
    * @return mixed
    */
   public function getId()
@@ -1003,6 +1012,30 @@ class Service
     $this->geographicAreasId = $geographicAreasId;
   }
 
+  /**
+   * Get the value of maxResponseTime
+   *
+   * @return  integer
+   */ 
+  public function getMaxResponseTime()
+  {
+    return $this->maxResponseTime;
+  }
+
+  /**
+   * Set the value of maxResponseTime
+   *
+   * @param  integer  $maxResponseTime
+   *
+   * @return  self
+   */ 
+  public function setMaxResponseTime($maxResponseTime)
+  {
+    $this->maxResponseTime = $maxResponseTime;
+
+    return $this;
+  }
+
 
 
 
@@ -1050,6 +1083,7 @@ class Service
     $dto->allowWithdraw = $servizio->isAllowWithdraw();
     $dto->allowIntegrationRequest = $servizio->isAllowIntegrationRequest();
     $dto->workflow = $servizio->getWorkflow();
+    $dto->maxResponseTime = $servizio->getMaxResponseTime();
 
     $dto->recipients = [];
     $dto->recipientsId = [];
@@ -1125,6 +1159,7 @@ class Service
     $entity->setAllowWithdraw($this->allowWithdraw);
     $entity->setAllowIntegrationRequest($this->allowIntegrationRequest);
     $entity->setWorkflow($this->workflow);
+    $entity->setMaxResponseTime($this->maxResponseTime);
 
     $entity->setRecipients(new ArrayCollection($this->recipientsId));
     $entity->setGeographicAreas(new ArrayCollection($this->geographicAreasId));
