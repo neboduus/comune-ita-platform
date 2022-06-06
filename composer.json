@@ -55,7 +55,7 @@
     "symfony/webpack-encore-bundle": "1.7.0",
     "anyx/login-gate-bundle": "0.7.1",
     "xiidea/easy-audit": "1.4.9",
-    "omines/datatables-bundle": "0.3.1",
+    "omines/datatables-bundle": "dev-fix-0-3 as 0.3.1",
     "friendsofsymfony/rest-bundle": "2.8.3",
     "nelmio/api-doc-bundle": "3.8.1",
     "lexik/jwt-authentication-bundle": "2.10.7",
@@ -81,8 +81,8 @@
   },
   "repositories": [
     {
-      "type": "vcs",
-      "url": "https://github.com/alahtarin/symfony-translatable.git"
+      "type": "git",
+      "url": "https://github.com/OpencontentCoop/datatables-bundle.git"
     }
   ],
   "require-dev": {

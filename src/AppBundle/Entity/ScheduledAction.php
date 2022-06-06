@@ -206,7 +206,7 @@ class ScheduledAction
     /**
      * @return int
      */
-    public function getRetry(): int
+    public function getRetry(): ?int
     {
       return $this->retry;
     }
@@ -214,7 +214,7 @@ class ScheduledAction
     /**
      * @param int $retry
      */
-    public function setRetry(int $retry): void
+    public function setRetry(?int $retry): void
     {
       $this->retry = $retry;
     }

@@ -1,4 +1,6 @@
-{% if row.status == '1' %}
+{% if row.status == '1' and row.retry >= 10 %}
+  <span class="badge badge-danger">Fallita</span>
+{% elseif row.status == '1' %}
   <span class="badge badge-warning">In attesa</span>
 {% elseif row.status == '3' %}
   <span class="badge badge-success">Completata</span>

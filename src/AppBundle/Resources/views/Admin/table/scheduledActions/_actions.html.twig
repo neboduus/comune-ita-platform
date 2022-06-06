@@ -1,0 +1,3 @@
+{% if row.retry >= 10 and row.status == 1 %}
+  <button class="btn btn-sm btn-outline-primary scheduled-action-retry" data-retry-url="{{ path('admin_scheduled_actions_retry', {'id': row.id}) }}">Riprova</button>
+{% endif %}

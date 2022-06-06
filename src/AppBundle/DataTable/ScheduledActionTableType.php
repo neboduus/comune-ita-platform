@@ -4,6 +4,7 @@ namespace AppBundle\DataTable;
 
 
 use AppBundle\Entity\ScheduledAction;
+use AppBundle\Entity\Servizio;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -12,11 +13,19 @@ use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigColumn;
 use Omines\DataTablesBundle\DataTable;
 use Omines\DataTablesBundle\DataTableTypeInterface;
+use Omines\DataTablesBundle\Filter\ChoiceFilter;
 
 class ScheduledActionTableType implements DataTableTypeInterface
 {
   public function configure(DataTable $dataTable, array $options)
   {
+
+    $filter = new ChoiceFilter();
+    $filter->set([
+      'operator' => '=',
+      'choices' => ['', '1', '3', '4']
+    ]);
+
     $dataTable
       ->add('id', TwigColumn::class, [
         'className' => 'text-truncate',
@@ -54,39 +63,61 @@ class ScheduledActionTableType implements DataTableTypeInterface
       ->add('hostname', TextColumn::class, [
         'label' => 'Host',
         'orderable' => false,
-        'searchable' => false
+        'searchable' => false,
       ])
       ->add('retry', TextColumn::class, [
         'label' => '#',
         'orderable' => true,
-        'searchable' => false
+        'searchable' => false,
       ])
       ->add('status', TwigColumn::class, [
         'label' => 'Stato',
         'orderable' => false,
-        'searchable' => false,
+        'searchable' => true,
+        'field' => 'scheduled_action.status',
+        'filter' => $filter,
         'template' => '@App/Admin/table/scheduledActions/_status.html.twig',
       ])
       ->add('log', TextColumn::class, [
         'label' => 'Log',
         'visible' => false,
         'orderable' => false,
-        'searchable' => false
+        'searchable' => false,
       ])
       ->add('createdAt', DateTimeColumn::class, [
         'label' => 'Data di creazione',
         'format' => 'd/m/y H:i',
         'orderable' => true,
-        'searchable' => false
+        'searchable' => false,
       ])
       ->add('updatedAt', DateTimeColumn::class, [
         'label' => 'Ultimo aggiornamento',
         'format' => 'd/m/y H:i',
         'orderable' => true,
-        'searchable' => false
+        'searchable' => false,
+      ])
+      ->add('actions', TwigColumn::class, [
+        'label' => '',
+        'orderable' => false,
+        'searchable' => false,
+        'template' => '@App/Admin/table/scheduledActions/_actions.html.twig',
       ])
       ->createAdapter(ORMAdapter::class, [
         'entity' => ScheduledAction::class,
-      ]);
+        'query' => function (QueryBuilder $builder) use ($options): void {
+          $qb = $builder
+            ->select('scheduled_action')
+            ->from(ScheduledAction::class, 'scheduled_action');
+
+          if (isset($options['filters'])) {
+            if (!empty($options['filters']['status'])) {
+              $qb
+                ->andWhere('scheduled_action.status = (:status)')
+                ->setParameter('status', $options['filters']['status']);
+            }
+          }
+        },
+      ])
+      ->addOrderBy('updatedAt', DataTable::SORT_DESCENDING);
   }
 }

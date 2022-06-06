@@ -11,13 +11,31 @@
 {% block main_content %}
   <section id="intro" class="container-fluid px-4 my-4">
     <div class="row">
-      <div class="col-lg-12 py-lg-2">
-        <h2>Azioni programmate</h2>
+      <div class="col-12">
+        <h2>{{ 'nav.admin.azioni_programmate'|trans }}</h2>
       </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-9"></div>
+      <div class="col-12 col-md-3 py-lg-2">
+        <form method="get" action="{{ path('admin_scheduled_actions_index') }}">
+          <div class="form-row">
+            <label>Filtra per stato</label>
+            <select id="filter-status" class="form-control" name="filters[status]">
+              <option value="">Tutti</option>
+              <option value="1" {% if filters.status is defined and filters.status == 1 %}selected{% endif %}>In attesa</option>
+              <option value="3" {% if filters.status is defined and filters.status == 3 %}selected{% endif %}>Completata</option>
+              <option value="4" {% if filters.status is defined and filters.status == 4 %}selected{% endif %}>Non valida</option>
+            </select>
+          </div>
+        </form>
+      </div>
+    </div>
 
+    <div class="row">
       <div class="col-lg-12 table-responsive">
         <!-- Insert this where you want the table to appear -->
-          <div id="scheduled-actions" data-config="{{ datatable_settings(datatable)|url_encode }}"></div>
+        <div id="scheduled-actions" data-config="{{ datatable_settings(datatable)|url_encode }}"></div>
         <!-- Insert this at the end of your body element, but before the closing tag -->
       </div>
     </div>
