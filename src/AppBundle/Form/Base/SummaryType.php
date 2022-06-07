@@ -92,27 +92,17 @@ class SummaryType extends AbstractType
       $service = $application->getServizio();
       $paymentParameters = $service->getPaymentParameters();
       $selectedGateways = isset($paymentParameters['gateways']) ? $paymentParameters['gateways'] : [];
-
       if (count($selectedGateways) == 1) {
         $identifier = array_keys($selectedGateways)[0];
-        $gateways = $this->em->getRepository('AppBundle:PaymentGateway')->findBy([
-          'identifier' => array_keys($selectedGateways)[0]
-        ]);
-        if (count($gateways) > 0) {
+        if ($identifier) {
           /** @var PaymentGateway $gateway */
-          $gateway = $gateways[0];
-          $application->setPaymentType($gateway);
+          $application->setPaymentType($identifier);
           $this->em->persist($application);
           $this->em->flush();
-          if ($identifier != 'bollo' && $application->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
-
-            // Temporaneo per supportare mypay e nuovo flusso di pagamento
-            if ($gateway->getFcqn() == 'AppBundle\Payment\Gateway\GenericExternalPay') {
-              $application->setPaymentData($this->paymentService->createPaymentData($application));
-              $this->em->persist($application);
-              $this->em->flush();
-            }
-
+          if ($identifier != 'bollo' && $identifier != 'mypay' && $application->getStatus() != Pratica::STATUS_PAYMENT_PENDING) {
+            $application->setPaymentData($this->paymentService->createPaymentData($application));
+            $this->em->persist($application);
+            $this->em->flush();
             $this->statusService->setNewStatus($application, Pratica::STATUS_PAYMENT_PENDING);
           }
         }
