@@ -81,9 +81,8 @@ class EnteType extends AbstractType
     }
 
     $availablePaymentGateways = $this->gatewayCollection->getAvailablePaymentGateways();
-    $gateways = [];
-    foreach ($availablePaymentGateways as $g) {
-      $gateways[$g['name']] = $g['handler'];
+    foreach ($availablePaymentGateways as $k => $g) {
+      $gateways[$g['name']] = $k;
     }
 
     $selectedGateways = $ente->getGateways();
@@ -98,7 +97,6 @@ class EnteType extends AbstractType
         $selectedGatewaysParameters [$s['identifier']] = $s['parameters'];
       }
     }
-
 
     $backOfficesData = [];
     /** @var BackOfficeInterface $b */
