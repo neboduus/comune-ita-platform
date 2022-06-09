@@ -343,7 +343,14 @@ class InfoPayment {
                     </div>` : ""}
                     ${data[i].status === 'CREATION_FAILED' ?
                       `<div></div>` : "" }
-                    ${data[i].status !== 'CREATION_FAILED' && data[i].status !== 'COMPLETE' ?
+                    ${data[i].status !== 'CREATION_FAILED'
+                      && data[i].status !== 'COMPLETE'
+                      && data[i].status !== 'PAYMENT_STARTED'
+                      && data[i].status !== 'PAYMENT_CONFIRMED'
+                      && data[i].status !== 'PAYMENT_FAILED'
+                      && data[i].status !== 'NOTIFICATION_PENDING'
+                      && data[i].status !== 'EXPIRED'
+                      ?
                       `<div class="text-center mt-5">
                         <a href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${InfoPayment.$translations[InfoPayment.$language].paga_online}</a>
                         <a href="${data[i].links.offline_payment.url}" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download> ${InfoPayment.$translations[InfoPayment.$language].paga_offline}</a>
