@@ -77,7 +77,8 @@
     "oneup/flysystem-bundle": "3.7.1",
     "league/flysystem-aws-s3-v3": "1.0.29",
     "whiteoctober/breadcrumbs-bundle": "1.4.5",
-    "exercise/htmlpurifier-bundle": "v3.1.0"
+    "exercise/htmlpurifier-bundle": "v3.1.0",
+    "davidepastore/codice-fiscale": "^0.9.0"
   },
   "repositories": [
     {
@@ -130,5 +131,5 @@
       "file": "app/config/parameters.yml"
     }
   },
-  "version": "1.22.0-rc.10"
+  "version": "1.22.0"
 }
