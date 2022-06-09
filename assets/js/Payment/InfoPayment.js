@@ -159,7 +159,7 @@ class InfoPayment {
   static detailPayment() {
     // GET API PAYMENTS
     $.ajax({
-      url: '/comune-di-bugliano/api/payments?remote_id=' + InfoPayment.$application_id,
+      url: InfoPayment.$spinnerContainer.data('api'), //'/comune-di-bugliano/api/payments?remote_id=' + InfoPayment.$application_id
       dataType: 'json',
       type: 'get',
       //timeout: 100, // enable for simulate timeout

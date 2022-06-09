@@ -65,7 +65,7 @@ class PaymentsAPIController extends AbstractFOSRestController
 
   /**
    * List all payments
-   * @Rest\Get("", name="payments_list")
+   * @Rest\Get("", name="payments_api_list")
    *
    *
    * @SWG\Parameter(
