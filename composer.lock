@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "10a3f03d97c48fd4ab2da84c549ee601",
+    "content-hash": "5225ba88490c242870848d2ecc7a4d9e",
     "packages": [
         {
             "name": "anyx/login-gate-bundle",
@@ -232,16 +232,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.224.3",
+            "version": "3.225.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "52f45dfe0d1e5a77f33c050bde5134901fc54a57"
+                "reference": "b795c9c14997dac771f66d1f6cbadb62c742373a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/52f45dfe0d1e5a77f33c050bde5134901fc54a57",
-                "reference": "52f45dfe0d1e5a77f33c050bde5134901fc54a57",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b795c9c14997dac771f66d1f6cbadb62c742373a",
+                "reference": "b795c9c14997dac771f66d1f6cbadb62c742373a",
                 "shasum": ""
             },
             "require": {
@@ -317,9 +317,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.224.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.225.1"
             },
-            "time": "2022-06-02T18:22:57+00:00"
+            "time": "2022-06-09T18:19:43+00:00"
         },
         {
             "name": "behat/transliterator",
@@ -3122,16 +3122,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.5.6",
+            "version": "6.5.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "f092dd734083473658de3ee4bef093ed77d2689c"
+                "reference": "724562fa861e21a4071c652c8a159934e4f05592"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f092dd734083473658de3ee4bef093ed77d2689c",
-                "reference": "f092dd734083473658de3ee4bef093ed77d2689c",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/724562fa861e21a4071c652c8a159934e4f05592",
+                "reference": "724562fa861e21a4071c652c8a159934e4f05592",
                 "shasum": ""
             },
             "require": {
@@ -3217,7 +3217,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/6.5.6"
+                "source": "https://github.com/guzzle/guzzle/tree/6.5.7"
             },
             "funding": [
                 {
@@ -3233,7 +3233,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-25T13:19:12+00:00"
+            "time": "2022-06-09T21:36:50+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -4697,16 +4697,16 @@
         },
         {
             "name": "monolog/monolog",
-            "version": "1.27.0",
+            "version": "1.27.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "52ebd235c1f7e0d5e1b16464b695a28335f8e44a"
+                "reference": "904713c5929655dc9b97288b69cfeedad610c9a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/52ebd235c1f7e0d5e1b16464b695a28335f8e44a",
-                "reference": "52ebd235c1f7e0d5e1b16464b695a28335f8e44a",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/904713c5929655dc9b97288b69cfeedad610c9a1",
+                "reference": "904713c5929655dc9b97288b69cfeedad610c9a1",
                 "shasum": ""
             },
             "require": {
@@ -4767,7 +4767,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/1.27.0"
+                "source": "https://github.com/Seldaek/monolog/tree/1.27.1"
             },
             "funding": [
                 {
@@ -4779,7 +4779,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-03-13T20:29:46+00:00"
+            "time": "2022-06-09T08:53:42+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",
@@ -6053,16 +6053,16 @@
         },
         {
             "name": "phpstan/phpdoc-parser",
-            "version": "1.5.1",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpdoc-parser.git",
-                "reference": "981cc368a216c988e862a75e526b6076987d1b50"
+                "reference": "5aaeb83195d6d96515329d14688547d7c81e59e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/981cc368a216c988e862a75e526b6076987d1b50",
-                "reference": "981cc368a216c988e862a75e526b6076987d1b50",
+                "url": "https://api.github.com/repos/phpstan/phpdoc-parser/zipball/5aaeb83195d6d96515329d14688547d7c81e59e9",
+                "reference": "5aaeb83195d6d96515329d14688547d7c81e59e9",
                 "shasum": ""
             },
             "require": {
@@ -6072,6 +6072,7 @@
                 "php-parallel-lint/php-parallel-lint": "^1.2",
                 "phpstan/extension-installer": "^1.0",
                 "phpstan/phpstan": "^1.5",
+                "phpstan/phpstan-phpunit": "^1.1",
                 "phpstan/phpstan-strict-rules": "^1.0",
                 "phpunit/phpunit": "^9.5",
                 "symfony/process": "^5.2"
@@ -6091,9 +6092,9 @@
             "description": "PHPDoc parser with support for nullable, intersection and generic types",
             "support": {
                 "issues": "https://github.com/phpstan/phpdoc-parser/issues",
-                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.5.1"
+                "source": "https://github.com/phpstan/phpdoc-parser/tree/1.6.1"
             },
-            "time": "2022-05-05T11:32:40+00:00"
+            "time": "2022-06-10T08:12:59+00:00"
         },
         {
             "name": "psr/cache",
@@ -11736,5 +11737,5 @@
         "ext-fileinfo": "^7.3"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
