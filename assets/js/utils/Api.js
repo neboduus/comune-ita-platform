@@ -47,6 +47,23 @@ class Api {
     )
   }
 
+  getSessionAuthTokenPromise() {
+    let self = this;
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: self.basePath + '/api/session-auth',
+        dataType: 'json',
+        type: 'GET',
+        success: function (data) {
+          resolve(data)
+        },
+        error: function (error) {
+          reject(error)
+        }
+      })
+    })
+  }
+
   init() {
     let explodedPath = window.location.pathname.split("/");
     this.basePath = location.origin + '/' + explodedPath[1];

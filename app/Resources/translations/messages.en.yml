@@ -2524,3 +2524,35 @@ search:
   geographic_areas: ''
 analytics:
   not_enabled: ''
+payment:
+  title: "Scegli la modalità di pagamento"
+  description: "Puoi gestire i tuoi pagamenti in modo semplice e immediato, verifica le opzioni disponibili e scegli quelle più adatte alle tue esigenze."
+  pay_office:
+    title: "Paga sul territorio"
+    description: "Potrai pagare successivamente il servizio richiesto, scaricando il modulo PDF tramite il pulsante sottostante."
+    at_bank: "In banca"
+    at_bank_description: "Presso le filiali aderenti o gli sportelli ATM abilitati."
+    at_post_office: "In ufficio postale"
+    at_post_office_description: "Utilizzando indifferentemente il codice QR pagoPA o il bollettino postale PA."
+    at_merchants: "Presso gli esercenti convenzionati"
+    at_merchants_description: "Cerca il logo pagoPA nei bar, edicole, farmacie, ricevitorie, supermercati e tabaccherie convenzionati."
+    at_private_mail: "Presso i punti di posta privata"
+    at_private_mail_description: "Puoi pagare anche nelle agenzie che offrono servizi postali sul territorio."
+  pay_online:
+    title: "Paga online"
+    description: "Usa la tua carta di credito o debito e paga il tuo servizio velocemente online in pochi passi."
+    creditor: "Sul sito del tuo Ente Creditore"
+    creditor_description: "Segui i passaggi richiesti dall’Ente e completa il pagamento tramite pagoPA. <strong>Potrai scegliere il gestore della transazione (PSP) a te più conveniente</strong>."
+    homebanking: "Sul tuo servizio di home banking"
+    homebanking_description: "Accedi al portale della tua banca, cerca nel menu pagoPA e paga con il tuo conto corrente."
+    app_payment: "Sulla tua app di pagamenti"
+    app_payment_description: "Apri la tua app di pagamenti preferita, cerca nel menu pagoPA e inquadra il codice QR del tuo avviso."
+    online_services: "Sui servizi di pagamento online"
+    online_services_description: "pagoPA è integrato anche nei principali servizi di pagamento online, che puoi utilizzare anche se non sei loro cliente."
+  pay_appio:
+    title: "Paga con App IO"
+    item_1: "Usa i metodi di pagamento salvati nel tuo Portafoglio"
+    item_2: "Scegli il gestore della transazione (PSP) a te più conveniente"
+    item_3: "Conserva le ricevute in un unico posto"
+    download_app: "Scarica l'app"
+    watch_video: "Guarda il video"

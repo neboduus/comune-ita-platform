@@ -1,0 +1,262 @@
+<div class="mt-5">
+  <div class="spinner-container">
+    <div class="d-flex justify-content-center flex-column align-items-center">
+      <p class="mb-3"><h4 class="status"></h4></p>
+      <div class="progress-spinner progress-spinner-double">
+        <div class="progress-spinner-inner"></div>
+        <div class="progress-spinner-inner"></div>
+        <span class="sr-only">{{ 'loading'|trans() }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="d-none actions-container" data-api="{{ path('application_api_payment_get', {'id': pratica.id}) }}">
+    <div class="row">
+      <div class="col-12 col-md-8 mb-2 mb-md-4">
+        <h1 class="page-title">{{'payment.title'|trans() }}</h1>
+        <div class="page-desc">
+          <p>{{'payment.description'|trans() }}
+          </p>
+        </div>
+      </div>
+      <div class="col-12 col-md-6">
+        <!--start card-->
+        <div class="card-wrapper card-space">
+          <div class="card card-bg no-after">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3 h-80">
+                        <span class="h3 mb-0">
+                          <a href="#sezione-online" data-attribute="forward" class="text-forward">{{ 'payment.pay_online.title'|trans() }}</a>
+                        </span>
+                <img src="{{ asset('bundles/app/images/pictograms/notifica.svg')}}"
+                     alt="Icona Sui servizi di pagamento online" class="h-40" />
+              </div>
+              <p>
+                {{'payment.pay_online.description'|trans() }}
+              </p>
+              <div class="it-card-footer">
+                <a href="#" class="btn btn-primary btn-sm online_payment_begin" role="button"
+                   aria-pressed="true">{{ 'payment.pay_online.title'|trans() }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--end card-->
+      </div>
+      <div class="col-12 col-md-6">
+        <!--start card-->
+        <div class="card-wrapper card-space">
+          <div class="card card-bg no-after">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3 h-80">
+                <span class="h3 mb-0"><a href="#sezione-offline" data-attribute="forward" class="text-forward">{{ 'payment.pay_office.title'|trans() }}</a></span>
+                <img src="{{ asset('bundles/app/images/pictograms/posteitaliane.svg') }}"
+                     alt="Icona In ufficio postale" class="h-40">
+              </div>
+              <p>{{'payment.pay_office.description'|trans() }}</p>
+              <div class="it-card-footer">
+                <a href="#" class="btn btn-primary btn-sm offline_payment" role="button" aria-pressed="true"
+                   download>{{ 'pratica.payment.paga_offline'|trans() }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--end card-->
+      </div>
+      <div class="col-12 mb-5">
+        <div class="card-wrapper card-space">
+          <div class="card card-bg no-after">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-baseline">
+                <span class="h3 card-title">{{'payment.pay_appio.title'|trans() }}</span>
+                <img class="ml-auto" src="{{ asset('bundles/app/images/app-logo-appio.svg') }}"
+                     alt="Logo App IO"></div>
+              <div class="d-flex flex-column">
+                <ul class="list-unstyled mb-3 mb-md-5">
+                  <li class="list-item">
+                    <svg class="icon icon-success icon-sm mr-2">
+                      <use href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use>
+                    </svg>
+                    {{'payment.pay_appio.item_1'|trans() }}
+                  </li>
+                  <li class="list-item my-2">
+                    <svg class="icon icon-success icon-sm mr-2">
+                      <use href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use>
+                    </svg>
+                    {{'payment.pay_appio.item_2'|trans() }}
+                  </li>
+                  <li class="list-item">
+                    <svg class="icon icon-success icon-sm mr-2">
+                      <use href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use>
+                    </svg>
+                    {{'payment.pay_appio.item_3'|trans() }}
+                  </li>
+                </ul>
+                <div class="mt-auto">
+                  <a role="button" href="https://io.italia.it" title="Scarica l'app"
+                     class="btn btn-sm btn-primary px-5 mr-md-2 mb-2 d-block d-md-inline">{{'payment.pay_appio.download_app'|trans() }}</a>
+                  <a role="button" href="#" title="Guarda il video"
+                     class="btn btn-sm btn-outline-primary px-5 mb-2 mb-md-0 d-block d-md-inline"
+                     data-toggle="modal" data-target="#modalCenter">{{'payment.pay_appio.watch_video'|trans() }}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12" id="sezione-online">
+        <h3 class="heading-border-bottom pb-2 my-md-5" id="paga-online">{{'payment.pay_online.title'|trans() }}</h3>
+        <div class="row my-3 my-md-5 img-64">
+          <div class="d-lg-flex align-items-stretch flex-wrap">
+            <div class="col-6 with-border by-4">
+              <div class="h-100 d-flex flex-column">
+                <div>
+                  <div>
+                    <div class="top-icon mb-3">
+                      <img src="{{ asset('bundles/app/images/pictograms/comune.svg') }}"
+                           alt="Icona Sul sito del tuo Ente Creditore">
+                    </div>
+                    <h5>{{'payment.pay_online.creditor'|trans() }}</h5>
+                    <div><p>{{'payment.pay_online.creditor_description'|trans() }}</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 with-border by-4">
+              <div class="h-100 d-flex flex-column">
+                <div>
+                  <div>
+                    <div class="top-icon mb-3">
+                      <img src="{{ asset('bundles/app/images/pictograms/computer.svg') }}"
+                           alt="Icona Sul tuo servizio di home banking">
+                    </div>
+                    <h5>{{'payment.pay_online.homebanking'|trans() }}</h5>
+                    <div><p>{{'payment.pay_online.homebanking_description'|trans() }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 with-border by-4">
+              <div class="h-100 d-flex flex-column">
+                <div>
+                  <div>
+                    <div class="top-icon mb-3">
+                      <img src="{{ asset('bundles/app/images/pictograms/telefono.svg') }}"
+                           alt="Icona Sulla tua app di pagamenti">
+                    </div>
+                    <h5>{{'payment.pay_online.app_payment'|trans() }}</h5>
+                    <div>
+                      <p>{{'payment.pay_online.app_payment_description'|trans() }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 by-4">
+              <div class="h-100 d-flex flex-column">
+                <div>
+                  <div>
+                    <div class="top-icon mb-3">
+                      <img src="{{ asset('bundles/app/images/pictograms/notifica.svg') }}"
+                           alt="Icona Sui servizi di pagamento online">
+                    </div>
+                    <h5>{{'payment.pay_online.app_payment'|trans() }}</h5>
+                    <div><p>{{'payment.pay_online.app_payment_description'|trans() }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12" id="sezione-offline">
+        <h3 class="heading-border-bottom pb-2 my-md-5" id="paga-sul-territorio">{{'payment.pay_office.title'|trans() }}</h3>
+        <div class="my-3 my-md-5 img-64">
+          <div class="d-lg-flex align-items-stretch flex-wrap ">
+            <div class="col-12 col-sm-6 by-4">
+              <div class="h-100 d-flex flex-column">
+                <div>
+                  <div>
+                    <div class="top-icon mb-3">
+                      <img src="{{ asset('bundles/app/images/pictograms/banca.svg') }}" alt="Icona In banca">
+                    </div>
+                    <h5>{{'payment.pay_office.at_bank'|trans() }}</h5>
+                    <div><p>{{'payment.pay_office.at_bank_description'|trans() }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 with-border by-4">
+              <div class="h-100 d-flex flex-column">
+                <div>
+                  <div>
+                    <div class="top-icon mb-3">
+                      <img src="{{ asset('bundles/app/images/pictograms/posteitaliane.svg') }}"
+                           alt="Icona In ufficio postale">
+                    </div>
+                    <h5>{{'payment.pay_office.at_post_office'|trans() }}</h5>
+                    <div><p>{{'payment.pay_office.at_post_office_description'|trans() }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 with-border by-4">
+              <div class="h-100 d-flex flex-column">
+                <div>
+                  <div>
+                    <div class="top-icon mb-3">
+                      <img src="{{ asset('bundles/app/images/pictograms/negozio.svg') }}"
+                           alt="Icona Presso gli esercenti convenzionati">
+                    </div>
+                    <h5>{{'payment.pay_office.at_merchants'|trans() }}</h5>
+                    <div><p>{{'payment.pay_office.at_merchants_description'|trans() }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6 by-4">
+              <div class="h-100 d-flex flex-column">
+                <div>
+                  <div>
+                    <div class="top-icon mb-3">
+                      <img src="{{ asset('bundles/app/images/pictograms/lettera.svg') }}"
+                           alt="Icona Presso i punti di posta privata">
+                    </div>
+                    <h5>{{'payment.pay_office.at_private_mail'|trans() }}</h5>
+                    <div><p>{{'payment.pay_office.at_private_mail_description'|trans() }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="alert alert-danger alert-error d-none" role="alert"></div>
+  <!-- Modal -->
+  <div class="modal fade" tabindex="-1" role="dialog" id="modalCenter" aria-labelledby="modalCenterTitle">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="video-wrapper-icon">
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <svg class="icon icon-lg">
+              <use href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body p-0">
+          <div class="embed-responsive embed-responsive-16by9">
+            <iframe class="embed-responsive-item" title="Video YouTube"
+                    src="https://www.youtube-nocookie.com/embed/RaHmGbBOP84" allowfullscreen></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
