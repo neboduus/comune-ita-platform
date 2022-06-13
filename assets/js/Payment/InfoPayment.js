@@ -1,5 +1,7 @@
 import moment from "moment";
-const pagopa = require('../../images/payments/pagppa.png');
+const PAGOPA = require('../../images/payments/pagppa.png');
+import {i18n} from "../translations/i18n"
+import Api from "../utils/Api";
 
 class InfoPayment {
 
@@ -12,108 +14,7 @@ class InfoPayment {
   $alertError; // Html element alert errors
   $tenant; // Tenant Slug
   $gateway; // Gateway details
-
-  static $translations = {
-    "it": {
-      "get_payment": "Recupero pagamento in corso",
-      "creation_failed": "Opss qualcosa è andato storto!",
-      "timeout": "La richiesta sta impiegando più tempo del necessario.. <br><b>Riprova più tardi!</b>",
-      "unauth": "Sessione scaduta <br><b>Effettua nuovamente il login</b>.",
-      "get_failed": "Opss qualcosa è andato storto! <br> Riprova più tardi oppure contatta l'ufficio amministrativo.",
-      "not_found": "Pagamento non trovato, riprova più tardi!",
-      "created_at": "Data invio procedimento",
-      "reason": "Causale versamento",
-      "payer": "Intestatario",
-      "address": "Indirizzo pagatore",
-      "email": "Email pagatore",
-      "event_created_at": "Evento creato il",
-      "type": "Metodo di pagamento",
-      "iud": "Identificativo Unico del Dovuto (IUD)",
-      "iuv": "Identificativo Univoco pagamento (IUV)",
-      "copy": "Copia",
-      "amount": "Importo",
-      "other_details": "Dettaglio operazione",
-      "status_creation_pending": "In attesa di pagamento",
-      "status_notification_pending": "Notifica pendente",
-      "status_payment_pending": "In attesa di pagamento",
-      "status_creation_failed": "Creazione di pagamento fallita",
-      "status_payment_failed": "Pagamento fallito",
-      "status_payment_started": "Pagamento inviato",
-      "status_payment_confirmed": "Pagamento confermato",
-      "status_expired": "Pagamento scaduto",
-      "status_complete": "Pagamento completato",
-      "paid_at": "Pagato il",
-      "download_pdf": "Scarica ricevuta pagamento",
-      "paga_online": "Paga online",
-      "paga_offline": "Paga offline"
-    },
-    "en": {
-      "get_payment": "Payment creation in progress",
-      "creation_failed": "Oops something went wrong!",
-      "timeout": "The request is taking longer than necessary .. <br> <b> Please try again later! </b>",
-      "unauth": "Session expired <br> <b> Please login again </b>.",
-      "get_failed": "Oops something went wrong!, please try again later or contact the administrative office.",
-      "not_found": "Payment not found, try again later!",
-      "created_at": "Procedure submission date",
-      "reason": "Reason for payment",
-      "payer": "Accountholder",
-      "address": "Payer address",
-      "email": "Payer email",
-      "event_created_at": "Event date",
-      "type": "Payment method",
-      "iud": "Identificativo Unico del Dovuto (IUD)",
-      "iuv": "Identificativo Univoco pagamento (IUV)",
-      "copy": "Copy",
-      "amount": "Amount",
-      "other_details": "Operation detail",
-      "status_creation_pending": "In attesa di pagamento",
-      "status_notification_pending": "Notifica pendente",
-      "status_payment_pending": "In attesa di pagamento",
-      "status_creation_failed": "Creazione di pagamento fallita",
-      "status_payment_failed": "Pagamento fallito",
-      "status_payment_started": "Pagamento inviato",
-      "status_payment_confirmed": "Pagamento confermato",
-      "status_expired": "Pagamento scaduto",
-      "status_complete": "Pagamento completato",
-      "paid_at": "Paid on",
-      "download_pdf": "Download payment receipt",
-      "paga_online": "Pay online",
-      "paga_offline": "Pay offline"
-    },
-    "de": {
-      "get_payment": "Zahlungserstellung läuft",
-      "creation_failed": "OUps! Irgendwas lief schief!",
-      "timeout": "Die Anfrage dauert länger als nötig. <br> <b> Bitte versuchen Sie es später erneut! </b>",
-      "unauth": "Sitzung abgelaufen <br> <b> Bitte melden Sie sich erneut an </b>.",
-      "get_failed": "OUps! Irgendwas lief schief!, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle.",
-      "not_found": "Zahlung nicht gefunden, versuchen Sie es später erneut!",
-      "created_at": "Einreichungsdatum des Verfahrens",
-      "reason": "Zahlungsgrund",
-      "payer": "Kontoinhaber",
-      "address": "Zahleradresse",
-      "email": "E-Mail des Zahlers",
-      "event_created_at": "Veranstaltungsdatum",
-      "type": "Bezahlverfahren",
-      "iud": "Identificativo Unico del Dovuto (IUD)",
-      "iuv": "Identificativo Univoco pagamento (IUV)",
-      "copy": "Kopieren",
-      "amount": "Menge",
-      "other_details": "Betriebsdetail",
-      "status_creation_pending": "In attesa di pagamento",
-      "status_notification_pending": "Notifica pendente",
-      "status_payment_pending": "In attesa di pagamento",
-      "status_creation_failed": "Creazione di pagamento fallita",
-      "status_payment_failed": "Pagamento fallito",
-      "status_payment_started": "Pagamento inviato",
-      "status_payment_confirmed": "Pagamento confermato",
-      "status_expired": "Pagamento scaduto",
-      "status_complete": "Pagamento completato",
-      "paid_at": "Bezahlt am",
-      "download_pdf": "Zahlungsbeleg herunterladen",
-      "paga_online": "Online bezahlen",
-      "paga_offline": "Offline bezahlen"
-    }
-  }
+  $apiService; // API Class
 
 
   static init() {
@@ -126,13 +27,20 @@ class InfoPayment {
     InfoPayment.$language = document.documentElement.lang.toString();
     InfoPayment.$alertError = $('.alert-error');
     InfoPayment.$statusPayment = $('.status');
+    InfoPayment.$apiService = new Api();
+
     // Active spinner animations
     InfoPayment.$spinner.addClass('progress-spinner-active');
-    InfoPayment.$statusPayment.html(InfoPayment.$translations[InfoPayment.$language].get_payment);
+    InfoPayment.$statusPayment.html(i18n[InfoPayment.$language].get_payment);
     // Get tenant slug
     InfoPayment.$tenant = window.location.pathname.split('/')[1];
     // Get Auth token
-    InfoPayment.getAuthToken();
+    InfoPayment.$apiService.getSessionAuthTokenPromise().then((data) => {
+      InfoPayment.$token = data.token;
+      InfoPayment.detailPayment();
+    }).catch(() => {
+      InfoPayment.handleErrors(i18n[InfoPayment.$language].unauth);
+    })
   }
 
   static handleErrors(errorMessage) {
@@ -141,20 +49,6 @@ class InfoPayment {
     InfoPayment.$alertError.removeClass('d-none').addClass('d-block fade show');
   }
 
-  static getAuthToken() {
-    $.ajax({
-      url: '/' + InfoPayment.$tenant + '/api/session-auth',
-      dataType: 'json',
-      type: 'get',
-      success: function (data) {
-        InfoPayment.$token = data.token;
-        InfoPayment.detailPayment();
-      },
-      error: function (xmlhttprequest, textstatus, message) {
-        InfoPayment.handleErrors(InfoPayment.$translations[InfoPayment.$language].unauth);
-      }
-    });
-  }
 
   static detailPayment() {
     // GET API PAYMENTS
@@ -172,13 +66,13 @@ class InfoPayment {
       },
       error: function (xmlhttprequest, textstatus, message) { // error logging
        if (textstatus === "timeout") {
-          InfoPayment.handleErrors(InfoPayment.$translations[InfoPayment.$language].timeout);
+          InfoPayment.handleErrors(i18n[InfoPayment.$language].timeout);
         } else if (xmlhttprequest.status === 401) {
-          InfoPayment.handleErrors(InfoPayment.$translations[InfoPayment.$language].unauth);
+          InfoPayment.handleErrors(i18n[InfoPayment.$language].unauth);
         } else if (xmlhttprequest.status === 404) {
-          InfoPayment.handleErrors(InfoPayment.$translations[InfoPayment.$language].not_found);
+          InfoPayment.handleErrors(i18n[InfoPayment.$language].not_found);
         } else {
-          InfoPayment.handleErrors(InfoPayment.$translations[InfoPayment.$language].get_failed);
+          InfoPayment.handleErrors(i18n[InfoPayment.$language].get_failed);
         }
       }
     });
@@ -187,23 +81,23 @@ class InfoPayment {
   static switchStatus(status){
     switch (status) {
       case 'CREATION_PENDING':
-        return InfoPayment.$translations[InfoPayment.$language].status_creation_pending;
+        return i18n[InfoPayment.$language].status_creation_pending;
       case 'PAYMENT_PENDING':
-        return InfoPayment.$translations[InfoPayment.$language].status_payment_pending;
+        return i18n[InfoPayment.$language].status_payment_pending;
       case 'CREATION_FAILED':
-        return InfoPayment.$translations[InfoPayment.$language].status_creation_failed;
+        return i18n[InfoPayment.$language].status_creation_failed;
       case 'PAYMENT_STARTED':
-        return InfoPayment.$translations[InfoPayment.$language].status_payment_started;
+        return i18n[InfoPayment.$language].status_payment_started;
       case 'PAYMENT_CONFIRMED':
-        return InfoPayment.$translations[InfoPayment.$language].status_payment_confirmed;
+        return i18n[InfoPayment.$language].status_payment_confirmed;
       case 'PAYMENT_FAILED':
-        return InfoPayment.$translations[InfoPayment.$language].status_payment_failed;
+        return i18n[InfoPayment.$language].status_payment_failed;
       case 'NOTIFICATION_PENDING':
-        return InfoPayment.$translations[InfoPayment.$language].status_notification_pending;
+        return i18n[InfoPayment.$language].status_notification_pending;
       case 'COMPLETE':
-        return InfoPayment.$translations[InfoPayment.$language].status_complete;
+        return i18n[InfoPayment.$language].status_complete;
       case 'EXPIRED':
-        return InfoPayment.$translations[InfoPayment.$language].status_expired;
+        return i18n[InfoPayment.$language].status_expired;
       default:
         console.log(`Status not found - ${status}.`);
     }
@@ -224,7 +118,7 @@ class InfoPayment {
                       <a class="card-tag px-0 px-sm-2" href="javascript:void(0)">${InfoPayment.switchStatus(data[i].status)}</a>
                     </div>
                     <div class="category-top">
-                      <a class="category" href="javascript:void(0)">${InfoPayment.$translations[InfoPayment.$language].created_at}</a>
+                      <a class="category" href="javascript:void(0)">${i18n[InfoPayment.$language].created_at}</a>
                       <span class="data">${moment(data[i].created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                     </div>
                   </div>
@@ -241,23 +135,23 @@ class InfoPayment {
                     <path class="gb_blu" d="M111.9,19.2h13.9v52.5h-13.9V19.2z"></path>
                     <path class="gb_blu" d="M146.6,71.6l-13.7,0.1v-71l13.7-0.1V71.6z"></path>
                   </svg>` : ""}
-           ${data[i].type === 'PAGOPA' ? `<div><img class="icon" alt="pagopa" src="${pagopa}"/></div>` : ""}
+           ${data[i].type === 'PAGOPA' ? `<div><img class="icon" alt="PAGOPA" src="${PAGOPA}"/></div>` : ""}
            ${data[i].type !== 'PAGOPA' && data[i].type !== 'EFIL' ? `<svg class="icon"><use href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use></svg>`: ""}
             </div>
                  <h5 class="card-title">${InfoPayment.$gateway}</h5>
                     <p class="card-text">
-                    <span>${InfoPayment.$translations[InfoPayment.$language].amount}:</span>
+                    <span>${i18n[InfoPayment.$language].amount}:</span>
                     <span class="float-right h4">${Number(data[i].payment.amount)} ${data[i].payment.currency === 'EUR' ? '€' : data[i].payment.currency}</span>
                     <hr>
                     </p>
                   <p class="card-text">
-                    ${InfoPayment.$translations[InfoPayment.$language].reason}:
+                    ${i18n[InfoPayment.$language].reason}:
                     <br><b>${data[i].reason}</b>
                   </p>
 
                   <div class="it-card-footer">
                     <span class="card-signature"></span>
-                    <a class="btn btn-outline-primary btn-sm" href="#" data-toggle="collapse" data-target="#collapse1-sc${[i]}" aria-expanded="false" aria-controls="collapse1-sc${[i]}">${InfoPayment.$translations[InfoPayment.$language].other_details}</a>
+                    <a class="btn btn-outline-primary btn-sm" href="#" data-toggle="collapse" data-target="#collapse1-sc${[i]}" aria-expanded="false" aria-controls="collapse1-sc${[i]}">${i18n[InfoPayment.$language].other_details}</a>
                   </div>
                   <div id="collapse1-sc${[i]}" class="collapse mt-3" role="region" aria-labelledby="heading1-sc${[i]}">
                     <div class="collapse-body p-0">
@@ -266,13 +160,13 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].payer}</em> ${data[i].payer.name} ${data[i].payer.family_name} - ${data[i].payer.tax_identification_number}</span>
+                                <span class="text"><em>${i18n[InfoPayment.$language].payer}</em> ${data[i].payer.name} ${data[i].payer.family_name} - ${data[i].payer.tax_identification_number}</span>
                               </div>
                             </a>
                           </li>   <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].address}</em>
+                                <span class="text"><em>${i18n[InfoPayment.$language].address}</em>
                                 ${data[i].payer.street_name ? `${data[i].payer.street_name}, ${data[i].payer.building_number}` : "--"}
                                 ${data[i].payer.postal_code ? `${data[i].payer.postal_code}` : ""}
                                 ${data[i].payer.town_name ? `${data[i].payer.town_name}` : ""}
@@ -284,7 +178,7 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].email}</em> ${data[i].payer.email ? `${data[i].payer.email}`: "--"}</span>
+                                <span class="text"><em>${i18n[InfoPayment.$language].email}</em> ${data[i].payer.email ? `${data[i].payer.email}`: "--"}</span>
                               </div>
                             </a>
                           </li>
@@ -292,7 +186,7 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].paid_at}</em> ${moment(data[i].payment.paid_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
+                                <span class="text"><em>${i18n[InfoPayment.$language].paid_at}</em> ${moment(data[i].payment.paid_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                               </div>
                             </a>
                           </li>
@@ -300,7 +194,7 @@ class InfoPayment {
                           `<li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].event_created_at}</em> ${moment(data[i].event_created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
+                                <span class="text"><em>${i18n[InfoPayment.$language].event_created_at}</em> ${moment(data[i].event_created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                               </div>
                             </a>
                           </li>
@@ -308,7 +202,7 @@ class InfoPayment {
                           </li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${InfoPayment.$translations[InfoPayment.$language].type}</em> ${data[i].type}</span>
+                                <span class="text"><em>${i18n[InfoPayment.$language].type}</em> ${data[i].type}</span>
                               </div>
                             </a>
                           </li>
@@ -316,8 +210,8 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text text-truncate"><em>${InfoPayment.$translations[InfoPayment.$language].iuv}</em> ${data[i].payment.iuv}</span>
-                                <button type="button" class="btn btn-outline-primary copy" data-copy="${data[i].payment.iuv}">${InfoPayment.$translations[InfoPayment.$language].copy}</button>
+                                <span class="text text-truncate"><em>${i18n[InfoPayment.$language].iuv}</em> ${data[i].payment.iuv}</span>
+                                <button type="button" class="btn btn-outline-primary copy" data-copy="${data[i].payment.iuv}">${i18n[InfoPayment.$language].copy}</button>
                               </div>
                             </a>
                           </li>
@@ -326,8 +220,8 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text text-truncate"><em>${InfoPayment.$translations[InfoPayment.$language].iud}</em> ${data[i].payment.iud}</span>
-                                <button type="button" class="btn btn-outline-primary copy" data-copy="${data[i].payment.iud}">${InfoPayment.$translations[InfoPayment.$language].copy}</button>
+                                <span class="text text-truncate"><em>${i18n[InfoPayment.$language].iud}</em> ${data[i].payment.iud}</span>
+                                <button type="button" class="btn btn-outline-primary copy" data-copy="${data[i].payment.iud}">${i18n[InfoPayment.$language].copy}</button>
                               </div>
                             </a>
                           </li>
@@ -338,7 +232,7 @@ class InfoPayment {
                     ${data[i].status === 'COMPLETE' ?
                    `<div class="text-center mt-5">
                         <a href="${data[i].links.receipt.url}" class="btn btn-primary" role="button" aria-disabled="true" download>
-                            ${InfoPayment.$translations[InfoPayment.$language].download_pdf}
+                            ${i18n[InfoPayment.$language].download_pdf}
                         </a>
                     </div>` : ""}
                     ${data[i].status === 'CREATION_FAILED' ?
@@ -352,8 +246,8 @@ class InfoPayment {
                       && data[i].status !== 'EXPIRED'
                       ?
                       `<div class="text-center mt-5">
-                        <a href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${InfoPayment.$translations[InfoPayment.$language].paga_online}</a>
-                        <a href="${data[i].links.offline_payment.url}" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download> ${InfoPayment.$translations[InfoPayment.$language].paga_offline}</a>
+                        <a href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${i18n[InfoPayment.$language].paga_online}</a>
+                        <a href="${data[i].links.offline_payment.url}" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download> ${i18n[InfoPayment.$language].paga_offline}</a>
                       </div>
                     ` : ""}
                   </div>

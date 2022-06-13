@@ -1,3 +1,6 @@
+import {i18n} from "../translations/i18n";
+import Api from "../utils/Api";
+
 class Payment {
 
   $token; // Auth token
@@ -9,34 +12,7 @@ class Payment {
   $language; // Browser language
   $alertError; // Html element alert errors
   $tenant; // Tenant Slug
-
-  static $translations = {
-    "it": {
-      "creation_pending": "Creazione del pagamento in corso",
-      "creation_failed": "Opss qualcosa è andato storto!",
-      "timeout": "La richiesta sta impiegando più tempo del necessario.. <br><b>Riprova più tardi!</b>",
-      "unauth": "Sessione scaduta <br><b>Effettua nuovamente il login</b>.",
-      "creation_failed_text": "La creazione del pagamento non è andata a buon fine riprova più tardi oppure contatta l'ufficio amministrativo.",
-      "not_found": "La pratica non è ancora pervenuta, la preghiamo di attendere!"
-    },
-    "en": {
-      "creation_pending": "Payment creation in progress",
-      "creation_failed": "Oops something went wrong!",
-      "timeout": "The request is taking longer than necessary .. <br> <b> Please try again later! </b>",
-      "unauth": "Session expired <br> <b> Please login again </b>.",
-      "creation_failed_text": "The creation of the payment was not successful, please try again later or contact the administrative office.",
-      "not_found": "The pratice has not yet been received, please wait!"
-    },
-    "de": {
-      "creation_pending": "Zahlungserstellung läuft",
-      "creation_failed": "OUps! Irgendwas lief schief!",
-      "timeout": "Die Anfrage dauert länger als nötig. <br> <b> Bitte versuchen Sie es später erneut! </b>",
-      "unauth": "Sitzung abgelaufen <br> <b> Bitte melden Sie sich erneut an </b>.",
-      "creation_failed_text": "Die Erstellung der Zahlung war nicht erfolgreich, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle.",
-      "not_found": "Die Datei wurde noch nicht empfangen, bitte warten!"
-    }
-  }
-
+  $apiService; // API Class
 
   static init() {
 
@@ -47,16 +23,21 @@ class Payment {
     Payment.$statusPayment = $('.status');
     Payment.$language = document.documentElement.lang.toString();
     Payment.$alertError = $('.alert-error');
-
+    Payment.$apiService = new Api();
 
     // Active spinner animations
     Payment.$spinner.addClass('progress-spinner-active');
-    Payment.$statusPayment.html(Payment.$translations[Payment.$language].creation_pending);
+    Payment.$statusPayment.html(i18n[Payment.$language].creation_pending);
 
     // Get tenant slug
     Payment.$tenant = window.location.pathname.split('/')[1];
     // Get Auth token
-    Payment.getAuthToken();
+    Payment.$apiService.getSessionAuthTokenPromise().then((data) => {
+      Payment.$token = data.token;
+      Payment.poolingPayment();
+    }).catch(() => {
+      Payment.handleErrors(i18n[Payment.$language].unauth);
+    })
   }
 
   static handleErrors(errorMessage) {
@@ -69,7 +50,7 @@ class Payment {
   static handleSwitchStatus(data,self) {
     switch (data.status) {
       case 'CREATION_PENDING':
-        Payment.$statusPayment.html(Payment.$translations[Payment.$language].creation_pending);
+        Payment.$statusPayment.html(i18n[Payment.$language].creation_pending);
         Payment.retryPooling(self);
         break;
       case 'PAYMENT_PENDING':
@@ -80,29 +61,12 @@ class Payment {
         break;
       case 'CREATION_FAILED':
         Payment.$spinnerContainer.addClass('d-none');
-        Payment.handleErrors(Payment.$translations[Payment.$language].creation_failed_text);
+        Payment.handleErrors(i18n[Payment.$language].creation_failed_text);
         break;
       default:
         console.log(`Status not found - ${data.status}.`);
     }
   }
-
-
-  static getAuthToken() {
-    $.ajax({
-      url: '/'+ Payment.$tenant+ '/api/session-auth',
-      dataType: 'json',
-      type: 'get',
-      success: function (data) {
-        Payment.$token = data.token;
-        Payment.poolingPayment();
-      },
-      error: function (xmlhttprequest, textstatus, message) {
-        Payment.handleErrors(Payment.$translations[Payment.$language].unauth);
-      }
-    });
-  }
-
 
   static retryPooling(self){
     self.tryCount++;
@@ -120,7 +84,7 @@ class Payment {
       }else{
         // if I exceed the timeout I show a message
         Payment.$spinnerContainer.addClass('d-none');
-        Payment.handleErrors(Payment.$translations[Payment.$language].timeout);
+        Payment.handleErrors(i18n[Payment.$language].timeout);
       }
     }
   }
@@ -145,14 +109,14 @@ class Payment {
         },
         error: function (xmlhttprequest, textstatus, message) { // error logging
           if (textstatus === "timeout") {
-            Payment.handleErrors(Payment.$translations[Payment.$language].timeout);
+            Payment.handleErrors(i18n[Payment.$language].timeout);
           } else if (xmlhttprequest.status === 401) {
-            Payment.handleErrors(Payment.$translations[Payment.$language].unauth);
+            Payment.handleErrors(i18n[Payment.$language].unauth);
           } else if (xmlhttprequest.status === 404) {
             Payment.retryPooling(this);
-            Payment.$statusPayment.html(Payment.$translations[Payment.$language].not_found);
+            Payment.$statusPayment.html(i18n[Payment.$language].not_found);
           } else {
-            Payment.handleErrors(Payment.$translations[Payment.$language].creation_failed_text);
+            Payment.handleErrors(i18n[Payment.$language].creation_failed_text);
           }
         }
       });
