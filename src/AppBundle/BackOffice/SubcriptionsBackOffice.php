@@ -52,6 +52,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     "postal_code",
     "email_address",
     "code",
+    "related_cfs",
   );
 
   private $required_fields = [
@@ -204,7 +205,10 @@ class SubcriptionsBackOffice implements BackOfficeInterface
         $this->logger->error($this->translator->trans('backoffice.integration.fields_error'));
         return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
       }
-      $fixedData= $data;
+      $fixedData = $data;
+      if ( is_string($fixedData['related_cfs']) ) {
+        $fixedData['related_cfs'] = explode(",", $fixedData['related_cfs']);
+      }
     }
 
     $repo = $this->em->getRepository('AppBundle:Subscriber');
