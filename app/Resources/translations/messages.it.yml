@@ -14,8 +14,11 @@ reply: 'Rispondi'
 view: 'Visualizza'
 read_more: 'Leggi di più'
 load_more: 'Altro...'
+processing: 'In elaborazione...'
+close: 'Chiudi'
 lista: 'Lista'
 tutti: 'Tutti'
+proceed: 'Procedi'
 terms_do_il_consenso: "Ho letto l'informativa"
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
@@ -33,6 +36,7 @@ aggiorna_profilo: "I tuoi dati sono stati aggiornati correttamente."
 error_back_to_home: "Torna alla Home"
 error_support: "Contatta il supporto tecnico"
 error_message: "Ooops!"
+error_generic: "<strong>Attenzione</strong> ci sono stati degli errori. Riprova più tardi"
 error_message_detail: "Qualcosa non ha funzionato"
 error_message_401: "401 | Accesso negato"
 error_message_detail_401: "Non sei autorizzato ad accedere a quest'area"
@@ -944,6 +948,16 @@ operatori:
       allega_risposta_firmata: 'Allega la risposta firmata digitalmente'
     allega_documentazione_richiesta: 'Allega documentazione richiesta'
     concludi: 'Concludi elaborazione'
+    force_paid:
+      button_cta: 'Registra pagamento'
+      title: 'Cambio stato pratica in: <b>PAGATA</b>'
+      warning_text: "L'azione è <b>irreversibile</b>"
+      modal_note: 'Aggiungere una nota con la motivazione del cambio stato FORZATO'
+      internal_note: 'Nota interna'
+      internal_note_description: 'Abilitando questa opzione la nota sarà visibile solo agli operatori'
+      applicant_note: 'Invia messaggio al cittadino'
+      applicant_note_description: 'Verrà inviata una email e un messaggio sulla piattaforma'
+      toolitip_cta: "La pratica passa automaticamente in stato pagata se il cittadino effettua il pagamento del dovuto che noi abbiamo creato su PagoPA. Se il cittadino fa un pagamento diverso o paga in contanti a uno sportello è possibile usare questa funzionalità per forzare la registrazione di un pagamento. Nella pagina che si apre avrete modo di aggiungere altri dettagli."
   profile:
     title: 'Profilo operatore'
     nome: 'Nome'

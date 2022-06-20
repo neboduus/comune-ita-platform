@@ -2444,6 +2444,71 @@ class ApplicationsAPIController extends AbstractFOSRestController
   }
 
   /**
+   * Force change application status payment pending by to payment success
+   * @Rest\Post("/{id}/transition/complete-payment", name="application_api_post_transition_complete_payment")
+   *
+   * @SWG\Parameter(
+   *     name="Authorization",
+   *     in="header",
+   *     description="The authentication Bearer",
+   *     required=true,
+   *     type="string"
+   * )
+   *
+   * @SWG\Response(
+   *     response=204,
+   *     description="Updated"
+   * )
+   *
+   * @SWG\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @SWG\Response(
+   *     response=404,
+   *     description="Application not found"
+   * )
+   * @SWG\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function applicationTransitionPaymentCompletedAction($id, Request $request)
+  {
+    try {
+      $repository = $this->em->getRepository('AppBundle:Pratica');
+      $application = $repository->find($id);
+      if (!$application) {
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+      }
+      $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
+      if (!in_array(
+        $application->getStatus(),
+        [Pratica::STATUS_PAYMENT_OUTCOME_PENDING, Pratica::STATUS_PAYMENT_PENDING]
+      )) {
+        return $this->view(["Application isn't in correct state"], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      $this->praticaManager->finalizePaymentCompleteSubmission($application);
+
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during transition process',
+        'description' => 'Contact technical support at support@opencontent.it',
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    return $this->view(["Application Status Payment Modified Successfully"], Response::HTTP_OK);
+
+  }
+
+  /**
    * @return array
    */
   private function getAllowedServices(): array

@@ -1,5 +1,5 @@
 /* global $ */
-import './Api';
+import '../services/api.service';
 import Swal from 'sweetalert2/src/sweetalert2.js'
 
 class RequestIntegration {

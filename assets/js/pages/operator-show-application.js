@@ -11,6 +11,7 @@ import {TextEditor} from "../utils/TextEditor";
 import moment from "moment";
 import RequestIntegration from "../utils/RequestIntegration";
 import InfoPayment from "../Payment/InfoPayment";
+import ApplicationsMessage from "../Applications/Message";
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
@@ -187,4 +188,10 @@ $(document).ready(function () {
   if( $('.payment-list').length > 0){
     InfoPayment.init();
   }
+
+  //Operator Message
+  if( $('#change_paid_modal').length > 0) {
+    ApplicationsMessage.init();
+  }
+
 });

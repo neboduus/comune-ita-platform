@@ -1,7 +1,7 @@
 import moment from "moment";
 const PAGOPA = require('../../images/payments/pagppa.png');
 import {i18n} from "../translations/i18n"
-import Api from "../utils/Api";
+import Api from "../services/api.service";
 
 class InfoPayment {
 

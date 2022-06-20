@@ -32,7 +32,10 @@ export const i18n = {
     "paga_offline": "Paga offline",
     "creation_pending": "Creazione del pagamento in corso",
     "creation_failed_text": "La creazione del pagamento non è andata a buon fine riprova più tardi oppure contatta l'ufficio amministrativo.",
-    "not_found": "La pratica non è ancora pervenuta, riprova più tardi!"
+    "not_found": "La pratica non è ancora pervenuta, riprova più tardi!",
+    "operator":{
+      "change_status_message": "Cambio Forzato stato pratica in: PAGATO"
+    }
   },
   "en": {
     "get_payment": "Payment creation in progress",
@@ -67,7 +70,10 @@ export const i18n = {
     "paga_offline": "Pay offline",
     "creation_pending": "Payment creation in progress",
     "creation_failed_text": "The creation of the payment was not successful, please try again later or contact the administrative office.",
-    "not_found": "The pratice has not yet been received, try again later!"
+    "not_found": "The pratice has not yet been received, try again later!",
+    "operator":{
+      "change_status_message": "Cambio Forzato stato pratica in: PAGATO"
+    }
   },
   "de": {
     "get_payment": "Zahlungserstellung läuft",
@@ -102,6 +108,9 @@ export const i18n = {
     "paga_offline": "Offline bezahlen",
     "creation_pending": "Zahlungserstellung läuft",
     "creation_failed_text": "Die Erstellung der Zahlung war nicht erfolgreich, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle.",
-    "not_found": "Die Datei wurde noch nicht empfangen, versuchen Sie es später erneut!"
+    "not_found": "Die Datei wurde noch nicht empfangen, versuchen Sie es später erneut!",
+    "operator":{
+      "change_status_message": "Cambio Forzato stato pratica in: PAGATO"
+    }
   }
 }
