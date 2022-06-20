@@ -139,7 +139,7 @@ servizio:
   consenti_riapertura: "BACKOFFICE"
   consenti_ritiro: "BACKOFFICE"
   flusso: ""
-  max_response_time: "Maximale Servicebereitstellungszeit"
+  max_response_time: "Maximale Servicebereitstellungszeit (in Tagen)"
   stages_and_deadlines: ""
   max_response_time_text: ""
   active_from_date_to_date: ""
