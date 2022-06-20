@@ -8,6 +8,7 @@ parameters:
   database_name: '%env(DB_NAME)%'
   database_user: '%env(DB_USER)%'
   database_password: '%env(DB_PASSWORD)%'
+  database_reconnect_attemps: '%env(DB_RECONNECT_ATTEMPS)%'
   mailer_transport: '%env(MAILER_TRANSPORT)%'
   mailer_host: '%env(MAILER_HOST)%'
   mailer_port: '%env(MAILER_PORT)%'
@@ -163,6 +164,7 @@ parameters:
   env(DB_NAME): 'sdc'
   env(DB_USER): 'sdc'
   env(DB_PASSWORD): 'sdc'
+  env(DB_RECONNECT_ATTEMPS): 3
   env(MAILER_TRANSPORT): 'smtp'
   env(MAILER_HOST): '127.0.0.1'
   env(MAILER_PORT): '25'
