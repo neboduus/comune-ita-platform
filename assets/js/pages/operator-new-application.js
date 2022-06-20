@@ -11,7 +11,7 @@ import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
 import Swal from 'sweetalert2/src/sweetalert2.js'
 import FormioI18n from "../utils/FormioI18n";
-import Api from "../utils/Api";
+import Api from "../services/api.service";
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);

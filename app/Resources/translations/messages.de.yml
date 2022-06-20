@@ -5,6 +5,9 @@ salva: 'Speichern'
 elimina: 'Löschen'
 reply: 'Antworten'
 view: 'Anzeigen'
+processing: 'In elaborazione...'
+close: 'Chiudi'
+proceed: 'Procedi'
 terms_do_il_consenso: "Ich habe die Information gelesen"
 accedi_al_servizio: 'Greifen Sie auf %name% zu'
 registrati_per_accedere_al_servizio: 'Registrieren Sie sich, um den Dienst zu nutzen'
@@ -905,6 +908,16 @@ operatori:
       allega_risposta_firmata: 'Die digital signierte Antwort anhängen'
     allega_documentazione_richiesta: 'Dokumente anhängen'
     concludi: 'Bearbeitung abschließen'
+    force_paid:
+      button_cta: 'Registra pagamento'
+      title: 'Cambio stato pratica in: <b>PAGATA</b>'
+      warning_text: "L'azione è <b>irreversibile</b>"
+      modal_note: 'Aggiungere una nota con la motivazione del cambio stato FORZATO'
+      internal_note: 'Nota interna'
+      internal_note_description: 'Abilitando questa opzione la nota sarà visibile solo agli operatori'
+      applicant_note: 'Invia messaggio al cittadino'
+      applicant_note_description: 'Verrà inviata una email e un messaggio sulla piattaforma'
+      toolitip_cta: "La pratica passa automaticamente in stato pagata se il cittadino effettua il pagamento del dovuto che noi abbiamo creato su PagoPA. Se il cittadino fa un pagamento diverso o paga in contanti a uno sportello è possibile usare questa funzionalità per forzare la registrazione di un pagamento. Nella pagina che si apre avrete modo di aggiungere altri dettagli."
   profile:
     title: 'Profil Sachbearbeiter/-in'
     nome: 'Name'

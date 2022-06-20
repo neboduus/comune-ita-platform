@@ -1,4 +1,4 @@
-import './Api';
+import '../services/api.service';
 
 class Search {
 

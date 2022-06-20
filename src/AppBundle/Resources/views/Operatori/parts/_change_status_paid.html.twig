@@ -1,0 +1,52 @@
+<div>
+  <button class="btn btn-outline-primary w-100 my-3" type="button" data-toggle="modal" data-target="#change_paid_modal">
+    {{ 'operatori.flow.force_paid.button_cta' | trans }}
+    <span data-toggle="tooltip" data-placement="top" data-html="true"
+          title="{{ 'operatori.flow.force_paid.toolitip_cta' | trans }}"><svg class="icon align-middle"><use href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use></svg></span>
+  </button>
+</div>
+<!-- Modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id="change_paid_modal" aria-labelledby="change_paid_modal" data-id="{{ pratica }}"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="progress-indeterminate">
+        <span class="sr-only">{{ 'processing' | trans }}</span>
+        <div class="progress-bar" role="progressbar"></div>
+      </div>
+      <div class="modal-header flex-column">
+        <h5 class="modal-title" id="change_paid_modal_title">{{ 'operatori.flow.force_paid.button_cta' | trans | raw  }}
+          <p class="text-danger">{{ 'operatori.flow.force_paid.warning_text' | trans | raw }}</p></h5>
+        <label>{{ 'operatori.flow.force_paid.toolitip_cta' | trans }}</label>
+      </div>
+      <div class="alert alert-danger alert-dismissible small m-3 d-none fade show" role="alert">
+        {{ 'error_generic' | trans | raw }}
+        <button type="button" class="close" data-dismiss="alert" aria-label="{{ 'close' | trans }}">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="note">{{ 'operatori.flow.force_paid.modal_note' | trans }}</label>
+          <textarea id="note" rows="5"></textarea>
+        </div>
+        <div class="form-check form-check-group">
+          <input checked name="checkNote" type="radio" id="internalNote" aria-labelledby="internalNote-help" value="internal">
+          <label for="internalNote">{{ 'operatori.flow.force_paid.internal_note' | trans }}</label>
+          <small id="internalNote-help" class="form-text">{{ 'operatori.flow.force_paid.internal_note_description' | trans }}</small>
+        </div>
+        <div class="form-check form-check-group">
+          <input name="checkNote" type="radio" id="visible" aria-labelledby="visible-help" value="applicant">
+          <label for="visible">{{ 'operatori.flow.force_paid.applicant_note' | trans }}</label>
+          <small id="visible-help" class="form-text">{{ 'operatori.flow.force_paid.applicant_note_description' | trans }}</small>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" type="button" id="change_paid_application">{{ 'proceed' | trans }}</button>
+          <button class="btn btn-outline-secondary" type="button" data-dismiss="modal">{{ 'annulla' | trans }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- end modal -->
+

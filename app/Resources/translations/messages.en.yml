@@ -1,10 +1,23 @@
 title: 'The Citizen Room'
+Home: 'Home'
 claim: 'Online services of %ente_name%'
 intro: "<p> <span>Using the \"Citizen Room\" you can access with a few clicks all the services made available to citizens.<br />\nIn case of first access, you will be asked to confirm your data before using the service.</span> </p>"
 salva: 'Save'
+aggiungi: 'Add'
+annulla: 'cancel'
+modifica: 'edit'
+read_more: 'read more'
 elimina: 'Delete'
+withdraw: 'Ritira'
+activate: 'Attiva'
 reply: 'Answer'
 view: 'View'
+load_more: 'Altro...'
+processing: 'In elaborazione...'
+close: 'Chiudi'
+lista: 'Lista'
+tutti: 'Tutti'
+proceed: 'Procedi'
 terms_do_il_consenso: "I confirm that I read the privacy policy"
 accedi_al_servizio: 'Access to service %name%'
 registrati_per_accedere_al_servizio: 'Service is reserved to logged in users'
@@ -24,7 +37,10 @@ aggiorna_profilo: "Your data has been updated successfully."
 error_back_to_home: "Back to Homepage"
 error_support: "Contact technical support"
 error_message: "Ooops!"
+error_generic: "<strong>Attenzione</strong> ci sono stati degli errori. Riprova più tardi"
 error_message_detail: "Something went wrong"
+error_message_401: "401 | Accesso negato"
+error_message_detail_401: "Non sei autorizzato ad accedere a quest'area"
 error_message_403: "403 | Access denied"
 error_message_detail_403: "You do not have permission to access this area"
 error_message_404: "404 | Page not found"
@@ -36,6 +52,8 @@ operatore: "Operator"
 credits: "The Stanza del cittadino is an experimental project initiative of %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Update your e-mail to continue'
+practice_of: 'Pratica del'
+from_date_to_date: "Dal %from% al %to%"
 loading: "Loading..."
 nav:
   home: 'Homepage'
@@ -884,6 +902,16 @@ operatori:
       allega_risposta_firmata: 'Attach your digitally signed response'
     allega_documentazione_richiesta: 'Attach requested documentation'
     concludi: 'Finish processing'
+    force_paid:
+      button_cta: 'Registra pagamento'
+      title: 'Cambio stato pratica in: <b>PAGATA</b>'
+      warning_text: "L'azione è <b>irreversibile</b>"
+      modal_note: 'Aggiungere una nota con la motivazione del cambio stato FORZATO'
+      internal_note: 'Nota interna'
+      internal_note_description: 'Abilitando questa opzione la nota sarà visibile solo agli operatori'
+      applicant_note: 'Invia messaggio al cittadino'
+      applicant_note_description: 'Verrà inviata una email e un messaggio sulla piattaforma'
+      toolitip_cta: "La pratica passa automaticamente in stato pagata se il cittadino effettua il pagamento del dovuto che noi abbiamo creato su PagoPA. Se il cittadino fa un pagamento diverso o paga in contanti a uno sportello è possibile usare questa funzionalità per forzare la registrazione di un pagamento. Nella pagina che si apre avrete modo di aggiungere altri dettagli."
   profile:
     title: 'Operator''s profile'
     nome: 'Name'
@@ -2445,10 +2473,6 @@ ente:
 buttons:
   draft: 'Save draft'
   last_save: 'Last saved:'
-aggiungi: 'Add'
-annulla: 'cancel'
-modifica: 'edit'
-read_more: 'read more'
 general:
   nome: 'name'
   cognome: 'surname'
@@ -2481,13 +2505,11 @@ categories:
   service_remove_error: ""
   error_reference_parent: ''
   error_reference_children: ''
-load_more: ''
 recipients:
   title: ''
   all: ''
   delete_success: ''
   delete_error: ''
-lista: ''
 geographic_areas:
   title: ''
   all: ''
@@ -2504,14 +2526,6 @@ geographic_areas:
 breadcrumbs:
   list: ''
   compile: ''
-Home: ''
-withdraw: ''
-activate: ''
-tutti: ''
-error_message_401: ""
-error_message_detail_401: ""
-practice_of: ''
-from_date_to_date: ""
 search:
   label: ''
   close: ''

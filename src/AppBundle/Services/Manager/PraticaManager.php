@@ -180,6 +180,17 @@ class PraticaManager
 
   /**
    * @param Pratica $pratica
+   * @throws Exception
+   */
+  public function finalizePaymentCompleteSubmission(Pratica $pratica)
+  {
+    $pratica->setStatus(Pratica::STATUS_PAYMENT_SUCCESS);
+    $this->entityManager->persist($pratica);
+    $this->entityManager->flush();
+  }
+
+  /**
+   * @param Pratica $pratica
    * @param User $user
    * @throws Exception
    */

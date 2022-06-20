@@ -75,6 +75,10 @@ class Api {
     this.token = null;
     this.init()
   }
+
+  getBasePath(){
+    return this.basePath
+  }
 }
 
 export default Api;

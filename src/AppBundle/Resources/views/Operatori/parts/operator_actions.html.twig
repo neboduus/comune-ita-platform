@@ -12,7 +12,7 @@
       {% elseif pratica.status > 1900 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
         {{ 'operatori.attesa_modulo_protocollato'|trans }}
       {% elseif pratica.servizio.isPaymentRequired and pratica.status <= 1510 %}
-        {{ 'operatori.attesa_pagamento'|trans }}
+        {{ include('@App/Operatori/parts/_change_status_paid.html.twig') }}
       {% elseif pratica.status == 20000 %}
         {{ 'operatori.pratica_ritirata'|trans({
           '%data%': pratica.latestStatusChangeTimestamp | date(ocsdc_default_date_format),
