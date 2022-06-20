@@ -176,7 +176,15 @@ services:
       traefik.enable: 'true'
       traefik.docker.network: 'default'
       traefik.http.services.caddy.loadbalancer.server.port: 80
-      traefik.http.routers.caddy.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+
+      traefik.http.routers.sdc-http.entrypoints: web
+      traefik.http.routers.sdc-http.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+
+      # Per provare https eliminare il commento al blocco successivo
+      #traefik.http.routers.sdc-https.entrypoints: websecure
+      #traefik.http.routers.sdc-https.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+      #traefik.http.routers.sdc-https.tls:
+      #traefik.http.routers.sdc-https.tls.certresolver: 'mydnschallenge'
 
       #traefik.http.middlewares.spid-auth.forwardauth.address: http://boreale.localtest.me:5252
       #traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Provider,X-Forwarded-User-registeredOffice,X-Forwarded-User-spidCode,X-Forwarded-User-name,X-Forwarded-User-companyName,X-Forwarded-User-ivaCode,X-Forwarded-User-countyOfBirth,X-Forwarded-User-idCard,X-Forwarded-User-gender,X-Forwarded-User-dateOfBirth,X-Forwarded-User-placeOfBirth,X-Forwarded-User-familyName,X-Forwarded-User-fiscalNumber,X-Forwarded-User-digitalAddress,X-Forwarded-User-mobilePhone,X-Forwarded-User-expirationDate,X-Forwarded-User-email,X-Forwarded-User-address,X-Forwarded-User-Session,X-Forwarded-User-Spid-Level,X-Forwarded-User-Spid-Idp"

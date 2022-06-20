@@ -1,7 +1,7 @@
 ARG php_image
 FROM ${php_image} as php
 
-FROM caddy:2.4.6
+FROM caddy:2.5.1
 
 COPY compose_conf/caddy/docker-entrypoint.sh /docker-entrypoint.sh
 COPY Caddyfile /etc/caddy/Caddyfile
