@@ -135,7 +135,7 @@ servizio:
   consenti_riapertura: "Allow operators to manually change the status of a case"
   consenti_ritiro: "Allow the citizen to cancel the submission of the file"
   flusso: "Workflow"
-  max_response_time: "Maximum service delivery time"
+  max_response_time: "Maximum service delivery time (in days)"
   stages_and_deadlines: "Stages and deadlines"
   max_response_time_text: "Once you have submitted the application, you will receive an answer within %time% days"
   active_from_date_to_date: "The service will be active from %from% to %to%"
