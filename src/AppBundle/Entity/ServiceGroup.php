@@ -13,6 +13,7 @@ use Swagger\Annotations as SWG;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
+use Gedmo\Translatable\Translatable;
 
 /**
  * ServiceGroup
@@ -21,7 +22,7 @@ use JMS\Serializer\Annotation as Serializer;
  * @ORM\Table(name="service_group",)
  *
  */
-class ServiceGroup
+class ServiceGroup implements Translatable
 {
 
   /**
@@ -34,7 +35,7 @@ class ServiceGroup
 
   /**
    * @var string
-   *
+   * @Gedmo\Translatable
    * @ORM\Column(type="string", length=255, unique=true)
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
@@ -55,6 +56,7 @@ class ServiceGroup
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Services group description")
    * @Groups({"read", "write"})
@@ -63,6 +65,7 @@ class ServiceGroup
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Compilation guide, accepts html tags")
    * @Groups({"read", "write"})
@@ -71,6 +74,7 @@ class ServiceGroup
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Textual description of whom the service is addressed, accepts html tags")
    * @Groups({"read", "write"})
@@ -79,6 +83,7 @@ class ServiceGroup
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
    * @Groups({"read", "write"})
@@ -87,6 +92,7 @@ class ServiceGroup
 
   /**
    * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Other info, accepts html tags")
    * @Groups({"read", "write"})
@@ -149,6 +155,13 @@ class ServiceGroup
    * @var ArrayCollection
    */
   private $geographicAreas;
+
+  /**
+   * @Gedmo\Locale
+   * Used locale to override Translation listener`s locale
+   * this is not a mapped field of entity metadata, just a simple property
+   */
+  private $locale;
 
   /**
    * ServiceGroup constructor.
@@ -656,6 +669,11 @@ class ServiceGroup
       }
     }
     return true;
+  }
+
+  public function setTranslatableLocale($locale)
+  {
+    $this->locale = $locale;
   }
 
 }

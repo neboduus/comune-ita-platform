@@ -259,7 +259,10 @@ class ServiziController extends Controller
     $result = [];
     $repoServices = $this->getDoctrine()->getRepository('AppBundle:Servizio');
     $services = $repoServices->findAvailable(
-      ['topics' => $category->getId()]
+      [
+        'topics' => $category->getId(),
+        'locale' => $request->getLocale()
+      ]
     );
 
     /** @var Servizio $item */
