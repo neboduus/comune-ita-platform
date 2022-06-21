@@ -180,13 +180,19 @@ class PraticaManager
 
   /**
    * @param Pratica $pratica
+   * @param User $user
    * @throws Exception
    */
-  public function finalizePaymentCompleteSubmission(Pratica $pratica)
+  public function finalizePaymentCompleteSubmission(Pratica $pratica, User $user)
   {
-    $pratica->setStatus(Pratica::STATUS_PAYMENT_SUCCESS);
-    $this->entityManager->persist($pratica);
-    $this->entityManager->flush();
+    $statusChange = new StatusChange();
+    $statusChange->setEvento('Pagamento completato');
+    $statusChange->setOperatore($user->getFullName());
+    $this->praticaStatusService->setNewStatus(
+      $pratica,
+      Pratica::STATUS_PAYMENT_SUCCESS,
+      $statusChange
+    );
   }
 
   /**

@@ -87,18 +87,20 @@
                 {% else %}
                   <ul class="list-unstyled">
                     {% for fiscalCode in subscription.relatedCfs %}
-                      <li>
-                        <svg class="icon icon-sm mx-2">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
-                        </svg>
-                        {{ fiscalCode }}
-                        <a
-                          href="{{ path('unshare_subscription_operatore', {'subscriptionId': subscription.id, 'fiscalCode': fiscalCode}) }}">
-                          <svg class="icon icon-sm mx-2 icon-danger">
-                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                      {% if fiscalCode is not empty %}
+                        <li>
+                          <svg class="icon icon-sm mx-2">
+                            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
                           </svg>
-                        </a>
-                      </li>
+                          {{ fiscalCode }}
+                          <a
+                            href="{{ path('unshare_subscription_operatore', {'subscriptionId': subscription.id, 'fiscalCode': fiscalCode}) }}">
+                            <svg class="icon icon-sm mx-2 icon-danger">
+                              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                            </svg>
+                          </a>
+                        </li>
+                      {% endif %}
                     {% endfor %}
                   </ul>
                 {% endif %}

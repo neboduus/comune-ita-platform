@@ -2477,6 +2477,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    */
   public function applicationTransitionPaymentCompletedAction($id, Request $request)
   {
+    $user = $this->getUser();
     try {
       $repository = $this->em->getRepository('AppBundle:Pratica');
       $application = $repository->find($id);
@@ -2491,7 +2492,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         return $this->view(["Application isn't in correct state"], Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
-      $this->praticaManager->finalizePaymentCompleteSubmission($application);
+      $this->praticaManager->finalizePaymentCompleteSubmission($application, $user);
 
     } catch (\Exception $e) {
       $data = [
