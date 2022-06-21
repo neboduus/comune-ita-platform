@@ -206,8 +206,10 @@ class SubcriptionsBackOffice implements BackOfficeInterface
         return ['error' => $this->translator->trans('backoffice.integration.fields_error')];
       }
       $fixedData = $data;
-      if ( is_string($fixedData['related_cfs']) ) {
+      if ($fixedData['related_cfs'] and is_string($fixedData['related_cfs'])) {
         $fixedData['related_cfs'] = explode(",", $fixedData['related_cfs']);
+      } else {
+        unset($fixedData['related_cfs']);
       }
     }
 
