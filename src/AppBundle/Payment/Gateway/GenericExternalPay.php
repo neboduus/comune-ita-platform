@@ -143,7 +143,7 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
   {
 
     $buttons = '<div class="row mt-5"><div class="col-sm-4"><strong>'.$this->translator->trans('pratica.numero').'</strong></div><div class="col-sm-8 d-inline-flex"><code>'.$pratica->getId().'</code></div></div>';
-    $buttons .= "<p class='mt-5'>".$this->translator->trans('gateway.mypay.redirect_text', ['%gateway_name%' => $pratica->getPaymentType()->getName()])."</p><div class='text-center mt-5'><a href='{$url['online_url']}' class='btn btn-lg btn-primary'>".$this->translator->trans('gateway.mypay.redirect_button')."</a></div>";
+    $buttons .= "<p class='mt-5'>".$this->translator->trans('gateway.mypay.redirect_text', ['%gateway_name%' => $pratica->getPaymentType()])."</p><div class='text-center mt-5'><a href='{$url['online_url']}' class='btn btn-lg btn-primary'>".$this->translator->trans('gateway.mypay.redirect_button')."</a></div>";
 
     return $buttons;
   }
