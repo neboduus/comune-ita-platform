@@ -120,7 +120,7 @@ class ReminderService implements ScheduledActionHandlerInterface
     $callToActions = [];
 
     $paymentData = $pratica->getPaymentData();
-    if ($pratica->getPaymentType()->getIdentifier() == 'mypay') {
+    if ($pratica->getPaymentType() == 'mypay') {
       if (isset($paymentData["response"]["url"])) {
         $callToActions[] = [
           'label'=>'gateway.mypay.redirect_button',
