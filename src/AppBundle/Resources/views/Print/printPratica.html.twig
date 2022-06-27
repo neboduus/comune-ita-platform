@@ -46,7 +46,7 @@
           <div class="callout-title">Numero richiesta</div>
           <p class="text-sans-serif">{{ pratica.id }}</p>
         </div>
-        {% if pratica.numeroProtocollo %}
+        {% if pratica.numeroProtocollo and show_protocol_number %}
           <div class="callout danger p-3 mt-1 mb-4">
             <div class="callout-title">Numero protocollo</div>
             <p class="text-danger text-break text-sans-serif">{{ pratica.numeroProtocollo }}</p>

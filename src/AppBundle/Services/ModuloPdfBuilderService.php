@@ -446,12 +446,12 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @throws RequestException
    * @throws ReflectionException
    */
-  public function renderForPratica(Pratica $pratica)
+  public function renderForPratica(Pratica $pratica, $showProtocolNumber = false)
   {
 
     $className = (new ReflectionClass($pratica))->getShortName();
     if ($className == 'FormIO') {
-      return $this->generatePdfUsingGotemberg( $pratica );
+      return $this->generatePdfUsingGotemberg( $pratica, $showProtocolNumber );
     } else {
       return $this->renderForClass($pratica, $className);
     }
@@ -618,10 +618,10 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @throws ClientException
    * @throws RequestException
    */
-  public function generatePdfUsingGotemberg( Pratica $pratica )
+  public function generatePdfUsingGotemberg( Pratica $pratica, $showProtocolNumber = false )
   {
 
-    $url = $this->router->generate('print_pratiche', ['pratica' => $pratica], UrlGeneratorInterface::ABSOLUTE_URL);
+    $url = $this->router->generate('print_pratiche', ['pratica' => $pratica, 'protocol', $showProtocolNumber], UrlGeneratorInterface::ABSOLUTE_URL);
     $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);
