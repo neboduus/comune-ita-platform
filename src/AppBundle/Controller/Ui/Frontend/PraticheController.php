@@ -783,7 +783,7 @@ class PraticheController extends Controller
   {
     $user = $this->getUser();
     $this->checkUserCanAccessPratica($pratica, $user);
-    $fileContent = $this->pdfBuilderService->renderForPratica($pratica);
+    $fileContent = $this->pdfBuilderService->renderForPratica($pratica, true);
 
     // Provide a name for your file with extension
     $filename = time() . '.pdf';

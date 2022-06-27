@@ -63,6 +63,9 @@ class PrintController extends Controller
    */
   public function printPraticaAction(Request $request, Pratica $pratica)
   {
+
+    $showProtocolNumber = $request->get('protocol', false);
+
     $user = $pratica->getUser();
     $form = $this->createForm('AppBundle\Form\FormIO\FormIORenderType', $pratica);
 
@@ -89,6 +92,7 @@ class PrintController extends Controller
 
     return $this->render( '@App/Print/printPratica.html.twig', [
       'formserver_url' => $this->getParameter('formserver_public_url'),
+      'show_protocol_number' => $showProtocolNumber,
       'form' => $form->createView(),
       'pratica' => $pratica,
       'user' => $user,
