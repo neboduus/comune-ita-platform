@@ -707,8 +707,13 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       if (!$pratica instanceof Pratica) {
         throw new Exception('Not found application with id: ' . $params['pratica']);
       }
-      $pdf = $this->createForPratica($pratica);
-      $pratica->addModuloCompilato($pdf);
+
+      // Todo: trovare una logica migliore e disaccoppiare la transizione del cambio stato con gli event listener
+      // Serve ad evitare che un errore successivo (integrazioni backoffice, messaggi kafka, webhook) crei un pdf all'infinito
+      if ($pratica->getModuliCompilati()->isEmpty()) {
+        $pdf = $this->createForPratica($pratica);
+        $pratica->addModuloCompilato($pdf);
+      }
 
       if (isset($params['next_status']) && !empty($params['next_status'])) {
         $this->statusService->setNewStatus($pratica, $params['next_status'], null, true);

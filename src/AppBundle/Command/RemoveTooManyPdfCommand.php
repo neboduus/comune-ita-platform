@@ -71,6 +71,8 @@ class RemoveTooManyPdfCommand extends ContainerAwareCommand
             continue;
           }
           $application->removeModuloCompilato($item);
+          $entityManager->remove($item);
+          $entityManager->persist($application);
           //$io->success("Rimosso modulo: {$modId}");
           ++$removed;
         }
@@ -78,9 +80,7 @@ class RemoveTooManyPdfCommand extends ContainerAwareCommand
         $io->success("Errore rimuovendo il modulo: {$modId} - " . $e->getMessage());
       }
       $progressBar->finish();
-      $entityManager->persist($application);
     }
-
     $entityManager->flush();
     $io->success("Sono stati rimossi {$count} pdf");
 
