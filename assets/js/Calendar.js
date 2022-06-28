@@ -2,6 +2,8 @@ import "jquery-ui/ui/widgets/datepicker"
 import Base from 'formiojs/components/_classes/component/Component';
 import editForm from './Calendar/Calendar.form'
 import moment from 'moment'
+import {i18n} from "./translations/i18n"
+import {i18nDatepicker} from "./translations/i18n-datepicker";
 
 export default class FormioCalendar extends Base {
   constructor(component, options, data) {
@@ -17,7 +19,9 @@ export default class FormioCalendar extends Base {
     this.first_available_start_time = null;
     this.first_available_end_time = null;
     this.first_availability_updated_at = null;
-    this.loaderTpl = '<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span></div>';
+    this.$language = document.documentElement.lang.toString();
+    this.loaderTpl = `<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">${i18n[this.$language].loading}</span></div>`;
+
   }
 
   static schema() {
@@ -85,21 +89,9 @@ export default class FormioCalendar extends Base {
 
     this.container = $(`#calendar-container-${this.id}`);
 
-    $.datepicker.regional['it'] = {
-      closeText: 'Chiudi', // set a close button text
-      currentText: 'Oggi', // set today text
-      monthNames: ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'], // set month names
-      monthNamesShort: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'], // set short month names
-      dayNames: ['Domenica', 'Luned&#236', 'Marted&#236', 'Mercoled&#236', 'Gioved&#236', 'Venerd&#236', 'Sabato'], // set days names
-      dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'], // set short day names
-      dayNamesMin: ['Do', 'Lu', 'Ma', 'Me', 'Gio', 'Ve', 'Sa'], // set more short days names
-      nextText: '',
-      prevText: ''
-      //dateFormat: 'dd-mm.-yy' // set format date
-    };
-
-    $.datepicker.setDefaults($.datepicker.regional['it']);
-
+    // override default values calendar
+    $.datepicker.regional[self.$language] = i18nDatepicker[self.$language]
+    $.datepicker.setDefaults($.datepicker.regional[self.$language]);
 
     if (calendarID !== '' && calendarID != null && !this.disabled) {
       let url = `${location.origin}/${explodedPath[1]}/api/calendars/${calendarID}/availabilities`;
@@ -130,12 +122,12 @@ export default class FormioCalendar extends Base {
                 self.date = dateText;
                 self.getDaySlots();
 
-                let slotText = self.slot ? ` alle ore ${self.slot}` : '';
-                $('#date-picker-print').html(`<b>Giorno selezionato per la prenotazione: </b> ${self.date} ${slotText}`);
+                let slotText = self.slot ? ` ${i18n[self.$language].calendar_formio.at_hours} ${self.slot}` : '';
+                $('#date-picker-print').html(`<b>${i18n[self.$language].calendar_formio.day_selected}: </b> ${self.date} ${slotText}`);
 
                 if (self.meeting_expiration_time) {
-                  let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} alle ore ${self.meeting_expiration_time.format("HH:mm")}`;
-                  $('#draft-expiration').html(`<i>Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno ${expiration}. Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati</i>`)
+                  let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${i18n[self.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
+                  $('#draft-expiration').html(`<i>${i18n[self.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[self.$language].calendar_formio.draft_expiration_text_end}</i>`)
                 }
 
               },
@@ -155,7 +147,7 @@ export default class FormioCalendar extends Base {
             }
           },
           error: function (jqXhr, textStatus, errorMessage) { // error callback
-            alert("Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare");
+            alert(`${i18n[self.$language].calendar_formio.availability_error}`);
           }, complete: function () {
             //Auto-click current selected day
             var dayActive = $('a.ui-state-active');
@@ -164,11 +156,11 @@ export default class FormioCalendar extends Base {
             }
 
             if (self.date && self.slot) {
-              $('#date-picker-print').html(`<b>Giorno selezionato per la prenotazione: </b> ${self.date} alle ore ${self.slot}`)
+              $('#date-picker-print').html(`<b>${i18n[self.$language].calendar_formio.day_selected}: </b> ${self.date} ${i18n[self.$language].calendar_formio.at_hours} ${self.slot}`)
             }
             if (self.meeting_expiration_time) {
-              let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} alle ore ${self.meeting_expiration_time.format("HH:mm")}`;
-              $('#draft-expiration').html(`<i>Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno ${expiration}. Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati</i>`)
+              let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${i18n[self.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
+              $('#draft-expiration').html(`<i>${i18n[self.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[self.$language].calendar_formio.draft_expiration_text_end}</i>`)
             }
           }
         });
@@ -214,11 +206,11 @@ export default class FormioCalendar extends Base {
     this.opening_hour = explodedCalendar.length === 3 ? explodedCalendar[2] : "";
 
     if (this.date && this.slot) {
-      $('#date-picker-print').html(`<b>Giorno selezionato per la prenotazione: </b> ${this.date} alle ore ${this.slot}`)
+      $('#date-picker-print').html(`<b>${i18n[self.$language].calendar_formio.day_selected}: </b> ${this.date} ${i18n[self.$language].calendar_formio.at_hours} ${this.slot}`)
     }
     if (self.meeting_expiration_time) {
-      let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} alle ore ${self.meeting_expiration_time.format("HH:mm")}`;
-      $('#draft-expiration').html(`<i>Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno ${expiration}. Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati</i>`)
+      let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${i18n[self.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
+      $('#draft-expiration').html(`<i>${i18n[self.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[self.$language].calendar_formio.draft_expiration_text_end}</i>`)
     }
   }
 
@@ -298,8 +290,8 @@ export default class FormioCalendar extends Base {
 
           if (countAllElmAvailables === 0) {
             self.container.find('#slot-picker').html(`<div class="callout warning">
-                            <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use></svg>Attenzione</div>
-                            <p>Non è possibile prenotare in questa giornata, tutte le fasce orarie a disposizione sono già prenotate</p>
+                            <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use></svg>${i18n[self.$language].warning}</div>
+                            <p>${i18n[self.$language].calendar_formio.no_availability_error}</p>
                             </div>`);
           } else {
             $(data).each(function (index, element) {
@@ -318,7 +310,7 @@ export default class FormioCalendar extends Base {
               html = html.concat(`<div class="col-6"><button type="button" data-slot="${key}" data-opening_hour="${op_hour}" class="btn btn-ora p-0 ${cssClass}" ${ariaDisabled ? 'tabindex="-1"' : ''} aria-disabled="${ariaDisabled}">${key}</button></div>`);
 
             });
-            self.container.find('#slot-picker').html(`<div class="col-12"><h6>Orari disponibili il ${self.date}</h6></div>${html}`);
+            self.container.find('#slot-picker').html(`<div class="col-12"><h6> ${i18n[self.$language].calendar_formio.availability_hours} ${self.date}</h6></div>${html}`);
 
             $('.btn-ora.available').on('click', function (e) {
               e.preventDefault();
@@ -335,7 +327,7 @@ export default class FormioCalendar extends Base {
           }
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
-          alert("Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare");
+          alert(`${i18n[self.$language].calendar_formio.availability_error}`);
         }, complete: function () {
           //Click available hour button only is visible for auto selection
           var btnHourActive = $('.btn-ora.available.active');
@@ -372,7 +364,7 @@ export default class FormioCalendar extends Base {
           self.updateValue();
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
-          alert("Si è verificato un errore, si prega di riprovare");
+          alert(`${i18n[self.$language].calendar_formio.availability_error}`);
           // Reinitialize
           self.slot = null;
           self.meeting = null;
@@ -381,11 +373,11 @@ export default class FormioCalendar extends Base {
           self.getDaySlots();
         },
         complete: function () {
-          let slotText = self.slot ? ` alle ore ${self.slot}` : '';
-          $('#date-picker-print').html(`<b>Giorno selezionato per la prenotazione: </b> ${self.date} ${slotText}`);
+          let slotText = self.slot ? ` ${i18n[self.$language].calendar_formio.at_hours} ${self.slot}` : '';
+          $('#date-picker-print').html(`<b>${i18n[self.$language].calendar_formio.day_selected}: </b> ${self.date} ${slotText}`);
           if (self.meeting_expiration_time) {
-            let expiration = `${self.meeting_expiration_time.format("YYYY-MM-DD")} alle ore ${self.meeting_expiration_time.format("HH:mm")}`;
-            $('#draft-expiration').html(`<i>Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno ${expiration}. Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati</i>`)
+            let expiration = `${self.meeting_expiration_time.format("YYYY-MM-DD")} ${i18n[self.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
+            $('#draft-expiration').html(`<i>${i18n[self.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[self.$language].calendar_formio.draft_expiration_text_end}</i>`)
           }
         }
       });

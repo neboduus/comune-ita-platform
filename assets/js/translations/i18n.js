@@ -33,9 +33,26 @@ export const i18n = {
     "creation_pending": "Creazione del pagamento in corso",
     "creation_failed_text": "La creazione del pagamento non è andata a buon fine riprova più tardi oppure contatta l'ufficio amministrativo.",
     "not_found": "La pratica non è ancora pervenuta, riprova più tardi!",
-    "operator":{
+    "operator": {
       "change_status_message": "Cambio Forzato stato pratica in: PAGATO"
-    }
+    },
+    "loading": "Caricamento...",
+    "warning": "Attenzione",
+    "calendar_formio":
+      {
+        "at_hours": "alle ore",
+        "draft_expiration_text": "Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno",
+        "draft_expiration_text_end": "Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati",
+        "availability_error": "Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare",
+        "no_availability_error": "Non è possibile prenotare in questa giornata, tutte le fasce orarie a disposizione sono già prenotate",
+        "day_selected": "Giorno selezionato per la prenotazione",
+        "availability_hours": "Orari disponibili il",
+        "range_picker_description": "Se preferisci puoi utilizzare il controllo che segue per accorciare la durata della prenotazione",
+        "from": "Dalle",
+        "to": "Alle",
+        "from_range_error_value": "Il valore",
+        "from_range_error_not_valid": "non è valido"
+      }
   },
   "en": {
     "get_payment": "Payment creation in progress",
@@ -71,9 +88,26 @@ export const i18n = {
     "creation_pending": "Payment creation in progress",
     "creation_failed_text": "The creation of the payment was not successful, please try again later or contact the administrative office.",
     "not_found": "The pratice has not yet been received, try again later!",
-    "operator":{
+    "operator": {
       "change_status_message": "Cambio Forzato stato pratica in: PAGATO"
-    }
+    },
+    "loading": "Loading...",
+    "warning": "Warning",
+    "calendar_formio":
+      {
+        "at_hours": "at",
+        "draft_expiration_text": "A draft reservation has been reserved for you at the time indicated above valid until the day",
+        "draft_expiration_text_end": "Proceed to submit your application before the deadline to confirm your reservation and not lose priority for the selected day and time",
+        "availability_error": "There was an error retrieving availability, please try again",
+        "no_availability_error": "It is not possible to book on this day, all the available time slots are already booked",
+        "day_selected": "Day selected for booking",
+        "availability_hours": "Timetables available on",
+        "range_picker_description": "If you prefer you can use the control below to shorten the duration of the reservation",
+        "from": "From",
+        "to": "To",
+        "from_range_error_value": "The value",
+        "from_range_error_not_valid": "it is not valid"
+      }
   },
   "de": {
     "get_payment": "Zahlungserstellung läuft",
@@ -109,8 +143,25 @@ export const i18n = {
     "creation_pending": "Zahlungserstellung läuft",
     "creation_failed_text": "Die Erstellung der Zahlung war nicht erfolgreich, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle.",
     "not_found": "Die Datei wurde noch nicht empfangen, versuchen Sie es später erneut!",
-    "operator":{
+    "operator": {
       "change_status_message": "Cambio Forzato stato pratica in: PAGATO"
-    }
+    },
+    "loading": "Wird geladen...",
+    "warning": "Aufmerksamkeit",
+    "calendar_formio":
+      {
+        "at_hours": "alle ore",
+        "draft_expiration_text": "Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno",
+        "draft_expiration_text_end": "Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati",
+        "availability_error": "Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare",
+        "no_availability_error": "Non è possibile prenotare in questa giornata, tutte le fasce orarie a disposizione sono già prenotate",
+        "day_selected": "Giorno selezionato per la prenotazione",
+        "availability_hours": "Orari disponibili il",
+        "range_picker_description": "Se preferisci puoi utilizzare il controllo che segue per accorciare la durata della prenotazione",
+        "from": "Dalle",
+        "to": "Alle",
+        "from_range_error_value": "Il valore",
+        "from_range_error_not_valid": "non è valido"
+      }
   }
 }
