@@ -1,7 +1,6 @@
 {% if pratica.canBeAssigned %}
   <div class="row mb-5">
     <div class="col d-flex justify-content-around">
-      {{ include('@App/Operatori/parts/_change_status_paid.html.twig') }}
       {% if  pratica.status == constant('STATUS_REQUEST_INTEGRATION', pratica) %}
         <p>{{ 'operatori.protocollazione_richiesta_integrazione' | trans }}</p>
       {% elseif  pratica.status == constant('STATUS_SUBMITTED_AFTER_INTEGRATION', pratica) %}
@@ -31,8 +30,6 @@
           </button>
         {% endif %}
 
-
-
       {% elseif pratica.status == constant('STATUS_PENDING', pratica) %}
         {{ include('@App/Operatori/parts/change_status_modal.html.twig') }}
 
@@ -58,6 +55,9 @@
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
           </svg>{{ 'operatori.approva' | trans }}
         </button>
+
+      {% elseif pratica.status == constant('STATUS_PAYMENT_PENDING', pratica) or pratica.status == constant('STATUS_PAYMENT_OUTCOME_PENDING', pratica) %}
+        {{ include('@App/Operatori/parts/_change_status_paid.html.twig') }}
       {% endif %}
     </div>
   </div>
