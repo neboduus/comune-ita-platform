@@ -62,15 +62,23 @@
       box-shadow: 0 0 0 2px $orange;
     }
 
-    &.not-available:not(.ui-state-disabled){
-      background: linear-gradient(to top left, #fff calc(50% - 2px), #d9364f, #fff calc(50% + 2px));
-      & a.ui-state-active {
-        background-color: #2222;
-        color: #555!important;
-        border: none;
+    &.not-available {
+      &:not(.ui-state-disabled) {
+        background: linear-gradient(to top left, #fff calc(50% - 2px), #d9364f, #fff calc(50% + 2px));
+
+        & a.ui-state-active {
+          background-color: #2222;
+          color: #555 !important;
+          border: none;
+        }
+
+        &.ui-datepicker-today > a {
+          border: none;
+        }
       }
-      &.ui-datepicker-today > a{
-        border: none;
+
+      &.disabled {
+        background: linear-gradient(to top left, #fff calc(50% - 2px), #d9364f, #fff calc(50% + 2px));
       }
     }
   }

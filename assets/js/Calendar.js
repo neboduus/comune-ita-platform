@@ -129,16 +129,16 @@ export default class FormioCalendar extends Base {
                   let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${i18n[self.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
                   $('#draft-expiration').html(`<i>${i18n[self.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[self.$language].calendar_formio.draft_expiration_text_end}</i>`)
                 }
-
               },
               beforeShowDay: function (date) {
                 var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
                 if (data.some(e => e.available === false && e.date === string)) {
-                  return [data.some(e => e.date === string), 'not-available']
+                  return [false, 'disabled not-available', i18n[self.$language].calendar_formio.unavailable]
+                }else{
+                  return [(data.some(e => e.date === string))]
                 }
-                return [(data.some(e => e.date === string))]
-              },
-            });
+              }
+            })
 
             if (self.date) {
               let parsedDate = moment(self.date, 'DD-MM-YYYY');

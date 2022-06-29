@@ -51,7 +51,8 @@ export const i18n = {
         "from": "Dalle",
         "to": "Alle",
         "from_range_error_value": "Il valore",
-        "from_range_error_not_valid": "non è valido"
+        "from_range_error_not_valid": "non è valido",
+        "unavailable": "Non disponibile"
       }
   },
   "en": {
@@ -106,7 +107,8 @@ export const i18n = {
         "from": "From",
         "to": "To",
         "from_range_error_value": "The value",
-        "from_range_error_not_valid": "it is not valid"
+        "from_range_error_not_valid": "it is not valid",
+        "unavailable": "Unavailable"
       }
   },
   "de": {
@@ -161,7 +163,8 @@ export const i18n = {
         "from": "Dalle",
         "to": "Alle",
         "from_range_error_value": "Il valore",
-        "from_range_error_not_valid": "non è valido"
+        "from_range_error_not_valid": "non è valido",
+        "unavailable": "Non disponibile"
       }
   }
 }
