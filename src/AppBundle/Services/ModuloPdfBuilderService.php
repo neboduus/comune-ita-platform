@@ -32,6 +32,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
+use Smalot\PdfParser\Parser;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -55,6 +56,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   const SCHEDULED_CREATE_FOR_PRATICA = 'createForPratica';
   const PRINTABLE_USERNAME = 'ez';
+
+  const PRINT_TAG_CHECK = 'print_tag_check';
 
   /**
    * @var FileSystemService
@@ -631,6 +634,19 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $request->addRemoteURLHTTPHeader('Authorization', 'Basic '.base64_encode(implode(':', ['ez', $this->printablePassword])));
     $response =  $client->post($request);
     $fileStream = $response->getBody();
+
+    $parser = new Parser();
+    $pdf = $parser->parseContent($fileStream->getContents());
+
+    // Verifico che sia visibile il tag di fine stampa
+    $pos = strpos(str_replace([' '], [''], $pdf->getText()), self::PRINT_TAG_CHECK);
+    if ($pos === false) {
+      $this->logger->error('Error generating pdf for application: ' . $pratica->getId() . ' - print tag check not found');
+    }
+
+    dump(str_replace([' '], [''], $pdf->getText()));
+
+    exit;
     return $fileStream->getContents();
 
   }

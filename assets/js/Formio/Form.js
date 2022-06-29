@@ -123,11 +123,25 @@ class Form {
         i18n: data,
         buttonSettings: {showCancel: false},
         hooks: {
-          beforeCancel: () => Form.handleBeforeSubmit(event)
+          beforeCancel: () => Form.handleBeforeSubmit(event),
+          addComponent: (component) => {
+            console.log(component)
+            return component;
+          },
+          addComponents: (components, instance) => {
+            console.log(components)
+            console.log(instance)
+          }
+
         }
       }).then(function (form) {
 
         form.formReady.then(() => {
+
+          console.log(form);
+          console.log(form.loading);
+
+
           setTimeout(disableApplicant, 1000);
           setTimeout(Form.disableBreadcrumbButton, 500);
           const draftButton = $('#save-draft');
@@ -266,6 +280,15 @@ class Form {
               data: JSON.parse($('#formio_render_dematerialized_forms').val()).data
             };
           }
+
+          form.formReady.then(() => {
+
+            console.log('aaaaa');
+            console.log(form.loading);
+            $('#print-tag-check').removeClass('d-none');
+
+          });
+
         });
     });
   }

@@ -64,7 +64,7 @@ class GeneratePdfCommand extends ContainerAwareCommand
         $count ++;
 
       } catch (\Exception $e) {
-
+        $io->error($e->getMessage());
       }
     }
     $entityManager->flush();

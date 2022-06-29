@@ -188,6 +188,8 @@ class PatAuthenticator extends AbstractAuthenticator
       return UserAuthenticationData::fromArray($data);
     }
 
+
+
     throw new \Exception('PatAuthenticator:getUserAuthenticationData - insufficient authentication data');
   }
 }
