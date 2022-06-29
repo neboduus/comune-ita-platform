@@ -18,6 +18,7 @@ close: 'Chiudi'
 lista: 'Lista'
 tutti: 'Tutti'
 proceed: 'Procedi'
+days: 'days'
 terms_do_il_consenso: "I confirm that I read the privacy policy"
 accedi_al_servizio: 'Access to service %name%'
 registrati_per_accedere_al_servizio: 'Service is reserved to logged in users'
@@ -155,7 +156,8 @@ servizio:
   flusso: "Workflow"
   max_response_time: "Maximum service delivery time (in days)"
   stages_and_deadlines: "Stages and deadlines"
-  max_response_time_text: "Once you have submitted the application, you will receive an answer within %time% days"
+  max_response_time_text: "Once the application has been submitted, a response will be provided within %time% days"
+  max-response-time-list: "Maximum response time"
   active_from_date_to_date: "The service will be active from %from% to %to%"
   bozza_successo: 'draft_success'
   nessun_template: 'no_template'
