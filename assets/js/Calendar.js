@@ -206,11 +206,11 @@ export default class FormioCalendar extends Base {
     this.opening_hour = explodedCalendar.length === 3 ? explodedCalendar[2] : "";
 
     if (this.date && this.slot) {
-      $('#date-picker-print').html(`<b>${i18n[self.$language].calendar_formio.day_selected}: </b> ${this.date} ${i18n[self.$language].calendar_formio.at_hours} ${this.slot}`)
+      $('#date-picker-print').html(`<b>${i18n[this.$language].calendar_formio.day_selected}: </b> ${this.date} ${i18n[this.$language].calendar_formio.at_hours} ${this.slot}`)
     }
     if (self.meeting_expiration_time) {
-      let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${i18n[self.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
-      $('#draft-expiration').html(`<i>${i18n[self.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[self.$language].calendar_formio.draft_expiration_text_end}</i>`)
+      let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${i18n[this.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
+      $('#draft-expiration').html(`<i>${i18n[this.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[this.$language].calendar_formio.draft_expiration_text_end}</i>`)
     }
   }
 
