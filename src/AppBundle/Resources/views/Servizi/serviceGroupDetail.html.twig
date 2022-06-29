@@ -207,6 +207,18 @@
             <span class="text-serif">{{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
+        {% if servizio.getSharedServices|length > 0 and higherMaxResponseTime %}
+          <div id="max-response-time-section">
+            <h4 class="it-page-section">{{ 'servizio.max-response-time-list' | trans }}</h4>
+            <ul>
+              {% for sharedService in servizio.getSharedServices %}
+                {% if sharedService.maxResponseTime %}
+                  <li class="text-serif">{{ sharedService.name }}: {{ sharedService.maxResponseTime }} {{ 'days' | trans }}</li>
+                {% endif %}  
+              {% endfor %}
+            <ul>
+          </div>
+        {% endif %}
         <div class="row d-flex flex-wrap">
           {% for sharedService in servizio.getSharedServices %}
             {% set serviceUrl = path('pratiche_anonime_new', {'servizio': sharedService.slug}) %}
@@ -238,7 +250,7 @@
     </section>
   {% endif %}
 
-  {% if servizio.getNotStickyServices.count > 0 %}
+  {% if servizio.getNotStickyServices.count > 0 and higherMaxResponseTime %}
     <section class="container py-5">
       <div class="row">
         {% for item in servizio.getNotStickyServices %}

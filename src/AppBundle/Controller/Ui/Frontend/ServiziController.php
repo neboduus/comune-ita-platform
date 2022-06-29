@@ -200,19 +200,22 @@ class ServiziController extends Controller
   public function serviceGroupDetailAction($slug, Request $request)
   {
     $user = $this->getUser();
-    $serviziRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
+    $serviceGroupRepository = $this->getDoctrine()->getRepository('AppBundle:ServiceGroup');
 
     /** @var Servizio $servizio */
-    $servizio = $serviziRepository->findOneBySlug($slug);
-    if (!$servizio instanceof ServiceGroup) {
+    $serviceGroup = $serviceGroupRepository->findOneBySlug($slug);
+    if (!$serviceGroup instanceof ServiceGroup) {
       throw new NotFoundHttpException("ServiceGroup $slug not found");
     }
 
-    $this->breadcrumbsService->generateServiceGroupBreadcrumbs($servizio);
+    $this->breadcrumbsService->generateServiceGroupBreadcrumbs($serviceGroup);
+    
+    $higherMaxResponseTime = $serviceGroupRepository->findHigherMaxResponseTime($serviceGroup->getId());
 
     $response = $this->render('@App/Servizi/serviceGroupDetail.html.twig', [
       'user' => $user,
-      'servizio' => $servizio
+      'servizio' => $serviceGroup,
+      'higherMaxResponseTime' => $higherMaxResponseTime
     ]);
 
     return $response;

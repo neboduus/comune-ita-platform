@@ -215,4 +215,5 @@ class ServizioRepository extends EntityRepository
 
     return $qb->getQuery()->getResult();
   }
+
 }
