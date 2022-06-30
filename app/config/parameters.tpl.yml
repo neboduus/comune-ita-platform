@@ -136,6 +136,7 @@ parameters:
     applications: '%env(KAFKA_TOPIC_APPLICATIONS)%'
     services: '%env(KAFKA_TOPIC_SERVICES)%'
     meetings: '%env(KAFKA_TOPIC_MEETINGS)%'
+    calendars: '%env(KAFKA_TOPIC_CALENDARS)%'
   api_version: 1
   cas_login_url: 'https://mycasserver/cas/'
   cas_validation_url: 'https://mycasserver/cas/serviceValidate'
@@ -258,6 +259,7 @@ parameters:
   env(KAFKA_TOPIC_APPLICATIONS): 'applications'
   env(KAFKA_TOPIC_SERVICES): 'services'
   env(KAFKA_TOPIC_MEETINGS): 'meetings'
+  env(KAFKA_TOPIC_CALENDARS): 'calendars'
   env(API_VERSION): 1
   env(MYPAY_ADAPTER_URL): 'https://mypay-dev.ship.opencontent.io'
 

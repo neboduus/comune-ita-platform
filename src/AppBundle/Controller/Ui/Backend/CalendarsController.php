@@ -32,6 +32,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Translation\TranslatorInterface;
+use AppBundle\Services\Manager\CalendarManager;
 
 /**
  * Class CalendarsController
@@ -59,13 +60,20 @@ class CalendarsController extends Controller
    */
   private $JWTTokenManager;
 
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
+  /**
+   * @var CalendarManager
+   */
+  private $calendarManager;
+
+
+  public function __construct(CalendarManager $calendarManager, TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, JWTTokenManagerInterface $JWTTokenManager)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
     $this->meetingService = $meetingService;
     $this->JWTTokenManager = $JWTTokenManager;
+    $this->calendarManager = $calendarManager;
   }
 
   /**
@@ -164,14 +172,13 @@ class CalendarsController extends Controller
       $em = $this->getDoctrine()->getManager();
 
       try {
-        $em->persist($calendar);
 
         foreach ($calendar->getOpeningHours() as $openingHour) {
           $openingHour->setCalendar($calendar);
           $em->persist($openingHour);
         }
-        $em->flush();
-
+        $this->calendarManager->save($calendar);
+ 
         $this->addFlash('feedback', 'Calendario creato correttamente');
         return $this->redirectToRoute('operatori_calendars_index');
       } catch (\Exception $exception) {
@@ -279,8 +286,7 @@ class CalendarsController extends Controller
         foreach ($toDelete as $deleteId => $openingHour) {
           $em->remove($openingHour);
         }
-        $em->persist($calendar);
-        $em->flush();
+        $this->calendarManager->save($calendar);
 
         $this->addFlash('feedback', 'Calendario modificato correttamente');
         return $this->redirectToRoute('operatori_calendars_index');

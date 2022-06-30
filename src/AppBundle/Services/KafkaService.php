@@ -6,6 +6,7 @@ namespace AppBundle\Services;
 
 use AppBundle\Dto\ApplicationDto;
 use AppBundle\Entity\Meeting;
+use AppBundle\Entity\Calendar;
 use AppBundle\Dto\Service;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\ScheduledAction;
@@ -171,6 +172,10 @@ class KafkaService implements ScheduledActionHandlerInterface
       $context->setGroups('kafka');
       $content = $item;
       $topic = $this->topics['meetings'];
+    } elseif ($item instanceof Calendar) {
+      $context->setGroups('kafka');
+      $content = $item;
+      $topic = $this->topics['calendars'];
     } else {
       $topic = 'default';
       $content = $item;

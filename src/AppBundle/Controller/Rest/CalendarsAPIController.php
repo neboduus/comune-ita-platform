@@ -23,11 +23,13 @@ use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Swagger\Annotations as SWG;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use AppBundle\Services\Manager\CalendarManager;
 
 /**
  * Class CalendarsAPIController
  * @property EntityManagerInterface em
  * @property InstanceService is
+ * @property CalendarManager calendarManager
  * @package AppBundle\Controller
  * @Route("/calendars")
  */
@@ -45,12 +47,13 @@ class CalendarsAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   private $logger;
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, LoggerInterface $logger)
+  public function __construct(CalendarManager $calendarManager, EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->is = $is;
     $this->meetingService = $meetingService;
     $this->logger = $logger;
+    $this->calendarManager = $calendarManager;
   }
 
 
@@ -422,8 +425,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $this->em->persist($calendar);
-      $this->em->flush();
+      $this->calendarManager->save($calendar);
     } catch (\Exception $e) {
 
       $data = [
@@ -521,8 +523,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $this->em->persist($calendar);
-      $this->em->flush();
+      $this->calendarManager->save($calendar);
     } catch (\Exception $e) {
 
       $data = [
@@ -620,8 +621,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $this->em->persist($calendar);
-      $this->em->flush();
+      $this->calendarManager->save($calendar);
     } catch (\Exception $e) {
 
       $data = [
