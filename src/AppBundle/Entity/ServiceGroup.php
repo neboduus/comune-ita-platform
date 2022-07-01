@@ -76,6 +76,42 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="How to fill in the application")
+   * @Groups({"read", "write"})
+   */
+  private $howToDo;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="What you need to fill in the application")
+   * @Groups({"read", "write"})
+   */
+  private $whatYouNeed;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="The outcome of the application")
+   * @Groups({"read", "write"})
+   */
+  private $whatYouGet;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Costs of this application")
+   * @Groups({"read", "write"})
+   */
+  private $costs;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
    * @SWG\Property(description="Textual description of whom the service is addressed, accepts html tags")
    * @Groups({"read", "write"})
    */
@@ -676,4 +712,100 @@ class ServiceGroup implements Translatable
     $this->locale = $locale;
   }
 
+
+  /**
+   * Get the value of howToDo
+   *
+   * @return  string
+   */ 
+  public function getHowToDo()
+  {
+    return $this->howToDo;
+  }
+
+  /**
+   * Set the value of howToDo
+   *
+   * @param  string  $howToDo
+   *
+   * @return  self
+   */ 
+  public function setHowToDo(string $howToDo)
+  {
+    $this->howToDo = $howToDo;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of whatYouNeed
+   *
+   * @return  string
+   */ 
+  public function getWhatYouNeed()
+  {
+    return $this->whatYouNeed;
+  }
+
+  /**
+   * Set the value of whatYouNeed
+   *
+   * @param  string  $whatYouNeed
+   *
+   * @return  self
+   */ 
+  public function setWhatYouNeed(string $whatYouNeed)
+  {
+    $this->whatYouNeed = $whatYouNeed;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of whatYouGet
+   *
+   * @return  string
+   */ 
+  public function getWhatYouGet()
+  {
+    return $this->whatYouGet;
+  }
+
+  /**
+   * Set the value of whatYouGet
+   *
+   * @param  string  $whatYouGet
+   *
+   * @return  self
+   */ 
+  public function setWhatYouGet(string $whatYouGet)
+  {
+    $this->whatYouGet = $whatYouGet;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of costs
+   *
+   * @return  string
+   */ 
+  public function getCosts()
+  {
+    return $this->costs;
+  }
+
+  /**
+   * Set the value of costs
+   *
+   * @param  string  $costs
+   *
+   * @return  self
+   */ 
+  public function setCosts(string $costs)
+  {
+    $this->costs = $costs;
+
+    return $this;
+  }
 }

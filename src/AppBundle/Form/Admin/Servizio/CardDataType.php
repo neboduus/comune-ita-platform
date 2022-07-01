@@ -42,6 +42,22 @@ class CardDataType extends AbstractI18nType
         "label" => 'servizio.accedere',
         'purify_html' => true,
       ])
+      ->add("howToDo", I18nTextareaType::class, [
+        "label" => 'servizio.how_to_do',
+        'purify_html' => true,
+      ])
+      ->add("whatYouNeed", I18nTextareaType::class, [
+        "label" => 'servizio.what_you_need',
+        'purify_html' => true,
+      ])
+      ->add("whatYouGet", I18nTextareaType::class, [
+        "label" => 'servizio.what_you_get',
+        'purify_html' => true,
+      ])
+      ->add("costs", I18nTextareaType::class, [
+        "label" => 'servizio.costs',
+        'purify_html' => true,
+      ])
       ->add("specialCases", I18nTextareaType::class, [
         "label" => 'servizio.casi_particolari',
         'purify_html' => true,

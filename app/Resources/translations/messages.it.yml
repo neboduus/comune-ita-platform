@@ -120,6 +120,10 @@ general:
     updated: 'Oggetto aggiornato correttamente'
   search: 'Cerca'
 servizio:
+  how_to_do: "Come fare"
+  what_you_need: "Cosa serve"
+  what_you_get: "Cosa si ottiene"
+  costs: "Costi"
   sottotitolo: 'Domande e iscrizioni, contributi e graduatorie, segnalazioni, autorizzazioni e concessioni, certificati e dichiarazioni, pagamenti, servizi pubblici.'
   sottotitolo_categorie: "Gli argomenti rispondono a un'esigenza di organizzazione dei contenuti del sito istituzionale per temi e rappresentano le principali categorie di contenuti, informazioni e documenti specifici."
   bozza_successo: 'Bozza salvata con successo'
@@ -154,7 +158,7 @@ servizio:
   max_response_time: "Tempo massimo di erogazione del servizio (in giorni)"
   stages_and_deadlines: "Fasi e scadenze"
   max_response_time_text: "Una volta presentata una pratica, verrà fornita una risposta entro %time% giorni"
-  max-response-time-list: "Tempo massimo di risposta"
+  max_response_time_list: "Tempo massimo di risposta"
   active_from_date_to_date: "Il servizio sarà attivo dal %from% al %to%"
   crea: 'Crea nuovo servizio'
   modifica: 'Modifica %name%'
@@ -218,6 +222,7 @@ gruppo_di_servizi:
   nome: 'Nome'
   descrizione: 'Descrizione'
   cos_e: "Cos'è"
+  max_response_time_list: "Tempo massimo di risposta"
   a_chi_si_rivolge: "A chi si rivolge"
   copertura: "Copertura geografica"
   copertura_helper: "Copertura geografica - (se più di uno inserire i valori separati da virgola)"
