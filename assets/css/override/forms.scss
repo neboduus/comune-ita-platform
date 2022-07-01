@@ -240,7 +240,7 @@ textarea {
 }
 
 
-#formio, #formio_summary, #backoffice-form {
+#formio, #formio_summary, #backoffice-form, #builder {
 
   .formio-component {
     margin-bottom: 1.3rem;
@@ -303,6 +303,16 @@ textarea {
 
     .form-check-inline {
       padding-left: 1rem;
+    }
+
+    + .form-text.text-muted{
+      padding-left: 2.5rem;
+    }
+  }
+
+  .formio-component-selectboxes{
+    > .form-text.text-muted{
+      padding-left: 1.5rem;
     }
   }
 
