@@ -339,4 +339,12 @@ white_october_breadcrumbs:
 exercise_html_purifier:
   default_cache_serializer_path: '%kernel.cache_dir%/htmlpurifier'
 
-
+bazinga_js_translation:
+  locale_fallback: "%locale%"
+  default_domain: messages
+  active_locales:
+    - it
+    - en
+    - de
+  active_domains:
+    - messages

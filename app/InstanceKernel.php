@@ -57,6 +57,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
       new Oneup\FlysystemBundle\OneupFlysystemBundle(),
       new WhiteOctober\BreadcrumbsBundle\WhiteOctoberBreadcrumbsBundle(),
       new Exercise\HTMLPurifierBundle\ExerciseHTMLPurifierBundle(),
+      new Bazinga\Bundle\JsTranslationBundle\BazingaJsTranslationBundle(),
       new AppBundle\AppBundle(),
     ];
 
