@@ -43,12 +43,12 @@
       </div>
       <div class="col-4">
         <div class="callout{% if pratica.numeroProtocollo %} p-3 mt-1 mb-4{% endif %}">
-          <div class="callout-title">Numero richiesta</div>
+          <div class="callout-title">{{ 'pratica.numero'|trans }}</div>
           <p class="text-sans-serif">{{ pratica.id }}</p>
         </div>
         {% if pratica.numeroProtocollo and show_protocol_number %}
           <div class="callout danger p-3 mt-1 mb-4">
-            <div class="callout-title">Numero protocollo</div>
+            <div class="callout-title">{{ 'pratica.protocol_number'|trans }}</div>
             <p class="text-danger text-break text-sans-serif">{{ pratica.numeroProtocollo }}</p>
           </div>
         {% endif %}
@@ -76,10 +76,10 @@
       <div class="card-body">
         <div class="row">
           <div class="col-6">
-            <p><strong>Nome del file</strong></p>
+            <p><strong>{{'pratica.file_name'|trans}}</strong></p>
           </div>
           <div class="col-6">
-            <p><strong>Hash del file</strong></p>
+            <p><strong>{{'pratica.hash'|trans}}</strong></p>
           </div>
           {% for a in attachments %}
             <div class="col-6">
@@ -112,10 +112,10 @@
       <div class="card-body">
         <div class="row">
           <div class="col-6">
-            <p><strong>Nome del file</strong></p>
+            <p><strong>{{'pratica.file_name'|trans}}</strong></p>
           </div>
           <div class="col-6">
-            <p><strong>Hash del file (md5)</strong></p>
+            <p><strong>{{'pratica.hash'|trans}} (md5)</strong></p>
           </div>
           {% for a in attachmentsNoProtocol %}
           <div class="col-6">

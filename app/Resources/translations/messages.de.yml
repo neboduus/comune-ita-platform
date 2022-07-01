@@ -248,6 +248,9 @@ pratica:
   empty: 'Es scheinen keine Vorgänge zu Ihrer Person auf.'
   protocollo: 'Protokoll'
   numero: 'Anfrage Nr.'
+  protocol_number: 'Protokoll Nr.'
+  file_name: 'Dateiname'
+  hash: 'Datei-Hash'
   in_attesa_protocollo: 'Warten auf Protokollierung'
   protocollo_non_richiesto: '(nicht erforderlich)'
   # anfragende Person
