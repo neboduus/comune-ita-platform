@@ -75,6 +75,10 @@ class MailerService
     Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
   ];
 
+  private $blacklistedNotLegacyStates = [
+    Pratica::STATUS_DRAFT_FOR_INTEGRATION,
+  ];
+
   private $blacklistedSDuplicatetates = [
     Pratica::STATUS_PENDING
   ];
@@ -120,6 +124,11 @@ class MailerService
   {
     $sentAmount = 0;
     if (in_array($pratica->getStatus(), $this->blacklistedStates)) {
+      return $sentAmount;
+    }
+
+    // Nel caso di pratiche Formio voglio disabilitare anche l'invio in alcuni stati perchè gestite tramite messaggi
+    if (!$pratica->getServizio()->isLegacy() && in_array($pratica->getStatus(), $this->blacklistedNotLegacyStates)) {
       return $sentAmount;
     }
 

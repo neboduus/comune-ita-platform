@@ -90,30 +90,6 @@ class MessageManager
    */
   public function save(Message $message)
   {
-
-    // Email da parte dell'utente
-    /*if ($message->getApplication()->getOperatore()) {
-      $instance = $this->instanceService->getCurrentInstance();
-      $userReceiver = $message->getApplication()->getOperatore();
-      $subject = $this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()]);
-      $mess = $this->translator->trans('pratica.messaggi.messaggio', [
-        '%message%' => $message->getMessage(),
-        '%link%' => $this->router->generate('track_message', ['id'=>$message->getId()], UrlGeneratorInterface::ABSOLUTE_URL) . '?id='. $message->getId()]);
-      $this->mailerService->dispatchMail(
-        $this->defaultSender,
-        $message->getAuthor()->getFullName(),
-        $userReceiver->getEmail(),
-        $userReceiver->getFullName(),
-        $mess,
-        $subject,
-        $instance,
-        $message->getCallToAction()
-      );
-
-      $message->setSentAt(time());
-      $message->setEmail($userReceiver->getEmail());
-    }*/
-
     $this->entityManager->persist($message);
     $this->entityManager->flush();
 

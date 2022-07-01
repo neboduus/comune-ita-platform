@@ -102,6 +102,10 @@ class PraticaManager
    * @var SchemaFactoryInterface
    */
   private $schemaFactory;
+  /**
+   * @var MessageManager
+   */
+  private $messageManager;
 
   /**
    * PraticaManagerService constructor.
@@ -112,6 +116,7 @@ class PraticaManager
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    * @param SchemaFactoryInterface $schemaFactory
+   * @param MessageManager $messageManager
    */
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -120,7 +125,8 @@ class PraticaManager
     PraticaStatusService $praticaStatusService,
     TranslatorInterface $translator,
     LoggerInterface $logger,
-    SchemaFactoryInterface $schemaFactory
+    SchemaFactoryInterface $schemaFactory,
+    MessageManager $messageManager
   )
   {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
@@ -130,6 +136,7 @@ class PraticaManager
     $this->is = $instanceService;
     $this->translator = $translator;
     $this->schemaFactory = $schemaFactory;
+    $this->messageManager = $messageManager;
   }
 
   /**
@@ -370,6 +377,7 @@ class PraticaManager
       $pratica,
       $richiestaIntegrazione
     );
+    $pratica->addRichiestaIntegrazione($integration);
 
 
     $message = new Message();
@@ -393,8 +401,7 @@ class PraticaManager
       $message->addAttachment($allegato);
     }
 
-    $pratica->addRichiestaIntegrazione($integration);
-    $this->entityManager->persist($message);
+    $this->messageManager->save($message);
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
 
