@@ -14,7 +14,7 @@
 
 {% block main_content %}
   <section class="container-fluid px-4 my-4">
-        <app-analytics></app-analytics>
+        <app-analytics data-config="{{ analytics_config }}"></app-analytics>
         {% if not feature('feature_analytics') %}
           <h3>{{ 'analytics.not_enabled' | trans }}</h3>
         {% endif %}

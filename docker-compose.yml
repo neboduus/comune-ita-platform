@@ -89,7 +89,7 @@ services:
       KAFKA_URL: ${KAFKA_URL:-}
       KAFKA_REQUEST_TIMEOUT: ${KAFKA_REQUEST_TIMEOUT:-2}
       KSQLDB_URL: ${KSQLDB_URL:-}
-
+      ANALYTICS_PLAN: ${ANALYTICS_PLAN:-free}
       # In assenza di una vera autenticazione basata su SPID si può simulare
       # un login di un utente con le seguenti variabili d'ambiente:
       LOGIN_ROUTE: ${LOGIN_ROUTE:-login_pat}

@@ -1169,6 +1169,9 @@ class OperatoriController extends Controller
    */
   public function analyticsAction()
   {
-    return $this->render('@App/Analytics/index.html.twig');
+    $config = $this->getParameter('analytics');
+    return $this->render('@App/Analytics/index.html.twig', [
+      'analytics_config' => \json_encode($config)
+    ]);
   }
 }

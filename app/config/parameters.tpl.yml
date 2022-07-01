@@ -157,6 +157,8 @@ parameters:
       url: mypay.gateway.opencontent.io
       handler: mypay
       enabled: true
+  analytics:
+    plan: '%env(ANALYTICS_PLAN)%'
   #Default fallback if env not set
   env(PREFIX): ''
   env(DB_DRIVER): 'pdo_pgsql'
@@ -262,4 +264,4 @@ parameters:
   env(KAFKA_TOPIC_CALENDARS): 'calendars'
   env(API_VERSION): 1
   env(MYPAY_ADAPTER_URL): 'https://mypay-dev.ship.opencontent.io'
-
+  env(ANALYTICS_PLAN): 'free'
