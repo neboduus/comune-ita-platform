@@ -217,6 +217,36 @@
                            tabindex="-1"><span>{{ 'servizio.accedere' | trans }}</span></a>
                       </li>
                     {% endif %}
+                    {% if servizio.howToDo|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#how-to-do" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.how_to_do' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.whatYouNeed|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#what-you-need" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.what_you_need' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.whatYouGet|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#what-you-get" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.what_you_get' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.costs|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#costs" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.costs' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.maxResponseTime or servizio.status == '4' %}
+                      <li class="nav-item">
+                        <a class="nav-link" href="#maxResponseTime" aria-selected="false" aria-disabled="true"
+                           tabindex="-1"><span>{{ 'servizio.stages_and_deadlines' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                   </ul>
                 </div>
               </div>
@@ -283,6 +313,34 @@
             <span
               class="text-serif">{{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
+        {% endif %}
+        {% if servizio.howToDo|striptags|trim != '' %}
+          <div id="how-to-do">
+            <h4 class="it-page-section">{{ 'servizio.how_to_do' | trans }}</h4>
+            <span
+              class="text-serif">{{ servizio.howToDo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
+          </div>
+        {% endif %}
+        {% if servizio.whatYouNeed|striptags|trim != '' %}
+          <div id="what-you-need">
+            <h4 class="it-page-section">{{ 'servizio.what_you_need' | trans }}</h4>
+            <span
+              class="text-serif">{{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
+          </div>
+        {% endif %}
+        {% if servizio.whatYouGet|striptags|trim != '' %}
+          <div id="what-you-get">
+            <h4 class="it-page-section">{{ 'servizio.what_you_get' | trans }}</h4>
+            <span
+              class="text-serif">{{ servizio.whatYouGet|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
+          </div>
+        {% endif %}
+        {% if servizio.costs|striptags|trim != '' %}
+          <div id="costs">
+            <h4 class="it-page-section">{{ 'servizio.costs' | trans }}</h4>
+            <span
+              class="text-serif">{{ servizio.costs|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
+          </div>
         {% endif %}
         {% if servizio.maxResponseTime or servizio.status == '4' %}
           <div id="maxResponseTime">

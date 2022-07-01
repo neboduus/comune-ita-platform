@@ -144,6 +144,36 @@
                            href="#howto"><span>{{ 'gruppo_di_servizi.accedere' | trans }}</span></a>
                       </li>
                     {% endif %}
+                    {% if servizio.howToDo|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#how-to-do"><span>{{ 'servizio.how_to_do' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.whatYouNeed|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#what-you-need"><span>{{ 'servizio.what_you_need' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.whatYouGet|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#what-you-get"><span>{{ 'servizio.what_you_get' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.costs|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#costs"><span>{{ 'servizio.costs' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.getSharedServices|length > 0 and higherMaxResponseTime %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#max-response-time-section"><span>{{ 'gruppo_di_servizi.max_response_time_list' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                   </ul>
                 </div>
               </div>
@@ -207,9 +237,33 @@
             <span class="text-serif">{{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
+        {% if servizio.howToDo|striptags|trim != '' %}
+          <article id="how-to-do">
+            <h4 class="it-page-section">{{ 'servizio.how_to_do' | trans }}</h4>
+            <span class="text-serif">{{ servizio.howToDo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
+          </article>
+        {% endif %}
+        {% if servizio.whatYouNeed|striptags|trim != '' %}
+          <article id="what-you-need">
+            <h4 class="it-page-section">{{ 'servizio.what_you_need' | trans }}</h4>
+            <span class="text-serif">{{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
+          </article>
+        {% endif %}
+        {% if servizio.whatYouGet|striptags|trim != '' %}
+          <article id="what-you-get">
+            <h4 class="it-page-section">{{ 'servizio.what_you_get' | trans }}</h4>
+            <span class="text-serif">{{ servizio.whatYouGet|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
+          </article>
+        {% endif %}
+        {% if servizio.costs|striptags|trim != '' %}
+          <article id="costs">
+            <h4 class="it-page-section">{{ 'servizio.costs' | trans }}</h4>
+            <span class="text-serif">{{ servizio.costs|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
+          </article>
+        {% endif %}
         {% if servizio.getSharedServices|length > 0 and higherMaxResponseTime %}
           <div id="max-response-time-section">
-            <h4 class="it-page-section">{{ 'servizio.max-response-time-list' | trans }}</h4>
+            <h4 class="it-page-section">{{ 'servizio.max_response_time_list' | trans }}</h4>
             <ul>
               {% for sharedService in servizio.getSharedServices %}
                 {% if sharedService.maxResponseTime %}

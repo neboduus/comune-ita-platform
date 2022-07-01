@@ -120,6 +120,43 @@ class Servizio implements Translatable
    */
   private $howto;
 
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="How to fill in the application")
+   */
+  private $howToDo;
+
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="What you need to fill in the application")
+   */
+  private $whatYouNeed;
+
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="The outcome of the application")
+   */
+  private $whatYouGet;
+
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @SWG\Property(description="Costs of this application")
+   */
+  private $costs;
+
+
   /**
    * @var string
    * @Gedmo\Translatable
@@ -394,6 +431,9 @@ class Servizio implements Translatable
    * @var ArrayCollection
    */
   private $geographicAreas;
+
+
+
 
   /**
    * @var integer
@@ -1507,4 +1547,112 @@ class Servizio implements Translatable
     return $this;
   }
   
+
+  /**
+   * Get the value of howToDo
+   *
+   * @return  string
+   */ 
+  public function getHowToDo()
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getHowtoDo();
+    }
+    return $this->howToDo;
+  }
+
+  /**
+   * Set the value of howToDo
+   *
+   * @param  string  $howToDo
+   *
+   * @return  self
+   */ 
+  public function setHowToDo(string $howToDo)
+  {
+    $this->howToDo = $howToDo;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of whatYouNeed
+   *
+   * @return  string
+   */ 
+  public function getWhatYouNeed()
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getWhatYouNeed();
+    }
+    return $this->whatYouNeed;
+  }
+
+  /**
+   * Set the value of whatYouNeed
+   *
+   * @param  string  $whatYouNeed
+   *
+   * @return  self
+   */ 
+  public function setWhatYouNeed(string $whatYouNeed)
+  {
+    $this->whatYouNeed = $whatYouNeed;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of whatYouGet
+   *
+   * @return  string
+   */ 
+  public function getWhatYouGet()
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getWhatYouGet();
+    }
+    return $this->whatYouGet;
+  }
+
+  /**
+   * Set the value of whatYouGet
+   *
+   * @param  string  $whatYouGet
+   *
+   * @return  self
+   */ 
+  public function setWhatYouGet(string $whatYouGet)
+  {
+    $this->whatYouGet = $whatYouGet;
+
+    return $this;
+  }
+
+  /**
+   * Get the value of costs
+   *
+   * @return  string
+   */ 
+  public function getCosts()
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getCosts();
+    }
+    return $this->costs;
+  }
+
+  /**
+   * Set the value of costs
+   *
+   * @param  string  $costs
+   *
+   * @return  self
+   */ 
+  public function setCosts(string $costs)
+  {
+    $this->costs = $costs;
+
+    return $this;
+  }
 }

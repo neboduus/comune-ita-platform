@@ -136,6 +136,10 @@ class FormIOTemplateType extends AbstractType
     $service->setName($ServiceToClone->getName() . " (copia)");
     $service->setDescription($ServiceToClone->getDescription() ?? '');
     $service->setHowto($ServiceToClone->getHowto() ?? '');
+    $service->setHowToDo($ServiceToClone->getHowToDo() ?? '');
+    $service->setWhatYouNeed($ServiceToClone->getWhatYouNeed() ?? '');
+    $service->setWhatYouGet($ServiceToClone->getWhatYouGet() ?? '');
+    $service->setCosts($ServiceToClone->getCosts() ?? '');
     $service->setWho($ServiceToClone->getWho() ?? '');
     $service->setSpecialCases($ServiceToClone->getSpecialCases() ?? '');
     $service->setMoreInfo($ServiceToClone->getMoreInfo() ?? '');

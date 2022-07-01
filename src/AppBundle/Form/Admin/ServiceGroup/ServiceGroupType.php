@@ -72,6 +72,26 @@ class ServiceGroupType extends AbstractI18nType
         'required' => false,
         'purify_html' => true,
       ])
+      ->add('howToDo', I18nTextareaType::class, [
+        'label' => 'servizio.how_to_do',
+        'required' => false,
+        'purify_html' => true,
+      ])
+      ->add('whatYouNeed', I18nTextareaType::class, [
+        'label' => 'servizio.what_you_need',
+        'required' => false,
+        'purify_html' => true,
+      ])
+      ->add('whatYouGet', I18nTextareaType::class, [
+        'label' => 'servizio.what_you_get',
+        'required' => false,
+        'purify_html' => true,
+      ])
+      ->add('costs', I18nTextareaType::class, [
+        'label' => 'servizio.costs',
+        'required' => false,
+        'purify_html' => true,
+      ])
       ->add('specialCases', I18nTextareaType::class, [
         'label' => 'gruppo_di_servizi.casi_particolari',
         'required' => false,

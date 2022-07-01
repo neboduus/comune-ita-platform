@@ -91,6 +91,10 @@ nav:
 terms:
   title: 'Zustimmung zu den Nutzungsbedingungen'
 servizio:
+  how_to_do: ""
+  what_you_need: ""
+  what_you_get: ""
+  costs: ""
   crea: 'Neuen Díenst erstellen'
   modifica: 'Bearbeitung %name%'
   placeholder_disponibili: 'Verfügbare Platzhalter'
@@ -146,7 +150,7 @@ servizio:
   max_response_time: "Maximale Servicebereitstellungszeit (in Tagen)"
   stages_and_deadlines: ""
   max_response_time_text: ""
-  max-response-time-list: ""
+  max_response_time_list: ""
   active_from_date_to_date: ""
   bozza_successo: 'Entwurf erfolgreich gespeichert'
   nessun_template: 'BACKOFFICE'
@@ -188,6 +192,7 @@ gruppo_di_servizi:
   gruppo_di_servizi: 'Kategorie von Diensten'
   nome: 'Name'
   descrizione: 'Beschreibung'
+  max_response_time_list: ""
   url: 'Url'
   protocollazione_fascicoli: 'Protokollierung nach Akten'
   azioni: 'Aktivitäten'
