@@ -19,7 +19,7 @@ final class Version20220528095406 extends AbstractMigration
         $this->addSql('DROP INDEX idx_448253acad5dc05d');
         $this->addSql('ALTER TABLE pratica ALTER payment_type TYPE VARCHAR(255)');
         $this->addSql('ALTER TABLE pratica ALTER payment_type DROP DEFAULT');
-        $this->addSql('UPDATE pratica SET payment_type = (SELECT identifier FROM payment_gateway WHERE payment_gateway.id::text LIKE pratica.payment_type) WHERE payment_type IS NOT NULL ');
+        $this->addSql('UPDATE pratica SET payment_type = (SELECT identifier FROM payment_gateway WHERE payment_gateway.id::text LIKE pratica.payment_type) WHERE payment_type IS NOT NULL');
     }
 
     public function down(Schema $schema) : void
