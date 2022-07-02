@@ -211,9 +211,9 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
       $subscriptionPayment->setAmount((float)$subscriptionData['payment_amount']);
       $subscriptionPayment->setExternalKey($data->getId());
       $subscriptionPayment->setSubscription($subscription);
-      if ($data->getPaymentType()->getIdentifier() == "mypay" and $data->getPaymentData()["outcome"]) {
+      if ($data->getPaymentType() == "mypay" and $data->getPaymentData()["outcome"]) {
         $subscriptionPayment->setPaymentDate((new DateTime($data->getPaymentData()["outcome"]["data"]["datiPagamento"]["datiSingoloPagamento"]["dataEsitoSingoloPagamento"])));
-      } elseif ($data->getPaymentType()->getIdentifier() == "bollo") {
+      } elseif ($data->getPaymentType() == "bollo") {
         $subscriptionPayment->setPaymentDate((new DateTime(json_decode($data->getPaymentData(), true)["bollo_data_emissione"])));
       }
 
