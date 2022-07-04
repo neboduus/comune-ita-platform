@@ -1,12 +1,12 @@
 {% extends '@App/Default/index.html.twig' %}
-{% block title %}Allegati - Stanza del cittadino{% endblock %}
+{% block title %}{{ 'operatori.allegati'|trans }} - Stanza del cittadino{% endblock %}
 
 {% block main_content %}
 
     <section id="intro" class="container px-4 my-4">
         <div class="row">
             <div class="col-lg-12 px-lg-4 py-lg-2">
-                <h1>Allegati</h1>
+                <h1>{{ 'operatori.allegati'|trans }}</h1>
 
                 <div class="row">
                     {% for item in allegati %}
@@ -27,7 +27,11 @@
                                             <a class="category" href="#">{{ item.allegato.originalFilename }}</a>
                                         </div>
                                         <h5 class="card-title">
-                                            {{ item.allegato.description }}
+                                          {% if item.allegato.description == 'Allegato' %}
+                                            {{ 'pratica.dettaglio.allegato.allegato' | trans }}
+                                          {% else %}
+                                              {{ item.allegato.description }}
+                                          {% endif %}
                                         </h5>
                                         <p class="card-text">
                                             {% if item.allegato.pratiche | length > 0 %}

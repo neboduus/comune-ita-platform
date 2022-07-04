@@ -1,9 +1,11 @@
 {% extends '@App/Default/index.html.twig' %}
 {% block title %}{{ title|trans() }} - Stanza del cittadino{% endblock %}
+ {% set cta_delete_draft = 'pratica.elimina_pratica' | trans() %}
 
 {% block javascripts %}
   {{ parent() }}
   <script>
+    const cta_delete_draft = "{{ cta_delete_draft }}";
     document.getElementById('services').onchange = function() {
       window.location = this.value;
     };
@@ -37,9 +39,9 @@
         <div class="col-xs-12 col-md-6"></div>
         <div class="col-xs-12 col-md-6 mb-3 col-md-offset-5 px-lg-4 py-lg-2">
           <div class="bootstrap-select-wrapper">
-            <label>Filtra per servizio</label>
+            <label>{{ 'pratica.filtra_per_servizio' | trans }}</label>
             <select id="services">
-              <option value="{{ path('pratiche_list') }}">Tutti</option>
+              <option value="{{ path('pratiche_list') }}">{{ 'tutti' | trans }}</option>
               {% for k,v in services %}
                 <option value="{{ path('pratiche_list', {'service': k}) }}" {% if k == service_slug %}selected="selected"{% endif %}>{{ v }}</option>
               {% endfor %}
@@ -136,9 +138,9 @@
                               {% if pratica.status == 1000 %}
                                 <a href="{{ path('pratiche_delete', {'pratica': pratica}) }}"
                                    class="btn btn-danger btn-xs"
-                                   onclick="return confirm('Vuoi veramente eliminare la pratica?');"><i
+                                   onclick="return confirm(cta_delete_draft);"><i
                                     class="fa fa-trash" aria-hidden="true"></i>
-                                  Elimina</a>
+                                  {{ 'elimina' | trans }}</a>
                               {% endif %}
                             </td>
 

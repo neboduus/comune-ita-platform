@@ -1,6 +1,5 @@
 import moment from "moment";
 const PAGOPA = require('../../images/payments/pagppa.png');
-import {i18n} from "../translations/i18n"
 import Api from "../services/api.service";
 
 class InfoPayment {
@@ -31,7 +30,7 @@ class InfoPayment {
 
     // Active spinner animations
     InfoPayment.$spinner.addClass('progress-spinner-active');
-    InfoPayment.$statusPayment.html(i18n[InfoPayment.$language].get_payment);
+    InfoPayment.$statusPayment.html(Translator.trans('payment.get_payment', {}, 'messages', InfoPayment.$language));
     // Get tenant slug
     InfoPayment.$tenant = window.location.pathname.split('/')[1];
     // Get Auth token
@@ -39,7 +38,7 @@ class InfoPayment {
       InfoPayment.$token = data.token;
       InfoPayment.detailPayment();
     }).catch(() => {
-      InfoPayment.handleErrors(i18n[InfoPayment.$language].unauth);
+      InfoPayment.handleErrors(Translator.trans('payment.unauth', {}, 'messages', InfoPayment.$language));
     })
   }
 
@@ -53,7 +52,7 @@ class InfoPayment {
   static detailPayment() {
     // GET API PAYMENTS
     $.ajax({
-      url: InfoPayment.$spinnerContainer.data('api'), //'/comune-di-bugliano/api/payments?remote_id=' + InfoPayment.$application_id
+      url: InfoPayment.$spinnerContainer.data('api'),
       dataType: 'json',
       type: 'get',
       //timeout: 100, // enable for simulate timeout
@@ -66,13 +65,13 @@ class InfoPayment {
       },
       error: function (xmlhttprequest, textstatus, message) { // error logging
        if (textstatus === "timeout") {
-          InfoPayment.handleErrors(i18n[InfoPayment.$language].timeout);
+          InfoPayment.handleErrors(Translator.trans('payment.timeout', {}, 'messages', InfoPayment.$language));
         } else if (xmlhttprequest.status === 401) {
-          InfoPayment.handleErrors(i18n[InfoPayment.$language].unauth);
+          InfoPayment.handleErrors(Translator.trans('payment.unauth', {}, 'messages', InfoPayment.$language));
         } else if (xmlhttprequest.status === 404) {
-          InfoPayment.handleErrors(i18n[InfoPayment.$language].not_found);
+          InfoPayment.handleErrors(Translator.trans('payment.not_found', {}, 'messages', InfoPayment.$language));
         } else {
-          InfoPayment.handleErrors(i18n[InfoPayment.$language].get_failed);
+          InfoPayment.handleErrors(Translator.trans('payment.get_failed', {}, 'messages', InfoPayment.$language));
         }
       }
     });
@@ -81,23 +80,23 @@ class InfoPayment {
   static switchStatus(status){
     switch (status) {
       case 'CREATION_PENDING':
-        return i18n[InfoPayment.$language].status_creation_pending;
+        return Translator.trans('STATUS_PAYMENT_PENDING', {}, 'messages', InfoPayment.$language);
       case 'PAYMENT_PENDING':
-        return i18n[InfoPayment.$language].status_payment_pending;
+        return Translator.trans('STATUS_PAYMENT_PENDING', {}, 'messages', InfoPayment.$language);
       case 'CREATION_FAILED':
-        return i18n[InfoPayment.$language].status_creation_failed;
+        return Translator.trans('STATUS_PAYMENT_CREATION_FAIL', {}, 'messages', InfoPayment.$language);
       case 'PAYMENT_STARTED':
-        return i18n[InfoPayment.$language].status_payment_started;
+        return Translator.trans('STATUS_PAYMENT_STARTED', {}, 'messages', InfoPayment.$language);
       case 'PAYMENT_CONFIRMED':
-        return i18n[InfoPayment.$language].status_payment_confirmed;
+        return Translator.trans('STATUS_PAYMENT_SUCCESS', {}, 'messages', InfoPayment.$language);
       case 'PAYMENT_FAILED':
-        return i18n[InfoPayment.$language].status_payment_failed;
+        return Translator.trans('STATUS_PAYMENT_ERROR', {}, 'messages', InfoPayment.$language);
       case 'NOTIFICATION_PENDING':
-        return i18n[InfoPayment.$language].status_notification_pending;
+        return Translator.trans('STATUS_NOTIFICATION_PENDING', {}, 'messages', InfoPayment.$language);
       case 'COMPLETE':
-        return i18n[InfoPayment.$language].status_complete;
+        return Translator.trans('STATUS_PAYMENT_COMPLETE', {}, 'messages', InfoPayment.$language);
       case 'EXPIRED':
-        return i18n[InfoPayment.$language].status_expired;
+        return Translator.trans('STATUS_PAYMENT_EXPIRED', {}, 'messages', InfoPayment.$language);
       default:
         console.log(`Status not found - ${status}.`);
     }
@@ -118,7 +117,7 @@ class InfoPayment {
                       <a class="card-tag px-0 px-sm-2" href="javascript:void(0)">${InfoPayment.switchStatus(data[i].status)}</a>
                     </div>
                     <div class="category-top">
-                      <a class="category" href="javascript:void(0)">${i18n[InfoPayment.$language].created_at}</a>
+                      <a class="category" href="javascript:void(0)">${Translator.trans('payment.created_at', {}, 'messages', InfoPayment.$language)}</a>
                       <span class="data">${moment(data[i].created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                     </div>
                   </div>
@@ -140,18 +139,18 @@ class InfoPayment {
             </div>
                  <h5 class="card-title">${InfoPayment.$gateway}</h5>
                     <p class="card-text">
-                    <span>${i18n[InfoPayment.$language].amount}:</span>
+                    <span>${Translator.trans('payment.amount', {}, 'messages', InfoPayment.$language)}:</span>
                     <span class="float-right h4">${Number(data[i].payment.amount)} ${data[i].payment.currency === 'EUR' ? '€' : data[i].payment.currency}</span>
                     <hr>
                     </p>
                   <p class="card-text">
-                    ${i18n[InfoPayment.$language].reason}:
+                    ${Translator.trans('payment.reason', {}, 'messages', InfoPayment.$language)}:
                     <br><b>${data[i].reason}</b>
                   </p>
 
                   <div class="it-card-footer">
                     <span class="card-signature"></span>
-                    <a class="btn btn-outline-primary btn-sm" href="#" data-toggle="collapse" data-target="#collapse1-sc${[i]}" aria-expanded="false" aria-controls="collapse1-sc${[i]}">${i18n[InfoPayment.$language].other_details}</a>
+                    <a class="btn btn-outline-primary btn-sm" href="#" data-toggle="collapse" data-target="#collapse1-sc${[i]}" aria-expanded="false" aria-controls="collapse1-sc${[i]}">${Translator.trans('payment.other_details', {}, 'messages', InfoPayment.$language)}</a>
                   </div>
                   <div id="collapse1-sc${[i]}" class="collapse mt-3" role="region" aria-labelledby="heading1-sc${[i]}">
                     <div class="collapse-body p-0">
@@ -160,13 +159,13 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${i18n[InfoPayment.$language].payer}</em> ${data[i].payer.name} ${data[i].payer.family_name} - ${data[i].payer.tax_identification_number}</span>
+                                <span class="text"><em>${Translator.trans('payment.payer', {}, 'messages', InfoPayment.$language)}</em> ${data[i].payer.name} ${data[i].payer.family_name} - ${data[i].payer.tax_identification_number}</span>
                               </div>
                             </a>
                           </li>   <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${i18n[InfoPayment.$language].address}</em>
+                                <span class="text"><em>${Translator.trans('payment.address', {}, 'messages', InfoPayment.$language)}</em>
                                 ${data[i].payer.street_name ? `${data[i].payer.street_name}, ${data[i].payer.building_number}` : "--"}
                                 ${data[i].payer.postal_code ? `${data[i].payer.postal_code}` : ""}
                                 ${data[i].payer.town_name ? `${data[i].payer.town_name}` : ""}
@@ -178,7 +177,7 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${i18n[InfoPayment.$language].email}</em> ${data[i].payer.email ? `${data[i].payer.email}`: "--"}</span>
+                                <span class="text"><em>${Translator.trans('payment.email', {}, 'messages', InfoPayment.$language)}</em> ${data[i].payer.email ? `${data[i].payer.email}`: "--"}</span>
                               </div>
                             </a>
                           </li>
@@ -186,7 +185,7 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${i18n[InfoPayment.$language].paid_at}</em> ${moment(data[i].payment.paid_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
+                                <span class="text"><em>${Translator.trans('payment.paid_at', {}, 'messages', InfoPayment.$language)}</em> ${moment(data[i].payment.paid_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                               </div>
                             </a>
                           </li>
@@ -194,7 +193,7 @@ class InfoPayment {
                           `<li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${i18n[InfoPayment.$language].event_created_at}</em> ${moment(data[i].event_created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
+                                <span class="text"><em>${Translator.trans('payment.event_created_at', {}, 'messages', InfoPayment.$language)}</em> ${moment(data[i].event_created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                               </div>
                             </a>
                           </li>
@@ -202,7 +201,7 @@ class InfoPayment {
                           </li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${i18n[InfoPayment.$language].type}</em> ${data[i].type}</span>
+                                <span class="text"><em>${Translator.trans('payment.type', {}, 'messages', InfoPayment.$language)}</em> ${data[i].type}</span>
                               </div>
                             </a>
                           </li>
@@ -210,8 +209,8 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text text-truncate"><em>${i18n[InfoPayment.$language].iuv}</em> ${data[i].payment.iuv}</span>
-                                <button type="button" class="btn btn-outline-primary copy" data-copy="${data[i].payment.iuv}">${i18n[InfoPayment.$language].copy}</button>
+                                <span class="text text-truncate"><em>${Translator.trans('payment.iuv', {}, 'messages', InfoPayment.$language)}</em> ${data[i].payment.iuv}</span>
+                                <button type="button" class="btn btn-outline-primary copy" data-copy="${data[i].payment.iuv}">${Translator.trans('payment.copy', {}, 'messages', InfoPayment.$language)}</button>
                               </div>
                             </a>
                           </li>
@@ -220,8 +219,8 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text text-truncate"><em>${i18n[InfoPayment.$language].iud}</em> ${data[i].payment.iud}</span>
-                                <button type="button" class="btn btn-outline-primary copy" data-copy="${data[i].payment.iud}">${i18n[InfoPayment.$language].copy}</button>
+                                <span class="text text-truncate"><em>${Translator.trans('payment.iud', {}, 'messages', InfoPayment.$language)}</em> ${data[i].payment.iud}</span>
+                                <button type="button" class="btn btn-outline-primary copy" data-copy="${data[i].payment.iud}">${Translator.trans('payment.copy', {}, 'messages', InfoPayment.$language)}</button>
                               </div>
                             </a>
                           </li>
@@ -232,7 +231,7 @@ class InfoPayment {
                     ${data[i].status === 'COMPLETE' ?
                    `<div class="text-center mt-5">
                         <a href="${data[i].links.receipt.url}" class="btn btn-primary" role="button" aria-disabled="true" download>
-                            ${i18n[InfoPayment.$language].download_pdf}
+                            ${Translator.trans('payment.download_pdf', {}, 'messages', InfoPayment.$language)}
                         </a>
                     </div>` : ""}
                     ${data[i].status === 'CREATION_FAILED' ?
@@ -246,8 +245,8 @@ class InfoPayment {
                       && data[i].status !== 'EXPIRED'
                       ?
                       `<div class="text-center mt-5">
-                        <a href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${i18n[InfoPayment.$language].paga_online}</a>
-                        <a href="${data[i].links.offline_payment.url}" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download> ${i18n[InfoPayment.$language].paga_offline}</a>
+                        <a href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${Translator.trans('payment.paga_online', {}, 'messages', InfoPayment.$language)}</a>
+                        <a href="${data[i].links.offline_payment.url}" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download> ${Translator.trans('payment.paga_offline', {}, 'messages', InfoPayment.$language)}</a>
                       </div>
                     ` : ""}
                   </div>

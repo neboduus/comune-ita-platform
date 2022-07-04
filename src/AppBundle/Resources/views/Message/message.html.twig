@@ -79,7 +79,7 @@
       {% if message.author == user or (user == pratica.operatore and not message.author) %}
         <div class="row">
           <div class="col-6">
-            <small class="font-weight-bold">Inviato:</small>
+            <small class="font-weight-bold">{{ 'operatori.messaggi.inviato' | trans }}:</small>
           </div>
           <div class="col-6 text-right">
             <small>
@@ -89,7 +89,7 @@
         </div>
         <div class="row">
           <div class="col-6">
-            <small class="font-weight-bold">Letto:</small>
+            <small class="font-weight-bold">{{ 'operatori.messaggi.letto' | trans }}:</small>
           </div>
           <div class="col-6 text-right">
             <small>

@@ -1,3 +1,9 @@
+{% block javascripts %}
+  <script>
+    const translate_ritiro_pratica = "{{ 'pratica.ritira_pratica' | trans }}";
+  </script>
+{% endblock %}
+
 {% if can_compile %}
   {% if pratica.status == constant('\\AppBundle\\Entity\\Pratica::STATUS_PAYMENT_PENDING') %}
     <a class="btn btn-success mb-4 w-100" data-action="edit_draft"
@@ -16,7 +22,7 @@
 {% endif %}
 {% if can_withdraw %}
   <a class="btn btn-danger mb-4 w-100"
-     onclick="return confirm('Sei sicuro di procedere? Questa azione non potrà più essere annullata.');"
+     onclick="return confirm(translate_ritiro_pratica);"
      href="{{ path('pratiche_withdraw', {'pratica': pratica.id}) }}">
     <i class="fa fa-times" aria-hidden="true"></i>
     {{ 'pratica.ritira_la_pratica'|trans }}

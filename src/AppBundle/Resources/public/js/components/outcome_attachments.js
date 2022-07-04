@@ -1,5 +1,4 @@
 'use strict';
-
 Vue.component('outcome_attachments', {
   template: `<div>
       <el-upload
@@ -10,7 +9,7 @@ Vue.component('outcome_attachments', {
         :on-error="onError"
         :before-upload="onBeforeUpload"
         :multiple="true">
-        <el-button type="primary">Carica allegato</el-button>
+        <el-button type="primary">${Translator.trans('pratica.upload_attachment', {}, 'messages', 'it')}</el-button>
       </el-upload>
     </div>`,
   data: function () {
@@ -46,7 +45,7 @@ Vue.component('outcome_attachments', {
     },
     onBeforeUpload(file) {
       if (file.size / 1024 / 1024 > 25) {
-        this.$message.error('Attenzione: non è possibile caricare file con una dimensione maggiore di 25Mb.');
+        this.$message.error(`${Translator.trans('pratica.upload_warning', {}, 'messages', 'it')}`);
         return false;
       }
     },

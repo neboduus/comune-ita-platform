@@ -6,7 +6,7 @@
     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{% if pratica.id == reference.id %}arrow-right{% else %}file{% endif %}"></use>
   </svg>
   <p class="m-0">
-    acquisita il {{ pratica.submissionTime | date('d/m/Y H:i:s') }} <span class="badge badge-light text-decoration-none">{{ pratica.statusName | trans }}</span>
+    {{ 'pratica.acquisita_il' | trans}} {{ pratica.submissionTime | date('d/m/Y H:i:s') }} <span class="badge badge-light text-decoration-none">{{ pratica.statusName | trans }}</span>
   </p>
 </a>
 {% if pratica.children.count > 0 %}

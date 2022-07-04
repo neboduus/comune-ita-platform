@@ -9,7 +9,7 @@
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
           </svg>
           <p class="m-0">
-            acquisita il {{ pratica_recente.submissionTime | date('d/m/Y H:i:s') }} <span class="badge badge-light text-decoration-none">{{ pratica_recente.statusName | trans }}</span>
+            {{ 'pratica.acquisita_il' | trans}} {{ pratica_recente.submissionTime | date('d/m/Y H:i:s') }} <span class="badge badge-light text-decoration-none">{{ pratica_recente.statusName | trans }}</span>
           </p>
         </a>
       </li>

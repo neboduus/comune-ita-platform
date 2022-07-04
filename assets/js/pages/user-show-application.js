@@ -3,6 +3,7 @@ import '../core';
 import {TextEditor} from "../utils/TextEditor";
 import Form from '../Formio/Form';
 import InfoPayment from "../Payment/InfoPayment";
+const lang = document.documentElement.lang.toString();
 
 
 $(document).ready(function () {
@@ -21,10 +22,10 @@ $(document).ready(function () {
     $('#message_applicant').click(function (e) {
       //e.preventDefault();
       if ( $('.summernote').summernote('isEmpty') ) {
-        alert('Attenzione! non puoi inviare un messaggio vuoto.');
+        alert(Translator.trans('pratica.messaggio_operatore_vuoto', {}, 'messages', lang));
         return false;
       }
-      return confirm("Sei sicuro di voler procedere? Se decidi di continuare verrà inviata un email all\'operatore che ha in carico la tua pratica");
+      return confirm(Translator.trans('pratica.messaggio_operatore', {}, 'messages', lang));
     })
   }
 
