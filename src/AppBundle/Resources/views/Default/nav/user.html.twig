@@ -27,7 +27,7 @@
               </li>
               <li class="nav-item">
                 <a class="nav-link {% if 'usage' in app.request.pathInfo %} active {% endif %}"
-                   href="{{ path('operatori_usage') }}">
+                   href="{{ path('analytics_index') }}">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chart-line"></use>
                   </svg>
@@ -121,7 +121,7 @@
                   </a>
                 </li>
                 <li class="nav-item {% if 'usage' in app.request.pathInfo %} active {% endif %}">
-                  <a class="nav-link" href="{{ path('admin_usage') }}">
+                  <a class="nav-link" href="{{ path('analytics_index') }}">
                     {{ 'nav.operatori.usage'|trans }}
                   </a>
                 </li>
