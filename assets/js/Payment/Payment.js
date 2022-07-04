@@ -1,4 +1,3 @@
-import {i18n} from "../translations/i18n";
 import Api from "../services/api.service";
 
 class Payment {
@@ -27,7 +26,7 @@ class Payment {
 
     // Active spinner animations
     Payment.$spinner.addClass('progress-spinner-active');
-    Payment.$statusPayment.html(i18n[Payment.$language].creation_pending);
+    Payment.$statusPayment.html(Translator.trans('payment.creation_pending', {}, 'messages', Payment.$language));
 
     // Get tenant slug
     Payment.$tenant = window.location.pathname.split('/')[1];
@@ -36,7 +35,7 @@ class Payment {
       Payment.$token = data.token;
       Payment.poolingPayment();
     }).catch(() => {
-      Payment.handleErrors(i18n[Payment.$language].unauth);
+      Payment.handleErrors(Translator.trans('payment.unauth', {}, 'messages', Payment.$language));
     })
   }
 
@@ -50,7 +49,7 @@ class Payment {
   static handleSwitchStatus(data,self) {
     switch (data.status) {
       case 'CREATION_PENDING':
-        Payment.$statusPayment.html(i18n[Payment.$language].creation_pending);
+        Payment.$statusPayment.html(Translator.trans('STATUS_PAYMENT_PENDING', {}, 'messages', Payment.$language));
         Payment.retryPooling(self);
         break;
       case 'PAYMENT_PENDING':
@@ -61,7 +60,7 @@ class Payment {
         break;
       case 'CREATION_FAILED':
         Payment.$spinnerContainer.addClass('d-none');
-        Payment.handleErrors(i18n[Payment.$language].creation_failed_text);
+        Payment.handleErrors(Translator.trans('payment.creation_failed_text', {}, 'messages', Payment.$language));
         break;
       default:
         console.log(`Status not found - ${data.status}.`);
@@ -84,7 +83,7 @@ class Payment {
       }else{
         // if I exceed the timeout I show a message
         Payment.$spinnerContainer.addClass('d-none');
-        Payment.handleErrors(i18n[Payment.$language].timeout);
+        Payment.handleErrors(Translator.trans('payment.timeout', {}, 'messages', Payment.$language));
       }
     }
   }
@@ -109,14 +108,14 @@ class Payment {
         },
         error: function (xmlhttprequest, textstatus, message) { // error logging
           if (textstatus === "timeout") {
-            Payment.handleErrors(i18n[Payment.$language].timeout);
+            Payment.handleErrors(Translator.trans('payment.timeout', {}, 'messages', Payment.$language));
           } else if (xmlhttprequest.status === 401) {
-            Payment.handleErrors(i18n[Payment.$language].unauth);
+            Payment.handleErrors(Translator.trans('payment.timeout', {}, 'messages', Payment.$language));
           } else if (xmlhttprequest.status === 404) {
             Payment.retryPooling(this);
-            Payment.$statusPayment.html(i18n[Payment.$language].not_found);
+            Payment.$statusPayment.html(Translator.trans('payment.not_found', {}, 'messages', Payment.$language));
           } else {
-            Payment.handleErrors(i18n[Payment.$language].creation_failed_text);
+            Payment.handleErrors(Translator.trans('payment.creation_failed_text', {}, 'messages', Payment.$language));
           }
         }
       });

@@ -810,9 +810,9 @@
         {% if servizi|length %}
           <div class="col-12 col-sm-6 col-lg-4 mb-5">
             <div class="label-sm-wrapper filter-servizio">
-              <label for="filter-servizio">Filtra per servizio</label>
+              <label for="filter-servizio">{{ 'pratica.filtra_per_servizio' | trans }}</label>
               <select id="filter-servizio" class="form-control filter-select form-control-chosen">
-                <option value="">Tutti</option>
+                <option value="">{{ 'tutti' | trans }}</option>
                 {% for servizio in servizi %}
                   {% if servizio is iterable %}
                     <option data-type="group" data-slug="{{ servizio.group.slug }}" data-name="{{ servizio.group.name }}" value="{{ servizio.group.id }}">{{ servizio.group.name }}</option>

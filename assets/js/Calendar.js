@@ -2,7 +2,6 @@ import "jquery-ui/ui/widgets/datepicker"
 import Base from 'formiojs/components/_classes/component/Component';
 import editForm from './Calendar/Calendar.form'
 import moment from 'moment'
-import {i18n} from "./translations/i18n"
 import {i18nDatepicker} from "./translations/i18n-datepicker";
 
 export default class FormioCalendar extends Base {
@@ -20,7 +19,7 @@ export default class FormioCalendar extends Base {
     this.first_available_end_time = null;
     this.first_availability_updated_at = null;
     this.$language = document.documentElement.lang.toString();
-    this.loaderTpl = `<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">${i18n[this.$language].loading}</span></div>`;
+    this.loaderTpl = `<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">${Translator.trans('loading', {}, 'messages', this.$language)}</span></div>`;
 
   }
 
@@ -41,9 +40,9 @@ export default class FormioCalendar extends Base {
   static editForm = editForm
 
   /**
-   * Render returns an html string of the fully rendered component.
+   * Render returns a html string of the fully rendered component.
    *
-   * @param children - If this class is extendended, the sub string is passed as children.
+   * @param children - If this class is extended, the sub string is passed as children.
    * @returns {string}
    */
   render(children) {
@@ -122,18 +121,18 @@ export default class FormioCalendar extends Base {
                 self.date = dateText;
                 self.getDaySlots();
 
-                let slotText = self.slot ? ` ${i18n[self.$language].calendar_formio.at_hours} ${self.slot}` : '';
-                $('#date-picker-print').html(`<b>${i18n[self.$language].calendar_formio.day_selected}: </b> ${self.date} ${slotText}`);
+                let slotText = self.slot ? ` ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.slot}` : '';
+                $('#date-picker-print').html(`<b>${Translator.trans('calendar_formio.day_selected', {}, 'messages', self.$language)}: </b> ${self.date} ${slotText}`);
 
                 if (self.meeting_expiration_time) {
-                  let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${i18n[self.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
-                  $('#draft-expiration').html(`<i>${i18n[self.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[self.$language].calendar_formio.draft_expiration_text_end}</i>`)
+                  let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.meeting_expiration_time.format("HH:mm")}`;
+                  $('#draft-expiration').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${expiration}. ${Translator.trans('calendar_formio.draft_expiration_text_end', {}, 'messages', self.$language)}</i>`)
                 }
               },
               beforeShowDay: function (date) {
                 var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
                 if (data.some(e => e.available === false && e.date === string)) {
-                  return [false, 'disabled not-available', i18n[self.$language].calendar_formio.unavailable]
+                  return [false, 'disabled not-available', Translator.trans('calendar_formio.unavailable', {}, 'messages', self.$language)]
                 }else{
                   return [(data.some(e => e.date === string))]
                 }
@@ -147,7 +146,7 @@ export default class FormioCalendar extends Base {
             }
           },
           error: function (jqXhr, textStatus, errorMessage) { // error callback
-            alert(`${i18n[self.$language].calendar_formio.availability_error}`);
+            alert(`${Translator.trans('calendar_formio.availability_error', {}, 'messages', self.$language)}`);
           }, complete: function () {
             //Auto-click current selected day
             var dayActive = $('a.ui-state-active');
@@ -156,11 +155,11 @@ export default class FormioCalendar extends Base {
             }
 
             if (self.date && self.slot) {
-              $('#date-picker-print').html(`<b>${i18n[self.$language].calendar_formio.day_selected}: </b> ${self.date} ${i18n[self.$language].calendar_formio.at_hours} ${self.slot}`)
+              $('#date-picker-print').html(`<b>${Translator.trans('calendar_formio.day_selected', {}, 'messages', self.$language)}: </b> ${self.date} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.slot}`)
             }
             if (self.meeting_expiration_time) {
-              let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${i18n[self.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
-              $('#draft-expiration').html(`<i>${i18n[self.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[self.$language].calendar_formio.draft_expiration_text_end}</i>`)
+              let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.meeting_expiration_time.format("HH:mm")}`;
+              $('#draft-expiration').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${expiration}. ${Translator.trans('calendar_formio.draft_expiration_text_end', {}, 'messages', self.$language)}</i>`)
             }
           }
         });
@@ -206,11 +205,11 @@ export default class FormioCalendar extends Base {
     this.opening_hour = explodedCalendar.length === 3 ? explodedCalendar[2] : "";
 
     if (this.date && this.slot) {
-      $('#date-picker-print').html(`<b>${i18n[this.$language].calendar_formio.day_selected}: </b> ${this.date} ${i18n[this.$language].calendar_formio.at_hours} ${this.slot}`)
+      $('#date-picker-print').html(`<b>${Translator.trans('calendar_formio.day_selected', {}, 'messages', self.$language)}: </b> ${this.date} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${this.slot}`)
     }
     if (self.meeting_expiration_time) {
-      let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${i18n[this.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
-      $('#draft-expiration').html(`<i>${i18n[this.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[this.$language].calendar_formio.draft_expiration_text_end}</i>`)
+      let expiration = `${self.meeting_expiration_time.format("DD-MM-YYYY")} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.meeting_expiration_time.format("HH:mm")}`;
+      $('#draft-expiration').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${expiration}. ${Translator.trans('calendar_formio.draft_expiration_text_end', {}, 'messages', self.$language)}</i>`)
     }
   }
 
@@ -263,7 +262,7 @@ export default class FormioCalendar extends Base {
     let url = `${location.origin}/${explodedPath[1]}/api/calendars/${calendarID}/availabilities/${parsedDate.format('YYYY-MM-DD')}`;
     let queryParameters = []
     if (self.meeting) {
-      // Exclude saved meeting from unavailabilities
+      // Exclude saved meeting from unavailability
       queryParameters.push(`exclude=${self.meeting}`)
     }
     if (selectOpeningHours && openingHours) {
@@ -290,8 +289,8 @@ export default class FormioCalendar extends Base {
 
           if (countAllElmAvailables === 0) {
             self.container.find('#slot-picker').html(`<div class="callout warning">
-                            <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use></svg>${i18n[self.$language].warning}</div>
-                            <p>${i18n[self.$language].calendar_formio.no_availability_error}</p>
+                            <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use></svg>${Translator.trans('warning', {}, 'messages', self.$language)}</div>
+                            <p>${Translator.trans('calendar_formio.no_availability_error', {}, 'messages', self.$language)}</p>
                             </div>`);
           } else {
             $(data).each(function (index, element) {
@@ -310,7 +309,7 @@ export default class FormioCalendar extends Base {
               html = html.concat(`<div class="col-6"><button type="button" data-slot="${key}" data-opening_hour="${op_hour}" class="btn btn-ora p-0 ${cssClass}" ${ariaDisabled ? 'tabindex="-1"' : ''} aria-disabled="${ariaDisabled}">${key}</button></div>`);
 
             });
-            self.container.find('#slot-picker').html(`<div class="col-12"><h6> ${i18n[self.$language].calendar_formio.availability_hours} ${self.date}</h6></div>${html}`);
+            self.container.find('#slot-picker').html(`<div class="col-12"><h6> ${Translator.trans('calendar_formio.availability_hours', {}, 'messages', self.$language)} ${self.date}</h6></div>${html}`);
 
             $('.btn-ora.available').on('click', function (e) {
               e.preventDefault();
@@ -327,7 +326,7 @@ export default class FormioCalendar extends Base {
           }
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
-          alert(`${i18n[self.$language].calendar_formio.availability_error}`);
+          alert(`${Translator.trans('calendar_formio.availability_error', {}, 'messages', self.$language)}`);
         }, complete: function () {
           //Click available hour button only is visible for auto selection
           var btnHourActive = $('.btn-ora.available.active');
@@ -364,7 +363,7 @@ export default class FormioCalendar extends Base {
           self.updateValue();
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback
-          alert(`${i18n[self.$language].calendar_formio.availability_error}`);
+          alert(`${Translator.trans('calendar_formio.availability_error', {}, 'messages', self.$language)}`);
           // Reinitialize
           self.slot = null;
           self.meeting = null;
@@ -373,11 +372,11 @@ export default class FormioCalendar extends Base {
           self.getDaySlots();
         },
         complete: function () {
-          let slotText = self.slot ? ` ${i18n[self.$language].calendar_formio.at_hours} ${self.slot}` : '';
-          $('#date-picker-print').html(`<b>${i18n[self.$language].calendar_formio.day_selected}: </b> ${self.date} ${slotText}`);
+          let slotText = self.slot ? ` ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.slot}` : '';
+          $('#date-picker-print').html(`<b>${Translator.trans('calendar_formio.day_selected', {}, 'messages', self.$language)}: </b> ${self.date} ${slotText}`);
           if (self.meeting_expiration_time) {
-            let expiration = `${self.meeting_expiration_time.format("YYYY-MM-DD")} ${i18n[self.$language].calendar_formio.at_hours} ${self.meeting_expiration_time.format("HH:mm")}`;
-            $('#draft-expiration').html(`<i>${i18n[self.$language].calendar_formio.draft_expiration_text} ${expiration}. ${i18n[self.$language].calendar_formio.draft_expiration_text_end}</i>`)
+            let expiration = `${self.meeting_expiration_time.format("YYYY-MM-DD")} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.meeting_expiration_time.format("HH:mm")}`;
+            $('#draft-expiration').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${expiration}. ${Translator.trans('calendar_formio.draft_expiration_text_end', {}, 'messages', self.$language)}</i>`)
           }
         }
       });

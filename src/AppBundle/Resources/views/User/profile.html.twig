@@ -50,7 +50,7 @@
         if ($('.alert.alert-danger').length > 0) {
           $("#edit_user_profile").find('.alert.alert-danger').remove()
           $('#edit_user_profile').prepend("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">\n" +
-            "  <strong>Attenzione:</strong> alcuni campi inseriti non sono validi:\n" +
+            "  {{ 'operatori.profile.errore_dati' | trans | raw }}:\n" +
             "<ul class='list-error'>" +
             "</ul>" +
             "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +
@@ -62,7 +62,7 @@
 
         } else {
           $('#edit_user_profile').prepend("<div class=\"alert alert-danger alert-dismissible fade show\" role=\"alert\">\n" +
-            "  <strong>Attenzione:</strong> alcuni campi inseriti non sono validi:\n" +
+            "  {{ 'operatori.profile.errore_dati' | trans | raw }}:\n" +
             "<ul class='list-error'>" +
             "</ul>" +
             "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\">\n" +

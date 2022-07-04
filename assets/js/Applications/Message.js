@@ -1,5 +1,3 @@
-
-import {i18n} from "../translations/i18n"
 import Api from "../services/api.service";
 
 class ApplicationsMessage {
@@ -44,7 +42,7 @@ class ApplicationsMessage {
     const DATA_MESSAGE =
       {
         "message": $('#note').val(),
-        "subject": i18n[ApplicationsMessage.$language].operator.change_status_message,
+        "subject": Translator.trans('payment.operator.change_status_message', {}, 'messages', ApplicationsMessage.$language),
         "visibility": $('input[name="checkNote"]:checked').val(),
       };
     return new Promise((resolve, reject) => {

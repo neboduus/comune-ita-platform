@@ -22,7 +22,7 @@
           <div class="form-row">
             <label>Filtra per stato</label>
             <select id="filter-status" class="form-control" name="filters[status]">
-              <option value="">Tutti</option>
+              <option value="">{{ 'tutti' | trans }}</option>
               {% for k,v in statuses  %}
                 {% if v.count > 0 %}
                   <option value="{{ k }}" {% if filters.status is defined and filters.status == k %}selected{% endif %}>{{ v.label }} ({{ v.count }})</option>

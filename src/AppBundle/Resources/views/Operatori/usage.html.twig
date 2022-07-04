@@ -30,7 +30,7 @@
         <div class="bootstrap-select-wrapper">
           <label>Filtra per Stato pratica</label>
           <select title="Scegli una opzione" class="select-status">
-            <option value="all" selected>Tutti</option>
+            <option value="all" selected>{{ 'tutti' | trans }}</option>
             {% for status in statusServices.statiPratiche %}
               <option value="{{ status.status }}">{{ status.name }}
               </option>
@@ -40,9 +40,9 @@
       </div>
       <div class="col-lg-4">
         <div class="bootstrap-select-wrapper">
-          <label>Filtra per Servizio pratica</label>
+          <label>{{ 'pratica.filtra_per_servizio' | trans }} pratica</label>
           <select title="Scegli una opzione" class="select-services">
-            <option value="all" selected>Tutti</option>
+            <option value="all" selected>{{ 'tutti' | trans }}</option>
             {% for pratica in statusServices.serviziPratiche %}
               <option value="{{ pratica.slug }}">{{ pratica.name }}
               </option>

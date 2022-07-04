@@ -65,6 +65,10 @@ nav:
   documenti: 'I miei documenti'
   iscrizioni: 'Le mie iscrizioni'
   informativa_privacy: 'Informativa per il trattamento dati personali'
+  header:
+    profile: "Profilo"
+    logout: "Logout"
+    access_my_area: "Accedi all'area personale"
   operatori:
     panello_controllo: "Elenco pratiche"
     lista_operatori: 'Gestisci operatori comune'
@@ -371,6 +375,7 @@ pratica:
       file: 'Nome del file'
       descrizione: 'Descrizione'
       pratiche_list_intro: 'Allegato alle pratiche:'
+      allegato: 'Allegato'
     modulocompilato: ''
     stato_1000: 'Bozza'
     stato_1500: 'In attesa di pagamento'
@@ -426,6 +431,16 @@ pratica:
     tipologie_pagamento: "Tipologie di pagamento"
     paga_online: "Paga online"
     paga_offline: "Paga offline"
+  upload_attachment: "Carica allegati"
+  upload_warning: "Attenzione: non è possibile caricare file con una dimensione maggiore di 25Mb."
+  protocollo_risposta: 'Protocollo risposta'
+  filtra_per_servizio: 'Filtra per servizio'
+  elimina_pratica: "Vuoi veramente eliminare la pratica?"
+  acquisita_il: "acquisita il"
+  ritira_pratica: "Sei sicuro di procedere? Questa azione non potrà più essere annullata."
+  carica_allegato: "Carica allegato"
+  messaggio_operatore: "Sei sicuro di voler procedere? Se decidi di continuare verrà inviata un email all'operatore che ha in carico la tua pratica"
+  messaggio_operatore_vuoto: "Attenzione! non puoi inviare un messaggio vuoto."
 STATUS_CANCELLED: 'Rifiutata'
 STATUS_DRAFT: 'Bozza'
 STATUS_PRE_SUBMIT: 'Inviata'
@@ -447,6 +462,11 @@ STATUS_PENDING_AFTER_INTEGRATION: 'Presa in carico in seguito a integrazioni'
 STATUS_PROCESSING: 'In elaborazione'
 STATUS_WITHDRAW: 'Ritirata'
 STATUS_REVOKED: 'Annullata'
+STATUS_PAYMENT_CREATION_FAIL: 'Creazione di pagamento fallita'
+STATUS_PAYMENT_STARTED: 'Pagamento inviato'
+STATUS_NOTIFICATION_PENDING: 'Notifica pendente'
+STATUS_PAYMENT_COMPLETE: 'Pagamento completato'
+STATUS_PAYMENT_EXPIRED: 'Pagamento scaduto'
 iscrizioni:
   le_mie_iscrizioni: "Le mie iscrizioni"
   iscrizioni_delegate: "Iscrizioni a cui ho accesso"
@@ -976,6 +996,7 @@ operatori:
     ente: 'Ente'
     ambito: 'Ambito'
     salva_modifiche: 'Salva modifiche'
+    errore_dati : "<strong>Attenzione:</strong> alcuni campi inseriti non sono validi"
   usage:
     title: 'Metriche di utilizzo'
     service_title: 'Servizi attivi'
@@ -1896,7 +1917,6 @@ steps:
           title: "l) parere Azienda Provinciale per i Servizi Sanitari qualora previsto da specifiche normative di settore"
           description: ""
         PROV_AR-ILLU:
-        PROV_AR-ILLU:
           title: "m) autorizzazione del Comune per la realizzazione di impianti di illuminazione esterna, ai sensi del D.P.P. n. 2-34/Leg. del 2010 in materia di inquinamento luminoso"
           description: ""
         PROV_FRT_FASC-VIA:
@@ -2585,3 +2605,47 @@ payment:
     item_3: "Conserva le ricevute in un unico posto"
     download_app: "Scarica l'app"
     watch_video: "Guarda il video"
+  get_payment: "Recupero pagamento in corso"
+  creation_failed: "Opss qualcosa è andato storto!"
+  timeout: "La richiesta sta impiegando più tempo del necessario.. <br><b>Riprova più tardi!</b>"
+  unauth: "Sessione scaduta <br><b>Effettua nuovamente il login</b>."
+  get_failed: "Opss qualcosa è andato storto! <br> Riprova più tardi oppure contatta l'ufficio amministrativo."
+  created_at: "Data invio procedimento"
+  reason: "Causale versamento"
+  payer: "Intestatario"
+  address: "Indirizzo pagatore"
+  email: "Email pagatore"
+  event_created_at: "Evento creato il"
+  type: "Metodo di pagamento"
+  iud: "Identificativo Unico del Dovuto (IUD)"
+  iuv: "Identificativo Univoco pagamento (IUV)"
+  copy: "Copia"
+  amount: "Importo"
+  other_details: "Dettaglio operazione"
+  paid_at: "Pagato il"
+  download_pdf: "Scarica ricevuta pagamento"
+  creation_pending: "Creazione del pagamento in corso"
+  creation_failed_text: "La creazione del pagamento non è andata a buon fine riprova più tardi oppure contatta l'ufficio amministrativo."
+  not_found: "La pratica non è ancora pervenuta riprova più tardi!"
+  status_creation_pending: "In attesa di pagamento"
+  status_notification_pending: "Notifica pendente"
+  paga_online: "Paga online"
+  paga_offline: "Paga offline"
+  loading: "Caricamento..."
+  warning: "Attenzione"
+  operator:
+    change_status_message: "Cambio Forzato stato pratica in: PAGATO"
+calendar_formio:
+  at_hours: "alle ore"
+  draft_expiration_text: "Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno"
+  draft_expiration_text_end: "Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati"
+  availability_error: "Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare"
+  no_availability_error: "Non è possibile prenotare in questa giornata, tutte le fasce orarie a disposizione sono già prenotate"
+  day_selected: "Giorno selezionato per la prenotazione"
+  availability_hours: "Orari disponibili il"
+  range_picker_description: "Se preferisci puoi utilizzare il controllo che segue per accorciare la durata della prenotazione"
+  from: "Dalle"
+  to: "Alle"
+  from_range_error_value: "Il valore"
+  from_range_error_not_valid: "non è valido"
+  unavailable: "Non disponibile"

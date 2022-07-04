@@ -90,8 +90,8 @@
                 {% endif %}
 
                 <div class="it-search-wrapper">
-                    <span class="d-none d-md-block">Cerca</span>
-                    <a class="search-link rounded-icon" href="#" aria-label="Cerca" id="globalSearchBtn" data-toggle="modal" data-target="#globalSearchModal">
+                    <span class="d-none d-md-block">{{ 'search.label' | trans }}</span>
+                    <a class="search-link rounded-icon" href="#" aria-label="{{ 'search.label' | trans }}" id="globalSearchBtn" data-toggle="modal" data-target="#globalSearchModal">
                         <svg class="icon"><use xlink:href="{{asset('bootstrap-italia/dist/svg/sprite.svg#it-search')}}"></use></svg>
                     </a>
                 </div>

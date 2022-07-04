@@ -12,11 +12,11 @@ withdraw: 'Ritira'
 activate: 'Attiva'
 reply: 'Answer'
 view: 'View'
-load_more: 'Altro...'
+load_more: 'Other...'
 processing: 'In elaborazione...'
-close: 'Chiudi'
-lista: 'Lista'
-tutti: 'Tutti'
+close: 'Close'
+lista: 'List'
+tutti: 'All'
 proceed: 'Procedi'
 days: 'days'
 terms_do_il_consenso: "I confirm that I read the privacy policy"
@@ -66,6 +66,10 @@ nav:
   documenti: 'My documents'
   iscrizioni: 'My subscriptions'
   informativa_privacy: 'Information for the processing of personal data'
+  header:
+    profile: "Profile"
+    logout: "Logout"
+    access_my_area: "Log in to your personal area"
   operatori:
     panello_controllo: "Paperwork list"
     lista_operatori: 'Manage operators'
@@ -199,11 +203,11 @@ servizio:
     translation: ''
   name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
   altri_servizi_disponibili: "Altri servizi disponibili in"
-  azioni: "Vedi azioni"
-  indice: "Indice della pagina"
+  azioni: "See actions"
+  indice: "Page index"
   machine_readable: 'JSON Object'
-  condividi: "Condividi"
-  torna_indietro: "Torna indietro"
+  condividi: "Share"
+  torna_indietro: "Come back"
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
@@ -346,6 +350,7 @@ pratica:
       file: 'File name'
       descrizione: 'Description'
       pratiche_list_intro: 'Attached to lists'
+      allegato: 'Attach'
     modulocompilato: 'Filled document'
     stato_1000: 'Draft'
     stato_1500: 'Pending payment'
@@ -412,6 +417,16 @@ pratica:
     tipologie_pagamento: "Types of payment"
     paga_online: "Pay online"
     paga_offline: "Pay offline"
+  upload_attachment: "Upload attachments"
+  upload_warning: "Warning: it is not possible to upload files with a size greater than 25Mb."
+  protocollo_risposta: 'Response protocol'
+  filtra_per_servizio: 'Filter by service'
+  elimina_pratica: "Do you really want to eliminate the practice?"
+  acquisita_il: "acquired on"
+  ritira_pratica: "Are you sure to proceed? This action can no longer be undone."
+  carica_allegato: "Upload attachment"
+  messaggio_operatore: "Are you sure you want to proceed? If you decide to continue, an email will be sent to the operator who is in charge of your practice"
+  messaggio_operatore_vuoto: "Warning! You cannot send an empty message."
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
@@ -2537,13 +2552,13 @@ breadcrumbs:
   list: ''
   compile: ''
 search:
-  label: ''
+  label: 'Search'
   close: ''
   filters: ''
   apply_filters: ''
   reset_filters: ''
   results_count: ''
-  topics: ''
+  topics: 'Topics'
   recipients: ''
   geographic_areas: ''
 analytics:
@@ -2580,3 +2595,47 @@ payment:
     item_3: "Conserva le ricevute in un unico posto"
     download_app: "Scarica l'app"
     watch_video: "Guarda il video"
+  get_payment: "Payment creation in progress"
+  creation_failed: "Oops something went wrong!"
+  timeout: "The request is taking longer than necessary .. <br> <b> Please try again later! </b>"
+  unauth: "Session expired <br> <b> Please login again </b>."
+  get_failed: "Oops something went wrong!, please try again later or contact the administrative office."
+  created_at: "Procedure submission date"
+  reason: "Reason for payment"
+  payer: "Accountholder"
+  address: "Payer address"
+  email: "Payer email"
+  event_created_at: "Event date"
+  type: "Payment method"
+  iud: "Identificativo Unico del Dovuto (IUD)"
+  iuv: "Identificativo Univoco pagamento (IUV)"
+  copy: "Copy"
+  amount: "Amount"
+  other_details: "Operation detail"
+  status_creation_pending: "In attesa di pagamento"
+  status_notification_pending: "Notifica pendente"
+  paid_at: "Paid on"
+  download_pdf: "Download payment receipt"
+  paga_online: "Pay online"
+  paga_offline: "Pay offline"
+  creation_pending: "Payment creation in progress"
+  creation_failed_text: "The creation of the payment was not successful, please try again later or contact the administrative office."
+  not_found: "The pratice has not yet been received, try again later!"
+  operator:
+    change_status_message: "Cambio Forzato stato pratica in: PAGATO"
+  loading: "Loading..."
+  warning: "Warning"
+calendar_formio:
+  at_hours: "at"
+  draft_expiration_text: "A draft reservation has been reserved for you at the time indicated above valid until the day"
+  draft_expiration_text_end: "Proceed to submit your application before the deadline to confirm your reservation and not lose priority for the selected day and time"
+  availability_error: "There was an error retrieving availability, please try again"
+  no_availability_error: "It is not possible to book on this day, all the available time slots are already booked"
+  day_selected: "Day selected for booking"
+  availability_hours: "Timetables available on"
+  range_picker_description: "If you prefer you can use the control below to shorten the duration of the reservation"
+  from: "From"
+  to: "To"
+  from_range_error_value: "The value"
+  from_range_error_not_valid: "it is not valid"
+  unavailable: "Unavailable"

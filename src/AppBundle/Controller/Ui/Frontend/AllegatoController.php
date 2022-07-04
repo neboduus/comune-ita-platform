@@ -658,7 +658,7 @@ class AllegatoController extends Controller
     if ($this->canDeleteAllegato($allegato)) {
       return $this->createFormBuilder(array('id' => $allegato->getId()))
         ->add('id', HiddenType::class)
-        ->add('elimina', SubmitType::class, ['attr' => ['class' => 'btn btn-xs btn-danger']])
+        ->add($this->translator->trans('elimina'), SubmitType::class, ['attr' => ['class' => 'btn btn-xs btn-danger']])
         ->setAction($this->router->generate('allegati_delete_cpsuser',
           ['allegato' => $allegato->getId()]))
         ->setMethod('DELETE')

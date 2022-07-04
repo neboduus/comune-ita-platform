@@ -50,6 +50,10 @@ nav:
   documenti: 'Meine Dokumente'
   iscrizioni: 'Meine Einträge'
   informativa_privacy: 'Datenschutzerklärung'
+  header:
+    profile: "Profil"
+    logout: "Ausloggen"
+    access_my_area: "Loggen Sie sich in Ihren persönlichen Bereich ein"
   operatori:
     panello_controllo: "Auflistung der Vorgänge"
     lista_operatori: 'Sachbearbeiter/-innen verwalten'
@@ -112,8 +116,8 @@ servizio:
   il_servizio: 'Der Onlinedienst'
   area_tematica: 'Themenbereich'
   machine_readable: 'JSON Object'
-  indice: "Indice della pagina"
-  azioni: "Vedi azioni"
+  indice: "Seitenindex"
+  azioni: "Siehe Aktionen"
   altri_servizi_disponibili: "Altri servizi disponibili in"
   name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
   imis:
@@ -344,6 +348,7 @@ pratica:
       file: 'Dateiname'
       descrizione: 'Beschreibung'
       pratiche_list_intro: 'Anhang'
+      allegato: 'Angebracht'
     modulocompilato: 'ausgefülltes Formular'
     stato_1000: 'Entwurf'
     stato_1500: 'Zahlung noch ausständig'
@@ -411,6 +416,16 @@ pratica:
     tipologie_pagamento: "Zahlungsarten"
     paga_online: "Online bezahlen"
     paga_offline: "Offline bezahlen"
+  upload_attachment: "Anhänge hochladen"
+  upload_warning: "Achtung: Es ist nicht möglich, Dateien mit einer Größe von mehr als 25 MB hochzuladen."
+  protocollo_risposta: 'Antwortprotokoll'
+  filtra_per_servizio: 'Nach Dienst filtern'
+  elimina_pratica: "Wollen Sie die Praxis wirklich abschaffen?"
+  acquisita_il: "erworben auf"
+  ritira_pratica: "Möchten Sie wirklich fortfahren? Diese Aktion kann nicht mehr rückgängig gemacht werden."
+  carica_allegato: "Anhang hochladen"
+  messaggio_operatore: "Sind Sie sicher, dass Sie fortfahren möchten? Wenn Sie fortfahren möchten, wird eine E-Mail an den für Ihre Praxis zuständigen Mitarbeiter gesendet."
+  messaggio_operatore_vuoto: "Achtung! Sie können keine leere Nachricht senden."
 STATUS_CANCELLED: 'Abgelehnt'
 STATUS_DRAFT: 'Entwurf'
 STATUS_PRE_SUBMIT: 'Gesendet'
@@ -2572,13 +2587,13 @@ error_message_detail_401: "Fehlermeldung_Detail_401"
 practice_of: 'Vorgang_vom'
 from_date_to_date: "von_Datum_bis_Datum"
 search:
-  label: 'label'
-  close: 'close'
-  filters: 'filters'
+  label: 'Nahe'
+  close: 'Nah dran'
+  filters: 'Filter'
   apply_filters: 'apply_filters'
   reset_filters: 'reset_filters'
   results_count: 'results_count'
-  topics: 'topics'
+  topics: 'Themen'
   recipients: 'recipients'
   geographic_areas: 'geographic_areas'
 analytics:
@@ -2615,3 +2630,47 @@ payment:
     item_3: "Conserva le ricevute in un unico posto"
     download_app: "Scarica l'app"
     watch_video: "Guarda il video"
+  get_payment: "Zahlungserstellung läuft"
+  creation_failed: "OUps! Irgendwas lief schief!"
+  timeout: "Die Anfrage dauert länger als nötig. <br> <b> Bitte versuchen Sie es später erneut! </b>"
+  unauth: "Sitzung abgelaufen <br> <b> Bitte melden Sie sich erneut an </b>."
+  get_failed: "OUps! Irgendwas lief schief!, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle."
+  created_at: "Einreichungsdatum des Verfahrens"
+  reason: "Zahlungsgrund"
+  payer: "Kontoinhaber"
+  address: "Zahleradresse"
+  email: "E-Mail des Zahlers"
+  event_created_at: "Veranstaltungsdatum"
+  type: "Bezahlverfahren"
+  iud: "Identificativo Unico del Dovuto (IUD)"
+  iuv: "Identificativo Univoco pagamento (IUV)"
+  copy: "Kopieren"
+  amount: "Menge"
+  other_details: "Betriebsdetail"
+  status_creation_pending: "In attesa di pagamento"
+  status_notification_pending: "Notifica pendente"
+  paid_at: "Bezahlt am"
+  download_pdf: "Zahlungsbeleg herunterladen"
+  paga_online: "Online bezahlen"
+  paga_offline: "Offline bezahlen"
+  creation_pending: "Zahlungserstellung läuft"
+  creation_failed_text: "Die Erstellung der Zahlung war nicht erfolgreich, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle."
+  not_found: "Die Datei wurde noch nicht empfangen, versuchen Sie es später erneut!"
+  operator:
+    change_status_message: "Cambio Forzato stato pratica in: PAGATO"
+  loading: "Wird geladen..."
+  warning: "Aufmerksamkeit"
+calendar_formio:
+  at_hours: "alle ore"
+  draft_expiration_text: "Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno"
+  draft_expiration_text_end: "Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati"
+  availability_error: "Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare"
+  no_availability_error: "Non è possibile prenotare in questa giornata, tutte le fasce orarie a disposizione sono già prenotate"
+  day_selected: "Giorno selezionato per la prenotazione"
+  availability_hours: "Orari disponibili il"
+  range_picker_description: "Se preferisci puoi utilizzare il controllo che segue per accorciare la durata della prenotazione"
+  from: "Dalle"
+  to: "Alle"
+  from_range_error_value: "Il valore"
+  from_range_error_not_valid: "non è valido"
+  unavailable: "Non disponibile"

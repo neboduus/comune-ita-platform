@@ -31,3 +31,4 @@ yarn-error.log
 .unison*
 docker-compose.override.yml
 /compose_conf/pitre-wrapper
+/web/translations/
