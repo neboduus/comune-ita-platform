@@ -73,21 +73,22 @@ class ServiceGroupRepository extends EntityRepository
 
     return $qb->getQuery()->getResult();
   }
-  public function findHigherMaxResponseTime($groupId)
+  public function hasServicesWithMaxResponseTime($groupId)
   {
-    $qb = $this->createQueryBuilder('g');
-    $qb = $qb
-      ->select($qb->expr()->max("s.maxResponseTime"))
+    $qb = $this->getEntityManager()->createQueryBuilder();
+    $qb
+      ->select($qb->expr()->count("s.maxResponseTime"))
       ->from("AppBundle:Servizio", "s")
       ->where(
         $qb->expr()->andX(
           $qb->expr()->eq("s.serviceGroup", ":groupId"),
-          $qb->expr()->eq("s.sharedWithGroup", "true")
+          $qb->expr()->eq("s.sharedWithGroup", "true"),
+          $qb->expr()->eq("s.workflow", 0)
         )
       )
       ->setParameter('groupId', $groupId);
-    //dump($qb->getQuery());
-    return $qb->getQuery()->getResult();
+    $qbResult = $qb->getQuery()->getSingleScalarResult();
+    return $qbResult > 0;
   }
 
 }
