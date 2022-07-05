@@ -168,7 +168,7 @@
                            href="#costs"><span>{{ 'servizio.costs' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.getSharedServices|length > 0 and higherMaxResponseTime %}
+                    {% if servizio.getSharedServices|length > 0 and hasServicesWithMaxResponseTime %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#max-response-time-section"><span>{{ 'gruppo_di_servizi.max_response_time_list' | trans }}</span></a>
@@ -261,7 +261,7 @@
             <span class="text-serif">{{ servizio.costs|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
           </article>
         {% endif %}
-        {% if servizio.getSharedServices|length > 0 and higherMaxResponseTime %}
+        {% if servizio.getSharedServices|length > 0 and hasServicesWithMaxResponseTime %}
           <div id="max-response-time-section">
             <h4 class="it-page-section">{{ 'servizio.max_response_time_list' | trans }}</h4>
             <ul>
@@ -304,7 +304,7 @@
     </section>
   {% endif %}
 
-  {% if servizio.getNotStickyServices.count > 0 and higherMaxResponseTime %}
+  {% if servizio.getNotStickyServices.count > 0 and hasServicesWithMaxResponseTime %}
     <section class="container py-5">
       <div class="row">
         {% for item in servizio.getNotStickyServices %}

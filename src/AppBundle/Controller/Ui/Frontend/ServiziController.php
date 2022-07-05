@@ -210,12 +210,12 @@ class ServiziController extends Controller
 
     $this->breadcrumbsService->generateServiceGroupBreadcrumbs($serviceGroup);
     
-    $higherMaxResponseTime = $serviceGroupRepository->findHigherMaxResponseTime($serviceGroup->getId());
+    $hasServicesWithMaxResponseTime = $serviceGroupRepository->hasServicesWithMaxResponseTime($serviceGroup->getId());
 
     $response = $this->render('@App/Servizi/serviceGroupDetail.html.twig', [
       'user' => $user,
       'servizio' => $serviceGroup,
-      'higherMaxResponseTime' => $higherMaxResponseTime
+      'hasServicesWithMaxResponseTime' => $hasServicesWithMaxResponseTime
     ]);
 
     return $response;
