@@ -32,3 +32,4 @@ yarn-error.log
 docker-compose.override.yml
 /compose_conf/pitre-wrapper
 /web/translations/
+/public/bundles/

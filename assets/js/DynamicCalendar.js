@@ -155,7 +155,7 @@ export default class FormioCalendar extends Base {
               beforeShowDay: function (date) {
                 var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
                 if (data.some(e => e.available === false && e.date === string)) {
-                  return [data.some(e => e.date === string), 'not-available']
+                  return [false, 'disabled not-available', Translator.trans('calendar_formio.unavailable', {}, 'messages', self.$language)]
                 }
                 return [(data.some(e => e.date === string))]
               },

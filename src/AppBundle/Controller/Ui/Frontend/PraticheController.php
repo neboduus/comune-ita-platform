@@ -681,7 +681,7 @@ class PraticheController extends Controller
         Pratica::STATUS_WITHDRAW
       );
 
-      $this->addFlash('success', 'La pratica ' . $pratica->getId() . ' è stata annullata.');
+      $this->addFlash('success', $this->translator->trans('operatori.pratica_annullata', ['%id%' => $pratica->getId()]));
       return $this->redirectToRoute('pratiche_list');
     }
 

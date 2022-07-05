@@ -11,7 +11,7 @@
           <div class="card card-teaser rounded p-2">
             <div class="card-body">
               <b>{{ ('pratica.dettaglio.stato_'~change[0])| trans }}</b>
-              <small class="d-block">il {{ timestamp|date('d/m/Y') }} alle {{ timestamp|date('H:i') }}</small>
+              <small class="d-block">{{ 'pratica.dettaglio.il' | trans }} {{ timestamp|date('d/m/Y') }} {{ 'pratica.dettaglio.alle' | trans }} {{ timestamp|date('H:i') }}</small>
             </div>
           </div>
         </div>

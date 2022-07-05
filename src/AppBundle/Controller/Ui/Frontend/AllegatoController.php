@@ -488,7 +488,7 @@ class AllegatoController extends Controller
   public function allegatoMessaggioUploadAction(Request $request, Pratica $pratica)
   {
     if (!in_array($pratica->getStatus(), [Pratica::STATUS_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_PENDING_AFTER_INTEGRATION])){
-      return new JsonResponse("Lo pratica con id: {$pratica->getId()} si trova in uno stato in cui non possono essere allegati file", Response::HTTP_BAD_REQUEST);
+      return new JsonResponse($this->translator->trans('operatori.messaggi.pratica_id'). ' '.$pratica->getId(). ' ' .$this->translator->trans('operatori.messaggi.errore_carica_allegato'), Response::HTTP_BAD_REQUEST);
     }
 
     /** @var User $user */
