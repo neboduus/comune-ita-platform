@@ -342,6 +342,7 @@ pratica:
       descrizione_ritiro: 'Qui sono elencati il file di ritiro e/o annullamento della pratica.'
     data_ora_presentazione: 'Richiesta presentata il'
     alle: 'alle'
+    il: 'il'
     stato: 'Stato corrente'
     servizio: 'Servizio'
     ente: 'Ente'
@@ -441,6 +442,10 @@ pratica:
   carica_allegato: "Carica allegato"
   messaggio_operatore: "Sei sicuro di voler procedere? Se decidi di continuare verrà inviata un email all'operatore che ha in carico la tua pratica"
   messaggio_operatore_vuoto: "Attenzione! non puoi inviare un messaggio vuoto."
+  messaggio_letto: "Messaggio letto il"
+  messaggio_creato: "Messaggio creato il"
+  messaggio_consegnato: "Messaggio creato il"
+  conferma_invio_pratica: "Sei sicuro di voler procedere con l'invio della pratica?"
 STATUS_CANCELLED: 'Rifiutata'
 STATUS_DRAFT: 'Bozza'
 STATUS_PRE_SUBMIT: 'Inviata'
@@ -915,7 +920,7 @@ operatori:
     allega_help: "Allega eventuali documenti in uno dei seguenti formati: doc, docx, odt, pdf, txt, jpeg, png, gif, p7m, xp7m, zip."
     aggiungi_nota_privata: 'Aggiungi nota interna'
     invia: 'Invia messaggio'
-    non_disponibile_anonimo: 'Funzionalità non dispobibile per gli utenti anonimi'
+    non_disponibile_anonimo: 'Funzionalità non disponibile per gli utenti anonimi'
     prendi_in_carico_per_abilitare: 'Prendi in carico la pratica per abilitare questa funzionalità'
     pubblico: 'Invia messaggio pubblico al cittadino'
     privato: 'Una nota interna non sarà visibile al cittadino'
@@ -927,12 +932,15 @@ operatori:
     consegnato_il: 'Messaggio inviato il %data%'
     letto_il: 'Messaggio letto il %data%'
     feedback_inviato: "Il messaggio verrà recapitato a breve all'indirizzo %email%. Una eventuale risposta del cittadino comparirà in questa stessa pagina"
+    pratica_id: "La pratica con id:"
+    errore_carica_allegato: "si trova in uno stato in cui non possono essere allegati file"
   suggerimento_login: 'Puoi autenticarti con SPID/CPS per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo.'
   login: "Accedi"
   scarica: 'File di richiesta'
   info: "Info"
   iter_completato: "La richiesta è stata <strong>%statusName%</strong> il %data% alle ore %ore%"
   pratica_ritirata: "La pratica è stata ritirata il %data% alle ore %ore%"
+  pratica_annullata: "La pratica %id% è stata annullata"
   pratica_correlata: "Pratica correlata"
   fascicolo: "Fascicolo numero"
   in_questo_fascicolo: "In questo fascicolo"
@@ -2635,6 +2643,9 @@ payment:
   warning: "Attenzione"
   operator:
     change_status_message: "Cambio Forzato stato pratica in: PAGATO"
+  mypay_error: "C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza."
+  error_select_payment: "Devi scegliere almeno un metodo di pagamento"
+  check_payment: "Verifica pagamento"
 calendar_formio:
   at_hours: "alle ore"
   draft_expiration_text: "Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno"
@@ -2649,3 +2660,5 @@ calendar_formio:
   from_range_error_value: "Il valore"
   from_range_error_not_valid: "non è valido"
   unavailable: "Non disponibile"
+timeago:
+  anno: 'year'

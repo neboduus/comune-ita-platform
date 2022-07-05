@@ -313,6 +313,7 @@ pratica:
     data_ora_presentazione: 'Anfrage gestellt am'
     # alle ore? um .... Uhr
     alle: 'um'
+    il: 'das'
     stato: 'aktueller Status'
     servizio: 'Dienst'
     # Behörde?
@@ -426,6 +427,10 @@ pratica:
   carica_allegato: "Anhang hochladen"
   messaggio_operatore: "Sind Sie sicher, dass Sie fortfahren möchten? Wenn Sie fortfahren möchten, wird eine E-Mail an den für Ihre Praxis zuständigen Mitarbeiter gesendet."
   messaggio_operatore_vuoto: "Achtung! Sie können keine leere Nachricht senden."
+  messaggio_letto: "Nachricht weiterlesen"
+  messaggio_creato: "Nachricht erstellt am"
+  messaggio_consegnato: "Nachricht zugestellt am"
+  conferma_invio_pratica: "Sei sicuro di voler procedere con l'invio della pratica?"
 STATUS_CANCELLED: 'Abgelehnt'
 STATUS_DRAFT: 'Entwurf'
 STATUS_PRE_SUBMIT: 'Gesendet'
@@ -886,6 +891,8 @@ operatori:
     consegnato_il: 'Nachricht gesendet am %data%'
     letto_il: 'Nachricht gelesen am %data%'
     feedback_inviato: "BACKOFFICE"
+    pratica_id: "Üben Sie mit ID:"
+    errore_carica_allegato: "befindet sich in einem Zustand, in dem keine Dateien angehängt werden können"
   suggerimento_login: 'Wenn Sie sich mit SPID/Bürgerkarte anmelden, werden die Felder automatisch ausgefüllt und der Vorgang in Ihrem Profil gespeichert.'
   login: "Login"
   scarica: 'Anfrage'
@@ -2592,7 +2599,7 @@ search:
   filters: 'Filter'
   apply_filters: 'apply_filters'
   reset_filters: 'reset_filters'
-  results_count: 'results_count'
+  results_count: '{0} Trovati <strong>0</strong> servizi|{1} Trovato <strong>1</strong> servizo|]1,Inf[ Trovati <strong>%count%</strong> servizi'
   topics: 'Themen'
   recipients: 'recipients'
   geographic_areas: 'geographic_areas'
@@ -2657,20 +2664,23 @@ payment:
   creation_failed_text: "Die Erstellung der Zahlung war nicht erfolgreich, bitte versuchen Sie es später erneut oder wenden Sie sich an die Geschäftsstelle."
   not_found: "Die Datei wurde noch nicht empfangen, versuchen Sie es später erneut!"
   operator:
-    change_status_message: "Cambio Forzato stato pratica in: PAGATO"
+    change_status_message: "Erzwungener Austausch des Praxisstatus in: BEZAHLT"
   loading: "Wird geladen..."
   warning: "Aufmerksamkeit"
+  mypay_error: "C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza."
+  error_select_payment: "Devi scegliere almeno un metodo di pagamento"
+  check_payment: "Verifica pagamento"
 calendar_formio:
-  at_hours: "alle ore"
-  draft_expiration_text: "Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno"
-  draft_expiration_text_end: "Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati"
-  availability_error: "Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare"
-  no_availability_error: "Non è possibile prenotare in questa giornata, tutte le fasce orarie a disposizione sono già prenotate"
-  day_selected: "Giorno selezionato per la prenotazione"
-  availability_hours: "Orari disponibili il"
-  range_picker_description: "Se preferisci puoi utilizzare il controllo che segue per accorciare la durata della prenotazione"
-  from: "Dalle"
-  to: "Alle"
-  from_range_error_value: "Il valore"
-  from_range_error_not_valid: "non è valido"
-  unavailable: "Non disponibile"
+  at_hours: "bei"
+  draft_expiration_text: "Für Sie wurde zum oben angegebenen Zeitpunkt ein Reservierungsentwurf reserviert, der bis zum Tag gültig ist"
+  draft_expiration_text_end: "Reichen Sie Ihren Antrag vor Ablauf der Frist ein, um Ihre Buchung zu bestätigen, und verlieren Sie nicht die Priorität für den ausgewählten Tag und die ausgewählte Uhrzeit"
+  availability_error: "Beim Abrufen der Verfügbarkeit ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut"
+  no_availability_error: "Eine Buchung an diesem Tag ist nicht möglich, alle verfügbaren Zeitfenster sind bereits gebucht"
+  day_selected: "Für die Buchung ausgewählter Tag"
+  availability_hours: "Fahrpläne verfügbar unter"
+  range_picker_description: "Wenn Sie es vorziehen, können Sie das Steuerelement unten verwenden, um die Dauer der Reservierung zu verkürzen"
+  from: "Gib ihr"
+  to: "bei"
+  from_range_error_value: "Der Wert"
+  from_range_error_not_valid: "es ist nicht gültig"
+  unavailable: "Nicht verfügbar"

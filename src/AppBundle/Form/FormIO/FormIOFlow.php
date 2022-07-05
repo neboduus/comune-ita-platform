@@ -99,7 +99,7 @@ class FormIOFlow extends PraticaFlow
           'form_type' => PaymentGatewayType::class,
         );
         $steps[] = array(
-          'label' => 'Verifica pagamento',
+          'label' => $this->translator->trans('payment.check_payment'),
         );
       }
     } else {

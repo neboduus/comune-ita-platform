@@ -223,7 +223,7 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
 
     } catch (\Exception $e) {
       $this->logger->error("Warning user about not being able to create a payment request for pratica " . $pratica->getId() . ' - ' . $e->getMessage());
-      $helper->setDescriptionText("C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza.");
+      $helper->setDescriptionText($this->translator->trans('payment.mypay_error'));
     }
   }
 
@@ -238,7 +238,7 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
 
     if (!isset($data['response']) || empty($data['response'])) {
       $event->getForm()->addError(
-        new FormError('Devi scegliere almeno un metodo di pagamento')
+        new FormError($this->translator->trans('payment.error_select_payment'))
       );
     }
   }

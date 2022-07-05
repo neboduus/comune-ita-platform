@@ -61,13 +61,13 @@
           <small class="font-italic text-secondary">{{ message.createdAt|time_ago }}
             {% if message.readAt %}
               <span class="msg-status read"
-                    title="Messaggio letto il {{ message.readAt | date(ocsdc_default_datetime_format) }}"></span>
+                    title="{{ 'pratica.messaggio_letto'|trans }} {{ message.readAt | date(ocsdc_default_datetime_format) }}"></span>
             {% elseif message.sentAt %}
               <span class="msg-status"
-                    title="Messaggio creato il {{ message.createdAt | date(ocsdc_default_datetime_format) }}"></span>
+                    title="{{ 'pratica.messaggio_creato'|trans }} {{ message.createdAt | date(ocsdc_default_datetime_format) }}"></span>
             {% else %}
               <span class="msg-status sent"
-                    title="Messaggio consegnato il {{ message.sentAt | date(ocsdc_default_datetime_format) }}"></span>
+                    title="{{ 'pratica.messaggio_consegnato'|trans }} {{ message.sentAt | date(ocsdc_default_datetime_format) }}"></span>
             {% endif %}
           </small>
         {% endif %}
