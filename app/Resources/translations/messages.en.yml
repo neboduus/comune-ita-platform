@@ -94,16 +94,16 @@ nav:
       webhooks: 'webhooks'
     ente: 'body'
     categorie: 'categories'
-    impostazioni_istanza_descrizione: ""
-    servizi_descrizione: ''
-    operatori_descrizione: ''
-    gruppo_servizi_descrizione: ''
-    webhook_descrizione: ''
-    azioni_programmate_descrizione: ''
-    logs_descrizione: ''
-    statistiche: ''
-    statistiche_descrizione: ''
-    title: ''
+    impostazioni_istanza_descrizione: "General configurations of the institution"
+    servizi_descrizione: 'Service management'
+    operatori_descrizione: 'Operators management'
+    gruppo_servizi_descrizione: 'Service group management'
+    webhook_descrizione: 'Webhook management'
+    azioni_programmate_descrizione: 'View scheduled actions'
+    logs_descrizione: 'Security logs'
+    statistiche: 'Statistics'
+    statistiche_descrizione: 'View statistics'
+    title: 'Welcome to the admin dashboard'
   backoffices:
     servizi_sottoscrizione: 'subscription_services'
     prenotazione_appuntamenti: 'booking_appointments'
@@ -170,44 +170,44 @@ servizio:
   bozza_successo: 'draft_success'
   nessun_template: 'no_template'
   importa: 'import'
-  destinatari: ""
-  sottotitolo: ''
-  aree_geografiche: ""
-  consenti_richiesta_integrazione: ""
-  no_topics: ''
-  no_recipients: ''
-  no_geographic_areas: ''
-  shared_with_group_message: ''
-  shared_with_group_action: ''
-  sottotitolo_categorie: ""
-  generali: ""
-  modulo_utente: ""
-  modulo_backoffice: ""
-  id_pratica: ""
-  nome_servizio: ""
-  nome_completo: ""
-  data_corrente: ""
-  data_acquisizione: ""
-  ora_acquisizione: ""
-  protocollo: ""
-  data_protocollo: ""
-  ora_protocollo: ""
-  messaggio_personale: ""
-  nome_utente: ""
-  indirizzo_utente: ""
-  preview: ''
-  print: ''
-  i18n:
-    default_language_module_alert: ''
-    string: ''
-    translation: ''
-  name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
-  altri_servizi_disponibili: "Altri servizi disponibili in"
-  azioni: "See actions"
-  indice: "Page index"
+  destinatari: "Recipients"
+  sottotitolo: 'Applications and registrations, contributions and rankings, reports, authorisations and concessions, certificates and declarations, payments, and public services.'
+  aree_geografiche: "Geographical areas"
+  consenti_richiesta_integrazione: "Allow operators to request additions to the practices of this service"
+  no_topics: 'A category was not specified'
+  no_recipients: 'No recipients have been specified'
+  no_geographic_areas: 'No geographic area has been specified'
+  shared_with_group_message: 'This service shares the tab with the service group; the contents of the associated service group are shown below.'
+  shared_with_group_action: 'Edit the service group'
+  sottotitolo_categorie: "The topics respond to a need to organise the contents of the institutional site by themes and represent the main categories of content, information and specific documents."
+  generali: "General"
+  modulo_utente: "User form"
+  modulo_backoffice: "Backoffice module"
+  id_pratica: "ID"
+  nome_servizio: "Service name"
+  nome_completo: "Full name (group service)"
+  data_corrente: "Current date"
+  data_acquisizione: "Acquisition date"
+  ora_acquisizione: "Acquisition time"
+  protocollo: "Protocol"
+  data_protocollo: "Protocol date"
+  ora_protocollo: "Protocol time"
+  messaggio_personale: "Personal message"
+  nome_utente: "User name"
+  indirizzo_utente: "User address"
   machine_readable: 'JSON Object'
+  preview: 'Preview'
+  print: 'Print'
+  name_service_warning: "Attention, titles that are too long make navigation more complex. We recommend the use of simple titles without regulatory references (for which you can use the More information field in the service sheet)."
+  i18n:
+    default_language_module_alert: 'The base language of the Module is <strong>%default_language% </strong>, you can add a translation from <a href="%module_translation_url%"> Module translations</a>'
+    string: 'It string'
+    translation: 'Translation %lang%'
+  indice: "Index"
+  azioni: "View actions"
+  altri_servizi_disponibili: "Other services available in"
   condividi: "Share"
-  torna_indietro: "Come back"
+  torna_indietro: "Back"
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
@@ -248,9 +248,9 @@ webhook:
   no_services: 'No service specified'
   active: 'Active'
   not_Active: 'Inactive'
-  filters_label: ''
-  headers: ''
-  version: ''
+  filters_label: 'Select the services enabled for the webhook'
+  headers: 'Headers (json)'
+  version: 'Version'
 pratica:
   guida_utente: 'Guide'
   email:
@@ -315,8 +315,8 @@ pratica:
     dichiarazione_cambiamenti_detail: "In the event of a false declaration, the declarant is aware that he will be punished according to the Criminal Code following the provisions of the art. 76 of the Presidential Decree 445/2000. Moreover, if the check carried out reveals the untruthfulness of the content of any of the declarations made, the subject will lose the benefits resulting from any provision issued based on the untruthful statement (Article 75 of Presidential Decree 445/2000). The declarant is informed and authorizes data collection to issue the administrative provision under art. 13 of the Legislative Decree 196/2003."
     luogo: 'Place'
     riferimento_sdc: 'Reference in Citizen''s Room:'
-    allegati_protocollo: ''
-    allegati_no_protocollo: ''
+    allegati_protocollo: 'Attachments sent to the protocol'
+    allegati_no_protocollo: 'Attachments not sent to the protocol'
   dettaglio:
     data_ora_presentazione: 'Request submitted on'
     alle: 'to'
@@ -351,7 +351,7 @@ pratica:
       file: 'File name'
       descrizione: 'Description'
       pratiche_list_intro: 'Attached to lists'
-      allegato: 'Attach'
+      allegato: 'Attachment'
     modulocompilato: 'Filled document'
     stato_1000: 'Draft'
     stato_1500: 'Pending payment'
@@ -385,22 +385,23 @@ pratica:
       indirizzo: 'Address'
     stato_50000: 'Canceled'
     lista_allegati:
-      descrizione_modulo: ''
-      descrizione_messaggi: ''
-      descrizione_risposta: ''
-      descrizione_richieste_integrazioni: ''
-      descrizione_risposte_integrazioni: ''
+      descrizione_modulo: 'The completed form generated by the form and the attached documents are listed here.'
+      descrizione_messaggi: 'Files attached to messages are listed here.'
+      descrizione_risposta: 'The answer file to the case and its attachments are listed here.'
+      descrizione_richieste_integrazioni: 'The integration request files are listed here.'
+      descrizione_risposte_integrazioni: 'The integration response files are listed here.'
+      descrizione_ritiro: 'The file for withdrawing and cancelling the practice is listed here.'
     integrazioni:
-      alert: ""
-      button: ''
-    or: ''
-    cambio_operatore: ''
+      alert: "An integration was requested"
+      button: 'Reply to the integration request'
+    or: 'Or'
+    cambio_operatore: 'Change operator'
   messaggi:
     oggetto: 'New message request numer %pratica%'
     messaggio: '%message% <img src="%link%">'
   modulo:
-    descrizione: ''
-    descrizioneRisposta: ''
+    descrizione: 'The form nomeservizio was completed on datacompilazione'
+    descrizioneRisposta: 'Service nomeservice, the reply was completed on datacompilazione'
   appunti_compilazione:
     titolo: 'Add note'
     sottotitolo: 'This description can only be seen by you and will help you recognize the practice more easily'
@@ -408,14 +409,14 @@ pratica:
   noteDiCompilazione: 'Notes'
   le_tue_note: 'Your notes'
   crea_nuova_pratica: 'Create new practice'
-  vai_al_pagamento: ''
+  vai_al_pagamento: 'Go to payment'
   payment_reminder:
-    message: ""
-    subject: ""
-  vedi_tutte: ''
-  pratiche_in_evidenzia: ''
+    message: "Dear <b>%user_name%</b><br/> the request number <b>%id%</b> for <b>%service_fullname%</b> is awaiting a payment, please use the following links to pay the amount due"
+    subject: "Payment reminder required number %practice%"
+  vedi_tutte: 'View all'
+  pratiche_in_evidenzia: 'Pinned forms'
   payment:
-    tipologie_pagamento: "Types of payment"
+    tipologie_pagamento: "Payment methods"
     paga_online: "Pay online"
     paga_offline: "Pay offline"
   upload_attachment: "Upload attachments"
@@ -504,90 +505,90 @@ iscrizioni:
   status_1: "Active"
   status_2: "Inactive"
   errore_salvataggio: "An error has occurred while saving the subscription"
-  back_to_service: ""
-  back_to_list: ""
-  payments: ""
-  subscriptions: ""
-  subscriber_data: ""
-  messages: ""
-  import: ''
-  export: ''
-  import_payments: ''
-  import_subscriptions: ''
-  import_success: ""
-  import_error: ""
-  import_invalid_code: ""
-  missing_file: ""
-  invalid_file: ""
-  empty_file: ""
-  subscriptions_limit_reached: ""
-  no_payments_config: ""
-  missing_payment_config: ""
-  no_payment_service: ''
-  missing_subscriber: ''
-  missing_subscription: ""
-  application_already_exists: ""
-  drafts_created: ''
-  subscriptions_created: ''
-  select_payment_config: ''
-  cancel: ''
-  send: ''
-  upload_csv: ''
+  back_to_service: "Back to service"
+  back_to_list: "Back to list"
+  payments: "Payments"
+  subscriptions: "Subscriptions"
+  subscriber_data: "Personal card"
+  messages: "Messages"
+  import: 'Imports'
+  export: 'Exports'
+  import_payments: 'Import payments'
+  import_subscriptions: 'Import subscriptions'
+  import_success: "Import successful"
+  import_error: "An error occurred while importing"
+  import_invalid_code: "The code %code% does not coincide with the selected service"
+  missing_file: "No file selected"
+  invalid_file: "The selected file is not valid"
+  empty_file: "The selected file is empty"
+  subscriptions_limit_reached: "The number of registrations is greater than the maximum number allowed"
+  no_payments_config: "There are no payment configurations"
+  missing_payment_config: "No payment found with identifier %identifier%"
+  no_payment_service: 'The service specified in the payment configuration does not exist'
+  missing_subscriber: 'A member with tax code %fiscal_code% was not found'
+  missing_subscription: "The user %fiscal_code% is not subscribed to this subscription service"
+  application_already_exists: "The payment procedure in the name of %user_fiscal_code% for the member %subscriber_fiscal_code% is already present"
+  drafts_created: '%num_applications% forms created successfully'
+  subscriptions_created: '%num_subscriptions% subscriptions successfully imported'
+  select_payment_config: 'Select a payment configuration'
+  cancel: 'Cancel'
+  send: 'Send'
+  upload_csv: 'Upload csv'
   modals:
-    payments_header: ''
-    subscriptions_header: ''
-    download_template: ''
-    open_in_excel: ''
-    payments_edit_file: ""
-    subscriptions_edit_file: ""
-    save_and_upload: ''
-    payments_check_errors: ""
-    subscriptions_check_errors: ""
-    edit_subscription: ''
+    payments_header: 'In this section it is possible to import payments and create draft payment practices through a well-defined CSV type file. In order to proceed:'
+    subscriptions_header: 'In this section, it is possible to import inscriptions through a well-defined CSV type file. In order to proceed:'
+    download_template: 'Download template'
+    open_in_excel: 'Open with Excel or Openoffice'
+    payments_edit_file: "enter the tax code of the members and the payment amount, one for each row, taking care to insert all and only the columns indicated"
+    subscriptions_edit_file: "enter the data of the subscribers, one for each row, taking care to insert all and only the columns indicated"
+    save_and_upload: 'save the file and upload it using the button Upload on this page'
+    payments_check_errors: "check and correct any errors indicated at the end of the import"
+    subscriptions_check_errors: "check that the subscribers have been successfully imported in the subscribers list"
+    edit_subscription: 'Edit subscription'
     confirm_edit:
-      description_title: ''
-      description_text: ''
-    delete_subscription: ''
+      description_title: 'You are about to move this entry'
+      description_text: 'Select the service you want to move this membership to. All payments associated with the previous subscription will automatically be associated with the new one'
+    delete_subscription: 'Delete subscription'
     confirm_delete:
-      description_title: ''
-      description_text: ""
-    withdraw_subscription: ''
+      description_title: 'You are about to delete this subscription permanently'
+      description_text: "Once the registration has been permanently deleted, it cannot be recovered. The deletion will NOT be possible if there are linked payments."
+    withdraw_subscription: 'Withdraw subscription'
     confirm_withdraw:
-      description_title: ''
-      description_text: ""
-    activate_subscription: ''
+      description_title: 'You''re about to withdraw this subscription'
+      description_text: "Once the registration has been withdrawn, it will still be possible to view all the relevant information and any related payments"
+    activate_subscription: 'Reactivate subscription'
     confirm_activate:
-      description_title: ''
-      description_text: ""
-  share_helper: ""
-  copy_application_helper: ""
+      description_title: 'You are about to reactivate this subscription'
+      description_text: "Once the subscription has been reactivated, it will still be possible to withdraw it through the appropriate button"
+  share_helper: "Enter a comma-separated list of fiscal code numbers"
+  copy_application_helper: "Click to copy the "
   subscribers:
-    show: ''
-    name: ''
-    surname: ''
-    fiscal_code: ''
-    date_of_birth: ''
-    email_address: ''
-    created_at: ''
-    actions: ''
-    completename: ""
-    registry: ''
-    place_of_birth: ''
-    address: ''
-    house_number: ''
-    municipality: ''
-    postal_code: ''
-  subscriber: ""
-  certificato: ""
-  back_to_subscriber: ""
-  edit_registry: ''
-  duration: ""
-  subscriptions_available: ""
-  subscribers_number: ""
-  no_payment_settings: ""
-  status_active: ""
-  status_withdraw: ""
-  withdraw_description: ""
+    show: 'Show'
+    name: 'Name'
+    surname: 'Surname'
+    fiscal_code: 'Fiscal Code'
+    date_of_birth: 'Date of Birth'
+    email_address: 'E-mail'
+    created_at: 'Subscription date'
+    actions: 'Actions'
+    completename: "Name and surmane"
+    registry: 'Registry'
+    place_of_birth: 'Place of birth'
+    address: 'Address'
+    house_number: 'House number'
+    municipality: 'Municipality'
+    postal_code: 'Postal code'
+  subscriber: "Subscriber"
+  certificato: "Certificate"
+  back_to_subscriber: "Back to subscriber"
+  edit_registry: 'Edit registry'
+  duration: "Duration"
+  subscriptions_available: "Registration availability"
+  subscribers_number: "Number of subscribers"
+  no_payment_settings: "There are no payments configured for this subscription service"
+  status_active: "Activate"
+  status_withdraw: "Withdraw"
+  withdraw_description: "The subscription is not active for this subscription service"
 documenti:
   i_miei_documenti: "My documents"
   no_documenti: "No documents available"
@@ -799,8 +800,8 @@ user:
     salva_informazioni_profilo: 'Save profile information'
     salva: 'Save'
     genere:
-      maschio: ''
-      femmina: ''
+      maschio: 'Male'
+      femmina: 'Female'
   welcome: 'welcome'
   welcome_msg: 'welcome_msg'
 admin:
@@ -829,8 +830,6 @@ operatori:
   scrivi_al_cittadino: "Write to citizen"
   riapri_pratica: "Fill the practice"
   richiedi_intergrazioni: 'Request integrations'
-  annulla_richiesta_integrazione: 'Cancel integration request'
-  accetta_richiesta_integrazione: 'Accept integrations'
   richiedi_integrazioni_tpl: "Dear <b>%user_name% </b> <br/> we inform you that an integration to the data of your request for the <b>%service%</b> service is required. <br/> [Insert reason] <br/> Enter your citizen room to complete the integration"
   modulo: 'Module'
   richiesta: 'Request'
@@ -935,15 +934,15 @@ operatori:
     allega_documentazione_richiesta: 'Attach requested documentation'
     concludi: 'Finish processing'
     force_paid:
-      button_cta: 'Registra pagamento'
-      title: 'Cambio stato pratica in: <b>PAGATA</b>'
-      warning_text: "L'azione è <b>irreversibile</b>"
-      modal_note: 'Aggiungere una nota con la motivazione del cambio stato FORZATO'
-      internal_note: 'Nota interna'
-      internal_note_description: 'Abilitando questa opzione la nota sarà visibile solo agli operatori'
-      applicant_note: 'Invia messaggio al cittadino'
-      applicant_note_description: 'Verrà inviata una email e un messaggio sulla piattaforma'
-      toolitip_cta: "La pratica passa automaticamente in stato pagata se il cittadino effettua il pagamento del dovuto che noi abbiamo creato su PagoPA. Se il cittadino fa un pagamento diverso o paga in contanti a uno sportello è possibile usare questa funzionalità per forzare la registrazione di un pagamento. Nella pagina che si apre avrete modo di aggiungere altri dettagli."
+      button_cta: 'Record payment'
+      title: 'Case status change to: <b>PAGATA</b>'
+      warning_text: "The action is <b>irreversible</b>"
+      modal_note: 'Add a note with the reason for the FORCED status change'
+      internal_note: 'Internal note'
+      internal_note_description: 'By enabling this option, the note will only be visible to operators'
+      applicant_note: 'Send a message to the citizen'
+      applicant_note_description: 'An email and a message on the platform will be sent'
+      toolitip_cta: "The practice automatically passes into paid status if the citizen delivers the amount we have created on PagoPA. If the citizen makes a different payment or pays cash at a counter, this feature can be used to force a price to be recorded. On the page that opens, you can add other details."
   profile:
     title: 'Operator''s profile'
     nome: 'Name'
@@ -952,6 +951,7 @@ operatori:
     ente: 'Body'
     ambito: 'Scope'
     salva_modifiche: 'Save changes'
+    errore_dati: "<strong>Warning:</strong> some fields entered are not valid"
   usage:
     title: 'Usage metrics'
     service_title: 'Active services'
@@ -971,23 +971,27 @@ operatori:
     complete: 'Complete'
     cancelled: 'Cancelled'
     draft: 'Draft'
-    done: ''
+    done: 'Done'
   dati_generali: "General Data"
   cambio_stato: "Status change"
   servizi_abilitati: "services_enabled"
   ultima_modifica_password: 'last_modify_password'
-  pagamento_posticipato_previsto: ""
-  pagamento_posticipato: ""
-  pagamento_posticipato_richiesto: ""
-  draft_description: ""
-  in_questo_fascicolo: ""
-  richiedi_integrazioni: ''
-  protocollazione_richiesta_integrazione: ''
-  protocollazione_risposta_integrazione: ''
-  richieste_integrazioni: ''
-  risposte_integrazioni: ''
-  how_accept_integrations_title: ''
-  how_accept_integrations_text: ''
+  pagamento_posticipato_previsto: "There is a deferred payment for this service."
+  pagamento_posticipato: "There is a payment of <b>%payment_amount% Euro</b> for this service. The applicant has been invited to go back to the form and undertake it, possibly choosing whether to do it online or offline.<br><br> As soon as the applicant proceeds with the payment, all the available data will appear in this area"
+  pagamento_posticipato_richiesto: "There is a payment of <b>%payment_amount% Euro</b> for this service. You are invited to go back to your form and start the payment, possibly choosing whether to do it online or offline.<br><br> Once the payment has started, all available data will appear in this area"
+  draft_description: "The appointment is not yet confirmed, but the space will remain reserved until %expiration_hour% of the day %expiration_date%"
+  in_questo_fascicolo: "In this folder"
+  richiedi_integrazioni: 'Request additions'
+  protocollazione_richiesta_integrazione: 'Request for additions pending registration'
+  protocollazione_risposta_integrazione: 'Additions awaiting registration'
+  richieste_integrazioni: 'Additions requested'
+  risposte_integrazioni: 'Answers integrations'
+  how_accept_integrations_title: 'How to accept additions'
+  how_accept_integrations_text: 'Select the messages through the box on the side and click on <strong>"Accept additions"</strong>. <br>The selected messages will be included in reply to the additions pdf.'
+  annulla_richiesta_integrazione: 'Cancel request for additions'
+  accetta_richiesta_integrazione: 'Accept additions'
+  tooltip_accetta_richiesta_disabilitato: "There must be at least one message from the citizen to be able to accept the integration"
+  scarica_ritiro: 'Withdrawl file'
 allegato:
   nome_file: 'File name'
   descrizione_file: 'File description'
@@ -996,16 +1000,16 @@ allegato:
   scarica_allegato_in_attesa_di_protocollazione: 'Download the file sent for registration'
   scarica_allegato_richiesta_integrazione: "Download file containing the integration request"
   crea_allegato: 'Upload attachment'
-  non_supportato: 'The file you''re trying to upload is not supported. The supported files are either pdf, jpg, gif, or png.'
+  non_supportato: "The file you're trying to upload is not supported. The supported files are either pdf, jpg, gif, or png."
   guida_alla_compilazione:
     crea: 'Select the file to upload. It must be an image (png bmp gif jpg) or a pdf file. Give the file a description to help you identify it'
   non_cancellabile: 'This attachment is present in correctly sent forms and therefore cannot be deleted'
   aggiungi: 'Add an attachment'
   cancellato: 'The attachment has been properly deleted'
   protocollo:
-    protocollato: ''
-    in_attesa: ''
-    non_richiesto: ''
+    protocollato: 'Registered'
+    in_attesa: 'Pending registration'
+    non_richiesto: 'Registration not required'
 email:
   detail_link: 'link'
   pratica:
@@ -1056,7 +1060,7 @@ email:
         draft: 'draft'
         withdraw: "user <strong>%user_pratica%</strong> request for service <strong>%servizio%</strong> has been withdrawn."
         revoked: "user <strong>%user_pratica% </strong> request for service <strong>%servizio% </strong> has been canceled."
-        draft.for.integration: ""
+        draft.for.integration: "you have requested intergations for the practice of the user <strong>%user_pratica%</strong> for the service <strong>%service%</strong>."
 messages:
   pratica:
     status:
@@ -1075,10 +1079,10 @@ messages:
       9000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been refused, the request number is <strong>%pratica_id%</strong>. <br /> With the following message: <br />%messaggio_personale%<br /> Thank you for your cooperation."
       20000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been successfully withdrawn, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications relating to your request. <br /> Thank you for your cooperation."
       1000: "1000"
-      50000: ""
+      50000: "Dear <strong>%user_name%</strong>, <br/>we inform you that your request for the <strong>%service%</strong> service has been canceled, the request number is <strong>% file_id%</strong>, always refer to this identifier in case of communications relating to your request."
     no_reason: '<i>No message specified</i>'
-  subject_label: ''
-  message_label: ''
+  subject_label: 'Object'
+  message_label: 'Message'
 messaggi:
   messaggio: 'Message'
   invia: 'Send'
@@ -2104,12 +2108,14 @@ gateway:
     identifier: 'Identifier'
     data: 'date of issue'
     ora: 'time of issue'
+    name: "Stamp\n"
   mypay:
     redirect_button: "Pay online now"
     redirect_text: "Use the button below to pay online on the MyPay / PagoPA site. <br /> Once the payment has been made, you will return to this site to confirm that your application has been correctly submitted to the Institution."
     download_button: "Download payment notice"
     download_receipt_button: "Download payment receipt"
     download_text: "Use the button below to download the PDF document (Payment Notice) that you can pay at a post office, a bank ATM, a Sisal office, on the IO App or Satispay."
+    name: 'MyPay'
   add: Add payment method
   name: Name
   description: Description
@@ -2117,6 +2123,9 @@ gateway:
   enabled: Enabled
   disabled: Disabled
   delete_alert: "Are you sure to proceed? The payment gateway will be permanently deleted."
+  none_placeholder: 'No gateway selected'
+  efil:
+    name: 'Efil'
 calendars:
   new: "Create new calendar"
   moderators: "Coorinators"
@@ -2191,43 +2200,43 @@ calendars:
       week_day_6: "Sat"
       week_day_7: "Sun"
     errors:
-      greater_than_begin_hour: ""
-      greater_than_start_date: ""
-      less_than_end_hour: ""
-      less_than_end_date: ""
-      end_date_limit: ""
+      greater_than_begin_hour: "The end time must be greater than the start time"
+      greater_than_start_date: "The end date must be greater than the start date"
+      less_than_end_hour: "The start time must be less than the end time"
+      less_than_end_date: "The start date must be less than the end date"
+      end_date_limit: "The end date cannot be higher than %max_date%"
   allow_overlaps: "Do you allow overlapping of opening hours?"
   type:
     label: "Type of appointment"
     time_fixed_slots: "Fixed duration appointments"
     time_variable_slots: "Appointments with variable duration"
-  edit: ""
-  cant_edit_tooltip: ""
-  cant_delete_tooltip: ""
-  delete: ""
-  cancel: ""
-  permanently_delete: ""
+  edit: "edit"
+  cant_edit_tooltip: "You cannot change this calendar because you are neither the owner nor a coordinator"
+  cant_delete_tooltip: "You cannot delete this calendar because you are not its owner. This calendar can only be deleted by %owner%"
+  delete: "delete"
+  cancel: "cancel"
+  permanently_delete: "Delete permanently"
   table:
-    title: ""
-    owner: ""
-    moderated: ""
-    actions: ""
-  moderated: ""
-  not_moderated: ""
+    title: "Title"
+    owner: "Owner"
+    moderated: "Moderation"
+    actions: "Action"
+  moderated: "Requires moderation"
+  not_moderated: "Doesn't require moderation"
   confirm_delete:
-    title: ""
-    description_title: ""
-    description_text: ""
-    type_name: ""
-    type_name_placeholder: ""
-    future_meetings_alert: ""
-  calendar: ''
-  calendars: ''
-  meetings: ''
-  detail: ''
-  back_to_calendars: ''
-  print: ''
-  info: ''
+    title: "Delete calendar"
+    description_title: "You are about to delete this calendar permanently"
+    description_text: "Once permanently deleted, the calendar cannot be recovered. Permanently deleting this calendar will also delete all linked appointments"
+    type_name: "Please type the following to confirm:"
+    type_name_placeholder: "Enter the name of the calendar you want to delete"
+    future_meetings_alert: "Attention! There are %num% appointments that have not yet taken place"
+  calendar: 'Calendar'
+  calendars: 'Calendars'
+  meetings: 'Meetings'
+  detail: 'Details'
+  back_to_calendars: 'Back to list'
+  print: 'Print'
+  info: 'Created by %owner% on %createdDate%, last modified on %updatedDate% at %updatedTime%'
 meetings:
   error:
     slot_unavailable: "The selected range is not available"
@@ -2235,8 +2244,8 @@ meetings:
     no_slots_available: "There are no times available at the selected date and time"
     no_slots_available_for_opening_hor: "There are no hours available on the date and time selected for the selected opening hours"
     no_opening_hour_with_overlaps: "The opening hours are mandatory if the calendar foresees overlaps"
-    invalid_meeting: ""
-    not_unique: ""
+    invalid_meeting: "Invalid appointment"
+    not_unique: "It is not possible to have more than one meeting to be confirmed or confirmed for practice"
   no_email_warning: 'Attention: there is no e-mail address. In case of changes, it is advisable to notify the citizen through the telephone number provided'
   default_draft_message: "Appointment in draft"
   no_info: "<i> Information not available </i>"
@@ -2257,13 +2266,13 @@ meetings:
         message: "<p>New appointment request in the name of <b>name</b> for the day <b>date</b> at <b>hour</b>. <p> <p>Reason:<b > user_message </b> </p>\n"
         approve_link: '<br><p>Click on the following link to approve: <a href="approve_link"> <b>Approve</b></a></p>'
         reason: "<p>Reason for the appointment: <br><b>%user_message%</b></p>\n"
-      meeting_details: ''
+      meeting_details: '</br><p><b>Appointment details:</b></p><table><tr><td>Name and surname</td><td>%completename%</td></tr><tr><td>Start</td><td>%start%</td></tr><tr><td>End</td><td>%end%</td></tr><tr><td>Reason</td><td><i>%reason%</i></td></tr><tr><td>Service</td><td>%service%</td></r></table>'
       meeting_rescheduled:
-        subject: ''
-        message: ""
+        subject: 'Appointment shift - %calendar%'
+        message: "<h3>%calendar%</h3><p>The appointment of the day <b>%old_date%</b> at <b>%old_hour%</b> has been <b>postponed</b> to <b>%new_date%</b> at <b>%new_hour%</b><p>"
       meeting_refused:
-        subject: ''
-        message: ""
+        subject: 'Refusal of appointment - %calendar%'
+        message: "<h3>%calendar%</h3><p>The appointment of the day <b>date</b> at <b>hour</b> was <b>rejected</b><p>"
     new_meeting:
       pending: "<p>We inform you that your request has been <b>taken care of</b>. </p><p>You will receive a confirmation email as soon as your request is confirmed.</p>\n"
       approved: "<p>We inform you that your request has been <b>confirmed</b>. </p> <p>We invite you to arrive at <b>hour</b> of the day <b>date</ b > at <b>location</b> </p>\n"
@@ -2293,8 +2302,8 @@ meetings:
     success: 'A notification was sent to the citizen successfully'
     cancel_success: 'Appointment canceled successfully'
     motivation_outcome: '<p>%motivation_outcome%</p>'
-    service_detail: ""
-    service_detail_with_group: ""
+    service_detail: "%service%"
+    service_detail_with_group: "%service% in %group%"
   labels:
     calendar: "Calendar"
     user: "User"
@@ -2314,7 +2323,7 @@ meetings:
     select_slot: "Select slot"
     select_slot_start: "From"
     select_slot_end: "To"
-    draft_expiration: ""
+    draft_expiration: "Deadline of the draft"
   legend:
     title: "Appointment status"
     approved: "Confirmed / Does not require moderation"
@@ -2345,18 +2354,18 @@ meetings:
       status_4: "The appointment will be marked as completed, a notification will NOT be sent to the citizen. Are you sure you want to proceed?"
       status_3: "The appointment will be marked as NOT completed, a notification will NOT be sent to the citizen. Are you sure you want to proceed?"
       status_5: "The cancellation of the appointment will result in the sending of a notification to the citizen. Are you sure you want to proceed?"
-      extend: ""
-      save: ""
-    extend_draft_for_days: ''
-    extend_draft_for_one_day: ''
+      extend: "The appointment deadline will be extended; a notification will NOT be sent to the citizen. Are you sure you want to proceed?"
+      save: "Changing the appointment will result in a notification being sent to the citizen. Are you sure you want to proceed?"
+    extend_draft_for_days: 'Reserve additional %num% days'
+    extend_draft_for_one_day: 'Book one more day'
   status:
-    pending: ''
-    approved: ''
-    refused: ''
-    missed: ''
-    done: ''
-    cancelled: ''
-    draft: ''
+    pending: 'Pending approval'
+    approved: 'Approved'
+    refused: 'Refused'
+    missed: 'Missed'
+    done: 'Done'
+    cancelled: 'Cancelled'
+    draft: 'Draft'
 backoffice:
   entity:
     mailers: 'Sending messages'
@@ -2384,8 +2393,8 @@ backoffice:
       save_subscriber_error: 'An error occurred while saving the user user'
       save_subscription_error: "An error occurred while saving the subscription for the user user"
       duplicate_error: "the user user is already registered to the service_name service"
-      update_subscription_error: ""
-      delete_subscription_error: ""
+      update_subscription_error: "An error occurred while updating your subscription"
+      delete_subscription_error: "An error occurred while deleting the subscription"
     subscription_service:
       payment:
         due_date: "Payment due date"
@@ -2406,22 +2415,22 @@ backoffice:
         no_payments_to_import: "Payments not found for the selected service"
         no_payment_config: "Configuration not found for the selected payment"
         import_configuration: "Import configuration"
-        meta_available_placeholders: ''
-        execution_date: ""
-        payments_made: ""
-        missing_payments: ""
-        type: ""
-        type_subscription_fee: ""
-        type_additional_fee: ""
-        type_optional: ""
-        text_subscription_fee: ""
-        text_additional_fee: ""
-        text_optional: ""
-        subscription_fee: ""
-        subscription_fee_description: ""
-        advanced_settings: ""
-        meta_helper: ""
-        import_helper: ""
+        meta_available_placeholders: 'The following placeholders are available: %fiscal_code%, %name%, %surname%, %amount%, %payment_reason%, %payment_identifier%, %code%'
+        execution_date: "Execution date"
+        payments_made: "Payments made"
+        missing_payments: "Missing payments"
+        type: "Type"
+        type_subscription_fee: "subscription fee"
+        type_additional_fee: "additional fee for all members"
+        type_optional: "only members can pay this fee, but it is not mandatory for all participants"
+        text_subscription_fee: "Subscription fee"
+        text_additional_fee: "Additional fee"
+        text_optional: "Optional fee"
+        subscription_fee: "Is payment required at the time of registration?"
+        subscription_fee_description: "Check if payment is required at the time of registration. All payments after the first are to be considered additional payments."
+        advanced_settings: "Advanced properties"
+        meta_helper: "These data are available via API and can therefore be used to modify the form dynamically"
+        import_helper: "Importing a payment configuration previously set up on another service is possible. Select the configuration from the menu below."
       invalid_service: "The identifier %service_id% is not valid\n"
       invalid_meta: "Incorrect meta: the entered value must be a valid json"
       no_service: "The %service_id% identifier does not correspond to an existing service"
@@ -2434,32 +2443,32 @@ backoffice:
         new_draft: "Dear <b>%user_name%</b><br/> You are receiving this message because you are subscribed or delegated to <b>%subscription_service%</b>. We inform you that there is a new pending activity that requires your attention: %service%. <br>Use the button below to access the case or visit the section <i>My cases</i>"
         new_draft_subject: "New practice in draft"
       payments: "Payments"
-      subscription_services: ""
-      new: ""
-      search_results: ""
-      no_results: ""
-      search_error: ""
-      search: ""
-      search_subscribers_helper: ""
-      search_subscribers: ""
-      close: ""
-      loading: ""
-      all: ""
-      subscription_service: ""
-      links: ""
-      subscription_service_payments: ""
-      created: ""
-      duplicate_error: ""
-      deleted: ""
-      delete_error: ""
-      edited: ""
-      duplicate_code_error: ""
-      identifier_payments: ""
-      no_integration_subscription: ""
-      no_integration_additional_payment: ""
+      subscription_services: "Subscription services"
+      new: "Create a subscription service"
+      search_results: "Search results"
+      no_results: "No result available"
+      search_error: "An error has occurred during the research"
+      search: "Search"
+      search_subscribers_helper: "Use this field to search"
+      search_subscribers: "Search subscribers"
+      close: "Close"
+      loading: "Loading..."
+      all: "All"
+      subscription_service: "Subscription service"
+      links: "Links"
+      subscription_service_payments: "Payments for Subscription Services"
+      created: "Subscription service created successfully"
+      duplicate_error: "Failed creation. Verify that service with this code does not already exist"
+      deleted: "Subscription service successfully deleted"
+      delete_error: "Unable to delete subscription service, there are linked subscriptions."
+      edited: "The subscription service changed successfully"
+      duplicate_code_error: "Duplicate subscription service code. Modification failed"
+      identifier_payments: "Payments %identifier%\n"
+      no_integration_subscription: "The payment of the registration fee is incorrect! The integration with 'Subscription Services' has not been enabled for the service you indicated (%service_name%)"
+      no_integration_additional_payment: "Payment of the registration fee is incorrect! The integration with 'Payments for subscription services' has not been enabled for the service you indicated (%service_name%)"
     invalid_action: "The selected action is not available"
-    related_payments_error: ""
-    edit_integration_error: ""
+    related_payments_error: "The integration cannot be changed as there are %num% subscription payments linked to this service"
+    edit_integration_error: "An error occurred while checking linked subscription payments"
 login_type:
   none: 'None'
   login_pat: 'Spid PAT'
@@ -2499,9 +2508,9 @@ ente:
     label: "label"
     panel_title: 'panel_title'
   navigation_type:
-    label: ''
-    services: ''
-    categories: ''
+    label: 'Type of navigation'
+    services: 'Services'
+    categories: 'Categories'
 buttons:
   draft: 'Save draft'
   last_save: 'Last saved:'
@@ -2516,68 +2525,74 @@ general:
   descrizione: 'description'
   flash:
     created: 'created'
-    updated: ''
-  search: ''
+    updated: 'Object updated successfully'
+  search: 'Search'
 avanti: 'next'
 categories:
   title: 'title'
   parent: 'parent'
-  all: ''
-  services_number: ''
-  services_group_number: ''
-  cant_delete_title: ''
-  cant_delete_content: ''
-  delete_success: ''
-  delete_service_error: ''
-  delete_service_group_error: ''
-  delete_subcategories_error: ''
-  related_title: ''
-  related_type: ''
-  service_remove_success: ''
-  service_remove_error: ""
-  error_reference_parent: ''
-  error_reference_children: ''
+  all: 'All the categories'
+  services_number: '# Services'
+  services_group_number: '# Service group'
+  cant_delete_title: 'Unable to delete'
+  cant_delete_content: 'You cannot delete this category because it is linked to services, service groups or sub-categories'
+  delete_success: 'Category deleted successfully'
+  delete_service_error: 'Unable to delete the category, there are %count% services connected'
+  delete_service_group_error: 'Unable to delete category, there are% count% linked service groups'
+  delete_subcategories_error: 'Unable to delete a category, there are %count% linked subcategories'
+  related_title: 'Services that have this category'
+  related_type: 'Type'
+  service_remove_success: 'Object removed successfully'
+  service_remove_error: "An error occurred while removing the object"
+  error_reference_parent: 'The category cannot father itself!'
+  error_reference_children: 'The category cannot be fathered by its sub-category!'
 recipients:
-  title: ''
-  all: ''
-  delete_success: ''
-  delete_error: ''
+  title: 'Recipients'
+  all: 'All recipients'
+  delete_success: 'Recipient successfully deleted'
+  delete_error: 'You cannot delete the recipient; there are services connected.'
 geographic_areas:
-  title: ''
-  all: ''
-  delete_success: ''
-  delete_error: ""
+  title: 'Geographical areas'
+  all: 'All geographical areas'
+  delete_success: 'Geographical area successfully deleted'
+  delete_error: "You cannot delete the area; there are related services"
   edit:
-    area: ''
-    import_area: ''
-    help: ''
-    help_title: ""
-    help_instruction_1: ''
-    help_instruction_2: ''
-    help_instruction_3: ''
+    area: 'Area'
+    import_area: 'Import area'
+    help: 'Help'
+    help_title: "How to add an area from Openstreetmap"
+    help_instruction_1: 'Search for the area on <a href="https://www.openstreetmap.org/" target="_blank">openstreetmap</a><br /><small class = "text-monospace">Ex: searching for " vicopisano "is obtained <a href="https://www.openstreetmap.org/relation/42583" target="_blank">https://www.openstreetmap.org/relation/42583 </a></small>'
+    help_instruction_2: 'Take the link to the XML definition and paste it in the field below <br /><small class = "text-monospace">Ex: <a href = "https://www.openstreetmap.org/api/0.6/ relation / 42583 "target =" _blank "> https://www.openstreetmap.org/api/0.6/relation/42583 </a></small>'
+    help_instruction_3: 'Click on the "Import" button'
 breadcrumbs:
-  list: ''
-  compile: ''
+  list: 'List'
+  compile: 'Fill in'
+
 search:
   label: 'Search'
-  close: ''
-  filters: ''
-  apply_filters: ''
-  reset_filters: ''
-  results_count: '{0} <strong>0</strong> services found|{1} <strong>1</strong> service found|]1,Inf[ <strong>%count%</strong> services found'
+  close: 'Close'
+  filters: 'Filters'
+  apply_filters: 'Apply filters'
+  reset_filters: 'Reset filters'
+  results_count: "{0} Found <strong>0</strong> services|{1} Found <strong>1</strong> services|]1, Inf[ Found <strong>%count%</strong> services"
   topics: 'Topics'
-  recipients: ''
-  geographic_areas: ''
+  recipients: 'Recipients'
+  geographic_areas: 'Geographical areas'
 analytics:
-  not_enabled: ''
+  not_enabled: 'This section is only accessible to Premium accounts'
+STATUS_PAYMENT_CREATION_FAIL: 'Payment creation failed'
+STATUS_PAYMENT_STARTED: 'Payment sent'
+STATUS_NOTIFICATION_PENDING: 'Pending notification'
+STATUS_PAYMENT_COMPLETE: 'Payment completed'
+STATUS_PAYMENT_EXPIRED: 'Expired payment'
 payment:
   title: "Choose the payment method"
-  description: "You can manage your payments in a simple and immediate way, check the available options and choose the ones that best suit your needs."
+  description: "You can immediately manage your payments, check the available options, and choose the best suits your needs."
   pay_office:
     title: "Pay on the territory"
     description: "You can then pay for the requested service by downloading the PDF form using the button below."
     at_bank: "At the bank"
-    at_bank_description: "At participating branches or authorized ATMs."
+    at_bank_description: "At participating branches or authorised ATMs."
     at_post_office: "At the post office"
     at_post_office_description: "Using either the pagoPA QR code or the PA postal bulletin."
     at_merchants: "At affiliated merchants"
@@ -2588,81 +2603,81 @@ payment:
     title: "Pay online"
     description: "Use your credit or debit card and pay for your service quickly online in just a few steps."
     creditor: "On the website of your Creditor"
-    creditor_description: "Follow the steps required by the institution and complete the payment via pagoPA. <strong> You will be able to choose the transaction manager (PSP) that is most convenient for you </strong>."
+    creditor_description: "Follow the steps required by the institution and complete the payment via pagoPA. <strong>You will be able to choose the transaction manager (PSP) that is most convenient for you</strong>."
     homebanking: "On your home banking service"
     homebanking_description: "Access your bank's portal, search the pagoPA menu and pay with your current account."
     app_payment: "On your payments app"
-    app_payment_description: "Open your favorite payments app, search the pagoPA menu and scan the QR code of your notice."
+    app_payment_description: "Open your favourite payments app, search the pagoPA menu and scan the QR code of your notice."
     online_services: "On online payment services"
-    online_services_description: "pagoPA is also integrated into the main online payment services, which you can use even if you are not their customer."
+    online_services_description: "pagoPA is also integrated into the primary online payment services, which you can use even if you are not their customer."
   pay_appio:
     title: "Pay with App IO"
     item_1: "Use the payment methods saved in your Wallet"
     item_2: "Choose the transaction manager (PSP) that is most convenient for you"
     item_3: "Keep your receipts in one place"
-    download_app: "Download app"
-    watch_video: "Watch video"
-  get_payment: "Payment creation in progress"
+    download_app: "Download the app"
+    watch_video: "Watch the video"
+  get_payment: "Payment recovery in progress"
   creation_failed: "Oops something went wrong!"
-  timeout: "The request is taking longer than necessary .. <br> <b> Please try again later! </b>"
-  unauth: "Session expired <br> <b> Please login again </b>."
-  get_failed: "Oops something went wrong!, please try again later or contact the administrative office."
+  timeout: "The request is taking longer than necessary .. <br><b>Please try again later! </b>"
+  unauth: "Session expired <br><b>Please login again</b>."
+  get_failed: "Oops, something went wrong! <br> Please try again later or contact the administrative office."
   created_at: "Procedure submission date"
   reason: "Reason for payment"
   payer: "Accountholder"
   address: "Payer address"
   email: "Payer email"
-  event_created_at: "Event date"
+  event_created_at: "Event created on"
   type: "Payment method"
-  iud: "Identificativo Unico del Dovuto (IUD)"
-  iuv: "Identificativo Univoco pagamento (IUV)"
+  iud: "Unique Identifier of Duty (IUD)"
+  iuv: "Unique Payment Identifier (IUV)"
   copy: "Copy"
   amount: "Amount"
-  other_details: "Operation detail"
-  status_creation_pending: "In attesa di pagamento"
-  status_notification_pending: "Notifica pendente"
+  other_details: "Other details"
   paid_at: "Paid on"
   download_pdf: "Download payment receipt"
+  status_creation_pending: "Pending payment"
+  status_notification_pending: "Pending notification"
   paga_online: "Pay online"
   paga_offline: "Pay offline"
   creation_pending: "Payment creation in progress"
   creation_failed_text: "The creation of the payment was not successful, please try again later or contact the administrative office."
   not_found: "The pratice has not yet been received, try again later!"
   operator:
-    change_status_message: "Cambio Forzato stato pratica in: PAGATO"
+    change_status_message: "Forced Exchange practice status in: PAID"
   loading: "Loading..."
   warning: "Warning"
-  mypay_error: "C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza."
-  error_select_payment: "Devi scegliere almeno un metodo di pagamento"
-  check_payment: "Verifica pagamento"
+  mypay_error: "There was an error creating the payment request, contact support."
+  error_select_payment: "You must choose at least one payment method"
+  check_payment: "Check payment"
 calendar_formio:
   at_hours: "at"
-  draft_expiration_text: "A draft reservation has been reserved for you at the time indicated above valid until the day"
-  draft_expiration_text_end: "Proceed to submit your application before the deadline to confirm your reservation and not lose priority for the selected day and time"
-  availability_error: "There was an error retrieving availability, please try again"
-  no_availability_error: "It is not possible to book on this day, all the available time slots are already booked"
+  draft_expiration_text: "A draft reservation has been reserved for you at the time indicated above, valid until the day"
+  draft_expiration_text_end: "Proceed to submit your application before the deadline to confirm your booking and not lose priority for the selected day and time"
+  availability_error: "There was an error retrieving availability; please try again"
+  no_availability_error: "It is not possible to book on this day; all the available time slots are already booked"
   day_selected: "Day selected for booking"
   availability_hours: "Timetables available on"
-  range_picker_description: "If you prefer you can use the control below to shorten the duration of the reservation"
+  range_picker_description: "If you prefer, you can use the control below to shorten the duration of the reservation"
   from: "From"
   to: "To"
   from_range_error_value: "The value"
-  from_range_error_not_valid: "it is not valid"
+  from_range_error_not_valid: "it's not valid"
   unavailable: "Unavailable"
 time:
-  year: 'anno'
-  years: 'anni'
-  months: 'mesi'
-  month: 'mese'
-  week: 'settimana'
-  day: 'giorno'
-  hour: 'ora'
-  minute: 'minuto'
-  weeks: 'settimane'
-  days: 'giorni'
-  hours: 'ore'
-  minutes: 'minuti'
-  second: 'secondo'
-  seconds: 'secondi'
-  ago: 'fa'
-  few_seconds_ago: 'pochi secondi fa'
+  year: 'year'
+  years: 'years'
+  months: 'months'
+  month: 'month'
+  week: 'week'
+  day: 'day'
+  hour: 'hour'
+  minute: 'minute'
+  weeks: 'weeks'
+  days: 'days'
+  hours: 'hours'
+  minutes: 'minutes'
+  second: 'second'
+  seconds: 'seconds'
+  ago: 'ago'
+  few_seconds_ago: 'few_seconds_ago'

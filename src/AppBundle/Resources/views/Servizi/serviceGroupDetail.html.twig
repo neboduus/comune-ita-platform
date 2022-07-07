@@ -268,9 +268,9 @@
               {% for sharedService in servizio.getSharedServices %}
                 {% if sharedService.maxResponseTime %}
                   <li class="text-serif">{{ sharedService.name }}: {{ sharedService.maxResponseTime }} {{ 'days' | trans }}</li>
-                {% endif %}  
+                {% endif %}
               {% endfor %}
-            <ul>
+            </ul>
           </div>
         {% endif %}
         <div class="row d-flex flex-wrap">

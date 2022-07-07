@@ -21,7 +21,6 @@ class Search {
   static popolateFilters(data) {
     $.each( data, ( key, value ) => {
       $.each(value, (k, v) => {
-        console.log(`#filter-${key}`);
         this.els.$globalSearchModal
           .find(`#filter-${key} .fields`)
           .append(this.getTplField(key, v))
@@ -40,12 +39,23 @@ class Search {
   }
 
   static init() {
+    this.loaded = false;
     if ($('#globalSearchModal').length > 0) {
       this.els = {
+        $globalSearchBtn: $('#globalSearchBtn'),
         $globalSearchModal: $('#globalSearchModal')
       }
       this.els.$searchForm = this.els.$globalSearchModal.find('form');
-      this.initSearchModal();
+
+
+      this.els.$globalSearchBtn.on('click', (e) => {
+        if (!this.els.loaded) {
+          this.initSearchModal();
+          this.els.loaded = true;
+        }
+        this.els.$globalSearchModal.modal('toggle');
+      });
+
     }
   }
 
