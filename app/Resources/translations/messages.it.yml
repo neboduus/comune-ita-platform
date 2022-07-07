@@ -2660,5 +2660,20 @@ calendar_formio:
   from_range_error_value: "Il valore"
   from_range_error_not_valid: "non è valido"
   unavailable: "Non disponibile"
-timeago:
-  anno: 'year'
+time:
+  year: 'anno'
+  years: 'anni'
+  months: 'mesi'
+  month: 'mese'
+  week: 'settimana'
+  day: 'giorno'
+  hour: 'ora'
+  minute: 'minuto'
+  weeks: 'settimane'
+  days: 'giorni'
+  hours: 'ore'
+  minutes: 'minuti'
+  second: 'secondo'
+  seconds: 'secondi'
+  ago: 'fa'
+  few_seconds_ago: 'pochi secondi fa'

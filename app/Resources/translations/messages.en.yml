@@ -422,7 +422,7 @@ pratica:
   upload_warning: "Warning: it is not possible to upload files with a size greater than 25Mb."
   protocollo_risposta: 'Response protocol'
   filtra_per_servizio: 'Filter by service'
-  elimina_pratica: "Do you really want to eliminate the practice?"
+  elimina_pratica: "Do you really want to delete the application?"
   acquisita_il: "acquired on"
   ritira_pratica: "Are you sure to proceed? This action can no longer be undone."
   carica_allegato: "Upload attachment"
@@ -2649,3 +2649,20 @@ calendar_formio:
   from_range_error_value: "The value"
   from_range_error_not_valid: "it is not valid"
   unavailable: "Unavailable"
+time:
+  year: 'anno'
+  years: 'anni'
+  months: 'mesi'
+  month: 'mese'
+  week: 'settimana'
+  day: 'giorno'
+  hour: 'ora'
+  minute: 'minuto'
+  weeks: 'settimane'
+  days: 'giorni'
+  hours: 'ore'
+  minutes: 'minuti'
+  second: 'secondo'
+  seconds: 'secondi'
+  ago: 'fa'
+  few_seconds_ago: 'pochi secondi fa'
