@@ -3,10 +3,22 @@
 namespace AppBundle\Twig;
 
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Twig\TwigFilter;
+
+
 
 class TimeAgo extends \Twig_Extension
 {
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+  public function __construct(TranslatorInterface $translator)
+  {
+    $this->translator = $translator;
+  }
 
   public function getName()
   {
@@ -26,35 +38,35 @@ class TimeAgo extends \Twig_Extension
     $time = time() - $_time;
 
     $units = array(
-      31536000 => 'anno',
-      2592000 => 'mese',
-      604800 => 'settimana',
-      86400 => 'giorno',
-      3600 => 'ora',
-      60 => 'minuto',
-      1 => 'secondo'
+      31536000 => $this->translator->trans('time.year'),
+      2592000 => $this->translator->trans('time.month'),
+      604800 => $this->translator->trans('time.week'),
+      86400 => $this->translator->trans('time.day'),
+      3600 => $this->translator->trans('time.hour'),
+      60 => $this->translator->trans('time.minute'),
+      1 => $this->translator->trans('time.second')
     );
 
     $plurali = array(
-      'anno' => 'anni',
-      'mese' => 'mesi',
-      'settimana' => 'settimane',
-      'giorno' => 'giorni',
-      'ora' => 'ore',
-      'minuto' => 'minuti',
-      'secondo' => 'secondi'
+      'anno' => $this->translator->trans('time.years'),
+      'mese' => $this->translator->trans('time.months'),
+      'settimana' => $this->translator->trans('time.weeks'),
+      'giorno' => $this->translator->trans('time.days'),
+      'ora' => $this->translator->trans('time.hours'),
+      'minuto' => $this->translator->trans('time.minutes'),
+      'secondo' => $this->translator->trans('time.seconds'),
     );
 
     foreach ($units as $unit => $val) {
       if ($time < $unit) continue;
       $numberOfUnits = floor($time / $unit);
-      if ($val == 'secondo') {
-        $timeAgo = 'pochi secondi fa';
+      if ($val == $this->translator->trans('time.second')) {
+        $timeAgo = $this->translator->trans('time.few_seconds_ago');
       } else {
         if ($numberOfUnits > 1) {
-          $timeAgo =  $numberOfUnits . ' ' . $plurali[$val] . ' fa';
+          $timeAgo =  $numberOfUnits . ' ' . $plurali[$val] . ' ' .$this->translator->trans('time.ago');
         } else {
-          $timeAgo =  $numberOfUnits . ' ' . $val . ' fa';
+          $timeAgo =  $numberOfUnits . ' ' . $val . ' ' .$this->translator->trans('time.ago');
         }
       }
       return $timeAgo;

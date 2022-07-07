@@ -1129,6 +1129,7 @@ services:
 
   ocsdc.twig.time_ago:
     class: AppBundle\Twig\TimeAgo
+    arguments: ['@translator']
     tags:
       - { name: twig.extension }
 
