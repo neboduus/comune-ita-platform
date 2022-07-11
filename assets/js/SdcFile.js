@@ -4,6 +4,7 @@ import {uniqueName} from 'formiojs/utils/utils';
 import axios from "axios";
 
 const endpoint = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] + "/it"
+const language = document.documentElement.lang.toString();
 
 export default class SdcFile extends File {
   constructor(component, options, data) {
@@ -105,7 +106,6 @@ export default class SdcFile extends File {
           fileStatus.originalName === file.name
           && fileStatus.status === 'error'
         );
-
         if (fileWithSameNameUploaded) {
           fileUpload.status = 'error';
           fileUpload.message = this.t('File with the same name is already uploaded');
@@ -124,7 +124,6 @@ export default class SdcFile extends File {
             pattern: this.component.filePattern,
           });
         }
-
         // Check file minimum size
         if (this.component.fileMinSize && !this.validateMinSize(file, this.component.fileMinSize)) {
           fileUpload.status = 'error';
@@ -148,7 +147,6 @@ export default class SdcFile extends File {
           fileUpload.status = 'error';
           fileUpload.message = this.t('File Service not provided.');
         }
-
         this.statuses.push(fileUpload);
         this.fileDropHidden = false;
         this.redraw();
@@ -265,11 +263,11 @@ export default class SdcFile extends File {
                 })
               }).catch(err => {
                 fileUpload.status = 'error';
-                fileUpload.message = err;
+                fileUpload.message = Translator.trans('pratica.error_upload_file_sdc', {}, 'messages', language)
                 delete fileUpload.progress;
                 this.fileDropHidden = false;
-                this.redraw();
-                this.triggerChange();
+                 this.redraw();
+               this.triggerChange();
               })
             })
             .catch((response) => {

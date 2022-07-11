@@ -286,6 +286,7 @@ pratica:
   protocol_number: 'Numero protocollo'
   file_name: 'Nome del file'
   hash: 'Hash del file'
+  error_upload_file_sdc: "Errore durante il caricamento dei file, riprova più tardi oppure contatta l'amministratore"
   in_attesa_protocollo: 'In attesa di protocollazione'
   protocollo_non_richiesto: '(non necessario)'
   richiedente: 'Richiedente'
