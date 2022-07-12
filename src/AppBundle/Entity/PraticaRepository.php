@@ -75,9 +75,9 @@ class PraticaRepository extends EntityRepository
         ],
       ],
       [
-        'creationTime' => 'DESC',
+        'latestStatusChangeTimestamp' => 'DESC',
       ]
-    );
+    )->setMaxResults(10);
   }
 
   public function findEvidencePraticaForUser(CPSUser $user)
@@ -92,7 +92,8 @@ class PraticaRepository extends EntityRepository
       ->setParameter('timediff', strtotime($timeDiff))
       ->setParameter('statues', [Pratica::STATUS_PAYMENT_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION])
       ->orderBy('p.status', 'ASC')
-      ->addOrderBy('p.latestStatusChangeTimestamp', 'DESC');
+      ->addOrderBy('p.latestStatusChangeTimestamp', 'DESC')
+      ->setMaxResults(10);
     return $qb->getQuery()->getResult();
   }
 

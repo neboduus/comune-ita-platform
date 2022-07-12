@@ -2,7 +2,7 @@
 {% block title %}{{ title|trans() }} - Stanza del cittadino{% endblock %}
 
 {% block main_content %}
-  <section class="page-homepage    bg-white" id="sezione-argomenti-in-evidenza">
+  <section class="page-homepage bg-white" id="sezione-argomenti-in-evidenza">
     <div class="py-5 position-relative">
       <div style="position: absolute; width: 100%;height: 260px; top: 0; left: 0; background-size: cover; background-color: #3478bd"></div>
       <div class="container">
@@ -23,7 +23,8 @@
                           <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-folder"></use>
                         </svg>
                       </div>
-                      <h5 class="card-title big-heading">{{ s.name }}</h5>
+                      <h5 class="card-title big-heading h-title">{{ s.name[:50] ~ (s.name|length > 50 ? '...') }}</h5>
+                      <p class="font-weight-bold">{{ 'user.dashboard.ultime_pratiche' | trans }}:</p>
                       <div class="link-list-wrapper">
                         <ul class="link-list">
                           {% for p in s.applications %}
