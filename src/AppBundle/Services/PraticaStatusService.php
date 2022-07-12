@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class PraticaStatusService
 {
@@ -71,18 +72,23 @@ class PraticaStatusService
 
   private $validChangeStatusList;
 
+  /** @var TranslatorInterface */
+  private $translator;
+
   /**
    * PraticaStatusService constructor.
    *
    * @param EntityManagerInterface $entityManager
    * @param LoggerInterface $logger
    * @param EventDispatcherInterface $dispatcher
+   * @param TranslatorInterface $translator
    */
-  public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher)
+  public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, EventDispatcherInterface $dispatcher,TranslatorInterface $translator)
   {
     $this->entityManager = $entityManager;
     $this->logger = $logger;
     $this->dispatcher = $dispatcher;
+    $this->translator = $translator;
 
     $this->validChangeStatusList = [
 
@@ -180,7 +186,7 @@ class PraticaStatusService
       $afterStatus = $states[$status]['id'];
       $afterStatusIdentifier = $states[$status]['identifier'];
     } else {
-      throw new \Exception("Pratica status $status not found");
+      throw new \Exception($this->translator->trans('errori.pratica.new_status',['%status%' => $pratica->getStatusNameByCode($states)]));
     }
 
     if ($this->validateChangeStatus($pratica, $afterStatus, $force)) {
@@ -222,7 +228,7 @@ class PraticaStatusService
       }
 
     } else {
-      throw new \Exception("Invalid status change request");
+      throw new \Exception($this->translator->trans('errori.pratica.change_status_invalid'));
     }
   }
 
@@ -237,6 +243,8 @@ class PraticaStatusService
   public function validateChangeStatus(Pratica $pratica, $afterStatus, $force = false)
   {
     $beforeStatus = $pratica->getStatus();
+    $beforeStatusName =  $this->translator->trans($pratica->getStatusName());
+    $afterStatusName =  $this->translator->trans($pratica->getStatusNameByCode($afterStatus));
 
     if ($beforeStatus == $afterStatus || $force) {
       return true;
@@ -249,7 +257,8 @@ class PraticaStatusService
         }
       }
     }
-    throw new \Exception("Invalid pratica status change from $beforeStatus to $afterStatus for pratica {$pratica->getId()}");
+    throw new \Exception($this->translator->trans('errori.pratica.change_status',
+      ['%before_status%' => $beforeStatusName, '%after_status%' => $afterStatusName, '%service_name%' => $pratica->getServizio()->getName(), '%id%' => $pratica->getId()]));
   }
 
   /**
