@@ -4,5 +4,5 @@
 {% if p.userCompilationNotes %}
   <span class="flex-1 mr-0">{{ p.userCompilationNotes[:20] ~ (p.userCompilationNotes|length > 20 ? '...') }}</span>
 {% else %}
-  <span class="flex-1 mr-0">{{ 'practice_of'|trans}} {{ p.creationTime|date(ocsdc_default_date_format) }}</span>
+  <span class="flex-1 mr-0">{{ p.creationTime|date(ocsdc_default_date_format) }}</span>
 {% endif %}

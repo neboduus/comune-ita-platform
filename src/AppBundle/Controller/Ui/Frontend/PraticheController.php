@@ -239,7 +239,7 @@ class PraticheController extends Controller
     $repo = $this->entityManager->getRepository('AppBundle:Pratica');
     $pratiche = $repo->findBy(
       $criteria,
-      ['latestStatusChangeTimestamp' => 'DESC',]
+      ['latestStatusChangeTimestamp' => 'DESC']
     );
 
     $services = $applications = [];
