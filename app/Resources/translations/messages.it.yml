@@ -55,6 +55,7 @@ fake_email_message: 'Per proseguire è necessario aggiornare la tua email'
 practice_of: 'Pratica del'
 from_date_to_date: "Dal %from% al %to%"
 loading: "Caricamento..."
+digital_services: 'Servizi Digitali powered by'
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'
