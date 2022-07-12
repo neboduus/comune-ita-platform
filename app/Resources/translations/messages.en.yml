@@ -56,6 +56,7 @@ fake_email_message: 'Update your e-mail to continue'
 practice_of: 'Application of'
 from_date_to_date: "Dal %from% al %to%"
 loading: "Loading..."
+digital_services: 'Servizi Digitali powered by'
 nav:
   home: 'Homepage'
   dashboard: 'My room'

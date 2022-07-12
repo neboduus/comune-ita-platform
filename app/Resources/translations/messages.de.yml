@@ -40,6 +40,7 @@ credits: "Die Einführung des Bürgerservicekontos erfolgt im Rahmen eines Versu
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Sie müssen Ihre E-Mail aktualisieren, um fortzufahren'
 loading: "Wird geladen..."
+digital_services: 'Servizi Digitali powered by'
 nav:
   home: 'Startseite'
   dashboard: 'Mein Konto'
