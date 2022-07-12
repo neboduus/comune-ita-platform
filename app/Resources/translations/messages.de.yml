@@ -261,6 +261,7 @@ pratica:
   protocol_number: 'Protokoll Nr.'
   file_name: 'Dateiname'
   hash: 'Datei-Hash'
+  error_upload_file_sdc: "Errore durante il caricamento dei file, riprova più tardi oppure contatta l'amministratore"
   in_attesa_protocollo: 'Warten auf Protokollierung'
   protocollo_non_richiesto: '(nicht erforderlich)'
   # anfragende Person

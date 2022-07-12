@@ -272,6 +272,7 @@ pratica:
   protocol_number: 'Protocol number'
   file_name: 'File Name'
   hash: 'File hash'
+  error_upload_file_sdc: "Errore durante il caricamento dei file, riprova più tardi oppure contatta l'amministratore"
   in_attesa_protocollo: 'Awaiting registration'
   protocollo_non_richiesto: '(not necessary)'
   richiedente: 'Applicant'
