@@ -13,10 +13,13 @@
 
   ],
   "paymentParameters": {
-    "datiSpecificiRiscossione": "9/9999.9",
-    "codIpaEnte": "C_H999",
-    "password": "999999999999",
-    "importo": "1200"
+    "total_amounts": "2,00",
+    "gateways": {
+      "bollo": {
+        "identifier": "bollo",
+        "parameters": null
+      }
+    }
   },
   "paymentRequired": true,
   "status": 1
