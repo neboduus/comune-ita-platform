@@ -71,9 +71,8 @@
     {% endif %}
   </div>
   {% endif %}
-
-
-  {% if pratica.status >= 1900 %}
+  
+  {% if pratica.status >= 1900 and user == pratica.user %}
     <div class="col-12">
       <p class="text-center m-2">{{ 'pratica.dettaglio.or' | trans }}</p>
     </div>
