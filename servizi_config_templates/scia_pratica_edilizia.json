@@ -12,12 +12,7 @@
   "url_moduli_aggiuntivi": [
 
   ],
-  "paymentParameters": {
-    "datiSpecificiRiscossione": "9/9999.9",
-    "codIpaEnte": "C_H999",
-    "password": "999999999999",
-    "importo": "1200"
-  },
+  "paymentParameters": null,
   "paymentRequired": false,
   "status": 1
 }

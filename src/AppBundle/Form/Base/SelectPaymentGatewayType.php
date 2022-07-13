@@ -57,16 +57,19 @@ class SelectPaymentGatewayType extends AbstractType
 
     /** @var Pratica $pratica */
     $pratica = $builder->getData();
-    $tenantGateways = $pratica->getServizio()->getEnte()->getGateways();
+
+    $serviceGateways = $pratica->getServizio()->getPaymentParameters();
     $normalizedTenantGateways = [];
-    foreach ($tenantGateways as $s) {
-      $normalizedTenantGateways [$s['identifier']] = $s;
+    if (isset($serviceGateways['gateways'])) {
+      foreach ($serviceGateways['gateways'] as $s) {
+        $normalizedTenantGateways [$s['identifier']] = $s;
+      }
+      $serviceGateways = $normalizedTenantGateways;
     }
-    $tenantGateways = $normalizedTenantGateways;
 
     $availableGateways = $this->gatewayCollection->getAvailablePaymentGateways();
     $gateways = [];
-    foreach ($tenantGateways as $g) {
+    foreach ($serviceGateways as $g) {
       $identifier = $g['identifier'];
       if (isset($availableGateways[$identifier])) {
         $gateways[$availableGateways[$identifier]['name']] = $identifier;
