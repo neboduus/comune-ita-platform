@@ -16,6 +16,3 @@ instances:
     protocollo: dummy
     identifier: comune-di-bugliano # Slug dell'instanza sul database
     app_locales: "it|en|fr|de|es"
-    payment_gateways:
-      bollo:
-        enabled: false

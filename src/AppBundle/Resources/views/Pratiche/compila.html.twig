@@ -106,9 +106,9 @@
         <div class="step-{{ flow.getCurrentStepNumber() }}">
           {{ form_errors(form) }}
 
-            {% if form.vars.helper.descriptionText|length > 0 and not (pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType != 'mypay') %}
-              {{ form.vars.helper.descriptionText|raw }}
-            {% endif %}
+          {% if form.vars.helper.descriptionText|length > 0 and not (pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType != 'mypay') %}
+            {{ form.vars.helper.descriptionText|raw }}
+          {% endif %}
 
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
 
@@ -123,13 +123,16 @@
 
           <div id="vueApp">
             {% if form.vars.helper.vueApp %}
-            <{{ form.vars.helper.vueApp }}></{{ form.vars.helper.vueApp }}>
-            {% endif %}
-          </div>
+            <{{ form.vars.helper.vueApp }}>
+          </{{ form.vars.helper.vueApp }}>
+          {% endif %}
         </div>
+      </div>
 
-        {# Sezione pagamenti diveso da MyPay #}
+      {# Sezione pagamenti diveso da MyPay e Bollo #}
+      {% if pratica.paymentType is not null and pratica.paymentType != 'bollo' and pratica.paymentType != 'mypay' %}
         {{ include('@App/Pratiche/parts/_payment.twig') }}
+      {% endif %}
 
 
       {% if currentStep.formType == "AppBundle\\Form\\FormIO\\FormIORenderType" %}
