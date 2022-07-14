@@ -1,6 +1,7 @@
 import moment from "moment";
-const PAGOPA = require('../../images/payments/pagppa.png');
 import Api from "../services/api.service";
+
+const PAGOPA = require('../../images/payments/pagppa.png');
 
 class InfoPayment {
 
@@ -64,7 +65,7 @@ class InfoPayment {
         InfoPayment.generateHtmlData(data)
       },
       error: function (xmlhttprequest, textstatus, message) { // error logging
-       if (textstatus === "timeout") {
+        if (textstatus === "timeout") {
           InfoPayment.handleErrors(Translator.trans('payment.timeout', {}, 'messages', InfoPayment.$language));
         } else if (xmlhttprequest.status === 401) {
           InfoPayment.handleErrors(Translator.trans('payment.unauth', {}, 'messages', InfoPayment.$language));
@@ -77,7 +78,7 @@ class InfoPayment {
     });
   };
 
-  static switchStatus(status){
+  static switchStatus(status) {
     switch (status) {
       case 'CREATION_PENDING':
         return Translator.trans('STATUS_PAYMENT_PENDING', {}, 'messages', InfoPayment.$language);
@@ -135,7 +136,7 @@ class InfoPayment {
                     <path class="gb_blu" d="M146.6,71.6l-13.7,0.1v-71l13.7-0.1V71.6z"></path>
                   </svg>` : ""}
            ${data[i].type === 'PAGOPA' ? `<div><img class="icon" alt="PAGOPA" src="${PAGOPA}"/></div>` : ""}
-           ${data[i].type !== 'PAGOPA' && data[i].type !== 'EFIL' ? `<svg class="icon"><use href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use></svg>`: ""}
+           ${data[i].type !== 'PAGOPA' && data[i].type !== 'EFIL' ? `<svg class="icon"><use href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use></svg>` : ""}
             </div>
                  <h5 class="card-title">${InfoPayment.$gateway}</h5>
                     <p class="card-text">
@@ -169,7 +170,7 @@ class InfoPayment {
                                 ${data[i].payer.street_name ? `${data[i].payer.street_name}, ${data[i].payer.building_number}` : "--"}
                                 ${data[i].payer.postal_code ? `${data[i].payer.postal_code}` : ""}
                                 ${data[i].payer.town_name ? `${data[i].payer.town_name}` : ""}
-                                ${data[i].payer.country_subdivision ? `(${data[i].payer.country_subdivision})`: ""}
+                                ${data[i].payer.country_subdivision ? `(${data[i].payer.country_subdivision})` : ""}
                                 </span>
                               </div>
                             </a>
@@ -177,7 +178,7 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${Translator.trans('payment.email', {}, 'messages', InfoPayment.$language)}</em> ${data[i].payer.email ? `${data[i].payer.email}`: "--"}</span>
+                                <span class="text"><em>${Translator.trans('payment.email', {}, 'messages', InfoPayment.$language)}</em> ${data[i].payer.email ? `${data[i].payer.email}` : "--"}</span>
                               </div>
                             </a>
                           </li>
@@ -189,8 +190,8 @@ class InfoPayment {
                               </div>
                             </a>
                           </li>
-                          `:
-                          `<li>
+                          ` :
+          `<li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
                                 <span class="text"><em>${Translator.trans('payment.event_created_at', {}, 'messages', InfoPayment.$language)}</em> ${moment(data[i].event_created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
@@ -214,7 +215,7 @@ class InfoPayment {
                               </div>
                             </a>
                           </li>
-                          `: ''}
+                          ` : ''}
                            ${data[i].payment.iud ? `
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
@@ -224,29 +225,31 @@ class InfoPayment {
                               </div>
                             </a>
                           </li>
-                            `: ''}
+                            ` : ''}
                         </ul>
                       </div>
                     </div>
-                    ${data[i].status === 'COMPLETE' ?
-                   `<div class="text-center mt-5">
-                        <a href="${data[i].links.receipt.url}" class="btn btn-primary" role="button" aria-disabled="true" download>
+                    ${data[i].status === 'COMPLETE' && data[i].links.receipt.url !== null ?
+          `<div class="text-center mt-5">
+                        <a target="_blank" href="${data[i].links.receipt.url}" class="btn btn-primary" role="button" aria-disabled="true" download>
                             ${Translator.trans('payment.download_pdf', {}, 'messages', InfoPayment.$language)}
                         </a>
                     </div>` : ""}
                     ${data[i].status === 'CREATION_FAILED' ?
-                      `<div></div>` : "" }
+          `<div></div>` : ""}
                     ${data[i].status !== 'CREATION_FAILED'
-                      && data[i].status !== 'COMPLETE'
-                      && data[i].status !== 'PAYMENT_STARTED'
-                      && data[i].status !== 'PAYMENT_CONFIRMED'
-                      && data[i].status !== 'PAYMENT_FAILED'
-                      && data[i].status !== 'NOTIFICATION_PENDING'
-                      && data[i].status !== 'EXPIRED'
-                      ?
-                      `<div class="text-center mt-5">
-                        <a href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${Translator.trans('payment.paga_online', {}, 'messages', InfoPayment.$language)}</a>
-                        <a href="${data[i].links.offline_payment.url}" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download> ${Translator.trans('payment.paga_offline', {}, 'messages', InfoPayment.$language)}</a>
+        && data[i].status !== 'COMPLETE'
+        && data[i].status !== 'PAYMENT_STARTED'
+        && data[i].status !== 'PAYMENT_CONFIRMED'
+        && data[i].status !== 'PAYMENT_FAILED'
+        && data[i].status !== 'NOTIFICATION_PENDING'
+        && data[i].status !== 'EXPIRED'
+          ?
+          `<div class="text-center mt-5">
+${data[i].links.online_payment_begin.url !== null ?
+            `<a target="_blank" href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${Translator.trans('payment.paga_online', {}, 'messages', InfoPayment.$language)}</a>` : ""}
+${data[i].links.offline_payment.url !== null ?
+            `<a target="_blank" href="${data[i].links.offline_payment.url}" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download> ${Translator.trans('payment.paga_offline', {}, 'messages', InfoPayment.$language)}</a>` : ""}
                       </div>
                     ` : ""}
                   </div>
