@@ -2453,8 +2453,9 @@ backoffice:
       subscription_error: 'There is no subscriber with tax code %fiscal_code% for the %code% service'
       limit_error: 'Maximum registration limit reached. User user not enrolled in the code course'
       save_subscriber_error: 'An error occurred while saving the user user'
+      date_format_subscriber_error: 'Format not valid for date %natoAIl%, user %fiscal_code% not imported'
       save_subscription_error: "An error occurred while saving the subscription for the user user"
-      duplicate_error: "the user user is already registered to the service_name service"
+      duplicate_error: "The user user is already registered to the service_name service"
       update_subscription_error: "An error occurred while updating your subscription"
       delete_subscription_error: "An error occurred while deleting the subscription"
     subscription_service:

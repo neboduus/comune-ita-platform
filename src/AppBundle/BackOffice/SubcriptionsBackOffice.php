@@ -11,8 +11,11 @@ use AppBundle\Entity\SubscriptionPayment;
 use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
+use Exception;
+use ParseError;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use ValueError;
 
 class SubcriptionsBackOffice implements BackOfficeInterface
 {
@@ -238,9 +241,14 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
     if (!$subscriber) {
       try {
-        $birthDate = \DateTime::createFromFormat('d/m/Y', $fixedData['natoAIl']);
+        $formats = ['d/m/Y', 'd-m-Y', 'Y/m/d', 'Y-m-d'];
+        foreach ($formats as $format) {
+            if ($birthDate = \DateTime::createFromFormat($format, $fixedData['natoAIl'])){
+                break;
+            }
+        }
         if (!$birthDate instanceof DateTime) {
-          $birthDate = new \DateTime();
+          return ['error' => $this->translator->trans('backoffice.integration.subscriptions.date_format_subscriber_error', ['%fiscal_code%' => $fixedData['fiscal_code'], '%natoAIl%' => $fixedData['natoAIl']])];
         }
 
         $subscriber = new Subscriber();

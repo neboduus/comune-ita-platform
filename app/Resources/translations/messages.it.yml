@@ -2516,10 +2516,11 @@ backoffice:
       subscription_error: 'Non esiste un iscritto con codice fiscale %fiscal_code% per il servizio %code%'
       limit_error: 'Limite massimo di iscrizioni raggiunto. Utente user non iscritto al corso code'
       save_subscriber_error: 'Si è verificato un errore durante il salvataggio dell utente user'
+      date_format_subscriber_error: 'Data %natoAIl% in formato non valido, utente %fiscal_code% non importato'
       save_subscription_error: "Si è verificato un errore durante il salvataggio dell iscrizione per l'utente user"
       update_subscription_error: "Si è verificato un errore durante l'aggiornamento dell'iscrizione"
       delete_subscription_error: "Si è verificato un errore durante l'eliminazione dell'iscrizione"
-      duplicate_error: "l'utente user risulta già iscritto al servizio service_name"
+      duplicate_error: "L'utente user risulta già iscritto al servizio service_name"
     subscription_service:
       subscription_service: "Servizio a sottoscrizione"
       subscription_services: "Servizi a sottoscrizione"
