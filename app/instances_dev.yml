@@ -1,21 +1,7 @@
 instances:
   stanzadelcittadino.localtest.me/comune-di-bugliano:
     codice_meccanografico: c_cbug
-    database_name: sdc_bugliano
+    identifier: comune-di-bugliano
     login_route: login_pat
-    # Deda Login
-    #login_route: login_deda
-    #deda_login_client_id: 'd8vbhj65d'
-    #deda_login_secret: '8fgb78h232klv4rvsd6sv86fsvfsdnnvdfd'
-    # Cas Login
-    #login_route: login_cas
-    #cas_login_url: 'https://sso-test.bresciagov.it/cas/login'
-    #cas_validation_url: 'https://sso-test.bresciagov.it/cas/serviceValidate'
-    #single_logout_url: 'https://sso-test.bresciagov.it/cas/logout?service=https://devsdc.opencontent.it/comune-di-bugliano'
-    #single_logout_url: ''
     protocollo: dummy
-    identifier: comune-di-bugliano # Slug dell'instanza sul database
     app_locales: "it|en|fr|de|es"
-    payment_gateways:
-      bollo:
-        enabled: false
