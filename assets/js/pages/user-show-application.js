@@ -2,7 +2,8 @@ import '../../css/app.scss';
 import '../core';
 import {TextEditor} from "../utils/TextEditor";
 import Form from '../Formio/Form';
-import InfoPayment from "../Payment/InfoPayment";
+import InfoPayment from "../rest/payment/InfoPayment";
+
 const lang = document.documentElement.lang.toString();
 
 

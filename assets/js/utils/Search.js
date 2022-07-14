@@ -1,5 +1,3 @@
-import '../services/api.service';
-
 class Search {
 
   static initSearchModal() {

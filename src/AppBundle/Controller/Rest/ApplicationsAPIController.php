@@ -5,12 +5,13 @@ namespace AppBundle\Controller\Rest;
 
 use AppBundle\Dto\Application;
 use AppBundle\Dto\ApplicationDto;
+use AppBundle\Entity\AllegatoMessaggio;
+use \AppBundle\Entity\Message as MessageEntity;
 use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoOperatore;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\FormIO;
-use AppBundle\Entity\Message;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\RispostaOperatore;
@@ -2455,6 +2456,20 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="Message",
+   *     in="body",
+   *     type="json",
+   *     description="The message to create",
+   *     required=true,
+   *     @SWG\Schema(
+   *        type="object",
+   *        @SWG\Property(property="message", type="string", description="Text message"),
+   *        @SWG\Property(property="subject", type="string", description="Subject message text"),
+   *        @SWG\Property(property="visibility", type="boolean", description="Visibility of message")
+   *     )
+   * )
+   *
    * @SWG\Response(
    *     response=204,
    *     description="Updated"
@@ -2484,7 +2499,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if (!$application) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
       }
-      $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
+      $this->denyAccessUnlessGranted(ApplicationVoter::ASSIGN, $application);
       if (!in_array(
         $application->getStatus(),
         [Pratica::STATUS_PAYMENT_OUTCOME_PENDING, Pratica::STATUS_PAYMENT_PENDING]
@@ -2492,7 +2507,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
         return $this->view(["Application isn't in correct state"], Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
-      $this->praticaManager->finalizePaymentCompleteSubmission($application, $user);
+      $message = json_decode($request->getContent(), true);
+      $this->praticaManager->finalizePaymentCompleteSubmission($application, $user, $message);
+
 
     } catch (\Exception $e) {
       $data = [

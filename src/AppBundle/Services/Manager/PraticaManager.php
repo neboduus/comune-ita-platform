@@ -190,7 +190,7 @@ class PraticaManager
    * @param User $user
    * @throws Exception
    */
-  public function finalizePaymentCompleteSubmission(Pratica $pratica, User $user)
+  public function finalizePaymentCompleteSubmission(Pratica $pratica, User $user, $message = null)
   {
     $statusChange = new StatusChange();
     $statusChange->setEvento('Pagamento completato');
@@ -200,6 +200,11 @@ class PraticaManager
       Pratica::STATUS_PAYMENT_SUCCESS,
       $statusChange
     );
+
+    if($message['message'] !== null) {
+      $this->generateStatusMessage($pratica, $message['message'], $message['subject'], [], $message['visibility']);
+    }
+
   }
 
   /**
@@ -532,12 +537,12 @@ class PraticaManager
    * @param string $subject
    * @return Message
    */
-  public function generateStatusMessage(Pratica $pratica, string $text, string $subject, array $callToActions = []): Message
+  public function generateStatusMessage(Pratica $pratica, string $text, string $subject, array $callToActions = [], $visibility = Message::VISIBILITY_APPLICANT): Message
   {
     $message = new Message();
     $message->setApplication($pratica);
     $message->setProtocolRequired(false);
-    $message->setVisibility(Message::VISIBILITY_APPLICANT);
+    $message->setVisibility($visibility);
     $message->setMessage($text);
     $message->setSubject($subject);
     $message->setCallToAction($callToActions);

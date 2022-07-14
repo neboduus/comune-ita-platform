@@ -10,8 +10,8 @@ import 'formiojs/dist/formio.form.min.css';
 import {TextEditor} from "../utils/TextEditor";
 import moment from "moment";
 import RequestIntegration from "../utils/RequestIntegration";
-import InfoPayment from "../Payment/InfoPayment";
-import ApplicationsMessage from "../Applications/Message";
+import InfoPayment from "../rest/payment/InfoPayment";
+import ApplicationsMessage from "../rest/applications/Message";
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);

@@ -1,6 +1,6 @@
 import './core';
 import Form from './Formio/Form';
-import Payment from "./Payment/Payment";
+import Payment from "./rest/payment/Payment";
 
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 require("../css/app.scss");
