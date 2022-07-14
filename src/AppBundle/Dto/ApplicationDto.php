@@ -276,6 +276,7 @@ class ApplicationDto extends AbstractDto
     $application->setLinks($this->getAvailableTransitions($pratica, $attachmentEndpointUrl, $version));
     $application->setIntegrations($this->prepareIntegrations($pratica));
     $application->setFlowChangedAt($pratica->getFlowChangedAt());
+    $application->setUserCompilationNotes($pratica->getUserCompilationNotes());
 
     return $application;
   }

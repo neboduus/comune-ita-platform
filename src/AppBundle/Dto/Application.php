@@ -343,6 +343,13 @@ class Application
    */
   private $flowChangedAt;
 
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Applications notes user complitaion")
+   * @Groups({"read", "write"})
+   */
+  private $userCompilationNotes;
+
 
   /**
    * @return mixed
@@ -1053,6 +1060,26 @@ class Application
   public function setFlowChangedAt($flowChangedAt): void
   {
     $this->flowChangedAt = $flowChangedAt;
+  }
+
+  /**
+   * @return string
+   */
+  public function getUserCompilationNotes()
+  {
+    return $this->userCompilationNotes;
+  }
+
+  /**
+   * @param string $userCompilationNotes
+   *
+   * @return $this
+   */
+  public function setUserCompilationNotes(string $userCompilationNotes)
+  {
+    $this->userCompilationNotes = $userCompilationNotes;
+
+    return $this;
   }
 
 }
