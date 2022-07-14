@@ -1757,7 +1757,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    *
    * @return $this
    */
-  public function setUserCompilationNotes(string $userCompilationNotes)
+  public function setUserCompilationNotes(?string $userCompilationNotes)
   {
     $this->userCompilationNotes = $userCompilationNotes;
 
