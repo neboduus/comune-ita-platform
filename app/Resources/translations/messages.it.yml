@@ -811,6 +811,11 @@ certificato_anagrafico:
 errori:
   allegato:
     tipo_non_valido: "L'allegato %s è di un tipo non supportato"
+  pratica:
+    change_status: "Modifica stato della pratica da <b>%before_status%</b> a <b>%after_status%</b> per la pratica del servizio %service_name% con ID %id%"
+    new_status: 'Stato della pratica "%status%" non trovato'
+    change_status_invalid: "Richiesta modifica stato della pratica non valido"
+
 user:
   welcome: 'Benvenuto'
   welcome_msg: 'Il login è avvenuto con successo'
