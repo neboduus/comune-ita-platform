@@ -18,7 +18,7 @@ Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 Formio.registerComponent('sdcfile', SdcFile);
-
+const language = document.documentElement.lang.toString();
 const api = new Api()
 // Todo: chiamare session-auth --> va modificato il provider, non solleva gli operatori
 api.token = $('#intro').data('token');
@@ -132,7 +132,7 @@ $(document).ready(function () {
       $autocomplete.removeClass('autocomplete-list-show');
     } else {
       $autocomplete.addClass('autocomplete-list-show');
-      $autocomplete.html('<li class="text-danger text-center"><span class="autocomplete-list-text">Inserire un codice fiscale corretto!</span></li>')
+      $autocomplete.html(`<li class="text-danger text-center"><span class="autocomplete-list-text">${Translator.trans('pratica.enter_correct_cf', {}, 'messages', language)}</span></li>`)
     }
   })
 });

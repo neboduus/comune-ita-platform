@@ -28,7 +28,7 @@
     <div class="row mt-5">
       <div class="col-lg-4">
         <div class="bootstrap-select-wrapper">
-          <label>Filtra per Stato pratica</label>
+          <label>{{ 'pratica.filtra_per_stato' | trans }} {{ 'pratica.applications' | trans }}</label>
           <select title="Scegli una opzione" class="select-status">
             <option value="all" selected>{{ 'tutti' | trans }}</option>
             {% for status in statusServices.statiPratiche %}
@@ -40,7 +40,7 @@
       </div>
       <div class="col-lg-4">
         <div class="bootstrap-select-wrapper">
-          <label>{{ 'pratica.filtra_per_servizio' | trans }} pratica</label>
+          <label>{{ 'pratica.filtra_per_servizio' | trans }} {{ 'pratica.applications' | trans }}</label>
           <select title="Scegli una opzione" class="select-services">
             <option value="all" selected>{{ 'tutti' | trans }}</option>
             {% for pratica in statusServices.serviziPratiche %}
@@ -52,20 +52,20 @@
       </div>
       <div class="col-lg-4">
         <div class="bootstrap-select-wrapper">
-          <label>Filtra per Data</label>
+          <label>{{ 'pratica.filtra_per_data' | trans }}</label>
           <select title="Scegli una opzione" class="select-time">
-            <option value="5">Ultimi 5 minuti</option>
-            <option value="15">Ultimi 15 minuti</option>
-            <option value="30">Ultimi 30 minuti</option>
-            <option value="60">Ultima ora</option>
-            <option value="180">Ultime 3 ore</option>
-            <option value="360">Ultime 6 ore</option>
-            <option value="720">Ultime 12 ore</option>
-            <option value="1440">Ultimo giorno</option>
-            <option value="2880">Ultimi 2 giorni</option>
-            <option value="10080">Ultimi 7 giorni</option>
-            <option value="43200" selected>Ultimi 30 giorni</option>
-            <option value="129600">Ultimi 90 giorni</option>
+            <option value="5">{{ 'time.last_5_minutes' | trans }}</option>
+            <option value="15">{{ 'time.last_15_minutes' | trans }}</option>
+            <option value="30">{{ 'time.last_30_minutes' | trans }}</option>
+            <option value="60">{{ 'time.last_hour' | trans }}</option>
+            <option value="180">{{ 'time.last_3_hours' | trans }}</option>
+            <option value="360">{{ 'time.last_6_hours' | trans }}</option>
+            <option value="720">{{ 'time.last_12_hours' | trans }}</option>
+            <option value="1440">{{ 'time.last_day' | trans }}</option>
+            <option value="2880">{{ 'time.last_2_days' | trans }}</option>
+            <option value="10080">{{ 'time.last_7_days' | trans }}</option>
+            <option value="43200" selected>{{ 'time.last_30_days' | trans }}</option>
+            <option value="129600">{{ 'time.last_90_days' | trans }}</option>
           </select>
         </div>
       </div>

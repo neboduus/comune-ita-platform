@@ -4,6 +4,8 @@ import {TextEditor} from "./utils/TextEditor";
 require("bootstrap-italia");
 require("../css/app.scss");
 require("jquery"); // Load jQuery as a module
+const lang = document.documentElement.lang.toString();
+moment.locale(lang)
 
 $('.edit-subscription-modal').on('show.bs.modal', function (event) {
   $(this).find('.error').hide();

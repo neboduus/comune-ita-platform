@@ -12,6 +12,9 @@ withdraw: 'Ritira'
 activate: 'Attiva'
 reply: 'Answer'
 view: 'View'
+sum: 'Somma'
+average: 'Media'
+counts: 'Conta'
 load_more: 'Other...'
 processing: 'In elaborazione...'
 close: 'Close'
@@ -19,6 +22,18 @@ lista: 'List'
 tutti: 'All'
 proceed: 'Procedi'
 days: 'days'
+previous: 'Precedente'
+following: 'Successivo'
+apply: 'Applica'
+cancel: 'Cancella'
+from: 'Da'
+to: 'A'
+of: 'di'
+page: 'Pagina'
+result: 'risultato'
+results: 'risultati'
+custom: 'Personalizzato'
+waiting: 'Attendere'
 terms_do_il_consenso: "I confirm that I read the privacy policy"
 accedi_al_servizio: 'Access to service %name%'
 registrati_per_accedere_al_servizio: 'Service is reserved to logged in users'
@@ -80,7 +95,7 @@ nav:
   admin:
     impostazioni_istanza: 'instance_settings'
     operatori: 'operators'
-    servizi: 'services'
+    servizi: 'Services'
     gruppo_servizi: 'service_group'
     webhook: 'webhook'
     metodi_pagamento: 'payment_methods'
@@ -253,6 +268,18 @@ webhook:
   headers: 'Headers (json)'
   version: 'Version'
 pratica:
+  select_new_status_application: 'Scegli il nuovo stato della pratica'
+  you_want_cancel: 'Sei sicuro di voler annullare?'
+  enter_correct_cf: 'Inserire un codice fiscale corretto!'
+  application_new_create_services: 'Crea nuova pratica per questo servizio'
+  application_create_success: 'Pratica creata correttamente'
+  back_services: 'Torna alla lista dei servizi'
+  create_new_application_for: 'Stai creando una nuova pratica per:'
+  find_user_message: "<p>Cerca l'utente tramite codice fiscale per associarlo alla pratica.</p><p>Se non presente puoi inserire i dati dell'utente direttamente nel modulo, l'utente verrà creato automaticamente.</p>"
+  create_applications: 'Crea pratica'
+  select_message: 'Seleziona messaggio'
+  reply_attachments: 'Allegati risposta'
+  applications: 'pratica'
   guida_utente: 'Guide'
   email:
     status_change:
@@ -425,6 +452,8 @@ pratica:
   upload_warning: "Warning: it is not possible to upload files with a size greater than 25Mb."
   protocollo_risposta: 'Response protocol'
   filtra_per_servizio: 'Filter by service'
+  filtra_per_stato: 'Filtra per stato'
+  filtra_per_data: 'Filtra per data'
   elimina_pratica: "Do you really want to delete the application?"
   acquisita_il: "acquired on"
   ritira_pratica: "Are you sure to proceed? This action can no longer be undone."
@@ -435,6 +464,19 @@ pratica:
   messaggio_creato: "Message created"
   messaggio_consegnato: "Message delivered on"
   conferma_invio_pratica: "Sei sicuro di voler procedere con l'invio della pratica?"
+  no_application_found: 'Nessuna pratica trovata'
+  date_in: 'Data di inserimento'
+  last_status_change: 'Ultimo cambio stato'
+  filter_by_processing: 'Filtra per lavorazione'
+  all_the: 'Tutte'
+  in_charge_of: 'In carico a'
+  to_assign: 'Da assegnare'
+  search_for: 'Cerca per'
+  text_search_for: 'Testo da cercare'
+  results_page: 'Risultati per pagina'
+  collate: 'Fascicola'
+  cancel_search: 'Annulla ricerca'
+  search_reload: 'Ricarica ricerca'
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
@@ -767,6 +809,8 @@ user:
     nuovi_documenti_messaggio: "New documents have been pubblished!"
     pratiche_payment_pending: 'Pending payment'
   profile:
+    update_profile: 'Modifica profilo'
+    change_password: 'Cambia password'
     title: 'User profile'
     dati_personali: 'Personal data'
     info_da_sdc: 'Authenticasion system information'
@@ -806,6 +850,8 @@ user:
       femmina: 'Female'
   welcome: 'welcome'
   welcome_msg: 'welcome_msg'
+  forgot_password: 'Hai dimenticato la password?'
+  forgot_password_description: 'Se hai dimenticato la tua password, inserisci il tuo username o il tuo indirizzo email.'
 admin:
   usage:
     user_title: 'User number'
@@ -958,6 +1004,16 @@ operatori:
     title: 'Usage metrics'
     service_title: 'Active services'
     pratiche_title: 'Practices per year'
+  copy_application_helper: "Clicca per copiare l'id della pratica"
+  copy_protocol_helper: "Clicca per copiare il numero di protocollo"
+  protocol_number_assigned: "Numero di protocollo in assegnazione"
+  download_csv_data: "Clicca per scaricare i dati in formato CSV"
+  table_options: "Opzioni tabella"
+  citizen_identity_verified: "Identità del cittadino verificata"
+  payment_executed: "Pagamento eseguito"
+  waiting_payment_outcome: "In attesa dell'esito del pagamento"
+  no_payment: "Non è previsto un pagamento"
+  apply_and_close: 'Applica e chiudi'
   pagamento_esentato: 'For this practice, the payment was exempted'
   meetings: 'Appointments'
   meetings_in_evidence: 'Appointments in evidence'
@@ -2683,3 +2739,21 @@ time:
   seconds: 'seconds'
   ago: 'ago'
   few_seconds_ago: 'few_seconds_ago'
+  last_5_minutes: 'Ultimi 5 minuti'
+  last_15_minutes: 'Ultimi 15 minuti'
+  last_30_minutes: 'Ultimi 30 minuti'
+  last_hour: 'Ultima ora'
+  last_3_hours: 'Ultime 3 ore'
+  last_6_hours: 'Ultime 6 ore'
+  last_12_hours: 'Ultime 12 ore'
+  last_day: 'Ultimo giorno'
+  last_2_days: 'Ultimi 2 giorni'
+  last_7_days: 'Ultimi 7 giorni'
+  last_30_days: 'Ultimi 30 giorni'
+  last_90_days: 'Ultimi 90 giorni'
+  today: 'Today'
+  yesterday: 'Yesterday'
+  this_week: 'Questa settimana'
+  last_week: 'Settimana scorsa'
+  this_month: 'Questo mese'
+  last_month: 'Mese scorso'

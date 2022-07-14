@@ -144,7 +144,7 @@
 
             {% if pratica.allegatiOperatore|length > 0 %}
               <div class="it-list-wrapper mt-4">
-                {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'Allegati risposta'}) }}
+                {{ include('@App/Allegato/parts/_header_attachments.html.twig', {'section_title': 'pratica.reply_attachments' | trans }) }}
                 <ul class="it-list">
                   {% for allegato in pratica.allegatiOperatore %}
                     {{ include('@App/Allegato/parts/_line_attachment.html.twig', {'attachment': allegato, 'application': pratica}) }}

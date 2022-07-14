@@ -4,7 +4,7 @@ class FormIoI18n {
   static languages() {
     return  {
       en: {},
-      sp: {},
+      de: {},
       it: {
         complete: 'Invio Completato',
         error: 'Per favore correggi i seguenti errori prima di inviare.',
