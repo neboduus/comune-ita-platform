@@ -19,7 +19,7 @@
         {% if application.user %}
           <div id="application-owner" class="row pb-5">
             <div class="col-4 col-lg-12">
-              <p><strong>Stai creando una nuova pratica per:</strong></p>
+              <p><strong>{{ 'pratica.create_new_application_for' | trans }}</strong></p>
             </div>
             <div class="col-8 col-lg-12">
               <div class="row">
@@ -40,12 +40,11 @@
           </div>
         {% else %}
           <div class="callout">
-            <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg><span class="sr-only">Ricerca utente</span> Guida</div>
-            <p>Cerca l'utente tramite codice fiscale per associarlo alla pratica.</p>
-            <p>Se non presente puoi inserire i dati dell'utente direttamente nel modulo, l'utente verrà creato automaticamente.</p>
+            <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg><span class="sr-only">{{ 'pratica.find_user' | trans }}</span> {{ 'pratica.guide' | trans }}</div>
+              {{ 'pratica.find_user_message' | trans | raw }}
           </div>
           <div class="form-group pb-5">
-            <input type="search" placeholder="Ricerca utente" id="autocomplete-users" name="autocomplete-test" data-url="{{ path('new_application_by_operator', {'servizio': service.id}) }}">
+            <input type="search" placeholder="{{ 'pratica.find_user' | trans }}" id="autocomplete-users" name="autocomplete-test" data-url="{{ path('new_application_by_operator', {'servizio': service.id}) }}">
             <span class="autocomplete-icon" aria-hidden="true">
               <i class="fa fa-search" aria-hidden="true"></i>
             </span>
@@ -57,7 +56,7 @@
           <svg class="icon icon-sm icon-white mr-2">
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-left"></use>
           </svg>
-          Torna alla lista dei servizi
+          {{ 'pratica.back_services' | trans }}
         </a>
 
       </div>
@@ -74,7 +73,7 @@
         <div id="feedback" class="row d-none">
           <div class="col-12">
             <div class="alert alert-success pb-5">
-              <p>Pratica creata correttamente</p>
+              <p>{{ 'pratica.application_create_success' | trans }}</p>
             </div>
           </div>
           <div class="col-12">
@@ -82,7 +81,7 @@
               <svg class="icon icon-sm icon-white mr-2">
                 <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
               </svg>
-              Crea nuova pratica per questo servizio
+              {{ 'pratica.application_new_create_services' | trans }}
             </a>
           </div>
         </div>

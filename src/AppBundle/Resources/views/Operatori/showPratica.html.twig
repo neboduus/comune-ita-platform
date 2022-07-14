@@ -150,14 +150,14 @@
                           <form action="{{ path('operatori_show_change_status', {'pratica': pratica.id}) }}" method="post">
                             <div class="form-group">
                               <div class="bootstrap-select-wrapper">
-                                <select title="Scegli il nuovo stato della pratica" name="status" required="required">
+                                <select title="{{ 'pratica.select_new_status_application' | trans }}" name="status" required="required">
                                   {% for state in pratica.allowedStates %}
                                     <option value="{{ state }}">{{ ('pratica.dettaglio.stato_'~state)|trans }}</option>
                                   {% endfor %}
                                 </select>
                               </div>
                             </div>
-                            <button class="btn btn-outline-warning btn-sm w-100" type="submit">Applica</button>
+                            <button class="btn btn-outline-warning btn-sm w-100" type="submit">{{ 'apply' | trans }}</button>
                           </form>
                         </div>
                       </div>

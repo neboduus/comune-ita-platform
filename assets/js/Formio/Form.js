@@ -6,15 +6,12 @@ import SdcFile from "../SdcFile";
 import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
 import axios from "axios";
-import Swal from "sweetalert2";
-//import FormioI18n from "../utils/FormioI18n";
-
-
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 Formio.registerComponent('sdcfile', SdcFile);
+const language = document.documentElement.lang.toString();
 
 class Form {
 
@@ -188,7 +185,7 @@ class Form {
         form.on('submit', function (submission) {
           let submitButton = $('#formio button');
           submitButton.hide();
-          $('<a href="#" id="loading-button" class="btn btn-secondary"><i class="fas fa-sync fa-spin"></i> Attendere...</a>').insertAfter(submitButton.last());
+          $(`<a href="#" id="loading-button" class="btn btn-secondary"><i class="fas fa-sync fa-spin"></i>${Translator.trans('waiting', {}, 'messages', language)}...</a>`).insertAfter(submitButton.last());
           customErrorContainer.empty().hide();
           axios.post($container.data('form_validate'), JSON.stringify(submission.data))
             .then(function (reponse) {
@@ -359,7 +356,7 @@ class Form {
 
   // Refresh page on handle "cancel button"
   static handleBeforeSubmit() {
-    if (confirm("Sei sicuro di voler annullare?")) {
+    if (confirm(`${Translator.trans('pratica.you_want_cancel', {}, 'messages', language)}`)) {
       document.location.reload()
     }
   }

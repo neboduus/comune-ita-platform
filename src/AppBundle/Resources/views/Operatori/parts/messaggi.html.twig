@@ -30,7 +30,9 @@
         {% if not pratica.operatore %}
           <div>{{ form_widget(messageForm.applicant, {'attr': {'disabled': true, 'title': 'operatori.messaggi.prendi_in_carico_per_abilitare'|trans}}) }}</div>
         {% else %}
-          <div>{{ form_widget(messageForm.applicant, {'attr': {'onclick': 'return confirm("Sei sicuro di voler procedere? Se decidi di procedere verrà inviata un email al cittadino all\'indirizzo email %email%")' | trans({ "%email%": pratica.user.emailContatto }) }}) }}</div>
+          {% set message = 'pratica.messaggio_a_utente' | trans({ "%email%": pratica.user.emailContatto }) | raw %}
+          {% set click = 'return confirm("'~message~'") '%}
+          <div>{{ form_widget(messageForm.applicant, {'attr': {'onclick': click}}) }}</div>
         {% endif %}
         <div>{{ form_widget(messageForm.internal, {'attr': {'class': 'btn-secondary'}}) }}</div>
       </div>

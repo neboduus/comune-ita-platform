@@ -12,6 +12,9 @@ withdraw: 'Ritira'
 activate: 'Attiva'
 reply: 'Rispondi'
 view: 'Visualizza'
+sum: 'Somma'
+average: 'Media'
+counts: 'Conta'
 read_more: 'Leggi di più'
 load_more: 'Altro...'
 processing: 'In elaborazione...'
@@ -20,6 +23,18 @@ lista: 'Lista'
 tutti: 'Tutti'
 proceed: 'Procedi'
 days: 'giorni'
+previous: 'Precedente'
+following: 'Successivo'
+apply: 'Applica'
+cancel: 'Cancella'
+from: 'Da'
+to: 'A'
+of: 'di'
+page: 'Pagina'
+result: 'risultato'
+results: 'risultati'
+custom: 'Personalizzato'
+waiting: 'Attendere'
 terms_do_il_consenso: "Ho letto l'informativa"
 accedi_al_servizio: 'Accedi al servizio %name%'
 registrati_per_accedere_al_servizio: 'Registrati per accedere al servizio'
@@ -265,6 +280,22 @@ webhook:
   active: 'Attivo'
   not_Active: 'Non attivo'
 pratica:
+  select_new_status_application: 'Scegli il nuovo stato della pratica'
+  you_want_cancel: 'Sei sicuro di voler annullare?'
+  enter_correct_cf: 'Inserire un codice fiscale corretto!'
+  application_new_create_services: 'Crea nuova pratica per questo servizio'
+  application_create_success: 'Pratica creata correttamente'
+  back_services: 'Torna alla lista dei servizi'
+  create_new_application_for: 'Stai creando una nuova pratica per:'
+  find_user_message: "<p>Cerca l'utente tramite codice fiscale per associarlo alla pratica.</p><p>Se non presente puoi inserire i dati dell'utente direttamente nel modulo, l'utente verrà creato automaticamente.</p>"
+  guide: 'Guida'
+  find_user: 'Ricerca utente'
+  create_applications: 'Crea pratica'
+  select_message: 'Seleziona messaggio'
+  reply_attachments: 'Allegati risposta'
+  applications: 'pratica'
+  applications_statistics: 'Statistiche Pratiche'
+  applications_number: 'N° pratiche'
   guida_utente: 'Guida'
   email:
     status_change:
@@ -436,16 +467,32 @@ pratica:
   upload_warning: "Attenzione: non è possibile caricare file con una dimensione maggiore di 25Mb."
   protocollo_risposta: 'Protocollo risposta'
   filtra_per_servizio: 'Filtra per servizio'
+  filtra_per_stato: 'Filtra per stato'
+  filtra_per_data: 'Filtra per data'
   elimina_pratica: "Vuoi veramente eliminare la pratica?"
   acquisita_il: "acquisita il"
   ritira_pratica: "Sei sicuro di procedere? Questa azione non potrà più essere annullata."
   carica_allegato: "Carica allegato"
   messaggio_operatore: "Sei sicuro di voler procedere? Se decidi di continuare verrà inviata un email all'operatore che ha in carico la tua pratica"
+  messaggio_a_utente: "Sei sicuro di voler procedere? Se decidi di procedere verrà inviata un email al cittadino all'indirizzo email %email%"
   messaggio_operatore_vuoto: "Attenzione! non puoi inviare un messaggio vuoto."
   messaggio_letto: "Messaggio letto il"
   messaggio_creato: "Messaggio creato il"
   messaggio_consegnato: "Messaggio creato il"
   conferma_invio_pratica: "Sei sicuro di voler procedere con l'invio della pratica?"
+  no_application_found: 'Nessuna pratica trovata'
+  date_in: 'Data di inserimento'
+  last_status_change: 'Ultimo cambio stato'
+  filter_by_processing: 'Filtra per lavorazione'
+  all_the: 'Tutte'
+  in_charge_of: 'In carico a'
+  to_assign: 'Da assegnare'
+  search_for: 'Cerca per'
+  text_search_for: 'Testo da cercare'
+  results_page: 'Risultati per pagina'
+  collate: 'Fascicola'
+  cancel_search: 'Annulla ricerca'
+  search_reload: 'Ricarica ricerca'
 STATUS_CANCELLED: 'Rifiutata'
 STATUS_DRAFT: 'Bozza'
 STATUS_PRE_SUBMIT: 'Inviata'
@@ -785,6 +832,8 @@ user:
     nuovi_documenti: "Nuovi documenti!"
     nuovi_documenti_messaggio: "Sono stati pubblicati nuovi documenti!"
   profile:
+    update_profile: 'Modifica profilo'
+    change_password: 'Cambia password'
     title: 'Profilo utente'
     dati_personali: 'Dati personali'
     info_da_sdc: 'Informazioni da sistema di autenticazione'
@@ -822,6 +871,8 @@ user:
     salva_informazioni_contatto: 'Salva informazioni contatto'
     salva_informazioni_profilo: 'Salva informazioni profilo'
     salva: 'Salva'
+  forgot_password: 'Hai dimenticato la password?'
+  forgot_password_description: 'Se hai dimenticato la tua password, inserisci il tuo username o il tuo indirizzo email.'
 admin:
   usage:
     user_title: 'Numero utenti'
@@ -1009,6 +1060,16 @@ operatori:
     title: 'Metriche di utilizzo'
     service_title: 'Servizi attivi'
     pratiche_title: 'Pratiche per anno'
+  copy_application_helper: "Clicca per copiare l'id della pratica"
+  copy_protocol_helper: "Clicca per copiare il numero di protocollo"
+  protocol_number_assigned: "Numero di protocollo in assegnazione"
+  download_csv_data: "Clicca per scaricare i dati in formato CSV"
+  table_options: "Opzioni tabella"
+  citizen_identity_verified: "Identità del cittadino verificata"
+  payment_executed: "Pagamento eseguito"
+  waiting_payment_outcome: "In attesa dell'esito del pagamento"
+  no_payment: "Non è previsto un pagamento"
+  apply_and_close: 'Applica e chiudi'
 allegato:
   nome_file: 'Nome del file'
   descrizione_file: 'Descrizione del file'
@@ -2677,3 +2738,21 @@ time:
   seconds: 'secondi'
   ago: 'fa'
   few_seconds_ago: 'pochi secondi fa'
+  last_5_minutes: 'Ultimi 5 minuti'
+  last_15_minutes: 'Ultimi 15 minuti'
+  last_30_minutes: 'Ultimi 30 minuti'
+  last_hour: 'Ultima ora'
+  last_3_hours: 'Ultime 3 ore'
+  last_6_hours: 'Ultime 6 ore'
+  last_12_hours: 'Ultime 12 ore'
+  last_day: 'Ultimo giorno'
+  last_2_days: 'Ultimi 2 giorni'
+  last_7_days: 'Ultimi 7 giorni'
+  last_30_days: 'Ultimi 30 giorni'
+  last_90_days: 'Ultimi 90 giorni'
+  today: 'Oggi'
+  yesterday: 'Ieri'
+  this_week: 'Questa settimana'
+  last_week: 'Settimana scorsa'
+  this_month: 'Questo mese'
+  last_month: 'Mese scorso'

@@ -5,7 +5,7 @@
   <div class="check-container">
     <div class="form-check">
       <input id="m-{{ message.id }}" class="checkbox-message" data-message-id="{{ message.id }}" type="checkbox" {% if request_integration_time and message.createdAt >= request_integration_time %}checked="checked"{% endif %}>
-      <label for="m-{{ message.id }}" class="sr-only">Seleziona messaggio {{ message.id }}</label>
+      <label for="m-{{ message.id }}" class="sr-only">{{ 'pratica.select_message' | trans}} {{ message.id }}</label>
     </div>
   </div>
   <div class="rounded p-3 shadow w-100 {{ class }}">

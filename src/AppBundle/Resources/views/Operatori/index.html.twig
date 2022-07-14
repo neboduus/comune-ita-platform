@@ -81,12 +81,12 @@
 
   <script src="{{ asset('bundles/app/js/jquery.min.js') }}"></script>
   <script src="{{ asset('bundles/app/js/jquery-ui.min.js') }}"></script>
-  <script src="{{ asset('bundles/app/js/moment.js') }}"></script>
-  <script src="{{ asset('bundles/app/js/moment-it.js') }}"></script>
+  <script src="{{ asset('bundles/app/js/moment-with-locales.js') }}"></script>
   <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
   <script src="{{ asset('bundles/app/js/chosen.jquery.min.js') }}"></script>
   <script src="{{ asset('bundles/app/js/daterangepicker.js') }}"></script>
   <script>
+    const language = document.documentElement.lang.toString();
     $.views.helpers({
       'formatId': function (id) {
         return id.split('-')[4];
@@ -168,20 +168,17 @@
       var chosenSelect = $('.form-control-chosen');
       var sort = 'submissionTime';
       var order = 'asc';
-
       chosenSelect.chosen();
+
       filterStatusRange.daterangepicker({
         "locale": {
           "format": "DD/MM/YYYY HH:mm",
           "separator": " - ",
-          "applyLabel": "Applica",
-          "cancelLabel": "Cancella",
-          "fromLabel": "Da",
-          "toLabel": "A",
-          "customRangeLabel": "Personalizzato",
-          "weekLabel": "Set",
-          "daysOfWeek": ["Do","Lu","Ma","Me","Gi","Ve","Sa"],
-          "monthNames": ["Gennaio","Febbraio","Marzp","Aprile","Maggio","Giugno","Luglio","Agosto","Settembre","Ottobrr","Novembre","Dicembre"],
+          "applyLabel": Translator.trans('apply', {}, 'messages', language),
+          "cancelLabel": Translator.trans('cancel', {}, 'messages', language),
+          "fromLabel": Translator.trans('from', {}, 'messages', language),
+          "toLabel": Translator.trans('to', {}, 'messages', language),
+          "customRangeLabel": Translator.trans('custom', {}, 'messages', language),
           "firstDay": 1
         },
         timePicker: true,
@@ -190,12 +187,12 @@
         autoUpdateInput: false,
         opens: "center",
         ranges: {
-          'Oggi': [moment().startOf('day'), moment().endOf('day')],
-          'Ieri': [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
-          'Questa settimana': [moment().startOf('week'), moment().endOf('week')],
-          'Settimana scorsa': [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
-          'Questo mese': [moment().startOf('month'), moment().endOf('month')],
-          'Mese scorso': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+          [Translator.trans('time.today', {}, 'messages', language)]: [moment().startOf('day'), moment().endOf('day')],
+          [Translator.trans('time.yesterday', {}, 'messages', language)]: [moment().subtract(1, 'days').startOf('day'), moment().subtract(1, 'days').endOf('day')],
+          [Translator.trans('time.this_week', {}, 'messages', language)]: [moment().startOf('week'), moment().endOf('week')],
+          [Translator.trans('time.last_week', {}, 'messages', language)]: [moment().subtract(1, 'week').startOf('week'), moment().subtract(1, 'week').endOf('week')],
+          [Translator.trans('time.this_month', {}, 'messages', language)]: [moment().startOf('month'), moment().endOf('month')],
+          [Translator.trans('time.last_month', {}, 'messages', language)]: [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
         }
       }).on('apply.daterangepicker', function(ev, picker) {
         filterStatusRange.data('start', picker.startDate.format('X'));
@@ -527,10 +524,10 @@
 
 {% verbatim %}
 <script id="tpl-spinner" type="text/x-jsrender">
-  <div class="text-center p-5"><div class="loader mb-1"></div> <em>Attendere il caricamento dei dati...</em></div>
+  <div class="text-center p-5"><div class="loader mb-1"></div> <em>{% endverbatim %}{{ 'loading' | trans }}{% verbatim %}</em></div>
 </script>
 <script id="tpl-empty" type="text/x-jsrender">
-  <div class="text-center p-5"><em>Nessuna pratica trovata</em></div>
+  <div class="text-center p-5"><em>{% endverbatim %}{{ 'pratica.no_application_found' | trans }}{% verbatim %}</em></div>
 </script>
 <script id="tpl-result" type="text/x-jsrender">
 {{if meta.schema}}
@@ -538,19 +535,19 @@
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Opzioni tabella</h5>
+            <h5 class="modal-title">{% endverbatim %}{{ 'operatori.table_options' | trans }}{% verbatim %}</h5>
             <button type="button" class="btn btn-xs btn-primary pull-right" data-dismiss="modal" aria-label="Close">
-              Applica e chiudi
+              {% endverbatim %}{{ 'operatori.apply_and_close' | trans }}{% verbatim %}
             </button>
           </div>
           <div class="modal-body">
             <table class="table table-sm">
             <tr>
                 <th></th>
-                <th>Visualizza</th>
-                <th>Somma</th>
-                <th>Media</th>
-                <th>Conta</th>
+                <th>{% endverbatim %}{{ 'view' | trans }}{% verbatim %}</th>
+                <th>{% endverbatim %}{{ 'sum' | trans }}{% verbatim %}</th>
+                <th>{% endverbatim %}{{ 'average' | trans }}{% verbatim %}</th>
+                <th>{% endverbatim %}{{ 'counts' | trans }}{% verbatim %}</th>
             </tr>
             {{for meta.schema}}
               <tr>
@@ -605,7 +602,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-xs btn-primary pull-right" data-dismiss="modal" aria-label="Close">
-              Applica e chiudi
+              {% endverbatim %}{{ 'operatori.apply_and_close' | trans }}{% verbatim %}
             </button>
           </div>
       </div>
@@ -618,36 +615,36 @@
     <tr>
       <th style="white-space:nowrap">
         {{if meta.schema}}
-          <button type="button" class="btn btn-secondary btn-xs text-nowrap py-1 px-2" data-toggle="modal" data-target="#tableOptions">Opzioni tabella</button>
+          <button type="button" class="btn btn-secondary btn-xs text-nowrap py-1 px-2" data-toggle="modal" data-target="#tableOptions">{% endverbatim %}{{ 'operatori.table_options' | trans }}{% verbatim %}</button>
         {{/if}}
-        <a data-download="true" data-href="{% endverbatim %}{{ path('operatori_index_csv') }}{% verbatim %}"  href="#" data-toggle="tooltip" title="Clicca per scaricare i dati in formato CSV" type="button" class="btn btn-default btn-xs p-0">
+        <a data-download="true" data-href="{% endverbatim %}{{ path('operatori_index_csv') }}{% verbatim %}"  href="#" data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.download_csv_data' | trans }}{% verbatim %}" type="button" class="btn btn-default btn-xs p-0">
           <svg class="icon icon-sm icon-primary">
            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
           </svg>
         </a>
       </th>
-      <th>Login</th>
-      <th>Pagamenti</th>
-      <th>Richiedente</th>
-      <th>Codice fiscale</th>
+      <th>{% endverbatim %}{{ 'operatori.login' | trans }}{% verbatim %}</th>
+      <th>{% endverbatim %}{{ 'nav.admin.tenant.pagamenti' | trans }}{% verbatim %}</th>
+      <th>{% endverbatim %}{{ 'pratica.richiedente' | trans }}{% verbatim %}</th>
+      <th>{% endverbatim %}{{ 'meetings.labels.fiscal_code' | trans }}{% verbatim %}</th>
       <th>
         <div class="d-flex">
-          <div class="text-nowrap mr-1">Data di inserimento </div>
+          <div class="text-nowrap mr-1">{% endverbatim %}{{ 'pratica.date_in' | trans }}{% verbatim %} </div>
           <a href="#" data-sort="submissionTime" data-order="asc"><svg class="icon icon-xs {{if meta.parameter.sort == 'submissionTime' && meta.parameter.order == 'asc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg></a>
           <a href="#" data-sort="submissionTime" data-order="desc"><svg class="icon icon-xs {{if meta.parameter.sort == 'submissionTime' && meta.parameter.order == 'desc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-down"></use></svg></a>
         </div>
       </th>
       <th>
         <div class="d-flex">
-          <div class="text-nowrap mr-1">Ultimo cambio stato </div>
+          <div class="text-nowrap mr-1">{% endverbatim %}{{ 'pratica.last_status_change' | trans }}{% verbatim %} </div>
           <a href="#" data-sort="latestStatusChangeTimestamp" data-order="asc"><svg class="icon icon-xs {{if meta.parameter.sort == 'latestStatusChangeTimestamp' && meta.parameter.order == 'asc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg></a>
           <a href="#" data-sort="latestStatusChangeTimestamp" data-order="desc"><svg class="icon icon-xs {{if meta.parameter.sort == 'latestStatusChangeTimestamp' && meta.parameter.order == 'desc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-down"></use></svg></a>
         </div>
       </th>
       {{if !meta.parameter.stato}}
-      <th>Stato</th>
+      <th>{% endverbatim %}{{ 'servizio.stato' | trans }}{% verbatim %}</th>
       {{/if}}
-      <th>Operatore</th>
+      <th>{% endverbatim %}{{ 'pratica.operatore' | trans }}{% verbatim %}</th>
       {{if meta.parameter.servizio}}
         {{if meta.schema}}
           {{for meta.schema}}
@@ -655,7 +652,7 @@
           {{/for}}
         {{/if}}
       {{else}}
-        <th>Servizio</th>
+        <th>{% endverbatim %}{{ 'pratica.servizio' | trans }}{% verbatim %}</th>
       {{/if}}
     </tr>
   </thead>
@@ -668,27 +665,27 @@
             <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file{{if ~metadata.parameter.collate && (children_count > 0 || group )}}s{{/if}}"></use></svg>
           </a>
         {{/if}}
-        <button data-toggle="tooltip" title="Clicca per copiare l'id della pratica" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{:id}}">
+        <button data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.copy_application_helper' | trans }}{% verbatim %}" type="button" class="btn btn-default btn-xs copy p-0" data-copy="{{:id}}">
           <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
         </button>
         {{if protocol_number}}
-          <button type="button" data-toggle="tooltip" title="Clicca per copiare il numero di protocollo" class="btn btn-default btn-xs copy p-0" data-copy="{{:protocol_number}}">
+          <button type="button" data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.copy_protocol_helper' | trans }}{% verbatim %}" class="btn btn-default btn-xs copy p-0" data-copy="{{:protocol_number}}">
             <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
           </button>
         {{else is_protocollo_required}}
-          <button type="button" data-toggle="tooltip" title="Numero di protocollo in assegnazione" class="btn btn-default text-muted btn-xs p-0">
+          <button type="button" data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.protocol_number_assigned' | trans }}{% verbatim %}" class="btn btn-default text-muted btn-xs p-0">
             <svg class="icon icon-sm icon-200"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-key"></use></svg>
           </button>
         {{/if}}
        </td>
        <td>
         {{if idp == "spid" }}
-          <span data-toggle="tooltip" title="Identità del cittadino verificata">
+          <span data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.citizen_identity_verified' | trans }}{% verbatim %}">
             <img class="icon" src={% endverbatim %}"{{ asset('bundles/app/images/spid.svg') }}"{% verbatim %}>
           </span>
         {{/if}}
         {{if idp == "cps/cns" }}
-          <span data-toggle="tooltip" title="Identità del cittadino verificata">
+          <span data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.citizen_identity_verified' | trans }}{% verbatim %}">
             <img class="icon" src={% endverbatim %}"{{ asset('bundles/app/images/cns.png') }}"{% verbatim %}>
           </span>
         {{/if}}
@@ -696,17 +693,17 @@
       <td>
         {{if is_payment_required}}
             {{if payment_complete}}
-             <span data-toggle="tooltip" title="Pagamento eseguito">
+             <span data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.payment_executed' | trans }}{% verbatim %}">
                 <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
             </span>
             {{else}}
-             <span data-toggle="tooltip" title="In attesa dell'esito del pagamento">
+             <span data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.waiting_payment_outcome' | trans }}{% verbatim %}">
                 <svg class="icon icon-sm icon-200"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clock"></use></svg>
             </span>
             {{/if}}
           </span>
         {{else}}
-          <span data-toggle="tooltip" title="Non è previsto un pagamento">
+          <span data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.no_payment' | trans }}{% verbatim %}">
                 <svg class="icon icon-sm icon-200"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-minus"></use></svg>
             </span>
         {{/if}}
@@ -714,7 +711,7 @@
       <td style="white-space: nowrap">
         {{:user_name}}
         {{if idp != "anonymous"}}
-          <span data-toggle="tooltip" title="Identità del cittadino verificata">
+          <span data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.citizen_identity_verified' | trans }}{% verbatim %}">
             <svg class="icon icon-xs icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
           </span>
         {{/if}}
@@ -722,7 +719,7 @@
       <td style="white-space: nowrap">
         {{:codice_fiscale}}
         {{if idp != "anonymous"}}
-          <span data-toggle="tooltip" title="Identità del cittadino verificata">
+          <span data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.citizen_identity_verified' | trans }}{% verbatim %}">
             <svg class="icon icon-xs icon-success"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check-circle"></use></svg>
           </span>
         {{/if}}
@@ -790,13 +787,13 @@
 {{if links.prev }}
   <a class="btn {{if !links.prev}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.prev}}"{{if !links.prev}} style="cursor:not-allowed"{{/if}}>
       <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use></svg>
-      Precedente
+      {% endverbatim %}{{ 'previous' | trans }}{% verbatim %}
   </a>
 {{/if}}
-  <span>{{:meta.count}} {{if meta.count == 1}}risultato{{else}}risultati{{/if}} - Pagina {{:currentPage}} di {{:pageCount}}</span>
+  <span>{{:meta.count}} {{if meta.count == 1}}{% endverbatim %}{{ 'result' | trans }}{% verbatim %}{{else}}{% endverbatim %}{{ 'results' | trans }}{% verbatim %}{{/if}} -  {% endverbatim %}{{ 'page' | trans }}{% verbatim %} {{:currentPage}}  {% endverbatim %}{{ 'of' | trans }}{% verbatim %} {{:pageCount}}</span>
 {{if links.next}}
   <a class="btn {{if !links.next}}btn-disabled text-muted{{else}}btn-link{{/if}} page text-decoration-none text-uppercase" href="#" data-url="{{:links.next}}"{{if !links.next}} style="cursor:not-allowed"{{/if}}>
-      Successivo
+      {% endverbatim %}{{ 'following' | trans }}{% verbatim %}
       <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use></svg>
   </a>
 {{/if}}
@@ -832,9 +829,9 @@
         {% if stati|length %}
           <div class="col-12 col-sm-6 col-lg-4 mb-5">
             <div class="label-sm-wrapper filter-stato">
-              <label for="filter-stato">Filtra per stato</label>
+              <label for="filter-stato">{{ 'pratica.filtra_per_stato' | trans }}</label>
               <select id="filter-stato" class="form-control filter-select form-control-chosen">
-                <option value="">Tutti</option>
+                <option value="">{{ 'tutti' | trans }}</option>
                 {% for stato in stati %}
                   <option value="{{ stato.id }}">{{ stato.name|trans }}</option>
                 {% endfor %}
@@ -844,32 +841,32 @@
         {% endif %}
         <div class="col-12 col-sm-6 col-lg-4 mb-5">
           <div class="label-sm-wrapper filter-workflow">
-            <label for="filter-workflow">Filtra per lavorazione</label>
+            <label for="filter-workflow">{{ 'pratica.filter_by_processing' | trans }}</label>
             <select id="filter-workflow" class="form-control filter-select form-control-chosen">
-              <option value="">Tutte</option>
-              <option value="owned">In carico a {{ user.fullName }}</option>
-              <option value="unassigned">Da assegnare</option>
+              <option value="">{{ 'pratica.all_the'| trans }}</option>
+              <option value="owned">{{ 'pratica.in_charge_of' | trans }} {{ user.fullName }}</option>
+              <option value="unassigned">{{ 'pratica.to_assign' | trans }}</option>
             </select>
           </div>
         </div>
         <div class="col-12 col-sm-6 col-lg-4 mb-5 mb-md-0">
           <div class="label-sm-wrapper filter-query">
-            <label for="filter-query-by">Cerca per</label>
+            <label for="filter-query-by">{{ 'pratica.search_for' | trans }}</label>
             <div class="input-group">
               <select class="form-control filter-select form-control-chosen" id="filter-query-by" name="query-by">
-                <option value="2">Nome utente</option>
-                <option value="1">Codice fiscale</option>
-                <option value="3">ID Pratica</option>
+                <option value="2">{{ 'servizio.nome_utente' | trans }}</option>
+                <option value="1">{{ 'meetings.labels.fiscal_code' | trans }}</option>
+                <option value="3">{{ 'servizio.id_pratica' | trans }}</option>
               </select>
               <div class="input-group-append">
-                <input type="text" class="chosen-input" name="query" id="filter-query" placeholder="Testo da cercare">
+                <input type="text" class="chosen-input" name="query" id="filter-query" placeholder="{{ 'pratica.text_search_for' | trans }}">
               </div>
             </div>
           </div>
         </div>
         <div class="col-6 col-sm-6 col-md-4 col-lg-1 mb-5">
           <div class="label-sm-wrapper">
-            <label for="filter-pratiche" class="text-nowrap overflow-hidden mw-100">Risultati per pagina</label>
+            <label for="filter-pratiche" class="text-nowrap overflow-hidden mw-100">{{ 'pratica.results_page' | trans }}</label>
             <select id="filter-pratiche" class="form-control filter-select form-control-chosen">
               <option value="10">10</option>
               <option value="25">25</option>
@@ -880,7 +877,7 @@
         </div>
         <div class="col-6 col-sm-6 col-md-8 col-lg-3 mb-5">
           <div class="label-sm-wrapper">
-            <label for="filter-status-range">Ultimo cambio stato</label>
+            <label for="filter-status-range">{{ 'pratica.last_status_change' | trans }}</label>
             <input type="text" id="status-range" name="status-range" class="chosen-input" onkeydown="event.preventDefault()">
           </div>
         </div>
@@ -888,7 +885,7 @@
           <div class="form-check">
             <div class="toggles">
               <label for="filter-collate">
-                Fascicola
+                {{ 'pratica.collate' | trans }}
                 <input type="checkbox" id="filter-collate">
                 <span class="lever" style="position: relative;z-index: 10;"></span>
               </label>
@@ -900,13 +897,13 @@
             <svg class="icon icon-white">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-big"></use>
             </svg>
-            <span>Annulla ricerca</span>
+            <span>{{ 'pratica.cancel_search' | trans }}</span>
           </a>
           <a id="reload" class="btn btn-secondary btn-xs btn-icon p-2" href="#">
             <svg class="icon icon-white">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-refresh"></use>
             </svg>
-            <span class="d-none">Ricarica ricerca</span>
+            <span class="d-none">{{ 'pratica.search_reload' | trans }}</span>
           </a>
         </div>
       </div>

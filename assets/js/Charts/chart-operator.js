@@ -15,6 +15,8 @@ let selectStatus =  $('select.select-status');
 let selectServices =  $('select.select-services');
 let selectTime =  $('select.select-time');
 let multiSelect = $('select.select-status, select.select-services, select.select-time');
+const lang = document.documentElement.lang.toString();
+moment.locale(lang)
 
 let typeSlot = 'day';
 
@@ -23,7 +25,7 @@ var chart  = Highcharts.chart('container', {
     type: 'area'
   },
   title: {
-    text: 'Statistiche Pratiche'
+    text: Translator.trans('pratica.applications_statistics', {}, 'messages', lang),
   },
   subtitle: {
     text: ''
@@ -37,7 +39,7 @@ var chart  = Highcharts.chart('container', {
   },
   yAxis: {
     title: {
-      text: 'N° pratiche'
+      text: Translator.trans('pratica.applications_number', {}, 'messages', lang),
     },
     labels: {
       formatter: function () {
@@ -48,7 +50,7 @@ var chart  = Highcharts.chart('container', {
   },
   tooltip: {
     split: true,
-    valuePrefix: 'N° pratiche '
+    valuePrefix: Translator.trans('pratica.applications_number', {}, 'messages', lang) + ' ',
   },
   plotOptions: {
     area: {
@@ -121,38 +123,6 @@ $(document).ready(function () {
 
   chart.setSeriesData();
   filterData();
-  /*axios.get(endpointUrl, {
-      params: {
-        status: 'all',
-        services:'all',
-        time: selectTime.val()
-      }
-    }
-  )
-    .then(function (response) {
-      if (response.status === 200) {
-
-        if(response.data.series){
-          chart.update({
-            xAxis: {
-              categories: response.data.categories.map(function (x) {
-                return moment(x).format('DD/MM/YYYY')
-              })
-            },
-
-          })
-          chart.update({
-            series: response.data.series
-          },true,true)
-        }else {
-          chart.update({
-            series: []
-          },true,true)
-        }
-
-      }
-    })*/
-
   onChangeSelect()
 
 })
