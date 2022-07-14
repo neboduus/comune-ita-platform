@@ -54,8 +54,27 @@ class Payment {
         break;
       case 'PAYMENT_PENDING':
         Payment.$spinnerContainer.addClass('d-none');
-        $(".online_payment_begin").attr("href", data.links.online_payment_begin.url);
-        $(".offline_payment").attr("href", data.links.offline_payment.url);
+        if(data.links.online_payment_begin.url !== null){
+          $('#sezione-online').addClass('d-block');
+          $(".online_payment_begin").attr("href", data.links.online_payment_begin.url);
+          if(data.links.offline_payment.url == null){
+            $('.card-pay-offline').removeClass('col-md-6');
+          }
+        }else{
+          $('#sezione-online').addClass('d-none');
+          $(".online_payment_begin").addClass('d-none');
+        }
+        if(data.links.offline_payment.url !== null){
+          $('#sezione-offline').addClass('d-block');
+          $(".offline_payment").attr("href", data.links.offline_payment.url);
+          if(data.links.online_payment_begin.url == null){
+            $('.card-pay-online').removeClass('col-md-6');
+          }
+        }else{
+          $(".offline_payment").addClass('d-none');
+          $('#sezione-offline').addClass('d-none');
+        }
+
         Payment.$callToActionButtons.removeClass('d-none').addClass('d-flex');
         break;
       case 'CREATION_FAILED':

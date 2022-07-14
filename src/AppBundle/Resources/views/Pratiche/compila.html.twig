@@ -128,8 +128,10 @@
           </div>
         </div>
 
-        {# Sezione pagamenti diveso da MyPay #}
+      {# Sezione pagamenti diveso da MyPay e Bollo #}
+      {% if pratica.paymentType is not null and pratica.paymentType != 'bollo' and pratica.paymentType != 'mypay' %}
         {{ include('@App/Pratiche/parts/_payment.twig') }}
+      {% endif %}
 
 
       {% if currentStep.formType == "AppBundle\\Form\\FormIO\\FormIORenderType" %}

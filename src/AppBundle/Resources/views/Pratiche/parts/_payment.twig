@@ -18,14 +18,14 @@
           </p>
         </div>
       </div>
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6 card-pay-online">
         <!--start card-->
         <div class="card-wrapper card-space">
           <div class="card card-bg no-after">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center mb-3 h-80">
                         <span class="h3 mb-0">
-                          <a href="#sezione-online" data-attribute="forward" class="text-forward">{{ 'payment.pay_online.title'|trans() }}</a>
+                          <a target="_blank" href="#sezione-online" data-attribute="forward" class="text-forward">{{ 'payment.pay_online.title'|trans() }}</a>
                         </span>
                 <img src="{{ asset('bundles/app/images/pictograms/notifica.svg')}}"
                      alt="Icona Sui servizi di pagamento online" class="h-40" />
@@ -34,7 +34,7 @@
                 {{'payment.pay_online.description'|trans() }}
               </p>
               <div class="it-card-footer">
-                <a href="#" class="btn btn-primary btn-sm online_payment_begin" role="button"
+                <a target="_blank" href="#" class="btn btn-primary btn-sm online_payment_begin" role="button"
                    aria-pressed="true">{{ 'payment.pay_online.title'|trans() }}</a>
               </div>
             </div>
@@ -42,7 +42,7 @@
         </div>
         <!--end card-->
       </div>
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6 card-pay-offline">
         <!--start card-->
         <div class="card-wrapper card-space">
           <div class="card card-bg no-after">
@@ -54,7 +54,7 @@
               </div>
               <p>{{'payment.pay_office.description'|trans() }}</p>
               <div class="it-card-footer">
-                <a href="#" class="btn btn-primary btn-sm offline_payment" role="button" aria-pressed="true"
+                <a target="_blank" href="#" class="btn btn-primary btn-sm offline_payment" role="button" aria-pressed="true"
                    download>{{ 'pratica.payment.paga_offline'|trans() }}</a>
               </div>
             </div>
@@ -92,7 +92,7 @@
                   </li>
                 </ul>
                 <div class="mt-auto">
-                  <a role="button" href="https://io.italia.it" title="Scarica l'app"
+                  <a target="_blank" role="button" href="https://io.italia.it" title="Scarica l'app"
                      class="btn btn-sm btn-primary px-5 mr-md-2 mb-2 d-block d-md-inline">{{'payment.pay_appio.download_app'|trans() }}</a>
                   <a role="button" href="#" title="Guarda il video"
                      class="btn btn-sm btn-outline-primary px-5 mb-2 mb-md-0 d-block d-md-inline"
@@ -116,7 +116,7 @@
                            alt="Icona Sul sito del tuo Ente Creditore">
                     </div>
                     <h5>{{'payment.pay_online.creditor'|trans() }}</h5>
-                    <div><p>{{'payment.pay_online.creditor_description'|trans() }}</p></div>
+                    <div><p>{{'payment.pay_online.creditor_description'|trans() | raw }}</p></div>
                   </div>
                 </div>
               </div>
@@ -253,7 +253,7 @@
         <div class="modal-body p-0">
           <div class="embed-responsive embed-responsive-16by9">
             <iframe class="embed-responsive-item" title="Video YouTube"
-                    src="https://www.youtube-nocookie.com/embed/RaHmGbBOP84" allowfullscreen></iframe>
+                    src="https://www.youtube-nocookie.com/embed/RaHmGbBOP84?origin={{ app.request.schemeAndHttpHost }}" allowfullscreen></iframe>
           </div>
         </div>
       </div>
