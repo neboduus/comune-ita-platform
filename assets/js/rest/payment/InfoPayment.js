@@ -1,7 +1,8 @@
 import moment from "moment";
-import Api from "../services/api.service";
+import Auth from "../auth/Auth";
 
-const PAGOPA = require('../../images/payments/pagppa.png');
+
+const PAGOPA = require('../../../images/payments/pagppa.png');
 
 class InfoPayment {
 
@@ -27,7 +28,7 @@ class InfoPayment {
     InfoPayment.$language = document.documentElement.lang.toString();
     InfoPayment.$alertError = $('.alert-error');
     InfoPayment.$statusPayment = $('.status');
-    InfoPayment.$apiService = new Api();
+    InfoPayment.$apiService = new Auth();
 
     // Active spinner animations
     InfoPayment.$spinner.addClass('progress-spinner-active');

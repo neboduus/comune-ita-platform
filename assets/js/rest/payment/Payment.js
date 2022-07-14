@@ -1,4 +1,5 @@
-import Api from "../services/api.service";
+import Auth from "../auth/Auth";
+
 
 class Payment {
 
@@ -22,7 +23,7 @@ class Payment {
     Payment.$statusPayment = $('.status');
     Payment.$language = document.documentElement.lang.toString();
     Payment.$alertError = $('.alert-error');
-    Payment.$apiService = new Api();
+    Payment.$apiService = new Auth();
 
     // Active spinner animations
     Payment.$spinner.addClass('progress-spinner-active');

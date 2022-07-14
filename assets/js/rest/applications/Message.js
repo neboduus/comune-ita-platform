@@ -1,4 +1,6 @@
-import Api from "../services/api.service";
+import Auth from "../auth/Auth";
+import BasePath from "../../utils/BasePath";
+
 
 class ApplicationsMessage {
 
@@ -8,14 +10,17 @@ class ApplicationsMessage {
   $applicationId; // Application id
   $spinner // Html Element spinner
   $language; // Browser language
+  $basePath;
 
   static init() {
 
-    ApplicationsMessage.$apiService = new Api();
+
     ApplicationsMessage.$modalSubmitButton = $('#change_paid_application');
     ApplicationsMessage.$applicationId = $('#change_paid_modal').data('id');
     ApplicationsMessage.$spinner = $('.progress-indeterminate');
     ApplicationsMessage.$language = document.documentElement.lang.toString();
+    ApplicationsMessage.$apiService = new Auth();
+    ApplicationsMessage.$basePath = new BasePath().getBasePath();
 
     ApplicationsMessage.$modalSubmitButton.on('click', () =>{
       ApplicationsMessage.$spinner.addClass('progress');
@@ -23,14 +28,7 @@ class ApplicationsMessage {
       // Get Auth token
       ApplicationsMessage.$apiService.getSessionAuthTokenPromise().then((data) => {
         ApplicationsMessage.$token = data.token
-        if($('#note').val() !== ''){
-          // Send new message
-          ApplicationsMessage.createMessage().then(() =>{
-            ApplicationsMessage.updateApplicationsStatus()
-          })
-        }else{
-          ApplicationsMessage.updateApplicationsStatus()
-        }
+        ApplicationsMessage.updateApplicationsStatus()
       }).catch((err) => {
         console.log(err)
         ApplicationsMessage.removeAttributes(true)
@@ -38,41 +36,22 @@ class ApplicationsMessage {
     })
   }
 
-  static createMessage() {
+  static updateApplicationsStatus() {
+
     const DATA_MESSAGE =
       {
-        "message": $('#note').val(),
+        "message": $('#note').val() || null,
         "subject": Translator.trans('payment.operator.change_status_message', {}, 'messages', ApplicationsMessage.$language),
         "visibility": $('input[name="checkNote"]:checked').val(),
+        "attachments": []
       };
+
     return new Promise((resolve, reject) => {
       $.ajax({
-        url: ApplicationsMessage.$apiService.getBasePath() + `/api/applications/${ApplicationsMessage.$applicationId}/messages`,
+        url: `${ApplicationsMessage.$basePath}/api/applications/${ApplicationsMessage.$applicationId}/transition/complete-payment`,
         dataType: 'json',
         type: 'POST',
         data: JSON.stringify(DATA_MESSAGE),
-        beforeSend: function (xhr) {
-          xhr.setRequestHeader('Authorization', `Bearer ${ApplicationsMessage.$token}`);
-        },
-        success: function (data) {
-          resolve(data)
-        },
-        error: function (error) {
-          ApplicationsMessage.removeAttributes(true)
-          reject(error)
-        }
-      })
-    })
-  }
-
-  static updateApplicationsStatus() {
-
-    return new Promise((resolve, reject) => {
-      $.ajax({
-        url: ApplicationsMessage.$apiService.getBasePath() + `/api/applications/${ApplicationsMessage.$applicationId}/transition/complete-payment`,
-        dataType: 'json',
-        type: 'POST',
-        data: null,
         beforeSend: function (xhr) {
           xhr.setRequestHeader('Authorization', `Bearer ${ApplicationsMessage.$token}`);
         },

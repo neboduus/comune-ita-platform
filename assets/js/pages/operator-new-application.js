@@ -1,7 +1,5 @@
 import '../../css/app.scss';
 import '../core';
-
-
 import Calendar from '../Calendar';
 import DynamicCalendar from '../DynamicCalendar';
 import PageBreak from '../PageBreak';
@@ -11,7 +9,8 @@ import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
 import Swal from 'sweetalert2/src/sweetalert2.js'
 import FormioI18n from "../utils/FormioI18n";
-import Api from "../services/api.service";
+import Users from "../rest/users/Users";
+import Applications from "../rest/applications/Applications";
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
@@ -19,11 +18,10 @@ Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 Formio.registerComponent('sdcfile', SdcFile);
 const language = document.documentElement.lang.toString();
-const api = new Api()
-// Todo: chiamare session-auth --> va modificato il provider, non solleva gli operatori
-api.token = $('#intro').data('token');
 
 window.onload = function () {
+
+  const applications = new Applications()
   const applicationFormContainer = $('#formio');
   const feedbackContainer = $('#feedback');
   const applicationOwner = $('#application-owner');
@@ -65,7 +63,7 @@ window.onload = function () {
         application.data = submission.data;
         application.status = 1900;
 
-        api.postApplication(JSON.stringify(application))
+        applications.postApplication(JSON.stringify(application))
           .fail(function (xhr, type, exception) {
             submitButton.html('Salva')
             Swal.fire(exception, '', 'error')
@@ -85,13 +83,14 @@ $(document).ready(function () {
   let $input = $('#autocomplete-users')
   let $autocomplete = $('#users-list');
   let url = $input.data('url')
+  const users = new Users()
 
   $input.on('input', function (e) {
     const q = $input.val()
     $autocomplete.empty()
     if (q.length === 16) {
       $('.autocomplete-icon').html('<i class="fa fa-circle-o-notch fa-spin fa-fw" aria-hidden="true"></i>')
-      api.getUsers(q)
+      users.getUsers(q)
         .fail(function (xhr, type, exception) {
           console.log(xhr)
           console.log(type)
