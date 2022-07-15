@@ -1,5 +1,5 @@
 publiccodeYmlVersion: '0.2'
-applicationSuite: Sito comunale
+applicationSuite: OpenCity Italia
 name: OpenCity Italia - La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanza-del-cittadino/core
 landingURL: https://link.opencontent.it/sdc-home
@@ -32,12 +32,12 @@ maintenance:
   contacts:
     - name: Gabriele Francescotto
       phone: +39 0461 917437
-      affiliation: Opencontent SCARL
-      email: gabriele.francescotto@opencontent.it
+      affiliation: OpenCity Labs srl
+      email: gabriele.francescotto@opencitylabs.it
 legal:
   license: AGPL-3.0-or-later
-  mainCopyrightOwner: Opencontent scarl
-  repoOwner: Opencontent scarl
+  mainCopyrightOwner: OpenCity Labs srl
+  repoOwner: OpenCity Labs srl
 intendedAudience:
   scope:
     - local-authorities
@@ -47,6 +47,7 @@ localisation:
   localisationReady: true
   availableLanguages:
     - it
+    - de
 it:
   piattaforme:
     spid: true
@@ -58,34 +59,36 @@ it:
     modelloInteroperabilita: true
 description:
   it:
-    genericName: ' L’area personale del cittadino'
+    genericName: ' Area personale del cittadino e servizi digitali'
     apiDocumentation: https://link.opencontent.it/sdc-apidoc
     documentation: https://link.opencontent.it/sdc-manuale
     shortDescription: >-
-      Area personale, moduli on line e prenotazione appuntamenti.  Anche in
-      [versione SaaS certificata
-      AgId](https://catalogocloud.agid.gov.it/service/525)
+      Area personale, servizi digitali e prenotazione appuntamenti.
+      Disponbile anche in SaaS (marketplace qualificato AgID)
+
     longDescription: >-
       L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
       asilo nido), verificare lo stato delle pratiche, ricevere comunicazioni da
-      parte dell’ente (messaggi, scadenze, ...) ed effettuare pagamenti.
-      Progettata con lo starter KIT per il sito di un comune insieme al Team per
-      la Trasformazione Digitale, permette di creare nuovi servizi digitali
-      secondo un flusso definito nelle Linee Guida di Design e integrato con le
-      piattaforme abilitanti. Si integra facilmente con le applicazioni presenti
-      presso l’ente (interoperabile, separando back end e front end); il profilo
-      del cittadino si arricchisce ad ogni interazione e riduce la necessità di
-      chiedere più volte le stesse informazioni (once only). Una soluzione
-      pratica per gestire il processo di trasformazione digitale in linea col
-      Piano Triennale. Nasce da un progetto condiviso con il Consorzio Comuni
+      parte dell’ente (messaggi, scadenze, ...), effettuare pagamenti, ottenere
+      risposte in tempi più rapidi.
+      Progettata con lo starter KIT per il sito di un comune insieme al Team
+      Digitale, permette di creare nuovi servizi digitali secondo i flussi
+      definito dalle Linee Guida di Design. Si integra facilmente con le
+      applicazioni presenti presso l’ente (interoperabile, separando back-end
+      e front-end); il profilo del cittadino si arricchisce ad ogni interazione
+      e riduce la necessità di chiedere più volte le stesse informazioni
+      (once only). Una soluzione in linea col Piano Triennale per l'informatica.
+      Nasce da un progetto condiviso con il Consorzio Comuni
       Trentini - ANCI Trentino, che accompagna i comuni nella revisione dei
-      servizi al cittadino in un’ottica digitale (digital first)
+      servizi al cittadino in un’ottica digitale [versione SaaS certificata
+      AgId](https://catalogocloud.agid.gov.it/service/525)
     features:
       - PNRR
       - PNRR/Misura/1.2
+      - PNRR/Misura/1.4.1
       - PNRR/Beneficiari/Comuni
       - >-
-        Gestione Appuntamenti, per singole persone, per Uffici e per sportelli
+        Gestione appuntamenti, per singole persone, per uffici e per sportelli
         con più operatori.
       - >-
         Possibilità di approvare/spostare appuntamenti e gestire orari multipli
