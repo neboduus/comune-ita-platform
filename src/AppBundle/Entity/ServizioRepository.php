@@ -180,7 +180,7 @@ class ServizioRepository extends EntityRepository
   {
     $qb = $this->createQueryBuilder('s')
       ->where('s.status NOT IN (:notAvailableStatues)')
-      ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
+      ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE, Servizio::STATUS_SUSPENDED])
       ->andWhere('s.sticky = true')
       ->andWhere('s.serviceGroup IS NULL')
       ->orderBy('s.name', 'ASC');
@@ -196,7 +196,7 @@ class ServizioRepository extends EntityRepository
   {
     $qb = $this->createQueryBuilder('s')
       ->where('s.status NOT IN (:notAvailableStatues)')
-      ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
+      ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE, Servizio::STATUS_SUSPENDED])
       ->andWhere('s.sticky = false OR s.sticky IS NULL')
       ->andWhere('s.serviceGroup IS NULL')
       ->orderBy('s.name', 'ASC');
