@@ -3,7 +3,7 @@ applicationSuite: Sito comunale
 name: OpenCity Italia - La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanza-del-cittadino/core
 landingURL: https://link.opencontent.it/sdc-home
-releaseDate: '2022-03-29'
+releaseDate: '2022-07-15'
 softwareVersion: 1.25.0-rc.1
 developmentStatus: stable
 softwareType: standalone/web
@@ -81,6 +81,9 @@ description:
       Trentini - ANCI Trentino, che accompagna i comuni nella revisione dei
       servizi al cittadino in un’ottica digitale (digital first)
     features:
+      - PNRR
+      - PNRR/Misura/1.2
+      - PNRR/Beneficiari/Comuni
       - >-
         Gestione Appuntamenti, per singole persone, per Uffici e per sportelli
         con più operatori.
