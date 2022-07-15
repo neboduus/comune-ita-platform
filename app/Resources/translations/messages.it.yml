@@ -547,7 +547,7 @@ iscrizioni:
   import_subscriptions: 'Importa iscrizioni'
   import_success: "Importazione avvenuta con successo"
   import_error: "Si è verificato un errore durante l'importazione"
-  import_invalid_code: "Il codice %code% non coincide con il servizio selezionato"
+  import_invalid_code: "Il codice %code%, alla riga %row%, non coincide con il servizio selezionato"
   missing_file: "Nessun file selezionato"
   invalid_file: "Il file selezionato non è valido"
   empty_file: "Il file selezionato è vuoto"

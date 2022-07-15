@@ -561,7 +561,7 @@ iscrizioni:
   import_subscriptions: 'Import subscriptions'
   import_success: "Import successful"
   import_error: "An error occurred while importing"
-  import_invalid_code: "The code %code% does not coincide with the selected service"
+  import_invalid_code: "The code %code%, at row %row%, does not coincide with the selected service"
   missing_file: "No file selected"
   invalid_file: "The selected file is not valid"
   empty_file: "The selected file is empty"

@@ -358,6 +358,8 @@ class SubscriptionsController extends Controller
         Response::HTTP_BAD_REQUEST);
     }
 
+    $count = 1;
+
     foreach ($rows as $row) {
       // No code provided: set default to current subscription service
       if (!array_key_exists('code', $row)) {
@@ -373,11 +375,12 @@ class SubscriptionsController extends Controller
           $subscriptions[] = $subscription;
         }
       } else {
-        $errors[] = [$this->translator->trans(
+        $errors[] = $this->translator->trans(
           'iscrizioni.import_invalid_code',
-          ['%code%' => $row['code']]
-        )];
+          ['%code%' => $row['code'], '%row%' => $count]
+        );
       }
+      $count++;
     }
 
     // Remove duplicates
