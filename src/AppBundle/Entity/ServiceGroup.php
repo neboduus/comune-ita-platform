@@ -717,7 +717,7 @@ class ServiceGroup implements Translatable
    * Get the value of howToDo
    *
    * @return  string
-   */ 
+   */
   public function getHowToDo()
   {
     return $this->howToDo;
@@ -729,8 +729,8 @@ class ServiceGroup implements Translatable
    * @param  string  $howToDo
    *
    * @return  self
-   */ 
-  public function setHowToDo(string $howToDo)
+   */
+  public function setHowToDo(?string $howToDo)
   {
     $this->howToDo = $howToDo;
 
@@ -741,7 +741,7 @@ class ServiceGroup implements Translatable
    * Get the value of whatYouNeed
    *
    * @return  string
-   */ 
+   */
   public function getWhatYouNeed()
   {
     return $this->whatYouNeed;
@@ -753,8 +753,8 @@ class ServiceGroup implements Translatable
    * @param  string  $whatYouNeed
    *
    * @return  self
-   */ 
-  public function setWhatYouNeed(string $whatYouNeed)
+   */
+  public function setWhatYouNeed(?string $whatYouNeed)
   {
     $this->whatYouNeed = $whatYouNeed;
 
@@ -765,7 +765,7 @@ class ServiceGroup implements Translatable
    * Get the value of whatYouGet
    *
    * @return  string
-   */ 
+   */
   public function getWhatYouGet()
   {
     return $this->whatYouGet;
@@ -777,8 +777,8 @@ class ServiceGroup implements Translatable
    * @param  string  $whatYouGet
    *
    * @return  self
-   */ 
-  public function setWhatYouGet(string $whatYouGet)
+   */
+  public function setWhatYouGet(?string $whatYouGet)
   {
     $this->whatYouGet = $whatYouGet;
 
@@ -789,7 +789,7 @@ class ServiceGroup implements Translatable
    * Get the value of costs
    *
    * @return  string
-   */ 
+   */
   public function getCosts()
   {
     return $this->costs;
@@ -801,8 +801,8 @@ class ServiceGroup implements Translatable
    * @param  string  $costs
    *
    * @return  self
-   */ 
-  public function setCosts(string $costs)
+   */
+  public function setCosts(?string $costs)
   {
     $this->costs = $costs;
 

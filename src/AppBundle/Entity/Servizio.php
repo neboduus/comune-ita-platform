@@ -1527,32 +1527,32 @@ class Servizio implements Translatable
    * Get the value of maxResponseTime
    *
    * @return  int
-   */ 
+   */
   public function getMaxResponseTime()
   {
     return $this->maxResponseTime;
   }
-  
+
   /**
    * Set the value of maxResponseTime
    *
    * @param  int  $maxResponseTime
    *
    * @return  self
-   */ 
+   */
   public function setMaxResponseTime($maxResponseTime)
   {
     $this->maxResponseTime = $maxResponseTime;
 
     return $this;
   }
-  
+
 
   /**
    * Get the value of howToDo
    *
    * @return  string
-   */ 
+   */
   public function getHowToDo()
   {
     if ($this->serviceGroup != null && $this->sharedWithGroup) {
@@ -1567,8 +1567,8 @@ class Servizio implements Translatable
    * @param  string  $howToDo
    *
    * @return  self
-   */ 
-  public function setHowToDo(string $howToDo)
+   */
+  public function setHowToDo(?string $howToDo)
   {
     $this->howToDo = $howToDo;
 
@@ -1579,7 +1579,7 @@ class Servizio implements Translatable
    * Get the value of whatYouNeed
    *
    * @return  string
-   */ 
+   */
   public function getWhatYouNeed()
   {
     if ($this->serviceGroup != null && $this->sharedWithGroup) {
@@ -1594,8 +1594,8 @@ class Servizio implements Translatable
    * @param  string  $whatYouNeed
    *
    * @return  self
-   */ 
-  public function setWhatYouNeed(string $whatYouNeed)
+   */
+  public function setWhatYouNeed(?string $whatYouNeed)
   {
     $this->whatYouNeed = $whatYouNeed;
 
@@ -1606,7 +1606,7 @@ class Servizio implements Translatable
    * Get the value of whatYouGet
    *
    * @return  string
-   */ 
+   */
   public function getWhatYouGet()
   {
     if ($this->serviceGroup != null && $this->sharedWithGroup) {
@@ -1621,8 +1621,8 @@ class Servizio implements Translatable
    * @param  string  $whatYouGet
    *
    * @return  self
-   */ 
-  public function setWhatYouGet(string $whatYouGet)
+   */
+  public function setWhatYouGet(?string $whatYouGet)
   {
     $this->whatYouGet = $whatYouGet;
 
@@ -1633,7 +1633,7 @@ class Servizio implements Translatable
    * Get the value of costs
    *
    * @return  string
-   */ 
+   */
   public function getCosts()
   {
     if ($this->serviceGroup != null && $this->sharedWithGroup) {
@@ -1648,8 +1648,8 @@ class Servizio implements Translatable
    * @param  string  $costs
    *
    * @return  self
-   */ 
-  public function setCosts(string $costs)
+   */
+  public function setCosts(?string $costs)
   {
     $this->costs = $costs;
 
