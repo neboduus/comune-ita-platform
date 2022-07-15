@@ -64,7 +64,7 @@ description:
     documentation: https://link.opencontent.it/sdc-manuale
     shortDescription: >-
       Area personale, servizi digitali e prenotazione appuntamenti.
-      Disponbile anche in SaaS (marketplace qualificato AgID)
+      Disponibile anche in SaaS (marketplace qualificato AgID)
 
     longDescription: >-
       L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
@@ -79,9 +79,9 @@ description:
       e riduce la necessità di chiedere più volte le stesse informazioni
       (once only). Una soluzione in linea col Piano Triennale per l'informatica.
       Nasce da un progetto condiviso con il Consorzio Comuni
-      Trentini - ANCI Trentino, che accompagna i comuni nella revisione dei
-      servizi al cittadino in un’ottica digitale [versione SaaS certificata
-      AgId](https://catalogocloud.agid.gov.it/service/525)
+      Trentini - ANCI Trentino.
+      Disponibile anche in SaaS; consulta il [cloud marketplace di
+      AgID](https://catalogocloud.agid.gov.it/service/525)
     features:
       - PNRR
       - PNRR/Misura/1.2
@@ -121,9 +121,9 @@ description:
         Integrazione con il sito comunale Comunweb per prossime scadenze e
         descrizione dei servizi
       - >-
-        Integrazione con i sistemi di protocollazione più diffusi (PiTre, Infor,
-        Maggioli).
-      - Possibilità di raccogliere servizi diversi in unico fascicolo
+        Integrazione con i sistemi di protocollazione più diffusi (PiTre, Halley,
+        Maggioli, Dedagroup, Datagraph, Infor/Municipia, ...).
+      - Possibilità di raccogliere protocolli provenienti da servizi digitali diversi in unico fascicolo
       - >-
         Pubblicazione documenti nell'area riservata del cittadino (cert.
         fiscali, tassa rifiuti, multe)
