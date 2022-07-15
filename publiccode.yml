@@ -59,7 +59,7 @@ it:
     modelloInteroperabilita: true
 description:
   it:
-    genericName: ' Area personale del cittadino e servizi digitali'
+    genericName: 'Servizi digitali e area personale'
     apiDocumentation: https://link.opencontent.it/sdc-apidoc
     documentation: https://link.opencontent.it/sdc-manuale
     shortDescription: >-
