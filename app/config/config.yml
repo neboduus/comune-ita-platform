@@ -93,10 +93,10 @@ doctrine:
     user: "%database_user%"
     password: "%database_password%"
     charset: UTF8
-    #wrapper_class: 'AppBundle\Doctrine\DBAL\Connection'
-    #driver_class: 'AppBundle\Doctrine\DBAL\Driver\PDOPgSql\Driver'
-    #options:
-    #  x_reconnect_attempts: "%database_reconnect_attemps%" #3
+    wrapper_class: 'AppBundle\Doctrine\DBAL\Connection'
+    driver_class: 'AppBundle\Doctrine\DBAL\Driver\PDOPgSql\Driver'
+    options:
+      x_reconnect_attempts: "%database_reconnect_attemps%" #3
     # if using pdo_sqlite as your database driver:
     #   1. add the path in parameters.yml
     #     e.g. database_path: "%kernel.root_dir%/data/data.db3"

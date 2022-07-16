@@ -201,14 +201,14 @@
                   {{ 'nav.pratiche'|trans }}
                 </a>
               </li>
-              <li class="nav-item ">
+              {#<li class="nav-item ">
                 <a class="nav-link {% if 'profilo' in app.request.pathInfo %} active {% endif %}" href="{{ path('user_profile') }}">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
                   </svg>
                   {{ 'nav.profilo'|trans }}
                 </a>
-              </li>
+              </li>#}
               <li class="nav-item ">
                 <a class="nav-link {% if 'allegati' in app.request.pathInfo %} active {% endif %}" href="{{ path('allegati_list_cpsuser') }}">
                   <svg class="icon icon-sm icon-primary left mr-1">

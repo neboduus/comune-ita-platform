@@ -25,14 +25,17 @@ class PraticaRepository extends EntityRepository
 
   private $classConstants;
 
+  /**
+   * @throws \Doctrine\DBAL\Driver\Exception
+   * @throws \Doctrine\DBAL\Exception
+   */
   public function findRelatedPraticaForUser(CPSUser $user)
   {
     $sql = 'SELECT id from pratica where (related_cfs)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\'';
 
 
     $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->fetchAll();
+    $result = $stmt->executeQuery()->fetchAllAssociative();
 
     $ids = [];
 
@@ -554,6 +557,10 @@ class PraticaRepository extends EntityRepository
     return $qb;
   }
 
+  /**
+   * @throws \Doctrine\DBAL\Driver\Exception
+   * @throws \Doctrine\DBAL\Exception
+   */
   private function getApplicationsCollectionsId($filterService)
   {
     $data = [];
@@ -563,8 +570,8 @@ class PraticaRepository extends EntityRepository
       $dql = "SELECT json_agg(id) as ids, folder_id FROM pratica WHERE servizio_id = '$filterService' GROUP BY folder_id";
     }
 
-    $stmt = $this->getEntityManager()->getConnection()->executeQuery($dql);
-    $result = $stmt->fetchAll();
+    $stmt = $this->getEntityManager()->getConnection()->prepare($dql);
+    $result = $stmt->executeQuery()->fetchAllAssociative();
 
     foreach ($result as $r) {
       $temp = \json_decode($r['ids']);
@@ -572,8 +579,8 @@ class PraticaRepository extends EntityRepository
     }
 
     $dql = 'SELECT id FROM pratica WHERE folder_id IS NULL';
-    $stmt = $this->getEntityManager()->getConnection()->executeQuery($dql);
-    $result = $stmt->fetchAll();
+    $stmt = $this->getEntityManager()->getConnection()->prepare($dql);
+    $result = $stmt->executeQuery()->fetchAllAssociative();
 
     foreach ($result as $r) {
       if (!in_array($r['id'], $data)) {

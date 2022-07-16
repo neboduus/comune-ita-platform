@@ -1022,11 +1022,9 @@ class OperatoriController extends Controller
     $sql = "SELECT DISTINCT(status) as status
             FROM pratica WHERE status > 1000 AND submission_time IS NOT NULL ORDER BY status ASC";
     try {
-      $em = $this->getDoctrine()->getManager();
-      $stmt = $em->getConnection()->prepare($sql);
-      $stmt->execute();
-      $result = $stmt->fetchAll();
-    } catch (DBALException $e) {
+      $stmt = $this->entityManager->getConnection()->prepare($sql);
+      $result = $stmt->executeQuery()->fetchAllAssociative();
+    } catch (Exception $e) {
       $this->logger->error($e->getMessage());
       $result = [];
     }

@@ -484,8 +484,8 @@ class SubscriptionsController extends Controller
       // Get shared subscriptions
       $sql = 'SELECT DISTINCT subscription.id from subscription where (related_cfs)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\'';
       $stmt = $this->entityManager->getConnection()->prepare($sql);
-      $stmt->execute();
-      $sharedIds = $stmt->fetchAll();
+      $result = $stmt->executeQuery();
+      $sharedIds = $result->fetchAllAssociative();
     } catch (Exception | \Doctrine\DBAL\Exception $e) {
       $sharedIds = [];
     }
@@ -542,6 +542,7 @@ class SubscriptionsController extends Controller
   {
     /** @var CPSUser $user */
     $user = $this->getUser();
+    /** @var SubscriptionPayment $subscriptionPayment */
     $subscriptionPayment = $this->entityManager->getRepository('AppBundle:SubscriptionPayment')->find($subscriptionPaymentId);
 
     if (!$subscriptionPayment or $subscriptionPayment->getSubscription()->getId() !== $subscriptionId) {
@@ -549,11 +550,14 @@ class SubscriptionsController extends Controller
       return $this->redirectToRoute('subscription_show_cpsuser', ["subscriptionId" => $subscriptionId]);
     }
 
-
     if (!$this->canUserAccessSubscription($subscriptionPayment->getSubscription())) {
       $this->addFlash('warning', $this->translator->trans('iscrizioni.accesso_negato'));
       return $this->redirectToRoute('subscriptions_list_cpsuser');
     }
+
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.iscrizioni', 'subscriptions_list_cpsuser');
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($subscriptionPayment->getSubscription()->getSubscriptionService()->getName(), 'subscription_show_cpsuser', ['subscriptionId' => $subscriptionPayment->getSubscription()->getId()]);
+    $this->breadcrumbsService->getBreadcrumbs()->addItem($subscriptionPayment->getName());
 
     return $this->render('@App/Subscriptions/cpsUserShowSubscriptionPayment.html.twig', [
       'payment' => $subscriptionPayment,
