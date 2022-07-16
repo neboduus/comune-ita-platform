@@ -187,13 +187,17 @@ class SubscriptionsService
     return $user;
   }
 
+  /**
+   * @throws \Doctrine\DBAL\Exception
+   * @throws \Doctrine\DBAL\Driver\Exception
+   */
   public function getDraftsApplicationForUser(CPSUser $user, Servizio $service, $uniqueId)
   {
     $ignoreStatuses = [Pratica::STATUS_REVOKED, Pratica::STATUS_CANCELLED, Pratica::STATUS_PAYMENT_ERROR, Pratica::STATUS_WITHDRAW];
     $sql = "select id from pratica where servizio_id = '" . $service->getId() . "' and user_id = '" . $user->getId() . "' and dematerialized_forms->'data'->>'unique_id' = '" . $uniqueId . "' and pratica.status NOT IN (" . implode(',', $ignoreStatuses) . ")";
     $stmt = $this->em->getConnection()->prepare($sql);
-    $stmt->execute();
-    return $stmt->fetchAll();
+    $result = $stmt->executeQuery();
+    return $result->fetchAllAssociative();
   }
 
   public function getPaymentSettingIdententifiers() {

@@ -125,8 +125,7 @@ class UserController extends Controller
 
     $sql = 'SELECT document.id from document where document.last_read_at is null and ((readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' or document.owner_id = \'' . $user->getId() . '\')';
     $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
-    $stmt->execute();
-    $documentsIds = $stmt->fetchAll();
+    $documentsIds = $stmt->executeQuery()->fetchAllAssociative();
 
     foreach ($documentsIds as $id) {
       $documents[] = $documentRepo->find($id);

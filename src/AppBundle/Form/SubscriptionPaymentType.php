@@ -97,6 +97,10 @@ class SubscriptionPaymentType extends AbstractType
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
 
+  /**
+   * @throws \Doctrine\DBAL\Driver\Exception
+   * @throws \Doctrine\DBAL\Exception
+   */
   public function onPreSubmit(FormEvent $event)
   {
     $data = $event->getData();
@@ -163,8 +167,8 @@ class SubscriptionPaymentType extends AbstractType
       $uniqueIdLike = trim($subscriptionPayment->getPaymentIdentifier() . '_' . $subscriptionPayment->getSubscriptionServiceCode() . '_%');
       $sql = "select id from pratica where servizio_id = '" . $service->getId() . "' and dematerialized_forms->'data'->>'unique_id' LIKE '" . $uniqueIdLike . "'";
       $stmt = $this->em->getConnection()->prepare($sql);
-      $stmt->execute();
-      $results = $stmt->fetchAll();
+      $results = $stmt->executeQuery()->fetchAllAssociative();
+
 
       if (!empty($results)) {
         $event->getForm()->addError(

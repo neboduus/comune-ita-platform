@@ -180,8 +180,7 @@ class MailerService
 
       $sql = "SELECT id from utente where servizi_abilitati like '%" . $pratica->getServizio()->getId() . "%'";
       $stmt = $this->doctrine->getManager()->getConnection()->prepare($sql);
-      $stmt->execute();
-      $result = $stmt->fetchAll();
+      $result = $stmt->executeQuery()->fetchAllAssociative();
 
       $ids = [];
       foreach ($result as $id) {

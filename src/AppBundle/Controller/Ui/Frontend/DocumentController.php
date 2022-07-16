@@ -8,6 +8,7 @@ use AppBundle\Logging\LogConstants;
 use AppBundle\Services\BreadcrumbsService;
 use AppBundle\Services\InstanceService;
 use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
@@ -65,6 +66,7 @@ class DocumentController extends Controller
 
   /**
    * @Route("/", name="folders_list_cpsuser")
+   * @throws \Doctrine\DBAL\Driver\Exception
    */
   public function cpsUserListFoldersAction()
   {
@@ -76,8 +78,8 @@ class DocumentController extends Controller
     // Get folders with shared documents
     $sql = 'SELECT DISTINCT folder.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\'';
     $stmt = $this->em->getConnection()->prepare($sql);
-    $stmt->execute();
-    $sharedIds = $stmt->fetchAll();
+    $result = $stmt->executeQuery();
+    $sharedIds = $result->fetchAllAssociative();
 
     foreach ($sharedIds as $id) {
       $folders[] = $this->em->getRepository('AppBundle:Folder')->find($id);
@@ -114,13 +116,12 @@ class DocumentController extends Controller
         $sql = 'SELECT document.id from document JOIN folder  on document.folder_id = folder.id where (readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' and folder.id = \'' . $folder->getId() . '\'';
 
         $stmt = $this->em->getConnection()->prepare($sql);
-        $stmt->execute();
-        $sharedDocuments = $stmt->fetchAll();
+        $sharedDocuments = $stmt->executeQuery()->fetchAllAssociative();
 
         foreach ($sharedDocuments as $id) {
           $documents[] = $this->em->getRepository('AppBundle:Document')->find($id);
         }
-      } catch (DBALException $exception) {
+      } catch (Exception $exception) {
         $this->addFlash('warning', $this->translator->trans('documenti.document_search_error'));
       }
     }

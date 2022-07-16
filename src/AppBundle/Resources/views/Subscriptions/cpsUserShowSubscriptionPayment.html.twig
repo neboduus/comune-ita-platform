@@ -8,24 +8,19 @@
 {% endblock %}
 {% block main_content %}
 
-  <section id="intro" class="container px-4 my-4">
+  <section class="container">
     <div class="row">
-      <div class="col-12 px-lg-4 py-lg-2">
-        <div class="mb-3">
-          <small>
-            <a class="text-decoration-none"
-               href="{{ path('subscription_show_cpsuser', {'subscriptionId': payment.subscription.id}) }}">
-              <svg class="icon icon-primary">
-                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
-              </svg>
-              {{ 'iscrizioni.torna_all_iscrizione' | trans }}
-            </a>
-          </small>
+      <div class="col-lg-8 px-lg-4 py-lg-2">
+        <h1>{{ payment.name }}</h1>
+        <div class="clearfix">
+          <p>{{ payment.description }}</p>
         </div>
-        <h3>{{ payment.name }}</h3>
-        <p>{{ payment.description }}</p>
       </div>
+    </div>
+  </section>
 
+  <section class="container py-5">
+    <div class="row">
       <div class="col-12 px-lg-4 py-lg-2 my-5">
         <div class="row p-3">
           <div class="col-10 text-truncate">
