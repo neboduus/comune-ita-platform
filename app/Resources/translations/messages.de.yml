@@ -56,6 +56,7 @@ powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl<
 fake_email_message: 'Sie müssen Ihre E-Mail aktualisieren, um fortzufahren'
 loading: "Wird geladen..."
 digital_services: 'Servizi Digitali powered by'
+characters: 'caratteri'
 nav:
   home: 'Startseite'
   dashboard: 'Mein Konto'
@@ -111,6 +112,16 @@ nav:
 terms:
   title: 'Zustimmung zu den Nutzungsbedingungen'
 servizio:
+  error_from_save: 'Si è verificato un errore durante il salvataggio.'
+  draft_message: "La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l'accesso diretto alla compilazione del servizio."
+  placeholders_available: 'Placeholders disponibili'
+  communication_citizen: "La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l'accesso diretto alla compilazione del servizio."
+  create_new_form: 'Crea nuovo form'
+  create_new_form_blank_template: 'Crea nuovo form da template vuoto'
+  max_limit_of: 'Si consiglia di inserire un massimo di'
+  select_template: 'Seleziona un template di partenza per la creazione del form'
+  blank_template: 'Template vuoto'
+  templates_based_existing_services: 'Templates basati su servizi esistenti'
   how_to_do: ""
   what_you_need: ""
   what_you_get: ""

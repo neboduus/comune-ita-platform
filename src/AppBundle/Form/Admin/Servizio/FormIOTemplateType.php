@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 
 class FormIOTemplateType extends AbstractType
@@ -30,6 +31,11 @@ class FormIOTemplateType extends AbstractType
    * @var FormServerApiAdapterService
    */
   private $formServerService;
+
+
+  private $servicesI18nFields = [
+    'name', 'description', 'who', 'howto', 'specialCases', 'moreInfo', 'compilationInfo', 'finalIndications', 'feedbackMessages', 'howToDo', 'whatYouNeed', 'whatYouGet', 'costs'
+  ];
 
   /**
    * FormIOTemplateType constructor.
@@ -83,9 +89,11 @@ class FormIOTemplateType extends AbstractType
           $response = $this->formServerService->createForm($servizio);
         } else {
           $serviceToClone = $this->em->getRepository('AppBundle:Servizio')->find($serviceID);
+
           if ($serviceToClone instanceof Servizio) {
             $this->cloneService($servizio, $serviceToClone);
             $response = $this->formServerService->cloneForm($servizio, $serviceToClone);
+            $this->cloneTranslations($servizio, $serviceToClone);
           }
         }
 
@@ -172,5 +180,22 @@ class FormIOTemplateType extends AbstractType
   public function getBlockPrefix()
   {
     return 'formio_template';
+  }
+
+
+  private function cloneTranslations(Servizio $service, Servizio $ServiceToClone){
+
+    // Clone translations
+    $repository = $this->em->getRepository('Gedmo\Translatable\Entity\Translation');
+    $translations = $repository->findTranslations($ServiceToClone);
+    foreach ($translations as $key => $value){
+      foreach ($this->servicesI18nFields as $field) {
+        if(isset($value[$field])){
+          $repository->translate($service, $field, $key, $value[$field]);
+        }
+      }
+    }
+    $this->em->persist($service);
+    $this->em->flush();
   }
 }

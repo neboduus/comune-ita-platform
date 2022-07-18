@@ -96,12 +96,12 @@
             </svg>
             Guida
           </div>
-          <p>Seleziona un template di partenza per la creazione del form</p>
+          <p>{{ 'servizio.select_template' | trans }}</p>
         </div>
       </div>
-      <div class="col-lg-12"><h5>Template vuoto</h5></div>
+      <div class="col-lg-12"><h5>{{ 'servizio.blank_template' | trans }}</h5></div>
       <div class="card-wrapper card-teaser-wrapper col-lg-12" id="formio-empty-templates-container"></div>
-      <div class="col-lg-12"><h5>Templates basati su servizi esistenti</h5></div>
+      <div class="col-lg-12"><h5>{{ 'servizio.templates_based_existing_services' | trans }}</h5></div>
       <div class="card-wrapper card-teaser-wrapper col-lg-12" id="formio-templates-container" data-url="{{ path('admin_servizio_list') }}"></div>
     </div>
 

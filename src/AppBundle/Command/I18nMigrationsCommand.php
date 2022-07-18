@@ -16,7 +16,7 @@ class I18nMigrationsCommand extends ContainerAwareCommand
 {
   private $defaultLocale = 'it';
   private $servicesI18nFields = [
-    'name', 'description', 'who', 'howto', 'specialCases', 'moreInfo', 'compilationInfo', 'finalIndications', 'feedbackMessages'
+    'name', 'description', 'who', 'howto', 'specialCases', 'moreInfo', 'compilationInfo', 'finalIndications', 'feedbackMessages', 'howToDo', 'whatYouNeed', 'whatYouGet', 'costs'
   ];
 
   protected function configure()

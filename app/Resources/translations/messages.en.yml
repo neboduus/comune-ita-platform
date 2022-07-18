@@ -1,39 +1,10 @@
 title: 'The Citizen Room'
-Home: 'Home'
 claim: 'Online services of %ente_name%'
 intro: "<p> <span>Using the \"Citizen Room\" you can access with a few clicks all the services made available to citizens.<br />\nIn case of first access, you will be asked to confirm your data before using the service.</span> </p>"
 salva: 'Save'
-aggiungi: 'Add'
-annulla: 'cancel'
-modifica: 'edit'
-read_more: 'read more'
 elimina: 'Delete'
-withdraw: 'Ritira'
-activate: 'Attiva'
 reply: 'Answer'
 view: 'View'
-sum: 'Somma'
-average: 'Media'
-counts: 'Conta'
-load_more: 'Other...'
-processing: 'In elaborazione...'
-close: 'Close'
-lista: 'List'
-tutti: 'All'
-proceed: 'Procedi'
-days: 'days'
-previous: 'Precedente'
-following: 'Successivo'
-apply: 'Applica'
-cancel: 'Cancella'
-from: 'Da'
-to: 'A'
-of: 'di'
-page: 'Pagina'
-result: 'risultato'
-results: 'risultati'
-custom: 'Personalizzato'
-waiting: 'Attendere'
 terms_do_il_consenso: "I confirm that I read the privacy policy"
 accedi_al_servizio: 'Access to service %name%'
 registrati_per_accedere_al_servizio: 'Service is reserved to logged in users'
@@ -53,10 +24,7 @@ aggiorna_profilo: "Your data has been updated successfully."
 error_back_to_home: "Back to Homepage"
 error_support: "Contact technical support"
 error_message: "Ooops!"
-error_generic: "<strong>Attenzione</strong> ci sono stati degli errori. Riprova più tardi"
 error_message_detail: "Something went wrong"
-error_message_401: "401 | Accesso negato"
-error_message_detail_401: "Non sei autorizzato ad accedere a quest'area"
 error_message_403: "403 | Access denied"
 error_message_detail_403: "You do not have permission to access this area"
 error_message_404: "404 | Page not found"
@@ -68,10 +36,7 @@ operatore: "Operator"
 credits: "The Stanza del cittadino is an experimental project initiative of %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Update your e-mail to continue'
-practice_of: 'Application of'
-from_date_to_date: "Dal %from% al %to%"
-loading: "Loading..."
-digital_services: 'Servizi Digitali powered by'
+characters: 'characters'
 nav:
   home: 'Homepage'
   dashboard: 'My room'
@@ -82,10 +47,6 @@ nav:
   documenti: 'My documents'
   iscrizioni: 'My subscriptions'
   informativa_privacy: 'Information for the processing of personal data'
-  header:
-    profile: "Profile"
-    logout: "Logout"
-    access_my_area: "Log in to your personal area"
   operatori:
     panello_controllo: "Paperwork list"
     lista_operatori: 'Manage operators'
@@ -95,7 +56,7 @@ nav:
   admin:
     impostazioni_istanza: 'instance_settings'
     operatori: 'operators'
-    servizi: 'Services'
+    servizi: 'services'
     gruppo_servizi: 'service_group'
     webhook: 'webhook'
     metodi_pagamento: 'payment_methods'
@@ -124,13 +85,23 @@ nav:
     servizi_sottoscrizione: 'subscription_services'
     prenotazione_appuntamenti: 'booking_appointments'
     pagamenti_servizi_sottoscrizione: 'payments_subscription_services'
+  header:
+    profile: "Profile"
+    logout: "Logout"
+    access_my_area: "Log in to your area"
 terms:
   title: 'Acceptance of terms of use'
 servizio:
-  how_to_do: "How to do"
-  what_you_need: "What you need"
-  what_you_get: "What you get"
-  costs: "Costs"
+  error_from_save: 'An error occurred while saving.'
+  draft_message: "The communication will be forwarded to the citizen only if a draft file is created on his behalf and not through direct access to the compilation of the service."
+  placeholders_available: 'Placeholders available'
+  communication_citizen: "The communication will be forwarded to the citizen only if a draft file is created on his behalf and not through direct access to the compilation of the service."
+  create_new_form: 'Create new form'
+  create_new_form_blank_template: 'Create new form from blank template'
+  max_limit_of: 'It is recommended to enter a maximum of'
+  select_template: 'Select a starting template for creating the form'
+  blank_template: 'Blank template'
+  templates_based_existing_services: 'Templates based on existing services'
   crea: 'Create new service'
   modifica: 'Modify %name%'
   placeholder_disponibili: 'Available module''s placeholders'
@@ -178,11 +149,6 @@ servizio:
   consenti_riapertura: "Allow operators to manually change the status of a case"
   consenti_ritiro: "Allow the citizen to cancel the submission of the file"
   flusso: "Workflow"
-  max_response_time: "Maximum service delivery time (in days)"
-  stages_and_deadlines: "Stages and deadlines"
-  max_response_time_text: "Once the application has been submitted, a response will be provided within %time% days"
-  max_response_time_list: "Maximum response time"
-  active_from_date_to_date: "The service will be active from %from% to %to%"
   bozza_successo: 'draft_success'
   nessun_template: 'no_template'
   importa: 'import'
@@ -224,11 +190,19 @@ servizio:
   altri_servizi_disponibili: "Other services available in"
   condividi: "Share"
   torna_indietro: "Back"
+  how_to_do: "How to"
+  what_you_need: "What you need"
+  what_you_get: "What you get"
+  costs: "Costs"
+  max_response_time: "Maximum service delivery time (in days)"
+  stages_and_deadlines: "Stages and deadlines"
+  max_response_time_text: "Once a file has been submitted, an answer will be provided within %time% days"
+  max_response_time_list: "Maximum response time"
+  active_from_date_to_date: "The service will be active from %from% to %to%"
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
   descrizione: 'Description'
-  max_response_time_list: "Maximum response time"
   url: 'Url'
   protocollazione_fascicoli: 'Registration in files'
   azioni: 'Actions'
@@ -252,6 +226,7 @@ gruppo_di_servizi:
   maggiori_info: "More info"
   in_evidenza: "In evidence?"
   protocolla_in_fascicolo: "Register within the same dossier?"
+  max_response_time_list: "Maximum response time"
 webhook:
   nome: 'Name'
   endpoint: 'Endpoint'
@@ -268,18 +243,6 @@ webhook:
   headers: 'Headers (json)'
   version: 'Version'
 pratica:
-  select_new_status_application: 'Scegli il nuovo stato della pratica'
-  you_want_cancel: 'Sei sicuro di voler annullare?'
-  enter_correct_cf: 'Inserire un codice fiscale corretto!'
-  application_new_create_services: 'Crea nuova pratica per questo servizio'
-  application_create_success: 'Pratica creata correttamente'
-  back_services: 'Torna alla lista dei servizi'
-  create_new_application_for: 'Stai creando una nuova pratica per:'
-  find_user_message: "<p>Cerca l'utente tramite codice fiscale per associarlo alla pratica.</p><p>Se non presente puoi inserire i dati dell'utente direttamente nel modulo, l'utente verrà creato automaticamente.</p>"
-  create_applications: 'Crea pratica'
-  select_message: 'Seleziona messaggio'
-  reply_attachments: 'Allegati risposta'
-  applications: 'pratica'
   guida_utente: 'Guide'
   email:
     status_change:
@@ -296,10 +259,6 @@ pratica:
   empty: 'There are no files in your name.'
   protocollo: 'Protocol'
   numero: 'Request number'
-  protocol_number: 'Protocol number'
-  file_name: 'File Name'
-  hash: 'File hash'
-  error_upload_file_sdc: "Errore durante il caricamento dei file, riprova più tardi oppure contatta l'amministratore"
   in_attesa_protocollo: 'Awaiting registration'
   protocollo_non_richiesto: '(not necessary)'
   richiedente: 'Applicant'
@@ -349,7 +308,6 @@ pratica:
   dettaglio:
     data_ora_presentazione: 'Request submitted on'
     alle: 'to'
-    il: 'the'
     stato: 'Current status'
     servizio: 'Service'
     ente: 'Body'
@@ -425,6 +383,7 @@ pratica:
       button: 'Reply to the integration request'
     or: 'Or'
     cambio_operatore: 'Change operator'
+    il: 'the'
   messaggi:
     oggetto: 'New message request numer %pratica%'
     messaggio: '%message% <img src="%link%">'
@@ -441,42 +400,63 @@ pratica:
   vai_al_pagamento: 'Go to payment'
   payment_reminder:
     message: "Dear <b>%user_name%</b><br/> the request number <b>%id%</b> for <b>%service_fullname%</b> is awaiting a payment, please use the following links to pay the amount due"
-    subject: "Payment reminder required number %practice%"
+    subject: "Payment reminder required number %pratica%"
   vedi_tutte: 'View all'
   pratiche_in_evidenzia: 'Pinned forms'
   payment:
     tipologie_pagamento: "Payment methods"
     paga_online: "Pay online"
     paga_offline: "Pay offline"
+  protocol_number: 'Protocol number'
+  file_name: 'File name'
+  hash: 'File hash'
   upload_attachment: "Upload attachments"
   upload_warning: "Warning: it is not possible to upload files with a size greater than 25Mb."
   protocollo_risposta: 'Response protocol'
   filtra_per_servizio: 'Filter by service'
-  filtra_per_stato: 'Filtra per stato'
-  filtra_per_data: 'Filtra per data'
-  elimina_pratica: "Do you really want to delete the application?"
-  acquisita_il: "acquired on"
+  elimina_pratica: "Are you sure you want to eliminate the practice?"
+  acquisita_il: "purchase the"
   ritira_pratica: "Are you sure to proceed? This action can no longer be undone."
   carica_allegato: "Upload attachment"
-  messaggio_operatore: "Are you sure you want to proceed? If you decide to continue, an email will be sent to the operator who is in charge of your practice"
-  messaggio_operatore_vuoto: "Warning! You cannot send an empty message."
-  messaggio_letto: "Message read"
-  messaggio_creato: "Message created"
-  messaggio_consegnato: "Message delivered on"
-  conferma_invio_pratica: "Sei sicuro di voler procedere con l'invio della pratica?"
-  no_application_found: 'Nessuna pratica trovata'
-  date_in: 'Data di inserimento'
-  last_status_change: 'Ultimo cambio stato'
-  filter_by_processing: 'Filtra per lavorazione'
-  all_the: 'Tutte'
-  in_charge_of: 'In carico a'
-  to_assign: 'Da assegnare'
-  search_for: 'Cerca per'
-  text_search_for: 'Testo da cercare'
-  results_page: 'Risultati per pagina'
-  collate: 'Fascicola'
-  cancel_search: 'Annulla ricerca'
-  search_reload: 'Ricarica ricerca'
+  messaggio_operatore: "Are you sure you want to proceed? If you decide to continue, an email will be sent to the operator in charge of your practice"
+  messaggio_operatore_vuoto: "Attention! You cannot send a blank message."
+  select_new_status_application: 'Choose the new applicant status'
+  you_want_cancel: 'Are you sure you want to cancel?'
+  enter_correct_cf: 'Enter a correct fiscal code!'
+  application_new_create_services: 'Create new practice for this service'
+  application_create_success: 'Practice created correctly'
+  back_services: 'Back to the list of services'
+  create_new_application_for: 'You are creating a new practice for:'
+  find_user_message: "<p> Search user by fiscal code to associate it with application. </p> <p> If not present, you can enter the user's data directly in the form, the user will be created automatically. </p>"
+  guide: 'Guide'
+  find_user: 'User search'
+  create_applications: 'Create practice'
+  select_message: 'Select message'
+  reply_attachments: 'Reply attachments'
+  applications: 'practice'
+  applications_statistics: 'Application Statistics'
+  applications_number: 'No. of practices'
+  error_upload_file_sdc: "Error uploading files, please try again later or contact your administrator"
+  filtra_per_stato: 'Filter by state'
+  filtra_per_data: 'Filter by date'
+  messaggio_a_utente: "Are you sure you want to proceed? If you decide to proceed, an email will be sent to the citizen at the email address %email%"
+  messaggio_letto: "Message read on"
+  messaggio_creato: "Message created on"
+  messaggio_consegnato: "Message created on"
+  conferma_invio_pratica: "Are you sure you want to proceed with sending the application?"
+  no_application_found: 'No practice found'
+  date_in: 'Date of input'
+  last_status_change: 'Last change of state'
+  filter_by_processing: 'Filter by processing'
+  all_the: 'All'
+  in_charge_of: 'Assignment of'
+  to_assign: 'To assign'
+  search_for: 'Search for'
+  text_search_for: 'Text to search for'
+  results_page: 'Results per page'
+  collate: 'Collate'
+  cancel_search: 'Cancel search'
+  search_reload: 'Search reload'
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
@@ -536,7 +516,7 @@ iscrizioni:
     beneficiario: "Beneficiary"
     cf_beneficiario: "Beneficiary's tax code"
   certificato_pagamento:
-    testo: "At the request of the interested party, having regard to the official documents, we declare that the student <b>%completeName%</b>, born in <b>%placeOfBirth%</b> on the <b>%dateOfBirth%</b>  F.C <b>% fiscalCode%</b> in the year %paymentYear% incurred the following expense:"
+    testo: "At the request of the interested party, having regard to the official documents, we declare that the student <b>%completeName%</b>, born in <b>%placeOfBirth%</b> on the <b>%dateOfBirth%</b>  F.C <b>%fiscalCode%</b> in the year %paymentYear% incurred the following expense:"
     importo: "Euro <b>%amount% /b> as %name%\n"
   data_iscrizione: "Registration date"
   num_condivisioni: "Shares %num%"
@@ -789,9 +769,9 @@ errori:
   allegato:
     tipo_non_valido: "The attachment %s type is not supported"
   pratica:
-    change_status: "Modifica stato della pratica da <b>%before_status%</b> a <b>%after_status%</b> per la pratica del servizio %service_name% con ID %id%"
-    new_status: "Stato della pratica %status% non trovato"
-    change_status_invalid: "Richiesta modifica stato della pratica non valido"
+    change_status: "Change application status from <b>%before_status%</b> to <b>%after_status%</b> for the application service %service_name% with ID %id%"
+    new_status: 'Application status "%status%" not found'
+    change_status_invalid: "Invalid status change request"
 user:
   dashboard:
     title: 'My room'
@@ -813,8 +793,6 @@ user:
     nuovi_documenti_messaggio: "New documents have been pubblished!"
     pratiche_payment_pending: 'Pending payment'
   profile:
-    update_profile: 'Modifica profilo'
-    change_password: 'Cambia password'
     title: 'User profile'
     dati_personali: 'Personal data'
     info_da_sdc: 'Authenticasion system information'
@@ -852,10 +830,12 @@ user:
     genere:
       maschio: 'Male'
       femmina: 'Female'
+    update_profile: 'Edit profile'
+    change_password: 'Change Password'
   welcome: 'welcome'
   welcome_msg: 'welcome_msg'
-  forgot_password: 'Hai dimenticato la password?'
-  forgot_password_description: 'Se hai dimenticato la tua password, inserisci il tuo username o il tuo indirizzo email.'
+  forgot_password: 'Did you forget your password?'
+  forgot_password_description: 'If you have forgotten your password, please enter your username or email address.'
 admin:
   usage:
     user_title: 'User number'
@@ -882,6 +862,7 @@ operatori:
   scrivi_al_cittadino: "Write to citizen"
   riapri_pratica: "Fill the practice"
   richiedi_intergrazioni: 'Request integrations'
+  chiudi_richiesta_integrazione: 'Close integration request'
   richiedi_integrazioni_tpl: "Dear <b>%user_name% </b> <br/> we inform you that an integration to the data of your request for the <b>%service%</b> service is required. <br/> [Insert reason] <br/> Enter your citizen room to complete the integration"
   modulo: 'Module'
   richiesta: 'Request'
@@ -936,20 +917,20 @@ operatori:
     consegnato_il: 'Message sent on the %data%'
     letto_il: 'Message read on the %data%'
     feedback_inviato: "The message will be delivered to %email% shortly. A possible response from the citizen will appear on this same page"
-    pratica_id: "Id file:"
-    errore_carica_allegato: "is in a state where no files can be attached"
+    pratica_id: "Practice with id:"
+    errore_carica_allegato: "is in a application state where no files can be attached"
   suggerimento_login: 'You can authenticate with SPID/CPS for the automatic compilation of the fields and the saving of the practice in your profile.'
   login: "Login"
   scarica: 'Request file'
   info: "Info"
-  iter_completato: "The request was <strong>%statusName%</strong> on %date% at %hours%"
+  iter_completato: "The request was <strong>%statusName%</strong> on %data% at %hours%"
   pratica_ritirata: "The practice was retired on %data% at %ore%"
   pratica_correlata: "Related practice"
   fascicolo: "Dossier number"
   documenti: "Documents"
   no_pratica_correlata: "No related practice"
   ultime_pratiche: "Last practices sent to the user"
-  inviata_il_alle: "Sent on %date% at %ore%"
+  inviata_il_alle: "Sent on %data% at %ore%"
   recaptcha: 'Click on "I''m not a robot" to send the request, then click the button "Send".'
   scarica_ricevuta_provvisoria: 'download the request sent to the registration'
   attesa_ricevuta: 'Generating the receipt'
@@ -1008,16 +989,6 @@ operatori:
     title: 'Usage metrics'
     service_title: 'Active services'
     pratiche_title: 'Practices per year'
-  copy_application_helper: "Clicca per copiare l'id della pratica"
-  copy_protocol_helper: "Clicca per copiare il numero di protocollo"
-  protocol_number_assigned: "Numero di protocollo in assegnazione"
-  download_csv_data: "Clicca per scaricare i dati in formato CSV"
-  table_options: "Opzioni tabella"
-  citizen_identity_verified: "Identità del cittadino verificata"
-  payment_executed: "Pagamento eseguito"
-  waiting_payment_outcome: "In attesa dell'esito del pagamento"
-  no_payment: "Non è previsto un pagamento"
-  apply_and_close: 'Applica e chiudi'
   pagamento_esentato: 'For this practice, the payment was exempted'
   meetings: 'Appointments'
   meetings_in_evidence: 'Appointments in evidence'
@@ -1054,6 +1025,17 @@ operatori:
   accetta_richiesta_integrazione: 'Accept additions'
   tooltip_accetta_richiesta_disabilitato: "There must be at least one message from the citizen to be able to accept the integration"
   scarica_ritiro: 'Withdrawl file'
+  pratica_annullata: "The application %id% was canceled"
+  copy_application_helper: "Click to copy application ID"
+  copy_protocol_helper: "Click to copy the protocol number"
+  protocol_number_assigned: "Protocol number being assigned"
+  download_csv_data: "Click to download the data in CSV format"
+  table_options: "Table options"
+  citizen_identity_verified: "Citizen identity verified"
+  payment_executed: "Payment executed"
+  waiting_payment_outcome: "Waiting for the payment outcome"
+  no_payment: "There is no payment"
+  apply_and_close: 'Apply and close'
 allegato:
   nome_file: 'File name'
   descrizione_file: 'File description'
@@ -1092,12 +1074,12 @@ email:
         complete: 'we inform you that your request for the <strong>%servizio% </strong> service has been approved, the request number is <strong>%pratica_id% </strong>'
         complete.waitallegatioperatore: 'we inform you that your request for the <strong>%servizio%</strong> service has been processed and is awaiting the registration of the new attached documents.'
         pending: "we inform you that your request for the <strong>%servizio%</strong> service has been taken over by one of our operators."
-        draft: "draft"
+        draft: "we inform you that a draft file has been created in your name for the <strong>%servizio%</strong> service, enter your citizen room and visit the <i> My applications </i> section to proceed with sending the application."
         draft.for.integration: "we inform you that integration to your request data is required for the <strong>%servizio%</strong> service. Enter your citizen room to carry out integration"
         submitted.after.integration: "we inform you that the integration to your request for the <strong>%servizio%</strong> service has been received by our systems."
         registered.after.integration: "we inform you that the integration to your request with <strong>%protocollo%</strong> protocol for the <strong>%servizio%</strong> service has been registered. <br /> As soon as possible, one of our operators will take over it to check what is integrated and process the request."
         pending.after.integration: "we inform you that the integration to your request for the <strong>%servizio%</strong> service has been taken over by one of our operators."
-        withdraw: "we inform you that your request for the <strong>%servizio%</strong> service has been correctly withdrawn, the request number is <strong>%practice_id%</strong>, always refer to this identifier in case of communications related to your request. <br /> Thank you for your cooperation."
+        withdraw: "we inform you that your request for the <strong>%servizio%</strong> service has been correctly withdrawn, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications related to your request. <br /> Thank you for your cooperation."
         payment:
           pending: "we inform you that your request for the <strong>%servizio%</strong> service is awaiting payment"
           success: "we inform you that the payment for your request for the service <strong>%servizio%</strong> was successful"
@@ -1108,7 +1090,7 @@ email:
     operatore:
       status:
         submitted: "user <strong>%user_pratica%</strong> request for service <strong>%servizio%</strong> has been received by our systems."
-        registered: "the request of the user <strong>%user_pratica%</strong> for the service <strong>%servizio%</strong> has been logged. The protocol number is <strong>%protocol%</strong>."
+        registered: "the request of the user <strong>%user_pratica%</strong> for the service <strong>%servizio%</strong> has been logged. The protocol number is <strong>%protocollo%</strong>."
         cancelled: "you have refused the practice of the user <strong>%user_pratica%</strong> for the service <strong>%servizio%</strong>."
         complete: "you have accepted the practice of the user <strong>%user_pratica%</strong> for the service <strong>%servizio%</strong>."
         complete.waitallegatioperatore: "the file of the user <strong>%user_pratica%</strong> for the service <strong>%servizio%</strong> has been processed and is awaiting the registration of the new attached documents."
@@ -1140,8 +1122,8 @@ messages:
       8000: '8000'
       9000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been refused, the request number is <strong>%pratica_id%</strong>. <br /> With the following message: <br />%messaggio_personale%<br /> Thank you for your cooperation."
       20000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been successfully withdrawn, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications relating to your request. <br /> Thank you for your cooperation."
-      1000: "1000"
-      50000: "Dear <strong>%user_name%</strong>, <br/>we inform you that your request for the <strong>%service%</strong> service has been canceled, the request number is <strong>% file_id%</strong>, always refer to this identifier in case of communications relating to your request."
+      1000: "Dear <strong>%user_name%</strong>, <br /> we inform you that a draft file has been created in your name for the service <strong>%servizio%</strong>, enter your Stanza del Cittadino and visit the section <i> My practices </i> to proceed with sending the application. <br /> Thank you for your cooperation."
+      50000: "Dear <strong>%user_name%</strong>, <br/>we inform you that your request for the <strong>%servizio%</strong> service has been canceled, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications relating to your request."
     no_reason: '<i>No message specified</i>'
   subject_label: 'Object'
   message_label: 'Message'
@@ -2453,11 +2435,11 @@ backoffice:
       subscription_error: 'There is no subscriber with tax code %fiscal_code% for the %code% service'
       limit_error: 'Maximum registration limit reached. User user not enrolled in the code course'
       save_subscriber_error: 'An error occurred while saving the user user'
-      date_format_subscriber_error: 'Format not valid for date %natoAIl%, user %fiscal_code% not imported'
       save_subscription_error: "An error occurred while saving the subscription for the user user"
-      duplicate_error: "The user user is already registered to the service_name service"
+      duplicate_error: "the user user is already registered to the service_name service"
       update_subscription_error: "An error occurred while updating your subscription"
       delete_subscription_error: "An error occurred while deleting the subscription"
+      date_format_subscriber_error: 'Date %natoAIl% is invalid format, user %fiscal_code% not imported'
     subscription_service:
       payment:
         due_date: "Payment due date"
@@ -2577,6 +2559,10 @@ ente:
 buttons:
   draft: 'Save draft'
   last_save: 'Last saved:'
+aggiungi: 'Add'
+annulla: 'cancel'
+modifica: 'edit'
+read_more: 'read more'
 general:
   nome: 'name'
   cognome: 'surname'
@@ -2601,7 +2587,7 @@ categories:
   cant_delete_content: 'You cannot delete this category because it is linked to services, service groups or sub-categories'
   delete_success: 'Category deleted successfully'
   delete_service_error: 'Unable to delete the category, there are %count% services connected'
-  delete_service_group_error: 'Unable to delete category, there are% count% linked service groups'
+  delete_service_group_error: 'Unable to delete category, there are %count% linked service groups'
   delete_subcategories_error: 'Unable to delete a category, there are %count% linked subcategories'
   related_title: 'Services that have this category'
   related_type: 'Type'
@@ -2609,11 +2595,13 @@ categories:
   service_remove_error: "An error occurred while removing the object"
   error_reference_parent: 'The category cannot father itself!'
   error_reference_children: 'The category cannot be fathered by its sub-category!'
+load_more: 'Other...'
 recipients:
   title: 'Recipients'
   all: 'All recipients'
   delete_success: 'Recipient successfully deleted'
   delete_error: 'You cannot delete the recipient; there are services connected.'
+lista: 'List'
 geographic_areas:
   title: 'Geographical areas'
   all: 'All geographical areas'
@@ -2630,19 +2618,32 @@ geographic_areas:
 breadcrumbs:
   list: 'List'
   compile: 'Fill in'
-
+Home: 'Home'
+withdraw: 'Withdraw'
+activate: 'Activate'
+tutti: 'All'
+error_message_401: "401 | Access denied"
+error_message_detail_401: "You're not authorized to access to this area"
+practice_of: 'Practice of'
+from_date_to_date: "From %from% to %to%"
 search:
-  label: 'Search'
+  label: 'Near'
   close: 'Close'
   filters: 'Filters'
   apply_filters: 'Apply filters'
   reset_filters: 'Reset filters'
-  results_count: "{0} Found <strong>0</strong> services|{1} Found <strong>1</strong> services|]1, Inf[ Found <strong>%count%</strong> services"
+  results_count: "{0} Found <strong>0</strong> services|{1} Found <strong>1</strong> services|]1, Inf[ Found <strong>%count%</strong> services\n"
   topics: 'Topics'
   recipients: 'Recipients'
   geographic_areas: 'Geographical areas'
 analytics:
   not_enabled: 'This section is only accessible to Premium accounts'
+loading: "Loading..."
+processing: 'Processing...'
+close: 'Close'
+proceed: 'Proceed'
+days: 'days'
+error_generic: "<strong>Warning</strong> there have been errors. Try later"
 STATUS_PAYMENT_CREATION_FAIL: 'Payment creation failed'
 STATUS_PAYMENT_STARTED: 'Payment sent'
 STATUS_NOTIFICATION_PENDING: 'Pending notification'
@@ -2683,7 +2684,7 @@ payment:
   get_payment: "Payment recovery in progress"
   creation_failed: "Oops something went wrong!"
   timeout: "The request is taking longer than necessary .. <br><b>Please try again later! </b>"
-  unauth: "Session expired <br><b>Please login again</b>."
+  unauth: "Session expired <br><b>Please login again</b>.\n"
   get_failed: "Oops, something went wrong! <br> Please try again later or contact the administrative office."
   created_at: "Procedure submission date"
   reason: "Reason for payment"
@@ -2699,20 +2700,20 @@ payment:
   other_details: "Other details"
   paid_at: "Paid on"
   download_pdf: "Download payment receipt"
+  creation_pending: "Payment creation in progress"
+  creation_failed_text: "The payment creation was not successful. Please try again later or contact the administrative office."
+  not_found: "The application has not yet been received, please try again later!"
   status_creation_pending: "Pending payment"
   status_notification_pending: "Pending notification"
   paga_online: "Pay online"
   paga_offline: "Pay offline"
-  creation_pending: "Payment creation in progress"
-  creation_failed_text: "The creation of the payment was not successful, please try again later or contact the administrative office."
-  not_found: "The pratice has not yet been received, try again later!"
-  operator:
-    change_status_message: "Forced Exchange practice status in: PAID"
   loading: "Loading..."
   warning: "Warning"
+  operator:
+    change_status_message: "Forced Exchange practice status in: PAID\n"
   mypay_error: "There was an error creating the payment request, contact support."
   error_select_payment: "You must choose at least one payment method"
-  check_payment: "Check payment"
+  check_payment: "Verify payment"
 calendar_formio:
   at_hours: "at"
   draft_expiration_text: "A draft reservation has been reserved for you at the time indicated above, valid until the day"
@@ -2723,10 +2724,26 @@ calendar_formio:
   availability_hours: "Timetables available on"
   range_picker_description: "If you prefer, you can use the control below to shorten the duration of the reservation"
   from: "From"
-  to: "To"
+  to: "to"
   from_range_error_value: "The value"
   from_range_error_not_valid: "it's not valid"
   unavailable: "Unavailable"
+sum: 'Sum'
+average: 'Average'
+counts: 'Count'
+previous: 'Previous'
+following: 'Following'
+apply: 'Apply'
+cancel: 'Cancel'
+from: 'From'
+to: 'TO'
+of: 'from'
+page: 'Page'
+result: 'result'
+results: 'results'
+custom: 'Personalized'
+waiting: 'Wait for'
+digital_services: 'Digital Services powered by'
 time:
   year: 'year'
   years: 'years'
@@ -2734,7 +2751,7 @@ time:
   month: 'month'
   week: 'week'
   day: 'day'
-  hour: 'hour'
+  hour: 'Now'
   minute: 'minute'
   weeks: 'weeks'
   days: 'days'
@@ -2743,22 +2760,22 @@ time:
   second: 'second'
   seconds: 'seconds'
   ago: 'ago'
-  few_seconds_ago: 'few_seconds_ago'
-  last_5_minutes: 'Ultimi 5 minuti'
-  last_15_minutes: 'Ultimi 15 minuti'
-  last_30_minutes: 'Ultimi 30 minuti'
-  last_hour: 'Ultima ora'
-  last_3_hours: 'Ultime 3 ore'
-  last_6_hours: 'Ultime 6 ore'
-  last_12_hours: 'Ultime 12 ore'
-  last_day: 'Ultimo giorno'
-  last_2_days: 'Ultimi 2 giorni'
-  last_7_days: 'Ultimi 7 giorni'
-  last_30_days: 'Ultimi 30 giorni'
-  last_90_days: 'Ultimi 90 giorni'
+  few_seconds_ago: 'a few seconds ago'
+  last_5_minutes: 'Last 5 minutes'
+  last_15_minutes: 'Last 15 minutes'
+  last_30_minutes: 'Last 30 minutes'
+  last_hour: 'Last hour'
+  last_3_hours: 'Last 3 hours'
+  last_6_hours: 'Last 6 hours'
+  last_12_hours: 'Last 12 hours'
+  last_day: 'Last day'
+  last_2_days: 'Last 2 days'
+  last_7_days: 'Last 7 days'
+  last_30_days: 'Last 30 days'
+  last_90_days: 'Last 90 days'
   today: 'Today'
   yesterday: 'Yesterday'
-  this_week: 'Questa settimana'
-  last_week: 'Settimana scorsa'
-  this_month: 'Questo mese'
-  last_month: 'Mese scorso'
+  this_week: 'This week'
+  last_week: 'Last week'
+  this_month: 'This month'
+  last_month: 'Last month'
