@@ -15,7 +15,7 @@ Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 Formio.registerComponent('sdcfile', SdcFile);
-
+const $language = document.documentElement.lang.toString();
 
 $(document).ready(function () {
 
@@ -38,12 +38,12 @@ $(document).ready(function () {
 
   if ($('#form-step-messages').length) {
     $('.placeholders').append(function () {
-      return $('<button type="button" class="btn btn-outline-primary btn-xs float-right">Placeholders disponibili</button>').on('click', function () {
+      return $(`<button type="button" class="btn btn-outline-primary btn-xs float-right">${Translator.trans('servizio.placeholders_available', {}, 'messages', $language)}</button>`).on('click', function () {
         $('#form_placeholders').modal('toggle')
       });
     });
     let draftMessage = $('#feedback_messages_data_i18n_it_feedback_messages_7');
-    draftMessage.closest('div').append('<p id="draft_helper" class="small text-info mb-0">La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l\'accesso diretto alla compilazione del servizio.</p>')
+    draftMessage.closest('div').append(`<p id="draft_helper" class="small text-info mb-0">${Translator.trans('servizio.communication_citizen', {}, 'messages', $language)}</p>`)
   }
 
   const serviceStatus = $('#general_data_status');
@@ -124,8 +124,8 @@ $(document).ready(function () {
     formioTemplatesContainer.parent().removeClass('d-none');
     formioEmptyTemplatesContainer.append($.templates("#tpl-form").render({
       id: 'new',
-      title: 'Crea nuovo form',
-      description: 'Crea nuovo form  da template vuoto',
+      title: `${Translator.trans('servizio.create_new_form', {}, 'messages', $language)}`,
+      description: `${Translator.trans('servizio.create_new_form_blank_template', {}, 'messages', $language)}`,
     }));
 
     $.get(formioTemplatesContainer.data('url') + "?t=" + Date.now(), function (data) {
@@ -194,7 +194,7 @@ $(document).ready(function () {
         let chars = $(this).parent().find(".note-editable").text();
         let totalChars = chars.length;
 
-        $(this).parent().append('<small class="form-text text-muted">Si consiglia di inserire un massimo di ' + limitChars + ' caratteri (<span class="total-chars">' + totalChars + '</span> / <span class="max-chars"> ' + limitChars + '</span>)</small>')
+        $(this).parent().append(`<small class="form-text text-muted">${Translator.trans('servizio.max_limit_of', {}, 'messages', $language)} ${limitChars} ${Translator.trans('characters', {}, 'messages', $language)} (<span class="total-chars"> ${totalChars} </span> / <span class="max-chars"> ${limitChars} </span>)</small>`)
       },
       onChange: function () {
         let chars = $(this).parent().find(".note-editable").text();
@@ -219,7 +219,7 @@ $(document).ready(function () {
         let chars = $(this).parent().find(".note-editable").text();
         let totalChars = chars.length;
 
-        $(this).parent().append('<small class="form-text text-muted">Si consiglia di inserire un massimo di ' + limitChars + ' caratteri (<span class="total-chars">' + totalChars + '</span> / <span class="max-chars"> ' + limitChars + '</span>)</small>')
+        $(this).parent().append(`<small class="form-text text-muted">${Translator.trans('servizio.max_limit_of', {}, 'messages', $language)} ${limitChars} ${Translator.trans('characters', {}, 'messages', $language)} (<span class="total-chars"> ${totalChars} </span> / <span class="max-chars"> ${limitChars} </span>)</small>`)
       },
       onChange: function () {
         let chars = $(this).parent().find(".note-editable").text();
@@ -240,7 +240,7 @@ $(document).ready(function () {
   if ($("#form-step-messages").length) {
 
     let draftMessage = $('#feedback_messages_data_feedback_messages_7_is_active');
-    draftMessage.closest('div').append('<p id="draft_helper" class="small text-info mb-0">La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l\'accesso diretto alla compilazione del servizio.</p>')
+    draftMessage.closest('div').append(`<p id="draft_helper" class="small text-info mb-0">${Translator.trans('servizio.draft_message', {}, 'messages', $language)}</p>`)
 
     $('textarea').summernote({
       toolbar: [
@@ -285,12 +285,12 @@ $(document).ready(function () {
                 window.open(targetUrl, '_blank');
               }
             } else {
-              alert('Si è verificato un errore durante il salvataggio.')
+              alert(`${Translator.trans('servizio.error_from_save', {}, 'messages', $language)}`)
             }
           },
           error: function (jqXhr, textStatus, errorMessage) { // error callback
             console.log(errorMessage);
-            alert('Si è verificato un errore durante il salvataggio.')
+            alert(`${Translator.trans('servizio.error_from_save', {}, 'messages', $language)}`)
           }
         });
     };
@@ -594,12 +594,12 @@ $(document).ready(function () {
             if (data.status === 'success') {
               $('.toast').toast('show')
             } else {
-              alert('Si è verificato un errore durante il salvataggio.')
+              alert(`${Translator.trans('servizio.error_from_save', {}, 'messages', $language)}`)
             }
           },
           error: function (jqXhr, textStatus, errorMessage) { // error callback
             console.log(errorMessage);
-            alert('Si è verificato un errore durante il salvataggio.')
+            alert(`${Translator.trans('servizio.error_from_save', {}, 'messages', $language)}`)
           }
         });
     })
