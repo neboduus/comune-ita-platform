@@ -211,12 +211,14 @@ class SubscriptionsController extends Controller
     $uploadedFile = $request->files->get('upload');
     $paymentIdentifier = $request->get('payment');
     if (empty($uploadedFile)) {
+      $this->logger->error("No file uploaded");
       return new JsonResponse(
         ["errors" => [$this->translator->trans('iscrizioni.missing_file')]],
         Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     if ($uploadedFile->getMimeType() != 'text/csv' && ($uploadedFile->getMimeType() == 'text/plain' && $uploadedFile->guessClientExtension() != 'csv')) {
+      $this->logger->error("Incorrect uploaded file mimetype " . $uploadedFile->getMimeType() . " or invaild extension " . $uploadedFile->guessClientExtension());
       return new JsonResponse(
         ['errors' => [$this->translator->trans('iscrizioni.invalid_file')]],
         Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -233,25 +235,30 @@ class SubscriptionsController extends Controller
     }
 
     if (!$paymentConfig) {
+      $this->logger->error("No payment config with identifier " . $paymentIdentifier);
       return new JsonResponse(
         ['errors' => [$this->translator->trans('iscrizioni.missing_payment_config', ['%identifier%' => $paymentIdentifier])]],
         Response::HTTP_BAD_REQUEST);
     }
 
+    /** @var Servizio $service */
     $service = $this->entityManager->getRepository(Servizio::class)->find($paymentConfig->getPaymentService());
     if (!$service) {
+      $this->logger->error("No service found with id " . $paymentConfig->getPaymentService());
       return new JsonResponse(
         ['errors' => [$this->translator->trans('iscrizioni.no_payment_service')]],
         Response::HTTP_BAD_REQUEST);
     }
 
     if (!$rows) {
+      $this->logger->error("Uploaded file is empty");
       return new JsonResponse(
         ['errors' => [$this->translator->trans('iscrizioni.empty_file')]],
         Response::HTTP_BAD_REQUEST);
     }
 
     if (!array_key_exists('fiscal_code', $rows[0]) || !array_key_exists('amount', $rows[0])) {
+      $this->logger->error("Incorrect headers for uploaded file " . implode(',', array_keys($rows[0])));
       return new JsonResponse(
         ['errors' => [$this->translator->trans('backoffice.integration.fields_error')]],
         Response::HTTP_BAD_REQUEST);
@@ -261,10 +268,12 @@ class SubscriptionsController extends Controller
     $applications = [];
 
 
-    foreach ($rows as $row) {
+    foreach ($rows as $index => $row) {
+      /** @var Subscriber $subscriber */
       $subscriber = $this->entityManager->getRepository(Subscriber::class)->findOneBy(['fiscal_code' => $row['fiscal_code']]);
       if (!$subscriber) {
-        $errors[] = $this->translator->trans('iscrizioni.missing_subscriber', ['%fiscal_code%' => $row['fiscal_code']]);
+        $errors[] = $this->translator->trans('iscrizioni.missing_subscriber', ['%index%'=>++$index, '%fiscal_code%' => $row['fiscal_code']]);
+        $this->logger->error("Non subscriber found with fiscal code " . $row['fiscal_code']);
         continue;
       }
 
@@ -274,7 +283,14 @@ class SubscriptionsController extends Controller
       ]);
 
       if (!$subscription) {
-        $errors[] = $this->translator->trans('iscrizioni.missing_subscription', ['%fiscal_code%' => $row['fiscal_code']]);
+        $errors[] = $this->translator->trans('iscrizioni.missing_subscription', ['%index%'=>++$index, '%fiscal_code%' => $row['fiscal_code']]);
+        $this->logger->error("Non subscription found for user " . $row['fiscal_code'] . " in subscription service " .  $subscriptionService->getCode());
+        continue;
+      }
+
+      if (!$subscriber->isAdult() && empty($subscription->getRelatedCFs())) {
+        $errors[] = $this->translator->trans('iscrizioni.underage_subscriber', ['%index%'=>++$index, '%fiscal_code%' => $row['fiscal_code']]);
+        $this->logger->error("Underage subscriber " . $row['fiscal_code'] . ' with no delegates');
         continue;
       }
 
@@ -293,6 +309,12 @@ class SubscriptionsController extends Controller
         }
       }
 
+      if (empty($users)) {
+        $errors[] = $this->translator->trans('iscrizioni.missing_related_cfs', ['%index%'=>++$index, '%fiscal_code%' => $row['fiscal_code']]);
+        $this->logger->error("Underage subscriber " . $row['fiscal_code'] . " with no registered delegates " . implode(',', $subscription->getRelatedCFs()));
+        continue;
+      }
+
       $uniqueId = trim($paymentConfig->getPaymentIdentifier() . '_' . $subscription->getSubscriptionService()->getId() . '_' . $subscription->getSubscriber()->getFiscalCode());
       $dematerializedData = SubscriptionsService::getDematerializedFormForPayment($paymentConfig, $subscription, $row['amount'], $uniqueId);
 
@@ -307,8 +329,9 @@ class SubscriptionsController extends Controller
           $this->subscriptionsService->sendEmailForDraftApplication($application, $subscription);
 
         } else {
-          $this->logger->info("Payment draft application already exists for user " . $user->getId() . "and identifier " . $paymentConfig->getPaymentIdentifier());
+          $this->logger->error("Payment draft application already exists for user " . $user->getId() . "and identifier " . $paymentConfig->getPaymentIdentifier());
           $errors[] = $this->translator->trans('iscrizioni.application_already_exists', [
+            '%index%'=>++$index,
             '%user_fiscal_code%' => $user->getCodiceFiscale(),
             '%subscriber_fiscal_code%' => $subscriber->getFiscalCode()
           ]);
@@ -316,12 +339,10 @@ class SubscriptionsController extends Controller
       }
     }
 
-    if (count($applications) > 0) {
-      $this->addFlash('success', $this->translator->trans('iscrizioni.drafts_created', ["%num_applications%" => count($applications)]));
-    }
+    $import_message = $this->translator->transChoice('iscrizioni.drafts_created', count($applications), ["%num_applications%" => count($applications)]);
 
     return new JsonResponse(
-      ['errors' => $errors, 'applications' => $applications],
+      ['errors' => $errors, 'applications' => $applications, 'import_message'=>$import_message],
       $errors ? Response::HTTP_BAD_REQUEST : Response::HTTP_OK);
   }
 
@@ -336,12 +357,14 @@ class SubscriptionsController extends Controller
   {
     $uploadedFile = $request->files->get('upload');
     if (empty($uploadedFile)) {
+      $this->logger->error("No file uploaded");
       return new JsonResponse(
         ["errors" => [$this->translator->trans('iscrizioni.missing_file')]],
         Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     if ($uploadedFile->getMimeType() != 'text/csv' && ($uploadedFile->getMimeType() == 'text/plain' && $uploadedFile->guessClientExtension() != 'csv')) {
+      $this->logger->error("Incorrect uploaded file mimetype " . $uploadedFile->getMimeType() . " or invaild extension " . $uploadedFile->guessClientExtension());
       return new JsonResponse(
         ['errors' => [$this->translator->trans('iscrizioni.invalid_file')]],
         Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -353,14 +376,13 @@ class SubscriptionsController extends Controller
 
     // If subscriptions limits exceedes available space skip import
     if ($subscriptionService->getSubscribersLimit() && $subscriptionService->getSubscribersLimit() - $subscriptionService->getSubscriptions()->count() < count($rows)) {
+      $this->logger->error("Subscribers limit reached for subscription service " . $subscriptionService->getCode());
       return new JsonResponse(
         ['errors' => [$this->translator->trans('iscrizioni.subscriptions_limit_reached')]],
         Response::HTTP_BAD_REQUEST);
     }
 
-    $count = 1;
-
-    foreach ($rows as $row) {
+    foreach ($rows as $index => $row) {
       // No code provided: set default to current subscription service
       if (!array_key_exists('code', $row)) {
         $row['code'] = $subscriptionService->getCode();
@@ -370,27 +392,26 @@ class SubscriptionsController extends Controller
       if ($row['code'] == $subscriptionService->getCode()) {
         $subscription = $this->subscriptionsBackOffice->execute($row);
         if (!$subscription instanceof Subscription) {
-          $errors[] = $subscription["error"];
+          $this->logger->error($subscription["error"]);
+          $errors[] = $this->translator->trans('iscrizioni.row_index', ['%index%' => ++$index]) . $subscription["error"];
         } else {
           $subscriptions[] = $subscription;
         }
       } else {
-        $errors[] = $this->translator->trans(
-          'iscrizioni.import_invalid_code',
-          ['%code%' => $row['code'], '%row%' => $count]
-        );
+        $this->logger->error("Invalid code " . $row['code']);
+        $errors[] = [$this->translator->trans(
+          'iscrizioni.import_invalid_code', ['%index%' => ++$index, '%code%' => $row['code']]
+        )];
       }
-      $count++;
     }
 
     // Remove duplicates
     $errors = array_unique($errors);
 
-    if (count($subscriptions) > 0) {
-      $this->addFlash('success', $this->translator->trans('iscrizioni.subscriptions_created', ["%num_subscriptions%" => count($subscriptions)]));
-    }
+    $import_message = $this->translator->transChoice('iscrizioni.subscriptions_created', count($subscriptions), ["%num_subscriptions%" => count($subscriptions)]);
+
     return new JsonResponse(
-      ['errors' => $errors, 'subscriptions' => $subscriptions],
+      ['errors' => $errors, 'subscriptions' => $subscriptions, 'import_message'=>$import_message],
       $errors ? Response::HTTP_BAD_REQUEST : Response::HTTP_OK);
   }
 

@@ -36,6 +36,9 @@
 
     $("#import_subscribers_btn").click(function (e) {
       $("#import_subscribers_errors").html("");
+      $("#import_subscribers_message").html("");
+      $("div#spinner").show();
+
       let files = $('#subcribers_upload').prop('files');
       if (files.length === 0) {
         $("#import_subscribers_errors").append('<p class="text-danger"><svg class="icon-expand icon icon-sm icon-danger mr-2">' +
@@ -54,8 +57,11 @@
         processData: false, //tell jquery not to process data
         contentType: false, //tell jquery not to set content-type
         success: function (response, status, jqxhr) {
+          $("div#spinner").hide();
         },
         error: function (jqxhr) {
+          $("div#spinner").hide();
+
           // todo: manage error
           let errors = jqxhr.responseJSON.errors || [];
           errors.forEach(function (error) {
@@ -65,19 +71,19 @@
           })
         },
         complete: function (jqxhr) {
-          let subscriptions = jqxhr.responseJSON.subscriptions || [];
-          if (subscriptions.length > 0) {
-            $("#import_subscribers_success").append(`<p class="text-success"><svg class="icon-expand icon icon-sm icon-success mr-2">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
-          </svg>${subscriptions.length} iscrizioni importate</p>`);
-          }
+          let importMessage = jqxhr.responseJSON.import_message;
+          let isEmpty  = jqxhr.responseJSON.subscriptions.length === 0
+          $("#import_subscribers_message").append(`<p class="${isEmpty ? "text-danger" : "text-success"}"><svg class="icon-expand icon icon-sm ${isEmpty ? "icon-danger" : "icon-success"} mr-2">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#${isEmpty ? "it-close" : "it-check"}"></use>
+          </svg>${importMessage}</p>`);
         }
       });
     })
 
     $("#import_payments_btn").click(function (e) {
       $("#import_payments_errors").html("");
-      $("#import_payments_success").html("");
+      $("#import_payments_message").html("");
+      $("div#spinner").show();
 
       let files = $('#payments_upload').prop('files');
       if (files.length === 0) {
@@ -99,8 +105,10 @@
         processData: false, //tell jquery not to process data
         contentType: false, //tell jquery not to set content-type
         success: function (response, status, jqxhr) {
+          $("div#spinner").hide();
         },
         error: function (jqxhr) {
+          $("div#spinner").hide();
           // todo: manage error
           let errors = jqxhr.responseJSON.errors || [];
 
@@ -111,12 +119,11 @@
           })
         },
         complete: function (jqxhr) {
-          let applications = jqxhr.responseJSON.applications || [];
-          if (applications.length > 0) {
-            $("#import_payments_success").append(`<p class="text-success"><svg class="icon-expand icon icon-sm icon-success mr-2">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
-          </svg>${applications.length} pratiche create</p>`);
-          }
+          let importMessage = jqxhr.responseJSON.import_message;
+          let isEmpty  = jqxhr.responseJSON.applications.length === 0
+          $("#import_payments_message").append(`<p class="${isEmpty ? "text-danger" : "text-success"}"><svg class="icon-expand icon icon-sm ${isEmpty ? "icon-danger" : "icon-success"} mr-2">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#${isEmpty ? "it-close" : "it-check"}"></use>
+          </svg>${importMessage}</p>`);
         }
       });
     })
@@ -124,6 +131,7 @@
     // Add the following code if you want the name of the file appear on select
     $("#subcribers_upload").on("change", function () {
       $("#import_subscribers_errors").html("")
+      $("#import_subscribers_message").html("");
 
       let fileName = $(this).val().split("\\").pop();
       if (fileName) {
@@ -142,7 +150,7 @@
     // Add the following code if you want the name of the file appear on select
     $("#payments_upload").on("change", function () {
       $("#import_payments_errors").html("");
-      $("#import_payments_success").html("");
+      $("#import_payments_message").html("");
       var fileName = $(this).val().split("\\").pop();
       if (fileName) {
         $('#payments_file').html(`<li class="upload-file success">

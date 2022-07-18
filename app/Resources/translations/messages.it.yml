@@ -558,7 +558,8 @@ iscrizioni:
   import_subscriptions: 'Importa iscrizioni'
   import_success: "Importazione avvenuta con successo"
   import_error: "Si è verificato un errore durante l'importazione"
-  import_invalid_code: "Il codice %code%, alla riga %row%, non coincide con il servizio selezionato"
+  row_index: "(Riga %index%) "
+  import_invalid_code: "(Riga %index%) Il codice %code% non coincide con il servizio selezionato"
   missing_file: "Nessun file selezionato"
   invalid_file: "Il file selezionato non è valido"
   empty_file: "Il file selezionato è vuoto"
@@ -566,11 +567,13 @@ iscrizioni:
   no_payments_config: "Nessun sono presenti configurazioni di pagamento"
   missing_payment_config: "Nessun pagamento trovato con identificativo %identifier%"
   no_payment_service: 'Il servizio specificato nella configurazione di pagamento non esiste'
-  missing_subscriber: 'Non è stato trovato un iscritto con codice fiscale %fiscal_code%'
-  missing_subscription: "L'utente %fiscal_code% non risulta iscritto a questo servizio a sottoscrizione"
-  application_already_exists: "La pratica di pagamento a nome di %user_fiscal_code% per l'iscritto %subscriber_fiscal_code% è già presente"
-  drafts_created: '%num_applications% pratiche create correttamente'
-  subscriptions_created: '%num_subscriptions% iscrizioni importate correttamente'
+  missing_subscriber: '(Riga %index%) Non è stato trovato alcun iscritto con codice fiscale %fiscal_code%'
+  missing_subscription: "(Riga %index%) L'utente %fiscal_code% non risulta iscritto a questo servizio a sottoscrizione"
+  missing_related_cfs: "(Riga %index%) L'utente %fiscal_code% è minorenne e nessun utente con cui è condivisa l'iscrizione risulta registrato"
+  underage_subscriber: "(Riga %index%) L'utente %fiscal_code% è minorenne e non ci delegati per questa iscrizione"
+  application_already_exists: "(Riga %index%) La pratica di pagamento a nome di %user_fiscal_code% per l'iscritto %subscriber_fiscal_code% è già presente"
+  drafts_created: '{0} Nessuna pratica è stata creata|{1} Una pratica è stata creata correttamente|]1,Inf[ %num_applications% pratiche create correttamente'
+  subscriptions_created: "{0} Nessun iscrizione è stata creata|{1} Un'iscrizione è stata creata correttamente|]1,Inf[ %num_subscriptions% iscrizioni create correttamente"
   select_payment_config: 'Seleziona una configurazione di pagamento'
   send: 'Invia'
   upload_csv: 'Carica file csv'
