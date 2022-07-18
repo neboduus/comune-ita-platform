@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\Base;
 
-use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;

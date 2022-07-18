@@ -4,7 +4,6 @@ namespace AppBundle\Payment\Gateway;
 
 
 use AppBundle\Entity\CPSUser;
-use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Admin\Servizio\PaymentDataType;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
@@ -105,25 +104,6 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
 
     $text = '<div class="row mt-5"><div class="col-sm-4"><strong>'.$this->translator->trans('pratica.numero').'</strong></div><div class="col-sm-8 d-inline-flex"><code>'.$pratica->getId().'</code></div></div>';
     $helper->setDescriptionText($text);
-
-    /*
-    try {
-      if (isset($data['response']) && $data['response']['esito'] == 'OK') {
-        $url = $this->getPaymentUrl($pratica);
-
-      } else {
-
-        $this->createPaymentRequest($pratica);
-        $this->entityManager->flush();
-        $url = $this->getPaymentUrl($pratica);
-        $helper->setDescriptionText($this->generatePaymentButtons($pratica, $url));
-
-      }
-
-    } catch (\Exception $e) {
-      $this->logger->error("Warning user about not being able to create a payment request for pratica " . $pratica->getId() . ' - ' . $e->getMessage());
-      $helper->setDescriptionText("C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza.");
-    }*/
   }
 
   /**

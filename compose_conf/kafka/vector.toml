@@ -1,0 +1,73 @@
+[sources.http-messages]
+type = "http"
+address = "0.0.0.0:80"
+encoding = "json"
+headers = [ "x-forwarded-for" ]
+strict_path = false
+path = ""
+
+
+[transforms.application-msg]
+type = "filter"
+inputs = [ "http-messages" ]
+condition =  '.path == "/applications"'
+
+[transforms.meeting-msg]
+type = "filter"
+inputs = [ "http-messages" ]
+condition =  '.path == "/meetings"'
+
+[transforms.service-msg]
+type = "filter"
+inputs = [ "http-messages" ]
+condition =  '.path == "/services"'
+
+[transforms.calendar-msg]
+type = "filter"
+inputs = [ "http-messages" ]
+condition =  '.path == "/calendars"'
+
+
+[sinks.applications]
+type = "kafka"
+bootstrap_servers = "kafka:9092"
+inputs = [ "application-msg" ]
+encoding = "json"
+compression = "none"
+topic = "applications"
+key_field = "service_id"
+
+[sinks.services]
+type = "kafka"
+bootstrap_servers = "kafka:9092"
+inputs = [ "service-msg" ]
+encoding = "json"
+compression = "none"
+topic = "services"
+key_field = "tenant_id"
+
+[sinks.meetings]
+type = "kafka"
+bootstrap_servers = "kafka:9092"
+inputs = [ "meeting-msg" ]
+encoding = "json"
+compression = "none"
+topic = "meetings"
+key_field = ".calendar.id"
+
+[sinks.calendars]
+type = "kafka"
+bootstrap_servers = "kafka:9092"
+inputs = [ "calendar-msg" ]
+encoding = "json"
+compression = "none"
+topic = "calendars"
+key_field = "id"
+
+
+
+#[sinks.debug]
+#type = "console"
+#inputs = [ "application-msg" ]
+#target = "stdout"
+#encoding = "json"

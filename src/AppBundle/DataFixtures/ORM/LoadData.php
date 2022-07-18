@@ -6,7 +6,6 @@ use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Erogatore;
-use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Servizio;
 use AppBundle\Entity\TerminiUtilizzo;
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -15,6 +14,7 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use AppBundle\Utils\Csv;
+
 
 class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwareInterface
 {
@@ -64,8 +64,6 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
     $this->loadCategories($manager);
     $this->loadServizi($manager);
     $this->loadTerminiUtilizzo($manager);
-    $this->loadPaymentGateways($manager);
-
   }
 
   /**
@@ -249,51 +247,6 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
       $manager->flush();
     }
   }
-
-  /**
-   * @param ObjectManager $manager
-   */
-  public function loadPaymentGateways(ObjectManager $manager)
-  {
-    $data = $this->getData('payment_gateways');
-    $gatewayRepo = $manager->getRepository('AppBundle:PaymentGateway');
-    foreach ($data as $item) {
-      $gateway = $gatewayRepo->findOneByIdentifier($item['identifier']);
-      if (!$gateway) {
-        $this->counters['payment_gateways']['new']++;
-        $gateway = new PaymentGateway();
-        $gateway
-          ->setName($item['name'])
-          ->setIdentifier($item['identifier'])
-          ->setDescription($item['description'])
-          ->setDisclaimer($item['disclaimer'])
-          ->setFcqn($item['fcqn'])
-          ->setEnabled($item['enabled']);
-        $manager->persist($gateway);
-      } else {
-        // Update name
-        if ($item['name'] != $gateway->getName()) {
-          $gateway->setName($item['name']);
-        }
-        // Update Description
-        if ($item['description'] != $gateway->getDescription()) {
-          $gateway->setDescription($item['description']);
-        }
-        // Update Disclaimer
-        if ($item['disclaimer'] != $gateway->getDisclaimer()) {
-          $gateway->setDisclaimer($item['disclaimer']);
-        }
-        // Update Disclaimer
-        if ($item['enabled'] != $gateway->isEnabled()) {
-          $gateway->setEnabled($item['enabled']);
-        }
-        $manager->persist($gateway);
-        $this->counters['payment_gateways']['updated']++;
-      }
-      $manager->flush();
-    }
-  }
-
 
   /**
    * @param ObjectManager $manager

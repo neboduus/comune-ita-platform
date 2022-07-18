@@ -178,10 +178,11 @@ class CalendarsController extends Controller
           $em->persist($openingHour);
         }
         $this->calendarManager->save($calendar);
- 
+
         $this->addFlash('feedback', 'Calendario creato correttamente');
         return $this->redirectToRoute('operatori_calendars_index');
       } catch (\Exception $exception) {
+
         if ($exception instanceof UniqueConstraintViolationException) {
           $this->addFlash('error', 'Creazione fallita: esiste già un calendario con nome ' . $calendar->getTitle());
         } else {

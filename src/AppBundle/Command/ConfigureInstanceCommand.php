@@ -6,7 +6,6 @@ use AppBundle\DataFixtures\ORM\LoadData;
 use AppBundle\Entity\AdminUser;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\OperatoreUser;
-use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\User;
 use AppBundle\Model\Gateway;
 use AppBundle\Utils\Csv;
@@ -158,16 +157,6 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
     // Altre configurazioni
     $loader = new LoadData();
     $loader->setContainer($this->getContainer());
-    $loader->loadPaymentGateways($this->entityManager);
-
-    if (!$instanceExists) {
-      /** @var PaymentGateway $bollo */
-      $bollo = $this->entityManager->getRepository('AppBundle:PaymentGateway')->findOneByIdentifier('bollo');
-      $gateway = new Gateway();
-      $gateway->setIdentifier($bollo->getIdentifier());
-      $gateway->setParameters(array('identifier' => $bollo->getIdentifier(), 'parameters' => null));
-      $ente->setGateways(array('bollo' => $gateway));
-    }
 
     $this->entityManager->persist($ente);
     $this->entityManager->flush();

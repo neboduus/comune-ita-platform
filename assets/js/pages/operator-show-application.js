@@ -7,6 +7,7 @@ import FinancialReport from "../FinancialReport";
 import SdcFile from "../SdcFile";
 import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
+import FormioI18n from "../utils/FormioI18n";
 import {TextEditor} from "../utils/TextEditor";
 import moment from "moment";
 import RequestIntegration from "../utils/RequestIntegration";
@@ -19,13 +20,15 @@ Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 Formio.registerComponent('sdcfile', SdcFile);
 
+
+// Todo: spostare in ./assets/js/Formio/Formio.js
 window.onload = function () {
   // Application summary
   Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
     readOnly: true,
     noAlerts: true,
     language: 'it',
-    i18n: formIoI18n
+    i18n: FormioI18n.languages()
   }).then(function (form) {
     form.submission = {
       data: $('#formio_summary').data('submission')

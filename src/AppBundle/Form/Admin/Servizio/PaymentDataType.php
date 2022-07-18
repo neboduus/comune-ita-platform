@@ -8,6 +8,7 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\BlockQuoteType;
 use AppBundle\Form\PaymentParametersType;
 use AppBundle\Model\Gateway;
+use AppBundle\Payment\Gateway\GenericExternalPay;
 use AppBundle\Payment\GatewayCollection;
 use AppBundle\Payment\PaymentDataInterface;
 use AppBundle\Services\FormServerApiAdapterService;
@@ -86,9 +87,7 @@ class PaymentDataType extends AbstractType
 
     $paymentParameters = $service->getPaymentParameters();
     $selectedGateways = isset($paymentParameters['gateways']) ? $paymentParameters['gateways'] : [];
-    $selectedGatewaysIentifiers = [];
-    $selectedGatewaysParameters = [];
-
+    $selectedGatewaysIentifiers = $selectedGatewaysParameters = [];
 
     foreach ($selectedGateways as $s) {
       if ($s instanceof Gateway) {
@@ -114,8 +113,6 @@ class PaymentDataType extends AbstractType
         $gatewaysChoice[$availableGateways[$identifier]['name']] = $identifier;
       }
     }
-
-    $gateways = $this->gatewayCollection->getHandlers();
 
     $paymentRequired = $service->getPaymentRequired();
     if ($paymentRequired == Servizio::PAYMENT_NOT_REQUIRED && $paymentRequired) {
@@ -146,9 +143,22 @@ class PaymentDataType extends AbstractType
         'attr' => (($fromForm && $paymentAmount > 0) ? ['readonly' => 'readonly'] : [])
       ])
       ->add('gateways', ChoiceType::class, [
-        //'data' => isset($selectedGatewaysIentifiers[0]) ?? '',
         'data' => $selectedGatewaysIentifiers,
         'choices' => $gatewaysChoice,
+        'choice_attr' => function($choice, $key, $value) use ($availableGateways, $service) {
+          // adds a class like attending_yes, attending_no, etc
+          $g = $availableGateways[$choice]['handler'];
+          $isGenericExternalPay = $g instanceof GenericExternalPay;
+          $attr = [];
+          if ($isGenericExternalPay) {
+            $attr['class'] = 'external-pay-choice';
+            $attr['data-tenant'] = $service->getEnte()->getId();
+            $attr['data-service'] = $service->getId();
+            $attr['data-identifier'] = $choice;
+            $attr['data-url'] = $availableGateways[$choice]['url'];
+          }
+          return $attr;
+        },
         'expanded' => true,
         'multiple' => true,
         'required' => false,
@@ -158,10 +168,12 @@ class PaymentDataType extends AbstractType
       ]);
 
     /** @var PaymentDataInterface $g */
-    foreach ($gateways as $g) {
+    foreach ($availableGateways as $key => $value) {
+
+      $g = $value['handler'];
       $parameters = $g::getPaymentParameters();
       if (count($parameters) > 0) {
-        $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [
+        $gatewaySubform = $builder->create($key, FormType::class, [
           'label' => false,
           'mapped' => false,
           'required' => false,
@@ -169,7 +181,7 @@ class PaymentDataType extends AbstractType
         ]);
 
         $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
-          'label' => 'Parametri necessari per ' . $availableGateways[$g->getIdentifier()]['name']
+          'label' => 'Parametri necessari per ' . $value['name']
         ]);
 
         foreach ($parameters as $k => $v) {

@@ -3,6 +3,7 @@
 use AppBundle\Form\PraticaFlowRegistry;
 use AppBundle\Handlers\Servizio\ServizioHandlerRegistry;
 use AppBundle\Protocollo\ProtocolloHandlerRegistry;
+use AppBundle\Utils\ConfigUtils;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -74,7 +75,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
 
   public function getCacheDir()
   {
-    return dirname(__DIR__).'/var/cache/'.$this->getIdentifier().'/'.$this->getEnvironment();
+    return dirname(__DIR__) . '/var/cache/' . $this->getIdentifier() . '/' . $this->getEnvironment();
   }
 
   /**
@@ -95,7 +96,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
 
   public function getLogDir()
   {
-    return dirname(__DIR__).'/var/logs/'.$this->getIdentifier().'/'.$this->getEnvironment();
+    return dirname(__DIR__) . '/var/logs/' . $this->getIdentifier() . '/' . $this->getEnvironment();
   }
 
   protected function getContainerClass()
@@ -105,7 +106,7 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
 
   public function registerContainerConfiguration(LoaderInterface $loader)
   {
-    $loader->load($this->getRootDir().'/config/common/config_'.$this->getEnvironment().'.yml');
+    $loader->load($this->getRootDir() . '/config/common/config_' . $this->getEnvironment() . '.yml');
 
     $instanceParameters = $this->getInstanceParameters();
     $instanceParameters['instance'] = $this->getIdentifier();
@@ -121,7 +122,8 @@ class InstanceKernel extends Kernel implements CompilerPassInterface
         }
         foreach ($instanceParameters as $key => $value) {
           if (is_array($value)) {
-            $container->setParameter($key, array_merge($container->getParameter($key), $value));
+            $parameter = $container->getParameter($key);
+            $container->setParameter($key, ConfigUtils::arrayMergeRecursiveDistinct($parameter, $value));
           } else {
             $container->setParameter($key, $value);
           }

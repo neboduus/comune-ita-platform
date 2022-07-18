@@ -4,7 +4,10 @@ import DynamicCalendar from './DynamicCalendar';
 import PageBreak from './PageBreak';
 import FinancialReport from "./FinancialReport";
 import SdcFile from "./SdcFile";
-import 'formiojs'
+import 'formiojs';
+import 'formiojs/dist/formio.form.min.css';
+import FormioI18n from "./utils/FormioI18n";
+import axios from "axios";
 import {TextEditor} from "./utils/TextEditor";
 
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
@@ -308,7 +311,7 @@ $(document).ready(function () {
     Formio.icons = "fontawesome";
     Formio.builder(document.getElementById("builder"), $('#formio').data('formserver_url') + "/form/" + $("#formio_builder_render_form_id").val(), {
       language: 'it',
-      i18n: formIoI18n,
+      i18n: FormioI18n.languages(),
       builder: {
         basic: false,
         advanced: false,
@@ -457,14 +460,65 @@ $(document).ready(function () {
       }
       paymentTypeHelp($(this).val());
     });
+    paymentRequiredField.trigger('change');
 
-    $('#payment_data_gateways').find('input[type="checkbox"]').each(function () {
-      if (this.checked) {
-        $('#payment_data_' + $(this).val()).removeClass('d-none');
-        $('#payment_data_' + $(this).val()).find('input').attr('required', 'required');
+    $('.external-pay-choice').each((i, e) => {
+      const gatewayIdentifier = $(e).data('identifier');
+      const tenantId = $(e).data('tenant');
+      const serviceId = $(e).data('service');
+      const url = $(e).data('url') + '/services/' + serviceId;
+      const $gatewaySettingsContainer = $( '<div id="payment_data_'+ gatewayIdentifier +'" class="gateway-form-type"></div>' );
+      let settings = {
+        "id": serviceId,
+        "tenant_id": tenantId
       }
+      // Creo l'elemento a cui appendere il form
+      $(e).parent('div.form-check').append($gatewaySettingsContainer);
+
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        type: 'get',
+        crossDomain: true,
+        success: function (result) {
+          Formio.createForm(document.getElementById('payment_data_' + gatewayIdentifier), result.schema, {
+            noAlerts: true,
+            language: 'it',
+            i18n: FormioI18n.languages(),
+            buttonSettings: {showCancel: false},
+          })
+            .then(function (form) {
+              if (result.data) {
+                settings = result.data;
+              }
+              form.submission = {
+                data: settings
+              };
+              form.nosubmit = true;
+              form.on('submit', function (submission) {
+                axios.put(url, JSON.stringify(submission.data), {
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                })
+                  .then(function (reponse) {
+                    if (reponse.data.errors) {
+                      console.log(response)
+                    } else {
+                      form.emit('submitDone', submission)
+                    }
+                  });
+              });
+            });
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+          // error logging
+          console.log(message);
+        }
+      });
     });
 
+    // Mostro o nascondo le configurazioni dei payment gateway abilitati
     $('#payment_data_gateways').find('input[type="checkbox"]').change(function () {
       if (this.checked) {
         $('#payment_data_' + $(this).val()).removeClass('d-none');
@@ -474,8 +528,7 @@ $(document).ready(function () {
         $('#payment_data_' + $(this).val()).find('input').removeAttr('required');
       }
     })
-
-    paymentRequiredField.trigger('change');
+    $('#payment_data_gateways').find('input[type="checkbox"]').trigger('change');
   }
 
   // Step Integrations data
