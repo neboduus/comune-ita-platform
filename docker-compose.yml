@@ -266,6 +266,7 @@ services:
         http --check-status formserver:80/form/5d5a41a4669977001b5b6177 || (http post formserver:80/form < /data/gender.json)
         http --check-status formserver:80/form/5d7aa15b18fecd734051ae7f || (http post formserver:80/form < /data/personal-data.json)
         http --check-status formserver:80/form/5e5e26ede170600020175850 || (http post formserver:80/form < /data/personal-data-light.json)
+        http --check-status formserver:80/form/605dd397a406c00020e9eef6 || (http post formserver:80/form < /data/personal-data-minimal.json)
 
   gotenberg:
     #image: gotenberg/gotenberg:7
