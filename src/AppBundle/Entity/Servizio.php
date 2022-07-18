@@ -1564,7 +1564,7 @@ class Servizio implements Translatable
   /**
    * Set the value of howToDo
    *
-   * @param  string  $howToDo
+   * @param string|null $howToDo
    *
    * @return  self
    */
@@ -1591,7 +1591,7 @@ class Servizio implements Translatable
   /**
    * Set the value of whatYouNeed
    *
-   * @param  string  $whatYouNeed
+   * @param string|null $whatYouNeed
    *
    * @return  self
    */
@@ -1618,7 +1618,7 @@ class Servizio implements Translatable
   /**
    * Set the value of whatYouGet
    *
-   * @param  string  $whatYouGet
+   * @param string|null $whatYouGet
    *
    * @return  self
    */
@@ -1645,7 +1645,7 @@ class Servizio implements Translatable
   /**
    * Set the value of costs
    *
-   * @param  string  $costs
+   * @param string|null $costs
    *
    * @return  self
    */
