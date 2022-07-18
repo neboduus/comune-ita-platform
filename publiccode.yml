@@ -4,7 +4,7 @@ name: OpenCity Italia - La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanza-del-cittadino/core
 landingURL: https://link.opencontent.it/sdc-home
 releaseDate: '2022-07-15'
-softwareVersion: 1.25.0-rc.2
+softwareVersion: 1.25.0-rc.3
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -59,29 +59,26 @@ it:
     modelloInteroperabilita: true
 description:
   it:
-    genericName: 'Servizi digitali e area personale'
+    genericName: Servizi digitali e area personale
     apiDocumentation: https://link.opencontent.it/sdc-apidoc
     documentation: https://link.opencontent.it/sdc-manuale
     shortDescription: >-
-      Area personale, servizi digitali e prenotazione appuntamenti.
-      Disponibile anche in SaaS (marketplace qualificato AgID)
-
+      Area personale, servizi digitali e prenotazione appuntamenti. Disponibile
+      anche in SaaS (marketplace qualificato AgID)
     longDescription: >-
       L’area personale con cui il cittadino può inviare istanze (es. iscrizioni
       asilo nido), verificare lo stato delle pratiche, ricevere comunicazioni da
       parte dell’ente (messaggi, scadenze, ...), effettuare pagamenti, ottenere
-      risposte in tempi più rapidi.
-      Progettata con lo starter KIT per il sito di un comune insieme al Team
-      Digitale, permette di creare nuovi servizi digitali secondo i flussi
-      definito dalle Linee Guida di Design. Si integra facilmente con le
-      applicazioni presenti presso l’ente (interoperabile, separando back-end
-      e front-end); il profilo del cittadino si arricchisce ad ogni interazione
-      e riduce la necessità di chiedere più volte le stesse informazioni
-      (once only). Una soluzione in linea col Piano Triennale per l'informatica.
-      Nasce da un progetto condiviso con il Consorzio Comuni
-      Trentini - ANCI Trentino.
-      Disponibile anche in SaaS; consulta il [cloud marketplace di
-      AgID](https://catalogocloud.agid.gov.it/service/525)
+      risposte in tempi più rapidi. Progettata con lo starter KIT per il sito di
+      un comune insieme al Team Digitale, permette di creare nuovi servizi
+      digitali secondo i flussi definito dalle Linee Guida di Design. Si integra
+      facilmente con le applicazioni presenti presso l’ente (interoperabile,
+      separando back-end e front-end); il profilo del cittadino si arricchisce
+      ad ogni interazione e riduce la necessità di chiedere più volte le stesse
+      informazioni (once only). Una soluzione in linea col Piano Triennale per
+      l'informatica. Nasce da un progetto condiviso con il Consorzio Comuni
+      Trentini - ANCI Trentino. Disponibile anche in SaaS; consulta il [cloud
+      marketplace di AgID](https://catalogocloud.agid.gov.it/service/525)
     features:
       - PNRR
       - PNRR/Misura/1.2
@@ -121,9 +118,11 @@ description:
         Integrazione con il sito comunale Comunweb per prossime scadenze e
         descrizione dei servizi
       - >-
-        Integrazione con i sistemi di protocollazione più diffusi (PiTre, Halley,
-        Maggioli, Dedagroup, Datagraph, Infor/Municipia, ...).
-      - Possibilità di raccogliere protocolli provenienti da servizi digitali diversi in unico fascicolo
+        Integrazione con i sistemi di protocollazione più diffusi (PiTre,
+        Halley, Maggioli, Dedagroup, Datagraph, Infor/Municipia, ...).
+      - >-
+        Possibilità di raccogliere protocolli provenienti da servizi digitali
+        diversi in unico fascicolo
       - >-
         Pubblicazione documenti nell'area riservata del cittadino (cert.
         fiscali, tassa rifiuti, multe)
