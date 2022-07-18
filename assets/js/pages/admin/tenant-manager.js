@@ -1,6 +1,7 @@
-require("bootstrap-italia");
-require("../css/app.scss");
-require("jquery"); // Load jQuery as a module
+import '../../core';
+import 'formiojs';
+import 'formiojs/dist/formio.form.min.css';
+import axios from "axios";
 
 $(document).ready(function () {
 
@@ -36,12 +37,59 @@ $(document).ready(function () {
     }
   });
 
-  $('#ente_gateways').find('input[type="checkbox"]').each(function () {
-    if (this.checked) {
-      $('#ente_' + $(this).val()).removeClass('d-none');
+  $('.external-pay-choice').each((i, e) => {
+    const gatewayIdentifier = $(e).data('identifier');
+    const tenantId = $(e).data('tenant');
+    const url = $(e).data('url') + '/tenants/' + tenantId;
+    const $gatewaySettingsContainer = $( '<div id="ente_'+ gatewayIdentifier +'" class="gateway-form-type"></div>' );
+    let settings = {
+      "id": tenantId
     }
+    // Creo l'elemento a cui appendere il form
+    $(e).parent('div.form-check').append($gatewaySettingsContainer);
+
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      type: 'get',
+      crossDomain: true,
+      success: function (result) {
+        Formio.createForm(document.getElementById('ente_' + gatewayIdentifier), result.schema, {
+          noAlerts: true,
+          buttonSettings: {showCancel: false},
+        })
+          .then(function (form) {
+            if (result.data) {
+              settings = result.data;
+            }
+            form.submission = {
+              data: settings
+            };
+            form.nosubmit = true;
+            form.on('submit', function (submission) {
+              axios.put(url, JSON.stringify(submission.data), {
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              })
+                .then(function (reponse) {
+                  if (reponse.data.errors) {
+                    console.log(response)
+                  } else {
+                    form.emit('submitDone', submission)
+                  }
+                });
+            });
+          });
+      },
+      error: function (xmlhttprequest, textstatus, message) {
+        // error logging
+        console.log(message);
+      }
+    });
   });
 
+  // Payment gateways
   $('#ente_gateways').find('input[type="checkbox"]').change(function () {
     if (this.checked) {
       $('#ente_' + $(this).val()).removeClass('d-none');
@@ -49,8 +97,10 @@ $(document).ready(function () {
       $('#ente_' + $(this).val()).addClass('d-none');
     }
   })
+  $('#ente_gateways').find('input[type="checkbox"]').trigger('change');
 
-  // Mailers
+
+// Mailers
   $('#add-mailer').click(function (e) {
     e.preventDefault();
     let list = $('#current-mailers');
@@ -105,4 +155,5 @@ $(document).ready(function () {
     newUrl = url.split("#")[0] + hash;
     history.replaceState(null, null, newUrl);
   });
-});
+})
+;

@@ -4,7 +4,6 @@
 namespace AppBundle\Form\Base;
 
 
-use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Admin\Servizio\PaymentDataType;
 use AppBundle\Services\PaymentService;

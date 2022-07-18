@@ -47,7 +47,8 @@ services:
 
   ocsdc.jwt_created_listener:
     class: AppBundle\EventListener\JWTCreatedListener
-    arguments: [ '@request_stack' ]
+    autowire: true
+    #arguments: [ '@request_stack' ]
     tags:
       - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
 
@@ -130,9 +131,6 @@ services:
     autowire: true
 
   AppBundle\Controller\Ui\Backend\WebhookController:
-    autowire: true
-
-  AppBundle\Controller\Ui\Backend\PaymentGatewayController:
     autowire: true
 
   AppBundle\Controller\Ui\Backend\CategoryController:

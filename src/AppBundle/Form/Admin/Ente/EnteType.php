@@ -10,6 +10,7 @@ use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\BlockQuoteType;
 use AppBundle\Model\DefaultProtocolSettings;
 use AppBundle\Model\Gateway;
+use AppBundle\Payment\Gateway\GenericExternalPay;
 use AppBundle\Payment\GatewayCollection;
 use AppBundle\Payment\PaymentDataInterface;
 use AppBundle\Services\BackOfficeCollection;
@@ -70,11 +71,8 @@ class EnteType extends AbstractType
       'ente.navigation_type.categories' => Ente::NAVIGATION_TYPE_CATEGORIES
     ];
 
-
     /** @var Ente $ente */
     $ente = $builder->getData();
-    $handlers = $this->gatewayCollection->getHandlers();
-
     $settings = new DefaultProtocolSettings();
     if ($ente->getDefaultProtocolSettings() != null) {
       $settings = DefaultProtocolSettings::fromArray($ente->getDefaultProtocolSettings());
@@ -146,6 +144,19 @@ class EnteType extends AbstractType
     $builder->add('gateways', ChoiceType::class, [
       'data' => $selectedGatewaysIentifiers,
       'choices' => $gateways,
+      'choice_attr' => function($choice, $key, $value) use ($availablePaymentGateways, $ente) {
+        // adds a class like attending_yes, attending_no, etc
+        $g = $availablePaymentGateways[$choice]['handler'];
+        $isGenericExternalPay = $g instanceof GenericExternalPay;
+        $attr = [];
+        if ($isGenericExternalPay) {
+          $attr['class'] = 'external-pay-choice';
+          $attr['data-tenant'] = $ente->getId();
+          $attr['data-identifier'] = $choice;
+          $attr['data-url'] = $availablePaymentGateways[$choice]['url'];
+        }
+        return $attr;
+      },
       'mapped' => false,
       'expanded' => true,
       'multiple' => true,
@@ -154,33 +165,33 @@ class EnteType extends AbstractType
     ]);
 
     /** @var PaymentDataInterface $g */
-    foreach ($handlers as $g) {
-      if (isset($availablePaymentGateways[$g->getIdentifier()])) {
-        $parameters = $g::getPaymentParameters();
-        if (count($parameters) > 0) {
+    foreach ($availablePaymentGateways as $key => $value) {
 
-          $gatewaySubform = $builder->create($g->getIdentifier(), FormType::class, [
-            'label' => false,
-            'mapped' => false,
-            'required' => false,
-            'attr' => ['class' => 'gateway-form-type d-none']
-          ]);
+      $g = $value['handler'];
+      $parameters = $g::getPaymentParameters();
+      if (count($parameters) > 0) {
 
-          $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
-            'label' => 'Parametri necessari per ' . $availablePaymentGateways[$g->getIdentifier()]['name'] . ' ( lasciare in bianco se si desidera impostare i valori a livello di servizio)'
-          ]);
+        $gatewaySubform = $builder->create($key, FormType::class, [
+          'label' => false,
+          'mapped' => false,
+          'required' => false,
+          'attr' => ['class' => 'gateway-form-type d-none']
+        ]);
 
-          foreach ($parameters as $k => $v) {
-            $gatewaySubform->add($k, TextType::class, [
-                'label' => $v,
-                'required' => false,
-                'data' => isset($selectedGatewaysParameters[$g->getIdentifier()][$k]) ? $selectedGatewaysParameters[$g->getIdentifier()][$k] : '',
-                'mapped' => false
-              ]
-            );
-          }
-          $builder->add($gatewaySubform);
+        $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
+          'label' => 'Parametri necessari per ' . $value['name'] . ' ( lasciare in bianco se si desidera impostare i valori a livello di servizio)'
+        ]);
+
+        foreach ($parameters as $k => $v) {
+          $gatewaySubform->add($k, TextType::class, [
+              'label' => $v,
+              'required' => false,
+              'data' => isset($selectedGatewaysParameters[$key][$k]) ? $selectedGatewaysParameters[$key][$k] : '',
+              'mapped' => false
+            ]
+          );
         }
+        $builder->add($gatewaySubform);
       }
     }
 

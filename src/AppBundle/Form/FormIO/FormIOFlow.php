@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\FormIO;
 
-use AppBundle\Entity\PaymentGateway;
 use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Admin\Servizio\PaymentDataType;

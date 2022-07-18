@@ -223,8 +223,10 @@ form[name="upload_allegato_operatore"] {
 }
 
 .gateway-form-type {
-  padding: 0.5rem;
-  background-color: #EFEFEF;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  background-color: #efefef;
+  margin: 0.5rem 0 1.5rem 2rem;
   fieldset {
     margin-bottom: 2rem;
     legend {

@@ -1,11 +1,7 @@
 {% extends '@App/Default/index.html.twig' %}
 
-{% block stylesheets %}
-  {{ encore_entry_link_tags('instance-manager') }}
-{% endblock %}
-
 {% block javascripts %}
-  {{ encore_entry_script_tags('instance-manager') }}
+  {{ encore_entry_script_tags('tenant-manager') }}
 {% endblock %}
 
 {% block main_content %}
@@ -32,8 +28,6 @@
                                   aria-controls="payments-tab" aria-selected="false">{{ 'nav.admin.tenant.pagamenti'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="options-tab" data-toggle="tab" href="#options" role="tab"
                                   aria-controls="options-tab" aria-selected="false">{{ 'nav.admin.tenant.opzioni'|trans }}</a></li>
-          <li class="nav-item"><a class="nav-link" id="webhooks-tab" data-toggle="tab" href="#webhooks" role="tab"
-                                  aria-controls="options-tab" aria-selected="false">{{ 'nav.admin.tenant.webhooks'|trans }}</a></li>
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane p-3 fade show active" id="default-settings" role="tabpanel"
@@ -130,46 +124,6 @@
           <div class="tab-pane p-3 fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
             {{ form_row(form.meta) }}
           </div>
-
-          <div class="tab-pane p-3 fade" id="webhooks" role="tabpanel" aria-labelledby="webhooks-tab">
-            <div class="form-group">
-              <table class="table table-sm table-striped mt-3">
-                <thead>
-                <tr>
-                  <th>{{ 'webhook.nome' | trans() }}</th>
-                  <th>{{ 'webhook.endpoint' | trans() }}</th>
-                  <th>{{ 'webhook.method' | trans() }}</th>
-                  <th>{{ 'webhook.trigger' | trans() }}</th>
-                  <th>{{ 'webhook.filters' | trans() }}</th>
-                  <th>{{ 'webhook.active' | trans() }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in ente.webhooks %}
-                  <tr>
-                    <td data-title="Nome">
-                      <a href="{{ path('admin_webhook_edit', { 'id': item.id }) }}">{{ item.title }}</a>
-                    </td>
-                    <td>{{ item.endpoint|raw }}</td>
-                    <td>{{ item.method }}</td>
-                    <td>{{ statuses[item.trigger] }}</td>
-                    <td>
-                      {% if item.filters|length > 0 %}
-                        {% for f in item.filters %}
-                          {{ services[f] }}
-                        {% endfor %}
-                      {% else %}
-                        {{ 'webhook.no_service' | trans() }}
-                      {% endif %}
-                    </td>
-                    <td>{{ (item.active) ? 'webhook.active'|trans() : 'webhook.not_active'|trans() }}</td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
 
           <div class="tab-pane p-3 fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
             {{ form_rest(form) }}
