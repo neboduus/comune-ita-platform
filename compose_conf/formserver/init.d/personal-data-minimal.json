@@ -1,0 +1,67 @@
+{
+  "display": "form",
+  "type": "form",
+  "components": [
+    {
+      "label": "Nome e cognome",
+      "mask": false,
+      "tableView": true,
+      "alwaysEnabled": false,
+      "type": "form",
+      "input": true,
+      "key": "completename",
+      "conditional": {
+        "show": "",
+        "when": "",
+        "json": ""
+      },
+      "reference": false,
+      "form": "5d4d26ff9410f50010f30068",
+      "tags": [
+
+      ],
+      "formRevision": "",
+      "reorder": false,
+      "customConditional": "",
+      "logic": [
+
+      ]
+    },
+    {
+      "label": "Codice Fiscale",
+      "mask": false,
+      "tableView": true,
+      "alwaysEnabled": false,
+      "type": "form",
+      "input": true,
+      "key": "fiscal_code",
+      "conditional": {
+        "show": "",
+        "when": "",
+        "json": ""
+      },
+      "reference": false,
+      "form": "5d7aa1b318fecd734051ae80",
+      "formRevision": "",
+      "customConditional": "",
+      "logic": [
+
+      ],
+      "tags": [
+
+      ],
+      "reorder": false
+    }
+  ],
+  "tags": [
+    "component"
+  ],
+  "_id": "605dd397a406c00020e9eef6",
+  "title": "Anagrafica minimale",
+  "name": "Anagrafica minimale",
+  "path": "anagrafica_minimale",
+  "description": "Anagrafica minimale",
+  "modified": "2021-03-26T12:29:11.342Z",
+  "created": "2021-03-26T12:29:11.342Z",
+  "__v": 0
+}
