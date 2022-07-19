@@ -1,7 +1,7 @@
 {% extends "@FOSUser/layout.html.twig" %}
 
 {% block fos_user_content %}
-    <h1 class="text-center title mb-5">Profilo utente</h1>
+    <h1 class="text-center title mb-5">{{ 'user.profile.title'| trans }}</h1>
     <div class="col-md-6 offset-md-3">
         {% include "@FOSUser/Profile/show_content.html.twig" %}
     </div>
