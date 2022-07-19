@@ -22,6 +22,7 @@ Encore
    */
   .addEntry('app', './assets/js/app.js')
   .addEntry('compile', './assets/js/compile.js')
+  .addEntry('user', './assets/js/user.js')
   .addEntry('service-manager', './assets/js/service-manager.js')
   .addEntry('service-group-manager', './assets/js/service-group-manager.js')
   .addEntry('tenant-manager', './assets/js/pages/admin/tenant-manager.js')
