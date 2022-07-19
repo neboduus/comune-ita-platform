@@ -248,7 +248,7 @@ class InfoPayment {
           ?
           `<div class="text-center mt-5">
 ${data[i].links.online_payment_begin.url !== null ?
-            `<a target="_blank" href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${Translator.trans('payment.paga_online', {}, 'messages', InfoPayment.$language)}</a>` : ""}
+            `<a href="${data[i].links.online_payment_begin.url}" class="btn btn-primary btn-lg mr-3 online_payment_begin" role="button" aria-pressed="true"> ${Translator.trans('payment.paga_online', {}, 'messages', InfoPayment.$language)}</a>` : ""}
 ${data[i].links.offline_payment.url !== null ?
             `<a target="_blank" href="${data[i].links.offline_payment.url}" class="btn btn-secondary btn-lg offline_payment" role="button" aria-pressed="true" download> ${Translator.trans('payment.paga_offline', {}, 'messages', InfoPayment.$language)}</a>` : ""}
                       </div>

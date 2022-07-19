@@ -75,6 +75,7 @@ class PraticaRepository extends EntityRepository
           Pratica::STATUS_REQUEST_INTEGRATION,
           Pratica::STATUS_REGISTERED_AFTER_INTEGRATION,
           Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
+          Pratica::STATUS_PAYMENT_OUTCOME_PENDING
         ],
       ],
       [
@@ -93,7 +94,7 @@ class PraticaRepository extends EntityRepository
       ->orWhere('p.latestStatusChangeTimestamp >= :timediff AND p.user = :user')
       ->setParameter('user', $user->getId())
       ->setParameter('timediff', strtotime($timeDiff))
-      ->setParameter('statues', [Pratica::STATUS_PAYMENT_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION])
+      ->setParameter('statues', [Pratica::STATUS_PAYMENT_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_PAYMENT_OUTCOME_PENDING])
       ->orderBy('p.status', 'ASC')
       ->addOrderBy('p.latestStatusChangeTimestamp', 'DESC')
       ->setMaxResults(10);

@@ -223,7 +223,7 @@ Altri limiti:
 
 ## Copyright
 
-Copyright (C) 2016-2020  Opencontent SCARL
+Copyright (C) 2016-2022  Opencontent SCARL
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
