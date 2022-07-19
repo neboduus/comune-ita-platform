@@ -26,7 +26,7 @@ Nasce da un progetto condiviso con il Consorzio Comuni Trentini - ANCI Trentino,
 - Controllo automatico della validità di firme digitali e formati dei file, ai fini della conservazione sostitutiva
 - Generazione automatica delle ricevuta di invio dell’istanza, in formato PDF
 - Integrazione con il [sito comunale Comunweb](https://developers.italia.it/it/software/c_a116-opencontent-opencity): prossime scadenze e descrizione dei servizi
-- Integrazione con alcuni dei sistemi di protocollazione più diffusi presso i comuni (tra cui, [PiTre](https://www.pi3.it), Infor, Sicraweb, Datagraph)
+- Integrazione con alcuni dei sistemi di protocollazione più diffusi presso i comuni (tra cui, [PiTre](https://www.pi3.it), Infor/Municipia, Sicraweb, Datagraph, Civilia, Halley)
 - Integrazione con Shibboleth (SAML 2.0)
 
 
