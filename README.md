@@ -1,6 +1,14 @@
 # La Stanza Del Cittadino
 
-L’area personale del cittadino, progettata con il [Team Digitale di Presidenza del Consiglio](https://teamdigitale.governo.it) utilizzando lo [starter KIT per il sito di un comune](https://designers.italia.it/progetti/siti-web-comuni/). Disponibile anche in [versione SaaS](https://opencityitalia.it/) allineata ai contenuti di questo repository.
+La Stanza del Cittadino è una piattaforma per creare e gestire i servizi digitali e l'area personale del cittadino, progettati secondo i KIT di [Designers Italia](https://designers.italia.it/kit/), il modello di [sito e servizi digitali dei Comuni italiani](https://designers.italia.it/modello/comuni/) e pubblicata su [Developers Italia](https://developers.italia.it/it/software/opencontent-stanzadelcittadino-cf016d).
+
+Supporta il *multilinguismo*, per favorire l'effettivo accesso ai servizi digitali da parte dei cittadini europei, ed altre raccomandazioni indicate nell'[eGovernment Benchmark Method Paper 2020-2023](https://op.europa.eu/it/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1).
+
+E' una delle componenti della soluzione [OpenCity Italia](https://opencityitalia.it/), che insieme al sito web istituzionale è disponibile anche in versione [SaaS in cloud qualificato AgID](https://catalogocloud.agid.gov.it/service/525).
+
+
+
+
 
 ## Descrizione
 
