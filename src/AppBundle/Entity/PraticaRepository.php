@@ -81,7 +81,7 @@ class PraticaRepository extends EntityRepository
       [
         'latestStatusChangeTimestamp' => 'DESC',
       ]
-    )->setMaxResults(10);
+    );
   }
 
   public function findEvidencePraticaForUser(CPSUser $user)
