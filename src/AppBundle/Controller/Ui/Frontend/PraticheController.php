@@ -263,7 +263,7 @@ class PraticheController extends Controller
         $applications['cancelled'][] = $p;
       } elseif (in_array($p->getStatus(), [Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION])) {
         $applications['integration'][] = $p;
-      } elseif ($p->getStatus() == Pratica::STATUS_PAYMENT_PENDING) {
+      } elseif (in_array($p->getStatus(), [Pratica::STATUS_PAYMENT_PENDING, Pratica::STATUS_PAYMENT_OUTCOME_PENDING])) {
         $applications['payment_pending'][] = $p;
       } elseif ($p->getStatus() == Pratica::STATUS_WITHDRAW) {
         $applications['withdrawn'][] = $p;
