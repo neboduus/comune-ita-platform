@@ -1,10 +1,10 @@
-publiccodeYmlVersion: '0.3.0'
+publiccodeYmlVersion: 0.3.0
 applicationSuite: OpenCity Italia
 name: OpenCity Italia - La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanza-del-cittadino/core
 landingURL: https://opencityitalia.it/
-releaseDate: '2022-07-15'
-softwareVersion: 1.25.0-rc.6
+releaseDate: '2022-07-20'
+softwareVersion: 1.25.0
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -66,64 +66,131 @@ description:
     shortDescription: |
       Area personale, servizi digitali e prenotazione appuntamenti.
       Disponibile anche in SaaS (marketplace qualificato AgID)
-    longDescription: |
-      OpenCity Italia - La Stanza del Cittadino è il software open source che mette a
-      disposizione di cittadini e imprese un’area personale e tutti i servizi comunali
-      in forma digitale. Comprende l’area personale attraverso cui il cittadino può
+    longDescription: >
+      OpenCity Italia - La Stanza del Cittadino è il software open source che
+      mette a
+
+      disposizione di cittadini e imprese un’area personale e tutti i servizi
+      comunali
+
+      in forma digitale. Comprende l’area personale attraverso cui il cittadino
+      può
+
       inviare pratiche (es. iscrizioni asilo nido, richiesta permesso ZTL,
-      partecipazione a concorsi, ecc.), verificare lo stato di avanzamento, ricevere
+
+      partecipazione a concorsi, ecc.), verificare lo stato di avanzamento,
+      ricevere
+
       comunicazioni da parte dell’ente, effettuare pagamenti, ricevere bonus e
+
       agevolazioni, ottenere e conservare certificati e altri documenti.
+
       Tutti i servizi sono realizzati secondo il
+
       [modello](https://designers.italia.it/modello/comuni/)
+
       reso disponibile dal Designers Italia; hanno un’esperienza d’uso semplice,
+
       sono facili da attivare e possono essere personalizzati secondo
+
       le esigenze dell’ente.
+
       Il software, nato da un [progetto pilota in collaborazione con il
+
       Team Digitale di Presidenza del Consiglio e il Consorzio dei Comuni
+
       Trentini](https://www.forumpa.it/pa-digitale/servizi-digitali/design-dei-siti-web/),
+
       è attualmente utilizzato da centinaia di comuni italiani.
+
       E’ disponibile anche in
+
       [versione SaaS in cloud qualificata
+
       da AgID](https://catalogocloud.agid.gov.it/service/525).
 
-      Può essere utilizzato in abbinamento a qualsiasi software per il sito web di
+
+      Può essere utilizzato in abbinamento a qualsiasi software per il sito web
+      di
+
       un Comune, compreso il modulo [OpenCity Italia -
-      Sito web](https://developers.italia.it/it/software/c_a116-comune-di-ala-comunweb)
-      per i Comuni italiani realizzato secondo le linee guida di design, conforme al
-      modello dati (ontologie e vocabolari controllati) definiti da AgID e anch’esso
+
+      Sito
+      web](https://developers.italia.it/it/software/c_a116-comune-di-ala-comunweb)
+
+      per i Comuni italiani realizzato secondo le linee guida di design,
+      conforme al
+
+      modello dati (ontologie e vocabolari controllati) definiti da AgID e
+      anch’esso
+
       disponibile in versione SaaS in cloud qualificato da AgID.
 
+
       Il profilo del cittadino è progettato per gestire i dati personali
-      nel rispetto del GDPR, al fine di ridurre la necessità di chiedere più volte agli
-      utenti le stesse informazioni (principio once only) e di diminuire i tempi necessari
+
+      nel rispetto del GDPR, al fine di ridurre la necessità di chiedere più
+      volte agli
+
+      utenti le stesse informazioni (principio once only) e di diminuire i tempi
+      necessari
+
       per processare le pratiche.
+
       L’esperienza utente è realizzata seguendo le linee guida per il design,
+
       utilizzando il kit Bootstrap Italia, mentre il modello di architettura
+
       dei contenuti è conforme a quanto previsto dalle linee guida.
+
 
       **Nessun lock-in su architettura cloud e dati**
 
-      OpenCiy Italia è integrata con la maggior parte dei sistemi di protocollo
-      adottati dai Comuni italiani, con le piattaforme abilitanti PagoPA (attraverso
-      intermediari tecnologici già presenti presso l'Ente), SPID/CIE/eIDAS
-      e con l’App IO.
-      Si integra facilmente con le altre applicazioni, attraverso OpenAPI e WebHook.
 
-      OpenCity Italia ha un’architettura altamente scalabile, multi-tenant, composta da
+      OpenCiy Italia è integrata con la maggior parte dei sistemi di protocollo
+
+      adottati dai Comuni italiani, con le piattaforme abilitanti PagoPA
+      (attraverso
+
+      intermediari tecnologici già presenti presso l'Ente), SPID/CIE/eIDAS
+
+      e con l’App IO.
+
+      Si integra facilmente con le altre applicazioni, attraverso OpenAPI e
+      WebHook.
+
+
+      OpenCity Italia ha un’architettura altamente scalabile, multi-tenant,
+      composta da
+
       micro servizi cloud-native e disponibile in container (per evitare il
-      cloud lock-in). L’interoperabilità è garantita da standard semantici europei
-      specifici del settore pubblico e da una piattaforma di API progettata secondo
-      le linee guida per l’interoperabilità e utilizzando il catalogo nazionale della
+
+      cloud lock-in). L’interoperabilità è garantita da standard semantici
+      europei
+
+      specifici del settore pubblico e da una piattaforma di API progettata
+      secondo
+
+      le linee guida per l’interoperabilità e utilizzando il catalogo nazionale
+      della
+
       semantica dei dati (per evitare il data lock-in). La piattaforma segue un
+
       approccio a design pattern, in modo da offrire risposte tecnologicamente
-      avanzate a ciascuna delle funzioni che abbiamo mappato, per poi utilizzarle
+
+      avanzate a ciascuna delle funzioni che abbiamo mappato, per poi
+      utilizzarle
+
       in ciascuno dei servizi messi a disposizione degli enti pubblici locali.
+
 
       **Sicurezza**
 
+
       Rispetta i requisiti minimi di sicurezza previsti da AGID e tutti i
+
       requisiti previsti nel capitolato tecnico funzionale al rilascio di
+
       fondi PNRR per gli enti locali.
     features:
       - PNRR
@@ -131,8 +198,8 @@ description:
       - PNRR/Misura/1.4.1
       - PNRR/Beneficiari/Comuni
       - |-
-         Tutti i servizi comunali in forma digitale, compresi quelli previsti
-         dalle misure PNRR
+        Tutti i servizi comunali in forma digitale, compresi quelli previsti
+        dalle misure PNRR
       - |-
         Accesso ai servizi con SPID, CIE, eIDAS oppure senza autenticazione
         (es. prenotazione appuntamenti)
@@ -172,13 +239,11 @@ description:
       - |-
         Ricezione dei messaggi relativi al servizio per email, nell’area
         personale e sull’app IO
-      - |-
-        Possibilità per l’utente di valutare l’esperienza d’uso del servizio
+      - Possibilità per l’utente di valutare l’esperienza d’uso del servizio
       - |-
         Segnalazione disservizi in città grazie all’integrazione con
         OpenSegnalazioni
-      - |-
-        Richiesta di assistenza grazie a integrazione con OpenSegnalazioni
+      - Richiesta di assistenza grazie a integrazione con OpenSegnalazioni
       - |-
         Servizio di prenotazione di un appuntamento con funzionalità avanzate
          per cittadini e funzionari
@@ -227,218 +292,218 @@ description:
       - images/sdc028.png
       - images/sdc029.png
 usedBy:
- - Comune di Ala
- - Comune di Albiano
- - Comune di Aldeno
- - Comune di Altavalle
- - Comune di Altopiano Della Vigolana
- - Comune di Amblar Don
- - Comune di Andalo
- - Comune di Baselga Di Pine
- - Comune di Bedollo
- - Comune di Besenello
- - Comune di Bieno
- - Comune di Bleggio Superiore
- - Comune di Bocenago
- - Comune di Bondone
- - Comune di Borgo Chiese
- - Comune di Borgo Danaunia
- - Comune di Borgo Lares
- - Comune di Borgo Valsugana
- - Comune di Brentonico
- - Comune di Bresimo
- - Comune di Caderzone Terme
- - Comune di Calceranica Al Lago
- - Comune di Caldes
- - Comune di Caldonazzo
- - Comune di Calliano
- - Comune di Campitello Di Fassa
- - Comune di Campodenno
- - Comune di Canal San Bovo
- - Comune di Canazei
- - Comune di Capriana
- - Comune di Carisolo
- - Comune di Carzano
- - Comune di Castel Condino
- - Comune di Castel Ivano
- - Comune di Castello Tesino
- - Comune di Castello Molina Di Fiemme
- - Comune di Castelnuovo
- - Comune di Cavalese
- - Comune di Cavareno
- - Comune di Cavedago
- - Comune di Cavedine
- - Comune di Cavizzana
- - Comune di Cembra Lisignago
- - Comune di Cimone
- - Comune di Cinte Tesino
- - Comune di Cis
- - Comune di Civezzano
- - Comune di Cles
- - Comune di Comano Terme
- - Comune di Commezzadura
- - Comune di Conta
- - Comune di Croviana
- - Comune di Dambel
- - Comune di Denno
- - Comune di Dimaro Folgarida
- - Comune di Drena
- - Comune di Dro
- - Comune di Fai Della Paganella
- - Comune di Fiave
- - Comune di Fierozzo
- - Comune di Folgaria
- - Comune di Fornace
- - Comune di Frassilongo
- - Comune di Garniga Terme
- - Comune di Giovo
- - Comune di Giustino
- - Comune di Grigno
- - Comune di Imer
- - Comune di Isera
- - Comune di Lavarone
- - Comune di Lavis
- - Comune di Ledro
- - Comune di Levico Terme
- - Comune di Livo
- - Comune di Lona Lases
- - Comune di Luserna
- - Comune di Madruzzo
- - Comune di Male
- - Comune di Massimeno
- - Comune di Mazzin
- - Comune di Mezzana
- - Comune di Mezzano
- - Comune di Mezzocorona
- - Comune di Mezzolombardo
- - Comune di Moena
- - Comune di Molveno
- - Comune di Mori
- - Comune di Nago Torbole
- - Comune di Nogaredo
- - Comune di Nomi
- - Comune di Novaledo
- - Comune di Novella
- - Comune di Ospedaletto
- - Comune di Ossana
- - Comune di Palu Del Fersina
- - Comune di Panchia
- - Comune di Peio
- - Comune di Pellizzano
- - Comune di Pelugo
- - Comune di Pergine
- - Comune di Pieve Di Bono Prezzo
- - Comune di Pieve Tesino
- - Comune di Pinzolo
- - Comune di Pomarolo
- - Comune di Porte Di Rendena
- - Comune di Predaia
- - Comune di Predazzo
- - Comune di Primiero San Martino Di Castrozza
- - Comune di Rabbi
- - Comune di Riva Del Garda
- - Comune di Romeno
- - Comune di Roncegno Terme
- - Comune di Ronchi Valsugana
- - Comune di Ronzo Chienis
- - Comune di Ronzone
- - Comune di Rovere Della Luna
- - Comune di Ruffre Mendola
- - Comune di Rumo
- - Comune di Sagron Mis
- - Comune di Samone
- - Comune di San Giovanni Di Fassa Sen Jan
- - Comune di San Lorenzo Dorsino
- - Comune di San Michele Alladige
- - Comune di Santorsola Terme
- - Comune di Sanzeno
- - Comune di Sarnonico
- - Comune di Scurelle
- - Comune di Segonzano
- - Comune di Sella Giudicarie
- - Comune di Sfruz
- - Comune di Soraga Di Fassa
- - Comune di Sover
- - Comune di Spiazzo
- - Comune di Spormaggiore
- - Comune di Sporminore
- - Comune di Stenico
- - Comune di Storo
- - Comune di Strembo
- - Comune di Telve
- - Comune di Telve Di Sopra
- - Comune di Tenna
- - Comune di Tenno
- - Comune di Terragnolo
- - Comune di Terre Dadige
- - Comune di Terzolas
- - Comune di Tesero
- - Comune di Tione Di Trento
- - Comune di Ton
- - Comune di Torcegno
- - Comune di Trambileno
- - Comune di Tre Ville
- - Comune di Trento
- - Comune di Valdaone
- - Comune di Valfloriana
- - Comune di Vallarsa
- - Comune di Vallelaghi
- - Comune di Vermiglio
- - Comune di Vignola Falesina
- - Comune di Villa Lagarina
- - Comune di Ville Danaunia
- - Comune di Ville Di Fiemme
- - Comune di Volano
- - Comune di Ziano Di Fiemme
- - Comune di Maniago
- - Comune di Niscemi
- - Comune di Tavagnacco
- - Comune di Schio
- - Comune di Monopoli
- - Comune di Seriate
- - Comune di Bauladu
- - Comune di Bonarcado
- - Comune di Cuglieri
- - Comune di Milis
- - Comune di Santu Lussurgiu
- - Comune di Scano Di Montiferro
- - Comune di Narbolia
- - Comune di Sennariolo
- - Comune di Tramatza
- - Comune di Zeddiani
- - Comune di Brescello
- - Comune di Mesagne
- - Comune di Alba Adriatica
- - Comune di Roverbella
- - Comune di Sestu
- - Comune di Rovereto
- - Comune di Pasturo
- - Comune di Aci Santantonio
- - Comune di Montirone
- - Comune di Olginate
- - Comune di Bagnolo Mella
- - Comune di Trezzano Sul Naviglio
- - Comune di Gottolengo
- - Comune di Marcallo Con Casone
- - Comune di Pineto
- - Comune di Casargo
- - Comune di Nibionno
- - Comune di Cesana Brianza
- - Comune di Lodrino
- - Comune di Isorella
- - Comune di Sulzano
- - Comune di Canistro
- - Comune di Pezzaze
- - Comune di Dolzago
- - Comune di Colico
- - Comune di Lecco
- - Comune di Suello
- - Comune di Erve
- - Comune di Annone Di Brianza
- - Comune di Offlaga
- - Comune di Collebeato
- - Trentino Sviluppo
- - Regione Autonoma Trentino Alto Adige
- - Azienda provinciale servizi sanitari
- - Provincia autonoma di Trento
- - A.P.S.P. Beato De Tschiderer
+  - Comune di Ala
+  - Comune di Albiano
+  - Comune di Aldeno
+  - Comune di Altavalle
+  - Comune di Altopiano Della Vigolana
+  - Comune di Amblar Don
+  - Comune di Andalo
+  - Comune di Baselga Di Pine
+  - Comune di Bedollo
+  - Comune di Besenello
+  - Comune di Bieno
+  - Comune di Bleggio Superiore
+  - Comune di Bocenago
+  - Comune di Bondone
+  - Comune di Borgo Chiese
+  - Comune di Borgo Danaunia
+  - Comune di Borgo Lares
+  - Comune di Borgo Valsugana
+  - Comune di Brentonico
+  - Comune di Bresimo
+  - Comune di Caderzone Terme
+  - Comune di Calceranica Al Lago
+  - Comune di Caldes
+  - Comune di Caldonazzo
+  - Comune di Calliano
+  - Comune di Campitello Di Fassa
+  - Comune di Campodenno
+  - Comune di Canal San Bovo
+  - Comune di Canazei
+  - Comune di Capriana
+  - Comune di Carisolo
+  - Comune di Carzano
+  - Comune di Castel Condino
+  - Comune di Castel Ivano
+  - Comune di Castello Tesino
+  - Comune di Castello Molina Di Fiemme
+  - Comune di Castelnuovo
+  - Comune di Cavalese
+  - Comune di Cavareno
+  - Comune di Cavedago
+  - Comune di Cavedine
+  - Comune di Cavizzana
+  - Comune di Cembra Lisignago
+  - Comune di Cimone
+  - Comune di Cinte Tesino
+  - Comune di Cis
+  - Comune di Civezzano
+  - Comune di Cles
+  - Comune di Comano Terme
+  - Comune di Commezzadura
+  - Comune di Conta
+  - Comune di Croviana
+  - Comune di Dambel
+  - Comune di Denno
+  - Comune di Dimaro Folgarida
+  - Comune di Drena
+  - Comune di Dro
+  - Comune di Fai Della Paganella
+  - Comune di Fiave
+  - Comune di Fierozzo
+  - Comune di Folgaria
+  - Comune di Fornace
+  - Comune di Frassilongo
+  - Comune di Garniga Terme
+  - Comune di Giovo
+  - Comune di Giustino
+  - Comune di Grigno
+  - Comune di Imer
+  - Comune di Isera
+  - Comune di Lavarone
+  - Comune di Lavis
+  - Comune di Ledro
+  - Comune di Levico Terme
+  - Comune di Livo
+  - Comune di Lona Lases
+  - Comune di Luserna
+  - Comune di Madruzzo
+  - Comune di Male
+  - Comune di Massimeno
+  - Comune di Mazzin
+  - Comune di Mezzana
+  - Comune di Mezzano
+  - Comune di Mezzocorona
+  - Comune di Mezzolombardo
+  - Comune di Moena
+  - Comune di Molveno
+  - Comune di Mori
+  - Comune di Nago Torbole
+  - Comune di Nogaredo
+  - Comune di Nomi
+  - Comune di Novaledo
+  - Comune di Novella
+  - Comune di Ospedaletto
+  - Comune di Ossana
+  - Comune di Palu Del Fersina
+  - Comune di Panchia
+  - Comune di Peio
+  - Comune di Pellizzano
+  - Comune di Pelugo
+  - Comune di Pergine
+  - Comune di Pieve Di Bono Prezzo
+  - Comune di Pieve Tesino
+  - Comune di Pinzolo
+  - Comune di Pomarolo
+  - Comune di Porte Di Rendena
+  - Comune di Predaia
+  - Comune di Predazzo
+  - Comune di Primiero San Martino Di Castrozza
+  - Comune di Rabbi
+  - Comune di Riva Del Garda
+  - Comune di Romeno
+  - Comune di Roncegno Terme
+  - Comune di Ronchi Valsugana
+  - Comune di Ronzo Chienis
+  - Comune di Ronzone
+  - Comune di Rovere Della Luna
+  - Comune di Ruffre Mendola
+  - Comune di Rumo
+  - Comune di Sagron Mis
+  - Comune di Samone
+  - Comune di San Giovanni Di Fassa Sen Jan
+  - Comune di San Lorenzo Dorsino
+  - Comune di San Michele Alladige
+  - Comune di Santorsola Terme
+  - Comune di Sanzeno
+  - Comune di Sarnonico
+  - Comune di Scurelle
+  - Comune di Segonzano
+  - Comune di Sella Giudicarie
+  - Comune di Sfruz
+  - Comune di Soraga Di Fassa
+  - Comune di Sover
+  - Comune di Spiazzo
+  - Comune di Spormaggiore
+  - Comune di Sporminore
+  - Comune di Stenico
+  - Comune di Storo
+  - Comune di Strembo
+  - Comune di Telve
+  - Comune di Telve Di Sopra
+  - Comune di Tenna
+  - Comune di Tenno
+  - Comune di Terragnolo
+  - Comune di Terre Dadige
+  - Comune di Terzolas
+  - Comune di Tesero
+  - Comune di Tione Di Trento
+  - Comune di Ton
+  - Comune di Torcegno
+  - Comune di Trambileno
+  - Comune di Tre Ville
+  - Comune di Trento
+  - Comune di Valdaone
+  - Comune di Valfloriana
+  - Comune di Vallarsa
+  - Comune di Vallelaghi
+  - Comune di Vermiglio
+  - Comune di Vignola Falesina
+  - Comune di Villa Lagarina
+  - Comune di Ville Danaunia
+  - Comune di Ville Di Fiemme
+  - Comune di Volano
+  - Comune di Ziano Di Fiemme
+  - Comune di Maniago
+  - Comune di Niscemi
+  - Comune di Tavagnacco
+  - Comune di Schio
+  - Comune di Monopoli
+  - Comune di Seriate
+  - Comune di Bauladu
+  - Comune di Bonarcado
+  - Comune di Cuglieri
+  - Comune di Milis
+  - Comune di Santu Lussurgiu
+  - Comune di Scano Di Montiferro
+  - Comune di Narbolia
+  - Comune di Sennariolo
+  - Comune di Tramatza
+  - Comune di Zeddiani
+  - Comune di Brescello
+  - Comune di Mesagne
+  - Comune di Alba Adriatica
+  - Comune di Roverbella
+  - Comune di Sestu
+  - Comune di Rovereto
+  - Comune di Pasturo
+  - Comune di Aci Santantonio
+  - Comune di Montirone
+  - Comune di Olginate
+  - Comune di Bagnolo Mella
+  - Comune di Trezzano Sul Naviglio
+  - Comune di Gottolengo
+  - Comune di Marcallo Con Casone
+  - Comune di Pineto
+  - Comune di Casargo
+  - Comune di Nibionno
+  - Comune di Cesana Brianza
+  - Comune di Lodrino
+  - Comune di Isorella
+  - Comune di Sulzano
+  - Comune di Canistro
+  - Comune di Pezzaze
+  - Comune di Dolzago
+  - Comune di Colico
+  - Comune di Lecco
+  - Comune di Suello
+  - Comune di Erve
+  - Comune di Annone Di Brianza
+  - Comune di Offlaga
+  - Comune di Collebeato
+  - Trentino Sviluppo
+  - Regione Autonoma Trentino Alto Adige
+  - Azienda provinciale servizi sanitari
+  - Provincia autonoma di Trento
+  - A.P.S.P. Beato De Tschiderer
