@@ -120,7 +120,7 @@ class InfoPayment {
                     </div>
                     <div class="category-top">
                       <a class="category" href="javascript:void(0)">${Translator.trans('payment.created_at', {}, 'messages', InfoPayment.$language)}</a>
-                      <span class="data">${moment(data[i].created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
+                      <span class="data">${moment(moment.utc(data[i].created_at).toDate()).local(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                     </div>
                   </div>
                   <div class="top-icon mb-0">
@@ -187,7 +187,7 @@ class InfoPayment {
                           <li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${Translator.trans('payment.paid_at', {}, 'messages', InfoPayment.$language)}</em> ${moment(data[i].payment.paid_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
+                                <span class="text"><em>${Translator.trans('payment.paid_at', {}, 'messages', InfoPayment.$language)}</em> ${moment(moment.utc(data[i].paid_at).toDate()).local(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                               </div>
                             </a>
                           </li>
@@ -195,7 +195,7 @@ class InfoPayment {
           `<li>
                             <a href="javascript:void(0)" data-focus-mouse="true">
                               <div class="it-right-zone">
-                                <span class="text"><em>${Translator.trans('payment.event_created_at', {}, 'messages', InfoPayment.$language)}</em> ${moment(data[i].event_created_at).locale(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
+                                <span class="text"><em>${Translator.trans('payment.event_created_at', {}, 'messages', InfoPayment.$language)}</em> ${moment(moment.utc(data[i].event_created_at).toDate()).local(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                               </div>
                             </a>
                           </li>
