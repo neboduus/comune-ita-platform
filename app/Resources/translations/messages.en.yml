@@ -2751,7 +2751,7 @@ time:
   month: 'month'
   week: 'week'
   day: 'day'
-  hour: 'Now'
+  hour: 'hour'
   minute: 'minute'
   weeks: 'weeks'
   days: 'days'

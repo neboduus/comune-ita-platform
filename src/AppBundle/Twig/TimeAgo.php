@@ -48,13 +48,13 @@ class TimeAgo extends \Twig_Extension
     );
 
     $plurali = array(
-      'anno' => $this->translator->trans('time.years'),
-      'mese' => $this->translator->trans('time.months'),
-      'settimana' => $this->translator->trans('time.weeks'),
-      'giorno' => $this->translator->trans('time.days'),
-      'ora' => $this->translator->trans('time.hours'),
-      'minuto' => $this->translator->trans('time.minutes'),
-      'secondo' => $this->translator->trans('time.seconds'),
+      $this->translator->trans('time.year') => $this->translator->trans('time.years'),
+      $this->translator->trans('time.month') => $this->translator->trans('time.months'),
+      $this->translator->trans('time.week') => $this->translator->trans('time.weeks'),
+      $this->translator->trans('time.day') => $this->translator->trans('time.days'),
+      $this->translator->trans('time.hour') => $this->translator->trans('time.hours'),
+      $this->translator->trans('time.minute') => $this->translator->trans('time.minutes'),
+      $this->translator->trans('time.second') => $this->translator->trans('time.seconds'),
     );
 
     foreach ($units as $unit => $val) {
@@ -71,7 +71,6 @@ class TimeAgo extends \Twig_Extension
       }
       return $timeAgo;
     }
-
   }
 
 }
