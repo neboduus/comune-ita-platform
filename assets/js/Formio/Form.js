@@ -20,7 +20,7 @@ class Form {
     const $container = $('#' + containerId);
     const formUrl = $container.data('formserver_url') + '/form/' + $container.data('form_id');
 
-    $.getJSON(formUrl + '/i18n', function (data) {
+    $.getJSON(formUrl + '/i18n?lang=' + $container.data('locale'), function (data) {
 
       let customErrorContainer = $('#formio-custom-errors');
       // Nascondo input symfony, trovare modo di fare submit di formio da esterno
@@ -107,7 +107,7 @@ class Form {
     const $container = $('#' + containerId);
     const formUrl = $container.data('formserver_url') + '/form/' + $container.data('form_id');
 
-    $.getJSON(formUrl + '/i18n', function (data) {
+    $.getJSON(formUrl + '/i18n?lang=' + $container.data('locale'), function (data) {
 
       let customErrorContainer = $('#formio-custom-errors');
       // Nascondo input symfony, trovare modo di fare submit di formio da esterno
@@ -243,7 +243,7 @@ class Form {
   static initPrintable(containerId) {
     const $container = $('#' + containerId);
     const formUrl = $container.data('formserver_url') + '/printable/' + $container.data('form_id');
-    $.getJSON($container.data('formserver_url') + '/form/' + $container.data('form_id') + '/i18n', function (data) {
+    $.getJSON($container.data('formserver_url') + '/form/' + $container.data('form_id') + '/i18n?lang=' + $container.data('locale'), function (data) {
       Formio.icons = 'fontawesome';
       Formio.createForm(document.getElementById(containerId), formUrl, {
         noAlerts: true,
@@ -270,7 +270,7 @@ class Form {
   static initPreview(containerId) {
     const $container = $('#' + containerId);
     const formUrl = $container.data('formserver_url') + '/form/' + $container.data('form_id');
-    $.getJSON(formUrl + '/i18n', function (data) {
+    $.getJSON(formUrl + '/i18n?lang=' + $container.data('locale'), function (data) {
       Formio.icons = 'fontawesome';
       Formio.createForm(document.getElementById(containerId), formUrl, {
         noAlerts: true,
@@ -295,7 +295,7 @@ class Form {
     const $container = $('#' + containerId);
     const formUrl = $container.data('formserver_url') + '/form/' + $container.data('form_id');
     const printableFormUrl = $container.data('formserver_url') + '/printable/' + $container.data('form_id');
-    $.getJSON(formUrl + '/i18n', function (data) {
+    $.getJSON(formUrl + '/i18n?lang=' + $container.data('locale'), function (data) {
       Formio.icons = 'fontawesome';
       Formio.createForm(document.getElementById(containerId), printableFormUrl, {
         readOnly: true,
