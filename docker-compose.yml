@@ -232,7 +232,7 @@ services:
       start_period: 30s
 
   formserver:
-    image: registry.gitlab.com/opencontent/stanza-del-cittadino/form-server:1.1.0
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/form-server:1.2.2
     healthcheck:
       test: ["NONE"]
     networks:
