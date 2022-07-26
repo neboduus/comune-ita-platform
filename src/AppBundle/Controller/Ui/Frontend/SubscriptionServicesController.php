@@ -316,12 +316,11 @@ class SubscriptionServicesController extends Controller
     foreach ($subscriptionService->getSubscriptionPayments() as $paymentSetting) {
       try {
         $payments = $this->em->createQueryBuilder()
-          ->select('count(distinct(payment.subscription))')
+          ->select('count(distinct payment.subscription)')
           ->from(SubscriptionPayment::class, 'payment')
           ->join('payment.subscription', 'subscription')
           ->where('subscription.subscription_service = :subscriptionServiceId')
           ->andWhere('payment.name = :identifier')
-          ->groupBy('payment.subscription')
           ->setParameter('subscriptionServiceId', $subscriptionService->getId())
           ->setParameter('identifier', $paymentSetting->getPaymentIdentifier())
           ->getQuery()->getSingleScalarResult();

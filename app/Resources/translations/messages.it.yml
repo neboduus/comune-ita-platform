@@ -2560,7 +2560,8 @@ backoffice:
       identifier_payments: "Pagamenti %identifier%"
       payment:
         payments_made: "Pagamenti effettuati"
-        missing_payments: "Pagamenti mancanti"
+        solvent_subscriber: "Iscritti solventi"
+        missing_subscribers: "Iscritti mancanti"
         type: "Tipologia"
         type_subscription_fee: "quota di iscrizione"
         type_additional_fee: "quota aggiuntiva per tutti gli iscritti"
