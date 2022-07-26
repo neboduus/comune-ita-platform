@@ -1,4 +1,4 @@
-import {getStatus, deleteDraftModal, getCookie} from "./fullcalendar-common";
+import {getStatus, deleteDraftModal, getCookie, setCookie} from "./fullcalendar-common";
 import { Calendar, locales } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -116,18 +116,21 @@ $(document).ready(function () {
       }
     },
     eventClick: function (info) {
+      setCookie("view_type",info.view.type)
       if (info.event.extendedProps.status === 6) {
         deleteDraftModal(info)
       } else if (info.event.id) compileModal(info);
       else if (info.event.title === 'Apertura') newModal(info)
     },
     dateClick: function(info) {
-      if (info.view.type === 'dayGridMonth')
+      setCookie("date_view",info.dateStr)
+      if (info.view.type === 'dayGridMonth'){
         this.changeView("timeGridDay", info.dateStr)
+        setCookie("view_type",info.view.type)
+      }
     },
     datesRender: function (info) {
-      document.cookie = "view_type="+info.view.type;
-      document.cookie = "date_view="+info.view.activeStart;
+      date_cookie ? setCookie("date_view",new Date(date_cookie)): setCookie("date_view",new Date());
     }
   });
 
@@ -180,6 +183,10 @@ function compileModal(info) {
 
   let date = new Date(info.event.start).toISOString().slice(0, 10);
   let start = new Date(info.event.start).toISOString().slice(11, 16);
+
+  //Set cookie
+  setCookie("date_view",new Date(info.event.start))
+  setCookie("view_type",info.view.type)
 
   // Populate modal
   $('#modalId').html(info.event.id);
@@ -251,6 +258,10 @@ function newModal(info) {
   let date = new Date(info.event.start).toISOString().slice(0, 10);
   let start = new Date(info.event.start).toISOString().slice(11, 16);
 
+  //Set cookie
+  setCookie("date_view",new Date(info.event.start))
+  setCookie("view_type",info.view.type)
+
   $('#modalNewDate').val(date);
   $('#modalNewStatus').html(1);
 
@@ -292,6 +303,8 @@ function getSlots(date, start, opening_hour, exclude_id, callback) {
   if (exclude_id){
     url = url + '&exclude=' + exclude_id;
   }
+
+  setCookie("date_view",new Date(date))
 
   $.ajax({
     headers: {
@@ -336,6 +349,8 @@ $('.modal-edit').on('click', function editMeeting(e) {
   if (!start || !end) {
     return $('#modalError').html(`<li><span class="badge badge-danger mr-2">${Translator.trans('status_error', {}, 'messages',language)}</span>${Translator.trans('meetings.error.slot_hours_invalid', {}, 'messages',language)}</li>`);
   }
+
+  setCookie("date_view",new Date(date))
 
   let data = {
     status: status,
@@ -406,6 +421,8 @@ $('.modal-create').on('click', function () {
   if (!start || !end) {
     return $('#modalNewError').html(`<li><span class="badge badge-danger mr-2">${Translator.trans('status_error', {}, 'messages',language)}</span>${Translator.trans('meetings.error.slot_hours_invalid', {}, 'messages',language)}</li>`);
   }
+
+  setCookie("date_view",new Date(date))
 
   let data = {
     status: 1,
