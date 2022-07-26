@@ -2463,7 +2463,8 @@ backoffice:
         meta_available_placeholders: 'The following placeholders are available: %fiscal_code%, %name%, %surname%, %amount%, %payment_reason%, %payment_identifier%, %code%'
         execution_date: "Execution date"
         payments_made: "Payments made"
-        missing_payments: "Missing payments"
+        solvent_subscriber: "Solvent subscriber"
+        missing_subscribers: "Missing subscriber"
         type: "Type"
         type_subscription_fee: "subscription fee"
         type_additional_fee: "additional fee for all members"
