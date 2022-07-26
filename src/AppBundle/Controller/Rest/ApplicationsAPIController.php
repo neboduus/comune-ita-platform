@@ -1296,10 +1296,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Application isn't in correct state"], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    if ($application->getType() !== Pratica::TYPE_FORMIO) {
-      return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
-    }
-
     // Todo: Passare alle transition prima possibile
     if ($application->getStatus() == Pratica::STATUS_REQUEST_INTEGRATION) {
       $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationRequestAction', [
@@ -1497,10 +1493,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
         return $this->view(["Application does not need to be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
-      if ($application->getType() !== Pratica::TYPE_FORMIO) {
-        return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
-      }
-
       $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
         ->add(
           'protocol_folder_number',
@@ -1634,10 +1626,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       if (!$application->getServizio()->isProtocolRequired()) {
         return $this->view(["Application does not need to be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
-      }
-
-      if ($application->getType() !== Pratica::TYPE_FORMIO) {
-        return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
       $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
@@ -2263,10 +2251,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
         return $this->view(["Application does not need to be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
-      if ($application->getType() !== Pratica::TYPE_FORMIO) {
-        return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
-      }
-
       $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
         ->add(
           'integration_outbound_protocol_number',
@@ -2382,10 +2366,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       if (!$application->getServizio()->isProtocolRequired()) {
         return $this->view(["Application does not need to be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
-      }
-
-      if ($application->getType() !== Pratica::TYPE_FORMIO) {
-        return $this->view(["Application can not be protocolled"], Response::HTTP_UNPROCESSABLE_ENTITY);
       }
 
       $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
