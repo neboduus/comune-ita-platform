@@ -1,10 +1,10 @@
 {% if row.status == '1' and row.retry >= 10 %}
-  <span class="badge badge-danger">Fallita</span>
+  <span class="badge badge-danger">{{ 'pratica.failed' | trans }}</span>
 {% elseif row.status == '1' %}
-  <span class="badge badge-warning">In attesa</span>
+  <span class="badge badge-warning">{{ 'STATUS_WAITING' | trans }}</span>
 {% elseif row.status == '3' %}
-  <span class="badge badge-success">Completata</span>
+  <span class="badge badge-success">{{ 'STATUS_DONE' | trans }}</span>
 {% else %}
-  <span class="badge badge-danger">Non valido</span>
+  <span class="badge badge-danger">{{ 'STATUS_INVALID' | trans }}</span>
 {% endif %}
 

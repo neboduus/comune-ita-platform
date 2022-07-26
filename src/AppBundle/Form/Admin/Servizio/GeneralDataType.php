@@ -1,57 +1,51 @@
 <?php
-
-
 namespace AppBundle\Form\Admin\Servizio;
-
 
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\I18n\AbstractI18nType;
 use AppBundle\Form\I18n\I18nTextareaType;
 use AppBundle\Form\I18n\I18nTextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GeneralDataType extends AbstractI18nType
 {
+
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
 
     $statuses = [
-      'Bozza' => Servizio::STATUS_CANCELLED,
-      'Pubblicato' => Servizio::STATUS_AVAILABLE,
-      'Non attivo' => Servizio::STATUS_SUSPENDED,
-      'Privato' => Servizio::STATUS_PRIVATE,
-      'Programmato' => Servizio::STATUS_SCHEDULED,
+      'servizio.statutes.bozza' => Servizio::STATUS_CANCELLED,
+      'servizio.statutes.pubblicato' => Servizio::STATUS_AVAILABLE,
+      'iscrizioni.status_2' => Servizio::STATUS_SUSPENDED,
+      'servizio.statutes.privato' => Servizio::STATUS_PRIVATE,
+      'servizio.statutes.schedulato' => Servizio::STATUS_SCHEDULED
     ];
 
     $accessLevels = [
-      'Anonimo' => Servizio::ACCESS_LEVEL_ANONYMOUS,
-      'Social' => Servizio::ACCESS_LEVEL_SOCIAL,
-      'Spid livello 1' => Servizio::ACCESS_LEVEL_SPID_L1,
-      'Spid livello 2' => Servizio::ACCESS_LEVEL_SPID_L2,
-      'Cie' => Servizio::ACCESS_LEVEL_CIE,
+      'general.anonymous' => Servizio::ACCESS_LEVEL_ANONYMOUS,
+      'general.social' => Servizio::ACCESS_LEVEL_SOCIAL,
+      'general.level_spid_1' => Servizio::ACCESS_LEVEL_SPID_L1,
+      'general.level_spid_2' => Servizio::ACCESS_LEVEL_SPID_L2,
+      'general.cie' => Servizio::ACCESS_LEVEL_CIE,
     ];
 
     $legacyAccessLevels = [
-      'Social' => Servizio::ACCESS_LEVEL_SOCIAL,
-      'Spid livello 1' => Servizio::ACCESS_LEVEL_SPID_L1,
-      'Spid livello 2' => Servizio::ACCESS_LEVEL_SPID_L2,
-      'Cie' => Servizio::ACCESS_LEVEL_CIE,
+      'general.social' => Servizio::ACCESS_LEVEL_SOCIAL,
+      'general.level_spid_1' => Servizio::ACCESS_LEVEL_SPID_L1,
+      'general.level_spid_2' => Servizio::ACCESS_LEVEL_SPID_L2,
+      'general.cie' => Servizio::ACCESS_LEVEL_CIE,
     ];
 
     $workflows = [
-      'Approvazione' => Servizio::WORKFLOW_APPROVAL,
-      'Inoltro' => Servizio::WORKFLOW_FORWARD,
+      'general.approval' => Servizio::WORKFLOW_APPROVAL,
+      'general.forwarding' => Servizio::WORKFLOW_FORWARD,
     ];
 
     /** @var Servizio $servizio */
@@ -101,12 +95,12 @@ class GeneralDataType extends AbstractI18nType
           'required' => false,
           'empty_data' => null,
           'placeholder' => [
-            'year' => 'Anno',
-            'month' => 'Mese',
-            'day' => 'Giorno',
-            'hour' => 'Ora',
-            'minute' => 'Minuto',
-            'second' => 'Secondo',
+            'year' => 'time.year',
+            'month' => 'time.month',
+            'day' => 'time.day',
+            'hour' => 'time.hour',
+            'minute' => 'time.minute',
+            'second' => 'time.second',
           ],
           'label_attr' => ['class' => 'label-datetime-field'],
         ]
@@ -119,12 +113,12 @@ class GeneralDataType extends AbstractI18nType
           'required' => false,
           'empty_data' => null,
           'placeholder' => [
-            'year' => 'Anno',
-            'month' => 'Mese',
-            'day' => 'Giorno',
-            'hour' => 'Ora',
-            'minute' => 'Minuto',
-            'second' => 'Secondo',
+            'year' => 'time.year',
+            'month' => 'time.month',
+            'day' => 'time.day',
+            'hour' => 'time.hour',
+            'minute' => 'time.minute',
+            'second' => 'time.second',
           ],
           'label_attr' => ['class' => 'label-datetime-field'],
         ]
@@ -204,7 +198,7 @@ class GeneralDataType extends AbstractI18nType
         ]
       )
       ->add(
-        'max_response_time', 
+        'max_response_time',
         IntegerType::class,
         [
           'label' => 'servizio.max_response_time',

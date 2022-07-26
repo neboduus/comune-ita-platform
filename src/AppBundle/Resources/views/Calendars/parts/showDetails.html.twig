@@ -9,14 +9,14 @@
                 <svg class="icon icon-sm">
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
                 </svg>
-                <span class="category">Orario di apertura</span>
+                <span class="category">{{ 'calendars.opening_hours.begin_hour' | trans }}</span>
               </div>
               <div class="card-text">
                 <p>
-                  Dal {{ openingHour.startDate | date('d/m/Y') }}
-                  al {{ openingHour.endDate | date('d/m/Y') }}
+                  {{ 'from_date' | trans}} {{ openingHour.startDate | date('d/m/Y') }}
+                  {{ 'from_to' | trans}} {{ openingHour.endDate | date('d/m/Y') }}
                 </p>
-                <p>Ogni {% for weekDay in openingHour.daysOfWeek %}
+                <p>{{ 'every' | trans}} {% for weekDay in openingHour.daysOfWeek %}
                     {# Punctuation and separators#}
                     {% if loop.last and not loop.first %} e
                     {% elseif not loop.first and not loop.last %},
@@ -26,16 +26,16 @@
                   {% endfor %}
                 </p>
                 <p>
-                  Dalle ore {{ openingHour.beginHour | date('H:i') }} alle
-                  ore {{ openingHour.endHour | date('H:i') }}
+                  {{ 'from' | trans}} {{ 'time.hours' | trans}} {{ openingHour.beginHour | date('H:i') }} {{ 'calendar_formio.to' | trans}}
+                  {{ 'time.hours' | trans}} {{ openingHour.endHour | date('H:i') }}
                 </p>
                 <br>
-                <p>Ogni incontro ha una durata di {{ openingHour.meetingMinutes }} minuti</p>
+                <p>{{ 'meetings.every_meetings' | trans}} {{ openingHour.meetingMinutes }} {{ 'time.minutes' | trans }}</p>
                 {% if openingHour.meetingQueue == 1 %}
-                  <p>E' inoltre possibile ricevere una persona alla volta</p>
+                  <p>{{ 'meetings.one_person' | trans }}</p>
                 {% else %}
-                  <p>E' inoltre possibile ricevere fino ad un massimo di {{ openingHour.meetingQueue }}
-                    persone contemporaneamente</p>
+                  <p>{{ 'meetings.one_person_max' | trans}} {{ openingHour.meetingQueue }}
+                    {{ 'meetings.people_same_time' | trans }}</p>
                 {% endif %}
               </div>
             </div>
@@ -48,17 +48,17 @@
         </svg>
         <div class="card-body">
           <h5 class="card-title">
-            Luogo di incontro
+            {{ 'meetings.meeting_place' | trans }}
           </h5>
           <div class="card-text">
             <p>{{ calendar.location | raw }}</p>
-            <p>Contatto: <a href="mailto:asili@comune.it">{{ calendar.contactEmail }}</a></p>
+            <p>{{ 'meetings.contact' | trans }}: <a href="mailto:asili@comune.it">{{ calendar.contactEmail }}</a></p>
           </div>
         </div>
       </div>
       <div class="callout">
-        <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg><span class="sr-only">Confermato</span> Informazioni annullamento</div>
-        <p>Sarà possibile annullare l'appuntamento entro minimo {{ calendar.allowCancelDays }} giorni dalla data dell'appuntamento</p>
+        <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg><span class="sr-only">{{ 'status_approved' | trans }}</span> {{ 'cancel_info' | trans }}</div>
+        <p>{{ 'meetings.min_cancel' | trans}} {{ calendar.allowCancelDays }} {{ 'meetings.days_to_date' | trans }}</p>
       </div>
     </div>
   </div>

@@ -17,6 +17,7 @@ require('@fullcalendar/timegrid/main.min.css');
 require('@fullcalendar/list/main.min.css');
 require('@fullcalendar/bootstrap/main.min.css');
 
+const language = document.documentElement.lang.toString();
 $(document).ready(function () {
   // Hide all buttons
   $("#edit_alert").hide();
@@ -64,11 +65,12 @@ $(document).ready(function () {
   });
 
   // Fullcalendar initialization
+  const language = document.documentElement.lang.toString();
   var calendarEl = document.getElementById('fullcalendar');
   var calendar = new Calendar(calendarEl, {
     plugins: [dayGridPlugin, timeGridPlugin, listPligin, interactionPlugin, bootstrapPlugin],
     themeSystem: 'bootstrap',
-    locale: 'it',
+    locale: language,
     locales: allLocales,
     timeZone: 'Europe/Rome',
     nowIndicator: true,
@@ -152,7 +154,7 @@ $(document).ready(function () {
 
 
 /**
- * Calculates minumin slot duration
+ * Calculates minimum slot duration
  */
 function calculateSlot() {
   let minDuration = $('#hidden').attr('data-duration');
@@ -183,7 +185,7 @@ function compileModal(info) {
   $('#modalId').html(info.event.id);
   $('#modalOpeningHour').val(info.event.extendedProps.opening_hour)
   $('#modalDate').val(date);
-  $('#modalTitle').html(`[${getStatus(info.event.extendedProps.status).toUpperCase()}] ${info.event.extendedProps.name || 'Nome non fornito'}`);
+  $('#modalTitle').html(`[${getStatus(info.event.extendedProps.status)}] ${info.event.extendedProps.name || Translator.trans('meetings.modal.no_name', {}, 'messages',language)}`);
   $('#modalDescription').val(info.event.extendedProps.description);
   $('#modalMotivationOutcome').val(info.event.extendedProps.motivation_outcome);
   $('#modalVideoconferenceLink').val(info.event.extendedProps.videoconferenceLink);
@@ -192,10 +194,10 @@ function compileModal(info) {
   $('#modalStatus').html(info.event.extendedProps.status);
 
   if (info.event.extendedProps.rescheduled === 1) {
-    $('#modalRescheduleText').html(`Quest'appuntamento è stato spostato 1 volta`);
+    $('#modalRescheduleText').html(`${Translator.trans('meetings.error.one_moved', {}, 'messages',language)}`);
     $("#modalReschedule").show();
   } else if (info.event.extendedProps.rescheduled !== 0) {
-    $('#modalRescheduleText').html(`Quest'appuntamento è stato spostato ${info.event.extendedProps.rescheduled} volte`);
+    $('#modalRescheduleText').html(`${Translator.trans('meetings.error.moved', {}, 'messages',language)} ${info.event.extendedProps.rescheduled} ${Translator.trans('meetings.error.times', {}, 'messages',language)}`);
     $("#modalReschedule").show();
   }
   switch ($('#modalStatus').html()) {
@@ -312,7 +314,7 @@ function getSlots(date, start, opening_hour, exclude_id, callback) {
       callback(slot);
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      $('#modalError').html('Impossibile recuperare le disponibilità per la data selezionata');
+      $('#modalError').html(`${Translator.trans('meetings.error.unable_availabilities', {}, 'messages',language)}`);
     }
   });
 }
@@ -332,7 +334,7 @@ $('.modal-edit').on('click', function editMeeting(e) {
   let id = $('#modalId').html();
 
   if (!start || !end) {
-    return $('#modalError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
+    return $('#modalError').html(`<li><span class="badge badge-danger mr-2">${Translator.trans('status_error', {}, 'messages',language)}</span>${Translator.trans('meetings.error.slot_hours_invalid', {}, 'messages',language)}</li>`);
   }
 
   let data = {
@@ -362,8 +364,8 @@ $('.modal-edit').on('click', function editMeeting(e) {
       location.reload();
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : "Si è verificato un errore durante il salvataggio dell'appuntamento";
-      let errorMessage = `<span class="badge badge-danger mr-2">Errore</span>${error}`
+      let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : `${Translator.trans('meetings.error.save_slot', {}, 'messages',language)}`;
+      let errorMessage = `<span class="badge badge-danger mr-2">${Translator.trans('status_error', {}, 'messages',language)}</span>${error}`
       $('#modalError').html(errorMessage);
     },
   });
@@ -387,8 +389,8 @@ $('.modal-delete').on('click', function () {
       location.reload();
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : "Si è verificato un errore durante il salvataggio dell'appuntamento";
-      let errorMessage = `<span class="badge badge-danger mr-2">Errore</span>${error}`
+      let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : `${Translator.trans('meetings.error.save_slot', {}, 'messages',language)}`;
+      let errorMessage = `<span class="badge badge-danger mr-2">${Translator.trans('status_error', {}, 'messages',language)}</span>${error}`
       $('#modalDraftError').html(errorMessage);
     },
   });
@@ -402,7 +404,7 @@ $('.modal-create').on('click', function () {
   let end = slot[1];
 
   if (!start || !end) {
-    return $('#modalNewError').html('<li><span class="badge badge-danger mr-2">Errore</span>Seleziona un orario valido</li>');
+    return $('#modalNewError').html(`<li><span class="badge badge-danger mr-2">${Translator.trans('status_error', {}, 'messages',language)}</span>${Translator.trans('meetings.error.slot_hours_invalid', {}, 'messages',language)}</li>`);
   }
 
   let data = {
@@ -435,8 +437,8 @@ $('.modal-create').on('click', function () {
       location.reload();
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : "Si è verificato un errore durante il salvataggio dell'appuntamento";
-      let errorMessage = `<span class="badge badge-danger mr-2">Errore</span>${error}`
+      let error = jqXHR.responseJSON.description ? jqXHR.responseJSON.description : `${Translator.trans('meetings.error.save_slot', {}, 'messages',language)}`;
+      let errorMessage = `<span class="badge badge-danger mr-2">${Translator.trans('status_error', {}, 'messages',language)}</span>${error}`
       $('#modalNewError').html(errorMessage);
     },
   });

@@ -14,12 +14,8 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\VarDumper\VarDumper;
 
 class MyPay extends AbstractPaymentData implements EventSubscriberInterface
 {
@@ -103,13 +99,14 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
     return 'mypay';
   }
 
-  public static function getPaymentParameters()
+  public static function getPaymentParameters(): array
   {
+
     return [
-      'codIpaEnte'                => 'Codice Ipa ente',
-      'password'                  => 'Password ente',
-      'datiSpecificiRiscossione'  => 'Dati specifici per la riscossione',
-      'identificativoTipoDovuto'  => 'Identificativo tipo dovuto'
+      'codIpaEnte'=> 'gateway.mypay.ipa_code',
+      'password'=> 'gateway.mypay.password',
+      'datiSpecificiRiscossione'=> 'gateway.mypay.data',
+      'identificativoTipoDovuto'=> 'gateway.mypay.id_type'
     ];
   }
 

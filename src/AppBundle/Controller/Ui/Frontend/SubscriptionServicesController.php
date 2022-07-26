@@ -77,9 +77,9 @@ class SubscriptionServicesController extends Controller
     /** @var User $user */
     $user = $this->getUser();
     $statuses = [
-      SubscriptionService::STATUS_WAITING => 'Pending',
-      SubscriptionService::STATUS_ACTIVE => 'Attivo',
-      SubscriptionService::STATUS_UNACTIVE => 'Inattivo'
+      SubscriptionService::STATUS_WAITING => $this->translator->trans('meetings.status.draft'),
+      SubscriptionService::STATUS_ACTIVE => $this->translator->trans('webhook.active'),
+      SubscriptionService::STATUS_UNACTIVE => $this->translator->trans('webhook.not_Active')
     ];
     $items = $this->em->getRepository('AppBundle:SubscriptionService')->findAll();
 
@@ -108,8 +108,8 @@ class SubscriptionServicesController extends Controller
         'searchable' => false,
         'template' => '@App/SubscriptionServices/table/_payments.html.twig',
       ])
-      ->add('beginDate', DateTimeColumn::class, ['label' => 'Data di inizio', 'format' => 'd/m/Y', 'searchable' => false])
-      ->add('endDate', DateTimeColumn::class, ['label' => 'Data di fine', 'format' => 'd/m/Y', 'searchable' => false])
+      ->add('beginDate', DateTimeColumn::class, ['label' => 'iscrizioni.data_inizio', 'format' => 'd/m/Y', 'searchable' => false])
+      ->add('endDate', DateTimeColumn::class, ['label' => 'iscrizioni.data_fine', 'format' => 'd/m/Y', 'searchable' => false])
       ->add('id', TwigColumn::class, [
         'className' => 'text-truncate',
         'label' => 'iscrizioni.subscribers.actions',

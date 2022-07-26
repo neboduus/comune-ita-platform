@@ -37,7 +37,7 @@
                   </td>
                   <td>
                     <a href="{{ path('admin_service_remove_group', {'id': service.id}) }}"
-                       onclick="return confirm('Sei sicuro di procedere? Il servizio verrà rimosso dal gruppo di servizi');">
+                       onclick="return confirm('{{ 'operatori.delete_services' | trans }}');">
                       <svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
                     </a>
                   </td>
@@ -50,7 +50,7 @@
           {% endif %}
         </div>
 
-        <input class="btn btn-primary mr-1" type="submit" value="Salva" style="float: left"/>
+        <input class="btn btn-primary mr-1" type="submit" value="{{ 'salva' | trans }}" style="float: left"/>
         <a class="btn btn-100 mr-1" href="{{ path('admin_service_group_index') }}" style="float: left">{{ 'gruppo_di_servizi.torna_alla_lista' | trans() }}</a>
         {{ form_end(form) }}
       </div>

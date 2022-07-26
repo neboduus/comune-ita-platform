@@ -310,7 +310,7 @@ $(document).ready(function () {
 
     Formio.icons = "fontawesome";
     Formio.builder(document.getElementById("builder"), $('#formio').data('formserver_url') + "/form/" + $("#formio_builder_render_form_id").val(), {
-      language: 'it',
+      language: $language,
       i18n: FormioI18n.languages(),
       builder: {
         basic: false,
@@ -444,9 +444,9 @@ $(document).ready(function () {
     const paymentTypeHelp = function (type) {
       $("#payment-type-help").remove();
       if (type == 1) {
-        paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento immediato viene richiesto dopo aver confermato la volontà di inviare una pratica, se non effettuato la pratica resta in stato "da pagare", è visibile agli operatori ma non può essere presa in carico.</small>');
+        paymentRequiredField.closest('.form-group').append(`<small id="payment-type-help" class="d-block m-2 text-muted">${Translator.trans('pratica.payment.immediate_payment_description', {}, 'messages', $language)}</small>`);
       } else if (type == 2) {
-        paymentRequiredField.closest('.form-group').append('<small id="payment-type-help" class="d-block m-2 text-muted">Il pagamento posticipato viene richiesto dopo aver inviato la pratica, gli operatori potranno approvare la pratica impostando un importo da pagare. Solo dopo l\'approvazione sarà richiesto il pagamento.</small>');
+        paymentRequiredField.closest('.form-group').append(`<small id="payment-type-help" class="d-block m-2 text-muted">${Translator.trans('pratica.payment.delayed_payment_description', {}, 'messages', $language)}</small>`);
       }
     };
 
@@ -483,7 +483,7 @@ $(document).ready(function () {
         success: function (result) {
           Formio.createForm(document.getElementById('payment_data_' + gatewayIdentifier), result.schema, {
             noAlerts: true,
-            language: 'it',
+            language: $language,
             i18n: FormioI18n.languages(),
             buttonSettings: {showCancel: false},
           })
@@ -501,8 +501,8 @@ $(document).ready(function () {
                     'Content-Type': 'application/json'
                   }
                 })
-                  .then(function (reponse) {
-                    if (reponse.data.errors) {
+                  .then(function (response) {
+                    if (response.data.errors) {
                       console.log(response)
                     } else {
                       form.emit('submitDone', submission)
@@ -597,11 +597,11 @@ $(document).ready(function () {
           "fiscal_code": $('#form_io_send_test_fiscal_code').val()
         },
         success: function (data) {
-          $("#error_messages").append("<p class='text-success'><i class='fa fa-check-circle mr-2'></i>La notifica è stata inviata con successo (identificativo " + data.id + ")</p>");
+          $("#error_messages").append(`<p class='text-success'><i class='fa fa-check-circle mr-2'></i>${Translator.trans('app_io.notify.success_send', {}, 'messages', $language)} ${data.id} </p>`);
         },
         error: function (data) {
           $("#error_messages").append(
-            "<p class='text-danger'><i class='fa fa-exclamation-circle mr-2'></i>la notifica NON è stata inviata a causa dell'errore:<ul class='list-unstyled text-danger'><li>" + data.responseJSON.error + "</li></ul></p>"
+            `<p class='text-danger'><i class='fa fa-exclamation-circle mr-2'></i>${Translator.trans('app_io.notify.no_send', {}, 'messages', $language)}<ul class='list-unstyled text-danger'><li>${data.responseJSON.error}</li></ul></p>`
           );
         }
       });
@@ -663,8 +663,7 @@ $(document).ready(function () {
     if($(this).val().length > 50) {
       $(this).addClass('is-invalid warning')
       if ($('#warning-text-length').length === 0) {
-        $('<small class="form-text text-muted" id="warning-text-length"> Attenzione, i titoli troppo lunghi rendono più difficile la navigazione.\n' +
-          'Si raccomanda l\'uso di titoli semplici, senza riferimenti normativi, e l\'utilizzo del campo <b>"Maggiori informazioni"</b> presente nella scheda del servizio.</small>').insertAfter($(this));
+        $(`${Translator.trans('pratica.warning_long_text', {}, 'messages', $language)}`).insertAfter($(this));
       }
     }else{
       if($('#warning-text-length').length){

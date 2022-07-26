@@ -4,11 +4,9 @@ namespace AppBundle\DataTable;
 
 
 use AppBundle\Entity\OperatoreUser;
-use AppBundle\Entity\ScheduledAction;
 use AppBundle\Entity\Servizio;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\MapColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigColumn;
@@ -47,7 +45,7 @@ class ServiceTableType implements DataTableTypeInterface
         'template' => '@App/Admin/table/services/_topics.html.twig',
       ])
       ->add('status', MapColumn::class, [
-        'label' => 'Stato',
+        'label' => 'general.stato',
         'orderable' => false,
         'searchable' => false,
         'map' => [

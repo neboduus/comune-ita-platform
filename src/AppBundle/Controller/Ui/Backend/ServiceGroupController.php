@@ -65,7 +65,7 @@ class ServiceGroupController extends Controller
       $em->persist($serviceGroup);
       $em->flush();
 
-      $this->addFlash('feedback', 'Gruppo di servizi creato con successo');
+      $this->addFlash('feedback', $this->translator->trans('backoffice.integration.subscriptions.create_service_group_success'));
       return $this->redirectToRoute('admin_service_group_index');
     }
 
@@ -110,11 +110,10 @@ class ServiceGroupController extends Controller
       $em = $this->getDoctrine()->getManager();
       $em->remove($serviceGroup);
       $em->flush();
-      $this->addFlash('feedback', 'Gruppo di servizi eliminato correttamente');
+      $this->addFlash('feedback', $this->translator->trans('backoffice.integration.subscriptions.delete_service_group_success'));
       return $this->redirectToRoute('admin_service_group_index');
-
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', 'Impossibile eliminare il gruppo, ci sono dei servizi collegati.');
+      $this->addFlash('warning', $this->translator->trans('backoffice.integration.subscriptions.delete_service_group_error'));
       return $this->redirectToRoute('admin_service_group_index');
     }
   }

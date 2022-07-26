@@ -374,7 +374,7 @@ class SubscriptionsController extends Controller
     $errors = [];
     $subscriptions = [];
 
-    // If subscriptions limits exceedes available space skip import
+    // If subscriptions limits exceeds available space skip import
     if ($subscriptionService->getSubscribersLimit() && $subscriptionService->getSubscribersLimit() - $subscriptionService->getSubscriptions()->count() < count($rows)) {
       $this->logger->error("Subscribers limit reached for subscription service " . $subscriptionService->getCode());
       return new JsonResponse(
@@ -430,11 +430,11 @@ class SubscriptionsController extends Controller
       $em->remove($subscription);
       $em->flush();
 
-      $this->addFlash('feedback', 'Sottoscrizione eliminata correttamente');
+      $this->addFlash('feedback', $this->translator->trans('operatori.delete_subscription_service_success'));
 
       return $this->redirectToRoute('operatori_subscriptions', ['subscriptionService' => $subscription->getSubscriptionService()->getId()]);
     } catch (\Exception $exception) {
-      $this->addFlash('warning', 'Impossibile eliminare la sottoscrizione.');
+      $this->addFlash('warning', $this->translator->trans('operatori.delete_subscription_service_error'));
       return $this->redirectToRoute('operatori_subscriptions', ['subscriptionService' => $subscription->getSubscriptionService()->getId()]);
     }
   }

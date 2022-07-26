@@ -47,7 +47,7 @@ class OpeningHourType extends AbstractType
     $builder
       ->add('name', TextType::class, [
         'required' => true,
-        'label' => 'Nome'
+        'label' => 'general.nome'
       ])
       ->add('start_date', DateType::class, [
         'widget' => 'single_text',

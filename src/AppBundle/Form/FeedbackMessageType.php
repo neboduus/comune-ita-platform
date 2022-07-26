@@ -3,10 +3,8 @@
 namespace AppBundle\Form;
 
 use AppBundle\Model\FeedbackMessage;
-use SebastianBergmann\CodeCoverage\Report\Text;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,13 +18,13 @@ class FeedbackMessageType extends AbstractType
 
     $builder
       ->add('name', TextType::class, [
-        'label' => 'Stato della richiesta',
+        'label' => 'messages.status_request',
         'label_attr' => ['class' => 'placeholders'],
         'attr' => ['readonly' => 'readonly'],
         'required' => false
       ])
       ->add('isActive', CheckboxType::class, [
-        'label' => "Abilitare l'invio del messaggio?",
+        'label' => "messages.enable_sending_message",
         'required' => false
       ])
       ->add('trigger', HiddenType::class)

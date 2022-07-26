@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\Admin;
 
-use AppBundle\Entity\Pratica;
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Admin\Servizio\FeedbackMessagesDataType;
 use AppBundle\Form\Admin\Servizio\FormIOBuilderRenderType;
@@ -12,11 +11,6 @@ use AppBundle\Form\Admin\Servizio\IntegrationsDataType;
 use AppBundle\Form\Admin\Servizio\IOIntegrationDataType;
 use AppBundle\Form\Admin\Servizio\PaymentDataType;
 use AppBundle\Form\Admin\Servizio\ProtocolDataType;
-use AppBundle\Form\Base\SelezionaEnteType;
-use AppBundle\Form\Base\SpecificaDelegaType;
-use AppBundle\Form\IOServiceParametersType;
-use AppBundle\Form\Operatore\Base\ApprovaORigettaType;
-use AppBundle\Form\Operatore\Base\UploadAllegatoOperatoreType;
 use AppBundle\Logging\LogConstants;
 use Craue\FormFlowBundle\Form\FormFlow;
 use Craue\FormFlowBundle\Form\FormFlowInterface;
@@ -63,7 +57,7 @@ class ServiceFlow extends FormFlow
   protected function loadStepsConfig()
   {
     $steps[self::STEP_IO] = array(
-      'label' => 'App IO',
+      'label' => $this->translator->trans('app_io.title'),
       'form_type' => IOIntegrationDataType::class,
       'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
         /** @var Servizio $service */
@@ -75,7 +69,7 @@ class ServiceFlow extends FormFlow
     // Mostro lo step per la configurazione di formio solo se necessario
     if ($this->getFormData()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
       $steps[self::STEP_FORM_TEMPLATE] = array(
-        'label' => 'Template del form',
+        'label' => $this->translator->trans('general.form_template'),
         'form_type' => FormIOTemplateType::class,
         'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
           /** @var Servizio $service */
@@ -86,7 +80,7 @@ class ServiceFlow extends FormFlow
     }
 
     $steps[self::STEP_GENERAL_DATA] = array(
-      'label' => 'Dati generali',
+      'label' => $this->translator->trans('operatori.dati_generali'),
       'form_type' => GeneralDataType::class
     );
 
@@ -94,18 +88,18 @@ class ServiceFlow extends FormFlow
     if ($this->getFormData()->getPraticaFCQN() == '\AppBundle\Entity\FormIO') {
 
       $steps[self::STEP_FORM_FIELDS] = array(
-        'label' => 'Campi del form',
+        'label' => $this->translator->trans('operatori.form_field'),
         'form_type' => FormIOBuilderRenderType::class,
       );
     }
 
     $steps[self::STEP_FEEDBACK_MESSAGES_DATA] = array(
-      'label' => 'Messaggi',
+      'label' => $this->translator->trans('messages.messages_label'),
       'form_type' => FeedbackMessagesDataType::class
     );
 
     $steps[self::STEP_PAYMENT_DATA] = array(
-      'label' => 'Dati pagamento',
+      'label' => $this->translator->trans('general.payment_data'),
       'form_type' => PaymentDataType::class,
       'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
         /** @var Servizio $service */
@@ -115,7 +109,7 @@ class ServiceFlow extends FormFlow
     );
 
     $steps[self::STEP_INTEGRATIONS_DATA] = array(
-      'label' => 'Integrazioni',
+      'label' => $this->translator->trans('integrations'),
       'form_type' => IntegrationsDataType::class,
       'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
         /** @var Servizio $service */
@@ -125,7 +119,7 @@ class ServiceFlow extends FormFlow
     );
 
     $steps[self::STEP_PROTOCOL_DATA] = array(
-      'label' => 'Dati protocollo',
+      'label' => $this->translator->trans('general.protocol_data'),
       'form_type' => ProtocolDataType::class
     );
 

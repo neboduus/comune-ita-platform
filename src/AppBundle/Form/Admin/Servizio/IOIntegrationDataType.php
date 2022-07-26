@@ -15,7 +15,7 @@ class IOIntegrationDataType extends AbstractType
   {
     $builder
       ->add('io_service_parameters', IOServiceParametersType::class, [
-        'label' => 'Parametri di configurazione per l\'integrazione con App IO',
+        'label' => 'app_io.config_parameters',
       ]);
   }
 

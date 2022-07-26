@@ -4,7 +4,7 @@
   <section id="intro" class="container my-4">
     <div class="row">
       <div class="col-lg-12">
-        <h2>Webhook</h2>
+        <h2>{{ 'nav.admin.webhook' | trans }}</h2>
       </div>
 
       <div class="col-lg-12">
@@ -43,8 +43,8 @@
                 <td data-title="Azioni" class="actions">
                   <a class="btn btn-secondary btn-xs" href="{{ path('admin_webhook_edit', { 'id': item.id }) }}">{{ 'gruppo_di_servizi.modifica' | trans() }}</a>
                   <a class="btn btn-danger btn-xs"
-                     onclick="return confirm('Sei sicuro di procedere? Il webhook verrà eliminato definitivamente.');"
-                     href="{{ path('admin_webhook_delete', { 'id': item.id }) }}">Elimina</a>
+                     onclick="return confirm('{{ 'operatori.delete_webhook' | trans }}');"
+                     href="{{ path('admin_webhook_delete', { 'id': item.id }) }}">{{ 'elimina' | trans }}</a>
                 </td>
               </tr>
             {% endfor %}

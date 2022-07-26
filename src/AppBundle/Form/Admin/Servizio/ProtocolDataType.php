@@ -5,9 +5,6 @@ namespace AppBundle\Form\Admin\Servizio;
 
 
 use AppBundle\Entity\Servizio;
-use AppBundle\Form\Base\BlockQuoteType;
-use AppBundle\Form\PaymentParametersType;
-use AppBundle\Protocollo\PiTreProtocolloParameters;
 use AppBundle\Protocollo\ProtocolloHandlerRegistry;
 use AppBundle\Services\ProtocolloService;
 use Doctrine\ORM\EntityManager;
@@ -16,7 +13,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -62,13 +58,13 @@ class ProtocolDataType extends AbstractType
 
     $builder
       ->add('protocol_required', CheckboxType::class, [
-        'label' => 'Protocollazione richiesta?',
+        'label' => 'nav.backoffices.request_protocol',
         'required' => false
       ]);
 
     $builder
       ->add('protocol_handler', ChoiceType::class, [
-        'label' => 'Tipo di protocollo',
+        'label' => 'nav.backoffices.protocol_type',
         'choices' => $handlerList,
         'required' => false
       ]);

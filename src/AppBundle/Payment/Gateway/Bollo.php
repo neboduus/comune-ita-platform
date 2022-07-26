@@ -4,7 +4,6 @@ namespace AppBundle\Payment\Gateway;
 
 
 use AppBundle\Entity\Pratica;
-use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use AppBundle\Payment\AbstractPaymentData;
 use AppBundle\Payment\PaymentDataInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,7 +12,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
-use Symfony\Component\VarDumper\VarDumper;
 
 class Bollo extends AbstractPaymentData implements EventSubscriberInterface
 {

@@ -4,7 +4,10 @@ require("jquery"); // Load jQuery as a module
 require("summernote");
 require("summernote/dist/summernote-bs4.css");
 
+
 $(document).ready(function () {
+
+  const language = document.documentElement.lang.toString();
 
   $('textarea').summernote({
     toolbar: [
@@ -45,7 +48,7 @@ $(document).ready(function () {
     $(this).closest('.js-closing_period-item').remove();
 
     if ($('.js-closing_period-item').length === 0) {
-      $('#closing_periods').append('<div class="alert alert-info" id="no-closing_periods">Non sono presenti periodi di chiusura</div>');
+      $('#closing_periods').append(`<div class="alert alert-info" id="no-closing_periods">${Translator.trans('backoffice.integration.calendars.no_closure_days', {}, 'messages', language)}</div>`);
     }
   });
 
@@ -79,7 +82,7 @@ $(document).ready(function () {
     $(this).closest('.js-opening_hour-item').remove();
 
     if ($('.js-opening_hour-item').length === 0) {
-      $('#no-opening_hours').append('<div class="alert alert-info" id="no-opening_hours">Non sono presenti orari di apertura</div>');
+      $('#no-opening_hours').append(`<div class="alert alert-info" id="no-opening_hours">${Translator.trans('calendars.opening_hours.no_opening_hours', {}, 'messages', language)}</div>`);
     }
   });
 
@@ -113,7 +116,7 @@ $(document).ready(function () {
     $(this).closest('.js-external_calendar-item').remove();
 
     if ($('.js-external_calendar-item').length === 0) {
-      $('#no-external_calendars').append('<div class="alert alert-info" id="no-external_calendars">Non sono presenti calendari esterni</div>');
+      $('#no-external_calendars').append(`<div class="alert alert-info" id="no-external_calendars">${Translator.trans('backoffice.integration.calendars.no_external_calendar', {}, 'messages', language)}</div>`);
     }
   });
 
@@ -124,10 +127,10 @@ $(document).ready(function () {
     $("body").append(temp)
     temp.val($('#appbundle_calendar_id').val()).select()
     document.execCommand("copy")
-    button.find('span').text('ID Copiato')
+    button.find('span').text(`${Translator.trans('copied_id', {}, 'messages', language)}`)
     temp.remove();
     setTimeout(function () {
-      button.find('span').text('Copia ID')
+      button.find('span').text(`${Translator.trans('copy_id', {}, 'messages', language)}`)
     }, 2000);
   })
 });

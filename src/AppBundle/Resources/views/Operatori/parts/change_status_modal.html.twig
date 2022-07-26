@@ -13,7 +13,7 @@
         <div class="row">
           <div class="col-lg-12 px-lg-4 py-lg-2">
             <h1 id="modalTitle"></h1>
-            <p>Verrà inviato un messaggio all’indirizzo dell’utente <a
+            <p>{{ 'messages.mail_to_user' | trans}} <a
                 href="mailto:{{ pratica.user.emailContatto }}">{{ pratica.user.emailContatto }}</a></p>
           </div>
         </div>
@@ -45,7 +45,7 @@
                 <svg class="icon icon-sm">
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-warning-circle"></use>
                 </svg>
-                Una volta elaborata la pratica non sarà più possibile effettuare modifiche
+                {{ 'messages.warning_pratice' | trans }}
               </strong>
             </div>
             <div class="col-auto">
@@ -69,8 +69,8 @@
       <div class="p-4">
         <div class="row">
           <div class="col-lg-12 px-lg-4 py-lg-2">
-            <h1>Richiedi integrazione</h1>
-            <p>Verrà inviato un messaggio all’indirizzo dell’utente <a
+            <h1>{{ 'operatori.inegrations_request' | trans }}</h1>
+            <p>{{ 'messages.mail_to_user' | trans}} <a
                 href="mailto:{{ pratica.user.emailContatto }}">{{ pratica.user.emailContatto }}</a></p>
           </div>
         </div>
@@ -79,14 +79,11 @@
             {{ form_start(integration_request_form) }}
             {{ form_row(integration_request_form.message) }}
             <small class="form-text text-muted mb-3">
-              Utilizza questo campo per motivare la richiesta di integrazione.<br />
-              Una volta inviato l'utente riceverà un messaggio con il testo specificato, sarà possibile verificare eventuali
-              risposte nella sezione messaggi.
+             {{ 'operatori.send_request_integration_description' | trans | raw }}
             </small>
-
             <div class="row justify-content-between mt-3">
               <div class="col-auto">
-                <button type="submit" class="btn btn-primary float-right">Invia richiesta integrazione</button>
+                <button type="submit" class="btn btn-primary float-right">{{ 'operatori.send_request_integration' | trans }}</button>
               </div>
             </div>
             {{ form_rest(integration_request_form) }}

@@ -55,7 +55,7 @@
                         </li>
                       {% endfor %}
                       <li class="list-item">
-                        <a href="{{ item.url }}"><em>Vedi tutto</em></a>
+                        <a href="{{ item.url }}"><em>{{ 'show_all' | trans }}</em></a>
                       </li>
                     </ul>
                   </div>
@@ -71,14 +71,14 @@
 
           {% if info %}
             <div class="col pb-2">
-              <h4><span>Informazioni</span></h4>
+              <h4><span>{{ 'info' | trans }}</span></h4>
               {{ info|raw }}
             </div>
           {% endif %}
 
           {% if contacts %}
             <div class="col pb-2">
-              <h4><span>Contatti</span></h4>
+              <h4><span>{{ 'steps.common.org_richiedente.contatti' | trans }}</span></h4>
               <div class="link-list-wrapper">
                 <ul class="footer-list link-list clearfix">
                   {% if contacts.address is defined %}

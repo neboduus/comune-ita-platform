@@ -792,7 +792,7 @@ class OperatoriController extends Controller
       $data = $integrationRequestform->getData();
       try {
         $this->praticaManager->requestIntegration($pratica, $this->getUser(), $data);
-        $this->addFlash('success', 'Integrazione richiesta correttamente.');
+        $this->addFlash('success', $this->translator->trans('operatori.integration_succes'));
       } catch (\Exception $e) {
         $this->logger->error($e->getMessage() . ' --- ' . $e->getTraceAsString());
         $this->addFlash('error', $e->getMessage());
@@ -881,7 +881,7 @@ class OperatoriController extends Controller
   {
 
     if (!in_array($request->request->get('status'), $pratica->getAllowedStates())) {
-      $this->addFlash('error', 'Lo stato selezionato non è tra quelli permessi per la pratica.');
+      $this->addFlash('error', $this->translator->trans('operatori.error_status_selected'));
       return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
     }
 
@@ -918,13 +918,13 @@ class OperatoriController extends Controller
           $statusChange,
           true
         );
-        $this->addFlash('success', 'Stato della pratica cambiato correttamente');
+        $this->addFlash('success', $this->translator->trans('operatori.change_status_success'));
       } catch (\Exception $e) {
-        $this->logger->error('Errore durante il cambio stato della pratica: ' . $pratica->getIdDocumentoProtocollo() . ' ' . $e->getMessage());
-        $this->addFlash('error', 'Si è verificato un errore durante il cambio stato della pratica.');
+        $this->logger->error($this->translator->trans('operatori.error_change_state_description').': ' . $pratica->getIdDocumentoProtocollo() . ' ' . $e->getMessage());
+        $this->addFlash('error', $this->translator->trans('operatori.error_change_state'));
       }
     } else {
-      $this->addFlash('error', 'Lo stato della pratica non può essere modificato.');
+      $this->addFlash('error', $this->translator->trans('operatori.error_update_change_state'));
     }
     $this->entityManager->refresh($pratica);
     return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
@@ -944,12 +944,12 @@ class OperatoriController extends Controller
     if ($pratica->getStatus() === Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
       try {
         $this->praticaManager->acceptIntegration($pratica, $user);
-        $this->addFlash('success', 'Integrazione accettata correttamente');
+        $this->addFlash('success', $this->translator->trans('operatori.integration_accepted_success'));
       } catch (\Exception $e) {
-        $this->addFlash('error', 'Si è veritifcato un errore durante la fase di accettazione');
+        $this->addFlash('error', $this->translator->trans('operatori.integration_accepted_error'));
       }
     } else {
-      $this->addFlash('error', 'La pratica non si trova nello corretto');
+      $this->addFlash('error', $this->translator->trans('operatori.error_pratice_state'));
     }
     return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
   }
