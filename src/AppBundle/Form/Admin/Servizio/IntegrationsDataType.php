@@ -90,12 +90,12 @@ class IntegrationsDataType extends AbstractType
     $builder
       ->add('trigger', ChoiceType::class, [
         'data' => $selectedIntegration,
-        'label' => 'Punto di attivazione',
+        'label' => 'backoffice.integration.activation_point',
         'choices' => $statuses,
         'mapped' => false
       ])
       ->add('action', ChoiceType::class, [
-        'label' => 'Azione da eseguire',
+        'label' => 'backoffice.integration.action_execute',
         'data' => $selectedIntegration != 0 ? $integrations[$selectedIntegration] : null,
         'choices' => $backOffices,
         'mapped' => false,

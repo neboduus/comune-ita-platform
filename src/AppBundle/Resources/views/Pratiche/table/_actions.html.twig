@@ -6,7 +6,7 @@
 {% if row.status == 1000 %}
   <a href="{{ path('pratiche_delete', {'pratica': row}) }}"
      class="btn btn-danger btn-xs"
-     onclick="return confirm('Vuoi veramente eliminare la pratica?');"><i
+     onclick="return confirm('{{ 'pratica.elimina_pratica' | trans }}');"><i
       class="fa fa-trash" aria-hidden="true"></i>
-    Elimina</a>
+    {{ 'elimina' | trans }}</a>
 {% endif %}

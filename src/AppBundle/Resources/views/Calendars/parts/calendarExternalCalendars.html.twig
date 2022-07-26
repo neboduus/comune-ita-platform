@@ -1,4 +1,4 @@
-<label style="font-weight: 600; padding: 0 0.5rem;">Calendari esterni</label>
+<label style="font-weight: 600; padding: 0 0.5rem;">{{ 'backoffice.integration.calendars.external_calendar' | trans }}</label>
 <fieldset class="bg-light p-3 mb-3">
   <div id="external_calendars"
        data-prototype='
@@ -22,7 +22,7 @@
                     <label>&nbsp;</label>
                     <a class="btn btn-danger btn-xs js-remove-external_calendar" href="#">
                       <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
-                      <span class="d-none d-md-block">Elimina Chiusura</span>
+                      <span class="d-none d-md-block">{{ 'backoffice.integration.calendars.delete_closure' |trans }}</span>
                     </a>
                   </div>
                 </div>
@@ -49,7 +49,7 @@
                     <label>&nbsp;</label>
                     <a class="btn btn-danger btn-xs js-remove-external_calendar" href="#">
                       <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
-                      <span class="d-none d-md-block">Elimina calendario esterno</span>
+                      <span class="d-none d-md-block">{{ 'backoffice.integration.calendars.delete_external_calendar' | trans }}</span>
                     </a>
                   </div>
                 </div>
@@ -60,13 +60,13 @@
         </div>
       {% endfor %}
     {% else %}
-      <div class="alert alert-info" id="no-external_calendars">Non sono presenti calendari esterni</div>
+      <div class="alert alert-info" id="no-external_calendars">{{ 'backoffice.integration.calendars.no_external_calendar' | trans }}</div>
     {% endif %}
   </div>
   <button type="button"
           class="add-another-external_calendar-widget btn btn-xs btn-primary"
           class="add-another-external_calendar-widget btn btn-xs btn-primary"
-          data-list-selector="#external_calendars">Aggiungi calendario esterno
+          data-list-selector="#external_calendars">{{ 'backoffice.integration.calendars.add_external_calendar' | trans }}
   </button>
 </fieldset>
 

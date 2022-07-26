@@ -98,7 +98,7 @@ class WebhookController extends Controller
       $this->entityManager->persist($webhook);
       $this->entityManager->flush();
 
-      $this->addFlash('feedback', 'Webhook creato con successo');
+      $this->addFlash('feedback', $this->translator->trans('operatori.create_webhook_success'));
       return $this->redirectToRoute('admin_webhook_index');
     }
 
@@ -157,11 +157,11 @@ class WebhookController extends Controller
       $em = $this->getDoctrine()->getManager();
       $em->remove($webhook);
       $em->flush();
-      $this->addFlash('feedback', 'Webhook eliminato correttamente');
+      $this->addFlash('feedback', $this->translator->trans('operatori.delete_webhook_success'));
       return $this->redirectToRoute('admin_webhook_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', 'Impossibile eliminare il webhook, ci sono dei servizi collegati.');
+      $this->addFlash('warning', $this->translator->trans('operatori.delete_webhook_error'));
       return $this->redirectToRoute('admin_service_group_index');
     }
   }

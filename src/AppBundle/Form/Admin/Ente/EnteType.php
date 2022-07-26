@@ -6,7 +6,6 @@ namespace AppBundle\Form\Admin\Ente;
 
 use AppBundle\BackOffice\BackOfficeInterface;
 use AppBundle\Entity\Ente;
-use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\BlockQuoteType;
 use AppBundle\Model\DefaultProtocolSettings;
 use AppBundle\Model\Gateway;
@@ -14,21 +13,18 @@ use AppBundle\Payment\Gateway\GenericExternalPay;
 use AppBundle\Payment\GatewayCollection;
 use AppBundle\Payment\PaymentDataInterface;
 use AppBundle\Services\BackOfficeCollection;
-use AppBundle\Services\PaymentService;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Translation\TranslatorInterface;
 
 
 class EnteType extends AbstractType
@@ -50,17 +46,27 @@ class EnteType extends AbstractType
    */
   private $gatewayCollection;
 
+  /** @var TranslatorInterface */
+  private $translator;
+
   /**
+   *  @param TranslatorInterface $translator
    * @param EntityManagerInterface $entityManager
    * @param BackOfficeCollection $backOffices
-   * @param PaymentService $paymentService
    * @param GatewayCollection $gatewayCollection
    */
-  public function __construct(EntityManagerInterface $entityManager, BackOfficeCollection $backOffices, GatewayCollection $gatewayCollection)
+  public function __construct(
+    TranslatorInterface $translator,
+    EntityManagerInterface $entityManager,
+    BackOfficeCollection $backOffices,
+    GatewayCollection $gatewayCollection
+)
   {
+    $this->translator = $translator;
     $this->em = $entityManager;
     $this->backOfficeCollection = $backOffices;
     $this->gatewayCollection = $gatewayCollection;
+
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -179,7 +185,7 @@ class EnteType extends AbstractType
         ]);
 
         $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
-          'label' => 'Parametri necessari per ' . $value['name'] . ' ( lasciare in bianco se si desidera impostare i valori a livello di servizio)'
+          'label' => $this->translator->trans('ente.pagamenti.panel_title',['%gateway_name%' => $value['name']])
         ]);
 
         foreach ($parameters as $k => $v) {

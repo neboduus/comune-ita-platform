@@ -16,15 +16,15 @@ class SubscriberMessageType extends AbstractType
   {
     $builder
       ->add('subject', TextType::class, [
-        'label' => 'Oggetto',
+        'label' => 'messages.subject_label',
         'required' => true,
       ])
       ->add('message', TextareaType::class, [
-        'label' => 'Messaggio',
+        'label' => 'messages.message_label',
         'required' => true,
       ])
       ->add('autoSend', CheckboxType::class, [
-        'label' => 'Invia mail a te stesso?',
+        'label' => 'messages.mail_to_me',
         'required' => false
       ]);
   }

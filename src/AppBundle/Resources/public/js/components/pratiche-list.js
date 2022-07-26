@@ -107,6 +107,7 @@ Vue.component('pratiche-list', {
     }
 });
 const renderOperatoreSelectItem= function(item) {
-    item.label = item.fullName + (item.ente ? ` (${item.enteName})` : ` (nessuno)`);
+  const language = document.documentElement.lang.toString();
+    item.label = item.fullName + (item.ente ? ` (${item.enteName})` : ` (${Translator.trans('login_type.none', {}, 'messages', language)})`);
     return item;
 }

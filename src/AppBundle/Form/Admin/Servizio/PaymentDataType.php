@@ -6,7 +6,6 @@ namespace AppBundle\Form\Admin\Servizio;
 
 use AppBundle\Entity\Servizio;
 use AppBundle\Form\Base\BlockQuoteType;
-use AppBundle\Form\PaymentParametersType;
 use AppBundle\Model\Gateway;
 use AppBundle\Payment\Gateway\GenericExternalPay;
 use AppBundle\Payment\GatewayCollection;
@@ -15,20 +14,16 @@ use AppBundle\Services\FormServerApiAdapterService;
 use AppBundle\Services\PaymentService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use phpDocumentor\Reflection\Types\Self_;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentDataType extends AbstractType
 {
@@ -60,21 +55,32 @@ class PaymentDataType extends AbstractType
    */
   private $gatewayCollection;
 
-  public function __construct(EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService, PaymentService $paymentService, GatewayCollection $gatewayCollection)
+  /** @var TranslatorInterface */
+  private $translator;
+
+  public function __construct(
+    TranslatorInterface $translator,
+    EntityManagerInterface $entityManager,
+    FormServerApiAdapterService $formServerService,
+    PaymentService $paymentService,
+    GatewayCollection $gatewayCollection
+
+  )
   {
     $this->em = $entityManager;
     $this->formServerService = $formServerService;
     $this->paymentService = $paymentService;
     $this->gatewayCollection = $gatewayCollection;
+    $this->translator = $translator;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
 
     $paymentsType = [
-      'Non richiesto' => Servizio::PAYMENT_NOT_REQUIRED,
-      'Immediato' => Servizio::PAYMENT_REQUIRED,
-      'Posticipato' => Servizio::PAYMENT_DEFERRED
+      'STATUS_PAYMENT_NOT_REQUIRED' => Servizio::PAYMENT_NOT_REQUIRED,
+      'STATUS_PAYMENT_REQUIRED' => Servizio::PAYMENT_REQUIRED,
+      'STATUS_PAYMENT_DEFERRED' => Servizio::PAYMENT_DEFERRED
     ];
 
     /** @var Servizio $service */
@@ -131,7 +137,7 @@ class PaymentDataType extends AbstractType
 
     $builder
       ->add('payment_required', ChoiceType::class, [
-        'label' => 'Tipologia di Pagamento',
+        'label' => 'payment.type_payment',
         'data' => $paymentRequired,
         'choices' => $paymentsType
       ])
@@ -139,7 +145,7 @@ class PaymentDataType extends AbstractType
         'mapped' => false,
         'required' => false,
         'data' => $fromForm ? 0 : $paymentAmount,
-        'label' => 'Importo' . ($fromForm? " (L'importo è determinato dal modulo tramite il valore del campo 'payment_amount')" : ''),
+        'label' => $this->translator->trans('operatori.importo') . ($fromForm? $this->translator->trans('admin.payment_amount_description') : ''),
         'attr' => (($fromForm && $paymentAmount > 0) ? ['readonly' => 'readonly'] : [])
       ])
       ->add('gateways', ChoiceType::class, [
@@ -181,7 +187,7 @@ class PaymentDataType extends AbstractType
         ]);
 
         $gatewaySubform->add($g->getIdentifier() . '_label', BlockQuoteType::class, [
-          'label' => 'Parametri necessari per ' . $value['name']
+          'label' => $this->translator->trans('payment.parameters_needed_for', ['%gateway%' => $value['name']])
         ]);
 
         foreach ($parameters as $k => $v) {
@@ -213,13 +219,13 @@ class PaymentDataType extends AbstractType
       // Se è impostata la tipologia di pagamento istantaneo ma ho speciicato un valore <= 0 restituisco un errore
       if ($data['payment_required'] == Servizio::PAYMENT_REQUIRED && $data['total_amounts'] <= 0 && !isset($this->fields[PaymentDataType::PAYMENT_AMOUNT])) {
         $event->getForm()->addError(
-          new FormError('Devi inserire un costo maggiore di zero')
+          new FormError($this->translator->trans('payment.error_amount'))
         );
       }
 
       if (!isset($data['gateways']) || empty($data['gateways'])) {
         $event->getForm()->addError(
-          new FormError('Devi scegliere almeno un metodo di pagamento')
+          new FormError($this->translator->trans('payment.error_select_type'))
         );
       }
 

@@ -18,7 +18,7 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
 {
   const IDENTIFIER = "subscription_payments";
 
-  const NAME = 'Pagamenti per servizi a sottoscrizione';
+  const NAME = 'nav.backoffices.pagamenti_servizi_sottoscrizione';
 
   const PATH = 'operatori_subscription-service_payments_index';
 
@@ -100,7 +100,7 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
 
   public function getName()
   {
-    return self::NAME;
+    return $this->translator->trans(self::NAME);
   }
 
   public function getPath()

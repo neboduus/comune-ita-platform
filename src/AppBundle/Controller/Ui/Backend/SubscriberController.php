@@ -14,6 +14,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class SubscriberController extends Controller
 {
@@ -37,13 +38,26 @@ class SubscriberController extends Controller
    */
   private $subscriptionsService;
 
-  public function __construct(EntityManager $entityManager, MailerService $mailer, JWTTokenManagerInterface $JWTTokenManager, SubscriptionsService $subscriptionsService, $defaultSender)
+  /** @var TranslatorInterface */
+  private $translator;
+
+
+  public function __construct(
+    TranslatorInterface $translator,
+    EntityManager $entityManager,
+    MailerService $mailer,
+    JWTTokenManagerInterface $JWTTokenManager,
+    SubscriptionsService $subscriptionsService,
+    $defaultSender
+  )
   {
+    $this->translator = $translator;
     $this->entityManager = $entityManager;
     $this->mailer = $mailer;
     $this->JWTTokenManager = $JWTTokenManager;
     $this->defaultSender = $defaultSender;
     $this->subscriptionsService = $subscriptionsService;
+
   }
 
   /**
@@ -66,7 +80,7 @@ class SubscriberController extends Controller
 
     if ($messageForm->isSubmitted() && $messageForm->isValid()) {
       $this->mailer->dispatchMailForSubscriber($subscriberMessage, $this->defaultSender, $this->getUser());
-      $this->addFlash('feedback', 'Messaggio inviato');
+      $this->addFlash('feedback', $this->translator->trans('iscrizioni.send_message'));
 
       return $this->redirectToRoute('operatori_subscriber_show', ['subscriber' => $subscriber->getId()]);
     }

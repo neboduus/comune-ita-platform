@@ -11,7 +11,7 @@
     </div>
     <div class="radio-type">
       <div class="form-group">
-        <label><legend class="col-form-label required">Tipologia pagamento</legend></label>
+        <label><legend class="col-form-label required">{{ 'backoffice.integration.subscription_service.type_payment' | trans }}</legend></label>
         <div id="appbundle_subscriptionservice_subscription_payments___name___type">
           <div class="form-check">
             <input type="radio" id="appbundle_subscriptionservice_subscription_payments___name___type_0" name="appbundle_subscriptionservice[subscription_payments][__name__][type]" required="required" class="form-check-input type_subscription_fee" value="subscription_fee">
@@ -236,7 +236,7 @@
           <label>{{ 'backoffice.integration.subscription_service.payment.select_service' | trans }}</label>
           <select id="modal_select_service"
                   title="{{ 'backoffice.integration.subscription_service.payment.select' | trans }}">
-            <option value="" title="Scegli una opzione"
+            <option value="" title="{{ 'backoffice.integration.subscription_service.select_option' | trans }}"
                     data-content="{{ 'annulla' | trans }} <span class='reset-label'></span>"></option>
             {% for service in subscriptionServices %}
               <option
@@ -249,8 +249,8 @@
         <div class="">
           <div class="bootstrap-select-wrapper select-payment-wrapper mt-5">
             <label>{{ 'backoffice.integration.subscription_service.payment.select_payment' | trans }}</label>
-            <select id="modal_select_payment" title="Scegli una opzione">
-              <option value="" title="Scegli una opzione"
+            <select id="modal_select_payment" title="{{ 'backoffice.integration.subscription_service.select_option' | trans }}">
+              <option value="" title="{{ 'backoffice.integration.subscription_service.select_option' | trans }}"
                       data-content="{{ 'annulla' | trans }} <span class='reset-label'></span>"></option>
             </select>
           </div>

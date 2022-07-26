@@ -1,4 +1,4 @@
-<label style="font-weight: 600; padding: 0 0.5rem;">Giorni di chiusura</label>
+<label style="font-weight: 600; padding: 0 0.5rem;">{{ 'backoffice.integration.calendars.closure_days' | trans }}</label>
 <fieldset class="bg-light p-3 mb-3">
   <div id="closing_periods"
        data-prototype='
@@ -22,7 +22,7 @@
                     <label>&nbsp;</label>
                     <a class="btn btn-danger btn-xs js-remove-closing_period" href="#">
                       <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
-                      <span class="d-none d-md-block">Elimina Chiusura</span>
+                      <span class="d-none d-md-block">{{ 'backoffice.integration.calendars.delete_closure' | trans }}</span>
                     </a>
                   </div>
                 </div>
@@ -49,7 +49,7 @@
                     <label>&nbsp;</label>
                     <a class="btn btn-danger btn-xs js-remove-closing_period" href="#">
                       <svg class="icon icon-sm icon-white d-md-none"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use></svg>
-                      <span class="d-none d-md-block">Elimina chiusura</span>
+                      <span class="d-none d-md-block">{{ 'backoffice.integration.calendars.delete_closure' | trans }}</span>
                     </a>
                   </div>
                 </div>
@@ -60,13 +60,13 @@
         </div>
       {% endfor %}
     {% else %}
-      <div class="alert alert-info" id="no-closing_periods">Non sono presenti periodi di chiusura</div>
+      <div class="alert alert-info" id="no-closing_periods">{{ 'backoffice.integration.calendars.no_closure_days' | trans }}</div>
     {% endif %}
   </div>
   <button type="button"
           class="add-another-closing_period-widget btn btn-xs btn-primary"
           class="add-another-closing_period-widget btn btn-xs btn-primary"
-          data-list-selector="#closing_periods">Aggiungi periodo di chiusura
+          data-list-selector="#closing_periods">{{ 'backoffice.integration.calendars.add_closure_days' | trans }}
   </button>
 </fieldset>
 

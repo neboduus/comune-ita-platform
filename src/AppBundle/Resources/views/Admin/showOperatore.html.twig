@@ -11,23 +11,23 @@
         <table class="table table-bordered table-striped table-condensed cf">
           <tbody>
           <tr>
-            <th>Nome</th>
+            <th>{{ 'general.nome' | trans }}</th>
             <td>{{ operatoreUser.fullName }}</td>
           </tr>
           <tr>
-            <th>Username</th>
+            <th>{{ 'general.username' | trans }}</th>
             <td>{{ operatoreUser.username }}</td>
           </tr>
           <tr>
-            <th>Ultima modifica password</th>
+            <th>{{ 'operatori.ultima_modifica_password' | trans }}</th>
             <td>{% if operatoreUser.lastChangePassword %}{{ operatoreUser.lastChangePassword|date('Y-m-d H:i:s') }}{% else %} --- {% endif %}</td>
           </tr>
           <tr>
-            <th>Email</th>
+            <th>{{ 'general.email' | trans }}</th>
             <td>{{ operatoreUser.email }}</td>
           </tr>
           <tr>
-            <th>Abilitato ai servizi</th>
+            <th>{{ 'operatori.enabled_services' | trans }}</th>
             <td>
               <ul class="list-unstyled">
                 {% for servizio in servizi_abilitati %}
@@ -41,11 +41,11 @@
       </div>
 
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
-        <a class="btn btn-primary" href="{{ path('admin_operatore_edit', { 'id': operatoreUser.id }) }}">Modifica</a>
+        <a class="btn btn-primary" href="{{ path('admin_operatore_edit', { 'id': operatoreUser.id }) }}">{{ 'modifica' | trans }}</a>
         <a class="btn btn-danger"
-           onclick="return confirm('Sei sicuro di procedere? L\'operatore verrà eliminato definitivamente.');"
-           href="{{ path('admin_operatore_delete', { 'id': operatoreUser.id }) }}">Elimina</a>
-        <a class="btn btn-default btn-100" href="{{ path('admin_operatore_index') }}">Torna alla lista</a>
+           onclick="return confirm('{{ 'operatori.delete_operator' | trans }}');"
+           href="{{ path('admin_operatore_delete', { 'id': operatoreUser.id }) }}">{{ 'elimina' | trans }}</a>
+        <a class="btn btn-default btn-100" href="{{ path('admin_operatore_index') }}">{{ 'gruppo_di_servizi.torna_alla_lista' | trans }}</a>
       </div>
 
     </div>

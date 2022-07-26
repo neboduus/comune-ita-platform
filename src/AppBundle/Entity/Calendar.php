@@ -39,18 +39,18 @@ class Calendar
   const TYPE_TIME_VARIABLE = "time_variable_slots";
 
   const MINIMUM_SCHEDULING_NOTICES_OPTIONS = [
-    'Nessuno' => 0,
-    'Un\'ora prima' => 1,
-    'Due ore prima' => 2,
-    'Quattro ore prima' => 4,
-    'Otto ore prima' => 8,
-    'Un giorno prima' => 24,
-    'Due giorni prima' => 48,
-    'Tre giorni prima' => 72,
-    'Una settimana prima' => 168,
-    'Due settimane prima' => 336,
-    'Tre settimane prima' => 504,
-    'Un mese prima (30 giorni)' => 720
+    'login_type.none' => 0,
+    'time.one_hour_before' => 1,
+    'time.two_hours_before' => 2,
+    'time.four_hours_before' => 4,
+    'time.eight_hours_before' => 8,
+    'time.one_day_before' => 24,
+    'time.two_days_before' => 48,
+    'time.three_days_before' => 72,
+    'time.one_week_before' => 168,
+    'time.two_weeks_before' => 336,
+    'time.three_weeks_before' => 504,
+    'time.one_month_before' => 720
   ];
 
   const CALENDAR_TYPES = [

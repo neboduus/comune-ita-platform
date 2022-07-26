@@ -196,7 +196,7 @@ class AdminController extends Controller
 
     $servizi = $this->instanceService->getServices();
     $services = [];
-    $services ['all'] = 'Tutti';
+    $services ['all'] = $this->translator->trans('tutti');
     foreach ($servizi as $s) {
       $services[$s->getId()] = $s->getName();
     }
@@ -269,7 +269,7 @@ class AdminController extends Controller
 
       $this->mailer->sendResettingEmailMessage($operatoreUser);
 
-      $this->addFlash('feedback', 'Operatore creato con successo');
+      $this->addFlash('feedback', $this->translator->trans('admin.create_operator_notify'));
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
 
@@ -355,11 +355,11 @@ class AdminController extends Controller
       $em = $this->getDoctrine()->getManager();
       $em->remove($operatoreUser);
       $em->flush();
-      $this->addFlash('feedback', 'Operatore eliminato correttamente');
+      $this->addFlash('feedback', $this->translator->trans('admin.delete_operator_notify'));
       return $this->redirectToRoute('admin_operatore_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', 'Impossibile eliminare l\'operatore, ci sono delle pratiche collegate.');
+      $this->addFlash('warning', $this->translator->trans('admin.error_delete_operator_notify'));
       return $this->redirectToRoute('admin_servizio_index');
     }
   }
@@ -373,10 +373,10 @@ class AdminController extends Controller
   public function indexLogsAction(Request $request)
   {
     $table = $this->createDataTable()
-      ->add('type', TextColumn::class, ['label' => 'Evento'])
-      ->add('eventTime', DateTimeColumn::class, ['label' => 'Data', 'format' => 'd-m-Y H:i', 'searchable' => false])
-      ->add('user', TextColumn::class, ['label' => 'Utente'])
-      ->add('description', TextColumn::class, ['label' => 'Descrizione'])
+      ->add('type', TextColumn::class, ['label' => $this->translator->trans('event')])
+      ->add('eventTime', DateTimeColumn::class, ['label' => $this->translator->trans('date'), 'format' => 'd-m-Y H:i', 'searchable' => false])
+      ->add('user', TextColumn::class, ['label' => $this->translator->trans('meetings.labels.user')])
+      ->add('description', TextColumn::class, ['label' => $this->translator->trans('general.descrizione')])
       ->add('ip', TextColumn::class, ['label' => 'Ip'])
       ->createAdapter(ORMAdapter::class, [
         'entity' => AuditLog::class,
@@ -403,15 +403,15 @@ class AdminController extends Controller
 
     $statuses = [
       ScheduledAction::STATUS_PENDING => [
-        'label' => 'In attesa',
+        'label' => $this->translator->trans('STATUS_WAITING'),
         'count' => 0,
       ],
       ScheduledAction::STATUS_DONE => [
-        'label' => 'Completata',
+        'label' => $this->translator->trans('STATUS_DONE'),
         'count' => 0,
       ],
       ScheduledAction::STATUS_INVALID => [
-        'label' => 'Non valida',
+        'label' => $this->translator->trans('STATUS_INVALID'),
         'count' => 0,
       ],
     ];
@@ -458,7 +458,7 @@ class AdminController extends Controller
       $this->entityManager->persist($scheduledAction);
       $this->entityManager->flush();
 
-      return new JsonResponse(['status' => 'succes']);
+      return new JsonResponse(['status' => 'success']);
     } catch (\Exception $e) {
       return new JsonResponse([
           'status' => 'error',
@@ -486,11 +486,11 @@ class AdminController extends Controller
     ];
 
     $accessLevels = [
-      Servizio::ACCESS_LEVEL_ANONYMOUS => 'Anonimo',
-      Servizio::ACCESS_LEVEL_SOCIAL => 'Social',
-      Servizio::ACCESS_LEVEL_SPID_L1 => 'Spid livello 1',
-      Servizio::ACCESS_LEVEL_SPID_L2 => 'Spid livello 2',
-      Servizio::ACCESS_LEVEL_CIE => 'Cie',
+      Servizio::ACCESS_LEVEL_ANONYMOUS => $this->translator->trans('general.anonymous'),
+      Servizio::ACCESS_LEVEL_SOCIAL => $this->translator->trans('general.social'),
+      Servizio::ACCESS_LEVEL_SPID_L1 => $this->translator->trans('general.level_spid_1'),
+      Servizio::ACCESS_LEVEL_SPID_L2 => $this->translator->trans('general.level_spid_2'),
+      Servizio::ACCESS_LEVEL_CIE => $this->translator->trans('general.cie'),
     ];
 
     $em = $this->getDoctrine()->getManager();
@@ -565,7 +565,7 @@ class AdminController extends Controller
         $form->submit($data, true);
 
         if ($form->isSubmitted() && !$form->isValid()) {
-          $this->addFlash('error', 'Si è verificato un problema in fase di importazione.');
+          $this->addFlash('error', $this->translator->trans('servizio.error_import'));
           return $this->redirectToRoute('admin_servizio_index');
         }
 
@@ -575,13 +575,13 @@ class AdminController extends Controller
         }
 
         $service = $serviceDto->toEntity();
-        $service->setName($service->getName() . ' (importato ' . date('d/m/Y H:i:s') . ')');
+        $service->setName($service->getName() . ' ('.  $this->translator->trans('imported') . ' ' . date('d/m/Y H:i:s') . ')');
         $service->setPraticaFCQN('\AppBundle\Entity\FormIO');
         $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
         $service->setEnte($ente);
         // Erogatore
         $erogatore = new Erogatore();
-        $erogatore->setName('Erogatore di ' . $service->getName() . ' per ' . $ente->getName());
+        $erogatore->setName( $this->translator->trans('provider_of'). ' ' . $service->getName() . ' '.  $this->translator->trans('for'). ' ' . $ente->getName());
         $erogatore->addEnte($ente);
         $em->persist($erogatore);
         $service->activateForErogatore($erogatore);
@@ -607,20 +607,20 @@ class AdminController extends Controller
           } else {
             $em->remove($service);
             $em->flush();
-            $this->addFlash('error', 'Si è verificato un problema in fase creazione del form.');
+            $this->addFlash('error',  $this->translator->trans('servizio.error_create_form'));
             return $this->redirectToRoute('admin_servizio_index');
           }
         }
 
         $this->serviceManager->save($service);
 
-        $this->addFlash('success', 'Servizio importato corettamente');
+        $this->addFlash('success',  $this->translator->trans('servizio.success_import_service'));
         return $this->redirectToRoute('admin_servizio_index');
 
       }
     } catch (\Exception $e) {
       $this->addFlash('error', $e->getMessage());
-      $this->addFlash('error', 'Si è verificato un problema in fase creazione del form.');
+      $this->addFlash('error', $this->translator->trans('servizio.error_create_form') );
     }
     return $this->redirectToRoute('admin_servizio_index');
   }
@@ -638,59 +638,59 @@ class AdminController extends Controller
 
     $steps = [
       'template' => [
-        'label' => 'Template del form',
+        'label' =>  $this->translator->trans('general.form_template'),
         'class' => FormIOTemplateType::class,
         'icon' => 'fa-clone',
       ],
       'general' => [
-        'label' => 'Dati generali',
+        'label' =>  $this->translator->trans('operatori.dati_generali'),
         'class' => GeneralDataType::class,
         'icon' => 'fa-file-o',
       ],
       'card' => [
-        'label' => 'Scheda',
+        'label' =>  $this->translator->trans('operatori.scheda'),
         'class' => CardDataType::class,
         'template' => 'AppBundle:Admin/servizio:_cardStep.html.twig',
         'icon' => 'fa-file-text-o',
       ],
       'formio' => [
-        'label' => 'Modulo',
+        'label' => $this->translator->trans('operatori.modulo'),
         'class' => FormIOBuilderRenderType::class,
         'template' => 'AppBundle:Admin/servizio:_formIOBuilderStep.html.twig',
         'icon' => 'fa-server',
       ],
       'formioI18n' => [
-        'label' => 'Traduzioni modulo',
+        'label' =>  $this->translator->trans('servizio.i18n.translations_module'),
         'class' => FormIOI18nType::class,
         'template' => 'AppBundle:Admin/servizio:_formIOI18nStep.html.twig',
         'icon' => 'fa-language',
       ],
       'messages' => [
-        'label' => 'Messaggi',
+        'label' =>  $this->translator->trans('operatori.messaggi.titolo'),
         'class' => FeedbackMessagesDataType::class,
         'template' => 'AppBundle:Admin/servizio:_feedbackMessagesStep.html.twig',
         'icon' => 'fa-envelope-o',
       ],
       'app-io' => [
-        'label' => 'App IO',
+        'label' =>  $this->translator->trans('app_io.title'),
         'class' => IOIntegrationDataType::class,
         'template' => 'AppBundle:Admin/servizio:_ioIntegrationStep.html.twig',
         'icon' => 'fa-bullhorn',
       ],
       'payments' => [
-        'label' => 'Dati pagamento',
+        'label' =>  $this->translator->trans('general.payment_data'),
         'class' => PaymentDataType::class,
         'template' => 'AppBundle:Admin/servizio:_paymentsStep.html.twig',
         'icon' => 'fa-credit-card',
       ],
       'backoffices' => [
-        'label' => 'Integrazioni',
+        'label' =>  $this->translator->trans('integrations'),
         'class' => IntegrationsDataType::class,
         'template' => 'AppBundle:Admin/servizio:_backofficesStep.html.twig',
         'icon' => 'fa-cogs',
       ],
       'protocol' => [
-        'label' => 'Dati protocollo',
+        'label' => $this->translator->trans('general.protocol_data'),
         'class' => ProtocolDataType::class,
         'icon' => 'fa-folder-open-o',
       ]
@@ -768,12 +768,12 @@ class AdminController extends Controller
 
     $form = $this->createFormBuilder(null)->add(
       "post_submit_validation_expression", TextareaType::class, [
-      "label" => 'Validazione al submit',
+      "label" => $this->translator->trans('servizio.validate_submit'),
       'required' => false,
       'data' => $servizio->getPostSubmitValidationExpression()
     ])->add(
       "post_submit_validation_message", TextType::class, [
-      "label" => 'Messaggio di errore in caso di mancata validazione',
+      "label" => $this->translator->trans('servizio.validate_error_service'),
       'required' => false,
       'data' => $servizio->getPostSubmitValidationMessage()
     ])->add(
@@ -785,7 +785,7 @@ class AdminController extends Controller
       $servizio->setPostSubmitValidationExpression($data['post_submit_validation_expression']);
       $servizio->setPostSubmitValidationMessage($data['post_submit_validation_message']);
       $this->serviceManager->save($servizio);
-      $this->addFlash('feedback', 'Validazione salvata correttamente');
+      $this->addFlash('feedback', $this->translator->trans('servizio.validate_service'));
 
       return $this->redirectToRoute('admin_servizio_custom_validation', ['servizio' => $servizio->getId()]);
     }
@@ -821,7 +821,7 @@ class AdminController extends Controller
 
     // Erogatore
     $erogatore = new Erogatore();
-    $erogatore->setName('Erogatore di ' . $servizio->getName() . ' per ' . $ente->getName());
+    $erogatore->setName( $this->translator->trans('provider_of'). ' ' . $servizio->getName() . ' '.  $this->translator->trans('for'). ' ' . $ente->getName());
     $erogatore->addEnte($ente);
     $this->getDoctrine()->getManager()->persist($erogatore);
     $servizio->activateForErogatore($erogatore);
@@ -849,11 +849,11 @@ class AdminController extends Controller
       $em->remove($servizio);
       $em->flush();
 
-      $this->addFlash('feedback', 'Servizio eliminato correttamente');
+      $this->addFlash('feedback', $this->translator->trans('servizio.service_successfully_deleted'));
 
       return $this->redirectToRoute('admin_servizio_index');
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', 'Impossibile eliminare il servizio, ci sono delle pratiche collegate.');
+      $this->addFlash('warning', $this->translator->trans('servizio.impossible_delete_service'));
       return $this->redirectToRoute('admin_servizio_index');
     }
 

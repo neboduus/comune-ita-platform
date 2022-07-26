@@ -11,17 +11,15 @@ use AppBundle\Entity\SubscriptionPayment;
 use DateTime;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
-use Exception;
-use ParseError;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use ValueError;
+
 
 class SubcriptionsBackOffice implements BackOfficeInterface
 {
   const IDENTIFIER = "subscriptions";
 
-  const NAME = 'Servizi a sottoscrizione';
+  const NAME = 'nav.backoffices.servizi_sottoscrizione';
 
   const PATH = 'operatori_subscription-service_index';
 
@@ -111,7 +109,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
 
   public function getName()
   {
-    return self::NAME;
+    return $this->translator->trans(self::NAME);
   }
 
   public function getPath()

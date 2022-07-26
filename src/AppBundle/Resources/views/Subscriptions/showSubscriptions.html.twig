@@ -2,24 +2,15 @@
 
 {% block stylesheets %}
   {{ encore_entry_link_tags('subscription-service-manager') }}
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/w/bs4/dt-1.10.18/datatables.min.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jq-3.6.0/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.4/kt-2.7.0/r-2.3.0/rg-1.2.0/rr-1.2.8/sc-2.0.7/sb-1.3.4/sp-2.0.2/sl-1.4.0/sr-1.1.1/datatables.min.css"/>
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
 {% endblock %}
 
 {% block javascripts %}
   {{ encore_entry_script_tags('subscription-service-manager') }}
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.print.min.js"></script>
-  <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.flash.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jq-3.6.0/jszip-2.5.0/dt-1.12.1/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.4/kt-2.7.0/r-2.3.0/rg-1.2.0/rr-1.2.8/sc-2.0.7/sb-1.3.4/sp-2.0.2/sl-1.4.0/sr-1.1.1/datatables.min.js"></script>
   <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
 
   <script>
@@ -222,69 +213,53 @@
     };
 
     $(document).ready(function () {
+      const lang = document.documentElement.lang.toString();
+      //Default
+      let url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/it-IT.json';
+      if(lang === 'en'){
+        url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/en-GB.json';
+      }else if(lang === 'de'){
+        url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/de-DE.json';
+      }
       $('#subscriptions').initDataTables({{ datatable_settings(datatable) }}, {
         dom: 'fBrtip',
         searching: true,
         paging: true,
         pagingType: 'simple_numbers',
+        language: {
+          url: url_language
+        },
         buttons: [
           {
             extend: 'excel',
-            text: '<i class="fas fa-file-excel"></i><span class="ml-2">Excel</span>',
-            title: 'Iscrizioni',
+            text: '<i class="fas fa-file-excel"></i><span class="ml-2">{{ 'meetings.excel' | trans }}</span>',
+            title: '{{ 'iscrizioni.subscriptions' | trans }}',
             action: newExportAction,
             className: 'btn btn-link'
           },
           {
             extend: 'csv',
-            text: '<i class="fas fa-file-csv"></i><span class="ml-2">CSV</span>',
-            title: 'Iscrizioni',
+            text: '<i class="fas fa-file-csv"></i><span class="ml-2">{{ 'meetings.csv' | trans }}</span>',
+            title: '{{ 'iscrizioni.subscriptions' | trans }}',
             action: newExportAction,
             className: 'btn btn-link'
           },
           {
             extend: 'pdf',
-            text: '<i class="fas fa-file-pdf"></i><span class="ml-2">PDF</span>',
-            title: 'Iscrizioni',
+            text: '<i class="fas fa-file-pdf"></i><span class="ml-2">{{ 'meetings.pdf' | trans }}</span>',
+            title: '{{ 'iscrizioni.subscriptions' | trans }}',
             pageSize: 'LEGAL',
             action: newExportAction,
             className: 'btn btn-link'
           },
           {
             extend: 'print',
-            text: '<i class="fas fa-print"></i><span class="ml-2">Stampa</span>',
-            title: 'Iscrizioni',
+            text: '<i class="fas fa-print"></i><span class="ml-2">{{ 'meetings.print' | trans }}</span>',
+            title: '{{ 'iscrizioni.subscriptions' | trans }}',
             action: newExportAction,
             className: 'btn btn-link'
           }
         ],
-        "language": {
-          "sEmptyTable": "Nessun dato presente nella tabella",
-          "sInfo": "Vista da _START_ a _END_ di _TOTAL_ elementi",
-          "sInfoEmpty": "Vista da 0 a 0 di 0 elementi",
-          "sInfoFiltered": "(filtrati da _MAX_ elementi totali)",
-          "sInfoPostFix": "",
-          "sInfoThousands": ".",
-          "sLengthMenu": "Visualizza _MENU_ elementi",
-          "sLoadingRecords": "Caricamento...",
-          "sProcessing": '<div class="progress-spinner progress-spinner-double progress-spinner-active">\n' +
-            '        <div class="progress-spinner-inner"></div>\n' +
-            '        <div class="progress-spinner-inner"></div>\n' +
-            '        <span class="sr-only">Caricamento...</span>\n' +
-            '      </div>',
-          "sSearch": "Ricerca",
-          "sZeroRecords": "La ricerca non ha portato alcun risultato.",
-          "oPaginate": {
-            "sFirst": "Inizio",
-            "sPrevious": "Precedente",
-            "sNext": "Successivo",
-            "sLast": "Fine"
-          },
-          "oAria": {
-            "sSortAscending": ": attiva per ordinare la colonna in ordine crescente",
-            "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
-          }
-        },
         initComplete: function () {
           // Add data-title attribute
           $('#subscriptions thead tr th').each(function (index, element) {
@@ -314,9 +289,7 @@
                 // todo: manage error
                 let errors = jqxhr.responseJSON.errors || [];
                 errors.forEach(function (error) {
-                  let inputForm = `<p class="text-danger"><svg class="icon-expand icon icon-danger">
-            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
-          </svg>${error.error}</p>`;
+                  let inputForm = `<p class="text-danger"><svg class="icon-expand icon icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use></svg>${error.error}</p>`;
                   $("#errors").append(inputForm);
                 })
               }

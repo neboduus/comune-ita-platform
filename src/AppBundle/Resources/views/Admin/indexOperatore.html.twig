@@ -4,7 +4,7 @@
   <section id="intro" class="container my-4">
     <div class="row">
       <div class="col-lg-12">
-        <h2>Operatori</h2>
+        <h2>{{ 'nav.admin.operatori' | trans}}</h2>
       </div>
 
       <div class="col-12">
@@ -28,13 +28,13 @@
               </td>
               <td>{{ operatoreUser.username }}</td>
               <td>{{ operatoreUser.email }}</td>
-              <td>{% if operatoreUser.enabled %}Abilitato{% else %}Non abilitato{% endif %}</td>
+              <td>{% if operatoreUser.enabled %}{{ 'enabled' | trans }}{% else %}{{ 'not_enabled' | trans }}{% endif %}</td>
               <td>{% if operatoreUser.lastChangePassword %}{{ operatoreUser.lastChangePassword|date('Y-m-d H:i:s') }}{% else %} --- {% endif %}</td>
               <td class="actions">
                 <a class="btn btn-secondary btn-xs"
-                   href="{{ path('admin_operatore_edit', { 'id': operatoreUser.id }) }}">Modifica</a>
+                   href="{{ path('admin_operatore_edit', { 'id': operatoreUser.id }) }}">{{ 'modifica'|trans }}</a>
                 <a class="btn btn-danger btn-xs" onclick="return confirm('{{ 'general.alert_elimina'|trans }}');"
-                   href="{{ path('admin_operatore_delete', { 'id': operatoreUser.id }) }}">Elimina</a>
+                   href="{{ path('admin_operatore_delete', { 'id': operatoreUser.id }) }}">{{ 'elimina'|trans }}</a>
               </td>
             </tr>
           {% endfor %}

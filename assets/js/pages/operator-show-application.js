@@ -19,7 +19,7 @@ Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
 Formio.registerComponent('financial_report', FinancialReport);
 Formio.registerComponent('sdcfile', SdcFile);
-
+const language = document.documentElement.lang.toString();
 
 // Todo: spostare in ./assets/js/Formio/Formio.js
 window.onload = function () {
@@ -27,7 +27,7 @@ window.onload = function () {
   Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
     readOnly: true,
     noAlerts: true,
-    language: 'it',
+    language: language,
     i18n: FormioI18n.languages()
   }).then(function (form) {
     form.submission = {
@@ -58,18 +58,18 @@ window.onload = function () {
     const backofficeTextInfo = saveInfo.find('span');
     const backofficeFormIOI18n = {
       en: {},
-      sp: {},
+      de: {},
       it: {
-        next: 'Successivo',
-        previous: 'Precedente',
-        cancel: 'Annulla',
-        submit: 'Salva',
+        next: `${Translator.trans('following', {}, 'messages',language)}`,
+        previous: `${Translator.trans('previous', {}, 'messages',language)}`,
+        cancel: `${Translator.trans('annulla', {}, 'messages',language)}`,
+        submit: `${Translator.trans('salva', {}, 'messages',language)}`,
       }
     }
     Formio.icons = 'fontawesome';
     Formio.createForm(document.getElementById('backoffice-form'), backofficeFormContainer.data('formserver_url') + '/form/' + backofficeFormContainer.data('form_id'), {
       noAlerts: true,
-      language: 'it',
+      language: language,
       i18n: backofficeFormIOI18n,
       buttonSettings: {
         showCancel: false
@@ -98,19 +98,19 @@ window.onload = function () {
       // Triggered when they click the submit button.
       form.on('submit', function (submission) {
         let submitButton = backofficeFormContainer.find('.btn-wizard-nav-submit');
-        submitButton.html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Salva ...')
+        submitButton.html(`<i class="fa fa-circle-o-notch fa-spin fa-fw"></i>${Translator.trans('salva', {}, 'messages',language)}`)
         axios.post(backofficeFormContainer.data('backoffice-save-url'), submission.data)
-          .then(function (reponse) {
+          .then(function (response) {
             saveInfo.removeClass('d-none');
-            backofficeTextInfo.text('pochi secondi fa')
+            backofficeTextInfo.text(`${Translator.trans('time.few_seconds_ago', {}, 'messages',language)}`)
             form.emit('submitDone', submission)
           })
           .catch(function (error) {
             saveInfo.removeClass('d-none');
-            backofficeTextInfo.text('si è verificato un errore durante il salvataggio')
+            backofficeTextInfo.text(`${Translator.trans('servizio.error_from_save', {}, 'messages',language)}`)
           })
           .then(function () {
-            submitButton.html('Salva')
+            submitButton.html(`${Translator.trans('salva', {}, 'messages',language)}`)
           });
       });
     });
@@ -161,7 +161,7 @@ $(document).ready(function () {
 
   $('#modal_approve').on('click', function () {
     $('#outcome_outcome_0').prop('checked', true);
-    $('#modalTitle').html('Approva pratica');
+    $('#modalTitle').html(`${Translator.trans('pratica.approved_pratice', {}, 'messages',language)}`);
     $('#email_text').show();
     if ($('#outcome_payment_amount').length > 0) {
       $('#outcome_payment_amount').closest('.form-group').removeClass('d-none');
@@ -171,7 +171,7 @@ $(document).ready(function () {
 
   $('#modal_refuse').on('click', function () {
     $('#outcome_outcome_1').prop('checked', true);
-    $('#modalTitle').html('Rigetta pratica');
+    $('#modalTitle').html(`${Translator.trans('pratica.reject_pratice', {}, 'messages',language)}`);
     $('#email_text').hide();
     if ($('#outcome_payment_amount').length > 0) {
       $('#outcome_payment_amount').closest('.form-group').addClass('d-none');

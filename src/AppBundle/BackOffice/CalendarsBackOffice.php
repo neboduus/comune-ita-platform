@@ -17,7 +17,7 @@ class CalendarsBackOffice implements BackOfficeInterface
 {
   const IDENTIFIER = 'calendars';
 
-  const NAME = 'Prenotazione appuntamenti';
+  const NAME = 'nav.backoffices.prenotazione_appuntamenti';
 
   const PATH = 'operatori_calendars_index';
 
@@ -72,7 +72,7 @@ class CalendarsBackOffice implements BackOfficeInterface
 
   public function getName()
   {
-    return self::NAME;
+    return $this->translator->trans(self::NAME);
   }
 
   public function getPath()

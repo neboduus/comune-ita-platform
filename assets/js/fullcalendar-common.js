@@ -14,23 +14,25 @@ export function getCookie(name) {
  * @param status
  */
 export function getStatus(status) {
+  const language = document.documentElement.lang.toString();
+
   switch (status) {
     case 0:
-      return 'In attesa di conferma';
+      return Translator.trans('meetings.status.pending', {}, 'messages', language);
     case 1:
-      return 'Confermato';
+      return Translator.trans('meetings.status.approved', {}, 'messages', language);
     case 2:
-      return 'Rifiutato';
+      return Translator.trans('meetings.status.refused', {}, 'messages', language);
     case 3:
-      return 'Assente';
+      return Translator.trans('meetings.status.missed', {}, 'messages', language);
     case 4:
-      return 'Concluso';
+      return Translator.trans('meetings.status.concluded', {}, 'messages', language);
     case 5:
-      return 'Annullato';
+      return Translator.trans('meetings.status.cancelled', {}, 'messages', language);
     case 6:
-      return 'Bozza';
+      return Translator.trans('meetings.status.draft', {}, 'messages', language);
     default:
-      return 'Errore';
+      return Translator.trans('status_error', {}, 'messages', language);
   }
 }
 

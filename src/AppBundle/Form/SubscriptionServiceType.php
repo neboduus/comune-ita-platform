@@ -45,9 +45,9 @@ class SubscriptionServiceType extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $statuses = [
-      'Pending' => SubscriptionService::STATUS_WAITING,
-      'Attivo' => SubscriptionService::STATUS_ACTIVE,
-      'Inattivo' => SubscriptionService::STATUS_UNACTIVE
+      'iscrizioni.status_0' => SubscriptionService::STATUS_WAITING,
+      'iscrizioni.status_1' => SubscriptionService::STATUS_ACTIVE,
+      'iscrizioni.status_2' => SubscriptionService::STATUS_UNACTIVE
     ];
 
     $builder

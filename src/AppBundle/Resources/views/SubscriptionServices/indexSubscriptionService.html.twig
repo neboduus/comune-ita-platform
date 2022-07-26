@@ -2,47 +2,30 @@
 
 {% block stylesheets %}
   {{ encore_entry_link_tags('subscription-service-manager') }}
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/w/bs4/dt-1.10.18/datatables.min.css"/>
-
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jq-3.6.0/dt-1.12.1/datatables.min.css"/>
 {% endblock %}
 
 {% block javascripts %}
   {{ encore_entry_script_tags('subscription-service-manager') }}
-  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+  <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jq-3.6.0/dt-1.12.1/datatables.min.js"></script>
   <script src="{{ asset('bundles/datatables/js/datatables.js') }}"></script>
   <script>
+    const lang = document.documentElement.lang.toString();
+    //Default
+    let url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/it-IT.json';
+    if(lang === 'en'){
+      url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/en-GB.json';
+    }else if(lang === 'de'){
+      url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/de-DE.json';
+    }
     $(function () {
       $('#subscription_services_table').initDataTables({{ datatable_settings(datatable) }}, {
         dom: 'fBrtip',
         searching: true,
         paging: true,
         pagingType: 'simple_numbers',
-        "language": {
-          "sEmptyTable": "Nessun dato presente nella tabella",
-          "sInfo": "Vista da _START_ a _END_ di _TOTAL_ elementi",
-          "sInfoEmpty": "Vista da 0 a 0 di 0 elementi",
-          "sInfoFiltered": "(filtrati da _MAX_ elementi totali)",
-          "sInfoPostFix": "",
-          "sInfoThousands": ".",
-          "sLengthMenu": "Visualizza _MENU_ elementi",
-          "sLoadingRecords": "Caricamento...",
-          "sProcessing": '<div class="progress-spinner progress-spinner-double progress-spinner-active">\n' +
-            '        <div class="progress-spinner-inner"></div>\n' +
-            '        <div class="progress-spinner-inner"></div>\n' +
-            '        <span class="sr-only">Caricamento...</span>\n' +
-            '      </div>',
-          "sSearch": "Ricerca",
-          "sZeroRecords": "La ricerca non ha portato alcun risultato.",
-          "oPaginate": {
-            "sFirst": "Inizio",
-            "sPrevious": "Precedente",
-            "sNext": "Successivo",
-            "sLast": "Fine"
-          },
-          "oAria": {
-            "sSortAscending": ": attiva per ordinare la colonna in ordine crescente",
-            "sSortDescending": ": attiva per ordinare la colonna in ordine decrescente"
-          },
+        language: {
+          url: url_language
         },
         initComplete: function () {
           $('#subscription_services_table thead tr th').each(function(index,element){

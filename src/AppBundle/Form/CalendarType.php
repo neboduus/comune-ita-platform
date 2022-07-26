@@ -89,7 +89,7 @@ class CalendarType extends AbstractType
       ])
       ->add('is_moderated', CheckboxType::class, [
         'required' => false,
-        'label' => 'Richiede moderazione?'
+        'label' => 'calendars.is_moderated'
       ])
       ->add('owner', ChoiceType::class, [
         'choices' => $owners,

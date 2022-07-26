@@ -4,9 +4,7 @@ namespace AppBundle\DataTable;
 
 
 use AppBundle\Entity\Pratica;
-use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
-use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\MapColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigColumn;
@@ -26,15 +24,15 @@ class PraticaTableType implements DataTableTypeInterface
         'template' => '@App/Pratiche/table/_id.html.twig',
       ])
       ->add('status', MapColumn::class, [
-        'label' => 'Stato',
+        'label' => 'general.stato',
         'orderable' => false,
         'searchable' => false,
         'map' => [
-          '1000' => 'Bozza',
+          '1000' => 'status_draft',
         ],
       ])
       ->add('servizio', TextColumn::class, [
-        'label' => 'Servizio',
+        'label' => 'pratica.servizio',
         'orderable' => false,
         'searchable' => true,
         'field' => 'servizio.name'
@@ -45,7 +43,7 @@ class PraticaTableType implements DataTableTypeInterface
         'searchable' => false
       ])
       ->add('creationTime', TextColumn::class, [
-        'label' => 'Data di creazione',
+        'label' => 'pratica.data_di_creazione',
         //'format' => 'd-m-Y H:i',
         'orderable' => true,
         'searchable' => false

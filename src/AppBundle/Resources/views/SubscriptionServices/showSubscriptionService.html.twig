@@ -135,7 +135,7 @@
         {{ form_start(delete_form) }}
         <div>
           <a class="btn btn-danger btn-sm float-right"
-             onclick="return confirm('Sei sicuro di procedere? il servizio a sottoscrizione verrà eliminato definitivamente.');"
+             onclick="return confirm('{{ 'operatori.delete_subscription_service' | trans }}');"
              href="{{ path('operatori_subscription-service_delete', { 'id': subscriptionService.id }) }}">{{ 'elimina' | trans }}</a>
           {{ form_end(delete_form) }}
         </div>

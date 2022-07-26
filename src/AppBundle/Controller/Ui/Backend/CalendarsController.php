@@ -179,14 +179,14 @@ class CalendarsController extends Controller
         }
         $this->calendarManager->save($calendar);
 
-        $this->addFlash('feedback', 'Calendario creato correttamente');
+        $this->addFlash('feedback', $this->translator->trans('operatori.create_calendar_success'));
         return $this->redirectToRoute('operatori_calendars_index');
       } catch (\Exception $exception) {
 
         if ($exception instanceof UniqueConstraintViolationException) {
-          $this->addFlash('error', 'Creazione fallita: esiste già un calendario con nome ' . $calendar->getTitle());
+          $this->addFlash('error', $this->translator->trans('operatori.create_calendar_error_name'). ' ' . $calendar->getTitle());
         } else {
-          $this->addFlash('error', 'Creazione fallita');
+          $this->addFlash('error', $this->translator->trans('operatori.create_calendar_error'));
         }
       }
     }
@@ -209,7 +209,7 @@ class CalendarsController extends Controller
   public function deleteCalendarAction(Request $request, Calendar $calendar)
   {
     if (!$this->canUserAccessCalendar($calendar)) {
-      $this->addFlash('error', 'Non possiedi i permessi per eliminare questo calendario');
+      $this->addFlash('error', $this->translator->trans('operatori.no_permission_calendar'));
       return $this->redirectToRoute('operatori_calendars_index');
     }
 
@@ -218,11 +218,11 @@ class CalendarsController extends Controller
       $em->remove($calendar);
       $em->flush();
 
-      $this->addFlash('feedback', 'Calendario eliminato correttamente');
+      $this->addFlash('feedback', $this->translator->trans('operatori.delete_calendar_success'));
 
       return $this->redirectToRoute('operatori_calendars_index');
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', 'Impossibile eliminare il calendario');
+      $this->addFlash('warning', $this->translator->trans('operatori.delete_calendar_error'));
       return $this->redirectToRoute('operatori_calendars_index');
     }
   }
@@ -256,7 +256,7 @@ class CalendarsController extends Controller
     $user = $this->getUser();
 
     if (!$this->canUserAccessCalendar($calendar)) {
-      $this->addFlash('error', 'Non possiedi i permessi per modificare questo calendario');
+      $this->addFlash('error', $this->translator->trans('operatori.no_permission_calendar'));
       return $this->redirectToRoute('operatori_calendars_index');
     }
 
@@ -289,10 +289,10 @@ class CalendarsController extends Controller
         }
         $this->calendarManager->save($calendar);
 
-        $this->addFlash('feedback', 'Calendario modificato correttamente');
+        $this->addFlash('feedback', $this->translator->trans('operatori.update_calendar_success'));
         return $this->redirectToRoute('operatori_calendars_index');
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Si è verificato un errore durante il salvataggio: ' . $exception->getMessage());
+        $this->addFlash('error', $this->translator->trans('servizio.error_from_save').': ' . $exception->getMessage());
       }
     }
 
@@ -314,17 +314,17 @@ class CalendarsController extends Controller
     $user = $this->getUser();
 
     if (!$this->canUserAccessCalendar($calendar)) {
-      $this->addFlash('error', 'Non possiedi i permessi per visualizzare questo calendario');
+      $this->addFlash('error', $this->translator->trans('operatori.no_permission_calendar'));
       return $this->redirectToRoute('operatori_calendars_index');
     }
 
     $statuses = [
-      Meeting::STATUS_PENDING => 'In attesa di approvazione',
-      Meeting::STATUS_APPROVED => 'Approvato',
-      Meeting::STATUS_REFUSED => 'Rifiutato',
-      Meeting::STATUS_MISSED => 'Assente',
-      Meeting::STATUS_DONE => 'Concluso',
-      Meeting::STATUS_CANCELLED => 'Annullato',
+      Meeting::STATUS_PENDING => $this->translator->trans('status_pending'),
+      Meeting::STATUS_APPROVED => $this->translator->trans('status_approved_1'),
+      Meeting::STATUS_REFUSED => $this->translator->trans('status_refused'),
+      Meeting::STATUS_MISSED => $this->translator->trans('status_missed'),
+      Meeting::STATUS_DONE => $this->translator->trans('status_concluded'),
+      Meeting::STATUS_CANCELLED => $this->translator->trans('status_cancelled'),
     ];
 
     $em = $this->getDoctrine()->getManager();
@@ -401,7 +401,7 @@ class CalendarsController extends Controller
       }
       $events[] = [
         'id' => $meeting->getId(),
-        'title' => $meeting->getName() ? $meeting->getName() : ($meeting->getStatus() == Meeting::STATUS_DRAFT ? "Bozza" : 'Nome non fornito'),
+        'title' => $meeting->getName() ? $meeting->getName() : ($meeting->getStatus() == Meeting::STATUS_DRAFT ? $this->translator->trans('meetings.status.draft') : $this->translator->trans('meetings.modal.no_name')),
         'name' => $meeting->getName(),
         'opening_hour' => $meeting->getOpeningHour() ? $meeting->getOpeningHour()->getId() : null,
         'is_allow_overlap' => $calendar->isAllowOverlaps(),
@@ -506,7 +506,7 @@ class CalendarsController extends Controller
     $canCancel = new \DateTime() <= $limitDate;
 
     $form = $this->createFormBuilder()->add('save', SubmitType::class, [
-      'label' => 'Annulla appuntamento',
+      'label' => $this->translator->trans('meetings.delete'),
       'attr' => ['class' => 'btn btn-danger']
     ])->getForm();
     $form->handleRequest($request);
@@ -518,7 +518,7 @@ class CalendarsController extends Controller
 
         $this->addFlash('feedback', $this->translator->trans('meetings.email.cancel_success'));
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Si è verificato un errore durante l\'annullamento dell\'appuntamento' . $exception->getMessage());
+        $this->addFlash('error', $this->translator->trans('meetings.error.save_delete_slot'). ' ' . $exception->getMessage());
       }
     }
     return $this->render('@App/Calendars/cancelMeeting.html.twig', [
@@ -557,15 +557,15 @@ class CalendarsController extends Controller
 
     $form = $this->createFormBuilder(null, array('csrf_protection' => false))
       ->add('approve', SubmitType::class, [
-        'label' => 'Conferma',
+        'label' => $this->translator->trans('meetings.modal.confirm'),
         'attr' => ['class' => 'btn btn-sm btn-success']
       ])
       ->add('refuse', SubmitType::class, [
-        'label' => 'Rifiuta',
+        'label' => $this->translator->trans('meetings.modal.refuse'),
         'attr' => ['class' => 'btn btn-sm btn-danger']
       ])
       ->add('cancel', SubmitType::class, [
-        'label' => 'Annulla',
+        'label' => $this->translator->trans('meetings.modal.cancel'),
         'attr' => ['class' => 'btn btn-sm btn-warning']
       ])
       ->getForm();
@@ -595,7 +595,7 @@ class CalendarsController extends Controller
 
         $this->addFlash('feedback', $this->translator->trans('meetings.email.success'));
       } catch (\Exception $exception) {
-        $this->addFlash('error', 'Si è verificato un errore durante la modifica dell\'appuntamento' . $exception->getMessage());
+        $this->addFlash('error', $this->translator->trans('meetings.error.update_slot'). ' ' . $exception->getMessage());
       }
     }
     return $this->render('@App/Calendars/editMeeting.html.twig', [

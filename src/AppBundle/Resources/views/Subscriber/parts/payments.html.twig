@@ -1,5 +1,13 @@
-<script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jq-3.6.0/dt-1.12.1/datatables.min.js"></script>
 <script>
+  const lang = document.documentElement.lang.toString();
+  //Default
+  let url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/it-IT.json';
+  if(lang === 'en'){
+    url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/en-GB.json';
+  }else if(lang === 'de'){
+    url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/de-DE.json';
+  }
     $(function () {
       $('#payments_table').DataTable({
         "order": [[3, "asc"]],
@@ -7,7 +15,7 @@
           {orderable: false, targets: 5}
         ],
         language: {
-          url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/it_it.json'
+          url: url_language
         },
         stateSave: true,
         dom: "<'row'<'col-6 pt-2'l><'col-6'f>>" +

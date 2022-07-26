@@ -14,10 +14,10 @@
         $("body").append(temp)
         temp.val(button.data('url')).select()
         document.execCommand("copy")
-        button.find('span').text('URL copiato')
+        button.find('span').text('{{ 'servizio.url_copied' | trans }}')
         temp.remove();
         setTimeout(function () {
-          button.find('span').text('Copia URL')
+          button.find('span').text('{{ 'servizio.copy_url' | trans }}')
         }, 2000);
 
       })
@@ -56,8 +56,8 @@
                      data-url="{{ absolute_url(path('service_group_show', { 'slug': item.slug })) }}"
                      data-container="body" data-toggle="popover" data-trigger="hover"
                      data-placement="right"
-                     data-html="true" title="Url pubblico del gruppo di servizi"
-                     data-content="Copia l'URL pubblico del gruppo di servizi.">
+                     data-html="true" title="{{ 'operatori.public_url_service_group' | trans }}"
+                     data-content="{{ 'operatori.copy_url_service_group' | trans }}">
                     Copia Url
                   </a>
                 </td>
@@ -65,8 +65,8 @@
                 <td data-title="Azioni" class="actions">
                   <a class="btn btn-secondary btn-xs" href="{{ path('admin_service_group_edit', { 'id': item.id }) }}">{{ 'gruppo_di_servizi.modifica' | trans() }}</a>
                   <a class="btn btn-danger btn-xs"
-                     onclick="return confirm('Sei sicuro di procedere? Il gruppo di servizi verrà eliminato definitivamente.');"
-                     href="{{ path('admin_service_group_delete', { 'id': item.id }) }}">Elimina</a>
+                     onclick="return confirm('{{ 'operatori.delete_service_group' | trans }}');"
+                     href="{{ path('admin_service_group_delete', { 'id': item.id }) }}">{{ 'elimina' | trans }}</a>
                 </td>
               </tr>
             {% endfor %}

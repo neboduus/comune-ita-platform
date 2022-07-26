@@ -20,7 +20,7 @@
       <div class="col-12 col-md-3 py-lg-2">
         <form method="get" action="{{ path('admin_scheduled_actions_index') }}">
           <div class="form-row">
-            <label>Filtra per stato</label>
+            <label>{{ 'pratica.filtra_per_stato' | trans }}</label>
             <select id="filter-status" class="form-control" name="filters[status]">
               <option value="">{{ 'tutti' | trans }}</option>
               {% for k,v in statuses  %}

@@ -1,6 +1,6 @@
 title: 'The Citizen Room'
 claim: 'Online services of %ente_name%'
-intro: "<p> <span>Using the \"Citizen Room\" you can access with a few clicks all the services made available to citizens.<br />\nIn case of first access, you will be asked to confirm your data before using the service.</span> </p>"
+intro: '<p><span>Using the "Citizen Room" you can access with a few clicks all the services made available to citizens.<br />In case of first access, you will be asked to confirm your data before using the service.</span></p>'
 salva: 'Save'
 elimina: 'Delete'
 reply: 'Answer'
@@ -54,14 +54,14 @@ nav:
     protocollo: 'Protocol Configuration'
     usage: 'Statistics'
   admin:
-    impostazioni_istanza: 'instance_settings'
+    impostazioni_istanza: 'Instance settings'
     operatori: 'operators'
     servizi: 'services'
     gruppo_servizi: 'service_group'
     webhook: 'webhook'
     metodi_pagamento: 'payment_methods'
     strumenti: 'tools'
-    azioni_programmate: 'programmed_actions'
+    azioni_programmate: 'Programmed actions'
     logs: 'logs'
     integrazioni: 'integrations'
     tenant:
@@ -82,9 +82,9 @@ nav:
     statistiche_descrizione: 'View statistics'
     title: 'Welcome to the admin dashboard'
   backoffices:
-    servizi_sottoscrizione: 'subscription_services'
-    prenotazione_appuntamenti: 'booking_appointments'
-    pagamenti_servizi_sottoscrizione: 'payments_subscription_services'
+    servizi_sottoscrizione: 'Subscription services'
+    prenotazione_appuntamenti: 'Booking appointments'
+    pagamenti_servizi_sottoscrizione: 'Payments subscription services'
   header:
     profile: "Profile"
     logout: "Logout"
@@ -293,7 +293,7 @@ pratica:
     comunica: 'announces'
     dichiara: 'states'
     allega: 'attaches'
-    dichiarazione_composizione_nucleo_familiare: 'declares that his own family unit is composed as follows'
+    dichiarazione_composizione_nucleo_familiare: 'declares that his own family unit is composed as follows:'
     composizione_nucleo_familiare:
       nome_e_cognome: 'Name and surname'
       rapporto_parentela: 'Family relationship'
@@ -301,7 +301,7 @@ pratica:
     dichiarazione_allegati: 'attach the following documents:'
     dichiarazione_cambiamenti: 'promptly inform the %comune% of any change regarding the household composition and the family''s economical situation'
     dichiarazione_cambiamenti_detail: "In the event of a false declaration, the declarant is aware that he will be punished according to the Criminal Code following the provisions of the art. 76 of the Presidential Decree 445/2000. Moreover, if the check carried out reveals the untruthfulness of the content of any of the declarations made, the subject will lose the benefits resulting from any provision issued based on the untruthful statement (Article 75 of Presidential Decree 445/2000). The declarant is informed and authorizes data collection to issue the administrative provision under art. 13 of the Legislative Decree 196/2003."
-    luogo: 'Place'
+    luogo: 'There'
     riferimento_sdc: 'Reference in Citizen''s Room:'
     allegati_protocollo: 'Attachments sent to the protocol'
     allegati_no_protocollo: 'Attachments not sent to the protocol'
@@ -337,7 +337,7 @@ pratica:
     allegato:
       file: 'File name'
       descrizione: 'Description'
-      pratiche_list_intro: 'Attached to lists'
+      pratiche_list_intro: 'Attached to lists:'
       allegato: 'Attachment'
     modulocompilato: 'Filled document'
     stato_1000: 'Draft'
@@ -351,7 +351,7 @@ pratica:
     stato_4000: 'Taking charge'
     stato_5000: 'Processing'
     stato_6000: 'Processed (waiting for registration of the outcome document)'
-    stato_7000: 'Accepted '
+    stato_7000: 'Accepted'
     stato_8000: 'Denied (waiting for registration of the outcome document)'
     stato_9000: 'Denied'
     stato_20000: 'Retired'
@@ -2519,7 +2519,7 @@ login_type:
   none: 'None'
   login_pat: 'Spid PAT'
   login_open: 'Openlogin'
-  label: 'label'
+  label: 'Login type:'
 app_io:
   service_id: 'Service identifier'
   primary_key: 'Primary key'
@@ -2551,7 +2551,7 @@ ente:
     title: 'title'
     helper: "helper"
   pagamenti:
-    label: "label"
+    label: "Select the payment methods available to the institution"
     panel_title: 'panel_title'
   navigation_type:
     label: 'Type of navigation'
@@ -2628,7 +2628,7 @@ error_message_detail_401: "You're not authorized to access to this area"
 practice_of: 'Practice of'
 from_date_to_date: "From %from% to %to%"
 search:
-  label: 'Near'
+  label: 'Search'
   close: 'Close'
   filters: 'Filters'
   apply_filters: 'Apply filters'
@@ -2752,7 +2752,7 @@ time:
   month: 'month'
   week: 'week'
   day: 'day'
-  hour: 'hour'
+  hour: 'Now'
   minute: 'minute'
   weeks: 'weeks'
   days: 'days'

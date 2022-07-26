@@ -4,7 +4,6 @@ namespace AppBundle\DataTable;
 
 
 use AppBundle\Entity\ScheduledAction;
-use AppBundle\Entity\Servizio;
 use Doctrine\ORM\QueryBuilder;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
@@ -35,27 +34,27 @@ class ScheduledActionTableType implements DataTableTypeInterface
         'template' => '@App/Admin/table/scheduledActions/_id.html.twig',
       ])
       ->add('type', MapColumn::class, [
-        'label' => 'Tipo',
+        'label' => 'type',
         'orderable' => false,
         'searchable' => true,
         'map' => [
-          'createForPratica' => 'Creazione pdf',
-          'protocollo.sendPratica' => 'Protocolla pratica',
-          'protocollo.sendAllegati' => 'Protocolla allegati integrazione',
-          'protocollo.sendRitiro' => 'Protocolla ritiro',
-          'protocollo.sendRichiesteIntegrazione' => 'Protocolla richiesta integrazione',
-          'protocollo.refreshPratica' => 'Protocolla esito',
-          'protocollo.uploadFile' => 'Protocolla allegati',
-          'giscom.sendPratica' => 'Invio pratica Giscomn',
-          'giscom.askCFs' => 'Richiesta codici fiscali Giscom',
-          'application_webhook' => 'Webhook',
-          'application_payment_reminder' => 'Promemoria pagamento',
-          'produce_message' => 'Messaggio Kafka',
+          'createForPratica' => 'scheduled_actions.create_pdf',
+          'protocollo.sendPratica' => 'scheduled_actions.protocollo_send_pratice',
+          'protocollo.sendAllegati' => 'scheduled_actions.protocollo_send_attach',
+          'protocollo.sendRitiro' => 'scheduled_actions.protocollo_send_withdraw',
+          'protocollo.sendRichiesteIntegrazione' => 'scheduled_actions.protocollo_send_integrations',
+          'protocollo.refreshPratica' => 'scheduled_actions.protocollo_refresh_pratice',
+          'protocollo.uploadFile' => 'scheduled_actions.protocollo_upload_file',
+          'giscom.sendPratica' => 'scheduled_actions.giscom_send_pratice',
+          'giscom.askCFs' => 'scheduled_actions.giscom_askCFs',
+          'application_webhook' => 'scheduled_actions.application_webhook',
+          'application_payment_reminder' => 'scheduled_actions.application_payment_reminder',
+          'produce_message' => 'scheduled_actions.produce_message',
         ],
       ])
       ->add('params', TwigColumn::class, [
         'className' => 'text-truncate',
-        'label' => 'Parametri',
+        'label' => 'parameters',
         'orderable' => false,
         'searchable' => true,
         'template' => '@App/Admin/table/scheduledActions/_params.html.twig',
@@ -71,7 +70,7 @@ class ScheduledActionTableType implements DataTableTypeInterface
         'searchable' => false,
       ])
       ->add('status', TwigColumn::class, [
-        'label' => 'Stato',
+        'label' => 'general.stato',
         'orderable' => false,
         'searchable' => true,
         'field' => 'scheduled_action.status',
@@ -85,13 +84,13 @@ class ScheduledActionTableType implements DataTableTypeInterface
         'searchable' => false,
       ])
       ->add('createdAt', DateTimeColumn::class, [
-        'label' => 'Data di creazione',
+        'label' => 'created_at',
         'format' => 'd/m/y H:i',
         'orderable' => true,
         'searchable' => false,
       ])
       ->add('updatedAt', DateTimeColumn::class, [
-        'label' => 'Ultimo aggiornamento',
+        'label' => 'updated_at',
         'format' => 'd/m/y H:i',
         'orderable' => true,
         'searchable' => false,
