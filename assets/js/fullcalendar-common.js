@@ -54,3 +54,8 @@ export function deleteDraftModal(info) {
 
   $('#modalDeleteDraft').modal('show');
 }
+
+
+export function setCookie(key, value) {
+  document.cookie = key+"="+value;
+}
