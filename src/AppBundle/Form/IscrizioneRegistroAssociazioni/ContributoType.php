@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\IscrizioneRegistroAssociazioni;
 
-use AppBundle\Entity\ContributoAssociazioni;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -18,7 +17,6 @@ class ContributoType extends AbstractType
         $helper->setGuideText('steps.contributo_associazioni.contributo.guida_alla_compilazione', true);
         $helper->setStepTitle('steps.contributo_associazioni.contributo.title', true);
 
-        /** @var ContributoAssociazioni $pratica */
         $pratica = $builder->getData();
         $choices = array();
         foreach ($pratica->getTipologieUsoContributo() as $type) {

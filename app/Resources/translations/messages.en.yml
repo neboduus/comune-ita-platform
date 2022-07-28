@@ -1271,13 +1271,6 @@ steps:
         guida_alla_compilazione: 'Choose the type for the required certificate'
         tipologia_certificato: 'Type of certificate'
         uso: "Specify the reasoned request"
-      AttoMorte:
-        label: 'Type and use'
-        title: 'Type and use'
-        description: "Detailed specification of the use of the certificate"
-        guida_alla_compilazione: "Detailed specification of the use of the certificate"
-        tipologia_certificato: 'Type of certificate'
-        uso: "Specify the reasoned request"
       EstrattoMorte:
         label: 'Type and use'
         title: 'Type and use'
@@ -1297,13 +1290,6 @@ steps:
         title: 'Type and use'
         description: "specify the certificate type"
         guida_alla_compilazione: "Specify the certificate type"
-        tipologia_certificato: 'Type of certificate'
-        uso: "Specify the reasoned request"
-      AttoMatrimonio:
-        label: 'Type and use'
-        title: "Type and use"
-        description: "Detailed specification of the use of the certificate"
-        guida_alla_compilazione: "Detailed specification of the use of the certificate"
         tipologia_certificato: 'Type of certificate'
         uso: "Specify the reasoned request"
     uso:

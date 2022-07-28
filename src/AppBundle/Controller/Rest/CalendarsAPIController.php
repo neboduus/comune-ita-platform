@@ -47,6 +47,9 @@ class CalendarsAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   private $logger;
 
+  /** @var CalendarManager  */
+  private $calendarManager;
+
   public function __construct(CalendarManager $calendarManager, EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, LoggerInterface $logger)
   {
     $this->em = $em;

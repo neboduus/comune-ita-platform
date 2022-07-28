@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\Base;
 
-use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\DematerializedFormAllegatiContainer;
 use AppBundle\Entity\Pratica;
@@ -106,11 +105,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
   public function getFormOptions($step, array $options = array())
   {
     $options = parent::getFormOptions($step, $options);
-
-    /** @var Pratica $pratica */
-    $pratica = $this->getFormData();
     $options["helper"] = new TestiAccompagnatoriProcedura($this->translator, $this->prefix . '/' . $this->locale);
-
     return $options;
   }
 
@@ -130,17 +125,6 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     $pratica->setRichiedenteCittaResidenza($user->getCittaResidenza());
     $pratica->setRichiedenteTelefono($user->getCellulare() ?? $user->getTelefono());
     $pratica->setRichiedenteEmail($user->getEmail());
-  }
-
-  /**
-   * @param Pratica $lastPratica
-   * @param Pratica $pratica
-   */
-  public function populatePraticaFieldsWithLastPraticaValues($lastPratica, $pratica)
-  {
-    foreach ($lastPratica->getNucleoFamiliare() as $oldComponente) {
-      $this->addNewComponenteToPraticaFromOldComponente($oldComponente, $pratica);
-    }
   }
 
   public function getResumeUrl(Request $request)
@@ -179,21 +163,6 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
 
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
     }
-  }
-
-
-  /**
-   * @param ComponenteNucleoFamiliare $componente
-   * @param Pratica $pratica
-   */
-  private function addNewComponenteToPraticaFromOldComponente(ComponenteNucleoFamiliare $componente, Pratica $pratica)
-  {
-    $cloneComponente = new ComponenteNucleoFamiliare();
-    $cloneComponente->setNome($componente->getNome());
-    $cloneComponente->setCognome($componente->getCognome());
-    $cloneComponente->setCodiceFiscale($componente->getCodiceFiscale());
-    $cloneComponente->setRapportoParentela($componente->getRapportoParentela());
-    $pratica->addComponenteNucleoFamiliare($cloneComponente);
   }
 
   /**

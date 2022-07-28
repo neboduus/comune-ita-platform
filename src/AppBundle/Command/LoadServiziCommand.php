@@ -23,7 +23,6 @@ class LoadServiziCommand extends ContainerAwareCommand{
         $loader = new LoadData();
         $loader->setContainer($this->getContainer());
 
-        $loader->loadAsili($manager);
         $loader->loadEnti($manager);
         $loader->loadCategories($manager);
         $loader->loadServizi($manager);

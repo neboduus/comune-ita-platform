@@ -70,7 +70,7 @@ class DefaultController extends Controller
     if ($this->instanceService->hasInstance()) {
       return $this->forward(ServiziController::class . '::serviziAction');
     } else {
-
+      $enti = [];
       foreach (InstancesProvider::factory()->getInstances() as $identifier => $instance){
         $indentifierParts = explode('/', $identifier);
         $enti[] = [

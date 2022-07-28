@@ -544,6 +544,7 @@ class Allegato implements AllegatoInterface
         ),
       );
 
+      $result = '';
       foreach ($arBytes as $arItem) {
         if ($bytes >= $arItem["VALUE"]) {
           $result = $bytes / $arItem["VALUE"];

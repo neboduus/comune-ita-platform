@@ -138,29 +138,4 @@
 {% block javascripts %}
   {{ parent() }}
   {{ encore_entry_script_tags('user') }}
-  {# <script src="{{ asset('bundles/app/js/jsrender.min.js') }}"></script>
-    <script>
-      $(document).ready(function () {
-        var news = $('#news');
-        var deadlines = $('#deadlines');
-        news.html($.templates("#tpl-news-spinner").render({}));
-        $.get("{{ path('user_latest_news') }}", function (data) {
-          if (data.length > 0) {
-            news.parent().css({'max-height': '300px', 'overflow-y': 'scroll', 'overflow-x': 'hidden'});
-            news.html($.templates("#tpl-news").render(data));
-          } else {
-            news.parent().removeAttr('style');
-            news.html($.templates("#tpl-news-empty").render({}));
-          }
-        });
-        deadlines.html($.templates("#tpl-deadlines-spinner").render({}));
-        $.get("{{ path('user_latest_deadlines') }}", function (data) {
-          if (data.length > 0)
-            deadlines.html($.templates("#tpl-deadlines").render(data));
-          else
-            deadlines.html($.templates("#tpl-deadlines-empty").render({}));
-        });
-      });
-    </script>
-    <script src="{{ asset('bundles/app/js/chat.js') }}"></script> #}
 {% endblock %}

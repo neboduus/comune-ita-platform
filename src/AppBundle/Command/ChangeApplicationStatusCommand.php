@@ -28,7 +28,7 @@ class ChangeApplicationStatusCommand extends ContainerAwareCommand
   protected function execute(InputInterface $input, OutputInterface $output)
   {
 
-    $this->symfonyStyle = new SymfonyStyle($input, $output);
+    $symfonyStyle = new SymfonyStyle($input, $output);
 
     $context = $this->getContainer()->get('router')->getContext();
     $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
@@ -39,7 +39,7 @@ class ChangeApplicationStatusCommand extends ContainerAwareCommand
     $force = $input->getOption('force');
 
     if (!Uuid::isValid($id)) {
-      $this->symfonyStyle->error('Option id must be an uuid');
+      $symfonyStyle->error('Option id must be an uuid');
       return 1;
     }
 
@@ -47,7 +47,7 @@ class ChangeApplicationStatusCommand extends ContainerAwareCommand
 
     $application = $em->getRepository('AppBundle:Pratica')->find($id);
     if (!$application instanceof Pratica) {
-      $this->symfonyStyle->error('Application with id:' . $id . ' not found.');
+      $symfonyStyle->error('Application with id:' . $id . ' not found.');
       return 1;
     }
 
@@ -59,17 +59,17 @@ class ChangeApplicationStatusCommand extends ContainerAwareCommand
     }*/
 
     if (!isset($allowedStatuses[$status])) {
-      $this->symfonyStyle->error('Submitted status doesn\'t exists');
+      $symfonyStyle->error('Submitted status doesn\'t exists');
       return 1;
     }
 
     $praticaStatusService = $this->getContainer()->get('ocsdc.pratica_status_service');
     try {
       $praticaStatusService->setNewStatus($application, $status);
-      $this->symfonyStyle->success('Application status changed succesfully' );
+      $symfonyStyle->success('Application status changed succesfully' );
       return 0;
     } catch (\Exception $e) {
-      $this->symfonyStyle->error($e->getMessage());
+      $symfonyStyle->error($e->getMessage());
       return 1;
     }
   }

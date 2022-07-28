@@ -67,7 +67,7 @@ class HotFixI18nSyncCommand extends ContainerAwareCommand
   protected function execute(InputInterface $input, OutputInterface $output)
   {
 
-    $this->symfonyStyle = new SymfonyStyle($input, $output);
+    $symfonyStyle = new SymfonyStyle($input, $output);
     try {
 
       $dryRun = $input->getOption('dry-run');
@@ -84,8 +84,8 @@ class HotFixI18nSyncCommand extends ContainerAwareCommand
 
           $stmt = $entityManager->getConnection()->executeQuery($sql);
           $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
-          $this->symfonyStyle->note('Ci sono '. count($result) .' servizi da sincronizzare per il campo: '.$k);
-          //$this->symfonyStyle->note(print_r($result, 1));
+          $symfonyStyle->note('Ci sono '. count($result) .' servizi da sincronizzare per il campo: '.$k);
+          //$symfonyStyle->note(print_r($result, 1));
 
           if (!$dryRun) {
             if (!empty($result)) {
@@ -102,20 +102,20 @@ class HotFixI18nSyncCommand extends ContainerAwareCommand
                       where id = '".$r['id']."'";
                   }
                   $entityManager->getConnection()->executeQuery($sql);
-                  $this->symfonyStyle->success('Aggiornato servizio: '.$r['id'].' campo: '.$k);
+                  $symfonyStyle->success('Aggiornato servizio: '.$r['id'].' campo: '.$k);
                 }
               }
             }
           }
         } catch (DBALException $e) {
-          $this->symfonyStyle->error(
+          $symfonyStyle->error(
             'Errore in aggiornamento servizio: '.$r['id'].' campo: '.$k.' - '.$e->getMessage()
           );
         }
       }
 
     } catch (\Exception $e) {
-      $this->symfonyStyle->error('Error: '.$e->getMessage());
+      $symfonyStyle->error('Error: '.$e->getMessage());
 
       return 1;
     }

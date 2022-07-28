@@ -75,6 +75,12 @@ class Meeting
    */
   private $name;
 
+  /**
+   * @Serializer\Type("string")
+   * @SWG\Property(description="Meeting's user surname")
+   * @Groups({"read"})
+   */
+  private $surname;
 
   /**
    * @Serializer\Type("string")

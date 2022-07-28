@@ -225,7 +225,7 @@ class MessagesAPIController extends AbstractFOSRestController
     if ($application === null) {
       return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
     }
-    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $result);
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $application);
 
     $queryParameters = ['offset' => $offset, 'limit' => $limit];
 

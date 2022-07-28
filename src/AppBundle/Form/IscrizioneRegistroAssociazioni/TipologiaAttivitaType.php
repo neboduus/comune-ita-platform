@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\IscrizioneRegistroAssociazioni;
 
-use AppBundle\Entity\ContributoAssociazioni;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -18,7 +17,6 @@ class TipologiaAttivitaType extends AbstractType
         $helper->setGuideText('steps.contributo_associazioni.tipologia_attivita.guida_alla_compilazione', true);
         $helper->setStepTitle('steps.contributo_associazioni.tipologia_attivita.title', true);
 
-        /** @var ContributoAssociazioni $pratica */
         $pratica = $builder->getData();
         $tipologie = [];
         foreach ($pratica->getTipologieAttivita() as $type) {

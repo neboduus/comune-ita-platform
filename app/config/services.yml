@@ -930,42 +930,11 @@ services:
       - '@AppBundle\Services\UserSessionService'
       - "%locale%"
 
-  ocsdc.form.flow.asilonido:
-    class: AppBundle\Form\IscrizioneAsiloNido\IscrizioneAsiloNidoFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.asilonido }
-
-  ocsdc.form.flow.autoletturaacqua:
-    class: AppBundle\Form\AutoletturaAcqua\AutoletturaAcquaFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.autoletturaacqua }
-
   ocsdc.form.flow.iscrizioneregistroassociazioni:
     class: AppBundle\Form\IscrizioneRegistroAssociazioni\IscrizioneRegistroAssociazioniFlow
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.iscrizioneregistroassociazioni }
-
-  ocsdc.form.flow.contributopannolini:
-    class: AppBundle\Form\ContributoPannolini\ContributoPannoliniFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.contributopannolini }
-
-  ocsdc.form.flow.cambioresidenza:
-    class: AppBundle\Form\CambioResidenza\CambioResidenzaFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.cambioresidenza }
-
-  ocsdc.form.flow.allacciamentoacquedotto:
-    class: AppBundle\Form\AllacciamentoAcquedotto\AllacciamentoAcquedottoFlow
-    parent: ocsdc.form.flow.pratica
-    arguments: [ "@logger","@translator" ]
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.allacciamentoacquedotto }
 
   ocsdc.form.flow.certificatonascita:
     class: AppBundle\Form\CertificatoNascita\CertificatoNascitaFlow
@@ -979,12 +948,6 @@ services:
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattonascita }
 
-  ocsdc.form.flow.attonascita:
-    class: AppBundle\Form\AttoNascita\AttoNascitaFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attonascita }
-
   ocsdc.form.flow.certificatomorte:
     class: AppBundle\Form\CertificatoMorte\CertificatoMorteFlow
     parent: ocsdc.form.flow.pratica
@@ -997,12 +960,6 @@ services:
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattomorte }
 
-  ocsdc.form.flow.attomorte:
-    class: AppBundle\Form\AttoMorte\AttoMorteFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attomorte }
-
   ocsdc.form.flow.certificatomatrimonio:
     class: AppBundle\Form\CertificatoMatrimonio\CertificatoMatrimonioFlow
     parent: ocsdc.form.flow.pratica
@@ -1014,34 +971,6 @@ services:
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattomatrimonio }
-
-  ocsdc.form.flow.attomatrimonio:
-    class: AppBundle\Form\AttoMatrimonio\AttoMatrimonioFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attomatrimonio }
-
-  #  ocsdc.form.flow.nullaostamatrimonio:
-  #    class: AppBundle\Form\CertificatoAnagrafico\CertificatoAnagraficoFlow
-  #    parent: ocsdc.form.flow.pratica
-
-  ocsdc.form.flow.attestazioneanagrafica:
-    class: AppBundle\Form\AttestazioneAnagrafica\AttestazioneAnagraficaFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.attestazioneanagrafica }
-
-  ocsdc.form.flow.listeelettorali:
-    class: AppBundle\Form\ListeElettorali\ListeElettoraliFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.listeelettorali }
-
-  ocsdc.form.flow.statofamiglia:
-    class: AppBundle\Form\StatoFamiglia\StatoFamigliaFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.statofamiglia }
 
   ocsdc.form.flow.formio:
     class: AppBundle\Form\FormIO\FormIOFlow
@@ -1066,18 +995,6 @@ services:
 
   ocsdc.form.flow.certificatonascitaoperatore:
     class: AppBundle\Form\Operatore\CertificatoNascita\CertificatoNascitaOperatoreFlow
-    parent: ocsdc.form.flow.praticaoperatore
-
-  ocsdc.form.flow.attestazioneanagraficaoperatore:
-    class: AppBundle\Form\Operatore\AttestazioneAnagrafica\AttestazioneAnagraficaOperatoreFlow
-    parent: ocsdc.form.flow.praticaoperatore
-
-  ocsdc.form.flow.listeelettoralioperatore:
-    class: AppBundle\Form\Operatore\ListeElettorali\ListeElettoraliOperatoreFlow
-    parent: ocsdc.form.flow.praticaoperatore
-
-  ocsdc.form.flow.statofamigliaoperatore:
-    class: AppBundle\Form\Operatore\StatoFamiglia\StatoFamigliaOperatoreFlow
     parent: ocsdc.form.flow.praticaoperatore
 
   # Flow service servizio
@@ -1175,12 +1092,6 @@ services:
     parent: ocsdc.form.flow.pratica
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.scia_pratica_edilizia }
-
-  ocsdc.form.flow.contributoassociazioni:
-    class: AppBundle\Form\ContributoAssociazioni\ContributoAssociazioniFlow
-    parent: ocsdc.form.flow.pratica
-    tags:
-      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.contributoassociazioni }
 
   AppBundle\Services\P7MSignatureCheckService:
     autowire: true

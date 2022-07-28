@@ -95,9 +95,6 @@ class DefaultLoggedInHandler extends DefaultHandler
     if ($lastPraticaList) {
       $lastPratica = $lastPraticaList[0];
     }
-    if ($lastPratica instanceof Pratica) {
-      $praticaFlowService->populatePraticaFieldsWithLastPraticaValues($lastPratica, $pratica);
-    }
 
     $user = $this->getUser();
     $praticaFlowService->populatePraticaFieldsWithUserValues($user, $pratica);

@@ -100,7 +100,7 @@ class ServiziController extends Controller
 
     switch ($this->instanceService->getCurrentInstance()->getNavigationType()) {
       case Ente::NAVIGATION_TYPE_CATEGORIES:
-        $topics = $this->getServicesByCategories($request);
+        $topics = $this->getServicesByCategories();
         $response = $this->render('@App/Servizi/serviziTopics.html.twig', [
           'topics' => $topics,
           'user' => $this->getUser()
@@ -209,7 +209,7 @@ class ServiziController extends Controller
     }
 
     $this->breadcrumbsService->generateServiceGroupBreadcrumbs($serviceGroup);
-    
+
     $hasServicesWithMaxResponseTime = $serviceGroupRepository->hasServicesWithMaxResponseTime($serviceGroup->getId());
 
     $response = $this->render('@App/Servizi/serviceGroupDetail.html.twig', [

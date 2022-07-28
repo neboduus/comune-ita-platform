@@ -12,157 +12,132 @@ use Ramsey\Uuid\UuidInterface;
  */
 class ComponenteNucleoFamiliare
 {
-    /**
-     * @ORM\Column(type="guid")
-     * @ORM\Id
-     */
-    protected $id;
+  /**
+   * @ORM\Column(type="guid")
+   * @ORM\Id
+   */
+  protected $id;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string" , nullable=true)
-     */
-    private $nome;
+  /**
+   * @var string
+   * @ORM\Column(type="string" , nullable=true)
+   */
+  private $nome;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string" , nullable=true)
-     */
-    private $cognome;
+  /**
+   * @var string
+   * @ORM\Column(type="string" , nullable=true)
+   */
+  private $cognome;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string" , nullable=true)
-     */
-    private $rapportoParentela;
+  /**
+   * @var string
+   * @ORM\Column(type="string" , nullable=true)
+   */
+  private $rapportoParentela;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string" , nullable=true)
-     */
-    private $codiceFiscale;
+  /**
+   * @var string
+   * @ORM\Column(type="string" , nullable=true)
+   */
+  private $codiceFiscale;
 
-    /**
-     * @ORM\ManyToOne(inversedBy="nucleoFamiliare", targetEntity="AppBundle\Entity\Pratica")
-     * @var Pratica $pratica
-     */
-    private $pratica;
-
-    /**
-     * ComponenteNucleoFamiliare constructor.
-     */
-    public function __construct()
-    {
-        if (!$this->id) {
-            $this->id = Uuid::uuid4();
-        }
+  /**
+   * ComponenteNucleoFamiliare constructor.
+   */
+  public function __construct()
+  {
+    if (!$this->id) {
+      $this->id = Uuid::uuid4();
     }
+  }
 
-    /**
-     * @return string
-     */
-    public function getNome()
-    {
-        return $this->nome;
-    }
+  /**
+   * @return string
+   */
+  public function getNome()
+  {
+    return $this->nome;
+  }
 
-    /**
-     * @param string $nome
-     *
-     * @return ComponenteNucleoFamiliare
-     */
-    public function setNome($nome)
-    {
-        $this->nome = $nome;
+  /**
+   * @param string $nome
+   *
+   * @return ComponenteNucleoFamiliare
+   */
+  public function setNome($nome)
+  {
+    $this->nome = $nome;
 
-        return $this;
-    }
+    return $this;
+  }
 
-    /**
-     * @return string
-     */
-    public function getCognome()
-    {
-        return $this->cognome;
-    }
+  /**
+   * @return string
+   */
+  public function getCognome()
+  {
+    return $this->cognome;
+  }
 
-    /**
-     * @param string $cognome
-     *
-     * @return ComponenteNucleoFamiliare
-     */
-    public function setCognome($cognome)
-    {
-        $this->cognome = $cognome;
+  /**
+   * @param string $cognome
+   *
+   * @return ComponenteNucleoFamiliare
+   */
+  public function setCognome($cognome)
+  {
+    $this->cognome = $cognome;
 
-        return $this;
-    }
+    return $this;
+  }
 
-    /**
-     * @return string
-     */
-    public function getRapportoParentela()
-    {
-        return $this->rapportoParentela;
-    }
+  /**
+   * @return string
+   */
+  public function getRapportoParentela()
+  {
+    return $this->rapportoParentela;
+  }
 
-    /**
-     * @param string $rapportoParentela
-     *
-     * @return ComponenteNucleoFamiliare
-     */
-    public function setRapportoParentela($rapportoParentela)
-    {
-        $this->rapportoParentela = $rapportoParentela;
+  /**
+   * @param string $rapportoParentela
+   *
+   * @return ComponenteNucleoFamiliare
+   */
+  public function setRapportoParentela($rapportoParentela)
+  {
+    $this->rapportoParentela = $rapportoParentela;
 
-        return $this;
-    }
+    return $this;
+  }
 
-    /**
-     * @return string
-     */
-    public function getCodiceFiscale()
-    {
-        return $this->codiceFiscale;
-    }
+  /**
+   * @return string
+   */
+  public function getCodiceFiscale()
+  {
+    return $this->codiceFiscale;
+  }
 
-    /**
-     * @param string $codiceFiscale
-     *
-     * @return ComponenteNucleoFamiliare
-     */
-    public function setCodiceFiscale($codiceFiscale)
-    {
-        $this->codiceFiscale = $codiceFiscale;
+  /**
+   * @param string $codiceFiscale
+   *
+   * @return ComponenteNucleoFamiliare
+   */
+  public function setCodiceFiscale($codiceFiscale)
+  {
+    $this->codiceFiscale = $codiceFiscale;
 
-        return $this;
-    }
+    return $this;
+  }
 
-    /**
-     * @return UuidInterface
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @return Pratica
-     */
-    public function getPratica()
-    {
-        return $this->pratica;
-    }
-
-    /**
-     * @param mixed $pratica
-     * @return ComponenteNucleoFamiliare
-     */
-    public function setPratica($pratica)
-    {
-        $this->pratica = $pratica;
-
-        return $this;
-    }
+  /**
+   * @return UuidInterface
+   */
+  public function getId()
+  {
+    return $this->id;
+  }
 
 }

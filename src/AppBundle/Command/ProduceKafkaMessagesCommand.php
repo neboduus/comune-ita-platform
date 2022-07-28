@@ -31,7 +31,7 @@ class ProduceKafkaMessagesCommand extends ContainerAwareCommand
   protected function execute(InputInterface $input, OutputInterface $output)
   {
 
-    $this->symfonyStyle = new SymfonyStyle($input, $output);
+    $symfonyStyle = new SymfonyStyle($input, $output);
 
     $context = $this->getContainer()->get('router')->getContext();
     $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
@@ -45,7 +45,7 @@ class ProduceKafkaMessagesCommand extends ContainerAwareCommand
       $dateFormat = 'Y-m-d';
       $date = DateTime::createFromFormat($dateFormat, $date);
       if (!$date || $date->format($dateFormat) !== $date) {
-        $this->symfonyStyle->error('Option date must be this format: yyyy-mm-dd');
+        $symfonyStyle->error('Option date must be this format: yyyy-mm-dd');
         return 1;
       }
     }
@@ -70,7 +70,7 @@ class ProduceKafkaMessagesCommand extends ContainerAwareCommand
     }
 
     $applications = $qb->getQuery()->getResult();
-    $this->symfonyStyle->note('Will be created ' . count($applications) . ' messages');
+    $symfonyStyle->note('Will be created ' . count($applications) . ' messages');
 
     $messages = 0;
 
@@ -85,6 +85,6 @@ class ProduceKafkaMessagesCommand extends ContainerAwareCommand
       }
     }
 
-    $this->symfonyStyle->success('Success! - Messages created: ' . $messages );
+    $symfonyStyle->success('Success! - Messages created: ' . $messages );
   }
 }

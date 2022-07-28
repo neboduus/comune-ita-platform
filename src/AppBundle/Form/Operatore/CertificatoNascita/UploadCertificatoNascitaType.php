@@ -3,7 +3,6 @@
 namespace AppBundle\Form\Operatore\CertificatoNascita;
 
 use AppBundle\Entity\AllegatoOperatore;
-use AppBundle\Entity\CambioResidenza;
 use AppBundle\Form\Base\ChooseAllegatoType;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Component\Form\AbstractType;
@@ -18,7 +17,6 @@ class UploadCertificatoNascitaType extends AbstractType
         /** @var TestiAccompagnatoriProcedura $helper */
         $helper = $options["helper"];
 
-        /** @var CambioResidenza $pratica */
         $pratica = $builder->getData();
 
         $helper->setGuideText('operatori.flow.allega_documentazione_richiesta', true);

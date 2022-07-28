@@ -30,7 +30,7 @@ class I18nMigrationsCommand extends ContainerAwareCommand
   protected function execute(InputInterface $input, OutputInterface $output)
   {
 
-    $this->symfonyStyle = new SymfonyStyle($input, $output);
+    $symfonyStyle = new SymfonyStyle($input, $output);
     try {
 
       $dryRun = $input->getOption('dry-run');
@@ -61,20 +61,20 @@ class I18nMigrationsCommand extends ContainerAwareCommand
 
       if (!empty($servicesToUpdate)) {
         if (!$dryRun) {
-          $this->symfonyStyle->success('Sono stati tradotti in ' . $this->defaultLocale . ' i seguenti servizi:');
+          $symfonyStyle->success('Sono stati tradotti in ' . $this->defaultLocale . ' i seguenti servizi:');
         } else {
-          $this->symfonyStyle->note('Verranno tradotti in ' . $this->defaultLocale . ' i seguenti servizi:');
+          $symfonyStyle->note('Verranno tradotti in ' . $this->defaultLocale . ' i seguenti servizi:');
         }
         foreach ($servicesToUpdate as $k => $v) {
-          $this->symfonyStyle->writeln( $k );
-          $this->symfonyStyle->listing( $v );
+          $symfonyStyle->writeln( $k );
+          $symfonyStyle->listing( $v );
         }
       } else {
-        $this->symfonyStyle->note('Non sono presenti servizi da tradurre.');
+        $symfonyStyle->note('Non sono presenti servizi da tradurre.');
       }
 
     } catch (\Exception $e) {
-      $this->symfonyStyle->error('Error: ' . $e->getMessage());
+      $symfonyStyle->error('Error: ' . $e->getMessage());
       return 1;
     }
   }

@@ -1454,13 +1454,6 @@ steps:
         guida_alla_compilazione: 'Scegli la tipologia per il certificato richiesto'
         tipologia_certificato: 'Tipologia certificato'
         uso: "Precisare la motivata richiesta"
-      AttoMorte:
-        label: 'Tipologia ed uso'
-        title: 'Tipologia ed uso'
-        description: "Specifica dettagliata dell'uso del certificato"
-        guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
-        tipologia_certificato: 'Tipologia certificato'
-        uso: "Precisare la motivata richiesta"
       EstrattoMorte:
         label: 'Tipologia ed uso'
         title: 'Tipologia ed uso'
@@ -1482,13 +1475,6 @@ steps:
         guida_alla_compilazione: "Specificare tipologia di certificato"
         tipologia_certificato: 'Tipologia certificato'
         uso: "Precisare la motivata richiesta"
-      AttoMatrimonio:
-        label: 'Tipologia ed uso'
-        title: "Tipologia ed uso"
-        description: "Specifica dettagliata dell'uso del certificato"
-        guida_alla_compilazione: "Specifica dettagliata dell'uso del certificato"
-        tipologia_certificato: 'Tipologia certificato'
-        uso: "Precisare la motivata richiesta"
     uso:
       label: 'Tipologia ed uso'
       title: 'Tipologia ed uso'
@@ -1502,196 +1488,6 @@ steps:
     fiscalcode_violation_message: "Il codice fiscale inserito non coincide con quello restituito dal sistema di autenticazione."
     name_violation_message: "Il Nome non coincide con quello restituito dal sistema di autenticazione"
     surname_violation_message: "Il Cognome non coincide con quello restituito dal sistema di autenticazione"
-
-  allacciamento_acquedotto:
-    dati_immobile:
-      label: 'Immobile'
-      title: "Dati dell'immobile"
-      guida_alla_compilazione: "Inserire i dati dell'immobile e a che titolo viene fatta la richiesta"
-      datiImmobile: "Dati dell'immobile"
-      qualifica: "Qualifica del richiedente"
-      provincia: "Provincia"
-      comune: "Comune"
-      indirizzo: "Indirizzo"
-      numero_civico: "Numero civico"
-      cap: "CAP"
-      scala: "Scala"
-      piano: "Piano"
-      interno: "Interno"
-      catasto_categoria: "Categoria catastale"
-      catasto_codice_comune: "Codice catastale del comune"
-      catasto_foglio: "Foglio"
-      catasto_sezione: "Sezione"
-      catasto_mappale: "Particella Mappale"
-      catasto_subalterno: "Subalterno"
-    dati_intervento:
-      label: 'Intervento'
-      title: "Tipologia di intervento"
-      guida_alla_compilazione: "Inserire i dati dell'intervento"
-      tipo_intervento: "Tipologia di intervento"
-      tipo_allaccio: "Tipologia di allaccio"
-      tipo_uso: "Tipologia d'utilizzo"
-      diametro_rete_interna: "Diametro rete interna"
-    dati_contatto:
-      label: 'Contatti'
-      title: 'Contatti'
-      guida_alla_compilazione: "Specificare indirizzo per comunicazioni e rimborsi"
-      use_alternate: "Utilizza i seguenti dati"
-      indirizzo: "Indirizzo"
-      numero_civico: "Numero civico"
-      cap: "CAP"
-      comune: "Comune"
-  autolettura_acqua:
-    dati_intestatario:
-      label: 'Intestatario'
-      title: "Dati dell'intestatario del contratto"
-      guida_alla_compilazione: "I dati dell'intestatario del contratto sono reperibili nell'ultima fattura ricevuta"
-      intestatario_codice_utente: "Codice utenza"
-      intestatario_nome: "Nome"
-      intestatario_cognome: "Cognome"
-      intestatario_indirizzo: "Indirizzo"
-      intestatario_cap: "CAP"
-      intestatario_citta: "Città"
-      intestatario_telefono: "Recapito telefonico per eventuali comunicazioni"
-      intestatario_email: "Recapito email per eventuali comunicazioni"
-    dati_contatore:
-      label: "Contatore"
-      title: "Contatore"
-      guida_alla_compilazione: "I dati del contatore sono reperibili nell'ultima fattura ricevuta"
-      contatore_numero: "Numero (da leggere sulla ghiera d'ottone del contatore)"
-      contatore_uso: "Tipologia di utilizzo del contatore"
-      contatore_unita_immobiliari: "Numero di unità immobiliari (appartamenti, negozi, uffici, ...) serviti dal contatore"
-    dati_lettura:
-      label: "Lettura"
-      title: "Dati della lettura"
-      guida_alla_compilazione: "La lettura del contatore si esegue considerando le cifre intere di colore nero (quelle prima di un'eventuale virgola) da sinistra verso destra. Se l'ultima cifra non è allineata alla altre, va considerata quella inferiore. Le lancette degli orologi, invece, non vanno lette."
-      lettura_metri_cubi: "Lettura dei metri cubi"
-      lettura_data: "Data della rilevazione"
-    note:
-      label: "Altre comunicazioni"
-      title: "Altre comunicazioni"
-      guida_alla_compilazione: "Utilizza questo campo per la segnalazione di guasti o altre comunicazioni"
-  cambio_residenza:
-    dichiarazione_provenienza:
-      label: "Provenienza"
-      title: "Dichiarazione della provenienza"
-      guida_alla_compilazione: "Dichiarazione della provenienza: da un altro comune, dall'estero o dallo stesso comune"
-      comune: "Dichiarazione di cambiamento di abitazione nell’ambito dello stesso comune"
-      altro_comune: "Dichiarazione di residenza con provenienza da altro comune"
-      estero: "Dichiarazione di residenza con provenienza dall’estero"
-      aire: "Dichiarazione di residenza di cittadini italiani iscritti all’AIRE (Anagrafe degli italiani residenti all’estero) con provenienza dall’estero"
-      altro: "Dichiarazione di residenza per altro motivo"
-    dichiarazione_provenienza_dettaglio:
-      label: 'Provenienza (dettaglio)'
-      title: "Dettagli provenienza"
-      guida_alla_compilazione:
-        nessun_allegato: "Per il tipo di provenienza selezionato non sono necessarie altre informazioni"
-        altro_comune: "Indicare il comune di provenienza"
-        stato_estero: "Indicare lo Stato estero di provenienza"
-        aire: "Indicare lo Stato estero e il comune AIRE di provenienza"
-        altro_motivo: "Specificare il motivo"
-    dati_residenza:
-      label: "Residenza"
-      title: "Dati residenza"
-      guida_alla_compilazione: "Specifica il nuovo indirizzo di residenza"
-      provincia: "Provincia"
-      comune: "Comune"
-      indirizzo: "Via/Piazza"
-      numero_civico: "Numero civico"
-      scala: "Scala"
-      piano: "Piano"
-      interno: "Interno"
-    attualmente_residenti:
-      label: "Residenti"
-      title: "Persone già iscritte nella nuova abitazione"
-      guida_alla_compilazione: "Inserisci le eventuali persone già residenti nell'abitazione per la quale chiedi la residenza"
-    tipologia_occupazione:
-      label: "Tipologia"
-      title: "Tipologia di occupazione"
-      guida_alla_compilazione: "Dichiarazione riguardante la tipologia di occupazione della nuova residenza"
-      proprietario: "Proprietario dell'abitazione"
-      locazione: "Intestatario del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
-      locazione_erp: "Intestatario di contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
-      comodato: "Comodatario con contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
-      usufruttuario: "Usufruttuario"
-      autocertificazione: "Autocertificazione del proprietario dell'appartamento"
-    tipologia_occupazione_dettaglio:
-      label: "Tipologia (dettaglio)"
-      title: "Dettagli della tipologia di occupazione"
-      guida_alla_compilazione:
-        proprietario: "Specifica i valori catastali dell'abitazione di proprietà"
-        locazione: "Specifica i dettagli del contratto di locazione regolarmente registrato presso l'Agenzia delle Entrate"
-        locazione_erp: "Allega il contratto di locazione relativo a immobile di Edilizia Residenziale Pubblica"
-        comodato: "Specifica i dettagli del contratto di comodato d'uso gratuito regolarmente registato presso l'Agenzia delle Entrate"
-        usufruttuario: "Indicare dati utili a consentirne la verifica"
-        autocertificazione: "Allega l'autocertificazione del proprietario dell'appartamento"
-      proprietario:
-        catasto_sezione: "Sezione"
-        catasto_foglio: "Foglio"
-        catasto_particella: "Particella/Mappale"
-        catasto_subalterno: "Subalterno"
-      contratto:
-        agenzia: "Indirizzo agenzia entrate"
-        numero: "Numero contratto"
-        data: "Data di stipula del contratto"
-      verbale_consegna: "Scansione del contratto o del verbale di consegna dell'immobile"
-      usufruttuario_info: "Titolo costitutivo"
-      autocertificazione: "Autocertificazione del proprietario dell'appartamento"
-    informazioni_accertamento:
-      label: "Accertamento"
-      title: "Informazioni per accertamento dei dati"
-      guida_alla_compilazione: "Segnalare eventuali giorni ed orari di preferenza per la verifica delle autorità giudiziarie"
-  contributo_pannolini:
-    dati_bambino:
-      label: 'Dati del bambino'
-      title: 'Dati del bambino'
-      guida_alla_compilazione: 'Inserisci i dati del bambino per cui hai comprato i pannolini'
-      nome: 'Nome'
-      cognome: 'Cognome'
-      luogo_nascita: 'Luogo di nascita'
-      data_nascita: 'Data di nascita'
-    dati_acquisto:
-      label: "Dati dell'Acquisto"
-      title: "Dati dell'Acquisto"
-      guida_alla_compilazione: 'Inserisci i dati relativi allo scontrino, la scansione dello scontrino andrà allegata nello passaggio successivo'
-      tipo_pannolini: 'Tipo dei pannolini acquistati'
-      punto_vendita: 'Nome del punto vendita'
-      data_acquisto: 'Data di acquisto'
-      totale_spesa: "Importo speso (inserire l'importo speso solo per i pannolini)"
-    dati_conto_corrente:
-      label: 'Dati Conto Corrente'
-      title: 'Dati Conto Corrente'
-      guida_alla_compilazione: 'Inserisci i dati del conto corrente'
-  iscrizione_asilo_nido:
-    seleziona_nido:
-      label: 'Struttura'
-      title: 'Selezione della struttura'
-      guida_alla_compilazione: "Seleziona dal menu a tendina l'asilo nido a cui intendi iscrivere il bambino"
-    accettazione_utilizzo:
-      label: 'Accettazione'
-      title: 'Termini di fruizione della struttura'
-      guida_alla_compilazione: "Leggi e accetta le condizioni di utilizzo dell'asilo nido che hai selezionato"
-      accetto_utilizzo: 'Ho letto i termini di fruizione della struttura'
-    seleziona_orari:
-      label: 'Orari e periodo'
-      title: 'Selezione degli orari e del periodo di iscrizione'
-      guida_alla_compilazione: "Seleziona nel menu a tendina l'orario che preferisci e scrivi il periodo di in cui intendi iscrivere il bambino all'asilo nido"
-      seleziona_orario: 'Orario prescelto'
-      periodo_iscrizione_da: 'Periodo iscrizione da'
-      periodo_iscrizione_a: 'Periodo iscrizione a'
-      error: "La data di fine iscrizione deve essere maggiore di quella d'inizio"
-    dati_bambino:
-      label: 'Dati del bambino'
-      title: 'Dati del bambino'
-      guida_alla_compilazione: 'Inserisci i dati del bambino che intendi iscrivere'
-      nome: 'Nome'
-      cognome: 'Cognome'
-      luogo_nascita: 'Luogo di nascita'
-      data_nascita: 'Data di nascita'
-    allega_attestazione_icef:
-      label: 'Attestazione ICEF'
-      title: 'Attestazione ICEF per i servizi alla prima infanzia'
-      guida_alla_compilazione: "Allega l'attestazione ICEF per i servizi alla prima infanzia (In mancanza dell’attestazione verranno applicate le tariffe massime. L’eventuale tariffa agevolata sarà applicata dal primo giorno del mese successivo a quello di presentazione dell’attestazione al Comune)"
   occupazione_suolo_pubblico:
     nomeIniziativa: 'Nome Manifestazione/Evento'
     guida_alla_compilazione: 'Inserisci i campi richiesti. I campi marcati con un asterisco (*) sono obbligatori'
@@ -1732,26 +1528,6 @@ steps:
       error: 'Selezionare un giorno di inizio precedente a quello di fine'
     importo:
       guida_alla_compilazione: "Inserisci l'importo corretto per la pratica.<br/>Trovi le istruzioni per il calcolo a questo indirizzo: <a href='http://www.comune.rovereto.tn.it/istruzioni-per-calcolo-importi'>Comune di Rovereto - Istruzioni per il calcolo degli importi</a>"
-  contributo_associazioni:
-    tipologia_attivita:
-      label: 'Tipologia attività'
-      title: 'Tipologia attività'
-      tipologia: 'Selezionare il tipo di attività'
-      commerciale: 'Svolge attività commerciale'
-      non_commerciale: 'Non svolge attività commerciale (art. 108 del Testo Unico delle Imposte sui redditi)'
-      guida_alla_compilazione: "Seleziona la tipologia di attività che l'organizzazione svolge"
-    contributo:
-      label: 'Uso del contributo'
-      title: 'Uso del contributo'
-      tipologia_contributo: 'Tipologia contributo'
-      beni_strumentali: 'Acquisto di beni strumentali'
-      fini_istituzionali_commerciali: 'Attività per il perseguimento di fini istituzionali a carattere commerciale'
-      fini_istituzionali_non_commerciali: 'Attività per il perseguimento di fini istituzionali non a carattere commerciale'
-      manifestazione_istituzionale_non_commerciale: 'Manifestazione rientrante nell’attività istituzionale non a carattere commerciale'
-      commerciale: 'Attività a carattere commerciale'
-      descrizione: 'Descrizione'
-      anno: 'Anno di attività'
-      guida_alla_compilazione: "Selezionare il tipo di contributo ed inserire descrizione ed anno dell'attività per cui si fa domanda"
   scia:
     error:
       allegato_richiesto: "Allegare almeno un file nel campo %field%"
@@ -2251,14 +2027,6 @@ steps:
         PUP_ALTRO:
           title: "y) ulteriori provvedimenti e atti di assenso previsti da disposizioni particolari nonché dal PUP"
           description: ""
-  atto_nascita:
-    dati_atto:
-      title: 'Dati atto'
-      label: 'Dati atto'
-      guida_alla_compilazione: "Se altra persona diversa dal richiedente, indicare i dati completi della persona cui si riferisce l'atto"
-      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
-      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
-      cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
   certificato_morte:
     dati_atto:
       title: 'Dati identificativi deceduto'
@@ -2267,14 +2035,6 @@ steps:
       nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
       cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
       data_morte_soggetto_certificato: "Data del decesso"
-  atto_morte:
-    dati_atto:
-      title: "Dati completi della persona cui si riferisce l'atto"
-      label: 'Dati deceduto'
-      guida_alla_compilazione: "Indicare i dati completi del defunto"
-      nome_soggetto_certificato: "Nome persona cui si riferisce l'atto"
-      cognome_soggetto_certificato: "Cognome persona cui si riferisce l'atto"
-      cf_soggetto_certificato: "Codice Fiscale persona cui si riferisce l'atto"
   certificato_matrimonio:
     dati_atto:
       title: "Dati identificativi dello sposo o della sposa"

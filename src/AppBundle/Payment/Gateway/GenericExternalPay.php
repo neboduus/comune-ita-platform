@@ -147,9 +147,6 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
   {
     $data = $pratica->getPaymentData();
     $gateway = $pratica->getPaymentType();
-    if (!$gateway instanceof PaymentGateway) {
-      throw new \Exception('Missing payment gateway');
-    }
 
     $requestBody = $this->createPaymentRequestBody($pratica);
     $client = new Client();
@@ -205,9 +202,6 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
     $paymentDayLifeTime = 90;
 
     $gateway = $pratica->getPaymentType();
-    if (!$gateway instanceof PaymentGateway) {
-      throw new \Exception('Missing payment gateway');
-    }
 
     $paymentIdentifier = $gateway->getIdentifier();
 

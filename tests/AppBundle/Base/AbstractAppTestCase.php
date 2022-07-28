@@ -4,13 +4,12 @@ namespace Tests\AppBundle\Base;
 
 use AppBundle\Entity\Allegato;
 use AppBundle\Entity\AllegatoOperatore;
-use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\CertificatoNascita;
 use AppBundle\Entity\CPSUser;
 use AppBundle\Entity\CPSUser as User;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Erogatore;
-use AppBundle\Entity\IscrizioneAsiloNido as Pratica;
+use AppBundle\Entity\Pratica;
 use AppBundle\Entity\OperatoreUser;
 use AppBundle\Entity\RispostaOperatore;
 use AppBundle\Entity\SciaPraticaEdilizia;
@@ -397,8 +396,8 @@ abstract class AbstractAppTestCase extends WebTestCase
     protected function createServizioWithAssociatedErogatori(
         $erogatori,
         $name = 'Servizio test pratiche',
-        $praticaFCQN = '\AppBundle\Entity\IscrizioneAsiloNido',
-        $praticaFlowServiceName = 'ocsdc.form.flow.asilonido',
+        $praticaFCQN = '\AppBundle\Entity\CertificatoNascita',
+        $praticaFlowServiceName = 'ocsdc.form.flow.certificatonascita',
         $praticaFlowOperatoreServiceName = ''
     ) {
 
@@ -559,31 +558,12 @@ abstract class AbstractAppTestCase extends WebTestCase
      */
     protected function createEnteWithAsili($codiceMeccanografico = 'L781')
     {
-        $asilo = new AsiloNido();
-        $asilo->setName('Asilo nido Bimbi belli')
-              ->setSchedaInformativa('Test')
-              ->setOrari([
-                  'orario intero dalle 8:00 alle 16:00',
-                  'orario ridotto mattutino dalle 8:00 alle 13:00',
-                  'orario prolungato dalle 8:00 alle 19:00',
-              ]);
-        $this->em->persist($asilo);
 
-        $asilo1 = new AsiloNido();
-        $asilo1->setName('Asilo nido Bimbi buoni')
-               ->setSchedaInformativa('Test')
-               ->setOrari([
-                   'orario intero dalle 8:00 alle 16:00',
-                   'orario ridotto mattutino dalle 8:00 alle 13:00',
-                   'orario prolungato dalle 8:00 alle 19:00',
-               ]);
-        $this->em->persist($asilo1);
 
         $ente = new Ente();
         $ente->setName('Comune di Tre Ville')
             ->setCodiceMeccanografico($codiceMeccanografico)
-            ->setCodiceAmministrativo($codiceMeccanografico)
-             ->setAsili([$asilo, $asilo1]);
+            ->setCodiceAmministrativo($codiceMeccanografico);
         $this->em->persist($ente);
 
         $this->em->flush();
@@ -601,7 +581,6 @@ abstract class AbstractAppTestCase extends WebTestCase
      */
     protected function createServizioWithErogatore(Erogatore $erogatore, $slug, $fqcn, $flow)
     {
-        //'Iscrizione asilo nido'
         $servizio = $this->createServizioWithAssociatedErogatori([$erogatore], $slug, $fqcn, $flow);
         $servizio->setHowto('<strong>Tutto</strong> quello che volevi sapere su ' . $slug . ' e non hai <em>mai</em> osato chiedere!');
 
@@ -664,7 +643,7 @@ abstract class AbstractAppTestCase extends WebTestCase
      */
     protected function gobackInFlow(&$crawler, $class)
     {
-        $accumulatedHtml = '<input type="hidden" name="flow_iscrizioneAsiloNido_transition" value="back">';
+        $accumulatedHtml = '<input type="hidden" name="flow_certificatoNascita_transition" value="back">';
         $prototypeFragment = new \DOMDocument();
         $prototypeFragment->loadHTML($accumulatedHtml);
         $node = $crawler->filter($class)->getNode(0);
@@ -949,24 +928,6 @@ abstract class AbstractAppTestCase extends WebTestCase
      * @param $nextButton
      * @param $form
      */
-    protected function datiBambino(&$crawler, $nextButton, &$form)
-    {
-        $form = $crawler->selectButton($nextButton)->form(array(
-            'iscrizione_asilo_nido_bambino[bambino_nome]' => 'Ciccio',
-            'iscrizione_asilo_nido_bambino[bambino_cognome]' => 'Balena',
-            'iscrizione_asilo_nido_bambino[bambino_luogo_nascita]' => 'Fantasilandia',
-            'iscrizione_asilo_nido_bambino[bambino_data_nascita]' => '01-09-2016',
-
-        ));
-        $crawler = $this->client->submit($form);
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode(), "Unexpected HTTP status code");
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param $nextButton
-     * @param $form
-     */
     protected function addAllegatoOperatore(&$crawler, $nextButton, &$form)
     {
         // Selezione del comune
@@ -1014,7 +975,7 @@ abstract class AbstractAppTestCase extends WebTestCase
 
         return new Response(200, [], json_encode($body));
     }
-    
+
     protected function getInforSuccessResponse() {
         return <<<HEREDOC
 <?xml version="1.0" ?>
