@@ -4,7 +4,7 @@ name: OpenCity Italia - La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanza-del-cittadino/core
 landingURL: https://opencityitalia.it/
 releaseDate: '2022-07-20'
-softwareVersion: 1.25.1
+softwareVersion: 1.26.0-rc.0
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
@@ -68,74 +68,72 @@ description:
       Disponibile anche in SaaS (marketplace qualificato AgID)
     longDescription: >
       OpenCity Italia - La Stanza del Cittadino è il software open source che
-      mette a disposizione di cittadini e imprese un’area personale e
-      tutti i servizi comunali in forma digitale.
-      Comprende l’area personale attraverso cui il cittadino
-      può inviare pratiche (es. iscrizioni asilo nido, richiesta permesso ZTL,
-      partecipazione a concorsi, ecc.), verificare lo stato di avanzamento,
-      ricevere comunicazioni da parte dell’ente, effettuare pagamenti,
-      ricevere bonus e agevolazioni, ottenere e conservare certificati
-      e altri documenti.
+      mette a disposizione di cittadini e imprese un’area personale e tutti i
+      servizi comunali in forma digitale. Comprende l’area personale attraverso
+      cui il cittadino può inviare pratiche (es. iscrizioni asilo nido,
+      richiesta permesso ZTL, partecipazione a concorsi, ecc.), verificare lo
+      stato di avanzamento, ricevere comunicazioni da parte dell’ente,
+      effettuare pagamenti, ricevere bonus e agevolazioni, ottenere e conservare
+      certificati e altri documenti.
 
       Tutti i servizi sono realizzati secondo il
       [modello](https://designers.italia.it/modello/comuni/) reso disponibile
-      dal Designers Italia; hanno un’esperienza d’uso semplice, sono facili
-      da attivare e possono essere personalizzati secondo le esigenze
-      dell’ente.
+      dal Designers Italia; hanno un’esperienza d’uso semplice, sono facili da
+      attivare e possono essere personalizzati secondo le esigenze dell’ente.
 
-      Il software, nato da un [progetto pilota in collaborazione con il
-      Team Digitale di Presidenza del Consiglio e il Consorzio dei Comuni
+      Il software, nato da un [progetto pilota in collaborazione con il Team
+      Digitale di Presidenza del Consiglio e il Consorzio dei Comuni
       Trentini](https://www.forumpa.it/pa-digitale/servizi-digitali/design-dei-siti-web/),
       è attualmente utilizzato da centinaia di comuni italiani.
 
-      E’ disponibile anche in [versione SaaS in cloud qualificata
-      da AgID](https://catalogocloud.agid.gov.it/service/525).
+      E’ disponibile anche in [versione SaaS in cloud qualificata da
+      AgID](https://catalogocloud.agid.gov.it/service/525).
 
       Può essere utilizzato in abbinamento a qualsiasi software per il sito web
       di un Comune, compreso il modulo [OpenCity Italia - Sito
       web](https://developers.italia.it/it/software/c_a116-comune-di-ala-comunweb)
       per i Comuni italiani realizzato secondo le linee guida di design,
-      conforme al modello dati (ontologie e vocabolari controllati) definiti da AgID e
-      anch’esso disponibile in versione SaaS in cloud qualificato da AgID.
+      conforme al modello dati (ontologie e vocabolari controllati) definiti da
+      AgID e anch’esso disponibile in versione SaaS in cloud qualificato da
+      AgID.
 
 
-      Il profilo del cittadino è progettato per gestire i dati personali
-      nel rispetto del GDPR, al fine di ridurre la necessità di chiedere più
-      volte agli utenti le stesse informazioni (principio once only) e di diminuire i tempi
-      necessari per processare le pratiche.
+      Il profilo del cittadino è progettato per gestire i dati personali nel
+      rispetto del GDPR, al fine di ridurre la necessità di chiedere più volte
+      agli utenti le stesse informazioni (principio once only) e di diminuire i
+      tempi necessari per processare le pratiche.
 
       L’esperienza utente è realizzata seguendo le linee guida per il design,
-      utilizzando il kit Bootstrap Italia, mentre il modello di architettura
-      dei contenuti è conforme a quanto previsto dalle linee guida.
+      utilizzando il kit Bootstrap Italia, mentre il modello di architettura dei
+      contenuti è conforme a quanto previsto dalle linee guida.
 
       **Nessun lock-in su architettura cloud e dati**
 
       OpenCiy Italia è integrata con la maggior parte dei sistemi di protocollo
       adottati dai Comuni italiani, con le piattaforme abilitanti PagoPA
-      (attraverso intermediari tecnologici già presenti presso l'Ente), SPID/CIE/eIDAS
-      e con l’App IO.
+      (attraverso intermediari tecnologici già presenti presso l'Ente),
+      SPID/CIE/eIDAS e con l’App IO.
 
       Si integra facilmente con le altre applicazioni, attraverso OpenAPI e
       WebHook.
 
 
       OpenCity Italia ha un’architettura altamente scalabile, multi-tenant,
-      composta da micro servizi cloud-native e disponibile in container
-      (per evitare il cloud lock-in). L’interoperabilità è garantita da
-      standard semantici nazioanli ed europei specifici del settore pubblico
-      e da una piattaforma di API progettata secondo le linee guida per
-      l’interoperabilità e utilizzando il catalogo nazionale
-      della semantica dei dati (per evitare il data lock-in). La piattaforma segue un
-      approccio a design pattern, in modo da offrire risposte tecnologicamente
-      avanzate a ciascuna delle funzioni che abbiamo mappato, per poi
-      utilizzarle in ciascuno dei servizi messi a disposizione degli
-      enti pubblici locali.
+      composta da micro servizi cloud-native e disponibile in container (per
+      evitare il cloud lock-in). L’interoperabilità è garantita da standard
+      semantici nazioanli ed europei specifici del settore pubblico e da una
+      piattaforma di API progettata secondo le linee guida per
+      l’interoperabilità e utilizzando il catalogo nazionale della semantica dei
+      dati (per evitare il data lock-in). La piattaforma segue un approccio a
+      design pattern, in modo da offrire risposte tecnologicamente avanzate a
+      ciascuna delle funzioni che abbiamo mappato, per poi utilizzarle in
+      ciascuno dei servizi messi a disposizione degli enti pubblici locali.
 
       **Sicurezza**
 
       Rispetta i requisiti minimi di sicurezza previsti da AGID e tutti i
-      requisiti previsti nel capitolato tecnico funzionale al rilascio di
-      fondi PNRR per gli enti locali.
+      requisiti previsti nel capitolato tecnico funzionale al rilascio di fondi
+      PNRR per gli enti locali.
     features:
       - PNRR
       - PNRR/Misura/1.2
