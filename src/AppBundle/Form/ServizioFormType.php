@@ -42,7 +42,7 @@ class ServizioFormType extends AbstractType
    */
   private $container;
 
-  public function __construct(Container $container, TranslatorInterface $translator, EntityManagerInterface $entityManager, FormServerApiAdapterService $formServerService, BackofficeManager $backOfficeManager)
+  public function __construct(Container $container, TranslatorInterface $translator, FormServerApiAdapterService $formServerService, BackofficeManager $backOfficeManager)
   {
     $this->container = $container;
     $this->formServerService = $formServerService;

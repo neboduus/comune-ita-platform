@@ -14,13 +14,6 @@ interface PraticaFlowInterface
      */
     public function populatePraticaFieldsWithUserValues(CPSUser $user, $pratica);
 
-    /**
-     * @param Pratica $lastPratica
-     * @param Pratica $pratica
-     */
-    public function populatePraticaFieldsWithLastPraticaValues($lastPratica, $pratica);
-
-
     public function getResumeUrl(Request $request);
 
     public function onFlowCompleted(Pratica $pratica);

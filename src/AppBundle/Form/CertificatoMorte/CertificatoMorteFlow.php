@@ -12,9 +12,7 @@ use AppBundle\Form\Base\SelectPaymentGatewayType;
 use AppBundle\Form\Base\PaymentGatewayType;
 use AppBundle\Form\Base\SelezionaEnteType;
 
-/**
- * Class AttoNascitaFlow
- */
+
 class CertificatoMorteFlow extends PraticaFlow
 {
     const STEP_SELEZIONA_ENTE = 1;

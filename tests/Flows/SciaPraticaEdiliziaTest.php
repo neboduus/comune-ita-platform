@@ -3,9 +3,7 @@
 namespace Tests\Flows;
 
 use AppBundle\Entity\Allegato;
-use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\SciaPraticaEdilizia;
-use AppBundle\Entity\StatoFamiglia;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\ModuloCompilato;
@@ -18,9 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Tests\AppBundle\Base\AbstractAppTestCase;
 
-/**
- * Class StatoFamigliaTest
- */
+
 class SciaPraticaEdiliziaTest extends AbstractAppTestCase
 {
     /**
@@ -40,7 +36,6 @@ class SciaPraticaEdiliziaTest extends AbstractAppTestCase
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
-        $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(Pratica::class);
         $this->cleanDb(Allegato::class);
         $this->cleanDb(Servizio::class);

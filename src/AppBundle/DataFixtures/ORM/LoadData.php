@@ -2,7 +2,6 @@
 
 namespace AppBundle\DataFixtures\ORM;
 
-use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\Categoria;
 use AppBundle\Entity\Ente;
 use AppBundle\Entity\Erogatore;
@@ -59,33 +58,10 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
 
   public function load(ObjectManager $manager)
   {
-    $this->loadAsili($manager);
     $this->loadEnti($manager);
     $this->loadCategories($manager);
     $this->loadServizi($manager);
     $this->loadTerminiUtilizzo($manager);
-  }
-
-  /**
-   * @param ObjectManager $manager
-   * @deprecated
-   */
-  public function loadAsili(ObjectManager $manager)
-  {
-    $data = $this->getData('Asili');
-    foreach ($data as $item) {
-
-      $orari = explode('##', $item['orari']);
-      $orari = array_map('trim', $orari);
-
-      $asiloNido = (new AsiloNido())
-        ->setName($item['name'])
-        ->setSchedaInformativa($item['schedaInformativa'])
-        ->setOrari($orari);
-
-      $manager->persist($asiloNido);
-      $manager->flush();
-    }
   }
 
   private function getData($key)
@@ -143,14 +119,6 @@ class LoadData extends AbstractFixture implements FixtureInterface, ContainerAwa
       } else {
         $this->counters['enti']['updated']++;
       }
-
-      $asiliNames = explode('##', $item['asili']);
-      $asiliNames = array_map('trim', $asiliNames);
-      $asili = $manager->getRepository('AppBundle:AsiloNido')->findBy(['name' => $asiliNames]);
-      foreach ($asili as $asilo) {
-        $ente->addAsilo($asilo);
-      }
-
       $manager->flush();
     }
   }

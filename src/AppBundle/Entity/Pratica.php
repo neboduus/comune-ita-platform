@@ -17,17 +17,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"default" = "Pratica",
- *     "iscrizione_asilo_nido" = "IscrizioneAsiloNido",
- *     "autolettura_acqua" = "AutoletturaAcqua",
- *     "contributo_pannolini" = "ContributoPannolini",
- *     "cambio_residenza" = "CambioResidenza",
- *     "allacciamento_acquedotto" = "AllacciamentoAcquedotto",
  *     "certificato_nascita" = "CertificatoNascita",
- *     "attestazione_anagrafica" = "AttestazioneAnagrafica",
- *     "liste_elettorali" = "ListeElettorali",
- *     "stato_famiglia" = "StatoFamiglia",
  *     "occupazione_suolo_pubblico" = "OccupazioneSuoloPubblico",
- *     "contributo_associazioni" = "ContributoAssociazioni",
  *     "iscrizione_registro_associazioni" = "IscrizioneRegistroAssociazioni",
  *     "scia_pratica_edilizia" = "SciaPraticaEdilizia",
  *     "comunicazione_opere_libere" = "ComunicazioneOpereLibere",
@@ -39,14 +30,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "autorizzazione_paesaggistica_sindaco" = "AutorizzazionePaesaggisticaSindaco",
  *     "segnalazione_certificata_agibilita" = "SegnalazioneCertificataAgibilita",
  *     "estratto_nascita" = "EstrattoNascita",
- *     "atto_nascita" = "AttoNascita",
  *     "certificato_morte" = "CertificatoMorte",
  *     "estratto_morte" = "EstrattoMorte",
- *     "atto_morte" = "AttoMorte",
  *     "certificato_matrimonio" = "CertificatoMatrimonio",
  *     "estratto_matrimonio" = "EstrattoMatrimonio",
- *     "atto_matrimonio" = "AttoMatrimonio",
- *     "nulla_osta_matrimonio" = "NullaOstaMatrimonio",
  *     "form_io" = "FormIO"
  * })
  * @ORM\HasLifecycleCallbacks
@@ -101,15 +88,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   const REJECTED = false;
 
   const TYPE_DEFAULT = "default";
-  const TYPE_ISCRIZIONE_ASILO_NIDO = "iscrizione_asilo_nido";
-  const TYPE_AUTOLETTURA_ACQUA = "autolettura_acqua";
-  const TYPE_CONTRIBUTO_PANNOLINI = "contributo_pannolini";
-  const TYPE_CAMBIO_RESIDENZA = "cambio_residenza";
-  const TYPE_ALLACCIAMENTO_AQUEDOTTO = "allacciamento_aquedotto";
   const TYPE_CERTIFICATO_NASCITA = "certificato_nascita";
-  const TYPE_ATTESTAZIONE_ANAGRAFICA = "attestazione_anagrafica";
-  const TYPE_LISTE_ELETTORALI = "liste_elettorali";
-  const TYPE_STATO_FAMIGLIA = "stato_famiglia";
 
   const TYPE_SCIA_PRATICA_EDILIZIA = "scia_pratica_edilizia";
   const TYPE_COMUNICAZIONE_OPERE_LIBERE = "comunicazione_opere_libere";
@@ -122,18 +101,13 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   const TYPE_SEGNALAZIONE_CERTIFICATA_AGIBILITA = 'segnalazione_certificata_agibilita';
 
   const TYPE_OCCUPAZIONE_SUOLO_PUBBLICO = "occupazione_suolo_pubblico";
-  const TYPE_CONTRIBUTO_ASSOCIAZIONI = "contributo_associazioni";
   const TYPE_ISCRIZIONE_REGISTRO_ASSOCIAZIONI = "iscrizione_registro_associazioni";
 
   const TYPE_ESTRATTO_NASCITA = "estratto_nascita";
-  const TYPE_ATTO_NASCITA = "atto_nascita";
   const TYPE_CERTIFICATO_MORTE = "certificato_morte";
   const TYPE_ESTRATTO_MORTE = "estratto_morte";
-  const TYPE_ATTO_MORTE = "atto_morte";
   const TYPE_CERTIFICATO_MATRIMONIO = "certificato_matrimonio";
   const TYPE_ESTRATTO_MATRIMONIO = "estratto_matrimonio";
-  const TYPE_ATTO_MATRIMONIO = "atto_matrimonio";
-  const TYPE_NULLA_OSTA_MATRIMONIO = "nulla_osta_matrimonio";
 
   const TYPE_FORMIO = 'form_io';
 
@@ -238,13 +212,6 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    * @var RispostaOperatore
    */
   private $rispostaOperatore;
-
-  /**
-   * @ORM\OneToMany(targetEntity="AppBundle\Entity\ComponenteNucleoFamiliare", mappedBy="pratica", cascade={"persist"}, orphanRemoval=true)
-   * @ORM\JoinColumn(nullable=true)
-   * @var ArrayCollection
-   */
-  private $nucleoFamiliare;
 
   /**
    * @ORM\Column(type="integer", name="creation_time")
@@ -399,18 +366,6 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
 
   /**
-   * @var string
-   * @ORM\Column(type="string", nullable=true)
-   */
-  private $iban;
-
-  /**
-   * @var string
-   * @ORM\Column(type="string", nullable=true)
-   */
-  private $intestatarioConto;
-
-  /**
    * @var int
    * @ORM\Column(type="integer", nullable=false)
    */
@@ -546,7 +501,6 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $this->moduliCompilati = new ArrayCollection();
     $this->allegatiOperatore = new ArrayCollection();
     $this->messages = new ArrayCollection();
-    $this->nucleoFamiliare = new ArrayCollection();
     $this->latestStatusChangeTimestamp = $this->latestCPSCommunicationTimestamp = $this->latestOperatoreCommunicationTimestamp = -10000000;
     $this->storicoStati = new ArrayCollection();
     $this->lastCompiledStep = 0;
@@ -1203,56 +1157,6 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
-   * @return Collection
-   */
-  public function getNucleoFamiliare()
-  {
-    return $this->nucleoFamiliare;
-  }
-
-  /**
-   * @param Collection $nucleoFamiliare
-   *
-   * @return $this
-   */
-  public function setNucleoFamiliare(Collection $nucleoFamiliare)
-  {
-    $this->nucleoFamiliare = $nucleoFamiliare;
-
-    return $this;
-  }
-
-  /**
-   * @param ComponenteNucleoFamiliare $componente
-   *
-   * @return $this
-   */
-  public function addComponenteNucleoFamiliare(ComponenteNucleoFamiliare $componente)
-  {
-    if (!$this->nucleoFamiliare->contains($componente)) {
-      $componente->setPratica($this);
-      $this->nucleoFamiliare->add($componente);
-    }
-
-    return $this;
-  }
-
-  /**
-   * @param ComponenteNucleoFamiliare $componente
-   *
-   * @return $this
-   */
-  public function removeComponenteNucleoFamiliare(ComponenteNucleoFamiliare $componente)
-  {
-    if ($this->nucleoFamiliare->contains($componente)) {
-      $this->nucleoFamiliare->removeElement($componente);
-      $componente->setPratica(null);
-    }
-
-    return $this;
-  }
-
-  /**
    * @ORM\PreFlush()
    */
   public function serializeStatuses()
@@ -1590,42 +1494,6 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
-   * @return string
-   */
-  public function getIban()
-  {
-    return $this->iban;
-  }
-
-  /**
-   * @param $iban
-   *
-   * @return $this
-   */
-  public function setIban($iban)
-  {
-    $this->iban = $iban;
-    return $this;
-  }
-
-  /**
-   * @return string
-   */
-  public function getIntestatarioConto()
-  {
-    return $this->intestatarioConto;
-  }
-
-  /**
-   * @param string $intestatarioConto
-   */
-  public function setIntestatarioConto($intestatarioConto)
-  {
-    $this->intestatarioConto = $intestatarioConto;
-    return $this;
-  }
-
-  /**
    * @return int
    */
   public function getLastCompiledStep(): int
@@ -1931,6 +1799,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     } elseif (is_array($this->getPaymentData())) {
       return $this->getPaymentData();
     }
+    return [];
   }
 
   /**

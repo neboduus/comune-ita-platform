@@ -2,16 +2,12 @@
 namespace AppBundle\Form\IscrizioneRegistroAssociazioni;
 
 use AppBundle\Form\Base\AccettazioneIstruzioniType;
-use AppBundle\Form\Base\DatiContoCorrenteType;
 use AppBundle\Form\Base\DatiRichiedenteType;
 use AppBundle\Form\Base\PraticaFlow;
 use AppBundle\Form\Base\SelezionaEnteType;
 use AppBundle\Form\Base\SelectPaymentGatewayType;
 use AppBundle\Form\Base\PaymentGatewayType;
 
-/**
- * Class ContributoAssociazioniFlow
- */
 class IscrizioneRegistroAssociazioniFlow extends PraticaFlow
 {
     const STEP_SELEZIONA_ENTE = 1;

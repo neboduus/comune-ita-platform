@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 
 /**
- * Class ContributoPannolini
+ *
  * @ORM\Entity
  */
 class CertificatoNascita extends Pratica

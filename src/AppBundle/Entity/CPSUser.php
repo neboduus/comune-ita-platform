@@ -473,6 +473,7 @@ class CPSUser extends User
     } else if ($this->sesso === "F") {
       return "femmina";
     }
+    return '';
   }
 
   /**

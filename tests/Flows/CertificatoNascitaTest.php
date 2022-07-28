@@ -3,7 +3,6 @@
 namespace Tests\Flows;
 
 use AppBundle\Entity\Allegato;
-use AppBundle\Entity\AsiloNido;
 use AppBundle\Entity\CertificatoNascita;
 use AppBundle\Entity\ComponenteNucleoFamiliare;
 use AppBundle\Entity\Ente;
@@ -40,12 +39,10 @@ class CertificatoNascitaTest extends AbstractAppTestCase
         $this->userProvider = $this->container->get('ocsdc.cps.userprovider');
         $this->em->getConnection()->executeQuery('DELETE FROM servizio_erogatori')->execute();
         $this->em->getConnection()->executeQuery('DELETE FROM erogatore_ente')->execute();
-        $this->em->getConnection()->executeQuery('DELETE FROM ente_asili')->execute();
         $this->cleanDb(ComponenteNucleoFamiliare::class);
         $this->cleanDb(Allegato::class);
         $this->cleanDb(Pratica::class);
         $this->cleanDb(Servizio::class);
-        $this->cleanDb(AsiloNido::class);
         $this->cleanDb(OperatoreUser::class);
         $this->cleanDb(Ente::class);
         $this->cleanDb(User::class);

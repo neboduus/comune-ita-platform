@@ -55,18 +55,6 @@ class Ente
 
   /**
    * @var ArrayCollection
-   * @ORM\ManyToMany(targetEntity="AsiloNido", cascade={"remove"})
-   * @ORM\JoinTable(
-   *     name="ente_asili",
-   *     joinColumns={@ORM\JoinColumn(name="ente_id", referencedColumnName="id")},
-   *     inverseJoinColumns={@ORM\JoinColumn(name="asilo_id", referencedColumnName="id")}
-   * )
-   * @Serializer\Exclude()
-   */
-  private $asili;
-
-  /**
-   * @var ArrayCollection
    * @ORM\OneToMany(targetEntity="AppBundle\Entity\OperatoreUser", mappedBy="ente", fetch="EAGER")
    * @Serializer\Exclude()
    */
@@ -179,7 +167,6 @@ class Ente
   public function __construct()
   {
     $this->id = Uuid::uuid4();
-    $this->asili = new ArrayCollection();
     $this->protocolloParameters = new ArrayCollection();
     $this->operatori = new ArrayCollection();
     $this->administrators = new ArrayCollection();
@@ -243,26 +230,6 @@ class Ente
   }
 
   /**
-   * @return Collection
-   */
-  public function getAsili()
-  {
-    return $this->asili;
-  }
-
-  /**
-   * @param AsiloNido[] $asili
-   *
-   * @return $this
-   */
-  public function setAsili($asili)
-  {
-    $this->asili = $asili;
-
-    return $this;
-  }
-
-  /**
    * @return string
    */
   public function __toString()
@@ -285,19 +252,6 @@ class Ente
   public function setCodiceMeccanografico($codiceMeccanografico)
   {
     $this->codiceMeccanografico = $codiceMeccanografico;
-
-    return $this;
-  }
-
-  /**
-   * @param AsiloNido $asilo
-   * @return $this
-   */
-  public function addAsilo(AsiloNido $asilo)
-  {
-    if (!$this->asili->contains($asilo)) {
-      $this->asili->add($asilo);
-    }
 
     return $this;
   }

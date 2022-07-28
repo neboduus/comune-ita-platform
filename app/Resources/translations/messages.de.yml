@@ -1307,13 +1307,6 @@ steps:
         guida_alla_compilazione: 'DA NON TRADURRE'
         tipologia_certificato: 'DA NON TRADURRE'
         uso: "DA NON TRADURRE"
-      AttoMorte:
-        label: 'DA NON TRADURRE'
-        title: 'DA NON TRADURRE'
-        description: "DA NON TRADURRE"
-        guida_alla_compilazione: "DA NON TRADURRE"
-        tipologia_certificato: 'DA NON TRADURRE'
-        uso: "DA NON TRADURRE"
       EstrattoMorte:
         label: 'DA NON TRADURRE'
         title: 'DA NON TRADURRE'
@@ -1335,13 +1328,6 @@ steps:
         guida_alla_compilazione: "DA NON TRADURRE"
         tipologia_certificato: 'DA NON TRADURRE'
         uso: "DA NON TRADURRE"
-      AttoMatrimonio:
-        label: 'DA NON TRADURRE'
-        title: "DA NON TRADURRE"
-        description: "DA NON TRADURRE"
-        guida_alla_compilazione: "DA NON TRADURRE"
-        tipologia_certificato: 'DA NON TRADURRE'
-        uso: "DA NON TRADURREDA NON TRADURRE"
     uso:
       label: 'DA NON TRADURRE'
       title: 'DA NON TRADURRE'

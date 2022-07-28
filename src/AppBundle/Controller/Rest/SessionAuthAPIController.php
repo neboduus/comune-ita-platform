@@ -54,5 +54,7 @@ class SessionAuthAPIController extends AbstractFOSRestController
     if ($user instanceof User) {
       return $this->view(['token' => $this->JWTTokenManager->create($user)]);
     }
+
+    return $this->view(['error' => 'You are not logged in']);
   }
 }

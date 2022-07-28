@@ -51,6 +51,7 @@ class RemoveTooManyPdfCommand extends ContainerAwareCommand
 
     $count = 0;
     foreach ($applicationIds as $applicationId) {
+      $progressBar = new ProgressBar($output, $application->getModuliCompilati()->count());
       try {
         /** @var Pratica $application */
         $application = $repository->find($applicationId);
@@ -60,8 +61,8 @@ class RemoveTooManyPdfCommand extends ContainerAwareCommand
           continue;
         }
 
-        $progressBar = new ProgressBar($output, $application->getModuliCompilati()->count());
         $count = $removed = 0;
+        $modId = '';
         foreach ($application->getModuliCompilati() as $item) {
           $progressBar->advance();
           ++$count;

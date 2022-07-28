@@ -2020,7 +2020,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
             'id' => $id,
             'application' => $application->getId(),
           ]);
-          if (!$message instanceof Message) {
+          if (!$message instanceof MessageEntity) {
             throw new Exception("Message $id not found");
           }
           $messages[] = $message;

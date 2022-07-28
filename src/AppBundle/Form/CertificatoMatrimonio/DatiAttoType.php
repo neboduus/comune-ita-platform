@@ -2,7 +2,6 @@
 
 namespace AppBundle\Form\CertificatoMatrimonio;
 
-use AppBundle\Entity\AttoNascita;
 use AppBundle\Entity\Pratica;
 use AppBundle\Form\Extension\TestiAccompagnatoriProcedura;
 use Symfony\Component\Form\AbstractType;
@@ -28,7 +27,6 @@ class DatiAttoType extends AbstractType
         $helper->setStepTitle('steps.certificato_matrimonio.dati_atto.title', true);
         $helper->setDescriptionText('steps.certificato_matrimonio.dati_atto.guida_alla_compilazione', true);
 
-        /** @var AttoNascita $pratica */
         $pratica = $builder->getData();
         $data = is_array($pratica->getDematerializedForms()) ? $pratica->getDematerializedForms() : json_decode($pratica->getDematerializedForms(), true);
 
