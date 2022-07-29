@@ -23,7 +23,7 @@
     }
   },
   "require": {
-    "php": ">=7.3.0",
+    "php": ">=7.3.0 <7.4.0",
     "symfony/symfony": "3.4.49",
     "doctrine/orm": "2.7.3",
     "doctrine/doctrine-bundle": "1.12.13",
