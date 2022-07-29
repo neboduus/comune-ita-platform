@@ -2751,3 +2751,15 @@ scheduled_actions:
   application_webhook' : 'Webhook'
   application_payment_reminder' : 'Promemoria pagamento'
   produce_message' : 'Messaggio Kafka'
+login_callout_texts:
+  cta_button: 'Entra'
+  cas:
+    title: 'Usi SPID?'
+    text: "Puoi autenticarti con SPID per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)"
+  login_pat:
+    title: 'Usi SPID o CPS?'
+    text: "Puoi autenticarti con SPID o Carta Provinciale dei Servizi per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)"
+  openlogin:
+    title: 'Usi SPID?'
+    text: "Puoi autenticarti con SPID per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)"
+

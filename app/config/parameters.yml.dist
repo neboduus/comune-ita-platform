@@ -100,11 +100,6 @@ parameters:
     recaptcha_key: ''
     recaptcha_secret: ''
 
-    login_callout_texts:
-      title: 'Usi SPID o CPS?'
-      text: "Puoi autenticarti con SPID o Carta Provinciale dei Servizi per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)"
-      button: 'Entra con SPID/CPS'
-
     shibbolet_server_varnames:
       codiceFiscale: "shibb_pat_attribute_codicefiscale"
       capDomicilio: "shibb_pat_attribute_capdomicilio"

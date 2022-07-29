@@ -50,17 +50,30 @@
                 <svg class="icon">
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
                 </svg>
-                {{ login_callout_texts.title }}
+                {% if login_route == 'cas' %}
+                  {{ 'login_callout_texts.cas.title' | trans }}
+                {% elseif login_route == 'login_pat' %}
+                  {{ 'login_callout_texts.login_pat.title' | trans }}
+                {% elseif login_route == 'openlogin' %}
+                  {{ 'login_callout_texts.openlogin.title' | trans }}
+                {% endif %}
               </div>
               <div class="body">
-                <p>{{ login_callout_texts.text | raw }}</p>
                 <p>
+                {% if login_route == 'cas' %}
+                  {{ 'login_callout_texts.cas.text' | trans | raw}}
+                {% elseif login_route == 'login_pat' %}
+                  {{ 'login_callout_texts.login_pat.text' | trans | raw}}
+                {% elseif login_route == 'openlogin' %}
+                  {{ 'login_callout_texts.openlogin.text' | trans | raw}}
+                {% endif %}
+                </p>
                   <a href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}"
-                     class="btn btn-primary btn-lg btn-icon mt-1 service-access-button">
-                <span>
+                     class="btn btn-primary btn-lg mt-1 btn-block w-100">
+                     <span class="d-inline-block">
                   <img class="icon" src="{{ asset('bundles/app/images/spid-user.svg') }}">
                 </span>
-                    <span class="ml-2">{{ login_callout_texts.button }}</span>
+                  <span class="ml-2 d-inline-block">{{ 'login_callout_texts.cta_button' | trans }}</span>
                   </a>
                 </p>
               </div>
