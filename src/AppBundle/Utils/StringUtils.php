@@ -6,10 +6,10 @@ class StringUtils
 {
 
   /**
-   * @param $string
+   * @param string $string
    * @return string|string[]|null
    */
-  public static function clean($string)
+  public static function clean(string $string)
   {
     $string = str_replace(['/', '\\', ' '], '-', $string); // Replaces all spaces with hyphens.
 

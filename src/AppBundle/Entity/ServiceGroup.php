@@ -345,12 +345,12 @@ class ServiceGroup implements Translatable
   }
 
   /**
-   * @return string
+   * @return string[]
    */
   public function getCoverage()
   {
     if (is_array($this->coverage)) {
-      return array_filter($this->coverage);
+      return $this->coverage;
     } else {
       return array_filter(explode(',', $this->coverage));
     }

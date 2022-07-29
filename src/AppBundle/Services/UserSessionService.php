@@ -69,8 +69,8 @@ class UserSessionService
   ) {
     $userSession = new UserSession();
     $userSession->setUserId($currentUser->getId());
-    $userSession->setEnvironment($this->request->headers->get('User-Agent'));
-    $userSession->setClientIp($this->request->getClientIp());
+    $userSession->setEnvironment($this->request->headers->get('User-Agent', ''));
+        $userSession->setClientIp($this->request->getClientIp() ?? '');
     $userSession->setSuspiciousActivity(false);
     $userSession->setSessionData($sessionData);
     if (!$authenticationData) {

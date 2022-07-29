@@ -69,17 +69,17 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
 
   /**
    * PecProtocolloHandler constructor.
-   * @param string $host
-   * @param string $port
-   * @param string $user
-   * @param string $password
-   * @param string $sender
+   * @param string|null $host
+   * @param string|null $port
+   * @param string|null $user
+   * @param string|null $password
+   * @param string|null $sender
    * @param TranslatorInterface $translator
    * @param EngineInterface $templating
    * @param LoggerInterface $logger
    * @param FileService $fileService
    */
-  public function __construct(string $host, string $port, string  $user, string  $password, string $sender, TranslatorInterface $translator, EngineInterface $templating, LoggerInterface $logger, FileService $fileService)
+  public function __construct(?string $host, ?string $port, ?string  $user, ?string  $password, ?string $sender, TranslatorInterface $translator, EngineInterface $templating, LoggerInterface $logger, FileService $fileService)
   {
     $this->host = $host;
     $this->port = $port;
