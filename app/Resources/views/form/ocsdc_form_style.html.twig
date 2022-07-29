@@ -66,7 +66,6 @@
 {% block blockquote_widget %}
 
   <blockquote>
-    asfasfadsfdafsd
     {{ data|raw }}
   </blockquote>
 {% endblock %}
@@ -74,7 +73,6 @@
 
 {% block fieldset_form_row -%}
   <fieldset class="form-group">
-    asdfasfasd
     <div class="row{% if (not compound or force_error|default(false)) and not valid %} is-invalid{% endif %}">
       {{- form_label(form) -}}
       <div class="{{ block('form_group_class') }}">
