@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="col-md-12">
+    {% if pratica.paymentData is not empty %}
+      {% if pratica.paymentType == "mypay" %}
+        {{ include('Gateway/summary/_mypay.html.twig', {'pratica':pratica}) }}
+      {% elseif pratica.paymentType == "bollo" %}
+        {{ include('Gateway/summary/_bollo.html.twig', {'pratica':pratica}) }}
+      {% else %}
+        {{ include('Gateway/summary/_generic-external.html.twig', {'pratica':pratica}) }}
+      {% endif %}
+    {% else %}
+      {% if pratica.isPaymentExempt %}
+        <div class="font-italic text-center">{{ 'operatori.pagamento_esentato'|trans }}</div>
+      {% elseif pratica.servizio.isPaymentDeferred %}
+        {{ include('Operatori/parts/payment_deferred.html.twig', {'pratica': pratica}) }}
+      {% else %}
+        <div class="font-italic text-center">{{ 'operatori.pagamento_non_previsto'|trans }}</div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,14 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block main_content %}
+<section id="intro" class="container px-4 my-4">
+  <h1 class="text-center title mb-5">{{ 'user.profile.update_profile' | trans }}</h1>
+  {{ form_start(form) }}
+  {{ form_widget(form) }}
+  <div>
+    <input type="submit" value="{{ 'aggiorna'|trans }}" class="btn btn-primary" />
+  </div>
+  {{ form_end(form) }}
+
+</section>
+{% endblock %}

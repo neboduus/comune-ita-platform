@@ -1,0 +1,44 @@
+<div class="row">
+  <div class="col">
+    <a class="p-2 float-right" data-toggle="collapse" href="#legend" role="button" aria-expanded="false"
+       aria-controls="legend">
+      <svg class="icon">
+        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use>
+      </svg>
+    </a>
+    <div class="collapse" id="legend">
+      <div class='my-legend shadow p-4 float-right'>
+        <div class='legend-title'>{{ 'meetings.legend.title' | trans }}</div>
+        <div class='legend-scale'>
+          <ul class='legend-labels'>
+            <li><span style='background:var(--indigo);'></span>{{ 'meetings.legend.approved' | trans }}</li>
+            <li><span style='background:var(--success);border: 1px solid var(--success);'></span>{{ 'meetings.legend.pending' | trans }}</li>
+            <li><span style='background:var(--danger);'></span>{{ 'meetings.legend.missed' | trans }}</li>
+            <li><span style='background:var(--secondary);'></span>{{ 'meetings.legend.done' | trans }}</li>
+            <li><span style='background:var(--200);'></span>{{ 'meetings.legend.closure' | trans }}</li>
+            <li><span style='background:#0073e670;'></span>{{ 'meetings.legend.availability' | trans }}</li>
+            <li><span style='background:var(--light);'></span>{{ 'meetings.legend.draft' | trans }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="py-4">
+  <div class="row">
+    <div class="col mt-4">
+      <div id="container-fullcalendar">
+        <h1 class="d-none d-print-block">{{ calendar.title }}</h1>
+        <div id='fullcalendar'></div>
+      </div>
+      {% if calendar.type == 'time_fixed_slots' %}
+        {{ include('Calendars/parts/modalEdit.html.twig') }}
+        {{ include('Calendars/parts/modalNew.html.twig') }}
+      {% else %}
+        {{ include('Calendars/parts/variable_slots/modalNew.html.twig') }}
+        {{ include('Calendars/parts/variable_slots/modalEdit.html.twig') }}
+      {% endif %}
+      {{ include('Calendars/parts/modalDeleteDraft.html.twig') }}
+    </div>
+  </div>
+</div>

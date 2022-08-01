@@ -1,0 +1,73 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block main_content %}
+  <section class="container my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>{{ 'categories.title' | trans() }}</h1>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-fluid py-5">
+    <div class="container">
+      <div class="col-12">
+        <table class="table table-striped table-condensed table-sm">
+          <thead>
+          <tr>
+            <th>{{ 'general.nome' | trans() }}</th>
+            <th>{{ 'categories.services_number'|trans() }}</th>
+            <th>{{ 'categories.services_group_number'|trans() }}</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for item in items %}
+            <tr>
+              <td data-title="Nome">
+                <a href="{{ path('admin_category_edit', { 'id': item.id }) }}">{{ item.spaced_name }}</a>
+              </td>
+              <td>
+                {{ item.related_services }}
+              </td>
+              <td>
+                {{ item.related_services_group }}
+              </td>
+              <td class="text-right">
+                <div class="text-right">
+                  {# EDIT #}
+                  <a class="btn btn-xs btn-secondary"
+                     href="{{ path('admin_category_edit', { 'id': item.id }) }}">
+                    <svg class="icon icon-sm icon-white">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
+                    </svg>
+                    <span class="d-none d-sm-inline-block d-lg-none d-xl-inline-block">{{ 'modifica'|trans }}</span>
+                  </a>
+
+                  {# DELETE #}
+                  {% if item.object.hasRelations %}
+                    <button class="btn btn-xs btn-primary disabled" type="button" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="right" data-html="true" title="{{ 'categories.cant_delete_title'|trans() }}" data-content="{{ 'categories.cant_delete_content'|trans() }}">
+                      <svg class="icon icon-sm icon-300">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+                      </svg>
+                      <span class="d-none d-sm-inline-block d-lg-none d-xl-inline-block">{{ 'elimina'|trans }}</span>
+                    </button>
+                  {% else %}
+                    <a class="btn btn-xs btn-danger" onclick="return confirm('{{ 'general.alert_elimina'|trans }}');" href="{{ path('admin_category_delete', { 'id': item.id }) }}">
+                      <svg class="icon icon-sm icon-white">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+                      </svg>
+                      <span class="d-none d-sm-inline-block d-lg-none d-xl-inline-block">{{ 'elimina'|trans }}</span>
+                    </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        <a class="btn btn-primary" href="{{ path('admin_category_new') }}">{{ 'aggiungi' | trans() }}</a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

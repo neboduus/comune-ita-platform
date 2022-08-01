@@ -1,0 +1,21 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+{% endblock %}
+
+{% block main_content %}
+
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h2>{{ 'backoffice.integration.subscriptions.welcome' | trans }}</h2>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'Default/index.html.twig' %}
+{% block title %}{{ pratica.servizio.name }} - Stanza del cittadino{% endblock %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('user-show-application') }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('user-show-application') }}
+
+  <script>
+    (function() {
+      setInterval(function() {
+        window.location.reload();
+      }, 15000);
+    })();
+  </script>
+
+{% endblock %}
+
+{% block main_content %}
+    <section id="intro" class="container px-4 my-4">
+        <div class="row">
+            <div class="col-12 px-lg-4 py-lg-2">
+                <h1>{{ pratica.servizio.name }}</h1>
+            </div>
+
+            <div class="col-lg-8 px-lg-4 py-lg-2">
+                {% if pratica.servizio.finalIndications and pratica.status >= 1900 and pratica.status <= 3000 %}
+                  <div class="alert alert-info">
+                    <p>{{ pratica.servizio.finalIndications | raw }}</p>
+                  </div>
+                {% endif %}
+
+                {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica, 'user': null}) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}

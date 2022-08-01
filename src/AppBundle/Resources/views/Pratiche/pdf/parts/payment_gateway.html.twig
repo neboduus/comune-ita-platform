@@ -1,6 +1,0 @@
-{% if pratica.paymentType and pratica.paymentType == 'bollo' %}
-    <div class="payment">
-        <p><strong>{{ 'pratica.pagamento'|trans }}</strong></p>
-        {{ include('@App/Gateway/pdf/_bollo.html.twig', {'pratica':pratica}) }}
-    </div>
-{% endif %}

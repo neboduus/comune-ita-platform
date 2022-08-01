@@ -1,0 +1,8 @@
+{% if pratica.paymentType and pratica.paymentType == 'bollo' %}
+    <div class="row">
+        <div class="col-xs-12 col-sm-3"><strong>{{ 'pratica.pagamento'|trans }}</strong></div>
+        <div class="col-xs-12 col-sm-9">
+            {{ include('Gateway/summary/_bollo.html.twig', {'pratica':pratica}) }}
+        </div>
+    </div>
+{% endif %}

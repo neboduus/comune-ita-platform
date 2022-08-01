@@ -11,8 +11,7 @@ log {
 }
 php_fastcgi * php:9000 {
   split .php
-  index app.php
-  root /var/www/html/web
+  root /var/www/html/public
   trusted_proxies private_ranges
 }
 file_server

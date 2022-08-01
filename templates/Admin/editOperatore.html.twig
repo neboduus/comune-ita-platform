@@ -1,0 +1,67 @@
+{% extends 'Default/index.html.twig' %}
+{% block javascripts %}
+  {{ parent() }}
+  {{ encore_entry_script_tags('edit-operator') }}
+{% endblock %}
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h2>{{ 'nav.admin.create_new_operator' | trans }}</h2>
+      </div>
+
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(form) }}
+        {{ form_row(form.nome) }}
+        {{ form_row(form.cognome) }}
+        {{ form_row(form.username) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.enabled) }}
+        {{ form_label(form.services) }}
+        {% block checkbox_hierarchy_widget %}
+          <ul class="list-unstyled" id="mainList">
+            {% for choiceOrOptionGroup,children in form.services.vars.choices %}
+              {% if children is iterable %}
+                <ul>
+                  {% for child,choiceView in children %}
+                    <li class="d-block">
+                      <label class="checkbox">
+                        {{ form_widget(form.services[child],{
+                          'attr':{
+                            'value': choiceView.data
+                          }}) }}
+                      </label>
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% else %}
+                {% if not loop.first %}
+                  </li>
+                {% endif %}
+                <li>
+                <label class="checkbox">
+                  {{ form_widget(form.services.offsetGet(choiceOrOptionGroup),{
+                    'attr':{
+                      'value': children.data,
+                      'class':'group'
+                    }}) }}
+                </label>
+              {% endif %}
+              {% if loop.last %}
+                </li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        {% endblock %}
+        <div class="row mt-3">
+          <div class="col-12 text-right">
+            <a class="btn btn-outline-secondary"
+               href="{{ path('admin_operatore_index') }}">{{ 'webhook.back_to_list' | trans() }}</a>
+            <button name="save" type="submit" value="save" class="btn btn-primary ml-1">{{ 'salva'|trans }}</button>
+          </div>
+        </div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </section>
+{% endblock %}

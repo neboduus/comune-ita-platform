@@ -1,0 +1,106 @@
+<div class="row">
+  {% if servizio.isSharedWithGroup and servizio.serviceGroup %}
+    <div class="col-lg-12 px-lg-4">
+      <div class="alert alert-info">
+        <p>{{ 'servizio.shared_with_group_message'|trans }} <a class="d-block" href="{{ path('admin_service_group_edit', {'id': servizio.serviceGroup.id}) }}"><i class="fa fa-pencil"></i> {{ 'servizio.shared_with_group_action'|trans }}</a></p>
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.cos_e'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.description|cleanMarkup|raw|nl2br }}
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.a_chi_si_rivolge'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.who|cleanMarkup|raw|nl2br }}
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.accedere'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.howto|cleanMarkup|raw|nl2br }}
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.how_to_do'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.howToDo|cleanMarkup|raw|nl2br }}
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.what_you_need'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.whatYouNeed|cleanMarkup|raw|nl2br }}
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.what_you_get'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.whatYouGet|cleanMarkup|raw|nl2br }}
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.costs'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.costs|cleanMarkup|raw|nl2br }}
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.casi_particolari'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.specialCases|cleanMarkup|raw|nl2br }}
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.maggiori_info'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.moreInfo|cleanMarkup|raw|nl2br }}
+      </div>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.categoria'|trans }}</strong></p>
+      <ul>
+        {% if servizio.serviceGroup.topics %}
+          <li>{{ servizio.serviceGroup.topics.name }}</li>
+        {% else %}
+          <li>{{ 'servizio.no_topics'|trans }}</li>
+        {% endif %}
+      </ul>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.destinatari'|trans }}</strong></p>
+      <ul>
+        {% if servizio.serviceGroup.recipients %}
+          {% for r in servizio.serviceGroup.recipients %}
+            <li>{{ r.name }}</li>
+          {% endfor %}
+        {% else %}
+          <li>{{ 'servizio.no_recipients'|trans }}</li>
+        {% endif %}
+      </ul>
+
+      <p class="text-primary mb-2"><strong>{{ 'servizio.aree_geografiche'|trans }}</strong></p>
+      <ul>
+        {% if servizio.serviceGroup.recipients %}
+          {% for r in servizio.serviceGroup.recipients %}
+            <li>{{ r.name }}</li>
+          {% endfor %}
+        {% else %}
+          <li>{{ 'servizio.no_geographic_areas'|trans }}</li>
+        {% endif %}
+      </ul>
+
+      <div class="mt-3 text-right">
+        <a href="{{ path('admin_servizio_index') }}" class="btn btn-outline-secondary">{{ 'annulla'|trans }}</a>
+        <a href="{{ path('admin_servizio_edit', {'id': servizio.id, 'step': 'formio'}) }}"
+           class="btn btn-secondary">{{ 'avanti'|trans }}</a>
+      </div>
+    </div>
+  {% else %}
+    <div class="col-lg-12 px-lg-4">
+      {{ form_start(form) }}
+      {{ form_errors(form) }}
+      {% if form.vars.helper.descriptionText|length > 0 %}
+        <blockquote>
+          {{ form.vars.helper.descriptionText|cleanMarkup|raw|nl2br }}
+        </blockquote>
+      {% endif %}
+
+      {{ form_rest(form) }}
+
+      {{ include('Admin/servizio/_saveButtons.html.twig') }}
+      {{ form_end(form) }}
+    </div>
+  {% endif %}
+</div>

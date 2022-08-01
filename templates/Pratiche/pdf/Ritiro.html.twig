@@ -1,0 +1,26 @@
+{% extends 'Pratiche/pdf/parts/base_logo.twig' %}
+
+{% block pdf_content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="chiede center_title">
+                <span class="text-uppercase"></span>
+            </div>
+            <div class="richiesta">
+                <p>
+                    {{ 'pratica.dettaglio.ritiro' | trans({'%id%': pratica.id, '%servizio%': pratica.servizio.name, '%user_name%': pratica.user.fullName}) }}.
+                </p>
+            </div>
+            <div class="data">
+                <p>
+                    {{ 'pratica.pdf.luogo'|trans()|raw }}
+                    {{ "now"|date("d/m/Y") }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row page-break-before"></div>
+    {{ include('Pratiche/pdf/parts/dati_autenticazione.html.twig', {'pratica':pratica,  'user': user}) }}
+
+{% endblock %}

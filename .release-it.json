@@ -20,7 +20,7 @@
           "path": "softwareVersion"
         },
         {
-          "file": "app/config/app.yml",
+          "file": "config/packages/app.yaml",
           "type": "text/yaml",
           "path": "parameters.version"
         }

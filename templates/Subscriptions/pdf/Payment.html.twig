@@ -1,0 +1,125 @@
+<html>
+<head>
+  {{ include('Subscriptions/pdf/parts/style.html.twig') }}
+</head>
+<body>
+{% set ente = instance_service.getCurrentInstance() %}
+
+<main class="container-fluid" style="padding: 40px">
+  <div class="row">
+    <div class="col-12 text-center">
+      {% if ente %}
+        <img class="logo" src="{{ absolute_url(asset('bundles/app/images/logo-' ~ ente.slug ~ '.png')) }}"
+             alt="{{ ente.name }}"/>
+        <h2 class="ente">{{ ente.name }}</h2>
+      {% endif %}
+    </div>
+  </div>
+
+
+  <div class="chiede center_title">
+    <span class="text-uppercase">DICHIARAZIONE</span>
+  </div>
+
+  <div class="richiesta">
+    <p>
+      {{ "iscrizioni.certificato_pagamento.testo" | trans({
+        "%completeName%": payment.subscription.subscriber.completeName | upper,
+        "%placeOfBirth%": payment.subscription.subscriber.placeOfBirth | upper,
+        "%dateOfBirth%": payment.subscription.subscriber.dateOfBirth | date(ocsdc_default_date_format),
+        "%fiscalCode%": payment.subscription.subscriber.fiscalCode | upper,
+        "%paymentYear%": payment.paymentDate | date('Y')
+      }) | raw }}
+    </p>
+    <ul>
+      <li>
+        {{ "iscrizioni.certificato_pagamento.importo" | trans({
+          "%amount%": payment.amount,
+          "%description%": payment.description,
+          "%service%": payment.subscription.subscriptionService.name
+        }) | raw }}
+      </li>
+    </ul>
+  </div>
+  <div>
+    {% if pratica and pratica.paymentData is not empty %}
+      <table class="table">
+        <tr>
+          <td><b>{{ 'operatori.gateway'|trans }}</b></td>
+          <td>{{ pratica.paymentType }}</td>
+        </tr>
+        {% if pratica.paymentType == "mypay" %}
+          {% if pratica.paymentData.request is defined %}
+            <tr>
+              <td><b>{{ 'operatori.anagrafica_pagatore'|trans }}</b></td>
+              <td>
+                <div>{{ pratica.paymentData.request.anagraficaPagatore }}</div>
+                <div>{{ pratica.paymentData.request.codiceIdentificativoUnivoco }}</div>
+                <div>{{ pratica.paymentData.request.indirizzoPagatore }} {{ pratica.paymentData.request.civicoPagatore }}</div>
+                <div>
+                  {{ pratica.paymentData.request.capPagatore }}
+                  {{ pratica.paymentData.request.localitaPagatore }}
+                  ({{ pratica.paymentData.request.provinciaPagatore }})
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td><b>{{ 'operatori.email_pagatore'|trans }}</b></td>
+              <td>
+                <a
+                  href="mailto:{{ pratica.paymentData.request['e-mailPagatore'] }}">{{ pratica.paymentData.request['e-mailPagatore'] }}</a>
+              </td>
+            </tr>
+            <tr>
+              <td><b>{{ 'operatori.causale'|trans }}</b></td>
+              <td>{{ pratica.paymentData.request.causaleVersamento }}</td>
+            </tr>
+            <tr>
+              <td><b>{{ 'operatori.iud'|trans }}</b></td>
+              <td>{{ pratica.paymentData.request.identificativoUnivocoDovuto }}</td>
+            </tr>
+          {% endif %}
+          {% if pratica.paymentData.response is defined %}
+            <tr>
+              <td><b>{{ 'operatori.iuv'|trans }}</b></td>
+              <td>{{ pratica.paymentData.response.identificativoUnivocoVersamento }}</td>
+            </tr>
+            {# Se c'è l'esito del pagamento scarico la ricevuta altrimenti scarico l'avviso #}
+            {% if pratica.paymentData.outcome is defined %}
+              {% if pratica.paymentData.outcome.data.dataOraMessaggioRicevuta is defined %}
+                <tr>
+                  <td><b>{{ 'operatori.data_ora_ricevuta'|trans }}</b></td>
+                  <td>{{ pratica.paymentData.outcome.data.dataOraMessaggioRicevuta | date(ocsdc_default_datetime_format) }}</td>
+                </tr>
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        {% elseif pratica.paymentType == "bollo" %}
+          {% set paymentData = pratica.paymentData | json_decode %}
+          <tr>
+            <td><b>{{ 'gateway.bollo.identifier'|trans }}</b></td>
+            <td>{{ paymentData.bollo_identifier }}</td>
+          </tr>
+          <tr>
+            <td><b>{{ 'gateway.bollo.data'|trans }}</b></td>
+            <td>{{ paymentData.bollo_data_emissione | date(ocsdc_default_date_format) }}</td>
+          </tr>
+          <tr>
+            <td><b>{{ 'gateway.bollo.ora'|trans }}</b></td>
+            <td>{{ paymentData.bollo_ora_emissione.hour }}:{{ paymentData.bollo_ora_emissione.minute }}
+              :{{ paymentData.bollo_ora_emissione.second }}</td>
+          </tr>
+        {% else %}
+          ok
+        {% endif %}
+      </table>
+    {% endif %}
+  </div>
+
+  <div class="data">
+    <p>{{ 'pratica.pdf.luogo'|trans()|raw }} {{ 'now' |date("d/m/Y") }}</p>
+  </div>
+</main>
+
+</body>
+</html>

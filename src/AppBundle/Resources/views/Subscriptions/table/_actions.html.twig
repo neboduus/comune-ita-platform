@@ -1,6 +1,0 @@
-<div class="text-right">
-  {{ include('@App/Subscriptions/table/_edit_action.twig', {'id': row.id, 'subscriptionServiceId': row.subscriptionService.id,
-    'subscriberId': row.subscriber.id, 'dataRedirect': path('operatori_subscriptions', {'subscriptionService': row.subscriptionService.id })}) }}
-  {{ include('@App/Subscriptions/table/_delete_action.twig', {'id': row.id, 'subscriptionServiceId': row.subscriptionService.id, 'subscriberId': row.subscriber.id}) }}
-  {{ include('@App/Subscriptions/table/_withdraw_or_activate_action.twig', {'id': row.id, 'status': row.status, 'dataRedirect': path('operatori_subscriptions', {'subscriptionService': row.subscriptionService.id })}) }}
-</div>

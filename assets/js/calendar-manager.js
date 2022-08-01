@@ -125,7 +125,7 @@ $(document).ready(function () {
     let button = $(this)
     let temp = $("<input>")
     $("body").append(temp)
-    temp.val($('#appbundle_calendar_id').val()).select()
+    temp.val($('#App_calendar_id').val()).select()
     document.execCommand("copy")
     button.find('span').text(`${Translator.trans('copied_id', {}, 'messages', language)}`)
     temp.remove();

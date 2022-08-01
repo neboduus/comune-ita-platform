@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Stanza del cittadino{% endblock %}
+{% block favicon %}
+  <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}"/>
+{% endblock %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('app') }}
+{% endblock %}
+
+
+{% block content_container %}
+  <main>
+    {% block main_content %}{% endblock %}
+  </main>
+{% endblock %}
+

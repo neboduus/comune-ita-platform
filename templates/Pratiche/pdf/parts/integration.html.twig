@@ -1,0 +1,10 @@
+<html>
+<head>
+    {{ include('Pratiche/pdf/parts/style.html.twig', {'pratica':pratica, 'user': user}) }}
+</head>
+<body>
+    <p>
+        {{ richiesta_integrazione.message|raw }}
+    </p>
+</body>
+</html>

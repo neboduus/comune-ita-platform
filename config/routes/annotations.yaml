@@ -1,0 +1,43 @@
+#controllers:
+#  resource: ../../src/Controller/
+#  type: annotation
+#  prefix:   "/%prefix%"
+
+kernel:
+  resource: ../../src/Kernel.php
+  type: annotation
+
+prometheus:
+  path: /prometheus.json
+  defaults: { _controller: App\Controller\General\MetricsController::prometheusAction}
+
+status:
+  path: /php-status
+  defaults: { _controller: App\Controller\Ui\Frontend\DefaultController::statusAction}
+
+home:
+  path: /
+  defaults: { _controller: App\Controller\Ui\Frontend\DefaultController::commonAction }
+
+api_auth:
+  path: "/%prefix%/api/auth"
+  methods: [ POST ]
+
+rest:
+  resource: '../../src/Controller/Rest/'
+  type: annotation
+  prefix: "/%prefix%/api"
+
+general:
+  resource: '../../src/Controller/General/'
+  type: annotation
+  prefix: "/%prefix%"
+
+app:
+  resource: '../../src/Controller/Ui/'
+  type: annotation
+  prefix: "/%prefix%/{_locale}"
+  requirements:
+    _locale: '%app_locales%'
+  defaults:
+    _locale: '%locale%'

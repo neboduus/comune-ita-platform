@@ -1,0 +1,75 @@
+{% extends 'Default/index.html.twig' %}
+
+{% set ente = instance_service.getCurrentInstance() %}
+
+{% block stylesheets %}
+  {{ parent() }}
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('service-manager') }}
+{% endblock %}
+
+{% block main_content %}
+
+  <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+          <h2>{{ 'admin.custom_validation.custom_validation_for' | trans}} {{ servizio.name }}</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 px-lg-4">
+        {{ form(form) }}
+      </div>
+    </div>
+
+    <hr />
+
+    <pre class="bg-light p-2">
+      applications.count({
+        service: ['{{ 'admin.custom_validation.id_service' | trans }}',...],
+        data: {'{{ 'admin.custom_validation.id_field' | trans }}': submission['Identificatore campo'], ...},
+        status: ['{{ 'admin.custom_validation.status_code' | trans }}',...],
+        id: ['{{ 'servizio.id_pratica' | trans }}',...]
+      }){#
+    #}</pre>
+
+    <table class="table">
+      <tr>
+        <th>{{ 'admin.custom_validation.id_service' | trans }}</th>
+        <td>{{ servizio.getSlug }}</td>
+      </tr>
+    </table>
+
+    <table class="table">
+      <tr>
+        <th>{{ 'admin.custom_validation.field_label' | trans }}</th>
+        <th>{{ 'admin.custom_validation.id_field' | trans }}</th>
+      </tr>
+      {% for component in schema.getComponents %}
+        <tr>
+          <td>{{ component.label }}</td>
+          <td>{{ component.name }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    <table class="table">
+      <tr>
+        <th>{{ 'admin.custom_validation.status_name' | trans }}</th>
+        <th>{{ 'admin.custom_validation.status_code' | trans }}</th>
+      </tr>
+    {% for status in statuses %}
+      <tr>
+        <td>{{ status.identifier }}</td>
+        <td>{{ status.id }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+
+  </section>
+
+{% endblock %}

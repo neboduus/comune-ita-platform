@@ -1,0 +1,11 @@
+{% extends 'Emails/base.html.twig' %}
+{% block email_content %}
+  <table align='center' bgcolor='#fff' border='0' cellpadding='0' cellspacing='0' id='backgroundTable' style='background: #fff;'>
+    <tr>
+      <td style="padding: 20px;line-height: 1.4;">
+        {{ text|raw }}
+      </td>
+    </tr>
+  </table>
+{% endblock %}
+

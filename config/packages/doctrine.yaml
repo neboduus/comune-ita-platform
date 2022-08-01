@@ -1,0 +1,28 @@
+doctrine:
+  dbal:
+    url: 'postgres://%env(DB_USER)%:%env(DB_PASSWORD)%@%env(DB_HOST)%/%env(DB_NAME)%?server_version=11'
+    driver: 'postgresql'
+
+  orm:
+    auto_generate_proxy_classes: true
+    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+    auto_mapping: true
+    mappings:
+      entity:
+        is_bundle: false
+        type: annotation
+        dir: '%kernel.project_dir%/src/Entity'
+        prefix: 'App\Entity'
+        alias: App
+      translatable:
+        type: annotation
+        is_bundle: false
+        prefix: Gedmo\Translatable\Entity
+        dir: '%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Translatable/Entity'
+        alias: GedmoTranslatable
+    dql:
+      string_functions:
+        FORMIO_JSON_FIELD: App\FormIO\FormIOJsonFieldParser
+        JSON_FIELD: App\Doctrine\JsonFieldParser
+        JSON_TEXT: App\Doctrine\JSONText
+        JSONB_ARRAY_ELEMENTS_TEXT: App\Doctrine\JsonbArrayElementsText

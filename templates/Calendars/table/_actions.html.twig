@@ -1,0 +1,4 @@
+<div class="text-right">
+  {{ include('Calendars/table/_edit_action.html.twig', {'canEdit': row.canEdit, 'id': row.id}) }}
+  {{ include('Calendars/table/_delete_action.html.twig', {'canDelete':row.canDelete, 'id': row.id, 'title': row.title, 'owner': row.owner, 'futureMeetings': row.futureMeetings}) }}
+</div>

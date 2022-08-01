@@ -1,0 +1,72 @@
+{% extends 'Default/index.html.twig' %}
+{% block title %}{{pratica.servizio.name}} - Stanza del cittadino{% endblock %}
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+  {# % if pratica.status == 1900 or (pratica.status == 2000 and pratica.servizio.isProtocolRequired) %}
+    <script>
+      (function() {
+        setInterval(function() {
+          window.location.reload();
+        }, 15000);
+      })();
+    </script>
+  {% endif % #}
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-12 px-lg-4 py-lg-2">
+        <h1>{{ pratica.servizio.name }}</h1>
+      </div>
+
+      <div class="col-lg-8 px-lg-4 py-lg-2">
+        {% if pratica.servizio.finalIndications and pratica.status >= 1900 and pratica.status <= 3000 %}
+          <div class="alert alert-info">
+            {{ pratica.servizio.finalIndications | raw }}
+          </div>
+          <div id="application-container-top"></div>
+        {% endif %}
+        {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
+        {% if pratica.servizio.finalIndications and pratica.status >= 1900 and pratica.status <= 3000 %}
+          <div id="application-container-bottom"></div>
+        {% endif %}
+      </div>
+
+      <div class="col-lg-3 offset-lg-1 pt-3 pt-lg-0">
+        <div class="row">
+          {% if pratica.userCompilationNotes %}
+            <div class="col-12">
+              <div id="compilationNotes" class="callout my-5">
+                <div class="callout-title py-1 px-2">
+                  <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use></svg>
+                  {{ 'pratica.le_tue_note'|trans }}
+                </div>
+                <div class="body">
+                  <p>{{ pratica.userCompilationNotes}}</p>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+          <div class="col-12">
+
+            {{ include('Pratiche/parts/pratica_actions.html.twig', {'pratica':pratica}) }}
+
+            {% if pratica.type != 'form_io' %}
+              <div class="row">
+                <div class="col-12">
+                  {{ include('Pratiche/parts/pratica_iter.html.twig', {'pratica':pratica}) }}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

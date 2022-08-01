@@ -1,0 +1,23 @@
+<html>
+<head>
+  {{ include('Pratiche/pdf/parts/style.html.twig') }}
+</head>
+<body>
+
+<div class="richiesta">
+  {{ text|raw }}
+</div>
+
+<div class="data">
+  <p>
+    {{ 'pratica.pdf.luogo'|trans()|raw }}
+    {% if pratica.rispostaOperatore %}
+      {{ pratica.rispostaOperatore.createdAt|date("d/m/Y") }}
+    {% else %}
+      {{ "now"|date("d/m/Y") }}
+    {% endif %}
+  </p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('tenant-manager') }}
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-12 px-lg-4 py-lg-2">
+        <h2>{{ 'modifica'|trans }} {{ ente.name }}</h2>
+      </div>
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(form) }}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item"><a class="nav-link active" id="default-settings-tab" data-toggle="tab"
+                                  href="#default-settings" role="tab" aria-controls="default-settings-tab"
+                                  aria-selected="true">{{ 'backoffice.entity.setting'|trans }}</a></li>
+          <li class="nav-item"><a class="nav-link" id="protocol-tab" data-toggle="tab" href="#protocol" role="tab"
+                                  aria-controls="protocol-tab" aria-selected="false">{{ 'nav.admin.tenant.protocollo'|trans }}</a></li>
+          <li class="nav-item"><a class="nav-link" id="mailers-tab" data-toggle="tab" href="#mailers" role="tab"
+                                  aria-controls="mailers-tab"
+                                  aria-selected="false">{{ 'backoffice.entity.mailers'|trans }}</a></li>
+          <li class="nav-item"><a class="nav-link" id="meta-tab" data-toggle="tab" href="#meta" role="tab"
+                                  aria-controls="meta-tab"
+                                  aria-selected="false">{{ 'backoffice.entity.meta'|trans }}</a></li>
+          <li class="nav-item"><a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab"
+                                  aria-controls="payments-tab" aria-selected="false">{{ 'nav.admin.tenant.pagamenti'|trans }}</a></li>
+          <li class="nav-item"><a class="nav-link" id="options-tab" data-toggle="tab" href="#options" role="tab"
+                                  aria-controls="options-tab" aria-selected="false">{{ 'nav.admin.tenant.opzioni'|trans }}</a></li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane p-3 fade show active" id="default-settings" role="tabpanel"
+               aria-labelledby="default-settings-tab">
+              <p>{{ 'login_type.label'|trans }} <strong>{{ ('login_type.'~login_route)|trans }}</strong></p>
+            <hr>
+            {{ form_row(form.name) }}
+            {{ form_row(form.codice_meccanografico) }}
+            {{ form_row(form.site_url) }}
+            {{ form_row(form.codice_amministrativo) }}
+            {{ form_row(form.navigation_type) }}
+          </div>
+          <div class="tab-pane p-3 fade" id="protocol" role="tabpanel" aria-labelledby="protocol-tab">
+            {{ form_row(form.default_settings) }}
+          </div>
+          {# Mailers #}
+          <div class="tab-pane p-3 fade" id="mailers" role="tabpanel" aria-labelledby="mailers-tab">
+            <div class="form-group mt-3" id="app_io">
+              {{ form_widget(form.io_enabled) }}
+              <span class="text-info px-2" id="io_helper"><i
+                  class="fa fa-info-circle"></i> {{ 'app_io.admin_helper' | trans }}</span>
+            </div>
+            <hr>
+            <div class="form-group">
+              <label>{{ 'ente.mailers.title' | trans }}</label>
+              <div id="current-mailers"
+                   data-widget-mailer="{{ '<div class="js-mailer-item shadow px-3 my-4"></div>'|e }}"
+                   data-widget-counter="{{ form.mailers|length }}">
+                {% if form.mailers|length > 0 %}
+                  {% for m in form.mailers %}
+                    <div class="js-mailer-item shadow px-3 my-4">
+                      <div id="mailer-item">
+                        <div class="row">
+                          <div class="col-3">
+                            {{ form_row(m.title, {'attr': {'readonly': 'readonly'}}) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.host) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.port) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.user) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.password) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.encription) }}
+                          </div>
+                          <div class="col-3">
+                            {{ form_row(m.sender) }}
+                          </div>
+                          <div class="col-3">
+                            <div class="form-group">
+                              <label>&nbsp;</label>
+                              <a class="btn btn-danger btn-block btn-xs js-remove-mailer" href="#">
+                                <svg class="icon icon-sm icon-white d-md-none">
+                                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+                                </svg>
+                                <span class="d-none d-md-block">{{ 'elimina' | trans }}</span>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="clearfix mb-4"></div>
+                      </div>
+                    </div>
+                  {% endfor %}
+                {% else %}
+                  <p class="text-info px-2" id="no-mailers">
+                    <i class="fa fa-info-circle"></i>
+                    {{ 'ente.mailers.helper' | trans }}
+                  </p>
+                {% endif %}
+              </div>
+              <div class="row mt-4">
+                <div class="col-9"></div>
+                <div class="col-3">
+                  <button type="button" id="add-mailer" class="btn btn-xs btn-secondary btn-block">{{ 'aggiungi' | trans }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane p-3 fade" id="options" role="tabpanel" aria-labelledby="options-tab">
+            {{ form_row(form.backoffice_enabled_integrations) }}
+            <div id="linkable_application_meetings" class="form-group">
+              {{ form_widget(form.linkable_application_meetings) }}
+              <span class="text-info px-2"><i class="fa fa-info-circle"></i> {{ 'ente.linkable_application_meetings.helper' | trans }} </span>
+            </div>
+          </div>
+
+          <div class="tab-pane p-3 fade" id="meta" role="tabpanel" aria-labelledby="meta-tab">
+            {{ form_row(form.meta) }}
+          </div>
+
+          <div class="tab-pane p-3 fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+            {{ form_rest(form) }}
+          </div>
+
+
+        </div>
+        <hr>
+        <div class="form-group">
+          <button type="submit" id="ente_save" class="btn-primary btn">{{ 'salva'|trans }}</button>
+          <a href="{{ path('admin_servizio_index') }}" class="btn btn-secondary">{{ 'annulla'|trans }}</a>
+        </div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </section>
+
+  <script type="text/html" id="mailer-item-template">
+    <div id="mailer-item">
+      <div class="row">
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___title" class="required">{{ 'backoffice.entity.title'|trans }}</label>
+            <input type="text" id="mailers___name___title" name="ente[mailers][__name__][title]" required="required"
+                   class="form-control"/>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___host" class="required">{{ 'backoffice.entity.host'|trans }}</label>
+            <input type="text" id="mailers___name___host" name="ente[mailers][__name__][host]" required="required"
+                   class="form-control"/>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___port" class="required">Porta</label>
+            <input type="number" id="mailers___name___port" name="ente[mailers][__name__][port]" required="required"
+                   class="form-control" value="587" min="1" max="65535"/>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___user" class="required">User</label>
+            <input type="text" id="mailers___name___user" name="ente[mailers][__name__][user]" required="required"
+                   class="form-control"/>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___password" class="required">Password</label>
+            <input type="text" id="mailers___name___password" name="ente[mailers][__name__][password]"
+                   required="required" class="form-control"/>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___encription" class="required">{{ 'backoffice.entity.encription'|trans }}</label>
+            <select id="mailers___name___encription" name="ente[mailers][__name__][encription]" required="required"
+                    class="form-control">
+              <option value="SSL">SSL</option>
+              <option value="TLS">TLS</option>
+              <option value="STARTTLS">STARTTLS</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label for="mailers___name___sender" class="required">{{ 'backoffice.entity.sender'|trans }}</label>
+            <input type="email" id="mailers___name___sender" name="ente[mailers][__name__][sender]" required="required"
+                   class="form-control"/>
+          </div>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <a class="btn btn-danger btn-block btn-xs js-remove-mailer" href="#">
+              <svg class="icon icon-sm icon-white d-md-none">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-delete"></use>
+              </svg>
+              <span class="d-none d-md-block">{{ 'elimina'|trans }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </script>
+{% endblock %}
+
+

@@ -44,7 +44,7 @@ function onTypeChange(el) {
   }
   // Disable payment due date and autocomplete with subscriptions due date
   if (value === 'subscription_fee'){
-    dueDate.val($('#appbundle_subscriptionservice_subscription_end').val());
+    dueDate.val($('#App_subscriptionservice_subscription_end').val());
     dueDate.attr('readonly', true);
   } else {
     if (dueDate.attr('readonly')) {
@@ -62,12 +62,12 @@ $(document).on("change", ".radio-type", function(){
 $(document).ready(function () {
 
   // On subscriptions end date change, change all subription fee payments due date
-  $('#appbundle_subscriptionservice_subscription_end').on('change', function () {
+  $('#App_subscriptionservice_subscription_end').on('change', function () {
 
     $('.due-date input').each(function (index, item) {
       let paymentItem = item.closest('.js-payment-item');
       if ($(paymentItem).find('.type_subscription_fee').first().prop('checked')) {
-        $(item).val($('#appbundle_subscriptionservice_subscription_end').val());
+        $(item).val($('#App_subscriptionservice_subscription_end').val());
       }
     });
   })
@@ -305,14 +305,14 @@ $(document).ready(function () {
     let data = identifier_el.attr('data-payment');
     if (data) {
       data = JSON.parse(data);
-        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_amount`).val(data["amount"])
-        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_identifier`).val(data["payment_identifier"])
-        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_reason`).val(data["payment_reason"])
-        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_payment_service`).val(data["payment_service"]).change()
-        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_create_draft`).prop('checked', data["create_draft"])
-        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_meta`).text(JSON.stringify(data["meta"]))
-        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_type`).find(`.type_${data["type"]}`).first().prop('checked', true).change();
-        $(`#appbundle_subscriptionservice_subscription_payments_${identifier}_date`).val(moment(data["date"]).format("YYYY-MM-DD"))
+        $(`#App_subscriptionservice_subscription_payments_${identifier}_amount`).val(data["amount"])
+        $(`#App_subscriptionservice_subscription_payments_${identifier}_payment_identifier`).val(data["payment_identifier"])
+        $(`#App_subscriptionservice_subscription_payments_${identifier}_payment_reason`).val(data["payment_reason"])
+        $(`#App_subscriptionservice_subscription_payments_${identifier}_payment_service`).val(data["payment_service"]).change()
+        $(`#App_subscriptionservice_subscription_payments_${identifier}_create_draft`).prop('checked', data["create_draft"])
+        $(`#App_subscriptionservice_subscription_payments_${identifier}_meta`).text(JSON.stringify(data["meta"]))
+        $(`#App_subscriptionservice_subscription_payments_${identifier}_type`).find(`.type_${data["type"]}`).first().prop('checked', true).change();
+        $(`#App_subscriptionservice_subscription_payments_${identifier}_date`).val(moment(data["date"]).format("YYYY-MM-DD"))
     }
   })
 
@@ -341,7 +341,7 @@ $(document).ready(function () {
     // with a number that's unique to your emails
     // end name attribute looks like name="contact[emails][2]"
     newWidget = newWidget.replace(/__name__/g, new Date().getTime());
-    newWidget = newWidget.replace(/__code__/g, $('#appbundle_subscriptionservice_code').val());
+    newWidget = newWidget.replace(/__code__/g, $('#App_subscriptionservice_code').val());
     newWidget = newWidget.replace(/__counter__/g, counter);
     // Increase the counter
     counter++;

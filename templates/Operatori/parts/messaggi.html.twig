@@ -1,0 +1,42 @@
+{% set request_integration_time = false %}
+{% if not pratica.servizio.legacy and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and pratica.richiestaDiIntegrazioneAttiva is defined %}
+  {%  set request_integration_time = pratica.richiestaDiIntegrazioneAttiva.createdAt|date('U') %}
+{% endif %}
+
+<div class="row">
+  <div class="col-md-12">
+    <ul class="messages-list">
+      {% for message in pratica.messages %}
+        {{ include('Message/message.html.twig', {'request_integration_time': request_integration_time}) }}
+      {% endfor %}
+    </ul>
+    <div>
+      {{ form_start(messageForm) }}
+      {{ form_errors(messageForm) }}
+      {{ form_row(messageForm.message, {'attr': {'class': 'summernote'}}) }}
+
+      <div {% if pratica.status < 4000 %} class="d-none" {% endif %}>
+        <div class="form-group mb-0 pb-0">
+          <label>{{ 'operatori.messaggi.allega_label' | trans }}</label>
+          {{ form_row(messageForm.attachments) }}
+        </div>
+        <div id="vueApp2" class="px-2">
+          <message_attachments id="upload_message_attachment"></message_attachments>
+          <small class="form-text text-muted">{{ 'operatori.messaggi.allega_help' | trans }}</small>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between mt-5">
+        {% if not pratica.operatore %}
+          <div>{{ form_widget(messageForm.applicant, {'attr': {'disabled': true, 'title': 'operatori.messaggi.prendi_in_carico_per_abilitare'|trans}}) }}</div>
+        {% else %}
+          {% set message = 'pratica.messaggio_a_utente' | trans({ "%email%": pratica.user.emailContatto }) | raw %}
+          {% set click = 'return confirm("'~message~'") '%}
+          <div>{{ form_widget(messageForm.applicant, {'attr': {'onclick': click}}) }}</div>
+        {% endif %}
+        <div>{{ form_widget(messageForm.internal, {'attr': {'class': 'btn-secondary'}}) }}</div>
+      </div>
+      {{ form_end(messageForm) }}
+    </div>
+  </div>
+</div>

@@ -12,7 +12,7 @@ class Users {
   init() {
     const auth = new Auth();
     auth.getSessionAuthTokenPromise().then( res => {
-      this.token = res.token
+       this.token = res.token
     });
     this.basePath = new BasePath().getBasePath()
   }
