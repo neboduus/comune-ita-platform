@@ -171,6 +171,7 @@ general:
   alert_elimina: "Sicuro di voler procedere?"
   anonymous: 'Anonimo'
   social: 'Social'
+  follow_social: 'Seguici su'
   level_spid_1: 'Spid livello 1'
   level_spid_2: 'Spid livello 2'
   cie: 'CIE'
@@ -180,6 +181,9 @@ general:
   approval: 'Approvazione'
   forwarding: 'Inoltro'
   postponement: 'Rinvii'
+  retry: 'Riprova'
+  import: 'Importa'
+  import_url: 'Inserisci url da cui importare'
   flash:
     created: 'Oggetto creato correttamente'
     updated: 'Oggetto aggiornato correttamente'
@@ -253,6 +257,7 @@ servizio:
   placeholder_disponibili: 'Placeholder disponibili'
   placeholder_disponibili_descrizione: "E' possibile utilizzare le informazioni compilate dall'utente utilizzando i placeholders di seguito elencati"
   id_pratica: "Id pratica"
+  id_service: 'Id servizio'
   nome_servizio: "Nome servizio"
   nome_completo: "Nome completo (servizio in gruppo)"
   data_corrente: "Data corrente"
@@ -397,6 +402,7 @@ pratica:
   data_di_compilazione: 'Data di compilazione'
   data_di_creazione: 'Data di creazione'
   data_di_presentazione: 'Data di presentazione'
+  presentante: 'Presentante'
   stato: 'Stato'
   operatore: 'Operatore'
   nessun_allegato: 'Non sono presenti allegati.'
@@ -978,6 +984,13 @@ admin:
   usage:
     user_title: 'Numero utenti'
     active_user_title: 'Numero utenti attivi'
+  custom_validation:
+    custom_validation_for: 'Validazione custom per'
+    id_service: 'Identificatore servizio'
+    id_field: 'Identificatore campo'
+    status_code: 'Codice stato'
+    field_label: 'Etichetta campo'
+    status_name: 'Nome stato'
   create_operator_notify: 'Operatore creato con successo'
   delete_operator_notify: 'Operatore eliminato correttamente'
   error_delete_operator_notify: "Impossibile eliminare l'operatore, ci sono delle pratiche collegate."
@@ -1310,6 +1323,8 @@ messages:
       20000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ritirata. Il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta.<br />La ringraziamo per la collaborazione."
       50000: "Gentile <strong>%user_name%</strong>,<br/> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata annullata, il numero di richiesta è <strong>%pratica_id%</strong>, faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta."
     no_reason: '<i>Nessun messaggio specificato</i>'
+  receives_why: 'Riceve questo messaggio perché ha usato un servizio su'
+  receives_why_description: "in caso di problemi non rispondere a questa e-mail perché l'indirizzo non è presidiato, la invitiamo a usare i contatti riportati sul sito web."
 messaggi:
   messaggio: 'Messaggio'
   invia: 'Invia'
@@ -2159,12 +2174,14 @@ calendars:
   calendars: 'Calendari'
   meetings: 'Appuntamenti'
   detail: 'Dettaglio'
+  update_meeting: 'Modifica appuntamento'
   update_calendar: 'Modifica calendario'
   cant_edit_tooltip: "Non puoi modificare questo calendario perché non ne sei nè il proprietario nè un coordinatore"
   cant_delete_tooltip: "Non puoi cancellare questo calendario perché non ne sei il proprietario. Questo calendario può essere cancellato solo da %owner%"
   permanently_delete: "Elimina definitivamente"
   new: "Crea nuovo calendario"
   back_to_calendars: 'Torna alla lista'
+  go_calendar: 'Vai al calendario'
   print: 'Stampa'
   info: 'Creato da %owner% il %createdDate%, ultima modifica il %updatedDate% alle %updatedTime%'
   table:
@@ -2273,6 +2290,7 @@ meetings:
     cancelled: 'Annullato'
     draft: 'Bozza'
     concluded: 'Concluso'
+    completed: 'Completato'
   labels:
     calendar: "Calendario"
     user: "Utente"
@@ -2441,6 +2459,9 @@ backoffice:
     edit_integration_error: "Si è verificato un errore durante il controllo sui pagamenti a sottoscrizione collegati"
     invalid_action: "L'azione selezionata non è disponibile"
     fields_error: 'I campi richiesti non coincidono'
+    enable_integration_with: "Abilita l'integrazione con"
+    with_appio: "l'app IO"
+    enable_integration_access: 'per poter accedere a questa sezione'
     calendars:
       missing_contacts: "E' necessario fornire almeno un recapito"
       calendar_error: 'Non esiste un calendario con id calendar_id'
@@ -2455,6 +2476,7 @@ backoffice:
       no_closure_days: 'Non sono presenti periodi di chiusura'
       add_closure_days: 'Aggiungi periodo di chiusura'
     subscriptions:
+      welcome: 'Benvenuto nella dashboard di amministrazione degli iscritti'
       subscription_service_error: 'Non esiste un servizio con codice code'
       subscriber_error: 'Non esiste un iscritto con codice fiscale %fiscal_code%'
       subscription_error: 'Non esiste un iscritto con codice fiscale %fiscal_code% per il servizio %code%'
@@ -2545,6 +2567,9 @@ backoffice:
       messages:
         new_draft: "Gentile <b>%user_name%</b><br/>Ricevi questo messaggio perchè sei iscritto/a oppure delegato/a a <b>%subscription_service%</b>. La informiamo che c'è una nuova attività pendente che richiede la Sua attenzione: %service%.<br>Usi il pulsante che segue per accedere alla pratica oppure visiti la sezione <i>Le mie pratiche</i>"
         new_draft_subject: "Nuova pratica in bozza"
+  gateway:
+    enable: 'Abilita i'
+    payment_gateway: 'gateways di pagamento'
 login_type:
   label: 'Tipologia di login:'
   none: 'Nessuno'
@@ -2693,6 +2718,7 @@ calendar_formio:
   from_range_error_not_valid: "non è valido"
   unavailable: "Non disponibile"
 time:
+  now: 'Ora'
   year: 'anno'
   years: 'anni'
   months: 'mesi'

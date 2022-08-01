@@ -5,6 +5,6 @@
 {% else %}
 {{ 'protocollo.pec.email.abstract.send_result'|trans({'%name%' : pratica.id})|striptags }}
 {% endif %}
-Id pratica: {{ pratica.id }}</td>
-Data di presentazione: {{ pratica.submissionTime|date(ocsdc_default_date_format) }}
-Presentante: {{ pratica.user.getFullName }}
+{{ 'servizio.id_pratica' | trans }}: {{ pratica.id }}</td>
+{{ 'pratica.data_di_presentazione' | trans }}: {{ pratica.submissionTime|date(ocsdc_default_date_format) }}
+{{ 'pratica.presentante' | trans }}: {{ pratica.user.getFullName }}
