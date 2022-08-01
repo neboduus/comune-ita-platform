@@ -101,7 +101,9 @@
     </div>
 
     <div class="row mt-2">
-      <div class="col-lg-8 px-lg-4">
+      {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
+      <div class="px-lg-4 {{ (currentStep.formType == "AppBundle\\Form\\Base\\SelectPaymentGatewayType" or
+      currentStep.formType == "AppBundle\\Form\\Base\\PaymentGatewayType") ? 'col-lg-12' : 'col-lg-8' }}">
         {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
         <div class="step-{{ flow.getCurrentStepNumber() }}">
           {{ form_errors(form) }}
@@ -109,8 +111,6 @@
             {% if form.vars.helper.descriptionText|length > 0 and not (pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType != 'mypay') %}
               {{ form.vars.helper.descriptionText|raw }}
             {% endif %}
-
-          {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
 
           {% if currentStep.formType == "AppBundle\\Form\\Base\\SummaryType" %}
             <p>{{ 'steps.common.conferma.payment_help_text_top' | trans }}</p>
@@ -159,7 +159,9 @@
       {{ form_end(form) }}
     </div>
 
-    <div class="col-lg-4 pt-5 pt-lg-2">
+    <div class="pt-5 pt-lg-2
+    {{ (currentStep.formType == "AppBundle\\Form\\Base\\SelectPaymentGatewayType" or
+      currentStep.formType == "AppBundle\\Form\\Base\\PaymentGatewayType") ? 'd-none' : 'col-lg-4' }}">
       {% if form.vars.helper.guideText|length > 0 %}
         <div class="callout">
           <div class="callout-title">

@@ -82,6 +82,9 @@ class Payment {
         Payment.$spinnerContainer.addClass('d-none');
         Payment.handleErrors(Translator.trans('payment.creation_failed_text', {}, 'messages', Payment.$language));
         break;
+      case 'PAYMENT_STARTED':
+        Payment.$spinnerContainer.addClass('d-none');
+        Payment.$statusPayment.html(Translator.trans('payment.payment_started', {}, 'messages', Payment.$language));
       default:
         console.log(`Status not found - ${data.status}.`);
     }
