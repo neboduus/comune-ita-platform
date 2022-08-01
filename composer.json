@@ -3,83 +3,89 @@
   "license": "GPL-3.0-only",
   "type": "project",
   "description": "The citizen's personal area, designed with the Italian Digital Team using the starter KIT for a municipality site.",
+  "version": "1.26.0-rc.0",
   "config": {
     "bin-dir": "bin",
-    "preferred-install": "dist"
+    "preferred-install": {
+      "*": "dist"
+    },
+    "sort-packages": true,
+    "allow-plugins": {
+      "symfony/flex": true
+    }
   },
   "autoload": {
     "psr-4": {
-      "": "src/"
-    },
-    "classmap": [
-      "app/AppKernel.php",
-      "app/InstanceKernel.php",
-      "app/AppCache.php"
-    ]
+      "AppBundle\\": "src/AppBundle",
+      "App\\": "src/"
+    }
   },
   "autoload-dev": {
     "psr-4": {
-      "Tests\\": "tests/"
+      "Tests\\AppBundle\\": "tests/AppBundle",
+      "App\\Tests\\": "tests/"
     }
   },
   "require": {
-    "php": ">=7.3.0 <7.4.0",
-    "symfony/symfony": "3.4.49",
-    "doctrine/orm": "2.7.3",
-    "doctrine/doctrine-bundle": "1.12.13",
-    "doctrine/doctrine-cache-bundle": "1.4.0",
-    "doctrine/doctrine-fixtures-bundle": "2.4.1",
-    "doctrine/data-fixtures": "1.4.4",
-    "symfony/swiftmailer-bundle": "2.6.7",
-    "symfony/monolog-bundle": "3.4.0",
-    "symfony/polyfill-apcu": "1.12.0",
-    "sensio/distribution-bundle": "5.0.25",
-    "sensio/framework-extra-bundle": "3.0.29",
-    "incenteev/composer-parameter-handler": "2.1.3",
-    "ramsey/uuid": "3.9.3",
-    "friendsofsymfony/user-bundle": "2.0.2",
-    "gedmo/doctrine-extensions": "2.4.37",
-    "symfony/translation": "3.4.49",
-    "craue/formflow-bundle": "3.0.4",
-    "vich/uploader-bundle": "1.10.2",
-    "knplabs/knp-snappy-bundle": "1.6.0",
-    "jms/serializer-bundle": "3.4.1",
-    "doctrine/doctrine-migrations-bundle": "1.3.2",
-    "h4cc/wkhtmltopdf-amd64": "0.12.4",
-    "eightpoints/guzzle-bundle": "6.2.1",
-    "nesbot/carbon": "2.57.0",
+    "php": ">=7.3.0",
     "ext-curl": "*",
     "ext-dom": "*",
-    "ext-simplexml": "*",
+    "ext-fileinfo": "*",
     "ext-json": "*",
-    "symfony/webpack-encore-bundle": "1.7.0",
-    "anyx/login-gate-bundle": "0.7.1",
-    "xiidea/easy-audit": "1.4.9",
-    "omines/datatables-bundle": "dev-fix-0-3 as 0.3.1",
-    "friendsofsymfony/rest-bundle": "2.8.3",
-    "nelmio/api-doc-bundle": "3.8.1",
-    "lexik/jwt-authentication-bundle": "2.10.7",
-    "thecodingmachine/gotenberg-php-client": "6.2.0",
-    "php-http/guzzle6-adapter": "2.0.1",
-    "excelwebzone/recaptcha-bundle": "1.5.21",
-    "ext-fileinfo": "^7.3",
-    "johngrogg/ics-parser": "2.1.18",
-    "league/csv": "9.6.0",
-    "sentry/sentry-symfony": "3.5.2",
-    "stof/doctrine-extensions-bundle": "v1.3.0",
-    "flagception/flagception-bundle": "3.5.1",
-    "symfony/dotenv": "^3.4",
-    "whichbrowser/parser": "2.1.2",
-    "league/html-to-markdown": "4.10.0",
-    "artprima/prometheus-metrics-bundle": "1.1.1",
-    "queueit/knownuserv3": "3.7.0",
-    "simettric/doctrine-translatable-form-bundle": "0.1.5",
-    "oneup/flysystem-bundle": "3.7.1",
-    "league/flysystem-aws-s3-v3": "1.0.29",
-    "whiteoctober/breadcrumbs-bundle": "1.4.5",
-    "exercise/htmlpurifier-bundle": "v3.1.0",
+    "ext-simplexml": "*",
+    "anyx/login-gate-bundle": "2.0.3",
+    "artprima/prometheus-metrics-bundle": "*",
+    "craue/formflow-bundle": "*",
     "davidepastore/codice-fiscale": "^0.9.0",
-    "willdurand/js-translation-bundle": "3.0.1"
+    "doctrine/data-fixtures": "*",
+    "doctrine/doctrine-bundle": "*",
+    "doctrine/doctrine-cache-bundle": "*",
+    "doctrine/doctrine-fixtures-bundle": "*",
+    "doctrine/doctrine-migrations-bundle": "*",
+    "doctrine/orm": "*",
+    "eightpoints/guzzle-bundle": "*",
+    "excelwebzone/recaptcha-bundle": "*",
+    "exercise/htmlpurifier-bundle": "*",
+    "flagception/flagception-bundle": "*",
+    "friendsofsymfony/rest-bundle": "*",
+    "gedmo/doctrine-extensions": "*",
+    "h4cc/wkhtmltopdf-amd64": "*",
+    "incenteev/composer-parameter-handler": "*",
+    "jms/serializer-bundle": "*",
+    "johngrogg/ics-parser": "*",
+    "league/csv": "*",
+    "league/flysystem-aws-s3-v3": "*",
+    "league/html-to-markdown": "*",
+    "lexik/jwt-authentication-bundle": "*",
+    "nelmio/api-doc-bundle": "*",
+    "nesbot/carbon": "*",
+    "omines/datatables-bundle": "dev-fix-0-3 as 0.3.1",
+    "oneup/flysystem-bundle": "*",
+    "php-http/guzzle6-adapter": "*",
+    "queueit/knownuserv3": "*",
+    "ramsey/uuid": "*",
+    "sensio/framework-extra-bundle": "*",
+    "sentry/sentry-symfony": "3.5.2",
+    "stof/doctrine-extensions-bundle": "*",
+    "symfony/asset": "*",
+    "symfony/console": "*",
+    "symfony/flex": "^1.9",
+    "symfony/framework-bundle": "*",
+    "symfony/yaml": "*",
+    "symfony/monolog-bundle": "*",
+    "symfony/polyfill-apcu": "*",
+    "symfony/swiftmailer-bundle": "*",
+    "symfony/translation": "*",
+    "symfony/twig-bundle": "*",
+    "symfony/webpack-encore-bundle": "^1.7",
+    "thecodingmachine/gotenberg-php-client": "*",
+    "twig/extra-bundle": "*",
+    "twig/twig": "*",
+    "vich/uploader-bundle": "^1.15",
+    "whichbrowser/parser": "*",
+    "whiteoctober/breadcrumbs-bundle": "*",
+    "willdurand/js-translation-bundle": "*",
+    "xiidea/easy-audit": "*"
   },
   "repositories": [
     {
@@ -88,49 +94,54 @@
     }
   ],
   "require-dev": {
-    "sensio/generator-bundle": "3.1.7",
-    "symfony/phpunit-bridge": "3.4.39",
-    "phpspec/phpspec": "3.4.3",
+    "symfony/dotenv": "^4.0",
+    "symfony/phpunit-bridge": "^4.0",
+    "phpspec/phpspec": "*",
     "phpunit/phpunit": "7.5.20",
     "squizlabs/php_codesniffer": "2.9.2",
     "escapestudios/symfony2-coding-standard": "2.11.0",
-    "phpstan/phpstan": "0.12.99"
+    "roave/security-advisories": "dev-master",
+    "phpstan/phpstan": "1.7.12",
+    "phpstan/phpstan-doctrine": "1.3.9",
+    "phpstan/phpstan-phpunit": "1.1.1",
+    "phpstan/phpstan-symfony": "1.2.5",
+    "rector/rector": "0.13.4",
+    "symfony/browser-kit": "*",
+    "symfony/css-selector": "*",
+    "symfony/debug-bundle": "*",
+    "symfony/maker-bundle": "*",
+    "symfony/stopwatch": "*",
+    "symfony/var-dumper": "*",
+    "symfony/web-profiler-bundle": "*"
+  },
+  "replace": {
+    "paragonie/random_compat": "2.*",
+    "symfony/polyfill-ctype": "*",
+    "symfony/polyfill-iconv": "*",
+    "symfony/polyfill-php71": "*",
+    "symfony/polyfill-php70": "*",
+    "symfony/polyfill-php56": "*"
   },
   "scripts": {
+    "auto-scripts": {
+      "cache:clear": "symfony-cmd",
+      "assets:install %PUBLIC_DIR%": "symfony-cmd"
+    },
     "post-install-cmd": [
-      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+      "@auto-scripts"
     ],
     "post-update-cmd": [
-      "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
-    ],
-    "post-docker-install-cmd": [
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-      "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+      "@auto-scripts"
     ]
   },
-  "extra": {
-    "symfony-app-dir": "app",
-    "symfony-bin-dir": "bin",
-    "symfony-var-dir": "var",
-    "symfony-web-dir": "web",
-    "symfony-tests-dir": "tests",
-    "symfony-assets-install": "hard",
-    "incenteev-parameters": {
-      "file": "app/config/parameters.yml"
-    }
+  "conflict": {
+    "symfony/symfony": "*"
   },
-  "version": "1.26.0-rc.1"
+  "extra": {
+    "symfony": {
+      "allow-contrib": true,
+      "require": "4.4.*",
+      "docker": true
+    }
+  }
 }

@@ -1,0 +1,172 @@
+{% extends '@App/Default/printable.html.twig' %}
+
+{% set ente = instance_service.getCurrentInstance() %}
+{% set customName = ente.getMetaAsArray('name') %}
+{% set enteName = customName != '' ? customName :  ente.name %}
+{% set host_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' %}
+{% set logoMeta = ente.getMetaAsArray('logo') %}
+{% set logo = logoMeta  ? logoMeta :  host_url ~ 'bundles/app/images/logo-default.png' %}
+
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+  {{ include('@App/Print/parts/style.html.twig') }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('compile') }}
+{% endblock %}
+
+{% block main_content %}
+
+  <main class="container-fluid">
+    <div class="row">
+      <div class="col-12 text-center">
+        {% if ente %}
+          <img class="logo" src="{{ logo }}" alt="{{ enteName }}"/>
+          <h2 class="ente">{{ enteName }}</h2>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row mt-5">
+      <div class="col-8">
+        <h3>{{ pratica.servizio.name }}</h3>
+        {% if pratica.status >= constant('STATUS_PRE_SUBMIT', pratica) %}
+          <div class="row mt-4 mb-4">
+            <div class="col-4"><strong>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</strong></div>
+            <div class="col-8">
+              {{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+      <div class="col-4">
+        <div class="callout{% if pratica.numeroProtocollo %} p-3 mt-1 mb-4{% endif %}">
+          <div class="callout-title">{{ 'pratica.numero'|trans }}</div>
+          <p class="text-sans-serif">{{ pratica.id }}</p>
+        </div>
+        {% if pratica.numeroProtocollo and show_protocol_number %}
+          <div class="callout danger p-3 mt-1 mb-4">
+            <div class="callout-title">{{ 'pratica.protocol_number'|trans }}</div>
+            <p class="text-danger text-break text-sans-serif">{{ pratica.numeroProtocollo }}</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_rest(form) }}
+        <div id="formio" class="printable" data-locale="{{ app.request.locale }}" data-formserver_url="{{ formserver_url }}" data-form_id="{{ pratica.servizio.formIoId }}"></div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+
+    <div class="row page-break-before"></div>
+
+    <div class="row">
+      <div class="col-12">
+        <div class=" card-header bg-default"> {{ 'pratica.pdf.allegati_protocollo'|trans }}</div>
+      </div>
+    </div>
+
+    {% if attachments|length > 0 %}
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">
+            <p><strong>{{'pratica.file_name'|trans}}</strong></p>
+          </div>
+          <div class="col-6">
+            <p><strong>{{'pratica.hash'|trans}}</strong></p>
+          </div>
+          {% for a in attachments %}
+            <div class="col-6">
+              <p>{{ a.original_filename }}</p>
+            </div>
+            <div class="col-6">
+              <p>{{ a.hash }}</p>
+            </div>
+            {% if loop.index % 20 == 0 %}
+              </div>
+              <div class="row page-break-before"></div>
+              <div class="row">
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <div class="card-body">
+        <p><em>{{ 'pratica.nessun_allegato'|trans }}</em></p>
+      </div>
+    {% endif %}
+
+    {% if attachmentsNoProtocol|length > 0 %}
+      <div class="row page-break-before"></div>
+      <div class="row">
+        <div class="col-12">
+          <div class=" card-header bg-default"> {{ 'pratica.pdf.allegati_no_protocollo'|trans }}</div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-6">
+            <p><strong>{{'pratica.file_name'|trans}}</strong></p>
+          </div>
+          <div class="col-6">
+            <p><strong>{{'pratica.hash'|trans}} (md5)</strong></p>
+          </div>
+          {% for a in attachmentsNoProtocol %}
+          <div class="col-6">
+            <p>{{ a.original_filename }}</p>
+          </div>
+          <div class="col-6">
+            <p>{{ a.hash }}</p>
+          </div>
+          {% if loop.index % 20 == 0 %}
+        </div>
+        <div class="row page-break-before"></div>
+        <div class="row">
+          {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {{ include('@App/Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
+
+    {% set securityFields = [] %}
+    {% if pratica.authenticationData|length > 0 %}
+      {% set securityFields = pratica.authenticationData %}
+    {#  Elimino recupero da scheda utente perchè la pratica può essere aperta anche da operatore
+    {% elseif user is defined  and user.getSecurityFields %}
+      {% set securityFields = user.getSecurityFields %}
+    #}
+    {% endif %}
+
+    {# @var user \App\Entity\CPSUser #}
+    {% if securityFields|length %}
+      <div class="row" style="padding-top: 40px">
+        <div class="col-12">
+          <p>{{ 'pratica.pdf.dati_autenticazione'|trans|raw }}</p>
+        </div>
+        {% for key, value in securityFields %}
+          <div class="col-md-3">
+            <p><strong>{{ key }}</strong></p>
+          </div>
+          <div class="col-md-9">
+            <p class="text-break"><small>{{ value }}</small></p>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+  </main>
+  <div id="footer">
+    <p>
+      {{ 'pratica.pdf.riferimento_sdc'|trans }} {{ url('pratiche_show', {'pratica': pratica.id}) }}
+    </p>
+  </div>
+
+{% endblock %}

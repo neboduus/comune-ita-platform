@@ -1,0 +1,101 @@
+{% extends '@App/Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ encore_entry_script_tags('calendar-manager') }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_link_tags('calendar-manager') }}
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>{{ 'calendars.update_calendar' | trans }}</h1>
+      </div>
+
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.title) }}
+        {% if feature('feature_calendar_type') %}
+          {{ form_row(form.type) }}
+        {% endif %}
+        <div class="row">
+          <div class="col-lg-10 col-md-9">
+            {{ form_row(form.id) }}
+          </div>
+          <div class="col-lg-2 col-md-3 align-self-end">
+            <div class="ml-2 form-group float-md-right">
+              <button class="btn btn-sm btn-primary clone">
+                <svg class="icon icon-sm icon-light"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-copy"></use></svg>
+                <span>{{ 'copy_id' | trans }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        {{ form_row(form.location) }}
+        {{ form_row(form.contact_email) }}
+        {{ form_row(form.owner) }}
+        {{ form_row(form.allow_overlaps) }}
+        {{ form_row(form.is_moderated) }}
+
+        <div class="form-group">
+          <label>{{ 'calendars.moderators' | trans() }}</label>
+          {{ form_row(form.moderators) }}
+        </div>
+
+        {{ include('@App/Calendars/parts/calendarExternalCalendars.html.twig') }}
+        {{ include('@App/Calendars/parts/calendarOpeningHours.html.twig') }}
+        {{ include('@App/Calendars/parts/calendarClosingPeriods.html.twig') }}
+
+        <div class="form-group m-0 p-0">
+          <label for="App_calendar_rolling_days">{{ 'calendars.rolling_days.label' | trans() }}</label>
+        </div>
+        <div class="row">
+          <div class="col-auto align-self-center" ><p>{{ 'calendars.rolling_days.text_before' | trans() }}</p></div>
+          <div class="col-2" >{{ form_row(form.rolling_days, {'attr': {'class': 'text-center'}}) }}</div>
+          <div class="col-auto align-self-center" ><p>{{ 'calendars.rolling_days.text_after' | trans() }}</p></div>
+        </div>
+
+        <div class="form-group m-0 p-0">
+          <label for="App_calendar_rolling_days">{{ 'calendars.allow_cancel_days.label' | trans() }}</label>
+        </div>
+        <div class="row">
+          <div class="col-auto align-self-center" ><p>{{ 'calendars.allow_cancel_days.text_before' | trans() }}</p></div>
+          <div class="col-2" >{{ form_row(form.allow_cancel_days, {'attr': {'class': 'text-center'}}) }}</div>
+          <div class="col-auto align-self-center" ><p>{{ 'calendars.allow_cancel_days.text_after' | trans() }}</p></div>
+        </div>
+
+        {{ form_row(form.minimum_scheduling_notice) }}
+
+        <div class="row">
+            <div class="form-group">
+              {{ form_label(form.drafts_duration) }}
+              {{ form_widget(form.drafts_duration) }}
+              <p class="text-secondary mt-2">{{ 'calendars.drafts_duration.description' | trans() }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group">
+              {{ form_label(form.drafts_duration_increment) }}
+              {{ form_widget(form.drafts_duration_increment) }}
+              <p class="text-secondary mt-2">{{ 'calendars.drafts_duration_increment.description' | trans() }}</p>
+            </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <input class="btn btn-warning mr-1" type="submit" value="{{ 'modifica' | trans }}" />
+          </div>
+          <div class="col-6 text-right">
+            <a class="btn btn-100 mr-1" href="{{ path('operatori_calendars_index') }}">{{ 'gruppo_di_servizi.torna_alla_lista' | trans }}</a>
+          </div>
+        </div>
+
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </section>
+{% endblock %}

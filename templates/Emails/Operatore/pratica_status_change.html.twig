@@ -1,0 +1,28 @@
+{% extends 'App:Emails:base.html.twig' %}
+
+
+{% block email_content %}
+    <table align='center' bgcolor='#fff' border='0' cellpadding='0' cellspacing='0' id='backgroundTable' style='background: #fff;'>
+        <tr>
+            <td style="padding: 20px;line-height: 1.4;">
+                <p>
+                    {{ 'email.pratica.dear'|trans({'%user_name%' : user_name})|striptags }}
+                </p>
+                <p>{{ ('email.pratica.operatore.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%user_pratica%': pratica.user.fullName, '%servizio%': pratica.servizio.name, '%protocollo%': pratica.numeroProtocollo})|raw }}</p>
+                {% if (pratica.servizio.isProtocolRequired and pratica.status >= 3000) or (not pratica.servizio.isProtocolRequired and pratica.status > 1900) %}
+                <p>{{ 'email.pratica.link'|trans()}} <a href="{{ absolute_url(path('operatori_show_pratica', {'pratica': pratica}))  }}">{{ 'email.detail_link'|trans }}</a></p>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 20px">
+                {% if pratica.id %}
+                    <p><b>{{ 'pratica.numero' | trans }}</b>: {{ pratica.id }}</p>
+                {% endif %}
+                {% if pratica.submissionTime %}
+                    <p><b>{{ 'pratica.data_di_presentazione' | trans }}</b>: {{ pratica.submissionTime | date('d/m/Y - H:i:s') }}</p>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+{% endblock %}

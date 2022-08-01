@@ -1,0 +1,106 @@
+{% set ente = instance_service.getCurrentInstance() %}
+{% set service = ente.getMetaAsArray('service') %}
+{% set social = ente.getMetaAsArray('social') %}
+
+<header class="it-header-wrapper it-header-sticky">
+  <div class="it-header-slim-wrapper">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="it-header-slim-wrapper-content">
+
+            {% if service.amministrazione_afferente is defined %}
+              <a class="d-none d-lg-block navbar-brand"
+                 href="{{ service.amministrazione_afferente.url }}">{{ service.amministrazione_afferente.text }}</a>
+            {% endif %}
+
+            <div class="nav-mobile">
+              <nav>
+                {% if service.nav is defined %}
+                  <a class="d-lg-none navbar-brand" data-toggle="collapse" href="#service-menu" role="button"
+                     aria-expanded="false" aria-controls="service-menu">
+                    <span>{% if service.amministrazione_afferente is defined %}{{ service.amministrazione_afferente.text }}{% endif %}</span>
+                    <svg class="icon icon-white">
+                      <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-expand') }}"></use>
+                    </svg>
+                  </a>
+                  <div class="link-list-wrapper collapse" id="service-menu">
+                    <ul class="link-list">
+                      {% for item in service.nav %}
+                        <li>
+                          <a href="{{ item.url }}" title="Link a {{ item.text }}">
+                            {{ item.text }}
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+              </nav>
+            </div>
+            {% if  login_route != constant('App\\Security\\AbstractAuthenticator::LOGIN_TYPE_NONE')  %}
+              {{ include('@App/Default/parts/user_badge.html.twig') }}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="it-nav-wrapper">
+    <div class="it-header-center-wrapper">
+      <div class="container">
+        <div class="row">
+          <div class="col-12">
+            <div class="it-header-center-content-wrapper">
+              <div class="it-brand-wrapper">
+                {% if ente %}
+                  <a href="{{ ente.siteUrl }}">
+                    {% set logo = ente.getMetaAsArray('logo') %}
+                    {% set customName = ente.getMetaAsArray('name') %}
+                    {% set enteName = customName != '' ? customName :  ente.name %}
+                    {% if logo is defined and logo is not empty %}
+                      <img class="icon" src="{{ logo }}" alt="{{ enteName }}"/>
+                    {% else %}
+                      <img class="icon" src="{{ asset('bundles/app/images/logo-default.png') }}" alt="{{ enteName }}"/>
+                    {% endif %}
+                    <div class="it-brand-text">
+                      <h2 class="no_toc">{{ enteName }}</h2>
+                    </div>
+                  </a>
+                {% endif %}
+              </div>
+              <div class="it-right-zone">
+
+                {% if social %}
+                  <div class="it-socials d-none d-md-flex">
+                    <span>{{ 'general.follow_social' | trans }}</span>
+                    <ul>
+                      {% for key,value in social %}
+                        <li>
+                          <a href="{{ value }}" aria-label="{{ key }}" target="_blank">
+                            <svg class="icon">
+                              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{{ key }}"></use>
+                            </svg>
+                          </a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endif %}
+
+                <div class="it-search-wrapper">
+                    <span class="d-none d-md-block">{{ 'search.label' | trans }}</span>
+                    <a class="search-link rounded-icon" href="#" aria-label="{{ 'search.label' | trans }}" id="globalSearchBtn" data-toggle="modal" data-target="#globalSearchModal">
+                        <svg class="icon"><use xlink:href="{{asset('bootstrap-italia/dist/svg/sprite.svg#it-search')}}"></use></svg>
+                    </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ include('@App/Default/nav/main.html.twig') }}
+  </div>
+</header>

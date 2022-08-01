@@ -1,0 +1,32 @@
+{% extends 'App:Emails:base.html.twig' %}
+
+{% block email_content %}
+  <table align='center' bgcolor='#fff' border='0' cellpadding='0' cellspacing='0' id='backgroundTable'
+         style='background: #fff;'>
+    <tr>
+      <td style="padding: 20px;line-height: 1.4;">
+        <p>
+          {{ 'email.pratica.dear'|trans({'%user_name%' : user_name}, null, locale)|striptags }}
+        </p>
+        <p>{{ ('email.pratica.user.' ~ pratica.statusName|replace({'_':'.'})|lower)|trans({'%servizio%': pratica.servizio.name, '%pratica_id%': pratica.id, '%protocollo%': pratica.numeroProtocollo, '%data_acquisizione%': data_acquisizione, '%ora_acquisizione%': ora_acquisizione, '%data_protocollo%': data_protocollo, '%ora_protocollo%': ora_protocollo, '%data_corrente%':data_corrente }, null, locale)|raw }}</p>
+
+        {% if pratica.status == constant('STATUS_PAYMENT_PENDING', pratica) and pratica.servizio.isPaymentDeferred %}
+          <p>
+            {{ 'email.pratica.payment_link'|trans({}, null, locale) }}<br />
+            <a href="{{ absolute_url(path('pratiche_compila', {'pratica': pratica})) }}">{{ absolute_url(path('pratiche_compila', {'pratica': pratica})) }}</a>
+          </p>
+        {% endif %}
+
+        {% if not pratica.getMotivazioneEsito() is empty and not pratica.getEsito() is null %}
+          <p>
+            Con la seguente motivazione:<br>
+            {{ pratica.getMotivazioneEsito()|raw }}
+          </p>
+        {% endif %}
+        <p>
+          {{ 'email.pratica.thanks'|trans({}, null, locale) }}
+        </p>
+      </td>
+    </tr>
+  </table>
+{% endblock %}
