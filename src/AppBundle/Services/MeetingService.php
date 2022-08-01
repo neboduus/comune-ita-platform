@@ -380,6 +380,8 @@ class MeetingService
       }
     }
     $ente = $this->instanceService->getCurrentInstance();
+    $ente->setTranslatableLocale($locale);
+
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
     $contact = $calendar->getContactEmail();
@@ -528,9 +530,14 @@ class MeetingService
     $application = $meeting->getApplications()->last();
     $serviceName = "";
     $serviceDetail = "";
+
+    // Todo: get from default locale
+    $locale = $application->getLocale() ?? 'it';
+
+    $ente = $this->instanceService->getCurrentInstance();
+    $ente->setTranslatableLocale($locale);
+
     if ($application) {
-      // Todo: get from default locale
-      $locale = $application->getLocale() ?? 'it';
       $service = $application->getServizio();
       $service->setTranslatableLocale($locale);
       try {
@@ -550,7 +557,7 @@ class MeetingService
         );
       }
     }
-    $ente = $this->instanceService->getCurrentInstance();
+
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
     $location = $calendar->getLocation();

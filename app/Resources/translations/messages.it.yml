@@ -2594,12 +2594,14 @@ app_io:
     parametro_mancante: "I parametri <b>Identificativo servizio</b>, <b>Chiave primaria</b> e <b>Codice fiscale</b> sono <b>necessari</b> per la corretta configurazione dell'integrazione"
   admin_helper: "Per poter utilizzare questa integrazione è necessario configurare ogni servizio per il quale si desidera attivare le notifiche "
 ente:
+  nome: 'Nome'
   codice_meccanografico: 'Codice meccanografico'
   site_url: 'Link sul titolo di ogni pagina'
   codice_amministrativo: 'Codice amministrativo'
   impostazioni_protocollo: 'Impostazioni di default per il protocollo'
   certificato: 'Certificato'
   chiave_certificato: 'Chiave certificato'
+  meta: 'Meta'
   password_certifcato: 'Password certificato'
   app_io: 'Abilita App IO?'
   backoffices: 'Abilita integrazione con i backoffice'

@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class I18nTextareaType extends AbstractType implements I18nFieldInterface
+class I18nJsonType extends AbstractType implements I18nFieldInterface
 {
 
   public function configureOptions(OptionsResolver $resolver)

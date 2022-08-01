@@ -7,6 +7,10 @@ namespace AppBundle\Form\Admin\Ente;
 use AppBundle\BackOffice\BackOfficeInterface;
 use AppBundle\Entity\Ente;
 use AppBundle\Form\Base\BlockQuoteType;
+use AppBundle\Form\I18n\AbstractI18nType;
+use AppBundle\Form\I18n\I18nDataMapperInterface;
+use AppBundle\Form\I18n\I18nJsonType;
+use AppBundle\Form\I18n\I18nTextType;
 use AppBundle\Model\DefaultProtocolSettings;
 use AppBundle\Model\Gateway;
 use AppBundle\Payment\Gateway\GenericExternalPay;
@@ -14,20 +18,19 @@ use AppBundle\Payment\GatewayCollection;
 use AppBundle\Payment\PaymentDataInterface;
 use AppBundle\Services\BackOfficeCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 
-class EnteType extends AbstractType
+class EnteType extends AbstractI18nType
 {
 
   /**
@@ -50,23 +53,29 @@ class EnteType extends AbstractType
   private $translator;
 
   /**
-   *  @param TranslatorInterface $translator
+   * @param I18nDataMapperInterface $dataMapper
+   * @param $locale
+   * @param $locales
+   * @param TranslatorInterface $translator
    * @param EntityManagerInterface $entityManager
    * @param BackOfficeCollection $backOffices
    * @param GatewayCollection $gatewayCollection
    */
   public function __construct(
+    I18nDataMapperInterface $dataMapper,
+    $locale,
+    $locales,
     TranslatorInterface $translator,
     EntityManagerInterface $entityManager,
     BackOfficeCollection $backOffices,
     GatewayCollection $gatewayCollection
 )
   {
+    parent::__construct($dataMapper, $locale, $locales);
     $this->translator = $translator;
     $this->em = $entityManager;
     $this->backOfficeCollection = $backOffices;
     $this->gatewayCollection = $gatewayCollection;
-
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -108,6 +117,16 @@ class EnteType extends AbstractType
       $backOfficesData[$b->getName()] = $b->getPath();
     }
 
+    $this->createTranslatableMapper($builder, $options)
+      ->add("name", I18nTextType::class, [
+        'label' => 'ente.nome'
+      ])
+      ->add('meta', I18nJsonType::class, [
+        'label' => 'ente.meta',
+        'required' => false,
+        'empty_data' => "",
+      ]);
+
     $builder
       ->add('codice_meccanografico', TextType::class, [
         'label' => 'ente.codice_meccanografico'
@@ -123,7 +142,6 @@ class EnteType extends AbstractType
           'choices' => $navigationTypes,
         ]
       )
-      ->add('meta', TextareaType::class, ['required' => false, 'empty_data' => ""])
       ->add(DefaultProtocolSettings::KEY, DefaultProtocolSettingsType::class, [
         'label' => 'ente.impostazioni_protocollo',
         'mapped' => false,
@@ -246,7 +264,17 @@ class EnteType extends AbstractType
       }
     }
     $ente->setGateways($gateways);
+
     $this->em->persist($ente);
+  }
+
+  public function configureOptions(OptionsResolver $resolver)
+  {
+    $resolver->setDefaults(array(
+      'data_class' => Ente::class,
+      'csrf_protection' => false
+    ));
+    $this->configureTranslationOptions($resolver);
   }
 
   public function getBlockPrefix()

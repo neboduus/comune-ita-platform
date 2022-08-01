@@ -145,7 +145,7 @@ class I18nDataMapper implements I18nDataMapperInterface
       $translations = $this->getTranslations($data);
 
       // Fix per traduzione vecchi oggetti
-      if (empty($translations[$this->required_locale][$form->getName()]) && !empty($accessor->getValue($data, $form->getName()))) {
+      if (empty($translations[$this->required_locale][$form->getName()]) && $accessor->isReadable($data, $form->getName()) && !empty($accessor->getValue($data, $form->getName()))) {
         $translations[$this->required_locale][$form->getName()] = $accessor->getValue($data, $form->getName());
       }
 
@@ -154,7 +154,10 @@ class I18nDataMapper implements I18nDataMapperInterface
         foreach ($this->getLocales() as $iso) {
           if (isset($translations[$iso])) {
             $values[$iso] = isset($translations[$iso][$form->getName()]) ? $translations[$iso][$form->getName()] : "";
-
+            // Don't decode default language
+            if ($form->getConfig()->getType()->getInnerType() instanceof I18nJsonType  && $iso !== $this->required_locale) {
+              $values[$iso] = json_decode($values[$iso]);
+            }
           }
         }
         $form->setData($values);
@@ -180,7 +183,6 @@ class I18nDataMapper implements I18nDataMapperInterface
     foreach ($forms as $form) {
 
       $entityInstance = $data;
-
 
       if (false !== in_array($form->getName(), $this->property_names)) {
 
@@ -212,9 +214,7 @@ class I18nDataMapper implements I18nDataMapperInterface
         $accessor->setValue($entityInstance, $form->getName(), $form->getData());
 
       }
-
     }
-
   }
 
 

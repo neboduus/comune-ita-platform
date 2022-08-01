@@ -8,7 +8,6 @@
 namespace AppBundle\Form\I18n;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Exception;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -32,6 +31,4 @@ class I18nTextType extends AbstractType implements I18nFieldInterface
   {
     return TextType::class;
   }
-
-
 }
