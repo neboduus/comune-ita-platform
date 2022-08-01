@@ -17,15 +17,15 @@
 
         <table width="100%" border='0' cellpadding='10' cellspacing='10' style="width: 100% !important;">
           <tr>
-            <td><strong>Id pratica:</strong></td>
+            <td><strong>{{ 'servizio.id_pratica' | trans }}:</strong></td>
             <td>{{ pratica.id }}</td>
           </tr>
           <tr>
-            <td><strong>Data di presentazione:</strong></td>
+            <td><strong>{{ 'pratica.data_di_presentazione' | trans }}:</strong></td>
             <td>{{ pratica.submissionTime|date(ocsdc_default_datetime_format) }}</td>
           </tr>
           <tr>
-            <td><strong>Presentante:</strong></td>
+            <td><strong>{{ 'pratica.presentante' | trans }}:</strong></td>
             <td>{{ pratica.user.getFullName }}</td>
           </tr>
         </table>

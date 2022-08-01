@@ -42,7 +42,7 @@
                 {% for service in item.services %}
                   <tr>
                     <td>{{ service.name }}</td>
-                    <td>Servizio</td>
+                    <td>{{ 'pratica.servizio' | trans }}</td>
                     <td class="text-right">
                       {{ include('@App/Admin/table/_actionsDefault.html.twig', {'edit_route': 'admin_servizio_edit', 'delete_route': 'admin_category_remove_service', item: service}) }}
                     </td>
@@ -51,7 +51,7 @@
                 {% for service in item.servicesGroup %}
                   <tr>
                     <td>{{ service.name }}</td>
-                    <td>Gruppo di servizi</td>
+                    <td>{{ 'gruppo_di_servizi.gruppo_di_servizi' | trans }}</td>
                     <td class="text-right">
                       {{ include('@App/Admin/table/_actionsDefault.html.twig', {'edit_route': 'admin_service_group_edit', 'delete_route': 'admin_category_remove_service_group', item: service}) }}
                     </td>

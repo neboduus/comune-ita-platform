@@ -40,7 +40,7 @@
                   {% endif %}
                 </td>
                 <td>{{ (item.active) ? 'webhook.active'|trans() : 'webhook.not_active'|trans() }}</td>
-                <td data-title="Azioni" class="actions">
+                <td data-title="{{ 'iscrizioni.subscribers.actions' | trans }}" class="actions">
                   <a class="btn btn-secondary btn-xs" href="{{ path('admin_webhook_edit', { 'id': item.id }) }}">{{ 'gruppo_di_servizi.modifica' | trans() }}</a>
                   <a class="btn btn-danger btn-xs"
                      onclick="return confirm('{{ 'operatori.delete_webhook' | trans }}');"

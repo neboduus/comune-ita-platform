@@ -31,7 +31,7 @@
         },
     ] -%}
 
-    <a href="{{ path('admin_servizio_index') }}" class="btn btn-secondary">Annulla</a>
+    <a href="{{ path('admin_servizio_index') }}" class="btn btn-secondary">{{ 'annulla' | trans }}</a>
     {% for button in craue_buttons if button.render %}
         <button type="submit"{% for key, value in button.attr %} {{ key }}="{{ value }}"{% endfor %}>
         {{- button.label | trans({}, 'CraueFormFlowBundle') -}}

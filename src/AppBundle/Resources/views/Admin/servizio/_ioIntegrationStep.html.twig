@@ -33,7 +33,7 @@
       {{ form_end(form) }}
     {% else %}
       <div class="alert alert-warning">
-        <p>Abilita l'integrazione con <a href="{{ path('admin_edit_ente') }}#mailers">l'app IO</a> per poter accedere a questa sezione.</p>
+        <p>{{ 'backoffice.integration.enable_integration_with' | trans}} <a href="{{ path('admin_edit_ente') }}#mailers">{{ 'backoffice.integration.with_appio' | trans }}</a> {{ 'backoffice.integration.enable_integration_access' | trans }}.</p>
       </div>
     {% endif %}
   </div>
