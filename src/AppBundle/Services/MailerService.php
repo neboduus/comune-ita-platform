@@ -263,7 +263,12 @@ class MailerService
     $toEmail = $pratica->getUser()->getEmailContatto();
     $toName = $pratica->getUser()->getFullName();
 
+    // Todo: get from default locale
+    $locale = $pratica->getLocale() ?? 'it';
+
     $ente = $pratica->getEnte();
+    $ente->setTranslatableLocale($locale);
+
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
     // Todo: get from default locale

@@ -34,6 +34,7 @@
                aria-labelledby="default-settings-tab">
               <p>{{ 'login_type.label'|trans }} <strong>{{ ('login_type.'~login_route)|trans }}</strong></p>
             <hr>
+            {{ form_row(form.name) }}
             {{ form_row(form.codice_meccanografico) }}
             {{ form_row(form.site_url) }}
             {{ form_row(form.codice_amministrativo) }}

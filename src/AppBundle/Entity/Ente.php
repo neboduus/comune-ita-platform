@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Model\DateTimeInterval;
 use AppBundle\Model\DefaultProtocolSettings;
 use AppBundle\Model\Mailer;
 use AppBundle\Model\Webhook;
@@ -10,17 +9,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\Translatable\Translatable;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use JMS\Serializer\Annotation as Serializer;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="ente")
  * @ORM\HasLifecycleCallbacks
  */
-class Ente
+class Ente implements Translatable
 {
 
   const NAVIGATION_TYPE_SERVICES = 'services';
@@ -36,13 +35,14 @@ class Ente
    * @var string
    *
    * @ORM\Column(type="string", length=100)
+   * @Gedmo\Translatable
    */
   private $name;
 
   /**
    * @var string
    *
-   * @Gedmo\Slug(fields={"name"})
+   * @Gedmo\Slug(fields={"name"}, updatable=false)
    * @ORM\Column(type="string", length=100, unique=true)
    */
   private $slug;
@@ -113,6 +113,7 @@ class Ente
   /**
    * @var string
    * @ORM\Column(type="json", nullable=true)
+   * @Gedmo\Translatable
    */
   private $meta;
 
@@ -160,6 +161,14 @@ class Ente
    * @ORM\Column(type="string", nullable=true, options={"default" : Ente::NAVIGATION_TYPE_SERVICES})
    */
   private $navigationType = self::NAVIGATION_TYPE_SERVICES;
+
+  /**
+   * @Gedmo\Locale
+   * Used locale to override Translation listener`s locale
+   * this is not a mapped field of entity metadata, just a simple property
+   */
+  private $locale;
+
 
   /**
    * Ente constructor.
@@ -638,6 +647,11 @@ class Ente
   public function setNavigationType(?string $navigationType): void
   {
     $this->navigationType = $navigationType;
+  }
+
+  public function setTranslatableLocale($locale)
+  {
+    $this->locale = $locale;
   }
 
   public static function fromEntity(Ente $ente)
