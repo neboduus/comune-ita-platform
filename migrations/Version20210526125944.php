@@ -1,0 +1,30 @@
+<?php declare(strict_types=1);
+
+namespace Application\Migrations;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+/**
+ * Auto-generated Migration: Please modify to your needs!
+ */
+final class Version20210526125944 extends AbstractMigration
+{
+    public function up(Schema $schema): void : void
+    {
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
+
+      $this->addSql('UPDATE calendar SET drafts_duration = 600 WHERE calendar.drafts_duration = 0 or calendar.drafts_duration is NULL');
+      $this->addSql('ALTER TABLE calendar ALTER drafts_duration SET NOT NULL');
+    }
+
+    public function down(Schema $schema): void : void
+    {
+        // this down() migration is auto-generated, please modify it to your needs
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
+
+
+        $this->addSql('ALTER TABLE calendar ALTER drafts_duration DROP NOT NULL');
+    }
+}

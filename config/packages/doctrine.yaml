@@ -2,11 +2,11 @@ doctrine:
   dbal:
     driver: 'pdo_pgsql'
     server_version: '10.6'
-    host: '%database_host%'
-    port: '%database_port%'
-    dbname: '%database_name%'
-    user: '%database_user%'
-    password: '%database_password%'
+    host: '%env(default:postgres:DB_HOST)%'
+    port: '%env(default:5432:DB_PORT)%'
+    dbname: '%env(default:sdc:DB_NAME)%'
+    user: '%env(default:sdc:DB_USER)%'
+    password: '%env(default:sdc:DB_PASSWORD)%'
     charset: UTF8
   orm:
     auto_generate_proxy_classes: true

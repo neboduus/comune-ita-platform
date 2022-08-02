@@ -5,7 +5,7 @@ const package = require("./package.json");
 
 Encore
   // directory where compiled assets will be stored
-  .setOutputPath('web/build/' + package.version + '/')
+  .setOutputPath('public/build/' + package.version + '/')
   // public path used by the web server to access the output path
   .setPublicPath('/build/' + package.version + '/')
   // only needed for CDN's or sub-directory deploy
@@ -44,16 +44,11 @@ Encore
 
   // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()
-
-  // will require an extra script tag for runtime.js
-  // but, you probably want this, unless you're building a single-page app
   .enableSingleRuntimeChunk()
-
   .cleanupOutputBeforeBuild()
-
   .enableSourceMaps(!Encore.isProduction())
-  // enables hashed filenames (e.g. app.abc123.css)
   .enableVersioning(Encore.isProduction())
+  .enableIntegrityHashes(Encore.isProduction())
 
   // uncomment if you use TypeScript
   //.enableTypeScriptLoader()
@@ -61,24 +56,31 @@ Encore
   .configureBabel(function(babelConfig) {
     babelConfig.plugins.push('@babel/plugin-proposal-class-properties');
   })
+  // Todo: da verifcare cosa fa
+  .configureBabelPresetEnv((config) => {
+    config.useBuiltIns = 'usage';
+    config.corejs = 3;
+  })
 
   // uncomment if you use Sass/SCSS files
   .enableSassLoader()
 
   // uncomment if you're having problems with a jQuery plugin
   .autoProvidejQuery()
-  .addPlugin(new CopyWebpackPlugin({
-    patterns: [
-      {from: './node_modules/bootstrap-italia/dist/fonts/', to: '../../bootstrap-italia/dist/fonts/'},
-      {from: './node_modules/bootstrap-italia/dist/svg/', to: '../../bootstrap-italia/dist/svg/'}
-    ]
-  }))
-  /*.copyFiles({
-    from: './assets/images/',
+  .autoProvideVariables({})
+  .copyFiles({
+    from: './node_modules/bootstrap-italia/dist/',
+    //to: '../bootstrap-italia/dist/[path][name].[hash:8].[ext]',
+    to: '../bootstrap-italia/dist/[path][name].[ext]',
+    pattern: /\.(eot|ttf|woff|woff2|svg)$/,
+  })
+  // Todo: verifica se spostare a livello di php
+  .copyFiles({
+    from: './assets/app/',
     //to: '../bundles/app/[path][name].[hash:8].[ext]',
-    to: 'images/[path][name].[ext]',
-    pattern: /\.(ico|png|jpg|jpeg|svg|gif)$/,
-  })*/
+    to: '../bundles/app/[path][name].[ext]',
+    pattern: /\.(ico|png|jpg|jpeg|svg|gif|pdf|js|css)$/,
+  })
 ;
 
 module.exports = Encore.getWebpackConfig();

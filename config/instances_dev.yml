@@ -4,3 +4,8 @@ instances:
     identifier: comune-di-bugliano
     login_route: login_pat
     protocollo: dummy
+    app_locales: "it|en|fr|de|es"
+    payment_gateways:
+      efil:
+        name: Efil
+        url: 'http://efil.localtest.me'
