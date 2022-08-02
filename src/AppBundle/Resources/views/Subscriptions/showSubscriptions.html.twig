@@ -213,6 +213,9 @@
     };
 
     $(document).ready(function () {
+      // Override default datatable buttons classes
+      $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn btn-link';
+
       const lang = document.documentElement.lang.toString();
       //Default
       let url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/it-IT.json';
@@ -235,14 +238,12 @@
             text: '<i class="fas fa-file-excel"></i><span class="ml-2">{{ 'meetings.excel' | trans }}</span>',
             title: '{{ 'iscrizioni.subscriptions' | trans }}',
             action: newExportAction,
-            className: 'btn btn-link'
           },
           {
             extend: 'csv',
             text: '<i class="fas fa-file-csv"></i><span class="ml-2">{{ 'meetings.csv' | trans }}</span>',
             title: '{{ 'iscrizioni.subscriptions' | trans }}',
             action: newExportAction,
-            className: 'btn btn-link'
           },
           {
             extend: 'pdf',
@@ -250,17 +251,24 @@
             title: '{{ 'iscrizioni.subscriptions' | trans }}',
             pageSize: 'LEGAL',
             action: newExportAction,
-            className: 'btn btn-link'
           },
           {
             extend: 'print',
             text: '<i class="fas fa-print"></i><span class="ml-2">{{ 'meetings.print' | trans }}</span>',
             title: '{{ 'iscrizioni.subscriptions' | trans }}',
             action: newExportAction,
-            className: 'btn btn-link'
           }
         ],
         initComplete: function () {
+          dt.buttons().container().children().each(function (index, elem) {
+            var listViewItem = document.createElement('li');
+            listViewItem.append(elem);
+            $('#export_list').append(listViewItem);
+          })
+
+          $("#dropdown_group").appendTo(".dt-buttons");
+          $('#dropdown_group').removeClass('d-none');
+
           // Add data-title attribute
           $('#subscriptions thead tr th').each(function (index, element) {
             index += 1;
@@ -296,14 +304,6 @@
             });
           });
         }
-      }).then(function (dt) {
-        dt.buttons().container().children().each(function (index, elem) {
-          var listViewItem = document.createElement('li');
-          listViewItem.append(elem);
-          $('#export_list').append(listViewItem);
-        })
-        $("#dropdown_group").appendTo(".dt-buttons");
-        $('#dropdown_group').removeClass('d-none');
       })
     });
   </script>
