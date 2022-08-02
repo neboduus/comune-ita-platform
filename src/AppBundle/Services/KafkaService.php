@@ -239,5 +239,5 @@ class KafkaService implements ScheduledActionHandlerInterface
       throw new \Exception("Error sending kafka message: " . $response->getBody());
     }
   }
-  
+
 }

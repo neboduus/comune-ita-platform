@@ -11,7 +11,6 @@ registrati_per_accedere_al_servizio: 'Service is reserved to logged in users'
 servizi_pending: 'Services with submitted applications'
 esplora_i_servizi: 'Explore services'
 servizi_primo_piano: 'Main services'
-tutti_i_servizi: 'All services'
 lista_pratiche: 'My applications'
 bozze_servizio: 'Draft applications for this service'
 msg_bozze_servizio: 'Attention, there are some practices to be filled in for the selected service.'
@@ -36,7 +35,6 @@ operatore: "Operator"
 credits: "The Stanza del cittadino is an experimental project initiative of %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Update your e-mail to continue'
-characters: 'characters'
 nav:
   home: 'Homepage'
   dashboard: 'My room'
@@ -61,7 +59,7 @@ nav:
     webhook: 'webhook'
     metodi_pagamento: 'payment_methods'
     strumenti: 'tools'
-    azioni_programmate: 'Programmed actions'
+    azioni_programmate: 'Scheduled actions'
     logs: 'logs'
     integrazioni: 'integrations'
     tenant:
@@ -81,10 +79,13 @@ nav:
     statistiche: 'Statistics'
     statistiche_descrizione: 'View statistics'
     title: 'Welcome to the admin dashboard'
+    create_new_operator: 'Create new operator'
   backoffices:
     servizi_sottoscrizione: 'Subscription services'
     prenotazione_appuntamenti: 'Booking appointments'
     pagamenti_servizi_sottoscrizione: 'Payments subscription services'
+    request_protocol: 'Registration required?'
+    protocol_type: 'Protocol type'
   header:
     profile: "Profile"
     logout: "Logout"
@@ -92,16 +93,6 @@ nav:
 terms:
   title: 'Acceptance of terms of use'
 servizio:
-  error_from_save: 'An error occurred while saving.'
-  draft_message: "The communication will be forwarded to the citizen only if a draft file is created on his behalf and not through direct access to the compilation of the service."
-  placeholders_available: 'Placeholders available'
-  communication_citizen: "The communication will be forwarded to the citizen only if a draft file is created on his behalf and not through direct access to the compilation of the service."
-  create_new_form: 'Create new form'
-  create_new_form_blank_template: 'Create new form from blank template'
-  max_limit_of: 'It is recommended to enter a maximum of'
-  select_template: 'Select a starting template for creating the form'
-  blank_template: 'Blank template'
-  templates_based_existing_services: 'Templates based on existing services'
   crea: 'Create new service'
   modifica: 'Modify %name%'
   placeholder_disponibili: 'Available module''s placeholders'
@@ -185,6 +176,8 @@ servizio:
     default_language_module_alert: 'The base language of the Module is <strong>%default_language% </strong>, you can add a translation from <a href="%module_translation_url%"> Module translations</a>'
     string: 'It string'
     translation: 'Translation %lang%'
+    translations: 'Translations'
+    translations_module: 'Translations'
   indice: "Index"
   azioni: "View actions"
   altri_servizi_disponibili: "Other services available in"
@@ -199,6 +192,26 @@ servizio:
   max_response_time_text: "Once a file has been submitted, an answer will be provided within %time% days"
   max_response_time_list: "Maximum response time"
   active_from_date_to_date: "The service will be active from %from% to %to%"
+  copy_url: 'copy URL'
+  url_copied: 'URL copied'
+  validate_submit: 'validation at submit'
+  validate_error_service: 'Error message in case of non-validation'
+  validate_service: 'Validation successfully saved'
+  impossible_delete_service: 'Unable to delete the service, there are related practices.'
+  service_successfully_deleted: 'Service successfully deleted'
+  success_import_service: 'Service successfully imported'
+  error_create_form: 'A problem occurred during the form creation phase.'
+  error_import: 'A problem occurred during the importation phase.'
+  error_from_save: 'A problem occurred while saving.'
+  draft_message: "The communication will be forwarded to the citizen only if a draft file is created on their behalf and not through direct access to the compilation of the service."
+  placeholders_available: 'Available placeholders'
+  communication_citizen: "The communication will be forwarded to the citizen only if a draft file is created on their behalf and not through direct access to the compilation of the service."
+  create_new_form: 'Create new form'
+  create_new_form_blank_template: 'Create new form from blank template'
+  max_limit_of: 'It is recommended to enter a maximum of'
+  select_template: 'Select a starting template for creating the form'
+  blank_template: 'Blank template'
+  templates_based_existing_services: 'Templates based on existing services'
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
@@ -407,6 +420,8 @@ pratica:
     tipologie_pagamento: "Payment methods"
     paga_online: "Pay online"
     paga_offline: "Pay offline"
+    immediate_payment_description: 'Immediate payment is requested after confirming the willingness to send a file. If not done, the file remains in the "to be paid" status; it is visible to the operators but cannot be taken over.'
+    delayed_payment_description: "The deferred payment is requested after sending the file. Operators can approve the practice by setting an amount to be paid. Only after approval will payment be required."
   protocol_number: 'Protocol number'
   file_name: 'File name'
   hash: 'File hash'
@@ -457,6 +472,10 @@ pratica:
   collate: 'Collate'
   cancel_search: 'Cancel search'
   search_reload: 'Search reload'
+  approved_pratice: 'Approve practice'
+  reject_pratice: 'Reject practice'
+  failed: 'Failed'
+  warning_long_text: "<small class='form-text text-muted' id='warning-text-length'>Beware, titles that are too long make navigation more difficult. We recommend the use of simple titles without normative references and the use of the <b>\"More information\"</b> field present in the service sheet.</small>"
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
@@ -478,7 +497,6 @@ STATUS_PENDING_AFTER_INTEGRATION: 'Taking charge following integrations'
 STATUS_PROCESSING: 'Processing'
 STATUS_WITHDRAW: 'Withdrawed'
 iscrizioni:
-  iscrizioni: "Subscriptions"
   le_mie_iscrizioni: "My subscriptions"
   iscrizioni_delegate: "Available subscriptions"
   no_iscrizioni: "No subscriptions available"
@@ -496,7 +514,6 @@ iscrizioni:
   cf_non_valido: "The Tax Code %fiscal_code% is not valid"
   data_inizio: "Starting date"
   data_fine: "Ending date"
-  pagamenti: "Payments"
   nome: "name"
   codice: "Code"
   descrizione: "Description"
@@ -541,7 +558,7 @@ iscrizioni:
   import_subscriptions: 'Import subscriptions'
   import_success: "Import successful"
   import_error: "An error occurred while importing"
-  import_invalid_code: "The code %code%, at row %row%, does not coincide with the selected service"
+  import_invalid_code: "The code %code% does not coincide with the selected service"
   missing_file: "No file selected"
   invalid_file: "The selected file is not valid"
   empty_file: "The selected file is empty"
@@ -553,9 +570,8 @@ iscrizioni:
   missing_subscription: "The user %fiscal_code% is not subscribed to this subscription service"
   application_already_exists: "The payment procedure in the name of %user_fiscal_code% for the member %subscriber_fiscal_code% is already present"
   drafts_created: '%num_applications% forms created successfully'
-  subscriptions_created: '%num_subscriptions% subscriptions successfully imported'
+  subscriptions_created: "%num_subscriptions% subscriptions successfully imported"
   select_payment_config: 'Select a payment configuration'
-  cancel: 'Cancel'
   send: 'Send'
   upload_csv: 'Upload csv'
   modals:
@@ -613,6 +629,13 @@ iscrizioni:
   status_active: "Activate"
   status_withdraw: "Withdraw"
   withdraw_description: "The subscription is not active for this subscription service"
+  id_action: 'Action ID'
+  log_action: 'Action log'
+  send_message: 'Message sent'
+  welcome: 'Welcome to the subscription administration dashboard'
+  row_index: "(Row %index%) "
+  missing_related_cfs: "(Riga %index%) The user %fiscal_code% is a minor, and no user with whom the subscription is shared is registered\n"
+  underage_subscriber: "(Riga %index%) The user %fiscal_code% is a minor, and you do not delegate us for this registration"
 documenti:
   i_miei_documenti: "My documents"
   no_documenti: "No documents available"
@@ -840,6 +863,14 @@ admin:
   usage:
     user_title: 'User number'
     active_user_title: 'Active users number'
+  create_operator_notify: 'Operator created successfully'
+  delete_operator_notify: 'Operator deleted successfully'
+  error_delete_operator_notify: "Unable to delete the operator, there are related practices."
+  url_service: 'Service URL'
+  url_api_service: 'Service API URL'
+  show_service: 'Click to view the service'
+  show_api_service: "Click to copy the service API URL"
+  payment_amount_description: "(The form determines the amount via the value of the 'payment_amount' field)"
 operatori:
   allega_risposta_firmata: 'Attach your signed response'
   vai_al_dettaglio: 'View detail'
@@ -861,8 +892,6 @@ operatori:
   elabora: 'Process'
   scrivi_al_cittadino: "Write to citizen"
   riapri_pratica: "Fill the practice"
-  richiedi_intergrazioni: 'Request integrations'
-  chiudi_richiesta_integrazione: 'Close integration request'
   richiedi_integrazioni_tpl: "Dear <b>%user_name% </b> <br/> we inform you that an integration to the data of your request for the <b>%service%</b> service is required. <br/> [Insert reason] <br/> Enter your citizen room to complete the integration"
   modulo: 'Module'
   richiesta: 'Request'
@@ -1001,7 +1030,6 @@ operatori:
     approved: 'Confirmed'
     refused: 'Rejected'
     missed: 'Absent'
-    complete: 'Complete'
     cancelled: 'Cancelled'
     draft: 'Draft'
     done: 'Done'
@@ -1036,6 +1064,40 @@ operatori:
   waiting_payment_outcome: "Waiting for the payment outcome"
   no_payment: "There is no payment"
   apply_and_close: 'Apply and close'
+  error_pratice_state: 'The file is not in the correct state'
+  integration_accepted_success: 'Integration accepted successfully'
+  integration_accepted_error: 'An error occurred during the acceptance phase'
+  integration_succes: 'Integration requested successfully'
+  error_change_state_description: 'Error while changing the status of the case'
+  error_change_state: 'An error occurred while changing the status of the case.'
+  error_update_change_state: 'The status of the case cannot be changed.'
+  change_status_success: 'The status of the case changed correctly'
+  error_status_selected: 'The selected state is not among those allowed for practice.'
+  send_request_integration: 'Send integration request'
+  send_request_integration_description: " Use this field to motivate the integration request.<br /> Once sent, the user will receive a message with the specified text. It will be possible to check any replies in the messages section."
+  inegrations_request: 'Request integration'
+  enabled_services: 'Enabled for services'
+  form_field: 'Form fields'
+  scheda: "Form"
+  copy_url_service_group: "Copy the public URL of the service group."
+  public_url_service_group: "Public url of the service group"
+  delete_service_group: 'Are you sure to proceed? The service group will be permanently deleted.'
+  delete_services: "Are you sure to proceed? The service will be removed from the service group"
+  delete_webhook: "Are you sure to proceed? The webhook will be permanently deleted."
+  create_webhook_success: "Webhook created successfully"
+  delete_webhook_success: "Webhook deleted successfully"
+  delete_webhook_error: "Unable to delete the webhook, there are related services."
+  no_permission_calendar: "You don't have permission to delete this calendar"
+  create_calendar_success: "Calendar created successfully"
+  create_calendar_error: "Failed creation"
+  create_calendar_error_name: "Failed to create: this named calendar already exists"
+  delete_calendar_success: "Calendar deleted successfully"
+  delete_calendar_error: "Unable to delete the calendar"
+  update_calendar_success: "Calendar edited successfully"
+  delete_subscription_service: "Are you sure to proceed? The subscription service will be permanently deleted."
+  delete_subscription_service_success: "Subscription successfully deleted"
+  delete_subscription_service_error: "Unable to delete subscription."
+  delete_operator: "Are you sure to proceed? The operator will be permanently deleted."
 allegato:
   nome_file: 'File name'
   descrizione_file: 'File description'
@@ -1127,6 +1189,12 @@ messages:
     no_reason: '<i>No message specified</i>'
   subject_label: 'Object'
   message_label: 'Message'
+  status_request: 'Status of the request'
+  enable_sending_message: "Enable the sending of the message?"
+  messages_label: 'Messages'
+  mail_to_me: 'Send mail to yourself?'
+  mail_to_user: 'A message will be sent to the user''s address'
+  warning_pratice: 'Once the file has been processed, it will no longer be possible to make changes'
 messaggi:
   messaggio: 'Message'
   invia: 'Send'
@@ -1271,6 +1339,13 @@ steps:
         guida_alla_compilazione: 'Choose the type for the required certificate'
         tipologia_certificato: 'Type of certificate'
         uso: "Specify the reasoned request"
+      AttoMorte:
+        label: 'Type and use'
+        title: 'Type and use'
+        description: "Detailed specification of the use of the certificate"
+        guida_alla_compilazione: "Detailed specification of the use of the certificate"
+        tipologia_certificato: 'Type of certificate'
+        uso: "Specify the reasoned request"
       EstrattoMorte:
         label: 'Type and use'
         title: 'Type and use'
@@ -1290,6 +1365,13 @@ steps:
         title: 'Type and use'
         description: "specify the certificate type"
         guida_alla_compilazione: "Specify the certificate type"
+        tipologia_certificato: 'Type of certificate'
+        uso: "Specify the reasoned request"
+      AttoMatrimonio:
+        label: 'Type and use'
+        title: "Type and use"
+        description: "Detailed specification of the use of the certificate"
+        guida_alla_compilazione: "Detailed specification of the use of the certificate"
         tipologia_certificato: 'Type of certificate'
         uso: "Specify the reasoned request"
     uso:
@@ -2146,6 +2228,10 @@ gateway:
     download_receipt_button: "Download payment receipt"
     download_text: "Use the button below to download the PDF document (Payment Notice) that you can pay at a post office, a bank ATM, a Sisal office, on the IO App or Satispay."
     name: 'MyPay'
+    ipa_code: 'Ipa code'
+    password: 'Corporate password'
+    data: 'Specific data for collection'
+    id_type: 'Due type identifier'
   add: Add payment method
   name: Name
   description: Description
@@ -2240,11 +2326,8 @@ calendars:
     label: "Type of appointment"
     time_fixed_slots: "Fixed duration appointments"
     time_variable_slots: "Appointments with variable duration"
-  edit: "edit"
   cant_edit_tooltip: "You cannot change this calendar because you are neither the owner nor a coordinator"
   cant_delete_tooltip: "You cannot delete this calendar because you are not its owner. This calendar can only be deleted by %owner%"
-  delete: "delete"
-  cancel: "cancel"
   permanently_delete: "Delete permanently"
   table:
     title: "Title"
@@ -2267,6 +2350,7 @@ calendars:
   back_to_calendars: 'Back to list'
   print: 'Print'
   info: 'Created by %owner% on %createdDate%, last modified on %updatedDate% at %updatedTime%'
+  update_calendar: 'Edit calendar'
 meetings:
   error:
     slot_unavailable: "The selected range is not available"
@@ -2276,6 +2360,14 @@ meetings:
     no_opening_hour_with_overlaps: "The opening hours are mandatory if the calendar foresees overlaps"
     invalid_meeting: "Invalid appointment"
     not_unique: "It is not possible to have more than one meeting to be confirmed or confirmed for practice"
+    one_moved: "This appointment has been postponed 1 time"
+    moved: "This appointment was"
+    times: 'times'
+    unable_availabilities: 'Unable to retrieve availabilities for the selected date'
+    save_slot: "An error occurred while saving the appointment"
+    update_slot: "An error occurred while editing the appointment"
+    save_delete_slot: "An error occurred while cancelling the appointment"
+    slot_hours_invalid: 'Select a valid time'
   no_email_warning: 'Attention: there is no e-mail address. In case of changes, it is advisable to notify the citizen through the telephone number provided'
   default_draft_message: "Appointment in draft"
   no_info: "<i> Information not available </i>"
@@ -2388,6 +2480,7 @@ meetings:
       save: "Changing the appointment will result in a notification being sent to the citizen. Are you sure you want to proceed?"
     extend_draft_for_days: 'Reserve additional %num% days'
     extend_draft_for_one_day: 'Book one more day'
+    no_name: 'Name not provided'
   status:
     pending: 'Pending approval'
     approved: 'Approved'
@@ -2396,6 +2489,23 @@ meetings:
     done: 'Done'
     cancelled: 'Cancelled'
     draft: 'Draft'
+    concluded: 'Concluded'
+  every_meetings: 'Each meeting has a duration of'
+  one_person: "It is also possible to receive one person at a time"
+  one_person_max: "It is also possible to receive up to a maximum of"
+  people_same_time: 'people at the same time'
+  meeting_place: 'Meeting place'
+  contact: 'Contact'
+  min_cancel: "It will be possible to cancel the appointment within a minimum of"
+  days_to_date: "days from the date of the appointment"
+  delete: 'Delete appointment'
+  export_excel: 'Export excel'
+  export_csv: 'Export CSV'
+  export_pdf: 'Export PDF'
+  print: 'Print'
+  excel: 'Excel'
+  csv: 'CSV'
+  pdf: 'PDF'
 backoffice:
   entity:
     mailers: 'Sending messages'
@@ -2415,6 +2525,14 @@ backoffice:
       calendar_error: 'There is no calendar with id calendar_id'
       save_meeting_error: 'An error occurred while saving the reservation'
       invalid_slot: 'The selected slot is invalid or unavailable'
+      external_calendar: 'External calendars'
+      delete_external_calendar: 'Delete external calendar'
+      no_external_calendar: 'There are no external calendars'
+      add_external_calendar: 'Add external calendar'
+      delete_closure: 'Delete Closure'
+      closure_days: 'Closing days'
+      no_closure_days: 'There are no closing periods'
+      add_closure_days: 'Add closing period'
     subscriptions:
       subscription_service_error: 'There is no service with code code'
       subscriber_error: 'There is no member with tax code %fiscal_code%'
@@ -2426,6 +2544,9 @@ backoffice:
       update_subscription_error: "An error occurred while updating your subscription"
       delete_subscription_error: "An error occurred while deleting the subscription"
       date_format_subscriber_error: 'Date %natoAIl% is invalid format, user %fiscal_code% not imported'
+      delete_service_group_success: "Service group successfully deleted"
+      delete_service_group_error: "Unable to delete the group, there are services connected."
+      create_service_group_success: "Successfully created service group"
     subscription_service:
       payment:
         due_date: "Payment due date"
@@ -2449,8 +2570,6 @@ backoffice:
         meta_available_placeholders: 'The following placeholders are available: %fiscal_code%, %name%, %surname%, %amount%, %payment_reason%, %payment_identifier%, %code%'
         execution_date: "Execution date"
         payments_made: "Payments made"
-        solvent_subscriber: "Solvent subscriber"
-        missing_subscribers: "Missing subscriber"
         type: "Type"
         type_subscription_fee: "subscription fee"
         type_additional_fee: "additional fee for all members"
@@ -2463,12 +2582,13 @@ backoffice:
         advanced_settings: "Advanced properties"
         meta_helper: "These data are available via API and can therefore be used to modify the form dynamically"
         import_helper: "Importing a payment configuration previously set up on another service is possible. Select the configuration from the menu below."
+        solvent_subscriber: "Paying subscribers"
+        missing_subscribers: "Missing subscribers"
       invalid_service: "The identifier %service_id% is not valid\n"
       invalid_meta: "Incorrect meta: the entered value must be a valid json"
       no_service: "The %service_id% identifier does not correspond to an existing service"
       duplicate_identifier: "Identifier %identifier% duplicate not allowed for payment set for the day %date% with reason \"%payment_reason%\""
       no_payment: "Payment is not available for the %service_name% service"
-      no_integration: "Integration with the 'Payments for subscription services' back office is not enabled for the %service_name% service"
       invalid_date: "Il formato della data %date% non è corretto"
       identifier_change_not_allowed: "It is not possible to change the payment identifier '%payment_identifier%': practices have already been created for this payment "
       messages:
@@ -2498,9 +2618,17 @@ backoffice:
       identifier_payments: "Payments %identifier%\n"
       no_integration_subscription: "The payment of the registration fee is incorrect! The integration with 'Subscription Services' has not been enabled for the service you indicated (%service_name%)"
       no_integration_additional_payment: "Payment of the registration fee is incorrect! The integration with 'Payments for subscription services' has not been enabled for the service you indicated (%service_name%)"
+      type_payment: 'Payment type'
+      select_option: 'Choose an option'
+      new_subscription_service: "Create a new subscription service"
+      update_subscription_service: "Change subscription service"
+      search_students: 'Search by student'
     invalid_action: "The selected action is not available"
     related_payments_error: "The integration cannot be changed as there are %num% subscription payments linked to this service"
     edit_integration_error: "An error occurred while checking linked subscription payments"
+    activation_point: 'Activation point'
+    action_execute: 'Action to be performed'
+    no_integration: 'No integration expected'
 login_type:
   none: 'None'
   login_pat: 'Spid PAT'
@@ -2519,6 +2647,11 @@ app_io:
   errore:
     parametro_mancante: "The parameters <b>Service identification</b>, <b>Primary key</b> and <b>Tax code</b> are <b>necessary</b> for the correct configuration of the integration"
   admin_helper: "In order to use this integration, you need to configure each service for which you want to enable notifications "
+  title: 'App IO'
+  config_parameters: "Configuration parameters for integration with App IO"
+  notify:
+    no_send: "the notification was NOT sent due to the error:"
+    success_send: "The notification was successfully sent with identifier"
 STATUS_REVOKED: 'Canceled'
 ente:
   linkable_application_meetings:
@@ -2563,6 +2696,17 @@ general:
     created: 'created'
     updated: 'Object updated successfully'
   search: 'Search'
+  anonymous: 'Anonymous'
+  social: 'Social'
+  level_spid_1: 'Spid level 1'
+  level_spid_2: 'Spid level 2'
+  cie: 'CIE'
+  form_template: 'form template'
+  payment_data: 'payment data'
+  protocol_data: 'protocol data'
+  approval: 'approval'
+  forwarding: 'forwarding'
+  postponement: 'postponement'
 avanti: 'next'
 categories:
   title: 'title'
@@ -2701,6 +2845,10 @@ payment:
   mypay_error: "There was an error creating the payment request, contact support."
   error_select_payment: "You must choose at least one payment method"
   check_payment: "Verify payment"
+  parameters_needed_for: 'Parameters required for %gateway%'
+  error_amount: 'You must enter a cost greater than zero'
+  error_select_type: 'You must choose at least one payment method'
+  type_payment: 'Type of Payment'
 calendar_formio:
   at_hours: "at"
   draft_expiration_text: "A draft reservation has been reserved for you at the time indicated above, valid until the day"
@@ -2766,3 +2914,72 @@ time:
   last_week: 'Last week'
   this_month: 'This month'
   last_month: 'Last month'
+  one_hour_before: "An hour before"
+  two_hours_before: "Two hours before"
+  four_hours_before: "Four hours before"
+  eight_hours_before: "Eight hours before"
+  one_day_before: "One day before"
+  two_days_before: "Two days before"
+  three_days_before: "Three days before"
+  one_week_before: "One week before"
+  two_weeks_before: "Two weeks before"
+  three_weeks_before: "Three weeks before"
+  one_month_before: "One month before (30 days)"
+characters: 'characters'
+integrations: 'Integrations'
+event: 'Event'
+date: 'Date'
+imported: 'imported'
+for: 'for'
+provider_of: 'provider of'
+enabled: 'enabled'
+not_enabled: 'not enabled'
+type: 'type'
+parameters: 'parameters'
+created_at: 'created at'
+updated_at: 'updated at'
+copy_id: 'copy ID'
+copied_id: 'copied ID'
+schedule: 'Schedule'
+status_pending: 'pending'
+status_approved: 'approved'
+status_approved_1: 'approved'
+status_refused: 'refused'
+status_missed: 'Absent'
+status_done: 'Done'
+status_cancelled: 'Cancelled'
+status_draft: 'Draft'
+status_error: 'Error'
+status_concluded: 'Concluded'
+cancel_info: 'Cancellation info'
+from_date: 'From'
+from_to: 'to'
+info: 'Info'
+show_all: 'Show all'
+every: 'Every'
+STATUS_WAITING: 'Pending'
+STATUS_DONE: 'Done'
+STATUS_INVALID: 'Invalid'
+STATUS_PAYMENT_NOT_REQUIRED: 'Not required'
+STATUS_PAYMENT_REQUIRED: 'Payment required'
+STATUS_PAYMENT_DEFERRED: 'Deferred'
+STATUS_APPLICATION_PAID: 'Paid'
+STATUS_APPLICATION_PRE_SUBMIT: 'Submitted'
+STATUS_APPLICATION_SUBMITTED: 'Acquired'
+STATUS_APPLICATION_REGISTERED: 'Registered'
+STATUS_APPLICATION_ASSIGNMENT: 'Assigned'
+STATUS_APPLICATION_COMPLETED: 'Accepted'
+STATUS_APPLICATION_CANCELLED: 'Rejected'
+scheduled_actions:
+  "create_pdf'": 'PDF creation'
+  "protocollo_send_pratice'": 'Register practice'
+  "protocollo_send_attach'": 'Register integration attachments'
+  "protocollo_send_withdraw'": 'Registry the withdraw'
+  "protocollo_send_integrations'": 'Registry the integration request'
+  "protocollo_refresh_pratice'": 'Registry the outcome'
+  "protocollo_upload_file'": 'Registry attachments'
+  "giscom_send_pratice'": 'Send Giscomn practice'
+  "giscom_askCFs'": 'Request Giscom tax codes'
+  "application_webhook'": 'Webhook'
+  "application_payment_reminder'": 'Payment reminder'
+  "produce_message'": 'Kafka message'
