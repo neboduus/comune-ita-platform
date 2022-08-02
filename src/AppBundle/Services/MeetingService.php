@@ -351,6 +351,7 @@ class MeetingService
    */
   public function sendEmailNewMeeting(Meeting $meeting)
   {
+    $ente = $this->instanceService->getCurrentInstance();
     $status = $meeting->getStatus();
     $calendar = $meeting->getCalendar();
     /** @var Pratica $application */
@@ -360,6 +361,7 @@ class MeetingService
     if ($application) {
       // Todo: get from default locale
       $locale = $application->getLocale() ?? 'it';
+      $ente->setTranslatableLocale($locale);
       $service = $application->getServizio();
       $service->setTranslatableLocale($locale);
       try {
@@ -379,8 +381,6 @@ class MeetingService
         );
       }
     }
-    $ente = $this->instanceService->getCurrentInstance();
-    $ente->setTranslatableLocale($locale);
 
     $date = $meeting->getFromTime()->format('d/m/Y');
     $hour = $meeting->getFromTime()->format('H:i');
@@ -531,13 +531,12 @@ class MeetingService
     $serviceName = "";
     $serviceDetail = "";
 
-    // Todo: get from default locale
-    $locale = $application->getLocale() ?? 'it';
-
     $ente = $this->instanceService->getCurrentInstance();
-    $ente->setTranslatableLocale($locale);
 
     if ($application) {
+      // Todo: get from default locale
+      $locale = $application->getLocale() ?? 'it';
+      $ente->setTranslatableLocale($locale);
       $service = $application->getServizio();
       $service->setTranslatableLocale($locale);
       try {
