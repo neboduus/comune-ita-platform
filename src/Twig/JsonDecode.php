@@ -3,9 +3,10 @@
 namespace App\Twig;
 
 
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
-class JsonDecode  extends \Twig_Extension
+class JsonDecode extends AbstractExtension
 {
 
     public function getName()

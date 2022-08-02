@@ -3,12 +3,13 @@
 namespace App\Twig;
 
 
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 
 
 
-class TimeAgo extends \Twig_Extension
+class TimeAgo extends AbstractExtension
 {
   /**
    * @var TranslatorInterface

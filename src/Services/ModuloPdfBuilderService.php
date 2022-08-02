@@ -32,7 +32,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -87,7 +87,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   private $wkhtmltopdfService;
 
   /**
-   * @var EngineInterface
+   * @var Environment
    */
   private $templating;
 
@@ -132,7 +132,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param PropertyMappingFactory $propertyMappingFactory
    * @param DirectoryNamerInterface $directoryNamer
    * @param string $wkhtmltopdfService
-   * @param EngineInterface $templating
+   * @param Environment $templating
    * @param $dateTimeFormat
    * @param UrlGeneratorInterface $router
    * @param string $printablePassword
@@ -148,7 +148,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     PropertyMappingFactory $propertyMappingFactory,
     DirectoryNamerInterface $directoryNamer,
     string $wkhtmltopdfService,
-    EngineInterface $templating,
+    Environment $templating,
     $dateTimeFormat,
     UrlGeneratorInterface $router,
     string $printablePassword,

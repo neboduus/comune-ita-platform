@@ -23,8 +23,8 @@ use App\Model\Transition;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Doctrine\Persistence\ManagerRegistry;
+use Twig\Environment;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -48,12 +48,12 @@ class MailerService
   private $translator;
 
   /**
-   * @var TemplatingExtension
+   * @var Environment
    */
   private $templating;
 
   /**
-   * @var RegistryInterface
+   * @var ManagerRegistry
    */
   private $doctrine;
 
@@ -95,14 +95,14 @@ class MailerService
    * MailerService constructor.
    * @param \Swift_Mailer $mailer
    * @param TranslatorInterface $translator
-   * @param EngineInterface $templating
-   * @param RegistryInterface $doctrine
+   * @param Environment $templating
+   * @param ManagerRegistry $doctrine
    * @param LoggerInterface $logger
    * @param IOService $ioService
    * @param PraticaPlaceholderService $praticaPlaceholderService
    * @param FileService $fileService
    */
-  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, EngineInterface $templating, RegistryInterface $doctrine, LoggerInterface $logger, IOService $ioService, PraticaPlaceholderService $praticaPlaceholderService, FileService $fileService)
+  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, Environment $templating, ManagerRegistry $doctrine, LoggerInterface $logger, IOService $ioService, PraticaPlaceholderService $praticaPlaceholderService, FileService $fileService)
   {
     $this->mailer = $mailer;
     $this->translator = $translator;

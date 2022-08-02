@@ -163,17 +163,19 @@ parameters:
   google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
 
 services:
+  League\Flysystem\FilesystemInterface: '@s3_filesystem'
+  #League\Flysystem\FilesystemInterface: '@local_filesystem'
   # default configuration for services in *this* file
   _defaults:
     autowire: true      # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
-    bind: # defines the scalar arguments once and apply them to any service defined/created in this file
-      $defaultApiVersion: '%api_version%'
-      $locales: '%app_locales%'
-      $defaultSender: '%default_from_email_address%'
-      $allowedExtensions: '%allowed_extensions%'
-      $hashValidity: '%hash_validity%'
+    #bind: # defines the scalar arguments once and apply them to any service defined/created in this file
+    #  $defaultApiVersion: '%api_version%'
+    #  $locales: '%app_locales%'
+    #  $defaultSender: '%default_from_email_address%'
+    #  $allowedExtensions: '%allowed_extensions%'
+    #  $hashValidity: '%hash_validity%'
 
 
   # makes classes in src/ available to be used as services
@@ -196,14 +198,914 @@ services:
 
   ## Stanzadelcittadino
 
+
+
+  ocsdc.s3_client:
+    class: Aws\S3\S3Client
+    arguments:
+      - version: '2006-03-01' # or 'latest'
+        region: '%s3_region%' # 'eu-central-1' for example
+        credentials:
+          key: '%s3_key%'
+          secret: "%s3_secret%"
+
+  Aws\S3\S3Client: '@ocsdc.s3_client'
+
+  ocsdc.filesystem:
+    class: App\Services\FileSystemService
+    arguments: [ '@League\Flysystem\FilesystemInterface' ]
+    public: true
+
+  #App\Services\FileSystemService: "@ocsdc.filesystem"
+
+  App\Services\FileService:
+    arguments:
+      $s3Bucket: '%s3_bucket%'
+      $uploadDestination: '%upload_destination%'
+
+  App\Services\MeetingService:
+    arguments:
+      $defaultSender: "%default_from_email_address%"
+
   App\EventListener\MeetingLifeCycleListener:
     tags:
+      - { name: doctrine.event_listener, event: prePersist, connection: default }
       - { name: doctrine.event_listener, event: postPersist, connection: default }
       - { name: doctrine.event_listener, event: preUpdate, connection: default }
       - { name: doctrine.event_listener, event: postRemove, connection: default }
+
+  App\EventListener\JWTCreatedListener:
+    tags:
+      - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
+
+  App\Controller\Rest\SubscriptionsAPIController:
+    arguments:
+      $defaultApiVersion: "%api_version%"
+
+  App\Controller\Rest\SubscribersAPIController:
+    arguments:
+      $defaultApiVersion: "%api_version%"
+
+  App\Controller\Rest\SubscriptionServicesAPIController:
+    arguments:
+      $defaultApiVersion: "%api_version%"
+
+  App\Controller\Ui\Backend\AdminController:
+    arguments:
+      $locales: "%app_locales%"
+
+  App\Controller\Ui\Frontend\AllegatoController:
+    arguments:
+      $allowedExtensions: '%allowed_extensions%'
+
+  App\Controller\Rest\GiscomAPIController:
+    arguments:
+      $giscomAPIAdapterService: '@App\Services\GiscomAPIAdapterService'
+      $delayedGiscomAPIAdapterService: '@App\Services\DelayedGiscomAPIAdapterService'
 
   App\Controller\Rest\DocumentsAPIController:
     arguments:
       $rootDir: '%kernel.root_dir%'
 
+  App\Controller\Ui\Frontend\PraticheAnonimeController:
+    arguments:
+      $hashValidity: '%hash_validity%'
 
+  GuzzleHttp\Client: '@eight_points_guzzle.client.mypay'
+
+  i18n.datamapper:
+    class: App\Form\I18n\I18nDataMapper
+    autowire: true
+
+  App\Form\Admin\RecipientType:
+    arguments:
+      - "@i18n.datamapper"
+      - "%locale%"
+      - "%app_locales%"
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\GeographicAreaType:
+    arguments:
+      - "@i18n.datamapper"
+      - "%locale%"
+      - "%app_locales%"
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\Servizio\GeneralDataType:
+    arguments:
+      - "@i18n.datamapper"
+      - "%locale%"
+      - "%app_locales%"
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\Servizio\CardDataType:
+    arguments:
+      - "@i18n.datamapper"
+      - "%locale%"
+      - "%app_locales%"
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\CategoryType:
+    arguments:
+      $locale: "%locale%"
+      $locales: "%app_locales%"
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\ServiceGroup\ServiceGroupType:
+    arguments:
+      $locale: "%locale%"
+      $locales: "%app_locales%"
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\Ente\EnteType:
+    arguments:
+      - "@i18n.datamapper"
+      - "%locale%"
+      - "%app_locales%"
+    tags:
+      - { name: form.type }
+
+  App\Form\DocumentAPIType:
+    arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Rest\MessageFormType:
+    arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Rest\Transition\OutcomeFormType:
+    arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Rest\Transition\RequestIntegrationFormType:
+    arguments: [ '%allowed_extensions%' ]
+    tags:
+      - { name: form.type }
+
+  App\Services\Manager\MessageManager:
+    autowire: true
+    arguments:
+      $defaultSender: "%default_from_email_address%"
+
+  App\Services\PaymentService:
+    arguments:
+      $ksqlDBUrl: "%ksqldb_url%"
+
+  App\Services\InstanceService:
+    arguments: [ "@doctrine", "%prefix%" ]
+    public: true
+
+  App\Payment\Gateway\Bollo:
+    tags: [ 'app.gateway' ]
+
+  App\Payment\Gateway\MyPay:
+    tags: [ 'app.gateway' ]
+
+  App\Payment\Gateway\GenericExternalPay:
+    tags: [ 'app.gateway' ]
+
+  App\Payment\GatewayCollection:
+    arguments:
+      - !tagged app.gateway
+      - "%payment_gateways%"
+
+  App\Form\Scia\PraticaEdiliziaVincoliType:
+    autowire: true
+    tags:
+      - { name: form.type }
+
+  App\Form\CalendarBackofficeType:
+    arguments: [ "@doctrine.orm.default_entity_manager", "@translator" ]
+    tags:
+      - { name: form.type }
+
+  App\BackOffice\SubcriptionsBackOffice:
+    arguments: [ "@logger","@translator","@doctrine.orm.entity_manager" ]
+    public: true
+    tags: [ 'app.backoffice' ]
+
+  App\BackOffice\CalendarsBackOffice:
+    public: true
+    tags: [ 'app.backoffice' ]
+
+  App\BackOffice\SubcriptionPaymentsBackOffice:
+    autowire: true
+    public: true
+    tags: [ 'app.backoffice' ]
+
+  App\Services\BackOfficeCollection:
+    arguments:
+      - !tagged app.backoffice
+
+  ocsdc.backoffices: '@App\Services\BackOfficeCollection'
+
+  App\Controller\Ui\Backend\SubscriberController:
+    arguments:
+      $defaultSender: "%default_from_email_address%"
+
+  Vich\UploaderBundle\Naming\DirectoryNamerInterface: "@ocsdc.allegati.directory_namer"
+
+  App\Services\DirectoryNamerService:
+    public: true
+
+  ocsdc.cps.userprovider:
+    class: App\Services\CPSUserProvider
+    arguments: [ "@doctrine.orm.default_entity_manager", "@logger" ]
+
+  ocsdc.pat.authenticator:
+    class: App\Security\PatAuthenticator
+    arguments:
+      - "@router"
+      - "%shibbolet_server_varnames%"
+      - "%login_route%"
+      - '@App\Services\UserSessionService'
+      - '@ocsdc.instance_service'
+      - '@App\Services\Metrics\UserMetrics'
+      - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
+
+  ocsdc.openlogin.authenticator:
+    class: App\Security\OpenLoginAuthenticator
+    arguments:
+      - "@router"
+      - "%login_route%"
+      - '@App\Services\UserSessionService'
+      - '@ocsdc.instance_service'
+      - '@App\Services\Metrics\UserMetrics'
+      - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
+
+  ocsdc.dedalogin.authenticator:
+    class: App\Security\DedaLoginAuthenticator
+    arguments:
+      - "@router"
+      - "%login_route%"
+      - '@App\Services\UserSessionService'
+      - '@ocsdc.instance_service'
+      - '@App\Services\Metrics\UserMetrics'
+      - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
+      - "@session"
+
+  ocsdc.cas.authenticator:
+    class: App\Security\CasAuthenticator
+    arguments:
+      - "@router"
+      - "%login_route%"
+      - '@App\Services\UserSessionService'
+      - '@ocsdc.instance_service'
+      - '@App\Services\Metrics\UserMetrics'
+      - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
+      - "%cas_login_url%"
+      - "%cas_validation_url%"
+      - "@logger"
+
+  App\Security\DedaLogin\DedaLoginClient:
+    public: true
+    arguments:
+      - '@http.client'
+      - "%deda_login_client_id%"
+      - "%deda_login_secret%"
+      - "%deda_login_env%"
+
+  ocsdc.dedalogin.client: '@App\Security\DedaLogin\DedaLoginClient'
+
+  ocsdc.cps.token_authenticator:
+    class: App\Security\CPSAuthenticator
+    arguments: [ "%shibbolet_server_varnames%",'@Symfony\Component\Security\Core\Security' ]
+
+  ocsdc.cache_listener:
+    class: App\EventListener\ResponseListener
+    arguments: [ "%cache_max_age%" ]
+    tags:
+      - { name: kernel.event_listener, event: kernel.response, priority: -10000 }
+
+  ocsdc.locale_rewrite_listener:
+    class: App\EventListener\LocaleRewriteListener
+    autowire: true
+    arguments:
+      $prefix: "%prefix%"
+      $defaultLocale: "%locale%"
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -200 }
+
+  App\EventListener\LocaleRewriteListener: "@ocsdc.locale_rewrite_listener"
+
+  ocsdc.locale_api_listener:
+    class: App\EventListener\LocaleApiListener
+    autowire: true
+    arguments:
+      $defaultLocale: "%locale%"
+      $availableLocales: "%app_locales%"
+      $translatableListener: "@stof_doctrine_extensions.listener.translatable"
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -10 }
+      - { name: kernel.event_listener, event: kernel.response, priority: -10 }
+
+  App\EventListener\LocaleApiListener: "@ocsdc.locale_api_listener"
+
+  App\EventListener\TermsAcceptListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -10 }
+
+  App\EventListener\CompleteProfileListener:
+    arguments: [ "@router","@security.token_storage", "@ocsdc.cps.userprovider", "%PasswordLifeTime%" ]
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: -100 }
+
+  App\EventListener\LocaleCommandListener:
+    arguments:
+      $defaultLocale: "%locale%"
+      $availableLocales: "%app_locales%"
+      $translatableListener: "@stof_doctrine_extensions.listener.translatable"
+    tags:
+      - { name: kernel.event_listener, event: console.command }
+
+  ocsdc.redirect.after.login:
+    class: App\Handlers\Auth\AfterLoginRedirection
+    arguments: [ '@router','@security.authorization_checker' ]
+
+  gedmo.listener.sluggable:
+    class: Gedmo\Sluggable\SluggableListener
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+    calls:
+      - [ setAnnotationReader, [ "@annotation_reader" ] ]
+
+  monolog_processor:
+    class: Monolog\Processor\PsrLogMessageProcessor
+    tags:
+      - { name: monolog.processor }
+
+  App\Form\Extension\HelpDataTypeExtension:
+    tags:
+      - { name: form.type_extension, alias: "form", extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
+
+  ocsdc.allegati.directory_namer:
+    class: App\Services\DirectoryNamerService
+
+  App\Validator\Constraints\ValidMimeTypeValidator:
+    arguments:
+      $allowedExtensions: "%allowed_extensions%"
+    tags:
+      - { name: validator.constraint_validator }
+
+  ocsdc.mailer:
+    class: App\Services\MailerService
+    autowire: true
+
+  App\Services\MailerService: "@ocsdc.mailer"
+
+  App\Services\SubscriptionsService:
+    arguments:
+      $scheme: '%ocsdc_scheme%'
+      $host: '%ocsdc_host%'
+      $defaultSender: '%default_from_email_address%'
+
+  ocsdc.subscriptions_service: '@App\Services\SubscriptionsService'
+
+  App\Services\ModuloPdfBuilderService:
+    arguments:
+      $wkhtmltopdfService: "%wkhtmltopdf_service%"
+      $dateTimeFormat: "%ocsdc_default_datetime_format%"
+      $printablePassword: "%ez_password%"
+    tags:
+      - { name: 'ocsdc.schedule_action_handler', alias: 'ocsdc.modulo_pdf_builder' }
+
+  App\Services\WebhookService:
+    autowire: true
+
+  ocsdc.webhook_service: '@App\Services\WebhookService'
+
+  App\Services\KafkaService:
+    autowire: true
+    arguments:
+      $kafkaUrl: "%kafka_url%"
+      $kafkaEventVersion: "%kafka_event_version%"
+      $topics: "%kafka_topics%"
+      $kafkaRequestTimeout: "%kafka_request_timeout%"
+
+  ocsdc.kafka_service: '@App\Services\KafkaService'
+
+  ocsdc.reminder_service:
+    class: App\Services\ReminderService
+    autowire: true
+
+  App\Services\ReminderService: "@ocsdc.reminder_service"
+
+  ocsdc.io_service:
+    class: App\Services\IOService
+    autowire: true
+    arguments:
+      - "%io_api_url%"
+
+  App\Services\IOService: "@ocsdc.io_service"
+
+
+  App\Protocollo\ConfigProtocolloHandler:
+    public: false
+    arguments:
+      $handlerAlias: "%protocollo%"
+
+  App\Protocollo\ByPraticaProtocolloHandler:
+    public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: by_pratica }
+
+  App\Protocollo\DummyProtocolloHandler:
+    public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: dummy }
+
+  App\Protocollo\ExternalProtocolloHandler:
+    public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: external }
+
+  App\Protocollo\PecProtocolloHandler:
+    public: false
+    arguments:
+      $host: "%pec_mailer_host%"
+      $port: "%pec_mailer_port%"
+      $user: "%pec_mailer_user%"
+      $password: "%pec_mailer_password%"
+      $sender: "%pec_delivery_address%"
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: pec }
+
+  App\Protocollo\PiTreProtocolloHandler:
+    arguments: [ "@ocsdc.protocollo.client", "%prefix%" ]
+    public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: pitre }
+
+  App\Protocollo\InforProtocolloHandler:
+    public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: infor }
+
+  App\Protocollo\SipalProtocolloHandler:
+    public: false
+    tags:
+      - { name: ocsdc.protocollo.handler, alias: sipal }
+
+  App\Services\DelayedProtocolloService:
+    arguments: [ "@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service" ]
+    tags:
+      - { name: 'ocsdc.schedule_action_handler'}
+
+  App\Services\ProtocolloService:
+    arguments: [ "@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger","@event_dispatcher" ]
+
+  ocsdc.protocollo: '@App\Services\DelayedProtocolloService'
+  ocsdc.protocollo_direct: '@App\Services\ProtocolloService'
+  ocsdc.protocollo.client: "@eight_points_guzzle.client.protocollo_cct"
+  ocsdc.protocollo.handler: '@App\Protocollo\ConfigProtocolloHandler'
+
+  App\EventListener\KafkaListener:
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.kafka, method: produce, priority: 10 }
+
+  App\EventListener\CreatePdfPraticaListener:
+    tags:
+      - { name: kernel.event_listener, method: onStatusChange, priority: 10 }
+
+  App\EventListener\SendMailPraticaListener:
+    arguments:
+      $defaultSender: '%default_from_email_address%'
+    tags:
+      - { name: kernel.event_listener, method: onStatusChange, priority: 20 }
+
+  App\EventListener\StatusMessagePraticaListener:
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 21 }
+
+  App\EventListener\BackOfficePraticaListener:
+    arguments: [ "@ocsdc.backoffices", "@logger" ]
+    tags:
+      - { name: kernel.event_listener, method: onStatusChange, priority: 30 }
+
+  App\EventListener\PaymentOutcomeListener:
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 35 }
+
+  App\EventListener\ProtocollaPraticaListener:
+    arguments: [ "@ocsdc.protocollo", "@ocsdc.pratica_status_service","@logger" ]
+    tags:
+      - { name: kernel.event_listener, method: onStatusChange, priority: 100 }
+
+  App\EventListener\WebhookApplicationListener:
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 110 }
+      - { name: kernel.event_listener, event: ocsdc.message.created, method: onMessageCreated, priority: 110 }
+
+  App\EventListener\PaymentReminderListener:
+    tags:
+      - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 120 }
+
+  ocsdc.form.flow.storage_key_generator:
+    class: App\Form\UserSessionStorageKeyGenerator
+
+  App\Form\Base\ChooseAllegatoType:
+    arguments: [ "@doctrine.orm.entity_manager", "@validator" ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Base\UploadAllegatoType:
+    arguments: [ "@doctrine.orm.entity_manager", "@validator" ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Operatore\Base\SignedAllegatoType:
+    arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Scia\PraticaEdiliziaModuloSciaType:
+    arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Scia\PraticaEdiliziaAllegatiModuloSciaType:
+    arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Scia\PraticaEdiliziaSoggettiType:
+    arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Scia\PraticaEdiliziaAllegatiTecniciType:
+    arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Scia\PraticaEdiliziaUlterioriAllegatiTecniciType:
+    arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Scia\PraticaEdiliziaProvvedimentiType:
+    arguments: [ "@doctrine.orm.entity_manager", "@validator", "@ocsdc.p7m_signature_check" ]
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\Servizio\FormIOI18nType:
+    arguments:
+      $locale: "%locale%"
+      $locales: "%app_locales%"
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\Servizio\FeedbackMessagesDataType:
+    arguments:
+      $locales: "%app_locales%"
+      $defaultLocale: "%locale%"
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\Servizio\IntegrationsDataType:
+    arguments: [ "@translator" ]
+    tags:
+      - { name: form.type }
+
+
+  ocsdc.form.type.payment_gateway_type: '@App\Form\Base\PaymentGatewayType'
+
+  App\Form\PraticaFlowRegistry:
+    autowire: true
+
+  ocsdc.form.flow.pratica:
+    autowire: false
+    autoconfigure: false
+    class: App\Form\Base\PraticaFlow
+    parent: craue.form.flow
+    arguments:
+      - "@logger"
+      - "@translator"
+      - "@ocsdc.pratica_status_service"
+      - "@ocsdc.modulo_pdf_builder"
+      - "@ocsdc.allegati.dematerialized_attacher"
+      - "%prefix%"
+      - "@formio.factory"
+      - "@doctrine.orm.entity_manager"
+      - '@App\Services\UserSessionService'
+      - "%locale%"
+
+  App\Form\Extension\TestiAccompagnatoriProcedura:
+    arguments:
+      $prefix: "%prefix%"
+
+  App\Form\CertificatoNascita\CertificatoNascitaFlow:
+    autowire: false
+    autoconfigure: false
+    parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatonascita }
+
+  App\Form\EstrattoNascita\EstrattoNascitaFlow:
+    autowire: false
+    autoconfigure: false
+    parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattonascita }
+
+  App\Form\CertificatoMorte\CertificatoMorteFlow:
+    autowire: false
+    autoconfigure: false
+    parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatomorte }
+
+  App\Form\EstrattoMorte\EstrattoMorteFlow:
+    autowire: false
+    autoconfigure: false
+    parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattomorte }
+
+  App\Form\CertificatoMatrimonio\CertificatoMatrimonioFlow:
+    autowire: false
+    autoconfigure: false
+    parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatomatrimonio }
+
+  App\Form\EstrattoMatrimonio\EstrattoMatrimonioFlow:
+    autowire: false
+    autoconfigure: false
+    parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.estrattomatrimonio }
+
+  App\Form\FormIO\FormIOFlow:
+    autowire: false
+    autoconfigure: false
+    parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.formio }
+
+  # Inzio operatore
+
+  ocsdc.form.flow.praticaoperatore:
+    class: App\Form\Operatore\Base\PraticaOperatoreFlow
+    autowire: false
+    autoconfigure: false
+    parent: craue.form.flow
+    arguments: [ "@logger","@translator" ]
+
+  App\Form\Operatore\CertificatoNascita\CertificatoNascitaOperatoreFlow:
+    autowire: false
+    autoconfigure: false
+    parent: ocsdc.form.flow.praticaoperatore
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatonascitaoperatore }
+
+  # Flow service servizio
+  App\Form\Admin\ServiceFlow:
+    autowire: false
+    autoconfigure: false
+    parent: craue.form.flow
+    arguments: [ "@logger","@translator" ]
+
+  ocsdc.comunweb_content_provider:
+    class: App\Services\ComunwebContentProviderService
+    arguments: [ "@eight_points_guzzle.client.comunweb","@logger" ]
+
+  App\Twig\AppExtension:
+    autowire: true
+    tags:
+      - { name: twig.extension }
+
+  App\Twig\IterCalculatorExtension:
+    arguments:
+      $durationStartStatus: '%ocsdc_iter_duration_start_status%'
+      $durationEndStatuses: '%ocsdc_iter_duration_end_statuses%'
+    tags:
+      - { name: twig.extension }
+
+  App\Twig\JsonDecode:
+    tags:
+      - { name: twig.extension }
+
+  App\Twig\Unserialize:
+    tags:
+      - { name: twig.extension }
+
+  App\Twig\HtmlSpecialCharsDecode:
+    tags:
+      - { name: twig.extension }
+
+  App\Twig\TimeAgo:
+    arguments: [ '@translator' ]
+    tags:
+      - { name: twig.extension }
+
+  ocsdc.pratica_status_service: '@App\Services\PraticaStatusService'
+
+  App\EventListener\ProtocolloSuccessSubscriber:
+    tags:
+      - { name: kernel.event_subscriber }
+
+  App\EventListener\UserSecuritySubscriber:
+    tags:
+      - { name: kernel.event_subscriber }
+
+  ocsdc.instance_service: '@App\Services\InstanceService'
+
+  App\Services\VersionService:
+    arguments:
+      $version: "%version%"
+
+  App\Form\Scia\SciaPraticaEdiliziaFlow:
+    autowire: false
+    autoconfigure: false
+    parent: ocsdc.form.flow.pratica
+    tags:
+      - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.scia_pratica_edilizia }
+
+  App\Services\P7MSignatureCheckService:
+    autowire: true
+
+  ocsdc.p7m_signature_check: '@App\Services\P7MSignatureCheckService'
+
+  ocsdc.p7m_thumbnailer_service:
+    class: App\Services\P7MThumbnailerService
+    arguments:
+      - '@ocsdc.allegati.directory_namer'
+      - '@vich_uploader.property_mapping_factory'
+      - '@logger'
+      - '%gsbinary%'
+
+  ocsdc.validator.scia.at_least_one_attachment:
+    class: App\Validator\Constraints\AtLeastOneAttachmentConstraintValidator
+    arguments:
+      - '@ocsdc.allegati.directory_namer'
+      - '@vich_uploader.property_mapping_factory'
+      - '@filesystem'
+      - '@doctrine.orm.entity_manager'
+    tags:
+      - { name: 'validator.constraint_validator' }
+
+  App\Validator\Constraints\AtLeastOneAttachmentConstraintValidator: '@ocsdc.validator.scia.at_least_one_attachment'
+
+  App\Services\GiscomAPIAdapterService:
+    arguments:
+      - '@eight_points_guzzle.client.giscom'
+      - '@doctrine.orm.entity_manager'
+      - '@logger'
+      - '@ocsdc.giscom_api.mapper'
+      - '@ocsdc.pratica_status_service'
+      - "@ocsdc.status_mapper.giscom"
+    autowire: false
+    autoconfigure: false
+
+
+  App\Services\DelayedGiscomAPIAdapterService:
+    arguments:
+      - '@App\Services\GiscomAPIAdapterService'
+      - '@doctrine.orm.entity_manager'
+      - '@logger'
+      - "@ocsdc.schedule_action_service"
+    autowire: false
+    autoconfigure: false
+    tags:
+      - { name: 'ocsdc.schedule_action_handler', alias: 'ocsdc.giscom_api.adapter' }
+
+  App\Services\GiscomAPIAdapterServiceInterface: '@App\Services\DelayedGiscomAPIAdapterService'
+
+  ocsdc.allegati.dematerialized_attacher:
+    class: App\Services\DematerializedFormAllegatiAttacherService
+    arguments:
+      - '@doctrine.orm.entity_manager'
+
+  App\EventListener\GiscomSendPraticaListener:
+    tags:
+      - { name: kernel.event_subscriber }
+
+  ocsdc.schedule_action_service:
+    class: App\Services\ScheduleActionService
+    arguments: [ "@doctrine.orm.entity_manager","@logger" ]
+
+  ocsdc.giscom_api.mapper:
+    class: App\Services\GiscomAPIMapperService
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@router'
+
+  ocsdc.status_mapper.giscom:
+    class: App\Mapper\Giscom\GiscomStatusMapper
+    tags:
+      - { name: 'ocsdc.status_mapper' }
+
+  App\Services\FormServerApiAdapterService:
+    arguments:
+      $formServerUrl: "%formserver_private_url%"
+      $formServerPublicUrl: "%formserver_public_url%"
+
+  ocsdc.formserver: '@App\Services\FormServerApiAdapterService'
+
+  # Handlers servizi
+  App\Handlers\Servizio\ServizioHandlerRegistry:
+    public: true
+
+  App\Handlers\Servizio\DefaultHandler:
+    arguments:
+      $formServerPublicUrl: "%formserver_public_url%"
+      $browserRestrictions: "%browsers_restrictions%"
+    tags:
+      - { name: ocsdc.servizio.handler, alias: default }
+
+  App\Handlers\Servizio\ImisHandler:
+    arguments: [ "@security.token_storage", "@logger", "@router" ]
+    tags:
+      - { name: ocsdc.servizio.handler, alias: ocsdc.servizio.imis }
+
+  http.client:
+    class: Symfony\Component\HttpClient\CurlHttpClient
+
+  # FormIO validator
+  formio.factory:
+    class: App\FormIO\SchemaFactory
+    arguments: [ '@ocsdc.formserver', '@http.client', '@session' ]
+
+  formio.validator:
+    class: App\FormIO\Validator
+    arguments: [ '@form.factory', '@formio.factory' ]
+
+  formio.expression_validator:
+    class: App\FormIO\ExpressionValidator
+    arguments: [ '@form.factory', '@formio.factory', '@doctrine.orm.entity_manager', '@logger' ]
+
+  App\FormIO\SchemaFactoryInterface: '@formio.factory'
+
+  formio.constraint_validator:
+    class: App\Validator\Constraints\ServerSideFormIOConstraintValidator
+    public: true
+    arguments: [ '@formio.validator' ]
+    tags:
+      - { name: validator.constraint_validator, alias: 'formio.constraint_validator' }
+
+  formio.expression_based_validator:
+    class: App\Validator\Constraints\ExpressionBasedFormIOConstraintValidator
+    public: true
+    arguments: [ '@formio.expression_validator' ]
+    tags:
+      - { name: validator.constraint_validator, alias: 'formio.expression_based_validator' }
+
+  log_resolver.applicant_browser:
+    class: App\Logging\ApplicantBrowserEventResolver
+
+  ocsdc.logout_success_handler:
+    class: App\Security\LogoutSuccessHandler
+    arguments: [ '@router', "%single_logout_url%" ]
+
+
+  App\Services\Metrics\ApplicationMetrics:
+    autowire: true
+    tags:
+      - { name: prometheus_metrics_bundle.metrics_generator }
+
+  App\Services\Metrics\ScheduledActionMetrics:
+    autowire: true
+    tags:
+      - { name: prometheus_metrics_bundle.metrics_generator }
+
+  App\Services\Metrics\UserMetrics:
+    autowire: true
+    tags:
+      - { name: prometheus_metrics_bundle.metrics_generator }
+
+
+  #craue.form.flow.storage_default:
+  #  class: Craue\FormFlowBundle\Storage\DoctrineStorage
+  #  public: false
+  #  #arguments: [ "@doctrine.dbal.default_connection", "@ocsdc.form.flow.storage_key_generator" ]
+#
+  #craue.form.flow.data_manager_default:
+  #  class: App\Form\DataManager
+  #  public: false
+  #  #arguments: [ "@craue.form.flow.storage", "@security.token_storage", "@session" ]
+
+  #App\Command\ScheduledActionCommand:
+  #  $host: "%ocsdc_host%"
+  #  $scheme: "%ocsdc_scheme%"
+
+  #App\Command\SecureUserCommand:
+  #  $host: "%ocsdc_host%"
+  #  $scheme: "%ocsdc_scheme%"
+  #  $inactiveUserLifeTime: "%InactiveUserLifeTime%"
+
+
+  App\Security\Voters\AttachmentVoter:
+    arguments:
+      $hashValidity: '%hash_validity%'
+    tags:
+      - { name: security.voter }

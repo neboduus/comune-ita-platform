@@ -4,10 +4,10 @@ namespace App\EventListener;
 
 use App\Entity\CPSUser;
 use App\Services\TermsAcceptanceCheckerService;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Class TermsAcceptListener
@@ -16,12 +16,12 @@ class TermsAcceptListener
 {
 
   /**
-   * @var Router
+   * @var RouterInterface
    */
   private $router;
 
   /**
-   * @var TokenStorage
+   * @var TokenStorageInterface
    */
   private $tokenStorage;
 
@@ -32,10 +32,10 @@ class TermsAcceptListener
 
   /**
    * TermsAcceptListener constructor.
-   * @param Router $router
+   * @param RouterInterface $router
    * @param TokenStorage $tokenStorage
    */
-  public function __construct(Router $router, TokenStorage $tokenStorage, TermsAcceptanceCheckerService $termsAcceptanceChecker)
+  public function __construct(RouterInterface $router, TokenStorageInterface $tokenStorage, TermsAcceptanceCheckerService $termsAcceptanceChecker)
   {
     $this->router = $router;
     $this->tokenStorage = $tokenStorage;
