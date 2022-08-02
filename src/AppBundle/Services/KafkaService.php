@@ -23,6 +23,8 @@ use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 
 class KafkaService implements ScheduledActionHandlerInterface
@@ -35,6 +37,10 @@ class KafkaService implements ScheduledActionHandlerInterface
    */
   private $scheduleActionService;
 
+  /**
+   * @var RouterInterface
+   */
+  private $router;
   /**
    * @var SerializerInterface
    */
@@ -71,6 +77,7 @@ class KafkaService implements ScheduledActionHandlerInterface
   /**
    * WebhookService constructor.
    * @param ScheduleActionService $scheduleActionService
+   * @param RouterInterface $router
    * @param SerializerInterface $serializer
    * @param VersionService $versionService
    * @param LoggerInterface $logger
@@ -84,6 +91,7 @@ class KafkaService implements ScheduledActionHandlerInterface
    */
   public function __construct(
     ScheduleActionService $scheduleActionService,
+    RouterInterface $router,
     SerializerInterface $serializer,
     VersionService $versionService,
     LoggerInterface $logger,
@@ -97,6 +105,7 @@ class KafkaService implements ScheduledActionHandlerInterface
   )
   {
     $this->scheduleActionService = $scheduleActionService;
+    $this->router = $router;
     $this->serializer = $serializer;
     $this->versionService = $versionService;
     $this->logger = $logger;
@@ -142,7 +151,6 @@ class KafkaService implements ScheduledActionHandlerInterface
   /**
    * @param $item
    * @throws GuzzleException
-   * @throws \Exception
    */
   public function produceMessage($item)
   {
@@ -150,23 +158,6 @@ class KafkaService implements ScheduledActionHandlerInterface
       return;
     }
 
-    $params = $this->generateMessage($item);
-
-    try {
-      $this->sendMessage($params);
-    } catch (\Exception $e) {
-      $this->logger->error($e->getMessage());
-      $this->produceMessageAsync($params);
-    }
-  }
-
-  /**
-   * @param $item
-   * @return array
-   * @throws \Exception
-   */
-  public function generateMessage($item)
-  {
     $context = new SerializationContext();
     $context->setSerializeNull(true);
 
@@ -189,6 +180,7 @@ class KafkaService implements ScheduledActionHandlerInterface
       $topic = 'default';
       $content = $item;
     }
+
     $data = json_decode($this->serializer->serialize($content, 'json', $context), true);
 
     // todo: fix veloce, prevedere tenant_id nelle entità per il multi tenant
@@ -201,17 +193,23 @@ class KafkaService implements ScheduledActionHandlerInterface
     $data['event_created_at'] = $date->format(DateTime::W3C);
     $data['event_version'] = $this->kafkaEventVersion;
     $data['app_version'] = $this->versionService->getVersion();
+    $data = json_encode($data);
 
     $params = [
       'topic' => $topic,
       'data'  => $data
     ];
 
-    return $params;
+    try {
+      $this->sendMessage($params);
+    } catch (\Exception $e) {
+      $this->logger->error($e->getMessage());
+      $this->produceMessageAsync($params);
+    }
   }
 
   /**
-   * @param $params
+   * @param $data
    * @throws GuzzleException
    */
   private function sendMessage($params)
@@ -241,7 +239,5 @@ class KafkaService implements ScheduledActionHandlerInterface
       throw new \Exception("Error sending kafka message: " . $response->getBody());
     }
   }
-
-
-
+  
 }
