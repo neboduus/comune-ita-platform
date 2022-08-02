@@ -56,9 +56,6 @@
             "src/Repository/.gitignore"
         ]
     },
-    "doctrine/doctrine-cache-bundle": {
-        "version": "1.4.0"
-    },
     "doctrine/doctrine-fixtures-bundle": {
         "version": "3.4",
         "recipe": {
@@ -182,6 +179,9 @@
         "files": [
             "config/packages/lexik_jwt_authentication.yaml"
         ]
+    },
+    "mhujer/breadcrumbs-bundle": {
+        "version": "1.5.3"
     },
     "nelmio/api-doc-bundle": {
         "version": "4.9",
@@ -494,9 +494,6 @@
         "files": [
             "config/packages/vich_uploader.yaml"
         ]
-    },
-    "whiteoctober/breadcrumbs-bundle": {
-        "version": "1.4.5"
     },
     "willdurand/js-translation-bundle": {
         "version": "5.0",

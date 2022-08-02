@@ -1,18 +1,33 @@
 doctrine:
-    dbal:
-        url: '%env(resolve:DATABASE_URL)%'
-
-        # IMPORTANT: You MUST configure your server version,
-        # either here or in the DATABASE_URL env var (see .env file)
-        #server_version: '13'
-    orm:
-        auto_generate_proxy_classes: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-        auto_mapping: true
-        mappings:
-            App:
-                is_bundle: false
-                type: annotation
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+  dbal:
+    driver: 'pdo_pgsql'
+    server_version: '10.6'
+    host: '%database_host%'
+    port: '%database_port%'
+    dbname: '%database_name%'
+    user: '%database_user%'
+    password: '%database_password%'
+    charset: UTF8
+  orm:
+    auto_generate_proxy_classes: true
+    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+    auto_mapping: true
+    mappings:
+      App:
+        is_bundle: false
+        type: annotation
+        dir: '%kernel.project_dir%/src/Entity'
+        prefix: 'App\Entity'
+        alias: App
+      translatable:
+        type: annotation
+        is_bundle: false
+        prefix: Gedmo\Translatable\Entity
+        dir: '%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Translatable/Entity'
+        alias: GedmoTranslatable
+    dql:
+      string_functions:
+        FORMIO_JSON_FIELD: App\FormIO\FormIOJsonFieldParser
+        JSON_FIELD: App\Doctrine\JsonFieldParser
+        JSON_TEXT: App\Doctrine\JSONText
+        JSONB_ARRAY_ELEMENTS_TEXT: App\Doctrine\JsonbArrayElementsText

@@ -39,7 +39,6 @@
     "davidepastore/codice-fiscale": "^0.9.0",
     "doctrine/data-fixtures": "*",
     "doctrine/doctrine-bundle": "*",
-    "doctrine/doctrine-cache-bundle": "*",
     "doctrine/doctrine-fixtures-bundle": "*",
     "doctrine/doctrine-migrations-bundle": "*",
     "doctrine/orm": "*",
@@ -83,7 +82,7 @@
     "twig/twig": "*",
     "vich/uploader-bundle": "^1.15",
     "whichbrowser/parser": "*",
-    "whiteoctober/breadcrumbs-bundle": "*",
+    "mhujer/breadcrumbs-bundle": "*",
     "willdurand/js-translation-bundle": "*",
     "xiidea/easy-audit": "*"
   },

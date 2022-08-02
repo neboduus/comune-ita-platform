@@ -1,15 +1,21 @@
 # Read the documentation: https://symfony.com/doc/master/bundles/FOSRestBundle/index.html
-#fos_rest:
-#    param_fetcher_listener:  true
-#    allowed_methods_listener:  true
-#    routing_loader: true
-#    view:
-#        view_response_listener:  true
-#    exception:
-#        codes:
-#            App\Exception\MyException: 403
-#        messages:
-#            App\Exception\MyException: Forbidden area.
-#    format_listener:
-#        rules:
-#            - { path: ^/api, prefer_extension: true, fallback_format: json, priorities: [ json, html ] }
+fos_rest:
+  versioning:
+    enabled: true
+    resolvers:
+      query: true # Query parameter: /?version=1
+      custom_header: true # X-Accept-Version header
+  view:
+    view_response_listener: true
+    #formats:
+    #    json: true
+    #templating_formats:
+    #    html: true
+  serializer:
+    serialize_null: true
+  exception:
+    enabled: false #Deprecated in Symfony 4.0
+  format_listener:
+    rules:
+      - { path: ^/%prefix%/api, prefer_extension: true, fallback_format: json, priorities: [ 'json' ] }
+      - { path: ^/%prefix%, prefer_extension: true, fallback_format: html, priorities: [ 'html', '*/*' ] }

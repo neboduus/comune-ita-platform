@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Entity\CPSUser;
 use App\Logging\LogConstants;
 use App\Model\IdCard;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
@@ -24,7 +23,7 @@ class CPSUserProvider implements UserProviderInterface
   const EMAIL_BLACKLIST = array('noreply@infotn.it', 'nobody@infotn.it');
 
   /**
-   * @var EntityManager
+   * @var EntityManagerInterface
    */
   private $em;
 
@@ -36,10 +35,10 @@ class CPSUserProvider implements UserProviderInterface
   /**
    * UserProvider constructor.
    *
-   * @param EntityManager $em
+   * @param EntityManagerInterface $em
    * @param LoggerInterface $logger
    */
-  public function __construct(EntityManager $em, LoggerInterface $logger)
+  public function __construct(EntityManagerInterface $em, LoggerInterface $logger)
   {
     $this->em = $em;
     $this->logger = $logger;

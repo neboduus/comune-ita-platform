@@ -1,0 +1,11 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% block fos_user_content %}
+    <h1 class="text-center title mb-5">{{ 'user.forgot_password' | trans }}</h1>
+    <div class="col-md-6 offset-md-3">
+        <div class="alert alert-info mb-5" role="alert">
+          {{ 'user.forgot_password_description' | trans }}
+        </div>
+        {% include "@FOSUser/Resetting/request_content.html.twig" %}
+    </div>
+{% endblock fos_user_content %}

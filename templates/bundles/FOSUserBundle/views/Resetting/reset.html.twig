@@ -1,0 +1,23 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% block fos_user_content %}
+    <h1 class="text-center title mb-5">Modifica password</h1>
+    <div class="col-md-4 offset-md-4">
+        {% include "@FOSUser/Resetting/reset_content.html.twig" %}
+    </div>
+{% endblock fos_user_content %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/app/js/jquery.min.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/password-score.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/password-score-options.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/bootstrap-strength-meter.js') }}"></script>
+    <script src="{{ asset('bundles/app/js/password.js') }}"></script>
+
+    <script>
+      $(document).ready(function () {
+        $('#fos_user_resetting_form_plainPassword_first').password({});
+      });
+    </script>
+{% endblock %}

@@ -1,9 +1,31 @@
 nelmio_api_doc:
-    documentation:
-        info:
-            title: My App
-            description: This is an awesome app!
-            version: 1.0.0
-    areas: # to filter documented areas
-        path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+  documentation:
+    info:
+      x-api-id: "sdc-api-2-2-0"
+      x-audience: "external-public"
+      title: "SDC Api Definition"
+      description: ""
+      version: "2.2.0"
+      contact:
+        name: "Opencontent S.c.a.r.l"
+        email: "support@opencontent.it"
+        url: "https://www.opencontent.it/"
+      license:
+        name: "GNU General Public License, version 2"
+        url: "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
+    securityDefinitions:
+      Bearer:
+        type: apiKey
+        description: 'Authorization: Bearer {jwt}'
+        name: Authorization
+        in: header
+    security:
+      - Bearer: [ ]
+    areas:
+      default:
+        path_patterns: # an array of regexps
+          #- ^/%prefix%/api(?!/doc$)
+          - ^/%prefix%/api/(services|services-groups|applications|subscription-services|subscriptions|calendars|meetings|folders|documents|messages|users|tenants|categories|recipients|geographic-areas|subscribers|payments)(?!/doc$)
+      v2:
+        name_patterns:
+          - ^v2
