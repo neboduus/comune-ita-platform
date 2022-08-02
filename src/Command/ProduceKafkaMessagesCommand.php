@@ -7,7 +7,7 @@ use App\Entity\Meeting;
 use App\Entity\Pratica;
 use Cassandra\Date;
 use DateTime;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpFoundation\Response;
 
 
-class ProduceKafkaMessagesCommand extends ContainerAwareCommand
+class ProduceKafkaMessagesCommand extends Command
 {
 
   protected function configure()

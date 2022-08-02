@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\Pratica;
 use App\Services\DelayedGiscomAPIAdapterService;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class RemoveTooManyPdfCommand extends ContainerAwareCommand
+class RemoveTooManyPdfCommand extends Command
 {
 
   protected function configure()

@@ -11,12 +11,12 @@ use App\Entity\SubscriptionService;
 use App\Model\SubscriptionPayment;
 use App\Services\Manager\PraticaManager;
 use App\Services\SubscriptionsService;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class CreateSubscriptionPaymentDraftsCommand extends ContainerAwareCommand
+class CreateSubscriptionPaymentDraftsCommand extends Command
 {
 
   protected function configure()

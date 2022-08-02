@@ -10,7 +10,7 @@ use App\Entity\User;
 use App\Model\Gateway;
 use App\Utils\Csv;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,8 +19,9 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class ConfigureInstanceCommand extends ContainerAwareCommand
+class ConfigureInstanceCommand extends Command
 {
 
   /** @var */
@@ -42,6 +43,27 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
   private $entityManager = null;
 
   private $output;
+
+  /**
+   * @var LoadData
+   */
+  private $loader;
+
+  /**
+   * @var UserPasswordEncoderInterface
+   */
+  private $passwordEncoder;
+
+  public function __construct(
+    EntityManagerInterface $entityManager,
+    LoadData $loader,
+    UserPasswordEncoderInterface $passwordEncoder
+  ) {
+    $this->loader = $loader;
+    $this->entityManager = $entityManager;
+    $this->passwordEncoder = $passwordEncoder;
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -81,7 +103,6 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
       $this->isInteractive = false;
     }
 
-    $this->entityManager = $this->getContainer()->get('doctrine')->getManager();
     $ente = $this->creaateInstance($instance);
     if ($ente instanceof Ente) {
       $this->symfonyStyle->note("Ente creato correttamente: " . $ente->getName());
@@ -156,8 +177,6 @@ class ConfigureInstanceCommand extends ContainerAwareCommand
 
     // Altre configurazioni
     $loader = new LoadData();
-    $loader->setContainer($this->getContainer());
-
     $this->entityManager->persist($ente);
     $this->entityManager->flush();
 

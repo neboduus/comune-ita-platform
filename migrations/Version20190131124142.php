@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Application\Migrations;
+namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190131124142 extends AbstractMigration
 {
-    public function up(Schema $schema): void : void
+    public function up(Schema $schema):void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
@@ -18,7 +18,7 @@ final class Version20190131124142 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN servizio.additional_data IS \'(DC2Type:json_array)\'');
     }
 
-    public function down(Schema $schema): void : void
+    public function down(Schema $schema):void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 

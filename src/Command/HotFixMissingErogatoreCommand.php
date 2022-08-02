@@ -5,13 +5,13 @@ namespace App\Command;
 use App\Entity\Erogatore;
 use App\Entity\Servizio;
 use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 
-class HotFixMissingErogatoreCommand extends ContainerAwareCommand
+class HotFixMissingErogatoreCommand extends Command
 {
   /**
    * @var EntityManager

@@ -6,7 +6,7 @@ namespace App\Controller\Rest;
 use App\Dto\Application;
 use App\Dto\ApplicationDto;
 use App\Entity\AllegatoMessaggio;
-use \App\Entity\Message as MessageEntity;
+use App\Entity\Message as MessageEntity;
 use App\Entity\AdminUser;
 use App\Entity\Allegato;
 use App\Entity\AllegatoOperatore;

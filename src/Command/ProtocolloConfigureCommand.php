@@ -6,7 +6,7 @@ use App\Entity\Ente;
 use App\Entity\Servizio;
 use App\Protocollo\PiTreProtocolloParameters;
 use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 
-class ProtocolloConfigureCommand extends ContainerAwareCommand
+class ProtocolloConfigureCommand extends Command
 {
 
   private $slugServices = [

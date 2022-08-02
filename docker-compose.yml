@@ -52,9 +52,9 @@ services:
       ENABLE_INSTANCE_CONFIG: 'true'
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
-      #DB_NAME: ${DB_NAME:-sdc_multi}
-      #DB_USER: ${DB_USER:-sdc}
-      #DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      DB_NAME: ${DB_PASSWORD:-sdc}
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
       MAILER_HOST: ${MAILER_HOST:-mailserver}
       MAILER_PORT: ${MAILER_PORT:-1025}
       MAILER_ENCRYPTION: null
@@ -133,6 +133,9 @@ services:
       SYMFONY_ENV: ${SYMFONY_ENV:-dev}
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_PASSWORD:-sdc}
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
       MAILER_TRANSPORT: ${MAILER_TRANSPORT:-sendmail}
       MAILER_HOST: ${MAILER_HOST:-mailserver}
       MAILER_PORT: ${MAILER_PORT:-1025}

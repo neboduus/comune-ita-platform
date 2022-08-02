@@ -3,14 +3,14 @@
 namespace App\Command;
 
 use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use CodiceFiscale\InverseCalculator;
 
-class HotFixSubscriberBirthDateFromFiscalCodeCommand extends ContainerAwareCommand
+class HotFixSubscriberBirthDateFromFiscalCodeCommand extends Command
 {
 
   protected function configure()

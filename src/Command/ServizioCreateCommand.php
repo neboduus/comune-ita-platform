@@ -3,7 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Servizio;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,7 +18,7 @@ use App\Entity\Erogatore;
 /**
  * Class ServizioCreateCommand
  */
-class ServizioCreateCommand extends ContainerAwareCommand
+class ServizioCreateCommand extends Command
 {
     protected function configure()
     {

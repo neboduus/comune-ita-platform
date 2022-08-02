@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\AdminUser;
 use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Class OperatoreCreateCommand
  */
-class AdministratorCreateCommand extends ContainerAwareCommand
+class AdministratorCreateCommand extends Command
 {
   protected function configure()
   {

@@ -2,3 +2,260 @@ parameters:
   locale: it
   app_locales: it
   version: 1.26.0-rc.1
+  prefix: '%env(PREFIX)%'
+  instance: ''
+  protocollo: ''
+  database_reconnect_attemps: '%env(DB_RECONNECT_ATTEMPS)%'
+  mailer_transport: '%env(MAILER_TRANSPORT)%'
+  mailer_host: '%env(MAILER_HOST)%'
+  mailer_port: '%env(MAILER_PORT)%'
+  mailer_user: '%env(MAILER_USER)%'
+  mailer_password: '%env(MAILER_PASSWORD)%'
+  mailer_encription: 'tls'
+  pec_mailer_transport: '%env(PEC_MAILER_TRANSPORT)%'
+  pec_mailer_host: '%env(PEC_MAILER_HOST)%'
+  pec_mailer_port: '%env(PEC_MAILER_PORT)%'
+  pec_mailer_user: '%env(PEC_MAILER_USER)%'
+  pec_mailer_password: '%env(PEC_MAILER_PASSWORD)%'
+  pec_delivery_address: '%env(PEC_DELIVERY_ADDRESS)%'
+  secret: '%env(SECRET)%'
+  default_from_email_address: '%env(DEFAULT_FROM_EMAIL_ADDRESS)%'
+  wkhtmlbinary: '%env(WKHTMLBINARY)%'
+  wkhtmltopdf_service: '%env(WKHTMLTOPDF_SERVICE)%'
+  ez_password: '%env(EZ_PASSWORD)%'
+  pitre_adapter_url: '%env(PITRE_ADAPTER_URL)%'
+  header_top_title: '%env(HEADER_TOP_TITLE)%'
+  header_top_link: '%env(HEADER_TOP_LINK)%'
+  footer_credits: '%env(FOOTER_CREDITS)%'
+  ocsdc_iter_duration_start_status: 3
+  ocsdc_iter_duration_end_statuses:
+    - 10
+    - 100
+  ocsdc_default_date_format: 'd-m-Y'
+  ocsdc_default_datetime_format: 'd-m-Y H:i:s'
+  ocsdc_default_time_format: 'H:i:s'
+  ocsdc_scheme: '%env(OCSDC_SCHEME)%'
+  ocsdc_host: '%env(OCSDC_HOST)%'
+  giscom_password: '%env(GISCOM_PASSWORD)%'
+  giscom_adapter_url: '%env(GISCOM_ADAPTER_URL)%'
+  giscom_adapter_username: '%env(GISCOM_ADAPTER_USERNAME)%'
+  giscom_adapter_password: '%env(GISCOM_ADAPTER_PASSWORD)%'
+  generate_p7m_thumbnail: true
+  gsbinary: gs
+  ocsdc_default_moment_datetime_format: 'DD-MM-YYYY HH:mm:ss'
+  mypay_adapter_url: '%env(MYPAY_ADAPTER_URL)%'
+  ocsdc_slim_datetime_format: 'd/m/y H:i'
+  PasswordLifeTime: '%env(PASSWORD_LIFE_TIME)%' #365
+  InactiveUserLifeTime: '%env(INACTIVE_USER_LIFE_TIME)%' #545
+  logs_formatter: 'monolog.formatter.line'
+  logs_path: '%env(LOGS_PATH)%'
+  formserver_private_url: '%env(FORMSERVER_PRIVATE_URL)%'
+  formserver_public_url: '%env(FORMSERVER_PUBLIC_URL)%'
+  formserver_admin_url: '%env(FORMSERVER_ADMIN_URL)%'
+  hash_validity: '%env(HASH_VALIDITY)%'
+  allowed_extensions:
+    - doc: application/msword
+    - docx: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+    - odt: application/vnd.oasis.opendocument.text
+    - pdf: application/pdf
+    - txt: text/plain
+    - jpeg: image/jpeg
+    - jpg: image/jpeg
+    - png: image/png
+    - gif: image/gif
+    - p7m: application/pkcs7-mime
+    - xp7m: application/x-pkcs7-mime
+    - p7c: application/pkcs7
+    - zip: application/zip
+  token_ttl: '%env(TOKEN_TTL)%'
+  recaptcha_key: '%env(RECAPTCHA_KEY)%'
+  recaptcha_secret: '%env(RECAPTCHA_SECRET)%'
+  shibbolet_server_varnames:
+    codiceFiscale: '%env(SHIB_CODICEFISCALE)%'
+    capDomicilio: '%env(SHIB_CAPDOMICILIO)%'
+    capResidenza: '%env(SHIB_CAPRESIDENZA)%'
+    cellulare: '%env(SHIB_CELLULARE)%'
+    cittaDomicilio: '%env(SHIB_CITTADOMICILIO)%'
+    cittaResidenza: '%env(SHIB_CITTARESIDENZA)%'
+    cognome: '%env(SHIB_COGNOME)%'
+    dataNascita: '%env(SHIB_DATANASCITA)%'
+    emailAddress: '%env(SHIB_EMAILADDRESS)%'
+    emailAddressPersonale: '%env(SHIB_EMAILADDRESSPERSONALE)%'
+    indirizzoDomicilio: '%env(SHIB_INDIRIZZODOMICILIO)%'
+    indirizzoResidenza: '%env(SHIB_INDIRIZZORESIDENZA)%'
+    luogoNascita: '%env(SHIB_LUOGONASCITA)%'
+    nome: '%env(SHIB_NOME)%'
+    provinciaDomicilio: '%env(SHIB_PROVINCIADOMICILIO)%'
+    provinciaNascita: '%env(SHIB_PROVINCIANASCITA)%'
+    provinciaResidenza: '%env(SHIB_PROVINCIARESIDENZA)%'
+    sesso: '%env(SHIB_SESSO)%'
+    statoDomicilio: '%env(SHIB_STATODOMICILIO)%'
+    statoNascita: '%env(SHIB_STATONASCITA)%'
+    statoResidenza: '%env(SHIB_STATORESIDENZA)%'
+    telefono: '%env(SHIB_TELEFONO)%'
+    titolo: '%env(SHIB_TITOLO)%'
+    idCard: '%env(SHIB_IDCARD)'
+    x509certificate_issuerdn: '%env(SHIB_X509CERTIFICATE_ISSUERDN)%'
+    x509certificate_subjectdn: '%env(SHIB_X509CERTIFICATE_SUBJECTDN)%'
+    x509certificate_base64: '%env(SHIB_X509CERTIFICATE_BASE64)%'
+    spidCode: '%env(SHIB_SPID_CODE)%'
+    shibSessionId: '%env(SHIB_SESSION_ID)%'
+    shibSessionIndex: '%env(SHIB_SESSION_INDEX)%'
+    shibAuthenticationIstant: '%env(SHIB_AUTHENTICATION_INSTANT)%'
+    shibAuthnContextClass: '%env(SHIB_AUTHN_CONTEXT_CLASS)%'
+  sentry_dsn: '%env(SENTRY_DSN)%'
+  login_route: '%env(LOGIN_ROUTE)%' #name of the route
+  single_logout_url: '%env(SINGLE_LOGOUT_URL)%'
+  browsers_restrictions: '%env(BROWSERS_RESTRICTIONS)%'
+  io_api_url: '%env(IO_API_URL)%'
+  cache_max_age: '%env(CACHE_MAX_AGE)%'
+  metrics_type: '%env(METRICS_TYPE)%'
+  metrics_redis_host: '%env(METRICS_REDIS_HOST)%'
+  metrics_redis_port: 6379 #se passato con variabile da errore sul tipo, risolto in sf4
+  metrics_redis_password: '%env(METRICS_REDIS_PASSWORD)%'
+  upload_destination: '%env(UPLOAD_DESTINATION)%'
+  s3_region: '%env(S3_REGION)%'
+  s3_key: '%env(S3_KEY)%'
+  s3_secret: '%env(S3_SECRET)%'
+  s3_bucket: '%env(S3_BUCKET)%'
+  deda_login_client_id: 'example'
+  deda_login_secret: 'example'
+  deda_login_env: 'prod'
+  kafka_url: '%env(KAFKA_URL)%'
+  ksqldb_url: '%env(KSQLDB_URL)%'
+  kafka_event_version: '%env(KAFKA_EVENT_VERSION)%'
+  kafka_request_timeout: '%env(KAFKA_REQUEST_TIMEOUT)%'
+  kafka_topics:
+    applications: '%env(KAFKA_TOPIC_APPLICATIONS)%'
+    services: '%env(KAFKA_TOPIC_SERVICES)%'
+    meetings: '%env(KAFKA_TOPIC_MEETINGS)%'
+    calendars: '%env(KAFKA_TOPIC_CALENDARS)%'
+  api_version: 1
+  cas_login_url: 'https://mycasserver/cas/'
+  cas_validation_url: 'https://mycasserver/cas/serviceValidate'
+  # Payment gateways
+  payment_gateways:
+    bollo:
+      name: Bollo
+      url: null
+      handler: bollo # <-- identificativo dell'handler che gestisce il pagamento
+      enabled: true
+    efil:
+      name: Efil
+      url: efil.gateway.opencontent.io
+      handler: generic-external
+      enabled: true
+    mypay:
+      name: Mypay
+      url: mypay.gateway.opencontent.io
+      handler: mypay
+      enabled: true
+  analytics:
+    plan: '%env(ANALYTICS_PLAN)%'
+  google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+  #Default fallback if env not set
+  env(PREFIX): ''
+  env(DB_DRIVER): 'pdo_pgsql'
+  env(DB_HOST): 'postgres'
+  env(DB_PORT): '5432'
+  env(DB_NAME): 'sdc'
+  env(DB_USER): 'sdc'
+  env(DB_PASSWORD): 'sdc'
+  env(DB_RECONNECT_ATTEMPS): 3
+  env(MAILER_TRANSPORT): 'smtp'
+  env(MAILER_HOST): '127.0.0.1'
+  env(MAILER_PORT): '25'
+  env(MAILER_USER): null
+  env(MAILER_PASSWORD): null
+  env(PEC_MAILER_TRANSPORT): 'smtp'
+  env(PEC_MAILER_HOST): 'smpt.pec.host'
+  env(PEC_MAILER_PORT): '465'
+  env(PEC_MAILER_USER): null
+  env(PEC_MAILER_PASSWORD): null
+  env(PEC_DELIVERY_ADDRESS): 'pec.stanzadelcittadino@localtest.me'
+  env(SECRET): 'ThisTokenIsNotSoSecretChangeIt'
+  env(DEFAULT_FROM_EMAIL_ADDRESS): 'stanzadelcittadino@localtest.me'
+  env(WKHTMLBINARY): 'wkhtmltopdf'
+  env(WKHTMLTOPDF_SERVICE): 'wkhtmltopdf'
+  env(EZ_PASSWORD): 'ez'
+  env(PITRE_ADAPTER_URL): 'http://localhost:8080/'
+  env(HEADER_TOP_TITLE): 'Provincia autonoma di Trento'
+  env(HEADER_TOP_LINK): 'http://www.provincia.tn.it/'
+  env(FOOTER_CREDITS): 'La <strong>Stanza del cittadino</strong> è una iniziativa progettuale del Consorzio dei Comuni Trentini'
+  env(OCSDC_SCHEME): 'https'
+  env(OCSDC_HOST): 'devsdc.opencontent.it'
+  env(GISCOM_PASSWORD): 'giscom'
+  env(GISCOM_ADAPTER_URL): 'https://www.giscom.cloud/WebAPI/'
+  env(GISCOM_ADAPTER_USERNAME): 'pippo'
+  env(GISCOM_ADAPTER_PASSWORD): 'passw'
+  env(PASSWORD_LIFE_TIME): '365'
+  env(INACTIVE_USER_LIFE_TIME): '545'
+  env(LOGS_PATH): '%kernel.logs_dir%/%kernel.environment%.log'
+  env(FORMSERVER_PRIVATE_URL): 'http//formserver'
+  env(FORMSERVER_PUBLIC_URL): 'http://formserver.localtest.me'
+  env(FORMSERVER_ADMIN_URL): 'http://formserver.localtest.me'
+  env(HASH_VALIDITY): '1'
+  env(TOKEN_TTL): '3600'
+  env(RECAPTCHA_KEY): ''
+  env(RECAPTCHA_SECRET): ''
+  env(SHIB_CODICEFISCALE): 'shibb_pat_attribute_codicefiscale'
+  env(SHIB_CAPDOMICILIO): 'shibb_pat_attribute_capdomicilio'
+  env(SHIB_CAPRESIDENZA): 'shibb_pat_attribute_capresidenza'
+  env(SHIB_CELLULARE): 'shibb_pat_attribute_cellulare'
+  env(SHIB_CITTADOMICILIO): 'shibb_pat_attribute_cittadomicilio'
+  env(SHIB_CITTARESIDENZA): 'shibb_pat_attribute_cittaresidenza'
+  env(SHIB_COGNOME): 'shibb_pat_attribute_cognome'
+  env(SHIB_DATANASCITA): 'shibb_pat_attribute_datanascita'
+  env(SHIB_EMAILADDRESS): 'shibb_pat_attribute_emailaddress'
+  env(SHIB_EMAILADDRESSPERSONALE): 'shibb_pat_attribute_emailaddresspersonale'
+  env(SHIB_INDIRIZZODOMICILIO): 'shibb_pat_attribute_indirizzodomicilio'
+  env(SHIB_INDIRIZZORESIDENZA): 'shibb_pat_attribute_indirizzoresidenza'
+  env(SHIB_LUOGONASCITA): 'shibb_pat_attribute_luogonascita'
+  env(SHIB_NOME): 'shibb_pat_attribute_nome'
+  env(SHIB_PROVINCIADOMICILIO): 'shibb_pat_attribute_provinciadomicilio'
+  env(SHIB_PROVINCIANASCITA): 'shibb_pat_attribute_provincianascita'
+  env(SHIB_PROVINCIARESIDENZA): 'shibb_pat_attribute_provinciaresidenza'
+  env(SHIB_SESSO): 'shibb_pat_attribute_sesso'
+  env(SHIB_STATODOMICILIO): 'shibb_pat_attribute_statodomicilio'
+  env(SHIB_STATONASCITA): 'shibb_pat_attribute_statonascita'
+  env(SHIB_STATORESIDENZA): 'shibb_pat_attribute_statoresidenza'
+  env(SHIB_TELEFONO): 'shibb_pat_attribute_telefono'
+  env(SHIB_TITOLO): 'shibb_pat_attribute_titolo'
+  env(SHIB_IDCARD): 'shibb_IDCARD'
+  env(SHIB_X509CERTIFICATE_ISSUERDN): 'shibb_pat_attribute_x509certificate_issuerdn'
+  env(SHIB_X509CERTIFICATE_SUBJECTDN): 'shibb_pat_attribute_x509certificate_subjectdn'
+  env(SHIB_X509CERTIFICATE_BASE64): 'shibb_pat_attribute_x509certificate_base64'
+  env(SHIB_SPID_CODE): 'shibb_pat_attribute_spid_code'
+  env(SHIB_SESSION_ID): 'shibb_Shib-Session-ID'
+  env(SHIB_SESSION_INDEX): 'shibb_Shib-Session-Index'
+  env(SHIB_AUTHENTICATION_INSTANT): 'shibb_Shib-Authentication-Instant'
+  env(SHIB_AUTHN_CONTEXT_CLASS): 'shibb_Shib-AuthnContext-Class'
+  env(BOX_LOGIN_TITLE): 'Usi SPID o CPS?'
+  env(BOX_LOGIN_TEXT): "Puoi autenticarti con SPID o Carta Provinciale dei Servizi per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)"
+  env(BOX_LOGIN_BUTTON): 'Entra con SPID/CPS'
+  env(SENTRY_DSN): ''
+  env(LOGIN_ROUTE): 'login_pat' #name of the route
+  env(SINGLE_LOGOUT_URL): '/Shibboleth.sso/Logout'
+  env(BROWSERS_RESTRICTIONS): null
+  env(IO_API_URL): 'https://api.io.italia.it/api/v1'
+  env(CACHE_MAX_AGE): '0'
+  env(METRICS_TYPE): 'in_memory'
+  env(METRICS_REDIS_HOST): 'redis'
+  env(METRICS_REDIS_PORT): 6379
+  env(METRICS_REDIS_PASSWORD): ~
+  env(UPLOAD_DESTINATION): 'local_filesystem'
+  env(S3_REGION): 'eu-west-1'
+  env(S3_KEY): ''
+  env(S3_SECRET): ''
+  env(S3_BUCKET): 'test'
+  env(KAFKA_URL): null
+  env(KSQLDB_URL): null
+  env(KAFKA_EVENT_VERSION): 1
+  env(KAFKA_REQUEST_TIMEOUT): 2
+  env(KAFKA_TOPIC_APPLICATIONS): 'applications'
+  env(KAFKA_TOPIC_SERVICES): 'services'
+  env(KAFKA_TOPIC_MEETINGS): 'meetings'
+  env(KAFKA_TOPIC_CALENDARS): 'calendars'
+  env(API_VERSION): 1
+  env(MYPAY_ADAPTER_URL): 'https://mypay-dev.ship.opencontent.io'
+  env(ANALYTICS_PLAN): 'free'

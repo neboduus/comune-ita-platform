@@ -5,14 +5,14 @@ namespace App\Command;
 
 use App\Entity\Pratica;
 use Ramsey\Uuid\Uuid;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 
-class ChangeApplicationStatusCommand extends ContainerAwareCommand
+class ChangeApplicationStatusCommand extends Command
 {
 
   protected function configure()

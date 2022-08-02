@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Entity\Ente;
 use App\Entity\Servizio;
+use Doctrine\ORM\EntityManagerInterface;
 use RuntimeException;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class InstanceService
 {
@@ -13,18 +13,18 @@ class InstanceService
   private $instance;
 
   /**
-   * @var RegistryInterface
+   * @var EntityManagerInterface
    */
-  private $doctrine;
+  private $entityManager;
 
   /**
    * TermsAcceptanceCheckerService constructor.
-   * @param RegistryInterface $doctrine
+   * @param EntityManagerInterface $doctrine
    * @param string $instance
    */
-  public function __construct(RegistryInterface $doctrine, $instance)
+  public function __construct(EntityManagerInterface $doctrine, $instance)
   {
-    $this->doctrine = $doctrine;
+    $this->entityManager = $doctrine;
     $this->instance = $instance;
   }
 
@@ -43,7 +43,7 @@ class InstanceService
       throw new RuntimeException("Ente not configured");
     }
 
-    $repo = $this->doctrine->getRepository('App:Ente');
+    $repo = $this->entityManager->getRepository('App:Ente');
     $ente = $repo->findOneBy(array('slug' => $this->instance));
     if (!$ente instanceof Ente) {
       throw new RuntimeException("Ente $this->instance not found");

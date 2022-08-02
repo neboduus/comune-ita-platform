@@ -1,7 +1,32 @@
-controllers:
-    resource: ../../src/Controller/
-    type: annotation
+#controllers:
+#  resource: ../../src/Controller/
+#  type: annotation
+#  prefix:   "/%prefix%"
 
 kernel:
-    resource: ../../src/Kernel.php
-    type: annotation
+  resource: ../../src/Kernel.php
+  type: annotation
+
+api_auth:
+  path: "/%prefix%/api/auth"
+  methods: [ POST ]
+
+rest:
+  resource: '../../src/Controller/Rest/'
+  type: annotation
+  prefix: "/%prefix%/api"
+
+general:
+  resource: '../../src/Controller/General/'
+  type: annotation
+  prefix: "/%prefix%"
+
+app:
+  resource: '../../src/Controller/Ui/'
+  type: annotation
+  prefix: "/%prefix%/{_locale}"
+  requirements:
+    _locale: '%app_locales%'
+  defaults:
+    _locale: '%locale%'
+

@@ -13,8 +13,9 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Twig\Environment;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class DefaultHandler extends AbstractServizioHandler
 {
@@ -29,7 +30,7 @@ class DefaultHandler extends AbstractServizioHandler
   /** @var SessionInterface */
   protected $session;
 
-  /** @var EngineInterface */
+  /** @var Environment */
   protected $templating;
 
   /** @var string */
@@ -43,25 +44,25 @@ class DefaultHandler extends AbstractServizioHandler
 
   /**
    * DefaultHandler constructor.
-   * @param TokenStorage $tokenStorage
+   * @param TokenStorageInterface $tokenStorage
    * @param LoggerInterface $logger
    * @param UrlGeneratorInterface $router
    * @param EntityManagerInterface $em
    * @param PraticaFlowRegistry $flowRegistry
    * @param SessionInterface $session
-   * @param EngineInterface $templating
+   * @param Environment $templating
    * @param $formServerPublicUrl
    * @param UserSessionService $userSessionService
    * @param $browserRestrictions
    */
   public function __construct(
-    TokenStorage $tokenStorage,
+    TokenStorageInterface $tokenStorage,
     LoggerInterface $logger,
     UrlGeneratorInterface $router,
     EntityManagerInterface $em,
     PraticaFlowRegistry $flowRegistry,
     SessionInterface $session,
-    EngineInterface $templating,
+    Environment $templating,
     $formServerPublicUrl,
     UserSessionService $userSessionService,
     $browserRestrictions

@@ -4,11 +4,11 @@ namespace App\Command;
 
 use App\DataFixtures\ORM\LoadData;
 use App\Entity\OperatoreUser;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class LoadServiziCommand extends ContainerAwareCommand{
+class LoadServiziCommand extends Command{
     protected function configure()
     {
         $this

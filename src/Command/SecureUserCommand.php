@@ -7,12 +7,12 @@ use App\Entity\OperatoreUser;
 
 use App\ScheduledAction\ScheduledActionHandlerInterface;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class SecureUserCommand extends ContainerAwareCommand
+class SecureUserCommand extends Command
 {
     protected function configure()
     {

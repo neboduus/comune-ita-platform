@@ -10,6 +10,7 @@ use App\Utils\BrowserParser;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use WhichBrowser\Parser;
 
@@ -21,7 +22,7 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
   protected $callToActionText = '';
 
   /**
-   * @var TokenStorage
+   * @var TokenStorageInterface
    */
   protected $tokenStorage;
 
@@ -38,11 +39,11 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
 
   /**
    * AbstractServizioHandler constructor.
-   * @param TokenStorage $tokenStorage
+   * @param TokenStorageInterface $tokenStorage
    * @param LoggerInterface $logger
    * @param UrlGeneratorInterface $router
    */
-  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
+  public function __construct(TokenStorageInterface $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
   {
     $this->tokenStorage = $tokenStorage;
     $this->logger = $logger;

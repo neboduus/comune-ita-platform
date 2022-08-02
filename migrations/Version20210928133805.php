@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Application\Migrations;
+namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20210928133805 extends AbstractMigration
 {
-    public function up(Schema $schema): void : void
+    public function up(Schema $schema):void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
@@ -21,7 +21,7 @@ final class Version20210928133805 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_4E10122D727ACA70 ON categoria (parent_id)');
     }
 
-    public function down(Schema $schema): void : void
+    public function down(Schema $schema):void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');

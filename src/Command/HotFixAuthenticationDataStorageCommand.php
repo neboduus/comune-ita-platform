@@ -6,11 +6,11 @@ use App\Entity\Pratica;
 use App\Entity\UserSession;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class HotFixAuthenticationDataStorageCommand extends ContainerAwareCommand
+class HotFixAuthenticationDataStorageCommand extends Command
 {
   protected function configure()
   {
