@@ -15,12 +15,12 @@
 /vendor/
 /bin/*
 !/bin/dockerized_startup
-/web/bundles/
-/web/css
-/web/js
-/web/build
-/web/bootstrap-italia
-/web/VERSION
+/public/bundles/
+/public/css
+/public/js
+/public/build
+/public/bootstrap-italia
+/public/VERSION
 /bower_components
 /node_modules
 /coverage
@@ -31,7 +31,7 @@ yarn-error.log
 .unison*
 docker-compose.override.yml
 /compose_conf/pitre-wrapper
-/web/translations/
+/public/translations/
 /public/bundles/
 
 ###> symfony/framework-bundle ###
@@ -39,8 +39,6 @@ docker-compose.override.yml
 /.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/public/bootstrap-italia/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###

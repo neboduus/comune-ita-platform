@@ -2,13 +2,19 @@
 #    path: /
 #    controller: App\Controller\DefaultController::commonAction
 
+prometheus:
+  path: /prometheus.json
+  defaults: { _controller: App\Controller\General\MetricsController::prometheusAction}
+
+status:
+  path: /php-status
+  defaults: { _controller: App\Controller\Ui\Frontend\DefaultController::statusAction}
+
+home:
+  path: /
+  defaults: { _controller: App\Controller\Ui\Frontend\DefaultController::commonAction }
+
 api_auth:
   path: "/%prefix%/api/auth"
-  methods:  [POST]
-
-rest:
-  resource: ../src/Controller/Rest
-  type: annotation
-  prefix: "/%prefix%/api"
-
+  methods: [ POST ]
 

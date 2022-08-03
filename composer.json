@@ -84,7 +84,7 @@
     "willdurand/js-translation-bundle": "*"
   },
   "require-dev": {
-    "symfony/dotenv": "^4.0",
+    "symfony/dotenv": "*",
     "symfony/phpunit-bridge": "^4.0",
     "phpspec/phpspec": "*",
     "phpunit/phpunit": "7.5.20",

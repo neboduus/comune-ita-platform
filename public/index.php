@@ -13,11 +13,8 @@ require dirname(__DIR__).'/config/bootstrap.php';
 
 if ($_SERVER['APP_DEBUG']) {
     umask(0000);
-
     Debug::enable();
 }
-
-$request = Request::createFromGlobals();
 
 if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
     Request::setTrustedProxies(explode(',', $trustedProxies), Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PORT | Request::HEADER_X_FORWARDED_PROTO);
@@ -26,6 +23,8 @@ if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? false) {
 if ($trustedHosts = $_SERVER['TRUSTED_HOSTS'] ?? false) {
     Request::setTrustedHosts([$trustedHosts]);
 }
+
+$request = Request::createFromGlobals();
 
 // handle queue-it if needed as soon as possible before kernel instantiation
 // @see https://github.com/queueit/KnownUser.V3.PHP/blob/master/README.md
@@ -74,18 +73,11 @@ if ($queueItCustomerId !== false) {
   }
 }
 
-/*
-$kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
-$request = Request::createFromGlobals();
-$response = $kernel->handle($request);
-$response->send();
-$kernel->terminate($request, $response);*/
-
 // Load environment from server variables, default is prod
 $env = 'prod';
 $debug = false;
-if ($request->server->has('SYMFONY_ENV') && in_array($request->server->get('SYMFONY_ENV'), ['prod', 'dev', 'test'])) {
-  $env = $request->server->get('SYMFONY_ENV');
+if ($request->server->has('APP_ENV') && in_array($request->server->get('APP_ENV'), ['prod', 'dev', 'test'])) {
+  $env = $request->server->get('APP_ENV');
   if ($env == 'dev') {
     $debug = true;
   }

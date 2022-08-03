@@ -88,4 +88,4 @@ COPY compose_conf/php/init.d/*.sh /docker-entrypoint-init.d/
 ENV LOGS_PATH=php://stderr PHP_DATE_TIMEZONE=Europe/Rome
 
 # generate js transaltions file
-RUN php bin/console bazinga:js-translation:dump public --format=js --pattern=/translations/{domain}.{_format}
+#RUN php bin/console bazinga:js-translation:dump public --format=js --pattern=/translations/{domain}.{_format}
