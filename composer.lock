@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "83b7db3e36013782d682ee5da300adb4",
+    "content-hash": "5f83c97ab6910f6c123608294e81a137",
     "packages": [
         {
             "name": "anyx/login-gate-bundle",
@@ -5127,47 +5127,62 @@
         },
         {
             "name": "omines/datatables-bundle",
-            "version": "dev-fix-0-3",
+            "version": "0.5.5",
             "source": {
                 "type": "git",
-                "url": "https://github.com/OpencontentCoop/datatables-bundle.git",
-                "reference": "7e580cc8088b5215e7e356880afffbac51a70a32"
+                "url": "https://github.com/omines/datatables-bundle.git",
+                "reference": "b8a16c365f9d8e97d1e890e8783249f979f0d7ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/omines/datatables-bundle/zipball/b8a16c365f9d8e97d1e890e8783249f979f0d7ca",
+                "reference": "b8a16c365f9d8e97d1e890e8783249f979f0d7ca",
+                "shasum": ""
             },
             "require": {
-                "php": "^7.0.8",
-                "symfony/framework-bundle": "^3.4|^4.1",
-                "symfony/property-access": "^3.4|^4.1",
-                "symfony/translation": "^3.4|^4.1"
+                "php": ">=7.2",
+                "symfony/event-dispatcher": "^4.4|^5.0",
+                "symfony/framework-bundle": "^4.4|^5.0",
+                "symfony/options-resolver": "^4.4|^5.0",
+                "symfony/property-access": "^4.4|^5.0",
+                "symfony/translation": "^4.4|^5.0"
             },
             "require-dev": {
-                "doctrine/common": "^2.6",
-                "doctrine/doctrine-bundle": "^1.6.7",
-                "doctrine/orm": "^2.5",
+                "doctrine/common": "^2.6|^3.0",
+                "doctrine/doctrine-bundle": "^2.3|^3.0",
+                "doctrine/orm": "^2.6.3",
+                "doctrine/persistence": "^1.3.4|^2.0",
+                "ext-curl": "*",
+                "ext-json": "*",
                 "ext-pdo_sqlite": "*",
+                "ext-zip": "*",
                 "friendsofphp/php-cs-fixer": "^2.7",
                 "mongodb/mongodb": "^1.2",
-                "phpunit/phpunit": "^6.1|^7.1",
+                "ocramius/package-versions": "^1.4",
+                "phpoffice/phpspreadsheet": "^1.6",
                 "ruflin/elastica": "^6.0",
-                "symfony/browser-kit": "^3.4|^4.1",
-                "symfony/css-selector": "^3.4|^4.1",
-                "symfony/dom-crawler": "^3.4|^4.1",
-                "symfony/phpunit-bridge": "^3.4|^4.1",
-                "symfony/templating": "^3.4|^4.1",
-                "symfony/twig-bundle": "^3.4|^4.1",
-                "symfony/var-dumper": "^3.4|^4.1",
-                "symfony/yaml": "^3.4|^4.1"
+                "symfony/browser-kit": "^4.4|^5.0",
+                "symfony/css-selector": "^4.4|^5.0",
+                "symfony/dom-crawler": "^4.4|^5.0",
+                "symfony/intl": "^4.4|^5.0",
+                "symfony/mime": "^4.4|^5.0",
+                "symfony/phpunit-bridge": "^4.4|^5.0",
+                "symfony/twig-bundle": "^4.4|^5.0",
+                "symfony/var-dumper": "^4.4|^5.0",
+                "symfony/yaml": "^4.4|^5.0"
             },
             "suggest": {
                 "doctrine/doctrine-bundle": "For integrated access to Doctrine object managers",
                 "doctrine/orm": "For full automated integration with Doctrine entities",
                 "mongodb/mongodb": "For integration with MongoDB collections",
+                "phpoffice/phpspreadsheet": "To export the data from DataTables to Excel",
                 "ruflin/elastica": "For integration with Elasticsearch indexes",
                 "symfony/twig-bundle": "To use default Twig based rendering and TwigColumn"
             },
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.2-dev"
+                    "dev-master": "0.5-dev"
                 }
             },
             "autoload": {
@@ -5175,11 +5190,7 @@
                     "Omines\\DataTablesBundle\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -5208,9 +5219,10 @@
                 "symfony"
             ],
             "support": {
-                "issues": "https://github.com/omines/datatables-bundle/issues"
+                "issues": "https://github.com/omines/datatables-bundle/issues",
+                "source": "https://github.com/omines/datatables-bundle/tree/0.5.5"
             },
-            "time": "2022-06-06T10:17:28+00:00"
+            "time": "2021-06-29T08:12:37+00:00"
         },
         {
             "name": "oneup/flysystem-bundle",
@@ -15962,17 +15974,9 @@
             "time": "2021-07-28T10:34:58+00:00"
         }
     ],
-    "aliases": [
-        {
-            "package": "omines/datatables-bundle",
-            "version": "dev-fix-0-3",
-            "alias": "0.3.1",
-            "alias_normalized": "0.3.1.0"
-        }
-    ],
+    "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "omines/datatables-bundle": 20,
         "roave/security-advisories": 20
     },
     "prefer-stable": false,
@@ -15986,5 +15990,5 @@
         "ext-simplexml": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }
