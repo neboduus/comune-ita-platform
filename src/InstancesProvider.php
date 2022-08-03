@@ -79,13 +79,13 @@ class InstancesProvider
       'params' => [],
     ];
 
-    $env = $_SERVER['SYMFONY_ENV'];
+    $env = $_SERVER['APP_ENV'];
 
     $instancesFilepath = false;
-    if (file_exists(__DIR__ . '/../../app/instances_' . $env . '.yml')) {
-      $instancesFilepath = __DIR__ . '/../../app/instances_' . $env . '.yml';
-    } elseif (file_exists(__DIR__ . '/../../config/instances.yml')) {
-      $instancesFilepath = __DIR__ . '/../../app/instances.yml';
+    if (file_exists(__DIR__ . '/../config/instances_' . $env . '.yml')) {
+      $instancesFilepath = __DIR__ . '/../config/instances_' . $env . '.yml';
+    } elseif (file_exists(__DIR__ . '/../config/instances.yml')) {
+      $instancesFilepath = __DIR__ . '/../config/instances.yml';
     }
     if ($instancesFilepath) {
       $instances = Yaml::parse(file_get_contents($instancesFilepath));

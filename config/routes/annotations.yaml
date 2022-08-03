@@ -7,22 +7,3 @@ kernel:
   resource: ../../src/Kernel.php
   type: annotation
 
-rest:
-  resource: '../../src/Controller/Rest/'
-  type: annotation
-  prefix: "/%prefix%/api"
-
-general:
-  resource: '../../src/Controller/General/'
-  type: annotation
-  prefix: "/%prefix%"
-
-app:
-  resource: '../../src/Controller/Ui/'
-  type: annotation
-  prefix: "/%prefix%/{_locale}"
-  requirements:
-    _locale: '%app_locales%'
-  defaults:
-    _locale: '%locale%'
-

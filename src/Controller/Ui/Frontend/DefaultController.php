@@ -66,7 +66,6 @@ class DefaultController extends Controller
    */
   public function commonAction()
   {
-
     if ($this->instanceService->hasInstance()) {
       return $this->forward(ServiziController::class . '::serviziAction');
     } else {
@@ -95,7 +94,7 @@ class DefaultController extends Controller
   }
 
   /**
-   * @Route("/", name="home")
+   * @Route("/", name="instance_home")
    * @return Response
    */
   public function indexAction(Request $request)
