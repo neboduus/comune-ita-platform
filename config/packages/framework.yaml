@@ -15,9 +15,3 @@ framework:
   #fragments: true
   php_errors:
     log: true
-
-  # Enables annotations support.
-  serializer: { enable_annotations: true }
-
-  # Enables ide support.
-  ide: 'phpstorm://open?file=%%f&line=%%l&%env(IDE_PATH)%'

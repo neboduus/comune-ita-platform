@@ -1,13 +1,14 @@
 doctrine:
   dbal:
     url: 'postgres://%env(DB_USER)%:%env(DB_PASSWORD)%@%env(DB_HOST)%/%env(DB_NAME)%?server_version=10.6'
+    driver: 'postgresql'
 
   orm:
     auto_generate_proxy_classes: true
     naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
     auto_mapping: true
     mappings:
-      App:
+      entity:
         is_bundle: false
         type: annotation
         dir: '%kernel.project_dir%/src/Entity'
