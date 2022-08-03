@@ -100,7 +100,7 @@ class DefaultController extends Controller
    */
   public function indexAction(Request $request)
   {
-    return $this->forward('App:Ui\Frontend\Servizi:servizi');
+    return $this->forward(ServiziController::class . '::serviziAction');
   }
 
   /**

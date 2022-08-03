@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ImisHandler extends AbstractServizioHandler
 {
@@ -31,11 +31,11 @@ class ImisHandler extends AbstractServizioHandler
 
   /**
    * ImisHandler constructor.
-   * @param TokenStorage $tokenStorage
+   * @param TokenStorageInterface $tokenStorage
    * @param LoggerInterface $logger
    * @param UrlGeneratorInterface $router
    */
-  public function __construct(TokenStorage $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
+  public function __construct(TokenStorageInterface $tokenStorage, LoggerInterface $logger, UrlGeneratorInterface $router)
   {
     parent::__construct($tokenStorage, $logger, $router);
     $this->setCallToActionText('servizio.imis.download_pdf_imis');

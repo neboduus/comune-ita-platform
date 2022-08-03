@@ -7,13 +7,12 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Psr\Log\LogLevel;
 use Ramsey\Uuid\Uuid;
-use Xiidea\EasyAuditBundle\Entity\BaseAuditLog;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="audit_log")
  */
-class AuditLog extends BaseAuditLog
+class AuditLog
 {
     /**
      * @ORM\Column(type="guid")

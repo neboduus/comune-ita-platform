@@ -5,14 +5,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Xiidea\EasyAuditBundle\Annotation\ORMSubscribedEvents;
 
 /**
  * Class OperatoreUser
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks()
  * @package App\Entity
- * @ORMSubscribedEvents("updated, created, deleted")
  */
 class OperatoreUser extends User
 {

@@ -53,12 +53,9 @@ class LoadData extends AbstractFixture implements FixtureInterface
   private function getData($key)
   {
 
-    dirname(__FILE__);
-
-
     if (empty($this->data)) {
-      $rootDir =  $this->getRootDir();
-      $dataDir = $rootDir . '/../data';
+      // Fixme
+      $dataDir = dirname(__FILE__) . '/../../../data';
 
       $categories = Csv::csvToArray($dataDir . '/categories.csv');
       $paymentGateways = Csv::csvToArray($dataDir . '/payment-gateways.csv');

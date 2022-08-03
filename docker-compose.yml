@@ -27,8 +27,6 @@ services:
       retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data/pgdata
-    ports:
-      - 5432:5432
 
   php:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest

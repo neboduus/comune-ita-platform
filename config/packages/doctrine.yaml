@@ -1,6 +1,6 @@
 doctrine:
   dbal:
-    url: 'postgres://%env(DB_USER)%:%env(DB_PASSWORD)%@%env(DB_HOST)%/%env(DB_NAME)%?server_version=10.6'
+    url: 'postgres://%env(DB_USER)%:%env(DB_PASSWORD)%@%env(DB_HOST)%/%env(DB_NAME)%?server_version=11'
     driver: 'postgresql'
 
   orm:

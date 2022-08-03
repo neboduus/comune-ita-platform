@@ -214,7 +214,6 @@ class ConfigureInstanceCommand extends Command
       $user = new AdminUser();
     }
 
-    $um = $this->getContainer()->get('fos_user.user_manager');
     if (empty($password)) {
       $password = $this->randomPassword();
     }
@@ -227,9 +226,16 @@ class ConfigureInstanceCommand extends Command
       ->setCognome($cognome)
       ->setEnabled(true);
 
+    $user->setPassword(
+      $this->passwordEncoder->encodePassword(
+        $user,
+        $password
+      )
+    );
+
     try {
-      $um->updateUser($user);
-      $this->output []= [$ente->getName(), $user->getUsername(), $password];
+      $this->entityManager->persist($user);
+      $this->entityManager->flush();
 
       return $user;
     } catch (\Exception $e) {

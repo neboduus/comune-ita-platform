@@ -81,8 +81,7 @@
     "vich/uploader-bundle": "^1.15",
     "whichbrowser/parser": "*",
     "mhujer/breadcrumbs-bundle": "*",
-    "willdurand/js-translation-bundle": "*",
-    "xiidea/easy-audit": "*"
+    "willdurand/js-translation-bundle": "*"
   },
   "repositories": [
     {

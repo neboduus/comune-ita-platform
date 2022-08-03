@@ -6,7 +6,7 @@ use App\Dto\UserAuthenticationData;
 use App\Entity\CPSUser;
 use App\Services\InstanceService;
 use App\Services\UserSessionService;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
+use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -34,7 +34,7 @@ class CasAuthenticator extends AbstractAuthenticator
   private $instanceService;
 
   /**
-   * @var MetricsGeneratorInterface
+   * @var MetricsCollectorInterface
    */
   private $userMetrics;
 
@@ -54,7 +54,7 @@ class CasAuthenticator extends AbstractAuthenticator
    * @param $loginRoute
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
-   * @param MetricsGeneratorInterface $userMetrics
+   * @param MetricsCollectorInterface $userMetrics
    * @param JWTTokenManagerInterface $JWTTokenManager
    * @param $casLoginUrl
    * @param $casValidationUrl
@@ -65,7 +65,7 @@ class CasAuthenticator extends AbstractAuthenticator
     $loginRoute,
     UserSessionService $userSessionService,
     InstanceService $instanceService,
-    MetricsGeneratorInterface $userMetrics,
+    MetricsCollectorInterface $userMetrics,
     JWTTokenManagerInterface $JWTTokenManager,
     $casLoginUrl,
     $casValidationUrl,

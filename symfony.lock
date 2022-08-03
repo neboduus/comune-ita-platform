@@ -506,17 +506,5 @@
         "files": [
             "config/routes/js_translation.yaml"
         ]
-    },
-    "xiidea/easy-audit": {
-        "version": "1.4",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "1.4",
-            "ref": "4479173f592da7a565275282fbac2d431c91ae50"
-        },
-        "files": [
-            "config/packages/xiidea_easy_audit.yaml"
-        ]
     }
 }

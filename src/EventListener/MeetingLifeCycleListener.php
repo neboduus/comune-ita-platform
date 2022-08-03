@@ -6,7 +6,7 @@ namespace App\EventListener;
 
 use App\Entity\Meeting;
 use App\Services\MeetingService;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use \DateTime;
 use Symfony\Component\Translation\TranslatorInterface;

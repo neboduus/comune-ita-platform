@@ -310,9 +310,10 @@ abstract class User implements UserInterface
   /**
    * @param string $plainPassword
    */
-  public function setPlainPassword(string $plainPassword): void
+  public function setPlainPassword(string $plainPassword)
   {
     $this->plainPassword = $plainPassword;
+    return $this;
   }
 
   /**
@@ -326,9 +327,10 @@ abstract class User implements UserInterface
   /**
    * @param \DateTime $lastLogin
    */
-  public function setLastLogin(\DateTime $lastLogin): void
+  public function setLastLogin(\DateTime $lastLogin)
   {
     $this->lastLogin = $lastLogin;
+    return $this;
   }
 
   /**
@@ -414,7 +416,6 @@ abstract class User implements UserInterface
   public function setNome($nome)
   {
     $this->nome = $nome;
-
     return $this;
   }
 
@@ -434,7 +435,6 @@ abstract class User implements UserInterface
   public function setCognome($cognome)
   {
     $this->cognome = $cognome;
-
     return $this;
   }
 

@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Services\InstanceService;
 use App\Services\UserSessionService;
+use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
 use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,7 +25,7 @@ class DedaLoginAuthenticator extends OpenLoginAuthenticator
    * @param $loginRoute
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
-   * @param MetricsGeneratorInterface $userMetrics
+   * @param MetricsCollectorInterface $userMetrics
    * @param JWTTokenManagerInterface $JWTTokenManager
    */
   public function __construct(
@@ -32,7 +33,7 @@ class DedaLoginAuthenticator extends OpenLoginAuthenticator
                               $loginRoute,
     UserSessionService        $userSessionService,
     InstanceService           $instanceService,
-    MetricsGeneratorInterface $userMetrics,
+    MetricsCollectorInterface $userMetrics,
     JWTTokenManagerInterface  $JWTTokenManager,
     SessionInterface          $session
   )
