@@ -1,7 +1,7 @@
 parameters:
+  version: 1.26.0-rc.1
   locale: it
   app_locales: it
-  version: 1.26.0-rc.1
   prefix: '%env(PREFIX)%'
   instance: ''
   protocollo: ''
