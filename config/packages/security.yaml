@@ -2,6 +2,7 @@ security:
   # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
   encoders:
     App\Entity\User: bcrypt
+
   providers:
     chain_provider:
       chain:
@@ -58,9 +59,11 @@ security:
           - lexik_jwt_authentication.jwt_token_authenticator
 
     backend:
-      #logout_on_user_change: true
+      logout_on_user_change: true
+      stateless: false
+      context: sdc_auth_context
       anonymous: true
-      pattern: ^/%prefix%/(operatori|admin)
+      pattern: ^/%prefix%/(%app_locales%)/(operatori|admin)
       user_checker: App\Security\UserChecker
       provider: app_user_provider
       form_login:

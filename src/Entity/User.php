@@ -18,7 +18,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({"operatore" = "OperatoreUser", "cps" = "CPSUser", "admin" = "AdminUser"})
- * @UniqueEntity(fields="usernameCanonical", errorPath="username", message="This value is already used.")
  * @ORM\AttributeOverrides({
  *      @ORM\AttributeOverride(name="email", column=@ORM\Column(type="string", name="email", length=255, unique=false, nullable=true)),
  *      @ORM\AttributeOverride(name="emailCanonical", column=@ORM\Column(type="string", name="email_canonical", length=255, unique=false, nullable=true))
@@ -55,7 +54,7 @@ abstract class User implements UserInterface
 
   /**
    * @var string
-   * @ORM\Column(type="string", length=180)
+   * @ORM\Column(type="string", length=180, unique=true)
    */
   protected $usernameCanonical;
 
@@ -80,7 +79,7 @@ abstract class User implements UserInterface
    * The salt to use for hashing.
    *
    * @var string
-   * @ORM\Column(type="string", length=255)
+   * @ORM\Column(type="string", length=255, nullable=true)
    */
   protected $salt;
 
@@ -101,6 +100,7 @@ abstract class User implements UserInterface
 
   /**
    * @var \DateTime
+   * @ORM\Column(name="last_login", type="datetime", nullable=true)
    */
   protected $lastLogin;
 
@@ -108,12 +108,13 @@ abstract class User implements UserInterface
    * Random string sent to the user email address in order to verify it.
    *
    * @var string
-   * @ORM\Column(type="string", length=180)
+   * @ORM\Column(type="string", length=180, unique=true, nullable=true)
    */
   protected $confirmationToken;
 
   /**
    * @var \DateTime
+   * @ORM\Column(name="password_requested_at", type="datetime", nullable=true)
    */
   protected $passwordRequestedAt;
 

@@ -5,8 +5,8 @@ twig:
   exception_controller: null
   form_themes:
     - 'bootstrap_4_layout.html.twig'
-    - 'VichUploaderBundle:Form:fields.html.twig'
-    - 'App:Form:fields.html.twig'
+    #- '@VichUploaderBundle/Form/fields.html.twig'
+    - 'Form/fields.html.twig'
   globals:
     header_top:
       title: "%header_top_title%"

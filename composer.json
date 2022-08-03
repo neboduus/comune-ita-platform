@@ -56,7 +56,7 @@
     "lexik/jwt-authentication-bundle": "*",
     "nelmio/api-doc-bundle": "^3.7",
     "nesbot/carbon": "*",
-    "omines/datatables-bundle": "dev-fix-0-3 as 0.3.1",
+    "omines/datatables-bundle": "*",
     "oneup/flysystem-bundle": "*",
     "php-http/guzzle6-adapter": "*",
     "queueit/knownuserv3": "*",
@@ -83,12 +83,6 @@
     "mhujer/breadcrumbs-bundle": "*",
     "willdurand/js-translation-bundle": "*"
   },
-  "repositories": [
-    {
-      "type": "git",
-      "url": "https://github.com/OpencontentCoop/datatables-bundle.git"
-    }
-  ],
   "require-dev": {
     "symfony/dotenv": "^4.0",
     "symfony/phpunit-bridge": "^4.0",
