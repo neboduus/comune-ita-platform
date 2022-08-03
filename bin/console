@@ -25,19 +25,23 @@ if (!class_exists(Application::class)) {
 }
 
 $input = new ArgvInput();
-$env = $input->getParameterOption(['--env', '-e'], getenv('SYMFONY_ENV') ?: 'dev');
+$env = $input->getParameterOption(['--env', '-e'], getenv('APP_ENV') ?: 'dev');
+
 $instance = $input->getParameterOption(['--instance', '-i'], '');
 
 $debug = getenv('SYMFONY_DEBUG') !== '0' && !$input->hasParameterOption(['--no-debug', '']) && $env !== 'prod';
 
+require dirname(__DIR__).'/config/bootstrap.php';
+
 if ($debug) {
+  umask(0000);
   if (class_exists(Debug::class)) {
     Debug::enable();
   }
 }
 
 if (!empty($instance)) {
-  $instances = Yaml::parse(file_get_contents(__DIR__.'/../app/instances_'.$env.'.yml'));
+  $instances = Yaml::parse(file_get_contents(__DIR__.'/../config/instances_'.$env.'.yml'));
   $instanceParams = $instances['instances'];
 
   $params = false;

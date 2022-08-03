@@ -259,3 +259,6 @@ parameters:
   env(API_VERSION): 1
   env(MYPAY_ADAPTER_URL): 'https://mypay-dev.ship.opencontent.io'
   env(ANALYTICS_PLAN): 'free'
+  env(JWT_SECRET_KEY): '%kernel.project_dir%/config/jwt/private.pem'
+  env(JWT_PUBLIC_KEY): '%kernel.project_dir%/config/jwt/public.pem'
+  env(JWT_PASSPHRASE): 'stanzadelcittadino'

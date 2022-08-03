@@ -1,6 +1,6 @@
 artprima_prometheus_metrics:
-    namespace: myapp
-    type: apcu
-    ignored_routes:
+  namespace: sdc
+  type: in_memory # possible values: in_memory, apcu, redis
+  ignored_routes:
     - prometheus_bundle_prometheus
     - _wdt

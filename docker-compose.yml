@@ -47,7 +47,7 @@ services:
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       PHP_FPM_LOG_LEVEL: error
       ENV: ${ENV:-DEV}
-      SYMFONY_ENV: ${SYMFONY_ENV:-dev}
+      APP_ENV: ${SYMFONY_ENV:-dev}
       ENABLE_MIGRATIONS: 'true'
       ENABLE_INSTANCE_CONFIG: 'true'
       DB_HOST: ${DB_HOST:-postgres}

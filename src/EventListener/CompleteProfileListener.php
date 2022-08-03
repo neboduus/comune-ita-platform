@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Constraints\DateTime;
 
 class CompleteProfileListener
@@ -20,7 +21,7 @@ class CompleteProfileListener
     private $router;
 
     /**
-     * @var TokenStorage
+     * @var TokenStorageInterface
      */
     private $tokenStorage;
 
@@ -35,10 +36,10 @@ class CompleteProfileListener
      * CompleteProfileListener constructor.
      *
      * @param Router $router
-     * @param TokenStorage $tokenStorage
+     * @param TokenStorageInterface $tokenStorage
      * @param CPSUserProvider $userProvider
      */
-    public function __construct(Router $router, TokenStorage $tokenStorage, CPSUserProvider $userProvider, $passwordLifeTime)
+    public function __construct(Router $router, TokenStorageInterface $tokenStorage, CPSUserProvider $userProvider, $passwordLifeTime)
     {
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;

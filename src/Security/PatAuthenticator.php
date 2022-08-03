@@ -7,7 +7,7 @@ use App\Entity\CPSUser;
 use App\Services\InstanceService;
 use App\Services\Metrics\UserMetrics;
 use App\Services\UserSessionService;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
+use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -34,7 +34,7 @@ class PatAuthenticator extends AbstractAuthenticator
    * @param $loginRoute
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
-   * @param MetricsGeneratorInterface $userMetrics
+   * @param MetricsCollectorInterface $userMetrics
    * @param JWTTokenManagerInterface $JWTTokenManager
    */
   public function __construct(
@@ -43,7 +43,7 @@ class PatAuthenticator extends AbstractAuthenticator
     $loginRoute,
     UserSessionService $userSessionService,
     InstanceService $instanceService,
-    MetricsGeneratorInterface $userMetrics,
+    MetricsCollectorInterface $userMetrics,
     JWTTokenManagerInterface $JWTTokenManager
   ) {
     $this->urlGenerator = $urlGenerator;
