@@ -187,7 +187,7 @@ class MailerService
         $ids[] = $id['id'];
       }
 
-      $repo = $this->doctrine->getRepository('App:OperatoreUser');
+      $repo = $this->doctrine->getRepository('App\Entity\OperatoreUser');
       $operatori = $repo->findById($ids);
       if ($operatori != null && !empty($operatori)) {
         foreach ($operatori as $operatore) {

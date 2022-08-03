@@ -308,7 +308,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     //Se messages è  null recupero i messaggi in automatico, per retrocompatibilità su prima versione
     if ($messages === null) {
-      $repo = $this->em->getRepository('App:Pratica');
+      $repo = $this->em->getRepository('App\Entity\Pratica');
       $filters['from_date'] = $integrationRequest->getCreatedAt();
       $filters['visibility'] = Message::VISIBILITY_APPLICANT;
       $messages = $repo->getMessages($filters, $pratica);
@@ -414,7 +414,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   {
 
     /** @var IntegrazioneRepository $integrationRepo */
-    $integrationRepo = $this->em->getRepository('App:Integrazione');
+    $integrationRepo = $this->em->getRepository('App\Entity\Integrazione');
 
     /** @var Integrazione[] $integrations */
     $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());
@@ -703,7 +703,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $params = unserialize($action->getParams());
     if ($action->getType() == self::SCHEDULED_CREATE_FOR_PRATICA) {
       /** @var Pratica $pratica */
-      $pratica = $this->em->getRepository('App:Pratica')->find($params['pratica']);
+      $pratica = $this->em->getRepository('App\Entity\Pratica')->find($params['pratica']);
       if (!$pratica instanceof Pratica) {
         throw new Exception('Not found application with id: ' . $params['pratica']);
       }

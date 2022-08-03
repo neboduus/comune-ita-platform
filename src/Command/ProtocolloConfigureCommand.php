@@ -64,10 +64,10 @@ class ProtocolloConfigureCommand extends Command
     $choice = $this->chooseServizio();
 
     if ($choice != '*' && $choice != 'Tutti') {
-      $servizio = $this->em->getRepository('App:Servizio')->findOneByName($choice);
+      $servizio = $this->em->getRepository('App\Entity\Servizio')->findOneByName($choice);
 
       if (!$servizio) {
-        $servizio = $this->em->getRepository('App:Servizio')->findOneBySlug($choice);
+        $servizio = $this->em->getRepository('App\Entity\Servizio')->findOneBySlug($choice);
       }
 
       if (!$servizio) {
@@ -98,7 +98,7 @@ class ProtocolloConfigureCommand extends Command
       $enti[] = $entiEntity->getName();
     }
     $enteName = $this->io->choice('Seleziona l\'ente da configurare', $enti);
-    $ente = $this->em->getRepository('App:Ente')->findOneByName($enteName);
+    $ente = $this->em->getRepository('App\Entity\Ente')->findOneByName($enteName);
     if (!$ente) {
       throw new InvalidArgumentException("Ente $enteName non trovato");
     }
@@ -187,7 +187,7 @@ class ProtocolloConfigureCommand extends Command
    */
   private function getServizi()
   {
-    $repo = $this->em->getRepository('App:Servizio');
+    $repo = $this->em->getRepository('App\Entity\Servizio');
     return $repo->findBy([
       'slug' => $this->slugServices
     ]);
@@ -198,7 +198,7 @@ class ProtocolloConfigureCommand extends Command
    */
   private function getEnti()
   {
-    $repo = $this->em->getRepository('App:Ente');
+    $repo = $this->em->getRepository('App\Entity\Ente');
 
     return $repo->findAll();
   }

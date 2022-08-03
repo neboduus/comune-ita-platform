@@ -81,7 +81,7 @@ class SubscriptionServicesController extends Controller
       SubscriptionService::STATUS_ACTIVE => $this->translator->trans('webhook.active'),
       SubscriptionService::STATUS_UNACTIVE => $this->translator->trans('webhook.not_Active')
     ];
-    $items = $this->em->getRepository('App:SubscriptionService')->findAll();
+    $items = $this->em->getRepository('App\Entity\SubscriptionService')->findAll();
 
 
     $table = $this->createDataTable()
@@ -207,7 +207,7 @@ class SubscriptionServicesController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
-    $subscriptionServices = $this->em->getRepository('App:SubscriptionService')->findAll();
+    $subscriptionServices = $this->em->getRepository('App\Entity\SubscriptionService')->findAll();
 
     $subscriptionService = new SubscriptionService();
     $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
@@ -274,7 +274,7 @@ class SubscriptionServicesController extends Controller
     /** @var User $user */
     $user = $this->getUser();
 
-    $subscriptionServices = $this->em->getRepository('App:SubscriptionService')->findAll();
+    $subscriptionServices = $this->em->getRepository('App\Entity\SubscriptionService')->findAll();
 
     $form = $this->createForm('App\Form\SubscriptionServiceType', $subscriptionService);
     $form->handleRequest($request);
@@ -361,7 +361,7 @@ class SubscriptionServicesController extends Controller
    */
   public function indexSubscriptionServicePaymentsAction(Request $request)
   {
-    $items = $this->em->getRepository('App:SubscriptionPayment')->findBy([], ['paymentDate' => 'DESC']);
+    $items = $this->em->getRepository('App\Entity\SubscriptionPayment')->findBy([], ['paymentDate' => 'DESC']);
 
     return $this->render('@App/SubscriptionServices/indexSubscriptionServicePayments.html.twig', [
       'user' => $this->getUser(),

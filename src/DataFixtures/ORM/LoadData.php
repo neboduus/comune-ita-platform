@@ -82,7 +82,7 @@ class LoadData extends AbstractFixture implements FixtureInterface
   public function loadCategories(ObjectManager $manager)
   {
     $data = $this->getData('categories');
-    $categoryRepo = $manager->getRepository('App:Categoria');
+    $categoryRepo = $manager->getRepository('App\Entity\Categoria');
     foreach ($data as $item) {
       $category = $categoryRepo->findOneBySlug($item['slug']);
       if (!$category) {
@@ -117,7 +117,7 @@ class LoadData extends AbstractFixture implements FixtureInterface
   public function loadTerminiUtilizzo(ObjectManager $manager)
   {
     $data = $this->getData('privacy');
-    $terminiUtilizzoRepo = $manager->getRepository('App:TerminiUtilizzo');
+    $terminiUtilizzoRepo = $manager->getRepository('App\Entity\TerminiUtilizzo');
     foreach ($data as $item) {
       $terminiUtilizzo = $terminiUtilizzoRepo->findOneByName($item['name']);
       if (!$terminiUtilizzo) {

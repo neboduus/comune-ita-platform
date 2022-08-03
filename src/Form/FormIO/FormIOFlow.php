@@ -33,7 +33,7 @@ class FormIOFlow extends PraticaFlow
         $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
         if (isset($data['related_applications'])) {
           $parentId = trim($data['related_applications']);
-          $parent = $this->em->getRepository('App:Pratica')->find($parentId);
+          $parent = $this->em->getRepository('App\Entity\Pratica')->find($parentId);
           if ($parent instanceof Pratica) {
             $pratica->setParent($parent);
             $pratica->setServiceGroup($parent->getServizio()->getServiceGroup());

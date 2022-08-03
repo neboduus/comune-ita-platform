@@ -48,7 +48,7 @@ class RecipientController extends Controller
   public function indexRecipientsAction()
   {
 
-    $items = $this->entityManager->getRepository('App:Recipient')->findBy([], ['name' => 'asc']);
+    $items = $this->entityManager->getRepository('App\Entity\Recipient')->findBy([], ['name' => 'asc']);
 
     return $this->render( '@App/Admin/indexRecipient.html.twig', [
       'user'  => $this->getUser(),

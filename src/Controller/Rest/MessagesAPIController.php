@@ -129,7 +129,7 @@ class MessagesAPIController extends AbstractFOSRestController
   public function messagesAction($id)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Pratica');
     /** @var Pratica $result */
     $result = $repository->find($id);
     if ($result === null) {
@@ -219,7 +219,7 @@ class MessagesAPIController extends AbstractFOSRestController
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
 
-    $repository = $this->getDoctrine()->getRepository('App:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Pratica');
     /** @var Pratica $result */
     $application = $repository->find($id);
     if ($application === null) {
@@ -335,7 +335,7 @@ class MessagesAPIController extends AbstractFOSRestController
   public function messageAction($messageId)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:Message');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Message');
     /** @var MessageEntity $result */
     $result = $repository->find($messageId);
     if ($result === null) {
@@ -397,7 +397,7 @@ class MessagesAPIController extends AbstractFOSRestController
   public function postMessageAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Pratica');
 
     /** @var Pratica $application */
     $application = $repository->find($id);
@@ -520,7 +520,7 @@ class MessagesAPIController extends AbstractFOSRestController
 
     $allowedPatchFields = ['sent_at', 'read_at', 'clicked_at', 'protocolled_at', 'protocol_number'];
 
-    $repository = $this->getDoctrine()->getRepository('App:Message');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Message');
     $messageEntity = $repository->find($messageId);
     if (!$messageEntity) {
       return $this->view(["Message not found"], Response::HTTP_NOT_FOUND);
@@ -611,14 +611,14 @@ class MessagesAPIController extends AbstractFOSRestController
    */
   public function messageAttachmentAction($messageId, $attachmentId)
   {
-    $message = $this->em->getRepository('App:Message')->find($messageId);
+    $message = $this->em->getRepository('App\Entity\Message')->find($messageId);
     if ($message === null) {
       return $this->view(["Message not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(MessageVoter::VIEW, $message);
 
-    $repository = $this->em->getRepository('App:Allegato');
+    $repository = $this->em->getRepository('App\Entity\Allegato');
     $result = $repository->find($attachmentId);
     if ($result === null) {
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);

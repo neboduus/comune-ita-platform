@@ -237,7 +237,7 @@ class OperatoriController extends Controller
 
     $cpsUserData = false;
     if ($userId) {
-      $cpsUserRepo = $this->entityManager->getRepository('App:CPSUser');
+      $cpsUserRepo = $this->entityManager->getRepository('App\Entity\CPSUser');
       $cpsUser = $cpsUserRepo->find($userId);
       if ($cpsUser instanceof CPSUser) {
         $application->setUser($cpsUser);
@@ -555,7 +555,7 @@ class OperatoriController extends Controller
    */
   public function usageAction()
   {
-    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
     $servizi = $serviziRepository->findBy(
       [
         'status' => Servizio::STATUS_AVAILABLE
@@ -602,9 +602,9 @@ class OperatoriController extends Controller
     $allegati = [];
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
       if (Uuid::isValid($protocollo->id)) {
-        $allegato = $this->entityManager->getRepository('App:Allegato')->find($protocollo->id);
+        $allegato = $this->entityManager->getRepository('App\Entity\Allegato')->find($protocollo->id);
       } else {
-        $allegato = $this->entityManager->getRepository('App:Allegato')->findOneBy(['id_documento_protocollo' => $protocollo->id]);
+        $allegato = $this->entityManager->getRepository('App\Entity\Allegato')->findOneBy(['id_documento_protocollo' => $protocollo->id]);
       }
       if ($allegato instanceof Allegato) {
         $allegati[] = [
@@ -700,7 +700,7 @@ class OperatoriController extends Controller
     $this->checkUserCanAccessPratica($user, $pratica);
     $tab = $request->query->get('tab');
 
-    $attachments = $this->entityManager->getRepository('App:Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->entityManager->getRepository('App\Entity\Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
 
     /** @var CPSUser $applicant */
     $applicant = $pratica->getUser();
@@ -802,7 +802,7 @@ class OperatoriController extends Controller
     }
 
     /** @var PraticaRepository $repository */
-    $repository = $this->getDoctrine()->getRepository('App:Pratica');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
 
     $fiscalCode = null;
@@ -824,9 +824,9 @@ class OperatoriController extends Controller
 
     foreach ($pratica->getNumeriProtocollo() as $protocollo) {
       if (Uuid::isValid($protocollo->id)) {
-        $allegato = $this->entityManager->getRepository('App:Allegato')->find($protocollo->id);
+        $allegato = $this->entityManager->getRepository('App\Entity\Allegato')->find($protocollo->id);
       } else {
-        $allegato = $this->entityManager->getRepository('App:Allegato')->findOneBy(['idDocumentoProtocollo' => $protocollo->id]);
+        $allegato = $this->entityManager->getRepository('App\Entity\Allegato')->findOneBy(['idDocumentoProtocollo' => $protocollo->id]);
       }
       if ($allegato instanceof Allegato) {
         $moduleProtocols[] = [
@@ -838,7 +838,7 @@ class OperatoriController extends Controller
     }
     if ($pratica->getRispostaOperatore()) {
       foreach ($pratica->getRispostaOperatore()->getNumeriProtocollo() as $protocollo) {
-        $allegato = $this->entityManager->getRepository('App:Allegato')->find($protocollo->id);
+        $allegato = $this->entityManager->getRepository('App\Entity\Allegato')->find($protocollo->id);
         if ($allegato instanceof Allegato) {
           $outcomeProtocols[] = [
             'allegato' => $allegato,
@@ -961,7 +961,7 @@ class OperatoriController extends Controller
    */
   public function listOperatoriByEnteAction()
   {
-    $operatoreRepo = $this->getDoctrine()->getRepository('App:OperatoreUser');
+    $operatoreRepo = $this->getDoctrine()->getRepository('App\Entity\OperatoreUser');
     $operatori = $operatoreRepo->findBy(
       [
         'ente' => $this->getUser()->getEnte(),

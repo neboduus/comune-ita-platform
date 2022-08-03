@@ -286,9 +286,9 @@ class ApplicationDto extends AbstractDto
 
     $integrations = [];
     /** @var RispostaIntegrazioneRepository $integrationAnswerRepo */
-    $integrationAnswerRepo = $this->entityManager->getRepository('App:RispostaIntegrazione');
+    $integrationAnswerRepo = $this->entityManager->getRepository('App\Entity\RispostaIntegrazione');
 
-    $attachmentsRepo = $this->entityManager->getRepository('App:Allegato');
+    $attachmentsRepo = $this->entityManager->getRepository('App\Entity\Allegato');
 
     /** @var RichiestaIntegrazione $integrationRequest */
     foreach ($pratica->getRichiesteIntegrazione() as $integrationRequest) {

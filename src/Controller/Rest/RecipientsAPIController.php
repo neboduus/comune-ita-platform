@@ -70,7 +70,7 @@ class RecipientsAPIController extends AbstractFOSRestController
    */
   public function getRecipientsAction(Request $request)
   {
-    $result = $this->entityManager->getRepository('App:Recipient')->findBy([], ['name' => 'asc']);
+    $result = $this->entityManager->getRepository('App\Entity\Recipient')->findBy([], ['name' => 'asc']);
     return $this->view($result, Response::HTTP_OK);
   }
 
@@ -105,7 +105,7 @@ class RecipientsAPIController extends AbstractFOSRestController
   public function getRecipientAction(Request $request, $id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Recipient');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\Recipient');
       $result = $repository->find($id);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -271,7 +271,7 @@ class RecipientsAPIController extends AbstractFOSRestController
 
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
-    $repository = $this->getDoctrine()->getRepository('App:Recipient');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Recipient');
     $item = $repository->find($id);
 
     if (!$item) {
@@ -373,7 +373,7 @@ class RecipientsAPIController extends AbstractFOSRestController
 
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
-    $repository = $this->getDoctrine()->getRepository('App:Recipient');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Recipient');
     $item = $repository->find($id);
 
     if (!$item) {
@@ -436,7 +436,7 @@ class RecipientsAPIController extends AbstractFOSRestController
   public function deleteRecipientAction($id)
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
-    $item = $this->getDoctrine()->getRepository('App:Recipient')->find($id);
+    $item = $this->getDoctrine()->getRepository('App\Entity\Recipient')->find($id);
     if ($item) {
       $this->entityManager->remove($item);
       $this->entityManager->flush();

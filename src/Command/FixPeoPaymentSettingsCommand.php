@@ -64,7 +64,7 @@ class FixPeoPaymentSettingsCommand extends Command
     $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
     $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
 
-    $repo = $this->em->getRepository('App:Servizio');
+    $repo = $this->em->getRepository('App\Entity\Servizio');
     $services = $repo->findBy(['slug' => $this->slugServices]);
 
     /** @var Servizio $s */

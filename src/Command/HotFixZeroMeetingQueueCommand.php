@@ -54,7 +54,7 @@ class HotFixZeroMeetingQueueCommand extends Command
    */
   private function getOpeningHours()
   {
-    $repo = $this->em->getRepository('App:OpeningHour');
+    $repo = $this->em->getRepository('App\Entity\OpeningHour');
 
     return $repo->findAll();
   }

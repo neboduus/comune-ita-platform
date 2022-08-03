@@ -70,7 +70,7 @@ class ServiceManager
     $repoServices = $this->entityManager->getRepository(Servizio::class);
 
     if ($serviceGroupId) {
-      $serviceGroupRepo = $this->entityManager->getRepository('App:ServiceGroup');
+      $serviceGroupRepo = $this->entityManager->getRepository('App\Entity\ServiceGroup');
       $serviceGroup = $serviceGroupRepo->find($serviceGroupId);
       if (!$serviceGroup instanceof ServiceGroup) {
         throw new NotFoundHttpException("Service group not found");
@@ -79,7 +79,7 @@ class ServiceManager
     }
 
     if ($categoryIds) {
-      $categoriesRepo = $this->entityManager->getRepository('App:Categoria');
+      $categoriesRepo = $this->entityManager->getRepository('App\Entity\Categoria');
       if (is_array($categoryIds)) {
         foreach ($categoryIds as $id) {
           $category = $categoriesRepo->find($id);
@@ -97,7 +97,7 @@ class ServiceManager
     }
 
     if ($recipientIds) {
-      $recipientsRepo = $this->entityManager->getRepository('App:Recipient');
+      $recipientsRepo = $this->entityManager->getRepository('App\Entity\Recipient');
       if (is_array($recipientIds)) {
         foreach ($recipientIds as $id) {
           $recipient = $recipientsRepo->find($id);
@@ -115,7 +115,7 @@ class ServiceManager
     }
 
     if ($geographicAreaIds) {
-      $geographicAreaRepo = $this->entityManager->getRepository('App:GeographicArea');
+      $geographicAreaRepo = $this->entityManager->getRepository('App\Entity\GeographicArea');
       if (is_array($geographicAreaIds)) {
         foreach ($geographicAreaIds as $id) {
           $geographicArea = $geographicAreaRepo->find($id);
@@ -166,7 +166,7 @@ class ServiceManager
 
   private function getNotSharedFacets(&$results)
   {
-    $categoriesRepo = $this->entityManager->getRepository('App:Categoria');
+    $categoriesRepo = $this->entityManager->getRepository('App\Entity\Categoria');
     /** @var QueryBuilder $qb */
     $qb = $categoriesRepo->createQueryBuilder('c');
     $qb->select('c.id', 'c.name')
@@ -187,7 +187,7 @@ class ServiceManager
       }
     }
 
-    $recipientsRepo = $this->entityManager->getRepository('App:Recipient');
+    $recipientsRepo = $this->entityManager->getRepository('App\Entity\Recipient');
     /** @var QueryBuilder $qb */
     $qb = $recipientsRepo->createQueryBuilder('r');
     $qb->select('r.id', 'r.name')
@@ -208,7 +208,7 @@ class ServiceManager
       }
     }
 
-    $geographicAreasRepo = $this->entityManager->getRepository('App:GeographicArea');
+    $geographicAreasRepo = $this->entityManager->getRepository('App\Entity\GeographicArea');
     /** @var QueryBuilder $qb */
     $qb = $geographicAreasRepo->createQueryBuilder('g');
     $qb->select('g.id', 'g.name')
@@ -232,7 +232,7 @@ class ServiceManager
 
   private function getSharedFacets(&$results)
   {
-    $categoriesRepo = $this->entityManager->getRepository('App:Categoria');
+    $categoriesRepo = $this->entityManager->getRepository('App\Entity\Categoria');
     /** @var QueryBuilder $qb */
     $qb = $categoriesRepo->createQueryBuilder('c');
     $qb->select('c.id', 'c.name')
@@ -255,7 +255,7 @@ class ServiceManager
       }
     }
 
-    $recipientsRepo = $this->entityManager->getRepository('App:Recipient');
+    $recipientsRepo = $this->entityManager->getRepository('App\Entity\Recipient');
     /** @var QueryBuilder $qb */
     $qb = $recipientsRepo->createQueryBuilder('r');
     $qb->select('r.id', 'r.name')
@@ -278,7 +278,7 @@ class ServiceManager
       }
     }
 
-    $geographicAreasRepo = $this->entityManager->getRepository('App:GeographicArea');
+    $geographicAreasRepo = $this->entityManager->getRepository('App\Entity\GeographicArea');
     /** @var QueryBuilder $qb */
     $qb = $geographicAreasRepo->createQueryBuilder('g');
     $qb->select('g.id', 'g.name')

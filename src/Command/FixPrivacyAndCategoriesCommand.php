@@ -24,7 +24,7 @@ class FixPrivacyAndCategoriesCommand extends Command
   {
     /** @var EntityManager $entityManager */
     $entityManager = $this->getContainer()->get('doctrine')->getManager();
-    $categories = $entityManager->getRepository('App:Categoria')->findAll();
+    $categories = $entityManager->getRepository('App\Entity\Categoria')->findAll();
 
     $loader = new LoadData();
     $loader->setContainer($this->getContainer());
@@ -33,7 +33,7 @@ class FixPrivacyAndCategoriesCommand extends Command
       $loader->loadCategories($entityManager);
     }
 
-    $privacy = $entityManager->getRepository('App:TerminiUtilizzo')->findAll();
+    $privacy = $entityManager->getRepository('App\Entity\TerminiUtilizzo')->findAll();
     if (empty($privacy)) {
       $output->writeln('Importo i termini di utilizzo');
       $loader->loadTerminiUtilizzo($entityManager);

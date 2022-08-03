@@ -214,7 +214,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     $dispatchSuccess = true;
 
     /** @var RispostaIntegrazioneRepository $integrationAnswerRepo */
-    $integrationAnswerRepo = $this->entityManager->getRepository('App:RispostaIntegrazione');
+    $integrationAnswerRepo = $this->entityManager->getRepository('App\Entity\RispostaIntegrazione');
 
     /** @var RispostaIntegrazione $integrationAnswer */
     $integrationAnswerCollection = $integrationAnswerRepo->findByIntegrationRequest($integrationRequest->getId());
@@ -245,7 +245,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     }
 
     /** @var IntegrazioneRepository $integrationRepo */
-    $integrationRepo = $this->entityManager->getRepository('App:Integrazione');
+    $integrationRepo = $this->entityManager->getRepository('App\Entity\Integrazione');
 
     /** @var Integrazione[] $integrations */
     $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());
@@ -278,7 +278,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
     if (!empty($integrationAnswer->getAttachments())) {
 
-      $allegatoMessaggioRepo = $this->entityManager->getRepository('App:AllegatoMessaggio');
+      $allegatoMessaggioRepo = $this->entityManager->getRepository('App\Entity\AllegatoMessaggio');
 
       foreach ($integrationAnswer->getAttachments() as $allegatoId) {
         $allegato = $allegatoMessaggioRepo->find($allegatoId);

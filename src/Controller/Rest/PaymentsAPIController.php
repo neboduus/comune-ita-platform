@@ -97,7 +97,7 @@ class PaymentsAPIController extends AbstractFOSRestController
     $remoteId = $request->get('remote_id', false);
 
     if ($remoteId) {
-      $repository = $this->entityManager->getRepository('App:Pratica');
+      $repository = $this->entityManager->getRepository('App\Entity\Pratica');
       /** @var Pratica $result */
       $result = $repository->find($remoteId);
       if ($result === null) {

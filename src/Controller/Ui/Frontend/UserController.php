@@ -108,10 +108,10 @@ class UserController extends Controller
     $user = $this->getUser();
 
     /** @var ServizioRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
     $servizi = $serviziRepository->findStickyAvailable(3);
 
-    $praticheRepo = $this->getDoctrine()->getRepository('App:Pratica');
+    $praticheRepo = $this->getDoctrine()->getRepository('App\Entity\Pratica');
     $pratiche = $praticheRepo->findBy(
       ['user' => $user],
       ['creationTime' => 'DESC'],
@@ -121,7 +121,7 @@ class UserController extends Controller
     $threads = [];
 
     $documents = [];
-    $documentRepo = $this->getDoctrine()->getRepository('App:Document');
+    $documentRepo = $this->getDoctrine()->getRepository('App\Entity\Document');
 
     $sql = 'SELECT document.id from document where document.last_read_at is null and ((readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' or document.owner_id = \'' . $user->getId() . '\')';
     $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
@@ -386,7 +386,7 @@ class UserController extends Controller
       ->getQuery()
       ->getResult();
 
-    $repository = $entityManager->getRepository('App:Ente');
+    $repository = $entityManager->getRepository('App\Entity\Ente');
     if (count($entiPerUser) > 0) {
       $entiPerUser = array_reduce($entiPerUser, 'array_merge', array());
       $enti = $repository->findBy(['id' => $entiPerUser]);

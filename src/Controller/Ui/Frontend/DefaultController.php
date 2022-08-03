@@ -120,7 +120,7 @@ class DefaultController extends Controller
   {
     $logger = $this->logger;
 
-    $repo = $this->getDoctrine()->getRepository('App:TerminiUtilizzo');
+    $repo = $this->getDoctrine()->getRepository('App\Entity\TerminiUtilizzo');
 
     /**
      * FIXME: gestire termini multipli

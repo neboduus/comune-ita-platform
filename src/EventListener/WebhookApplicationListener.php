@@ -49,7 +49,7 @@ class WebhookApplicationListener
     $pratica = $event->getPratica();
     $status = $event->getNewStateIdentifier();
 
-    $repo = $this->entityManager->getRepository('App:Webhook');
+    $repo = $this->entityManager->getRepository('App\Entity\Webhook');
     $webhooks = $repo->findBy([
       'trigger' => [$status, Webhook::TRIGGER_ALL],
       'active' => true
@@ -75,7 +75,7 @@ class WebhookApplicationListener
   {
     $message = $event->getItem();
     $pratica = $message->getApplication();
-    $repo = $this->entityManager->getRepository('App:Webhook');
+    $repo = $this->entityManager->getRepository('App\Entity\Webhook');
     $webhooks = $repo->findBy([
       'trigger' => [Webhook::TRIGGER_MESSAGE_CREATED, Webhook::TRIGGER_ALL],
       'active' => true

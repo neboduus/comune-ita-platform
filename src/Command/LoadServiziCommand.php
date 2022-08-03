@@ -34,7 +34,7 @@ class LoadServiziCommand extends Command{
 
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $repo = $em->getRepository('App:Ente');
+        $repo = $em->getRepository('App\Entity\Ente');
         $entiEntites = $repo->findAll();
         $ente = null;
         foreach($entiEntites as $entiEntity){

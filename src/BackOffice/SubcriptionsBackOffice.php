@@ -214,12 +214,12 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       }
     }
 
-    $repo = $this->em->getRepository('App:Subscriber');
+    $repo = $this->em->getRepository('App\Entity\Subscriber');
     $subscriber = $repo->findOneBy(
       array('fiscal_code' => $fixedData['fiscal_code'])
     );
 
-    $repo = $this->em->getRepository('App:SubscriptionService');
+    $repo = $this->em->getRepository('App\Entity\SubscriptionService');
     $subscriptionService = $repo->findOneBy(
       array('code' => $fixedData['code'])
     );

@@ -33,7 +33,7 @@ class ScheduleActionService
   )
   {
     $this->entityManager = $entityManager;
-    $this->entityRepository = $this->entityManager->getRepository('App:ScheduledAction');
+    $this->entityRepository = $this->entityManager->getRepository('App\Entity\ScheduledAction');
     $this->logger = $logger;
   }
 

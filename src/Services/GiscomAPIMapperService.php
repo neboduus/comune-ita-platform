@@ -240,7 +240,7 @@ class GiscomAPIMapperService
     $richiesteIntegrazione = $pratica->getRichiesteIntegrazione();
 
     /** @var RispostaIntegrazioneRepository $integrationAnswerRepo */
-    $integrationAnswerRepo = $this->em->getRepository('App:RispostaIntegrazione');
+    $integrationAnswerRepo = $this->em->getRepository('App\Entity\RispostaIntegrazione');
 
     $risposte = array();
     if (count($richiesteIntegrazione) > 0) {

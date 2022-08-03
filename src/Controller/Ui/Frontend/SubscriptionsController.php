@@ -512,7 +512,7 @@ class SubscriptionsController extends Controller
     }
 
     foreach ($sharedIds as $id) {
-      $userSubscriptions[] = $this->entityManager->getRepository('App:Subscription')->find($id);
+      $userSubscriptions[] = $this->entityManager->getRepository('App\Entity\Subscription')->find($id);
     }
 
     return $this->render('@App/Subscriptions/cpsUserListSubscription.html.twig', [
@@ -531,7 +531,7 @@ class SubscriptionsController extends Controller
   {
     /** @var CPSUser $user */
     $user = $this->getUser();
-    $subscription = $this->entityManager->getRepository('App:Subscription')->find($subscriptionId);
+    $subscription = $this->entityManager->getRepository('App\Entity\Subscription')->find($subscriptionId);
 
     if (!$subscription) {
       $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));
@@ -564,7 +564,7 @@ class SubscriptionsController extends Controller
     /** @var CPSUser $user */
     $user = $this->getUser();
     /** @var SubscriptionPayment $subscriptionPayment */
-    $subscriptionPayment = $this->entityManager->getRepository('App:SubscriptionPayment')->find($subscriptionPaymentId);
+    $subscriptionPayment = $this->entityManager->getRepository('App\Entity\SubscriptionPayment')->find($subscriptionPaymentId);
 
     if (!$subscriptionPayment or $subscriptionPayment->getSubscription()->getId() !== $subscriptionId) {
       $this->addFlash('warning', $this->translator->trans('iscrizioni.no_pagamento'));
@@ -596,7 +596,7 @@ class SubscriptionsController extends Controller
   public function cpsUserPaymentCertificareDownloadAction(Request $request, $subscriptionId, $subscriptionPaymentId): Response
   {
     /** @var SubscriptionPayment $subscriptionPayment */
-    $subscriptionPayment = $this->entityManager->getRepository('App:SubscriptionPayment')->find($subscriptionPaymentId);
+    $subscriptionPayment = $this->entityManager->getRepository('App\Entity\SubscriptionPayment')->find($subscriptionPaymentId);
 
     if (!$subscriptionPayment or $subscriptionPayment->getSubscription()->getId() !== $subscriptionId) {
       $this->addFlash('warning', $this->translator->trans('iscrizioni.no_pagamento'));
@@ -621,7 +621,7 @@ class SubscriptionsController extends Controller
   public function operatorePaymentCertificareDownloadAction(Request $request, $subscriptionId, $subscriptionPaymentId): Response
   {
     /** @var SubscriptionPayment $subscriptionPayment */
-    $subscriptionPayment = $this->entityManager->getRepository('App:SubscriptionPayment')->find($subscriptionPaymentId);
+    $subscriptionPayment = $this->entityManager->getRepository('App\Entity\SubscriptionPayment')->find($subscriptionPaymentId);
 
     if (!$subscriptionPayment or $subscriptionPayment->getSubscription()->getId() !== $subscriptionId) {
       $this->addFlash('warning', $this->translator->trans('iscrizioni.no_pagamento'));
@@ -664,7 +664,7 @@ class SubscriptionsController extends Controller
     /** @var OperatoreUser $user */
     $user = $this->getUser();
 
-    $subscription = $this->entityManager->getRepository('App:Subscription')->find($subscriptionId);
+    $subscription = $this->entityManager->getRepository('App\Entity\Subscription')->find($subscriptionId);
 
     if (!$subscription) {
       $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));
@@ -697,7 +697,7 @@ class SubscriptionsController extends Controller
   {
 
     /** @var Subscription $subscription */
-    $subscription = $this->entityManager->getRepository('App:Subscription')->find($subscriptionId);
+    $subscription = $this->entityManager->getRepository('App\Entity\Subscription')->find($subscriptionId);
 
     if (!$subscription) {
       $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));
@@ -732,7 +732,7 @@ class SubscriptionsController extends Controller
    */
   public function operatoreShareSubscriptionAction(Request $request, $subscriptionId): Response
   {
-    $subscription = $this->entityManager->getRepository('App:Subscription')->find($subscriptionId);
+    $subscription = $this->entityManager->getRepository('App\Entity\Subscription')->find($subscriptionId);
 
     if (!$subscription) {
       $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));
@@ -772,7 +772,7 @@ class SubscriptionsController extends Controller
   public function cpsUserShareSubscriptionAction(Request $request, $subscriptionId): Response
   {
     /** @var Subscription $subscription */
-    $subscription = $this->entityManager->getRepository('App:Subscription')->find($subscriptionId);
+    $subscription = $this->entityManager->getRepository('App\Entity\Subscription')->find($subscriptionId);
 
     if (!$subscription) {
       $this->addFlash('warning', $this->translator->trans('iscrizioni.no_iscrizione'));

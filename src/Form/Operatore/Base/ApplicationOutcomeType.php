@@ -36,7 +36,7 @@ class ApplicationOutcomeType extends AbstractType
     /** @var ApplicationOutcome $outcome */
     $outcome = $builder->getData();
 
-    $repo = $this->entityManager->getRepository('App:Pratica');
+    $repo = $this->entityManager->getRepository('App\Entity\Pratica');
     /** @var Pratica $application */
     $application = $repo->find($outcome->getApplicationId());
 

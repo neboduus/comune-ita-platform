@@ -62,7 +62,7 @@ class HotFixMissingErogatoreCommand extends Command
    */
   private function getServizi()
   {
-    $repo = $this->em->getRepository('App:Servizio');
+    $repo = $this->em->getRepository('App\Entity\Servizio');
 
     return $repo->findAll();
   }

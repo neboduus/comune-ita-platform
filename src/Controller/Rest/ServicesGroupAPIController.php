@@ -110,7 +110,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $criteria = [];
 
     if ($categoryId) {
-      $categoriesRepo = $this->em->getRepository('App:Categoria');
+      $categoriesRepo = $this->em->getRepository('App\Entity\Categoria');
       $category = $categoriesRepo->find($categoryId);
       if (!$category instanceof Categoria) {
         return $this->view(["Category not found"], Response::HTTP_NOT_FOUND);
@@ -119,7 +119,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     }
 
     if ($recipientId) {
-      $recipientsRepo = $this->em->getRepository('App:Recipient');
+      $recipientsRepo = $this->em->getRepository('App\Entity\Recipient');
       $recipient = $recipientsRepo->find($recipientId);
       if (!$recipient instanceof Recipient) {
         return $this->view(["Recipient not found"], Response::HTTP_NOT_FOUND);
@@ -128,7 +128,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     }
 
     if ($geographicAreaId) {
-      $geographicAreaRepo = $this->em->getRepository('App:GeographicArea');
+      $geographicAreaRepo = $this->em->getRepository('App\Entity\GeographicArea');
       $geographicArea = $geographicAreaRepo->find($geographicAreaId);
       if (!$geographicArea instanceof GeographicArea) {
         return $this->view(["Geographic area not found"], Response::HTTP_NOT_FOUND);
@@ -137,7 +137,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     }
 
 
-    $services = $this->em->getRepository('App:ServiceGroup')->findByCriteria($criteria);
+    $services = $this->em->getRepository('App\Entity\ServiceGroup')->findByCriteria($criteria);
     /** @var ServiceGroup $s */
     foreach ($services as $s) {
       if ($notEmpty && $s->getServicesCount() === 0) {
@@ -183,7 +183,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   public function getServiceAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:ServiceGroup');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup');
 
       if (Uuid::isValid($id) ) {
         $result = $repository->find($id);
@@ -346,7 +346,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
-    $repository = $this->getDoctrine()->getRepository('App:ServiceGroup');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup');
     $serviceGroup = $repository->find($id);
 
     if (!$serviceGroup) {
@@ -438,7 +438,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
     $em = $this->getDoctrine()->getManager();
-    $repository = $this->getDoctrine()->getRepository('App:ServiceGroup');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup');
     $serviceGroup = $repository->find($id);
 
     if (!$serviceGroup) {
@@ -499,7 +499,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
-    $service = $this->getDoctrine()->getRepository('App:ServiceGroup')->find($id);
+    $service = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup')->find($id);
     if ($service) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?

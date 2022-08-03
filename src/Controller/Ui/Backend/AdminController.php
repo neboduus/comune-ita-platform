@@ -232,7 +232,7 @@ class AdminController extends Controller
   {
     $em = $this->getDoctrine()->getManager();
 
-    $operatoreUsers = $em->getRepository('App:OperatoreUser')->findAll();
+    $operatoreUsers = $em->getRepository('App\Entity\OperatoreUser')->findAll();
 
     return $this->render('@App/Admin/indexOperatore.html.twig', [
       'user' => $this->getUser(),
@@ -493,7 +493,7 @@ class AdminController extends Controller
     ];
 
     $em = $this->getDoctrine()->getManager();
-    $items = $em->getRepository('App:Servizio')->findBy([], ['name' => 'ASC']);
+    $items = $em->getRepository('App\Entity\Servizio')->findBy([], ['name' => 'ASC']);
 
     return $this->render('@App/Admin/indexServizio.html.twig', [
       'user' => $this->getUser(),
@@ -512,7 +512,7 @@ class AdminController extends Controller
   {
 
     $em = $this->getDoctrine()->getManager();
-    $items = $em->getRepository('App:Servizio')->findBy(['praticaFCQN' => '\App\Entity\FormIO'], ['name' => 'ASC']);
+    $items = $em->getRepository('App\Entity\Servizio')->findBy(['praticaFCQN' => '\App\Entity\FormIO'], ['name' => 'ASC']);
 
     $data = [];
     foreach ($items as $s) {
@@ -568,7 +568,7 @@ class AdminController extends Controller
           return $this->redirectToRoute('admin_servizio_index');
         }
 
-        $category = $em->getRepository('App:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+        $category = $em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
         if ($category instanceof Categoria) {
           $serviceDto->setTopics($category);
         }

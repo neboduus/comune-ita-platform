@@ -47,7 +47,7 @@ class OperatoreAbilitaServizioCommand extends Command
     /** @var EntityManagerInterface $em */
     $em = $this->getContainer()->get('doctrine')->getManager();
 
-    $operatoriRepo = $em->getRepository('App:OperatoreUser');
+    $operatoriRepo = $em->getRepository('App\Entity\OperatoreUser');
     /** @var OperatoreUser $user */
     $user = $operatoriRepo->findOneByUsername($username);
     if (!$user) {
@@ -70,7 +70,7 @@ class OperatoreAbilitaServizioCommand extends Command
       }
     }
 
-    $serviziRepo = $em->getRepository('App:Servizio');
+    $serviziRepo = $em->getRepository('App\Entity\Servizio');
 
     if (empty($input->getOption('all')) && empty($input->getOption('services'))) {
 

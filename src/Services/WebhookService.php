@@ -149,13 +149,13 @@ class WebhookService implements ScheduledActionHandlerInterface
   {
 
     /** @var Pratica $pratica */
-    $pratica = $this->entityManager->getRepository('App:Pratica')->find($params['pratica']);
+    $pratica = $this->entityManager->getRepository('App\Entity\Pratica')->find($params['pratica']);
     if (!$pratica instanceof Pratica) {
       throw new \Exception('Not found application with id: ' . $params['pratica']);
     }
 
     /** @var Webhook $webhook */
-    $webhook = $this->entityManager->getRepository('App:Webhook')->find($params['webhook']);
+    $webhook = $this->entityManager->getRepository('App\Entity\Webhook')->find($params['webhook']);
     if (!$webhook instanceof Webhook) {
       throw new \Exception('Not found webhook with id: ' . $params['pratica']);
     }
@@ -203,13 +203,13 @@ class WebhookService implements ScheduledActionHandlerInterface
   {
 
     /** @var Message $message */
-    $message = $this->entityManager->getRepository('App:Message')->find($params['message']);
+    $message = $this->entityManager->getRepository('App\Entity\Message')->find($params['message']);
     if (!$message instanceof Message) {
       throw new \Exception('Not found Message with id: ' . $params['message']);
     }
 
     /** @var Webhook $webhook */
-    $webhook = $this->entityManager->getRepository('App:Webhook')->find($params['webhook']);
+    $webhook = $this->entityManager->getRepository('App\Entity\Webhook')->find($params['webhook']);
     if (!$webhook instanceof Webhook) {
       throw new \Exception('Not found webhook with id: ' . $params['pratica']);
     }

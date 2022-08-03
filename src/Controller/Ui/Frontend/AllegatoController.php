@@ -254,7 +254,7 @@ class AllegatoController extends Controller
 
       case 'GET':
         $fileName = str_replace('/', '', $request->get('form'));
-        $allegato = $this->entityManager->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $allegato = $this->entityManager->getRepository('App\Entity\Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($allegato instanceof Allegato) {
           if ($allegato->getHash() == hash('sha256', $session->getId())){
             return $this->fileService->download($allegato);
@@ -306,7 +306,7 @@ class AllegatoController extends Controller
 
       case 'DELETE':
         $fileName = str_replace('/', '', $request->get('form'));
-        $file = $this->entityManager->getRepository('App:Allegato')->findOneBy(['originalFilename' => $fileName]);
+        $file = $this->entityManager->getRepository('App\Entity\Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($file instanceof Allegato) {
 
           if ($file->getOwner() != $this->getUser() && $file->getHash() != hash('sha256', $session->getId())) {
@@ -572,7 +572,7 @@ class AllegatoController extends Controller
   public function allegatoDeleteAction(Allegato $allegato)
   {
     $this->denyAccessUnlessGranted(AttachmentVoter::DELETE, $allegato);
-    $this->entityManager->getRepository('App:Allegato');
+    $this->entityManager->getRepository('App\Entity\Allegato');
     $this->entityManager->remove($allegato);
     $this->entityManager->flush();
     return new JsonResponse(null, Response::HTTP_NO_CONTENT);

@@ -76,7 +76,7 @@ class CPSUserProvider implements UserProviderInterface
 
   private function getPersistedUser($codiceFiscale)
   {
-    $repo = $this->em->getRepository('App:CPSUser');
+    $repo = $this->em->getRepository('App\Entity\CPSUser');
     try {
       $user = $repo->createQueryBuilder('cpsuser')
         ->where('upper(cpsuser.codiceFiscale) = upper(:codiceFiscale)')

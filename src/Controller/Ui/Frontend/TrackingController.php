@@ -44,7 +44,7 @@ class TrackingController extends Controller
   {
     $id = $request->query->get('id');
     if ($id) {
-      $message = $this->entityManager->getRepository('App:Message')->find($id);
+      $message = $this->entityManager->getRepository('App\Entity\Message')->find($id);
       if ($message and !$message->getReadAt()) {
         $message->setReadAt(time());
         try {

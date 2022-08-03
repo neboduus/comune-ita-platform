@@ -97,7 +97,7 @@ class ReminderService implements ScheduledActionHandlerInterface
     $params = unserialize($action->getParams());
     if ($action->getType() == self::SCHEDULED_APPLICATION_PAYMENT_REMINDER) {
       /** @var Pratica $pratica */
-      $pratica = $this->entityManager->getRepository('App:Pratica')->find($params['pratica']);
+      $pratica = $this->entityManager->getRepository('App\Entity\Pratica')->find($params['pratica']);
       if (!$pratica instanceof Pratica) {
         throw new Exception('Not found application with id: ' . $params['pratica']);
       }

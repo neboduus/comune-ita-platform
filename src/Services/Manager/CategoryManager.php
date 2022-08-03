@@ -31,7 +31,7 @@ class CategoryManager
    */
   public function get($id)
   {
-    $category = $this->entityManager->getRepository('App:Categoria')->find($id);
+    $category = $this->entityManager->getRepository('App\Entity\Categoria')->find($id);
     if ($category instanceof Categoria) {
       return $category;
     }
@@ -40,7 +40,7 @@ class CategoryManager
 
   public function getCategoryTree($parent = null, $spacing = '', $result = [])
   {
-    $items = $this->entityManager->getRepository('App:Categoria')->findBy(['parent' => $parent], ['name' => 'asc']);
+    $items = $this->entityManager->getRepository('App\Entity\Categoria')->findBy(['parent' => $parent], ['name' => 'asc']);
 
     if (count($items) > 0) {
       /** @var Categoria $i */

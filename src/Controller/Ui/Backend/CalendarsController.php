@@ -267,7 +267,7 @@ class CalendarsController extends Controller
       $em = $this->getDoctrine()->getManager();
 
       try {
-        $openingHours = $em->getRepository('App:OpeningHour')->findBy(['calendar' => $calendar]);
+        $openingHours = $em->getRepository('App\Entity\OpeningHour')->findBy(['calendar' => $calendar]);
         $storedIds = [];
         foreach ($openingHours as $openingHour) {
           $storedIds[$openingHour->getId()] = $openingHour;
@@ -497,7 +497,7 @@ class CalendarsController extends Controller
   public function cancelMeetingAction(Request $request, $meetingHash)
   {
     $em = $this->getDoctrine()->getManager();
-    $meeting = $em->getRepository('App:Meeting')->findOneBy(['cancelLink' => $meetingHash]);
+    $meeting = $em->getRepository('App\Entity\Meeting')->findOneBy(['cancelLink' => $meetingHash]);
     if (!$meeting)
       return new Response(null, Response::HTTP_NOT_FOUND);
 
@@ -540,7 +540,7 @@ class CalendarsController extends Controller
   public function editMeetingAction(Request $request, $id)
   {
     $em = $this->getDoctrine()->getManager();
-    $meeting = $em->getRepository('App:Meeting')->find($id);
+    $meeting = $em->getRepository('App\Entity\Meeting')->find($id);
     if (!$meeting)
       return new Response(null, Response::HTTP_NOT_FOUND);
 
@@ -634,21 +634,21 @@ class CalendarsController extends Controller
     }
 
     /** @var Calendar $calendar */
-    $calendar = $this->em->getRepository('App:Calendar')->find($calendarId);
+    $calendar = $this->em->getRepository('App\Entity\Calendar')->find($calendarId);
     if (!$calendar) {
       return new JsonResponse([
         "error" => "Calendar " . $calendarId . " not found"
       ], Response::HTTP_NOT_FOUND);
     }
 
-    $openingHour = $this->em->getRepository('App:OpeningHour')->find($openingHourId);
+    $openingHour = $this->em->getRepository('App\Entity\OpeningHour')->find($openingHourId);
     if (!$openingHour) {
       return new JsonResponse([
         "error" => "Opening hour " . $openingHourId . " not found"
       ], Response::HTTP_NOT_FOUND);
     }
 
-    $meeting = $meetingId ? $this->em->getRepository('App:Meeting')->find($meetingId) : null;
+    $meeting = $meetingId ? $this->em->getRepository('App\Entity\Meeting')->find($meetingId) : null;
 
     $slot = explode('-', $slot);
     $fromTime = new DateTime($date . $slot[0]);
@@ -657,7 +657,7 @@ class CalendarsController extends Controller
     if (!$meeting) {
       $meeting = new Meeting();
     } else {
-      $meeting = $this->em->getRepository('App:Meeting')->find($meetingId);
+      $meeting = $this->em->getRepository('App\Entity\Meeting')->find($meetingId);
     }
 
     if ($user instanceof CPSUser) {

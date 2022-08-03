@@ -100,7 +100,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       // Extract meeting id from calendar string
       preg_match_all("/\(([^\)]*)\)/", $data->getDematerializedForms()['flattened']['calendar'], $matches);
       $meetingId = trim(explode("#", $matches[1][0])[1]);
-      $_meeting = $meetingId ? $this->em->getRepository('App:Meeting')->find($meetingId) : null;
+      $_meeting = $meetingId ? $this->em->getRepository('App\Entity\Meeting')->find($meetingId) : null;
       if ($_meeting) {
         $linkedMeetings[] = $_meeting;
       }
@@ -218,7 +218,7 @@ class CalendarsBackOffice implements BackOfficeInterface
     }
 
 
-    $calendar = $meetingData['calendar'] ? $this->em->getRepository('App:Calendar')->find($meetingData['calendar']) : null;
+    $calendar = $meetingData['calendar'] ? $this->em->getRepository('App\Entity\Calendar')->find($meetingData['calendar']) : null;
     if (!$calendar) {
       $this->logger->error($this->translator->trans(
         'backoffice.integration.calendars.calendar_error',
@@ -231,12 +231,12 @@ class CalendarsBackOffice implements BackOfficeInterface
     }
 
     try {
-      $meeting = $meetingData['meeting_id'] ? $this->em->getRepository('App:Meeting')->find($meetingData['meeting_id']) : null;
+      $meeting = $meetingData['meeting_id'] ? $this->em->getRepository('App\Entity\Meeting')->find($meetingData['meeting_id']) : null;
       if (!$meeting) {
         $meeting = new Meeting();
       }
 
-      $openingHour = $meetingData['opening_hour'] ? $this->em->getRepository('App:OpeningHour')->find($meetingData['opening_hour']) : null;
+      $openingHour = $meetingData['opening_hour'] ? $this->em->getRepository('App\Entity\OpeningHour')->find($meetingData['opening_hour']) : null;
 
       $meeting->setEmail($meetingData['email']);
       $meeting->setName($meetingData['name']);

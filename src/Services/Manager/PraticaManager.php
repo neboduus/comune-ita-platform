@@ -519,7 +519,7 @@ class PraticaManager
     $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
 
     /** @var RispostaIntegrazioneRepository $integrationAnswerRepo */
-    $integrationAnswerRepo = $this->entityManager->getRepository('App:RispostaIntegrazione');
+    $integrationAnswerRepo = $this->entityManager->getRepository('App\Entity\RispostaIntegrazione');
 
     $integrationAnswerCollection = $integrationAnswerRepo->findByIntegrationRequest($integrationRequest->getId());
 
@@ -659,7 +659,7 @@ class PraticaManager
 
     $user = null;
     if ($cf) {
-      //$userRepo = $this->entityManager->getRepository('App:CPSUser');
+      //$userRepo = $this->entityManager->getRepository('App\Entity\CPSUser');
       $qb = $this->entityManager->createQueryBuilder()
         ->select('u')
         ->from('App:CPSUser', 'u')
@@ -784,7 +784,7 @@ class PraticaManager
       if (isset($this->schema[$key]['type']) && ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'sdcfile')) {
         foreach ($value as $file) {
           $id = $file['data']['id'];
-          $attachment = $this->entityManager->getRepository('App:Allegato')->find($id);
+          $attachment = $this->entityManager->getRepository('App\Entity\Allegato')->find($id);
           if ($attachment instanceof Allegato) {
             if (isset($file['fileType']) && !empty($file['fileType'])) {
               $attachment->setDescription($file['fileType']);

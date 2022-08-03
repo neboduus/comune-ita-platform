@@ -23,7 +23,7 @@ class HotfixNomeEnteCommand extends Command
     {
         $manager = $this->getContainer()->get('doctrine')->getManager();
 
-        $terminiUtilizzoRepo = $manager->getRepository('App:TerminiUtilizzo');
+        $terminiUtilizzoRepo = $manager->getRepository('App\Entity\TerminiUtilizzo');
         foreach($terminiUtilizzoRepo->findAll() as $terminiUtilizzo){
             $text = $terminiUtilizzo->getText();
             $newText = str_replace(self::STRING_FIND, self::STRING_REPLACE, $text);

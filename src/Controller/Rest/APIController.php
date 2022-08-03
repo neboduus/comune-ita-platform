@@ -62,7 +62,7 @@ class APIController extends AbstractFOSRestController
   {
     $repo = $this->em->getRepository(Pratica::class);
     $pratiche = $repo->findSubmittedPraticheByEnte($this->is->getCurrentInstance());
-    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
     $servizi = $serviziRepository->findBy(
       [
         'status' => [1],

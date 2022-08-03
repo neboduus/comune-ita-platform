@@ -72,7 +72,7 @@ class CategoriesAPIController extends AbstractFOSRestController
     $result = [];
     $notEmpty = boolean_value($request->get('not_empty', false));
 
-    $categories = $this->entityManager->getRepository('App:Categoria')->findBy([], ['name' => 'asc']);
+    $categories = $this->entityManager->getRepository('App\Entity\Categoria')->findBy([], ['name' => 'asc']);
     /** @var Categoria $c */
     foreach ($categories as $c) {
       if ($notEmpty && !$c->hasVisibleRelations()) {
@@ -106,7 +106,7 @@ class CategoriesAPIController extends AbstractFOSRestController
   public function getCategoryAction(Request $request, $id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Categoria');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\Categoria');
       $result = $repository->find($id);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -256,7 +256,7 @@ class CategoriesAPIController extends AbstractFOSRestController
 
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
-    $repository = $this->getDoctrine()->getRepository('App:Categoria');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Categoria');
     $item = $repository->find($id);
 
     if (!$item) {
@@ -350,7 +350,7 @@ class CategoriesAPIController extends AbstractFOSRestController
 
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
-    $repository = $this->getDoctrine()->getRepository('App:Categoria');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Categoria');
     $item = $repository->find($id);
 
     if (!$item) {
@@ -413,7 +413,7 @@ class CategoriesAPIController extends AbstractFOSRestController
   public function deleteCategoryAction($id)
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
-    $item = $this->getDoctrine()->getRepository('App:Categoria')->find($id);
+    $item = $this->getDoctrine()->getRepository('App\Entity\Categoria')->find($id);
     if ($item) {
       $this->entityManager->remove($item);
       $this->entityManager->flush();

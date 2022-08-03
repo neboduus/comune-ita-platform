@@ -34,7 +34,7 @@ class HotFixStatusConsistencyCommand extends Command
       $statusService = $this->getContainer()->get('ocsdc.pratica_status_service');
 
       /** @var PraticaRepository $repo */
-      $repo = $this->getContainer()->get('doctrine')->getRepository('App:Pratica');
+      $repo = $this->getContainer()->get('doctrine')->getRepository('App\Entity\Pratica');
 
       $qb = $repo->createQueryBuilder('p')
         ->where('p.servizio = :servizio')

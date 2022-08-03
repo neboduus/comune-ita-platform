@@ -187,7 +187,7 @@ class DocumentsAPIController extends AbstractFOSRestController
   public function getDocumentAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Document');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\Document');
       $document = $repository->find($id);
       if ($document === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -348,7 +348,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function putDocumentAction($id, Request $request)
   {
-    $document = $this->em->getRepository('App:Document')->find($id);
+    $document = $this->em->getRepository('App\Entity\Document')->find($id);
 
     if (!$document) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -443,7 +443,7 @@ class DocumentsAPIController extends AbstractFOSRestController
   public function patchDocumentAction($id, Request $request)
   {
 
-    $document = $this->em->getRepository('App:Document')->find($id);
+    $document = $this->em->getRepository('App\Entity\Document')->find($id);
 
     if (!$document) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -516,7 +516,7 @@ class DocumentsAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
 
-    $document = $this->getDoctrine()->getRepository('App:Document')->find($id);
+    $document = $this->getDoctrine()->getRepository('App\Entity\Document')->find($id);
     if ($document) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
@@ -562,7 +562,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    */
   public function downloadDocumentAction($id)
   {
-    $document = $this->em->getRepository('App:Document')->find($id);
+    $document = $this->em->getRepository('App\Entity\Document')->find($id);
 
     $this->denyAccessUnlessGranted(DocumentVoter::VIEW, $document);
 

@@ -64,7 +64,7 @@ class OperatoreCreateCommand extends Command
     }
 
     $em = $this->getContainer()->get('doctrine')->getManager();
-    $repo = $em->getRepository('App:Ente');
+    $repo = $em->getRepository('App\Entity\Ente');
     $ente = $repo->findOneBySlug($instance);
 
     if (!$ente) {
@@ -72,7 +72,7 @@ class OperatoreCreateCommand extends Command
     }
 
     $um = $this->getContainer()->get('fos_user.user_manager');
-    $userRepo = $em->getRepository('App:OperatoreUser');
+    $userRepo = $em->getRepository('App\Entity\OperatoreUser');
     $user = $userRepo->findOneByUsername($username);
 
     if ( !$user instanceof User ) {

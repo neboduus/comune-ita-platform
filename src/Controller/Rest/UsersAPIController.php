@@ -149,7 +149,7 @@ class UsersAPIController extends AbstractFOSRestController
   public function getUserAction(Request $request, $id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:CPSUser');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\CPSUser');
       $result = $repository->find($id);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -327,7 +327,7 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function putUserAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('App:CPSUser');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\CPSUser');
     $user = $repository->find($id);
 
     if (!$user) {
@@ -425,7 +425,7 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function patchuserAction($id, Request $request)
   {
-    $repository = $this->entityManager->getRepository('App:CPSUser');
+    $repository = $this->entityManager->getRepository('App\Entity\CPSUser');
     $user = $repository->find($id);
 
     if (!$user) {
@@ -495,7 +495,7 @@ class UsersAPIController extends AbstractFOSRestController
   public function deleteAction($id)
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
-    $user = $this->getDoctrine()->getRepository('App:CPSUser')->find($id);
+    $user = $this->getDoctrine()->getRepository('App\Entity\CPSUser')->find($id);
     if ($user) {
       $this->entityManager->remove($user);
       $this->entityManager->flush();

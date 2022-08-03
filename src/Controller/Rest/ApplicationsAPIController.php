@@ -410,7 +410,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     $user = $this->getUser();
-    $repositoryService = $this->em->getRepository('App:Servizio');
+    $repositoryService = $this->em->getRepository('App\Entity\Servizio');
     $allowedServices = $this->getAllowedServices();
 
     if (empty($allowedServices) && $user instanceof OperatoreUser) {
@@ -533,7 +533,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       /** @var Pratica $result */
       $result = $repository->find($id);
       if ($result === null) {
@@ -613,7 +613,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $service = $this->em->getRepository('App:Servizio')->find($applicationModel->getService());
+      $service = $this->em->getRepository('App\Entity\Servizio')->find($applicationModel->getService());
       if (!$service instanceof Servizio) {
         return $this->view(["Service not found"], Response::HTTP_BAD_REQUEST);
       }
@@ -669,7 +669,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
     } else {
       try {
-        $user = $this->em->getRepository('App:CPSUser')->find($applicationModel->getUser());
+        $user = $this->em->getRepository('App\Entity\CPSUser')->find($applicationModel->getUser());
         if (!$user instanceof CPSUser) {
           $user = $this->praticaManager->checkUser($data);
         }
@@ -774,7 +774,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       /** @var Pratica $result */
       $result = $repository->find($id);
       if ($result === null) {
@@ -846,7 +846,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function updateApplicationBackofficeDataAction($id, Request $request)
   {
 
-    $repository = $this->em->getRepository('App:Pratica');
+    $repository = $this->em->getRepository('App\Entity\Pratica');
     /** @var Pratica $application */
     $application = $repository->find($id);
     if ($application === null) {
@@ -945,7 +945,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function getApplicationHistoryAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
@@ -986,12 +986,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function attachmentAction($id, $attachmentId)
   {
 
-    $repository = $this->em->getRepository('App:Allegato');
+    $repository = $this->em->getRepository('App\Entity\Allegato');
     $result = $repository->find($attachmentId);
     if ($result === null) {
       return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
     }
-    $pratica = $this->em->getRepository('App:Pratica')->find($id);
+    $pratica = $this->em->getRepository('App\Entity\Pratica')->find($id);
 
     $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica);
 
@@ -1054,7 +1054,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   {
 
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       /** @var Pratica $result */
       $result = $repository->find($id);
       if ($result === null) {
@@ -1134,7 +1134,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    */
   public function postApplicationPaymentAction($id, Request $request)
   {
-    $repository = $this->em->getRepository('App:Pratica');
+    $repository = $this->em->getRepository('App\Entity\Pratica');
     /** @var Pratica $application */
     $application = $repository->find($id);
 
@@ -1279,7 +1279,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function patchApplicationAction($id, Request $request)
   {
 
-    $repository = $this->em->getRepository('App:Pratica');
+    $repository = $this->em->getRepository('App\Entity\Pratica');
     /** @var Pratica $application */
     $application = $repository->find($id);
 
@@ -1406,7 +1406,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionSubmitAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -1478,7 +1478,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionRegisterAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
@@ -1607,7 +1607,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionRegisterOutcomeAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       /** @var Pratica $application */
       $application = $repository->find($id);
       if ($application === null) {
@@ -1729,7 +1729,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionAssignAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -1802,7 +1802,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionOutcomeAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -1908,7 +1908,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionRequestIntegrationAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -1996,7 +1996,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionAcceptIntegrationAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       /** @var Pratica $application */
       $application = $repository->find($id);
       if ($application === null) {
@@ -2011,7 +2011,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $messages = null;
       $messagesID = $request->get('messages', []);
       if (!empty($messagesID)) {
-        $messageRepository = $this->em->getRepository('App:Message');
+        $messageRepository = $this->em->getRepository('App\Entity\Message');
         foreach ($messagesID as $id) {
           if (!Uuid::isValid($id)) {
             throw new Exception("$id not is a valid Uuid");
@@ -2079,7 +2079,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionCancelIntegrationAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       /** @var Pratica $application */
       $application = $repository->find($id);
       if ($application === null) {
@@ -2142,7 +2142,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionWithDrawAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       $application = $repository->find($id);
       if ($application === null) {
         throw new Exception('Application not found');
@@ -2239,7 +2239,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionRegisterIntegrationRequestAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       /** @var Pratica $application */
       $application = $repository->find($id);
       if ($application === null) {
@@ -2356,7 +2356,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function applicationTransitionRegisterIntegrationAnswerAction($id, Request $request)
   {
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       /** @var Pratica $application */
       $application = $repository->find($id);
       if ($application === null) {
@@ -2474,7 +2474,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   {
     $user = $this->getUser();
     try {
-      $repository = $this->em->getRepository('App:Pratica');
+      $repository = $this->em->getRepository('App\Entity\Pratica');
       $application = $repository->find($id);
       if (!$application) {
         return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);

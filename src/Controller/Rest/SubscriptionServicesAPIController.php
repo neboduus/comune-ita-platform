@@ -105,7 +105,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
         ->orderBy('t1.name', "ASC")
         ->getQuery()->getResult();
     } else {
-      $subscriptionServices = $this->em->getRepository('App:SubscriptionService')->findAll();
+      $subscriptionServices = $this->em->getRepository('App\Entity\SubscriptionService')->findAll();
     }
 
     foreach ($subscriptionServices as $subscriptionService) {
@@ -146,7 +146,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     );
 
     try {
-      $repository = $this->em->getRepository('App:SubscriptionService');
+      $repository = $this->em->getRepository('App\Entity\SubscriptionService');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -427,7 +427,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
-    $repository = $this->em->getRepository('App:SubscriptionService');
+    $repository = $this->em->getRepository('App\Entity\SubscriptionService');
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
@@ -521,7 +521,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
-    $repository = $this->em->getRepository('App:SubscriptionService');
+    $repository = $this->em->getRepository('App\Entity\SubscriptionService');
     $subscriptionService = $repository->find($id);
 
     if (!$subscriptionService) {
@@ -602,7 +602,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
-    $subscriptionService = $this->em->getRepository('App:SubscriptionService')->find($id);
+    $subscriptionService = $this->em->getRepository('App\Entity\SubscriptionService')->find($id);
     if ($subscriptionService) {
       // debated point: should we 404 on an unknown nickname?
       // or should we just return a nice 204 in all cases?
@@ -701,7 +701,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
     try {
-      $repository = $this->em->getRepository('App:SubscriptionService');
+      $repository = $this->em->getRepository('App\Entity\SubscriptionService');
       $subscriptionService = $repository->find($subscription_service_id);
       if ($subscriptionService === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -765,7 +765,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     );
 
     try {
-      $repository = $this->em->getRepository('App:Subscription');
+      $repository = $this->em->getRepository('App\Entity\Subscription');
       $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -831,7 +831,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN' ]);
 
-    $repository = $this->em->getRepository('App:Subscription');
+    $repository = $this->em->getRepository('App\Entity\Subscription');
 
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
     if ($subscription) {
@@ -1044,7 +1044,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->em->getRepository('App:Subscription');
+    $repository = $this->em->getRepository('App\Entity\Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {
@@ -1164,7 +1164,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->em->getRepository('App:Subscription');
+    $repository = $this->em->getRepository('App\Entity\Subscription');
     $subscription = $repository->findOneBy(['subscription_service' => $subscription_service_id, 'id' => $id]);
 
     if (!$subscription) {

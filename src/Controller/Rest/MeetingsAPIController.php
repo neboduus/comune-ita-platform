@@ -178,7 +178,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       $result = $builder->getQuery()->getOneOrNullResult();
 
       if ($result) {
-        $meeting = $this->getDoctrine()->getRepository('App:Meeting')->find($result['id']);
+        $meeting = $this->getDoctrine()->getRepository('App\Entity\Meeting')->find($result['id']);
 
         $this->denyAccessUnlessGranted(MeetingVoter::VIEW, $meeting);
 
@@ -277,7 +277,7 @@ class MeetingsAPIController extends AbstractFOSRestController
           ->setParameter('username', $meeting->getFiscalCode())
           ->getQuery()->getResult();
         if (!empty($result)) {
-          $repository = $this->em->getRepository('App:CPSUser');
+          $repository = $this->em->getRepository('App\Entity\CPSUser');
           /**
            * @var CPSUser $user
            */
@@ -395,7 +395,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->getDoctrine()->getRepository('App:Meeting');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Meeting');
     $meeting = $repository->find($id);
 
     $this->denyAccessUnlessGranted(MeetingVoter::EDIT, $meeting);
@@ -514,7 +514,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->getDoctrine()->getRepository('App:Meeting');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Meeting');
     $meeting = $repository->find($id);
     $oldMeeting = clone $meeting;
 
@@ -613,7 +613,7 @@ class MeetingsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $meeting = $this->getDoctrine()->getRepository('App:Meeting')->find($id);
+    $meeting = $this->getDoctrine()->getRepository('App\Entity\Meeting')->find($id);
     if ($meeting) {
       $this->denyAccessUnlessGranted(MeetingVoter::DELETE, $meeting);
       // debated point: should we 404 on an unknown nickname?

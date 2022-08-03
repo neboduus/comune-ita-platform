@@ -31,7 +31,7 @@ class SendPraticaToGiscomCommand extends Command
     $question = new Question('Inserisci id della pratica: ', '');
     $applicationId = $helper->ask($input, $output, $question);
 
-    $repository = $this->getContainer()->get('doctrine')->getRepository('App:Pratica');
+    $repository = $this->getContainer()->get('doctrine')->getRepository('App\Entity\Pratica');
 
     $application = $repository->find($applicationId);
 

@@ -41,7 +41,7 @@ class ServiceGroupController extends Controller
   {
     $em = $this->getDoctrine()->getManager();
 
-    $items = $em->getRepository('App:ServiceGroup')->findAll();
+    $items = $em->getRepository('App\Entity\ServiceGroup')->findAll();
 
     return $this->render( '@App/Admin/indexServiceGroup.html.twig', [
       'user'  => $this->getUser(),

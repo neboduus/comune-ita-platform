@@ -43,7 +43,7 @@ class InstanceService
       throw new RuntimeException("Ente not configured");
     }
 
-    $repo = $this->entityManager->getRepository('App:Ente');
+    $repo = $this->entityManager->getRepository('App\Entity\Ente');
     $ente = $repo->findOneBy(array('slug' => $this->instance));
     if (!$ente instanceof Ente) {
       throw new RuntimeException("Ente $this->instance not found");

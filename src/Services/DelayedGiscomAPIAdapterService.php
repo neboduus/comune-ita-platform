@@ -88,13 +88,13 @@ class DelayedGiscomAPIAdapterService implements ScheduledActionHandlerInterface,
     {
         $params = unserialize($action->getParams());
         if ($action->getType() == self::SCHEDULED_ITEM_TYPE_SEND) {
-            $pratica = $this->em->getRepository('App:Pratica')->find($params['pratica']);
+            $pratica = $this->em->getRepository('App\Entity\Pratica')->find($params['pratica']);
 
             if ($pratica instanceof GiscomPratica) {
                 $this->giscomAPIAdapterService->sendPraticaToGiscom($pratica);
             }
         } elseif ($action->getType() == self::SCHEDULED_ITEM_TYPE_ASK_CFS) {
-            $pratica = $this->em->getRepository('App:Pratica')->find($params['pratica']);
+            $pratica = $this->em->getRepository('App\Entity\Pratica')->find($params['pratica']);
 
             if ($pratica instanceof GiscomPratica) {
                 $this->giscomAPIAdapterService->askRelatedCFsforPraticaToGiscom($pratica);

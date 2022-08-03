@@ -31,7 +31,7 @@ class HotFixSubscriberBirthDateFromFiscalCodeCommand extends Command
 
       /** @var EntityManager $entityManager */
       $entityManager = $this->getContainer()->get('doctrine')->getManager();
-      $subscriberRepo = $entityManager->getRepository('App:Subscriber');
+      $subscriberRepo = $entityManager->getRepository('App\Entity\Subscriber');
       $subscribers = $subscriberRepo->findAll();
 
       $subscribersToFix = $subscribersFixed = 0;

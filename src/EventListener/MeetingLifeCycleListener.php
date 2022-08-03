@@ -8,7 +8,7 @@ use App\Entity\Meeting;
 use App\Services\MeetingService;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Safe\DateTime;
+use \DateTime;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 

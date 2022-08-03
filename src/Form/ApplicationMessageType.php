@@ -79,7 +79,7 @@ class ApplicationMessageType extends AbstractType
     if ($attachments) {
       foreach ($attachments as $attachment) {
         if (isset($attachment['id'])) {
-          $allegato = $this->em->getRepository('App:AllegatoMessaggio')->findOneBy(['id' => $attachment['id']]);
+          $allegato = $this->em->getRepository('App\Entity\AllegatoMessaggio')->findOneBy(['id' => $attachment['id']]);
           if ($allegato) {
             $message->addAttachment($allegato);
           }

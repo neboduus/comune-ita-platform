@@ -58,7 +58,7 @@ class StatusAPIController extends AbstractFOSRestController
   public function getApplicationStatusAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Pratica');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\Pratica');
       /** @var Pratica $result */
       $result = $repository->find($id);
       if ($result === null) {

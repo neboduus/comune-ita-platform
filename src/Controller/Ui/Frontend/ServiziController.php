@@ -132,7 +132,7 @@ class ServiziController extends Controller
     $user = $this->getUser();
 
     /** @var EntityRepository $serviziRepository */
-    $serviziRepository = $this->entityManager->getRepository('App:Servizio');
+    $serviziRepository = $this->entityManager->getRepository('App\Entity\Servizio');
 
     /** @var Servizio $servizio */
     $servizio = $serviziRepository->findOneBySlug($slug);
@@ -200,7 +200,7 @@ class ServiziController extends Controller
   public function serviceGroupDetailAction($slug, Request $request)
   {
     $user = $this->getUser();
-    $serviceGroupRepository = $this->getDoctrine()->getRepository('App:ServiceGroup');
+    $serviceGroupRepository = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup');
 
     /** @var Servizio $servizio */
     $serviceGroup = $serviceGroupRepository->findOneBySlug($slug);
@@ -232,7 +232,7 @@ class ServiziController extends Controller
   {
 
     $user = $this->getUser();
-    $categoryRepository = $this->getDoctrine()->getRepository('App:Categoria');
+    $categoryRepository = $this->getDoctrine()->getRepository('App\Entity\Categoria');
 
     /** @var Servizio $servizio */
     $category = $categoryRepository->findOneBySlug($slug);
@@ -260,7 +260,7 @@ class ServiziController extends Controller
     }
 
     $result = [];
-    $repoServices = $this->getDoctrine()->getRepository('App:Servizio');
+    $repoServices = $this->getDoctrine()->getRepository('App\Entity\Servizio');
     $services = $repoServices->findAvailable(
       [
         'topics' => $category->getId(),
@@ -274,7 +274,7 @@ class ServiziController extends Controller
       $result[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
     }
 
-    $servicesGroupRepository = $this->getDoctrine()->getRepository('App:ServiceGroup');
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup');
     $servicesGroup = $servicesGroupRepository->findByCriteria(
       ['topics' => $category->getId()]
     );
@@ -309,7 +309,7 @@ class ServiziController extends Controller
   public function recipientDetailAction($slug)
   {
     $user = $this->getUser();
-    $recipientRepository = $this->getDoctrine()->getRepository('App:Recipient');
+    $recipientRepository = $this->getDoctrine()->getRepository('App\Entity\Recipient');
 
     /** @var Servizio $servizio */
     $recipient = $recipientRepository->findOneBySlug($slug);
@@ -323,7 +323,7 @@ class ServiziController extends Controller
 
     $recipients = $recipientRepository->findBy([], ['name' => 'asc']);
 
-    $repoServices = $this->getDoctrine()->getRepository('App:Servizio');
+    $repoServices = $this->getDoctrine()->getRepository('App\Entity\Servizio');
     $services = $repoServices->findByCriteria([
       'recipients' => $recipient->getId(),
       'status' => Servizio::PUBLIC_STATUSES
@@ -342,10 +342,10 @@ class ServiziController extends Controller
   private function getServices(Request $request)
   {
     /** @var ServizioRepository $serviziRepository */
-    $serviziRepository = $this->getDoctrine()->getRepository('App:Servizio');
+    $serviziRepository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
 
     /** @var ServiceGroupRepository $servicesGroupRepository */
-    $servicesGroupRepository = $this->getDoctrine()->getRepository('App:ServiceGroup');
+    $servicesGroupRepository = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup');
 
     $stickyServices = $serviziRepository->findStickyAvailable();
     $servizi = $serviziRepository->findNotStickyAvailable();
@@ -399,7 +399,7 @@ class ServiziController extends Controller
    */
   private function getServicesByCategories()
   {
-    $categoryRepository = $this->getDoctrine()->getRepository('App:Categoria');
+    $categoryRepository = $this->getDoctrine()->getRepository('App\Entity\Categoria');
 
     $topics = [];
     $categories = $categoryRepository->findBy(['parent' => null], ['name' => 'asc']);

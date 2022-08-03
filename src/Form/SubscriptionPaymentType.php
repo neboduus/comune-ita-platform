@@ -111,7 +111,7 @@ class SubscriptionPaymentType extends AbstractType
     if (isset($data["payment_service"])) {
       try {
         /** @var Servizio $service */
-        $service = $this->em->getRepository('App:Servizio')->find($data["payment_service"]);
+        $service = $this->em->getRepository('App\Entity\Servizio')->find($data["payment_service"]);
         if (!$service) {
           // Missing service
           $event->getForm()->addError(

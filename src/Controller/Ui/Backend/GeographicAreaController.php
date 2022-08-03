@@ -48,7 +48,7 @@ class GeographicAreaController extends Controller
   public function indexGeographicAreasAction()
   {
 
-    $items = $this->entityManager->getRepository('App:GeographicArea')->findBy([], ['name' => 'asc']);
+    $items = $this->entityManager->getRepository('App\Entity\GeographicArea')->findBy([], ['name' => 'asc']);
 
     return $this->render( '@App/Admin/indexGeographicArea.html.twig', [
       'user'  => $this->getUser(),

@@ -71,7 +71,7 @@ class WebhookController extends Controller
       $services[$s->getId()] = $s->getName();
     }
 
-    $items = $this->entityManager->getRepository('App:Webhook')->findAll();
+    $items = $this->entityManager->getRepository('App\Entity\Webhook')->findAll();
 
     return $this->render( '@App/Admin/indexWebhook.html.twig', [
       'user'  => $this->getUser(),
@@ -172,7 +172,7 @@ class WebhookController extends Controller
 
     if ($request->request->has('test')) {
       try {
-        $applicationRepo = $this->entityManager->getRepository('App:Pratica');
+        $applicationRepo = $this->entityManager->getRepository('App\Entity\Pratica');
         $application = $applicationRepo->find($request->request->get('application_id'));
         if ($application instanceof Pratica) {
           $this->webhookService->applicationWebhook(

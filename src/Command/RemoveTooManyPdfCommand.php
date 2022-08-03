@@ -47,7 +47,7 @@ class RemoveTooManyPdfCommand extends Command
 
 
     $entityManager = $this->getContainer()->get('doctrine')->getManager();
-    $repository = $entityManager->getRepository('App:Pratica');
+    $repository = $entityManager->getRepository('App\Entity\Pratica');
 
     $count = 0;
     foreach ($applicationIds as $applicationId) {

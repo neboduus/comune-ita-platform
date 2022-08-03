@@ -201,7 +201,7 @@ class GiscomAPIController extends Controller
 
       $securityUser = $this->getUser();
       $user = $this->getDoctrine()
-        ->getRepository('App:OperatoreUser')
+        ->getRepository('App\Entity\OperatoreUser')
         ->findOneByUsername($securityUser->getUsername());
 
 
@@ -209,7 +209,7 @@ class GiscomAPIController extends Controller
 
       /** @var Servizio $servizio */
       $servizio = $this->getDoctrine()
-        ->getRepository('App:Servizio')
+        ->getRepository('App\Entity\Servizio')
         ->findOneByPraticaFCQN(SciaPraticaEdilizia::class);
 
       $enteSlug = $ente = null;
@@ -220,7 +220,7 @@ class GiscomAPIController extends Controller
       if ($enteSlug != null) {
         /** @var Ente $ente */
         $ente = $this->getDoctrine()
-          ->getRepository('App:Ente')
+          ->getRepository('App\Entity\Ente')
           ->findOneBySlug($enteSlug);
       }
 

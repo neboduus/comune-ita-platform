@@ -180,7 +180,7 @@ class PraticheController extends Controller
     /** @var CPSUser $user */
     $user = $this->getUser();
     /** @var PraticaRepository $repo */
-    $repo = $this->entityManager->getRepository('App:Pratica');
+    $repo = $this->entityManager->getRepository('App\Entity\Pratica');
     $pratiche = $repo->count(
       array('user' => $user)
     );
@@ -228,7 +228,7 @@ class PraticheController extends Controller
     ];
     $serviceSlug = $request->query->get('service', false);
     if ($serviceSlug) {
-      $serviceRepo = $this->entityManager->getRepository('App:Servizio');
+      $serviceRepo = $this->entityManager->getRepository('App\Entity\Servizio');
       $service = $serviceRepo->findOneBy(['slug' => $serviceSlug]);
       if ($service instanceof Servizio) {
         $criteria ['servizio'] = $service;
@@ -236,7 +236,7 @@ class PraticheController extends Controller
     }
 
     /** @var PraticaRepository $repo */
-    $repo = $this->entityManager->getRepository('App:Pratica');
+    $repo = $this->entityManager->getRepository('App\Entity\Pratica');
     $pratiche = $repo->findBy(
       $criteria,
       ['latestStatusChangeTimestamp' => 'DESC']
@@ -340,7 +340,7 @@ class PraticheController extends Controller
   public function listDraftByServiceAction(Servizio $servizio)
   {
     $user = $this->getUser();
-    $repo = $this->entityManager->getRepository('App:Pratica');
+    $repo = $this->entityManager->getRepository('App\Entity\Pratica');
     $pratiche = $repo->findBy(
       array(
         'user' => $user,
@@ -595,7 +595,7 @@ class PraticheController extends Controller
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
     $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
 
-    $attachments = $this->entityManager->getRepository('App:Pratica')->getMessageAttachments(['visibility' => Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
+    $attachments = $this->entityManager->getRepository('App\Entity\Pratica')->getMessageAttachments(['visibility' => Message::VISIBILITY_APPLICANT, 'author' => $pratica->getUser()->getId()], $pratica);
 
     $message = new Message();
     $message->setApplication($pratica);
@@ -620,7 +620,7 @@ class PraticheController extends Controller
       return $this->redirectToRoute('pratica_show_detail', ['pratica' => $pratica, 'tab' => 'note']);
     }
 
-    $repository = $this->entityManager->getRepository('App:Pratica');
+    $repository = $this->entityManager->getRepository('App\Entity\Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $user, 5);
 
     $result = [

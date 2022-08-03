@@ -93,9 +93,9 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     $type = $request->query->get('type');
     if ($type) {
-      $calendars = $this->em->getRepository('App:Calendar')->findBy(['type' => $type]);
+      $calendars = $this->em->getRepository('App\Entity\Calendar')->findBy(['type' => $type]);
     } else {
-      $calendars = $this->em->getRepository('App:Calendar')->findAll();
+      $calendars = $this->em->getRepository('App\Entity\Calendar')->findAll();
     }
     return $this->view($calendars, Response::HTTP_OK);
   }
@@ -128,7 +128,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     );
 
     try {
-      $repository = $this->em->getRepository('App:Calendar');
+      $repository = $this->em->getRepository('App\Entity\Calendar');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -206,16 +206,16 @@ class CalendarsAPIController extends AbstractFOSRestController
       $selectedOpeningHours = explode(',', $selectedOpeningHours);
     }
     try {
-      $calendar = $this->em->getRepository('App:Calendar')->findOneBy(['id' => $id]);
+      $calendar = $this->em->getRepository('App\Entity\Calendar')->findOneBy(['id' => $id]);
       if ($calendar === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
       /** @var OpeningHour[] $openingHours */
       if ($selectedOpeningHours) {
-        $openingHours = $this->em->getRepository('App:OpeningHour')->findBy(['calendar' => $id, 'id' => $selectedOpeningHours]);
+        $openingHours = $this->em->getRepository('App\Entity\OpeningHour')->findBy(['calendar' => $id, 'id' => $selectedOpeningHours]);
       } else {
-        $openingHours = $this->em->getRepository('App:OpeningHour')->findBy(['calendar' => $id]);
+        $openingHours = $this->em->getRepository('App\Entity\OpeningHour')->findBy(['calendar' => $id]);
       }
 
       // Compute availabilities
@@ -323,7 +323,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       $selectedOpeningHours = explode(',', $selectedOpeningHours);
     }
 
-    $calendar = $this->em->getRepository('App:Calendar')->findOneBy(['id' => $id]);
+    $calendar = $this->em->getRepository('App\Entity\Calendar')->findOneBy(['id' => $id]);
     if ($calendar === null) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
@@ -336,8 +336,8 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     try {
       /** @var OpeningHour[] $openingHours */
-      $openingHours = $this->em->getRepository('App:OpeningHour')->findBy(['calendar' => $id]);
-      $calendar = $this->em->getRepository('App:Calendar')->findOneBy(['id' => $id]);
+      $openingHours = $this->em->getRepository('App\Entity\OpeningHour')->findBy(['calendar' => $id]);
+      $calendar = $this->em->getRepository('App\Entity\Calendar')->findOneBy(['id' => $id]);
       if ($openingHours === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
@@ -503,7 +503,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->em->getRepository('App:Calendar');
+    $repository = $this->em->getRepository('App\Entity\Calendar');
     $calendar = $repository->find($id);
 
     if (!$calendar) {
@@ -601,7 +601,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->em->getRepository('App:Calendar');
+    $repository = $this->em->getRepository('App\Entity\Calendar');
     $calendar = $repository->find($id);
 
     if (!$calendar) {
@@ -678,7 +678,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $calendar = $this->em->getRepository('App:Calendar')->find($id);
+    $calendar = $this->em->getRepository('App\Entity\Calendar')->find($id);
     if ($calendar) {
       $this->denyAccessUnlessGranted(CalendarVoter::DELETE, $calendar);
 
@@ -757,7 +757,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     );
 
     try {
-      $repository = $this->em->getRepository('App:Calendar');
+      $repository = $this->em->getRepository('App\Entity\Calendar');
       $calendar = $repository->find($calendar_id);
       if ($calendar === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -801,7 +801,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     );
 
     try {
-      $repository = $this->em->getRepository('App:OpeningHour');
+      $repository = $this->em->getRepository('App\Entity\OpeningHour');
       $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
       if ($openingHour === null) {
@@ -851,7 +851,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->em->getRepository('App:OpeningHour');
+    $repository = $this->em->getRepository('App\Entity\OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
     if ($openingHour) {
       $this->denyAccessUnlessGranted(CalendarVoter::DELETE, $openingHour->getCalendar());
@@ -919,7 +919,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $calendar = $this->em->getRepository('App:Calendar')->find($calendar_id);
+    $calendar = $this->em->getRepository('App\Entity\Calendar')->find($calendar_id);
     if (!$calendar) {
       return $this->view('Calendar not found', Response::HTTP_BAD_REQUEST);
     }
@@ -1017,7 +1017,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->em->getRepository('App:OpeningHour');
+    $repository = $this->em->getRepository('App\Entity\OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
     if (!$openingHour) {
@@ -1118,7 +1118,7 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->em->getRepository('App:OpeningHour');
+    $repository = $this->em->getRepository('App\Entity\OpeningHour');
     $openingHour = $repository->findOneBy(['calendar' => $calendar_id, 'id' => $id]);
 
     $openingHour->setDaysOfWeek([]);
@@ -1199,7 +1199,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $calendar = $this->em->getRepository('App:Calendar')->findOneBy(['id' => $id]);
+      $calendar = $this->em->getRepository('App\Entity\Calendar')->findOneBy(['id' => $id]);
       if ( $calendar === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }

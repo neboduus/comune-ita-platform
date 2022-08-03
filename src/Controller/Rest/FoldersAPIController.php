@@ -156,7 +156,7 @@ class FoldersAPIController extends AbstractFOSRestController
   public function getFolderAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Folder');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\Folder');
       $folder = $repository->find($id);
       if ($folder === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -303,7 +303,7 @@ class FoldersAPIController extends AbstractFOSRestController
    */
   public function putFolderAction($id, Request $request)
   {
-    $repository = $this->getDoctrine()->getRepository('App:Folder');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Folder');
     $folder = $repository->find($id);
 
     if (!$folder) {
@@ -400,7 +400,7 @@ class FoldersAPIController extends AbstractFOSRestController
   public function patchFolderAction($id, Request $request)
   {
 
-    $repository = $this->getDoctrine()->getRepository('App:Folder');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Folder');
     $folder = $repository->find($id);
 
     if (!$folder) {
@@ -472,7 +472,7 @@ class FoldersAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $folder = $this->getDoctrine()->getRepository('App:Folder')->find($id);
+    $folder = $this->getDoctrine()->getRepository('App\Entity\Folder')->find($id);
     if ($folder) {
       $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
       // debated point: should we 404 on an unknown nickname?

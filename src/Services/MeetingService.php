@@ -851,7 +851,7 @@ class MeetingService
     /** @var OpeningHour[] $openingHours */
     if ($selectedOpeningHours) {
       foreach ($selectedOpeningHours as $selectedOpeningHour) {
-        $openingHour = $this->entityManager->getRepository('App:OpeningHour')->findOneBy([
+        $openingHour = $this->entityManager->getRepository('App\Entity\OpeningHour')->findOneBy([
           'calendar' => $calendar,
           'id' => $selectedOpeningHour
         ]);
@@ -957,7 +957,7 @@ class MeetingService
 
     if ($selectedOpeningHours) {
       foreach ($selectedOpeningHours as $selectedOpeningHour) {
-        $openingHour = $this->entityManager->getRepository('App:OpeningHour')->findOneBy([
+        $openingHour = $this->entityManager->getRepository('App\Entity\OpeningHour')->findOneBy([
           'calendar' => $calendar,
           'id' => $selectedOpeningHour
         ]);
@@ -992,7 +992,7 @@ class MeetingService
     /** @var OpeningHour[] $openingHours */
     if ($selectedOpeningHours) {
       foreach ($selectedOpeningHours as $selectedOpeningHour) {
-        $openingHour = $this->entityManager->getRepository('App:OpeningHour')->findOneBy([
+        $openingHour = $this->entityManager->getRepository('App\Entity\OpeningHour')->findOneBy([
           'calendar' => $calendar,
           'id' => $selectedOpeningHour
         ]);

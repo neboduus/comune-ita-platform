@@ -68,7 +68,7 @@ class AtLeastOneAttachmentConstraintValidator extends ConstraintValidator
         ->setParameter('{{ string }}', "You must choose at least one file to attach to this form")
         ->addViolation();
     } else {
-      $allegatiRepo = $this->em->getRepository('App:Allegato');
+      $allegatiRepo = $this->em->getRepository('App\Entity\Allegato');
       foreach ($value as $id) {
         $allegato = $allegatiRepo->find($id);
         if ($allegato instanceof Allegato) {

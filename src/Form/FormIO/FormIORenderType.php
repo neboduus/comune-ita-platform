@@ -276,7 +276,7 @@ class FormIORenderType extends AbstractType
       if (isset($this->schema[$key]['type']) && ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'sdcfile')) {
         foreach ($value as $file) {
           $id = $file['data']['id'];
-          $attachment = $this->em->getRepository('App:Allegato')->find($id);
+          $attachment = $this->em->getRepository('App\Entity\Allegato')->find($id);
           if ($attachment instanceof Allegato) {
             if (isset($file['fileType']) && !empty($file['fileType'])) {
               $attachment->setDescription($file['fileType']);

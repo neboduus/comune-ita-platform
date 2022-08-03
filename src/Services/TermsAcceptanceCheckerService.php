@@ -33,7 +33,7 @@ class TermsAcceptanceCheckerService
   {
     $acceptedTerms = $user->getAcceptedTerms();
 
-    $repo = $this->doctrine->getRepository('App:TerminiUtilizzo');
+    $repo = $this->doctrine->getRepository('App\Entity\TerminiUtilizzo');
     $mandatoryTerms = $repo->findByMandatory(true);
 
     foreach ($mandatoryTerms as $k => $term) {

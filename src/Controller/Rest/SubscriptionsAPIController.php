@@ -391,7 +391,7 @@ class SubscriptionsAPIController extends AbstractApiController
     );
 
     try {
-      $repository = $this->em->getRepository('App:Subscription');
+      $repository = $this->em->getRepository('App\Entity\Subscription');
       $subscription = $repository->find($id);
     } catch (\Exception $e) {
       $this->logger->error($e->getMessage(), ['request' => $request]);
@@ -469,7 +469,7 @@ class SubscriptionsAPIController extends AbstractApiController
     );
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
 
-    $repository = $this->em->getRepository('App:Subscription');
+    $repository = $this->em->getRepository('App\Entity\Subscription');
     $subscription = $repository->find($id);
     if ($subscription) {
       // debated point: should we 404 on an unknown nickname?
@@ -682,7 +682,7 @@ class SubscriptionsAPIController extends AbstractApiController
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->em->getRepository('App:Subscription');
+    $repository = $this->em->getRepository('App\Entity\Subscription');
     $subscription = $repository->find($id);
 
     if (!$subscription) {
@@ -802,7 +802,7 @@ class SubscriptionsAPIController extends AbstractApiController
       SubcriptionsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $repository = $this->em->getRepository('App:Subscription');
+    $repository = $this->em->getRepository('App\Entity\Subscription');
     $subscription = $repository->find($id);
 
     if (!$subscription) {

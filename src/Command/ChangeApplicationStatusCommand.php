@@ -45,7 +45,7 @@ class ChangeApplicationStatusCommand extends Command
 
     $em = $this->getContainer()->get('doctrine')->getManager();
 
-    $application = $em->getRepository('App:Pratica')->find($id);
+    $application = $em->getRepository('App\Entity\Pratica')->find($id);
     if (!$application instanceof Pratica) {
       $symfonyStyle->error('Application with id:' . $id . ' not found.');
       return 1;

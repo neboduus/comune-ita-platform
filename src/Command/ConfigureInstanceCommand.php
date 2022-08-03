@@ -136,7 +136,7 @@ class ConfigureInstanceCommand extends Command
   private function creaateInstance($identifier)
   {
     $instanceExists = false;
-    $repo = $this->entityManager->getRepository('App:Ente');
+    $repo = $this->entityManager->getRepository('App\Entity\Ente');
     $ente = $repo->findOneBySlug($identifier);
 
     if ( $ente instanceof Ente ) {
@@ -207,7 +207,7 @@ class ConfigureInstanceCommand extends Command
       $password = $this->symfonyStyle->ask('Inserisci la password: ', '');
     }
 
-    $repo = $this->entityManager->getRepository('App:AdminUser');
+    $repo = $this->entityManager->getRepository('App\Entity\AdminUser');
     $user = $repo->findOneByUsername($username);
 
     if ( !$user instanceof User ) {

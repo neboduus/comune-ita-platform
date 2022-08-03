@@ -32,7 +32,7 @@ class SecureUserCommand extends Command
         $inactiveUserLifeTime = $this->getContainer()->getParameter('InactiveUserLifeTime');
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        //$repo = $em->getRepository('App::Operatore');
+        //$repo = $em->getRepository('App\Entity\:Operatore');
         //$operatori = $repo->findBy();
 
 

@@ -201,7 +201,7 @@ class SubscriptionsService
   }
 
   public function getPaymentSettingIdententifiers() {
-    $subscriptionServices =  $this->em->getRepository('App:SubscriptionService')->findAll();
+    $subscriptionServices =  $this->em->getRepository('App\Entity\SubscriptionService')->findAll();
     $subscriptionServiceIdentifiers = [];
     foreach ($subscriptionServices as $subscriptionService) {
       $subscriptionServiceIdentifiers[$subscriptionService->getCode()] = [];

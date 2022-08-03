@@ -67,7 +67,7 @@ class HotFixMigratePaymentTypeCommand extends Command
    */
   private function getSubscriptionServices()
   {
-    $repo = $this->em->getRepository('App:SubscriptionService');
+    $repo = $this->em->getRepository('App\Entity\SubscriptionService');
 
     return $repo->findAll();
   }

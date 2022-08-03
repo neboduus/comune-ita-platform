@@ -39,7 +39,7 @@ class I18nMigrationsCommand extends Command
       $entityManager = $this->getContainer()->get('doctrine')->getManager();
       $translationsRepo = $entityManager->getRepository('Gedmo\Translatable\Entity\Translation');
 
-      $services = $entityManager->getRepository('App:Servizio')->findAll();
+      $services = $entityManager->getRepository('App\Entity\Servizio')->findAll();
       $accessor = PropertyAccess::createPropertyAccessor();
 
       $servicesToUpdate = [];

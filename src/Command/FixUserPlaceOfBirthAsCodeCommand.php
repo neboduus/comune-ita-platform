@@ -24,7 +24,7 @@ class FixUserPlaceOfBirthAsCodeCommand extends Command
 
     /** @var EntityManager $entityManager */
     $entityManager = $this->getContainer()->get('doctrine')->getManager();
-    $users = $entityManager->getRepository('App:CPSUser')->findBy(['luogoNascita' => $codes]);
+    $users = $entityManager->getRepository('App\Entity\CPSUser')->findBy(['luogoNascita' => $codes]);
 
     foreach ($users as $user) {
       if ($user->getLuogoNascita()) {

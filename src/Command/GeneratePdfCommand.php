@@ -45,7 +45,7 @@ class GeneratePdfCommand extends Command
 
 
     $entityManager = $this->getContainer()->get('doctrine')->getManager();
-    $repository = $entityManager->getRepository('App:Pratica');
+    $repository = $entityManager->getRepository('App\Entity\Pratica');
     $pdfService  = $this->getContainer()->get('ocsdc.modulo_pdf_builder');
 
     $count = 0;

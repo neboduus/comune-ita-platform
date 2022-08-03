@@ -248,7 +248,7 @@ class ServicesAPIController extends AbstractFOSRestController
   public function getServiceAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Servizio');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
       $result = $repository->find($id);
       if ($result === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -288,7 +288,7 @@ class ServicesAPIController extends AbstractFOSRestController
   public function getFormServiceAction($id)
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App:Servizio');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
       /** @var Servizio $service */
       $service = $repository->find($id);
       if ($service === null) {
@@ -493,7 +493,7 @@ class ServicesAPIController extends AbstractFOSRestController
         );
       }
 
-      $repository = $this->getDoctrine()->getRepository('App:Servizio');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
       $service = $repository->find($id);
 
       if (!$service) {
@@ -600,7 +600,7 @@ class ServicesAPIController extends AbstractFOSRestController
         );
       }
 
-      $repository = $this->getDoctrine()->getRepository('App:Servizio');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
       /** @var Servizio $service */
       $service = $repository->find($id);
 
@@ -667,7 +667,7 @@ class ServicesAPIController extends AbstractFOSRestController
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
-    $service = $this->em->getRepository('App:Servizio')->find($id);
+    $service = $this->em->getRepository('App\Entity\Servizio')->find($id);
     if ($service) {
       $this->em->remove($service);
       $this->em->flush();
@@ -723,12 +723,12 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   private function checkServiceRelations(Service &$serviceDto)
   {
-    $category = $this->em->getRepository('App:Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+    $category = $this->em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
     if ($category instanceof Categoria) {
       $serviceDto->setTopics($category);
     }
 
-    $serviceGroup = $this->em->getRepository('App:ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]
+    $serviceGroup = $this->em->getRepository('App\Entity\ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]
     );
     if ($serviceGroup instanceof ServiceGroup) {
       $serviceDto->setServiceGroup($serviceGroup);
@@ -736,7 +736,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
     $recipients = [];
     foreach ($serviceDto->getRecipientsId() as $r) {
-      $recipient = $this->em->getRepository('App:Recipient')->find($r);
+      $recipient = $this->em->getRepository('App\Entity\Recipient')->find($r);
       if ($recipient instanceof Recipient) {
         $recipients []= $recipient;
       }
@@ -745,7 +745,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
     $geographicAreas = [];
     foreach ($serviceDto->getGeographicAreasId() as $g) {
-      $geographicArea = $this->em->getRepository('App:GeographicArea')->find($g);
+      $geographicArea = $this->em->getRepository('App\Entity\GeographicArea')->find($g);
       if ($geographicArea instanceof GeographicArea) {
         $geographicAreas []= $geographicArea;
       }
