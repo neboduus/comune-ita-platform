@@ -46,13 +46,13 @@ nav:
   iscrizioni: 'My subscriptions'
   informativa_privacy: 'Information for the processing of personal data'
   operatori:
-    panello_controllo: "Paperwork list"
+    panello_controllo: "Cases list"
     lista_operatori: 'Manage operators'
     accesso_operatori: 'Operator access'
     protocollo: 'Protocol Configuration'
     usage: 'Statistics'
   admin:
-    impostazioni_istanza: 'Instance settings'
+    impostazioni_istanza: 'instance settings'
     operatori: 'operators'
     servizi: 'services'
     gruppo_servizi: 'service_group'
@@ -82,7 +82,7 @@ nav:
     create_new_operator: 'Create new operator'
   backoffices:
     servizi_sottoscrizione: 'Subscription services'
-    prenotazione_appuntamenti: 'Booking appointments'
+    prenotazione_appuntamenti: 'Appointment booking'
     pagamenti_servizi_sottoscrizione: 'Payments subscription services'
     request_protocol: 'Registration required?'
     protocol_type: 'Protocol type'
@@ -1036,7 +1036,7 @@ operatori:
   dati_generali: "General Data"
   cambio_stato: "Status change"
   servizi_abilitati: "services_enabled"
-  ultima_modifica_password: 'last_modify_password'
+  ultima_modifica_password: 'Last password change'
   pagamento_posticipato_previsto: "There is a deferred payment for this service."
   pagamento_posticipato: "There is a payment of <b>%payment_amount% Euro</b> for this service. The applicant has been invited to go back to the form and undertake it, possibly choosing whether to do it online or offline.<br><br> As soon as the applicant proceeds with the payment, all the available data will appear in this area"
   pagamento_posticipato_richiesto: "There is a payment of <b>%payment_amount% Euro</b> for this service. You are invited to go back to your form and start the payment, possibly choosing whether to do it online or offline.<br><br> Once the payment has started, all available data will appear in this area"
@@ -2657,14 +2657,14 @@ ente:
   linkable_application_meetings:
     label: 'Enable the connection between practices and appointments'
     helper: "By enabling this option it will be possible to view and interact with the bookings connected to the practice in the detail section of the practice itself"
-  codice_meccanografico: 'mechanical_code'
-  site_url: 'site_url'
-  codice_amministrativo: 'administrative_code'
+  codice_meccanografico: 'Mechanographic code'
+  site_url: 'Link on the title of each page'
+  codice_amministrativo: 'Administrative code'
   impostazioni_protocollo: 'protocol_settings'
   certificato: 'certificate'
-  chiave_certificato: 'certificate_key'
-  password_certifcato: 'certificate_password'
-  app_io: 'app_io'
+  chiave_certificato: 'certificate key'
+  password_certifcato: 'Certificate password'
+  app_io: 'Enable App IO?'
   backoffices: 'backoffices'
   mailers:
     title: 'title'
