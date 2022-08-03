@@ -180,7 +180,7 @@ class AdminController extends Controller
    */
   public function indexAction(Request $request)
   {
-    return $this->render('@App/Admin/index.html.twig', [
+    return $this->render('Admin/index.html.twig', [
       'user' => $this->getUser()
     ]);
   }
@@ -213,7 +213,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_edit_ente');
     }
 
-    return $this->render('@App/Admin/editEnte.html.twig', [
+    return $this->render('Admin/editEnte.html.twig', [
       'user' => $this->getUser(),
       'ente' => $ente,
       'statuses' => Webhook::TRIGGERS,
@@ -234,7 +234,7 @@ class AdminController extends Controller
 
     $operatoreUsers = $em->getRepository('App\Entity\OperatoreUser')->findAll();
 
-    return $this->render('@App/Admin/indexOperatore.html.twig', [
+    return $this->render('Admin/indexOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUsers' => $operatoreUsers,
     ]);
@@ -272,7 +272,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
 
-    return $this->render('@App/Admin/editOperatore.html.twig', [
+    return $this->render('Admin/editOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'form' => $form->createView(),
@@ -294,7 +294,7 @@ class AdminController extends Controller
       $serviziAbilitati = [];
     }
 
-    return $this->render('@App/Admin/showOperatore.html.twig', [
+    return $this->render('Admin/showOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'servizi_abilitati' => $serviziAbilitati
@@ -317,7 +317,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_operatore_edit', array('id' => $operatoreUser->getId()));
     }
 
-    return $this->render('@App/Admin/editOperatore.html.twig', [
+    return $this->render('Admin/editOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
       'form' => $form->createView()
@@ -386,7 +386,7 @@ class AdminController extends Controller
       return $table->getResponse();
     }
 
-    return $this->render('@App/Admin/indexLogs.html.twig', [
+    return $this->render('Admin/indexLogs.html.twig', [
       'user' => $this->getUser(),
       'datatable' => $table
     ]);
@@ -436,7 +436,7 @@ class AdminController extends Controller
       return $table->getResponse();
     }
 
-    return $this->render('@App/Admin/indexScheduledActions.html.twig', [
+    return $this->render('Admin/indexScheduledActions.html.twig', [
       'user' => $this->getUser(),
       'datatable' => $table,
       'filters' => $options['filters'] ?? [],
@@ -495,7 +495,7 @@ class AdminController extends Controller
     $em = $this->getDoctrine()->getManager();
     $items = $em->getRepository('App\Entity\Servizio')->findBy([], ['name' => 'ASC']);
 
-    return $this->render('@App/Admin/indexServizio.html.twig', [
+    return $this->render('Admin/indexServizio.html.twig', [
       'user' => $this->getUser(),
       'items' => $items,
       'statuses' => $statuses,
@@ -738,7 +738,7 @@ class AdminController extends Controller
       }
     }
 
-    return $this->render('@App/Admin/editServizio.html.twig', [
+    return $this->render('Admin/editServizio.html.twig', [
       'form' => $form ? $form->createView() : null,
       'steps' => $steps,
       'current_step' => $currentStep,
@@ -789,7 +789,7 @@ class AdminController extends Controller
       return $this->redirectToRoute('admin_servizio_custom_validation', ['servizio' => $servizio->getId()]);
     }
 
-    return $this->render('@App/Admin/editCustomValidationServizio.html.twig', [
+    return $this->render('Admin/editCustomValidationServizio.html.twig', [
       'form' => $form->createView(),
       'servizio' => $servizio,
       'user' => $user,
@@ -931,7 +931,7 @@ class AdminController extends Controller
       $result = [];
     }
 
-    return $this->render('@App/Admin/usage.html.twig', [
+    return $this->render('Admin/usage.html.twig', [
       'all_user' => $result,
       'user' => $this->getUser(),
     ]);

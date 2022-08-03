@@ -201,7 +201,7 @@ class OperatoriController extends Controller
       $stati[] = $state;
     }
 
-    return $this->render('@App/Operatori/index.html.twig', [
+    return $this->render('Operatori/index.html.twig', [
       'servizi' => $result,
       'stati' => $stati,
       'user' => $this->getUser(),
@@ -246,7 +246,7 @@ class OperatoriController extends Controller
       }
     }
 
-    return $this->render('@App/Operatori/newApplication.html.twig', [
+    return $this->render('Operatori/newApplication.html.twig', [
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'user' => $this->getUser(),
       'token' => $this->JWTTokenManager->create($this->getUser()),
@@ -578,7 +578,7 @@ class OperatoriController extends Controller
     }
 
     $statusServices = $this->populateSelectStatusServicesPratiche();
-    return $this->render('@App/Operatori/usage.html.twig', [
+    return $this->render('Operatori/usage.html.twig', [
       'servizi' => $servizi,
       'pratiche' => $result,
       'user' => $this->getUser(),
@@ -615,7 +615,7 @@ class OperatoriController extends Controller
       }
     }
 
-    return $this->render('@App/Operatori/showProtocolli.html.twig', [
+    return $this->render('Operatori/showProtocolli.html.twig', [
       'pratica' => $pratica,
       'allegati' => $allegati,
       'user' => $user
@@ -849,7 +849,7 @@ class OperatoriController extends Controller
       }
     }
 
-    return $this->render('@App/Operatori/showPratica.html.twig', [
+    return $this->render('Operatori/showPratica.html.twig', [
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
       'attachments_count' => $this->praticaManager->countAttachments($pratica),
@@ -967,7 +967,7 @@ class OperatoriController extends Controller
         'ente' => $this->getUser()->getEnte(),
       ]
     );
-    return $this->render('@App/Operatori/listOperatoriByEnte.html.twig', [
+    return $this->render('Operatori/listOperatoriByEnte.html.twig', [
       'operatori' => $operatori,
       'user' => $this->getUser(),
     ]);
@@ -1168,7 +1168,7 @@ class OperatoriController extends Controller
   public function analyticsAction()
   {
     $config = $this->getParameter('analytics');
-    return $this->render('@App/Analytics/index.html.twig', [
+    return $this->render('Analytics/index.html.twig', [
       'analytics_config' => \json_encode($config)
     ]);
   }

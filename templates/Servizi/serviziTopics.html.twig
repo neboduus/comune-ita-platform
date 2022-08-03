@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% block title %}{{'nav.servizi'|trans()}} - Stanza del cittadino{% endblock %}
 {% block main_content %}
 
@@ -9,7 +9,7 @@
         <div class="clearfix">
           <p>{{ 'servizio.sottotitolo_categorie'|trans }}</p>
         </div>
-        {{ include('@App/Servizi/parts/_searchForm.html.twig') }}
+        {{ include('Servizi/parts/_searchForm.html.twig') }}
       </div>
     </div>
   </section>
@@ -19,7 +19,7 @@
       <div class="row">
         {% for item in topics %}
           <div class="col-12 col-sm-6 col-lg-4">
-            {{ include('@App/Servizi/parts/panel/topic.html.twig', {'item':item.object}) }}
+            {{ include('Servizi/parts/panel/topic.html.twig', {'item':item.object}) }}
           </div>
         {% endfor %}
       </div>

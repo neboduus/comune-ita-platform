@@ -5,7 +5,7 @@
     </svg>
     <span class="">{{ 'elimina' | trans }}</span>
   </button>
-  {{ include('@App/Calendars/table/_modal_delete.html.twig', {'id': id, 'title': title, 'futureMeetings': futureMeetings}) }}
+  {{ include('Calendars/table/_modal_delete.html.twig', {'id': id, 'title': title, 'futureMeetings': futureMeetings}) }}
 {% else %}
   <button data-toggle="tooltip" title="{{ 'calendars.cant_delete_tooltip' | trans({'%owner%': owner}) }}"
           class="btn btn-xs btn-primary disabled">

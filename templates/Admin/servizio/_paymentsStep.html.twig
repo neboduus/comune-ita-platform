@@ -5,7 +5,7 @@
       {{ form_start(form) }}
       {{ form_errors(form) }}
       {{ form_rest(form) }}
-      {{ include('@App/Admin/servizio/_saveButtons.html.twig') }}
+      {{ include('Admin/servizio/_saveButtons.html.twig') }}
       {{ form_end(form) }}
     {% else %}
       <div class="alert alert-warning">

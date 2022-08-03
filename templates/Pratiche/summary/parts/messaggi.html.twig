@@ -12,7 +12,7 @@
 
     <ul class="messages-list">
       {% for message in pratica.publicMessages %}
-        {{ include('@App/Message/message.html.twig', {'request_integration_time': request_integration_time}) }}
+        {{ include('Message/message.html.twig', {'request_integration_time': request_integration_time}) }}
       {% endfor %}
     </ul>
 

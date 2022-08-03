@@ -31,7 +31,7 @@
         {% endif %}
 
       {% elseif pratica.status == constant('STATUS_PENDING', pratica) %}
-        {{ include('@App/Operatori/parts/change_status_modal.html.twig') }}
+        {{ include('Operatori/parts/change_status_modal.html.twig') }}
 
         <button class="btn btn-outline-secondary" id="modal_refuse" data-toggle="modal"
                 data-target=".bd-example-modal-lg">
@@ -57,7 +57,7 @@
         </button>
 
       {% elseif pratica.status == constant('STATUS_PAYMENT_PENDING', pratica) or pratica.status == constant('STATUS_PAYMENT_OUTCOME_PENDING', pratica) %}
-        {{ include('@App/Operatori/parts/_change_status_paid.html.twig') }}
+        {{ include('Operatori/parts/_change_status_paid.html.twig') }}
       {% endif %}
     </div>
   </div>

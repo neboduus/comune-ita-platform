@@ -28,11 +28,11 @@
   </div>
 
   {# Bottone per download modulo compilato (solo operatore) #}
-  {{ include('@App/Pratiche/summary/parts/moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('Pratiche/summary/parts/moduli_compilati.html.twig', {'pratica':pratica, 'user': user}) }}
 
   {% if pratica.numeroProtocollo or (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length > 0) %}
     <div class="col-12 my-2">
-      {{ include('@App/Pratiche/summary/parts/moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
+      {{ include('Pratiche/summary/parts/moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
     </div>
   {% else %}
   <div class="col-12 my-2">
@@ -71,7 +71,7 @@
     {% endif %}
   </div>
   {% endif %}
-  
+
   {% if pratica.status >= 1900 and user == pratica.user %}
     <div class="col-12">
       <p class="text-center m-2">{{ 'pratica.dettaglio.or' | trans }}</p>

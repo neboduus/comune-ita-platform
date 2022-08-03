@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% block title %}{{ title|trans() }} - Stanza del cittadino{% endblock %}
 
 {% block main_content %}
@@ -31,19 +31,19 @@
                             <li class="pb-1 d-flex justify-content-between align-items-center">
                               {% if p.status == constant('STATUS_PAYMENT_PENDING', p) %}
                                 <a class="d-inline p-0" href="{{ path('pratiche_compila', {'pratica': p}) }}">
-                                  {{ include('@App/Pratiche/parts/list_pratice.html.twig') }}
+                                  {{ include('Pratiche/parts/list_pratice.html.twig') }}
                                 </a>
                               {% elseif p.status == constant('STATUS_DRAFT', p) %}
                                 <a class="d-inline p-0" href="{{ path('pratiche_compila', {'pratica': p}) }}">
-                                  {{ include('@App/Pratiche/parts/list_pratice.html.twig') }}
+                                  {{ include('Pratiche/parts/list_pratice.html.twig') }}
                                 </a>
                               {% elseif p.status == constant('STATUS_REQUEST_INTEGRATION', p) or p.status == constant('STATUS_DRAFT_FOR_INTEGRATION', p) %}
                                 <a class="d-inline p-0" href="{{ path('pratica_show_detail', {'pratica': p,'tab':'note'}) }}">
-                                  {{ include('@App/Pratiche/parts/list_pratice.html.twig') }}
+                                  {{ include('Pratiche/parts/list_pratice.html.twig') }}
                                 </a>
                               {% else %}
                                 <a class="d-inline p-0" href="{% if feature('feature_application_detail') %}{{ path('pratica_show_detail', {'pratica': p}) }}{% else %}{{ path('pratiche_show', {'pratica': p}) }}{% endif %}">
-                                  {{ include('@App/Pratiche/parts/list_pratice.html.twig') }}
+                                  {{ include('Pratiche/parts/list_pratice.html.twig') }}
                                 </a>
                               {% endif %}
 

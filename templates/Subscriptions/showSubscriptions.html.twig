@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 
 {% block stylesheets %}
   {{ encore_entry_link_tags('subscription-service-manager') }}
@@ -381,11 +381,11 @@
         </div>
       </div>
     </div>
-    {{ include('@App/SubscriptionServices/parts/subscriptionsModal.html.twig') }}
-    {{ include('@App/SubscriptionServices/parts/paymentsModal.html.twig') }}
-    {{ include('@App/Subscriptions/parts/_modal_edit.html.twig', {'subscriptionServices': subscriptionServices}) }}
-    {{ include('@App/Subscriptions/parts/_modal_delete.html.twig') }}
-    {{ include('@App/Subscriptions/parts/_modal_withdraw.html.twig') }}
-    {{ include('@App/Subscriptions/parts/_modal_activate.html.twig') }}
+    {{ include('SubscriptionServices/parts/subscriptionsModal.html.twig') }}
+    {{ include('SubscriptionServices/parts/paymentsModal.html.twig') }}
+    {{ include('Subscriptions/parts/_modal_edit.html.twig', {'subscriptionServices': subscriptionServices}) }}
+    {{ include('Subscriptions/parts/_modal_delete.html.twig') }}
+    {{ include('Subscriptions/parts/_modal_withdraw.html.twig') }}
+    {{ include('Subscriptions/parts/_modal_activate.html.twig') }}
   </section>
 {% endblock %}

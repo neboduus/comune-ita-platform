@@ -203,7 +203,7 @@ class PraticheController extends Controller
       }
     }
 
-    return $this->render('@App/Pratiche/index.html.twig', [
+    return $this->render('Pratiche/index.html.twig', [
       'user' => $user,
       'pratiche' => $pratiche,
       'title' => 'lista_pratiche',
@@ -275,7 +275,7 @@ class PraticheController extends Controller
       $applications['related'] = $praticheRelated;
     }
 
-    return $this->render('@App/Pratiche/list.html.twig', [
+    return $this->render('Pratiche/list.html.twig', [
       'user' => $user,
       'title' => 'lista_pratiche',
       'tab_pratiche' => $applications,
@@ -319,7 +319,7 @@ class PraticheController extends Controller
       $this->logger->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
 
       return $this->render(
-        '@App/Servizi/serviziFeedback.html.twig',
+        'Servizi/serviziFeedback.html.twig',
         array(
           'servizio' => $servizio,
           'status' => 'danger',
@@ -353,7 +353,7 @@ class PraticheController extends Controller
       array('creationTime' => 'ASC')
     );
 
-    return $this->render('@App/Pratiche/listDraftByService.html.twig', [
+    return $this->render('Pratiche/listDraftByService.html.twig', [
       'user' => $user,
       'pratiche' => $pratiche,
       'title' => 'bozze_servizio',
@@ -458,7 +458,7 @@ class PraticheController extends Controller
       }
     }
 
-    return $this->render('@App/Pratiche/compila.html.twig', [
+    return $this->render('Pratiche/compila.html.twig', [
       'form' => $form->createView(),
       'pratica' => $praticaFlowService->getFormData(),
       'flow' => $praticaFlowService,
@@ -566,7 +566,7 @@ class PraticheController extends Controller
       $result['allegati'] = $allegati;
     }
 
-    return $this->render('@App/Pratiche/show.html.twig', $result);
+    return $this->render('Pratiche/show.html.twig', $result);
   }
 
   /**
@@ -657,7 +657,7 @@ class PraticheController extends Controller
       $result['allegati'] = $allegati;
     }
 
-    return $this->render('@App/Pratiche/detail.html.twig', $result);
+    return $this->render('Pratiche/detail.html.twig', $result);
   }
 
   /**

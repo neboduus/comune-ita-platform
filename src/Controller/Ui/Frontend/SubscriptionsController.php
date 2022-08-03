@@ -119,7 +119,7 @@ class SubscriptionsController extends Controller
         'field' => 'subscriber.id',
         'searchable' => false,
         'orderable' => false,
-        'template' => '@App/Subscriptions/table/_show.html.twig',
+        'template' => 'Subscriptions/table/_show.html.twig',
       ])
       ->add('name', TextColumn::class, [
         'label' => 'iscrizioni.subscribers.name',
@@ -141,7 +141,7 @@ class SubscriptionsController extends Controller
       ->add('email', TwigColumn::class, [
         'label' => 'iscrizioni.subscribers.email_address',
         'field' => 'subscriber.email',
-        'template' => '@App/Subscriptions/table/_email.html.twig',
+        'template' => 'Subscriptions/table/_email.html.twig',
         'searchable' => false,
         'orderable' => false
       ])
@@ -166,7 +166,7 @@ class SubscriptionsController extends Controller
         'label' => 'iscrizioni.subscribers.actions',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Subscriptions/table/_actions.html.twig',
+        'template' => 'Subscriptions/table/_actions.html.twig',
       ])
       ->createAdapter(ORMAdapter::class, [
         'entity' => Subscription::class,
@@ -191,7 +191,7 @@ class SubscriptionsController extends Controller
 
     $subscriptionServices = $this->entityManager->getRepository(SubscriptionService::class)->findAll();
 
-    return $this->render('@App/Subscriptions/showSubscriptions.html.twig', [
+    return $this->render('Subscriptions/showSubscriptions.html.twig', [
       'user' => $user,
       'datatable' => $table, 'subscriptionService' => $subscriptionService,
       'subscriptionServices'=> $subscriptionServices,
@@ -515,7 +515,7 @@ class SubscriptionsController extends Controller
       $userSubscriptions[] = $this->entityManager->getRepository('App\Entity\Subscription')->find($id);
     }
 
-    return $this->render('@App/Subscriptions/cpsUserListSubscription.html.twig', [
+    return $this->render('Subscriptions/cpsUserListSubscription.html.twig', [
       'subscriptions' => $userSubscriptions,
       'user' => $user
     ]);
@@ -546,7 +546,7 @@ class SubscriptionsController extends Controller
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.iscrizioni', 'subscriptions_list_cpsuser');
     $this->breadcrumbsService->getBreadcrumbs()->addItem($subscription->getSubscriptionService()->getName());
 
-    return $this->render('@App/Subscriptions/cpsUserShowSubscription.html.twig', [
+    return $this->render('Subscriptions/cpsUserShowSubscription.html.twig', [
       'subscription' => $subscription,
       'user' => $user
     ]);
@@ -580,7 +580,7 @@ class SubscriptionsController extends Controller
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($subscriptionPayment->getSubscription()->getSubscriptionService()->getName(), 'subscription_show_cpsuser', ['subscriptionId' => $subscriptionPayment->getSubscription()->getId()]);
     $this->breadcrumbsService->getBreadcrumbs()->addItem($subscriptionPayment->getName());
 
-    return $this->render('@App/Subscriptions/cpsUserShowSubscriptionPayment.html.twig', [
+    return $this->render('Subscriptions/cpsUserShowSubscriptionPayment.html.twig', [
       'payment' => $subscriptionPayment,
       'user' => $user
     ]);
@@ -832,7 +832,7 @@ class SubscriptionsController extends Controller
       }
     }
 
-    return $this->render('@App/Subscriber/editSubscriber.html.twig', [
+    return $this->render('Subscriber/editSubscriber.html.twig', [
       'user' => $user,
       'form' => $form->createView(),
       'subscriber' => $subscriber

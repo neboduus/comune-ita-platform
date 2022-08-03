@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% block title %}{{ title|trans() }} - Stanza del cittadino{% endblock %}
  {% set cta_delete_draft = 'pratica.elimina_pratica' | trans() %}
 
@@ -167,7 +167,7 @@
     {% if pratiche|length > 0 %}
       {% for pratica in pratiche %}
         <div class="col-sm-4">
-          {{ include('@App/Pratiche/parts/panel/pratica.html.twig') }}
+          {{ include('Pratiche/parts/panel/pratica.html.twig') }}
         </div>
       {% endfor %}
     {% else %}

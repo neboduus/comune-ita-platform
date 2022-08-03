@@ -22,7 +22,7 @@
     </a>
   </div>
   <div>
-    {{ include('@App/Calendars/table/_edit_action.html.twig', {'canEdit': canEdit, 'id': calendar.id}) }}
-    {{ include('@App/Calendars/table/_delete_action.html.twig', {'canDelete': canDelete, 'id': calendar.id, 'title': calendar.title, 'futureMeetings': futureMeetings}) }}
+    {{ include('Calendars/table/_edit_action.html.twig', {'canEdit': canEdit, 'id': calendar.id}) }}
+    {{ include('Calendars/table/_delete_action.html.twig', {'canDelete': canDelete, 'id': calendar.id, 'title': calendar.title, 'futureMeetings': futureMeetings}) }}
   </div>
 </div>

@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% block title %}{{ servizio.name }} - Stanza del cittadino{% endblock %}
 
 {% block main_content %}
@@ -296,7 +296,7 @@
         <div class="row">
           {% for servizio in servizio.getStickyServices %}
             <div class="col-12">
-              {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig') }}
+              {{ include('Servizi/parts/panel/servizio_sticky.html.twig') }}
             </div>
           {% endfor %}
         </div>
@@ -309,7 +309,7 @@
       <div class="row">
         {% for item in servizio.getNotStickyServices %}
           <div class="col-12 col-sm-6 col-lg-4">
-            {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
+            {{ include('Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
           </div>
         {% endfor %}
       </div>

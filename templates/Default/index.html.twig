@@ -1,4 +1,4 @@
-{% extends '::base.html.twig' %}
+{% extends 'base.html.twig' %}
 
 {% block title %}Stanza del cittadino{% endblock %}
 {% block favicon %}
@@ -17,27 +17,27 @@
 {% endblock %}
 
 {% block header %}
-  {{ include('@App/Default/header/header.html.twig') }}
+  {{ include('Default/header/header.html.twig') }}
 {% endblock %}
 
 {% block content_container %}
   <main>
 
-    {{ include('@App/Default/nav/user.html.twig') }}
-    {{ include('@App/Default/parts/breadcrumb.html.twig') }}
-    {{ include('@App/Default/parts/flashes.html.twig') }}
+    {{ include('Default/nav/user.html.twig') }}
+    {{ include('Default/parts/breadcrumb.html.twig') }}
+    {{ include('Default/parts/flashes.html.twig') }}
 
     {% block main_content %}{% endblock %}
 
-    {{ include('@App/Default/parts/survey.html.twig') }}
+    {{ include('Default/parts/survey.html.twig') }}
 
-    {{ include('@App/Default/parts/_searchModal.html.twig') }}
+    {{ include('Default/parts/_searchModal.html.twig') }}
 
   </main>
 {% endblock %}
 
 {% block footer %}
-  {{ include('@App/Default/footer/footer.html.twig') }}
+  {{ include('Default/footer/footer.html.twig') }}
 {% endblock %}
 
 {% block javascripts %}

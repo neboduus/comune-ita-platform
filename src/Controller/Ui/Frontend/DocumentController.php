@@ -85,7 +85,7 @@ class DocumentController extends Controller
       $folders[] = $this->em->getRepository('App\Entity\Folder')->find($id);
     }
 
-    return $this->render('@App/Document/cpsUserListFolders.html.twig', [
+    return $this->render('Document/cpsUserListFolders.html.twig', [
       'folders' => $folders,
       'user' => $this->getUser(),
     ]);
@@ -126,7 +126,7 @@ class DocumentController extends Controller
       }
     }
 
-    return $this->render('@App/Document/cpsUserListDocuments.html.twig', [
+    return $this->render('Document/cpsUserListDocuments.html.twig', [
       'documents' => $documents,
       'folder' => $folder,
       'user' => $user
@@ -158,7 +158,7 @@ class DocumentController extends Controller
     $this->breadcrumbsService->getBreadcrumbs()->addItem($document->getTitle());
 
     if ($folder->getOwner() == $user->getCodiceFiscale() || in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
-      return $this->render('@App/Document/cpsUserShowDocumento.html.twig', [
+      return $this->render('Document/cpsUserShowDocumento.html.twig', [
         'document' => $document,
         'user' => $user,
       ]);

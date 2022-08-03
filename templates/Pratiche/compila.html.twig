@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 
 {% set ente = instance_service.getCurrentInstance() %}
 
@@ -114,10 +114,10 @@
 
           {% if currentStep.formType == "App\\Form\\Base\\SummaryType" %}
             <p>{{ 'steps.common.conferma.payment_help_text_top' | trans }}</p>
-            {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+            {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
             <p><b>{{ 'steps.common.conferma.help_text_top'|trans }}</b></p>
-            {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+            {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% endif %}
           {{ form_rest(form) }}
 
@@ -130,7 +130,7 @@
 
       {# Sezione pagamenti diveso da MyPay e Bollo #}
       {% if pratica.paymentType is not null and pratica.paymentType != 'bollo' and pratica.paymentType != 'mypay' %}
-        {{ include('@App/Pratiche/parts/_payment.twig') }}
+        {{ include('Pratiche/parts/_payment.twig') }}
       {% endif %}
 
 
@@ -190,17 +190,17 @@
       {% endif %}
 
       {# Info compilazione specificate nel servizio #}
-      {{ include('@App/Pratiche/parts/compilation_info.html.twig') }}
+      {{ include('Pratiche/parts/compilation_info.html.twig') }}
 
       {# Note compilazione per utente #}
-      {{ include('@App/Pratiche/parts/user_compilation_notes.html.twig') }}
+      {{ include('Pratiche/parts/user_compilation_notes.html.twig') }}
 
     </div>
     </div>
   </section>
 
   {# Modal di conferma #}
-  {{ include('@App/Pratiche/parts/confirm_modal.html.twig') }}
+  {{ include('Pratiche/parts/confirm_modal.html.twig') }}
 
 {% endblock %}
 

@@ -51,26 +51,26 @@
            data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
       </div>
     {% else %}
-      {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
+      {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
     {% endif %}
   </div>
   <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
-    {{ include('@App/Allegato/parts/_application_attachments.html.twig', {'pratica':pratica}) }}
+    {{ include('Allegato/parts/_application_attachments.html.twig', {'pratica':pratica}) }}
   </div>
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel" aria-labelledby="messaggi-tab">
-    {{ include('@App/Operatori/parts/messaggi.html.twig', {'pratica':pratica}) }}
+    {{ include('Operatori/parts/messaggi.html.twig', {'pratica':pratica}) }}
   </div>
   {% if pratica.servizio.paymentRequired %}
     <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
          aria-labelledby="pagamento-tab">
-      {{ include('@App/Operatori/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
+      {{ include('Operatori/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
     </div>
   {% endif %}
   {% if pratica.servizio.protocolRequired or pratica.numeroProtocollo %}
   <div class="tab-pane py-4 fade {% if tab == 'protocollo' %} show active {% endif %}" id="protocollo" role="tabpanel"
        aria-labelledby="protocollo-tab">
     <div class="m-3">
-      {{ include('@App/Operatori/parts/dati_protocollo.html.twig', {'pratica':pratica}) }}
+      {{ include('Operatori/parts/dati_protocollo.html.twig', {'pratica':pratica}) }}
     </div>
   </div>
   {% endif %}
@@ -78,7 +78,7 @@
     <div class="tab-pane py-4 fade {% if tab == 'meetings' %} show active {% endif %}" id="meetings" role="tabpanel"
          aria-labelledby="meetings-tab">
       <div class="m-3">
-        {{ include('@App/Operatori/parts/meetings.html.twig', {'pratica':pratica}) }}
+        {{ include('Operatori/parts/meetings.html.twig', {'pratica':pratica}) }}
       </div>
     </div>
   {% endif %}

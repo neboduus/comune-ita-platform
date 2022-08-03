@@ -73,7 +73,7 @@ class WebhookController extends Controller
 
     $items = $this->entityManager->getRepository('App\Entity\Webhook')->findAll();
 
-    return $this->render( '@App/Admin/indexWebhook.html.twig', [
+    return $this->render( 'Admin/indexWebhook.html.twig', [
       'user'  => $this->getUser(),
       'statuses' => Webhook::TRIGGERS,
       'services' => $services,
@@ -102,7 +102,7 @@ class WebhookController extends Controller
       return $this->redirectToRoute('admin_webhook_index');
     }
 
-    return $this->render( '@App/Admin/editWebhook.html.twig', [
+    return $this->render( 'Admin/editWebhook.html.twig', [
       'user'  => $this->getUser(),
       'item' => $webhook,
       'form' => $form->createView(),
@@ -144,7 +144,7 @@ class WebhookController extends Controller
       $templateVariables ['application_id'] = $request->request->get('application_id');
     }
 
-    return $this->render( '@App/Admin/editWebhook.html.twig', $templateVariables);
+    return $this->render( 'Admin/editWebhook.html.twig', $templateVariables);
   }
 
   /**

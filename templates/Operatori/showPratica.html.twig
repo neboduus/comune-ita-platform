@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% set ente = instance_service.getCurrentInstance() %}
 
 {% block stylesheets %}
@@ -68,8 +68,8 @@
     </div>
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
-        {{ include('@App/Operatori/parts/operator_actions.html.twig') }}
-        {{ include('@App/Operatori/parts/pratica_summary.html.twig') }}
+        {{ include('Operatori/parts/operator_actions.html.twig') }}
+        {{ include('Operatori/parts/pratica_summary.html.twig') }}
       </div>
 
       {# Sidebar #}
@@ -109,7 +109,7 @@
                 <div id="acc_meetings" class="collapse show" role="tabpanel" aria-labelledby="headingA1"
                      data-parent="#accordion_meetings">
                   <div class="collapse-body p-0">
-                    {{ include('@App/Operatori/parts/meeting_evidenza.html.twig') }}
+                    {{ include('Operatori/parts/meeting_evidenza.html.twig') }}
                   </div>
                 </div>
               </div>
@@ -223,7 +223,7 @@
                     <div class="collapse-body py-2">
                       <div class="row">
                         <div class="col-12 pb-3">
-                          {{ include('@App/Operatori/parts/fascicolo.html.twig') }}
+                          {{ include('Operatori/parts/fascicolo.html.twig') }}
                         </div>
                       </div>
                     </div>
@@ -245,7 +245,7 @@
                   <div id="acc_recent_applications" class="collapse" role="tabpanel"
                        aria-labelledby="heading_recent_applications" data-parent="#accordion_recent_applications">
                     <div class="collapse-body py-2">
-                      {{ include('@App/Operatori/parts/pratiche_recenti.html.twig') }}
+                      {{ include('Operatori/parts/pratiche_recenti.html.twig') }}
                     </div>
                   </div>
                 </div>
@@ -264,7 +264,7 @@
                 <div id="acc_iter" class="collapse" role="tabpanel" aria-labelledby="heading_iter"
                      data-parent="#accordion_iter">
                   <div class="collapse-body py-2">
-                    {{ include('@App/Operatori/parts/pratica_iter.html.twig') }}
+                    {{ include('Operatori/parts/pratica_iter.html.twig') }}
                   </div>
                 </div>
               </div>

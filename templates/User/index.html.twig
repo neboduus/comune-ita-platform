@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% block title %}{{ 'user.dashboard.title'|trans }} - Stanza del cittadino{% endblock %}
 
 {% block main_content %}
@@ -46,7 +46,7 @@
                   <div class="row">
                     {% for servizio in servizi %}
                       <div class="col-12 col-sm-6 col-lg-4">
-                        {{ include('@App/Servizi/parts/panel/servizio.html.twig') }}
+                        {{ include('Servizi/parts/panel/servizio.html.twig') }}
                       </div>
                     {% endfor %}
                   </div>
@@ -126,7 +126,7 @@
       </div>
       {% if threads %}
         <div class="col-md-4">
-          {{ include('@App/Default/parts/chat.html.twig') }}
+          {{ include('Default/parts/chat.html.twig') }}
         </div>
       {% endif %}
     </div>

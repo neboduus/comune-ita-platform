@@ -1,4 +1,4 @@
- {% extends '@App/Default/index.html.twig' %}
+ {% extends 'Default/index.html.twig' %}
 {% block title %}{{ 'nav.servizi'|trans() }} - Stanza del cittadino{% endblock %}
 {% block main_content %}
   <section class="container">
@@ -8,7 +8,7 @@
         <div class="clearfix">
           <p>{{ 'servizio.sottotitolo'|trans }}</p>
         </div>
-        {{ include('@App/Servizi/parts/_searchForm.html.twig') }}
+        {{ include('Servizi/parts/_searchForm.html.twig') }}
       </div>
     </div>
   </section>
@@ -20,9 +20,9 @@
           {% for item in sticky_services %}
             <div class="col-12 col-md-6">
               {% if item.type == 'service' %}
-                {{ include('@App/Servizi/parts/panel/servizio_sticky.html.twig', {'servizio':item.object}) }}
+                {{ include('Servizi/parts/panel/servizio_sticky.html.twig', {'servizio':item.object}) }}
               {% else %}
-                {{ include('@App/Servizi/parts/panel/service-group_sticky.html.twig', {'servizio':item.object}) }}
+                {{ include('Servizi/parts/panel/service-group_sticky.html.twig', {'servizio':item.object}) }}
               {% endif %}
             </div>
           {% endfor %}
@@ -37,9 +37,9 @@
         {% for item in servizi %}
           <div class="col-12 col-sm-6 col-lg-4">
             {% if item.type == 'service' %}
-              {{ include('@App/Servizi/parts/panel/servizio.html.twig', {'servizio':item.object}) }}
+              {{ include('Servizi/parts/panel/servizio.html.twig', {'servizio':item.object}) }}
             {% else %}
-              {{ include('@App/Servizi/parts/panel/service-group.html.twig', {'servizio':item.object}) }}
+              {{ include('Servizi/parts/panel/service-group.html.twig', {'servizio':item.object}) }}
             {% endif %}
           </div>
         {% endfor %}

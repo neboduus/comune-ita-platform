@@ -39,7 +39,7 @@
               </nav>
             </div>
             {% if  login_route != constant('App\\Security\\AbstractAuthenticator::LOGIN_TYPE_NONE')  %}
-              {{ include('@App/Default/parts/user_badge.html.twig') }}
+              {{ include('Default/parts/user_badge.html.twig') }}
             {% endif %}
           </div>
         </div>
@@ -101,6 +101,6 @@
         </div>
       </div>
     </div>
-    {{ include('@App/Default/nav/main.html.twig') }}
+    {{ include('Default/nav/main.html.twig') }}
   </div>
 </header>

@@ -116,14 +116,14 @@ class CalendarsController extends Controller
         'label' => 'calendars.table.title',
         'orderable' => true,
         'searchable' => true,
-        'template' => '@App/Calendars/table/_title.html.twig',
+        'template' => 'Calendars/table/_title.html.twig',
       ])
       ->add('owner', TextColumn::class, ['label' => 'calendars.table.owner', 'orderable'=>true, 'searchable'=>true])
       ->add('isModerated', TwigColumn::class, [
         'label' => 'calendars.table.moderated',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Calendars/table/_moderated.html.twig',
+        'template' => 'Calendars/table/_moderated.html.twig',
         'className' => 'px-5'
       ])
       ->add('canView', BoolColumn::class, ['visible' => false])
@@ -135,7 +135,7 @@ class CalendarsController extends Controller
         'label' => 'calendars.table.actions',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Calendars/table/_actions.html.twig',
+        'template' => 'Calendars/table/_actions.html.twig',
       ])
       ->createAdapter(ArrayAdapter::class, $data)
       ->addOrderBy('canEdit', 'desc')
@@ -144,7 +144,7 @@ class CalendarsController extends Controller
     if ($table->isCallback()) {
       return $table->getResponse();
     }
-    return $this->render('@App/Calendars/indexCalendars.html.twig', [
+    return $this->render('Calendars/indexCalendars.html.twig', [
       'user' => $user,
       'datatable' => $table
     ]);
@@ -191,7 +191,7 @@ class CalendarsController extends Controller
       }
     }
 
-    return $this->render('@App/Calendars/newCalendar.html.twig', [
+    return $this->render('Calendars/newCalendar.html.twig', [
       'user' => $user,
       'calendar' => $calendar,
       'form' => $form->createView(),
@@ -296,7 +296,7 @@ class CalendarsController extends Controller
       }
     }
 
-    return $this->render('@App/Calendars/editCalendar.html.twig', [
+    return $this->render('Calendars/editCalendar.html.twig', [
       'user' => $user,
       'form' => $form->createView(),
       'calendar' => $calendar
@@ -482,7 +482,7 @@ class CalendarsController extends Controller
       'futureMeetings' => $futureMeetings
     ];
 
-    return $this->render('@App/Calendars/showCalendar.html.twig', $data);
+    return $this->render('Calendars/showCalendar.html.twig', $data);
   }
 
   /**
@@ -521,7 +521,7 @@ class CalendarsController extends Controller
         $this->addFlash('error', $this->translator->trans('meetings.error.save_delete_slot'). ' ' . $exception->getMessage());
       }
     }
-    return $this->render('@App/Calendars/cancelMeeting.html.twig', [
+    return $this->render('Calendars/cancelMeeting.html.twig', [
       'form' => $form->createView(),
       'canCancel' => $canCancel,
       'meeting' => $meeting
@@ -545,7 +545,7 @@ class CalendarsController extends Controller
       return new Response(null, Response::HTTP_NOT_FOUND);
 
     if ($meeting->getStatus() != Meeting::STATUS_PENDING) {
-      return $this->render('@App/Calendars/editMeeting.html.twig', [
+      return $this->render('Calendars/editMeeting.html.twig', [
         'form' => null,
         'meeting' => $meeting
       ]);
@@ -598,7 +598,7 @@ class CalendarsController extends Controller
         $this->addFlash('error', $this->translator->trans('meetings.error.update_slot'). ' ' . $exception->getMessage());
       }
     }
-    return $this->render('@App/Calendars/editMeeting.html.twig', [
+    return $this->render('Calendars/editMeeting.html.twig', [
       'form' => $form->createView(),
       'meeting' => $meeting
     ]);

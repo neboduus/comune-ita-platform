@@ -85,7 +85,7 @@ class SubscriberController extends Controller
     }
 
     $subscriptionServices = $this->entityManager->getRepository(SubscriptionService::class)->findAll();
-    return $this->render( '@App/Subscriber/showSubscriber.html.twig', [
+    return $this->render( 'Subscriber/showSubscriber.html.twig', [
       'user' => $user,
       'subscriber' => $subscriber,
       'tab'=> $tab,

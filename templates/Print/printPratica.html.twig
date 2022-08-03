@@ -1,4 +1,4 @@
-{% extends '@App/Default/printable.html.twig' %}
+{% extends 'Default/printable.html.twig' %}
 
 {% set ente = instance_service.getCurrentInstance() %}
 {% set customName = ente.getMetaAsArray('name') %}
@@ -10,7 +10,7 @@
 
 {% block stylesheets %}
   {{ encore_entry_link_tags('compile') }}
-  {{ include('@App/Print/parts/style.html.twig') }}
+  {{ include('Print/parts/style.html.twig') }}
 {% endblock %}
 
 {% block javascripts %}
@@ -134,7 +134,7 @@
       </div>
     {% endif %}
 
-    {{ include('@App/Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
+    {{ include('Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': pratica.user}) }}
 
     {% set securityFields = [] %}
     {% if pratica.authenticationData|length > 0 %}

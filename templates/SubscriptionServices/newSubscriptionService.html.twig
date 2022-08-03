@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 
 {% block stylesheets %}
   {{ encore_entry_script_tags('subscription-service-manager') }}
@@ -51,7 +51,7 @@
         {{ form_row(form.end_message) }}
         {{ form_row(form.status) }}
 
-        {{ include('@App/SubscriptionServices/parts/subscriptionServicePayments.html.twig') }}
+        {{ include('SubscriptionServices/parts/subscriptionServicePayments.html.twig') }}
 
         <div class="row">
           <div class="col-6">

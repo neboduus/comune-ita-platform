@@ -86,7 +86,7 @@ class ServiceController extends Controller
     $items = $qb->getQuery()->getResult();
 
 
-    return $this->render('@App/Operatori/indexServices.html.twig', [
+    return $this->render('Operatori/indexServices.html.twig', [
       'user' => $user,
       'items' => $items,
       'statuses' => $statuses
@@ -114,7 +114,7 @@ class ServiceController extends Controller
       return $table->getResponse();
     }
 
-    return $this->render('@App/Operatori/indexServicesAjx.html.twig', [
+    return $this->render('Operatori/indexServicesAjx.html.twig', [
       'user' => $this->getUser(),
       'datatable' => $table
     ]);

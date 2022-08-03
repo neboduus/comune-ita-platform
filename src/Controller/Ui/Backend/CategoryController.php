@@ -61,7 +61,7 @@ class CategoryController extends Controller
 
     $items = $this->categoryManager->getCategoryTree();
 
-    return $this->render('@App/Admin/indexCategory.html.twig', [
+    return $this->render('Admin/indexCategory.html.twig', [
       'user' => $this->getUser(),
       'items' => $items
     ]);
@@ -87,7 +87,7 @@ class CategoryController extends Controller
       return $this->redirectToRoute('admin_category_edit', ['id' => $item->getId()]);
     }
 
-    return $this->render('@App/Admin/editCategory.html.twig', [
+    return $this->render('Admin/editCategory.html.twig', [
       'user' => $this->getUser(),
       'item' => $item,
       'form' => $form->createView(),
@@ -112,7 +112,7 @@ class CategoryController extends Controller
       return $this->redirectToRoute('admin_category_edit', ['id' => $item->getId()]);
     }
 
-    return $this->render('@App/Admin/editCategory.html.twig',
+    return $this->render('Admin/editCategory.html.twig',
       [
         'user' => $this->getUser(),
         'item' => $item,

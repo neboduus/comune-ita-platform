@@ -1,8 +1,8 @@
 {% if pratica.operatore %}
   {% if pratica.operatore == user %}
-    {{ include('@App/Operatori/parts/approva_o_rigetta.html.twig') }}
+    {{ include('Operatori/parts/approva_o_rigetta.html.twig') }}
   {% else %}
-    {{ include('@App/Operatori/parts/riassegna.html.twig') }}
+    {{ include('Operatori/parts/riassegna.html.twig') }}
   {% endif %}
 {% else %}
   <div class="row mb-5">
@@ -12,7 +12,7 @@
       {% elseif pratica.status > 1900 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
         {{ 'operatori.attesa_modulo_protocollato'|trans }}
       {% elseif pratica.servizio.isPaymentRequired and pratica.status <= 1510 %}
-        {{ include('@App/Operatori/parts/_change_status_paid.html.twig') }}
+        {{ include('Operatori/parts/_change_status_paid.html.twig') }}
       {% elseif pratica.status == 20000 %}
         {{ 'operatori.pratica_ritirata'|trans({
           '%data%': pratica.latestStatusChangeTimestamp | date(ocsdc_default_date_format),

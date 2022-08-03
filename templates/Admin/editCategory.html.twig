@@ -1,4 +1,4 @@
- {% extends '@App/Default/index.html.twig' %}
+ {% extends 'Default/index.html.twig' %}
 
 {% block main_content %}
   <section class="container my-4">
@@ -44,7 +44,7 @@
                     <td>{{ service.name }}</td>
                     <td>{{ 'pratica.servizio' | trans }}</td>
                     <td class="text-right">
-                      {{ include('@App/Admin/table/_actionsDefault.html.twig', {'edit_route': 'admin_servizio_edit', 'delete_route': 'admin_category_remove_service', item: service}) }}
+                      {{ include('Admin/table/_actionsDefault.html.twig', {'edit_route': 'admin_servizio_edit', 'delete_route': 'admin_category_remove_service', item: service}) }}
                     </td>
                   </tr>
                 {% endfor %}
@@ -53,7 +53,7 @@
                     <td>{{ service.name }}</td>
                     <td>{{ 'gruppo_di_servizi.gruppo_di_servizi' | trans }}</td>
                     <td class="text-right">
-                      {{ include('@App/Admin/table/_actionsDefault.html.twig', {'edit_route': 'admin_service_group_edit', 'delete_route': 'admin_category_remove_service_group', item: service}) }}
+                      {{ include('Admin/table/_actionsDefault.html.twig', {'edit_route': 'admin_service_group_edit', 'delete_route': 'admin_category_remove_service_group', item: service}) }}
                     </td>
                   </tr>
                 {% endfor %}

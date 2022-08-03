@@ -145,7 +145,7 @@ class AllegatoController extends Controller
       return new RedirectResponse($this->router->generate('allegati_list_cpsuser'));
     }
 
-    return $this->render( '@App/Allegato/cpsUserCreateAllegato.html.twig', [
+    return $this->render( 'Allegato/cpsUserCreateAllegato.html.twig', [
       'form' => $form->createView(),
       'user' => $this->getUser(),
     ]);
@@ -607,7 +607,7 @@ class AllegatoController extends Controller
       }
     }
 
-    return $this->render( '@App/Allegato/cpsUserListAllegati.html.twig',  [
+    return $this->render( 'Allegato/cpsUserListAllegati.html.twig',  [
       'allegati' => $allegati,
       'user' => $this->getUser(),
     ]);

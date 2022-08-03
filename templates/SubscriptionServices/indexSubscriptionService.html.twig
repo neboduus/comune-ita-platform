@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 
 {% block stylesheets %}
   {{ encore_entry_link_tags('subscription-service-manager') }}
@@ -80,5 +80,5 @@
       </div>
     </div>
   </section>
-  {% include "@App/SubscriptionServices/parts/searchModal.html.twig" %}
+  {% include "SubscriptionServices/parts/searchModal.html.twig" %}
 {% endblock %}

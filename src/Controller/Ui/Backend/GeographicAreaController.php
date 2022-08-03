@@ -50,7 +50,7 @@ class GeographicAreaController extends Controller
 
     $items = $this->entityManager->getRepository('App\Entity\GeographicArea')->findBy([], ['name' => 'asc']);
 
-    return $this->render( '@App/Admin/indexGeographicArea.html.twig', [
+    return $this->render( 'Admin/indexGeographicArea.html.twig', [
       'user'  => $this->getUser(),
       'items' => $items
     ]);
@@ -76,7 +76,7 @@ class GeographicAreaController extends Controller
       return $this->redirectToRoute('admin_geographic_area_edit', ['id' => $item->getId()]);
     }
 
-    return $this->render( '@App/Admin/editGeographicArea.html.twig', [
+    return $this->render( 'Admin/editGeographicArea.html.twig', [
       'user'  => $this->getUser(),
       'item' => $item,
       'form' => $form->createView(),
@@ -100,7 +100,7 @@ class GeographicAreaController extends Controller
       return $this->redirectToRoute('admin_geographic_area_edit', ['id' => $item->getId()]);
     }
 
-    return $this->render( '@App/Admin/editGeographicArea.html.twig',
+    return $this->render( 'Admin/editGeographicArea.html.twig',
       [
         'user'  => $this->getUser(),
         'item' => $item,

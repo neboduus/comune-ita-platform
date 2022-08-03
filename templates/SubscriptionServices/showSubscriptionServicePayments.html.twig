@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 
 {% block stylesheets %}
 
@@ -91,7 +91,7 @@
                   <td>{% if payment.paymentDate %}{{ payment.paymentDate | date('Y-m-d') }}{% endif %}</td>
                   <td>{{ payment.amount }} €</td>
                   <td>
-                    {{ include('@App/SubscriptionServices/table/_paymentActions.html.twig', {'payment': payment}) }}
+                    {{ include('SubscriptionServices/table/_paymentActions.html.twig', {'payment': payment}) }}
                   </td>
                 </tr>
               {% endfor %}

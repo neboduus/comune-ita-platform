@@ -71,7 +71,7 @@ class SearchController extends Controller
       }
     }
 
-    return $this->render('@App/Default/search.html.twig', [
+    return $this->render('Default/search.html.twig', [
       'services' => $services,
       'facets' => $facets,
       'filters' => $filters

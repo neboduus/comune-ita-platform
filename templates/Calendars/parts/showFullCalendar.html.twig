@@ -32,13 +32,13 @@
         <div id='fullcalendar'></div>
       </div>
       {% if calendar.type == 'time_fixed_slots' %}
-        {{ include('@App/Calendars/parts/modalEdit.html.twig') }}
-        {{ include('@App/Calendars/parts/modalNew.html.twig') }}
+        {{ include('Calendars/parts/modalEdit.html.twig') }}
+        {{ include('Calendars/parts/modalNew.html.twig') }}
       {% else %}
-        {{ include('@App/Calendars/parts/variable_slots/modalNew.html.twig') }}
-        {{ include('@App/Calendars/parts/variable_slots/modalEdit.html.twig') }}
+        {{ include('Calendars/parts/variable_slots/modalNew.html.twig') }}
+        {{ include('Calendars/parts/variable_slots/modalEdit.html.twig') }}
       {% endif %}
-      {{ include('@App/Calendars/parts/modalDeleteDraft.html.twig') }}
+      {{ include('Calendars/parts/modalDeleteDraft.html.twig') }}
     </div>
   </div>
 </div>

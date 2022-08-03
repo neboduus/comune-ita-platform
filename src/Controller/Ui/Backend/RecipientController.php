@@ -50,7 +50,7 @@ class RecipientController extends Controller
 
     $items = $this->entityManager->getRepository('App\Entity\Recipient')->findBy([], ['name' => 'asc']);
 
-    return $this->render( '@App/Admin/indexRecipient.html.twig', [
+    return $this->render( 'Admin/indexRecipient.html.twig', [
       'user'  => $this->getUser(),
       'items' => $items
     ]);
@@ -76,7 +76,7 @@ class RecipientController extends Controller
       return $this->redirectToRoute('admin_recipient_index');
     }
 
-    return $this->render( '@App/Admin/editRecipient.html.twig', [
+    return $this->render( 'Admin/editRecipient.html.twig', [
       'user'  => $this->getUser(),
       'item' => $item,
       'form' => $form->createView(),
@@ -99,7 +99,7 @@ class RecipientController extends Controller
       $this->entityManager->flush();
     }
 
-    return $this->render( '@App/Admin/editRecipient.html.twig',
+    return $this->render( 'Admin/editRecipient.html.twig',
       [
         'user'  => $this->getUser(),
         'item' => $item,

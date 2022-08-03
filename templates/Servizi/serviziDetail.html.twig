@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% block title %}{{ servizio.name }} - Stanza del cittadino{% endblock %}
 {% set ente = instance_service.getCurrentInstance() %}
 {% set logo = ente.getMetaAsArray('logo') ? ente.getMetaAsArray('logo') :  absolute_url(asset('bundles/app/images/logo-default.png')) %}
@@ -6,7 +6,7 @@
 
 {% block head %}
   {{ parent() }}
-  {{ include('@App/Servizi/parts/_json-ld.html.twig', {'servizio':servizio}) }}
+  {{ include('Servizi/parts/_json-ld.html.twig', {'servizio':servizio}) }}
 {% endblock %}
 
 {% block main_content %}

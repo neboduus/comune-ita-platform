@@ -90,7 +90,7 @@ class PrintController extends Controller
       }
     }
 
-    return $this->render( '@App/Print/printPratica.html.twig', [
+    return $this->render( 'Print/printPratica.html.twig', [
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'show_protocol_number' => $showProtocolNumber,
       'form' => $form->createView(),
@@ -150,7 +150,7 @@ class PrintController extends Controller
 
     $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
 
-    return $this->render( '@App/Print/printService.html.twig', [
+    return $this->render( 'Print/printService.html.twig', [
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'form' => $form->createView(),
       'pratica' => $pratica
@@ -207,7 +207,7 @@ class PrintController extends Controller
 
     $form = $this->createForm('App\Form\FormIO\FormIORenderType', $pratica);
 
-    return $this->render( '@App/Print/previewService.html.twig', [
+    return $this->render( 'Print/previewService.html.twig', [
       'formserver_url' => $this->getParameter('formserver_admin_url'),
       'form' => $form->createView(),
       'pratica' => $pratica

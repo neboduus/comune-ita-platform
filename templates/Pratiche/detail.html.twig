@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% set ente = instance_service.getCurrentInstance() %}
 
 {% block title %}{{ pratica.servizio.name }} - Stanza del cittadino{% endblock %}
@@ -93,12 +93,12 @@
             {% endif %}
           </div>
         {% endif %}
-        {{ include('@App/Pratiche/summary/detail_summary.html.twig', {'pratica':pratica}) }}
+        {{ include('Pratiche/summary/detail_summary.html.twig', {'pratica':pratica}) }}
       </div>
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
         <div class="row pl-4">
           <div class="col-12">
-            {{ include('@App/Pratiche/parts/pratica_actions.html.twig', {'pratica':pratica}) }}
+            {{ include('Pratiche/parts/pratica_actions.html.twig', {'pratica':pratica}) }}
           </div>
         </div>
         <div class="row pl-4">
@@ -124,7 +124,7 @@
             {% endif %}
           {% endif %}
           <div class="col-12 pb-3">
-            {{ include('@App/Pratiche/parts/pratica_iter.html.twig') }}
+            {{ include('Pratiche/parts/pratica_iter.html.twig') }}
           </div>
           {% if pratica.userCompilationNotes %}
             <div class="col-12">
@@ -144,13 +144,13 @@
           {% if applications_in_folder|length > 0 %}
             <div class="col-12 pb-3">
               <h6>{{ 'operatori.fascicolo' | trans }}</h6>
-              {{ include('@App/Pratiche/summary/parts/fascicolo.html.twig') }}
+              {{ include('Pratiche/summary/parts/fascicolo.html.twig') }}
             </div>
           {% endif %}
           {% if pratiche_recenti|length > 0 %}
             <div class="col-12 pb-3">
               <h6>{{ 'operatori.ultime_pratiche' | trans }}</h6>
-              {{ include('@App/Pratiche/summary/parts/pratiche_recenti.html.twig') }}
+              {{ include('Pratiche/summary/parts/pratiche_recenti.html.twig') }}
             </div>
           {% endif %}
         </div>

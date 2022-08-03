@@ -119,7 +119,7 @@ class SecurityController extends Controller
     if ($request->query->has('idp')){
       return new RedirectResponse($this->dedaLoginClient->getAuthRequest($request->query->get('idp')));
     }
-    return $this->render('@App/Default/loginDeda.html.twig');
+    return $this->render('Default/loginDeda.html.twig');
   }
 
   /**
@@ -141,7 +141,7 @@ class SecurityController extends Controller
   public function loginSuccess(Request $request)
   {
     return $this->render(
-      '@App/Default/loginSuccess.html.twig',
+      'Default/loginSuccess.html.twig',
       ['user' => $this->getUser()]
     );
   }

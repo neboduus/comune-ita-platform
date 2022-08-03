@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 
 {% block main_content %}
 
@@ -11,7 +11,7 @@
                 <div class="row">
                     {% for pratica in pratiche %}
                         <div class="col-12 col-sm-6 col-lg-4">
-                            {{ include('@App/Pratiche/parts/panel/pratica.html.twig') }}
+                            {{ include('Pratiche/parts/panel/pratica.html.twig') }}
                         </div>
                     {% endfor %}
                 </div>

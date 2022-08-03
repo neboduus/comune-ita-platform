@@ -124,7 +124,7 @@
                   {% endif %}
                 </div>
                 {% if is_granted('ROLE_OPERATORE') %}
-                  {{ include('@App/Operatori/parts/meeting_actions.html.twig', {'meeting':meeting}) }}
+                  {{ include('Operatori/parts/meeting_actions.html.twig', {'meeting':meeting}) }}
                 {% endif %}
               </div>
             </div>

@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 
 {% block stylesheets %}
   {% if calendar.type == constant('App\\Entity\\Calendar::TYPE_TIME_FIXED') %}
@@ -25,8 +25,8 @@
         <h1>{{ calendar.title }}</h1>
       </div>
     </div>
-    {{ include('@App/Calendars/parts/tabs.twig') }}
-    {{ include('@App/Calendars/parts/lastModified.html.twig') }}
-    {{ include('@App/Calendars/parts/action_buttons.twig') }}
+    {{ include('Calendars/parts/tabs.twig') }}
+    {{ include('Calendars/parts/lastModified.html.twig') }}
+    {{ include('Calendars/parts/action_buttons.twig') }}
   </section>
 {% endblock %}

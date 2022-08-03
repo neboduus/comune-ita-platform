@@ -80,7 +80,7 @@ class DefaultController extends Controller
       }
 
       return $this->render(
-        '@App/Default/common.html.twig',
+        'Default/common.html.twig',
         ['enti' => $enti]
       );
     }
@@ -151,7 +151,7 @@ class DefaultController extends Controller
       $logger->info(LogConstants::USER_HAS_TO_ACCEPT_TERMS, ['userid' => $user->getId()]);
     }
 
-    return $this->render( '@App/Default/termsAccept.html.twig', [
+    return $this->render( 'Default/termsAccept.html.twig', [
       'form' => $form->createView(),
       'terms' => $terms,
       'user' => $user,

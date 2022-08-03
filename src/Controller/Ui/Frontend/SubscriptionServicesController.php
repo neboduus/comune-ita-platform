@@ -90,7 +90,7 @@ class SubscriptionServicesController extends Controller
         'label' => 'iscrizioni.nome',
         'orderable' => true,
         'searchable' => true,
-        'template' => '@App/SubscriptionServices/table/_name.html.twig',
+        'template' => 'SubscriptionServices/table/_name.html.twig',
       ])
       ->add('code', TextColumn::class, ['label' => 'iscrizioni.codice', 'searchable' => true])
       ->add('status', MapColumn::class, ['label' => 'iscrizioni.stato', 'searchable' => false, 'map' => $statuses])
@@ -99,14 +99,14 @@ class SubscriptionServicesController extends Controller
         'label' => 'iscrizioni.subscriptions',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/SubscriptionServices/table/_subscriptions.html.twig',
+        'template' => 'SubscriptionServices/table/_subscriptions.html.twig',
       ])
       ->add('subscriptionPayments', TwigColumn::class, [
         'className' => 'text-truncate',
         'label' => 'backoffice.integration.subscription_service.payments',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/SubscriptionServices/table/_payments.html.twig',
+        'template' => 'SubscriptionServices/table/_payments.html.twig',
       ])
       ->add('beginDate', DateTimeColumn::class, ['label' => 'iscrizioni.data_inizio', 'format' => 'd/m/Y', 'searchable' => false])
       ->add('endDate', DateTimeColumn::class, ['label' => 'iscrizioni.data_fine', 'format' => 'd/m/Y', 'searchable' => false])
@@ -115,7 +115,7 @@ class SubscriptionServicesController extends Controller
         'label' => 'iscrizioni.subscribers.actions',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/SubscriptionServices/table/_actions.html.twig',
+        'template' => 'SubscriptionServices/table/_actions.html.twig',
       ])
       ->createAdapter(ORMAdapter::class, [
         'entity' => SubscriptionService::class
@@ -126,7 +126,7 @@ class SubscriptionServicesController extends Controller
       return $table->getResponse();
     }
 
-    return $this->render('@App/SubscriptionServices/indexSubscriptionService.html.twig', [
+    return $this->render('SubscriptionServices/indexSubscriptionService.html.twig', [
       'user' => $user,
       'items' => $items,
       'statuses' => $statuses,
@@ -228,7 +228,7 @@ class SubscriptionServicesController extends Controller
 
     $services = $this->em->getRepository(Servizio::class)->findAvailableForSubscriptionPaymentSettings();
 
-    return $this->render('@App/SubscriptionServices/newSubscriptionService.html.twig', [
+    return $this->render('SubscriptionServices/newSubscriptionService.html.twig', [
       'user' => $user,
       'subscriptionService' => $subscriptionService,
       'form' => $form->createView(),
@@ -294,7 +294,7 @@ class SubscriptionServicesController extends Controller
 
     $services = $this->em->getRepository(Servizio::class)->findAvailableForSubscriptionPaymentSettings();
 
-    return $this->render('@App/SubscriptionServices/editSubscriptionService.html.twig', [
+    return $this->render('SubscriptionServices/editSubscriptionService.html.twig', [
       'user' => $user,
       'form' => $form->createView(),
       'subscriptionServices' => $subscriptionServices,
@@ -332,7 +332,7 @@ class SubscriptionServicesController extends Controller
     }
 
     $deleteForm = $this->createDeleteForm($subscriptionService);
-    return $this->render('@App/SubscriptionServices/showSubscriptionService.html.twig', [
+    return $this->render('SubscriptionServices/showSubscriptionService.html.twig', [
       'user' => $user,
       'subscriptionService' => $subscriptionService,
       'payments' => $subscriptionServicePayments,
@@ -363,7 +363,7 @@ class SubscriptionServicesController extends Controller
   {
     $items = $this->em->getRepository('App\Entity\SubscriptionPayment')->findBy([], ['paymentDate' => 'DESC']);
 
-    return $this->render('@App/SubscriptionServices/indexSubscriptionServicePayments.html.twig', [
+    return $this->render('SubscriptionServices/indexSubscriptionServicePayments.html.twig', [
       'user' => $this->getUser(),
       'items' => $items,
       'identifiers' => $this->subscriptionsService->getPaymentSettingIdententifiers()
@@ -388,7 +388,7 @@ class SubscriptionServicesController extends Controller
         ->getQuery()->getResult();
     }
 
-    return new JsonResponse($this->render('@App/SubscriptionServices/parts/searchResults.html.twig', ['subscribers' =>$subscribers])->getContent(), Response::HTTP_OK);
+    return new JsonResponse($this->render('SubscriptionServices/parts/searchResults.html.twig', ['subscribers' =>$subscribers])->getContent(), Response::HTTP_OK);
   }
 
   /**
@@ -432,7 +432,7 @@ class SubscriptionServicesController extends Controller
 
     $missingPayment = $qb->getQuery()->getResult();
 
-    return $this->render('@App/SubscriptionServices/showSubscriptionServicePayments.html.twig', [
+    return $this->render('SubscriptionServices/showSubscriptionServicePayments.html.twig', [
       'user' => $user,
       'subscriptionService' => $subscriptionService,
       'paymentsMade' => $paymentsMade,

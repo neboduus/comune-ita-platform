@@ -21,7 +21,7 @@
                 {% if allegato.idDocumentoProtocollo %}<small>({{ allegato.idDocumentoProtocollo }})</small>{% endif %}
               </td>
               <td data-title="" class="text-right">
-                {{ include('@App/Pratiche/summary/parts/download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': allegato.id}) }}
+                {{ include('Pratiche/summary/parts/download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': allegato.id}) }}
               </td>
             </tr>
           {% endfor %}

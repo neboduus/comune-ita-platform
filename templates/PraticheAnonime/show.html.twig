@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% block title %}{{ pratica.servizio.name }} - Stanza del cittadino{% endblock %}
 
 {% block stylesheets %}
@@ -32,7 +32,7 @@
                   </div>
                 {% endif %}
 
-                {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica, 'user': null}) }}
+                {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica, 'user': null}) }}
             </div>
         </div>
     </section>

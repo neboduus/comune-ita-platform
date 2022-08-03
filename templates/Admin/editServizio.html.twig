@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 
 {% set ente = instance_service.getCurrentInstance() %}
 {% set locales = app_locales|split('|') %}
@@ -44,7 +44,7 @@
         {% if steps[current_step].template is defined %}
           {{ include(steps[current_step].template) }}
         {% else %}
-          {{ include('@App/Admin/servizio/_defaultStep.html.twig') }}
+          {{ include('Admin/servizio/_defaultStep.html.twig') }}
         {% endif %}
       </div>
     </div>

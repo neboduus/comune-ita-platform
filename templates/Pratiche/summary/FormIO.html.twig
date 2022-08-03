@@ -1,6 +1,6 @@
 <div id="pratica-summary">
 
-  {{ include('@App/Pratiche/summary/parts/allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('Pratiche/summary/parts/allegati_operatore.html.twig', {'pratica':pratica, 'user': user}) }}
 
   {% if pratica.statusName == 'STATUS_PAYMENT_PENDING' and pratica.paymentData.response is defined %}
 
@@ -37,7 +37,7 @@
       pagamento
     </div>
   {% elseif pratica.status >= 1500 %}
-    {{ include('@App/Pratiche/summary/parts/protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
+    {{ include('Pratiche/summary/parts/protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
   {% endif %}
 
   {% if (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length == 0) or ( pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo) %}
@@ -53,7 +53,7 @@
     {% endif %}
   {% endif %}
 
-  {{ include('@App/Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+  {{ include('Pratiche/summary/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
 </div>
 
 

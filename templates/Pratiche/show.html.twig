@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% block title %}{{pratica.servizio.name}} - Stanza del cittadino{% endblock %}
 {% block stylesheets %}
   {{ encore_entry_link_tags('compile') }}
@@ -31,7 +31,7 @@
           </div>
           <div id="application-container-top"></div>
         {% endif %}
-        {{ include('@App/Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
+        {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
         {% if pratica.servizio.finalIndications and pratica.status >= 1900 and pratica.status <= 3000 %}
           <div id="application-container-bottom"></div>
         {% endif %}
@@ -54,12 +54,12 @@
           {% endif %}
           <div class="col-12">
 
-            {{ include('@App/Pratiche/parts/pratica_actions.html.twig', {'pratica':pratica}) }}
+            {{ include('Pratiche/parts/pratica_actions.html.twig', {'pratica':pratica}) }}
 
             {% if pratica.type != 'form_io' %}
               <div class="row">
                 <div class="col-12">
-                  {{ include('@App/Pratiche/parts/pratica_iter.html.twig', {'pratica':pratica}) }}
+                  {{ include('Pratiche/parts/pratica_iter.html.twig', {'pratica':pratica}) }}
                 </div>
               </div>
             {% endif %}

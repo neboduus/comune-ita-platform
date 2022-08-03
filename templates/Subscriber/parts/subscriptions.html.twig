@@ -153,16 +153,16 @@
             </div>
             <div class="d-flex justify-content-end">
               <div class="mr-1">
-                {{ include('@App/Subscriptions/table/_edit_action.twig', {
+                {{ include('Subscriptions/table/_edit_action.twig', {
                   'id': subscription.id, 'subscriptionServiceId': subscription.subscriptionService.id, 'subscriberId': subscription.subscriber.id,
                   'dataRedirect': path('operatori_subscriber_show', {'subscriber':  subscriber.id, 'tab': 'subscriptions', 'show_subscription': subscription.id })
                 }) }}
               </div>
               <div class="mr-1">
-              {{ include('@App/Subscriptions/table/_delete_action.twig', {'id': subscription.id, 'subscriptionServiceId': subscription.subscriptionService.id, 'subscriberId': subscription.subscriber.id }) }}
+              {{ include('Subscriptions/table/_delete_action.twig', {'id': subscription.id, 'subscriptionServiceId': subscription.subscriptionService.id, 'subscriberId': subscription.subscriber.id }) }}
               </div>
               <div>
-                {{ include('@App/Subscriptions/table/_withdraw_or_activate_action.twig', {'id': subscription.id, 'status': subscription.status, 'dataRedirect': path('operatori_subscriber_show', {'subscriber':  subscriber.id, 'tab': 'subscriptions', 'show_subscription': subscription.id })}) }}
+                {{ include('Subscriptions/table/_withdraw_or_activate_action.twig', {'id': subscription.id, 'status': subscription.status, 'dataRedirect': path('operatori_subscriber_show', {'subscriber':  subscriber.id, 'tab': 'subscriptions', 'show_subscription': subscription.id })}) }}
               </div>
             </div>
           </div>
@@ -170,8 +170,8 @@
       {% endfor %}
     {% endif %}
   </div>
-  {{ include('@App/Subscriptions/parts/_modal_edit.html.twig', {'subscriptionServices': subscriptionServices}) }}
-  {{ include('@App/Subscriptions/parts/_modal_delete.html.twig') }}
-  {{ include('@App/Subscriptions/parts/_modal_withdraw.html.twig') }}
-  {{ include('@App/Subscriptions/parts/_modal_activate.html.twig') }}
+  {{ include('Subscriptions/parts/_modal_edit.html.twig', {'subscriptionServices': subscriptionServices}) }}
+  {{ include('Subscriptions/parts/_modal_delete.html.twig') }}
+  {{ include('Subscriptions/parts/_modal_withdraw.html.twig') }}
+  {{ include('Subscriptions/parts/_modal_activate.html.twig') }}
 </div>

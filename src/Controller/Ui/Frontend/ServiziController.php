@@ -101,7 +101,7 @@ class ServiziController extends Controller
     switch ($this->instanceService->getCurrentInstance()->getNavigationType()) {
       case Ente::NAVIGATION_TYPE_CATEGORIES:
         $topics = $this->getServicesByCategories();
-        $response = $this->render('@App/Servizi/serviziTopics.html.twig', [
+        $response = $this->render('Servizi/serviziTopics.html.twig', [
           'topics' => $topics,
           'user' => $this->getUser()
         ]);
@@ -109,7 +109,7 @@ class ServiziController extends Controller
 
       default:
         $services = $this->getServices($request);
-        $response = $this->render('@App/Servizi/servizi.html.twig', [
+        $response = $this->render('Servizi/servizi.html.twig', [
           'sticky_services' => $services['sticky'],
           'servizi' => $services['default'],
           'user' => $this->getUser()
@@ -177,7 +177,7 @@ class ServiziController extends Controller
     }
 
 
-    $response = $this->render('@App/Servizi/serviziDetail.html.twig', [
+    $response = $this->render('Servizi/serviziDetail.html.twig', [
       'user' => $user,
       'servizio' => $servizio,
       'servizi_area' => $serviziArea,
@@ -212,7 +212,7 @@ class ServiziController extends Controller
 
     $hasServicesWithMaxResponseTime = $serviceGroupRepository->hasServicesWithMaxResponseTime($serviceGroup->getId());
 
-    $response = $this->render('@App/Servizi/serviceGroupDetail.html.twig', [
+    $response = $this->render('Servizi/serviceGroupDetail.html.twig', [
       'user' => $user,
       'servizio' => $serviceGroup,
       'hasServicesWithMaxResponseTime' => $hasServicesWithMaxResponseTime
@@ -288,7 +288,7 @@ class ServiziController extends Controller
     }
     ksort($services);
 
-    $response = $this->render('@App/Servizi/categoryDetail.html.twig', [
+    $response = $this->render('Servizi/categoryDetail.html.twig', [
       'user' => $user,
       'category' => $category,
       'categories' => $topics,
@@ -329,7 +329,7 @@ class ServiziController extends Controller
       'status' => Servizio::PUBLIC_STATUSES
     ]);
 
-    $response = $this->render('@App/Servizi/recipientDetail.html.twig', [
+    $response = $this->render('Servizi/recipientDetail.html.twig', [
       'user' => $user,
       'recipient' => $recipient,
       'recipients' => $recipients,

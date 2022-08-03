@@ -131,7 +131,7 @@ class UserController extends Controller
       $documents[] = $documentRepo->find($id);
     }
 
-    return $this->render( '@App/User/index.html.twig', [
+    return $this->render( 'User/index.html.twig', [
       'user' => $user,
       'servizi' => $servizi,
       'pratiche' => $pratiche,
@@ -176,7 +176,7 @@ class UserController extends Controller
       }
     }
 
-    return $this->render( '@App/User/profile.html.twig', [
+    return $this->render( 'User/profile.html.twig', [
       'form'      => $form->createView(),
       'user'      => $user,
     ]);

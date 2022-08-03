@@ -1,4 +1,4 @@
-{% extends '@App/Default/index.html.twig' %}
+{% extends 'Default/index.html.twig' %}
 {% block title %}{{pratica.servizio.name}} - Stanza del cittadino{% endblock %}
 {% set ente = instance_service.getCurrentInstance() %}
 
@@ -82,7 +82,7 @@
         {% endif %}
 
         {# Info compilazione specificate nel servizio #}
-        {{ include('@App/Pratiche/parts/compilation_info.html.twig') }}
+        {{ include('Pratiche/parts/compilation_info.html.twig') }}
       </div>
 
       <div class="col-lg-8 px-lg-4 order-lg-1">
@@ -98,11 +98,11 @@
           {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
           {% if currentStep.formType == "App\\Form\\Base\\SummaryType" %}
             <p><b>{{ 'steps.common.conferma.payment_help_text_top'|trans }}</b></p>
-            {{ include('@App/PraticheAnonime/parts/pratica_summary.html.twig', {'pratica':form.vars.data}) }}
+            {{ include('PraticheAnonime/parts/pratica_summary.html.twig', {'pratica':form.vars.data}) }}
             <p class="py-3">{{ 'operatori.recaptcha'| trans }}</p>
           {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
             <p><b>{{ 'steps.common.conferma.help_text_top'|trans }}</b></p>
-            {{ include('@App/PraticheAnonime/parts/pratica_summary.html.twig', {'pratica':form.vars.data}) }}
+            {{ include('PraticheAnonime/parts/pratica_summary.html.twig', {'pratica':form.vars.data}) }}
             <p class="py-3">{{ 'operatori.recaptcha'| trans }}</p>
           {% endif %}
 
@@ -138,7 +138,7 @@
   </section>
 
   {# Modal di conferma #}
-  {{ include('@App/Pratiche/parts/confirm_modal.html.twig') }}
+  {{ include('Pratiche/parts/confirm_modal.html.twig') }}
 
 {% endblock %}
 
