@@ -1,3 +1,14 @@
 #index:
 #    path: /
-#    controller: App\Controller\DefaultController::index
+#    controller: App\Controller\DefaultController::commonAction
+
+api_auth:
+  path: "/%prefix%/api/auth"
+  methods:  [POST]
+
+rest:
+  resource: ../src/Controller/Rest
+  type: annotation
+  prefix: "/%prefix%/api"
+
+

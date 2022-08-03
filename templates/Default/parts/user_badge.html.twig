@@ -73,7 +73,7 @@
             <div class="link-list-wrapper">
               <ul class="link-list">
                 <li>
-                  <a class="list-item left-icon" href="{{ path('fos_user_profile_show') }}">
+                  <a class="list-item left-icon" href="{{ path('user_profile') }}">
                     <svg class="icon icon-sm icon-primary left position-relative">
                       <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-user') }}"></use>
                     </svg>
@@ -81,7 +81,7 @@
                   </a>
                 </li>
                 <li>
-                  <a class="list-item left-icon" href="{{ logout_path('operatori') }}">
+                  <a class="list-item left-icon" href="{{ path('security_logout') }}">
                     <svg class="icon icon-sm icon-primary left position-relative">
                       <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-link') }}"></use>
                     </svg>
