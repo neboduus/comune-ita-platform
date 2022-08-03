@@ -45,21 +45,16 @@ class ConfigureInstanceCommand extends Command
   private $output;
 
   /**
-   * @var LoadData
-   */
-  private $loader;
-
-  /**
    * @var UserPasswordEncoderInterface
    */
   private $passwordEncoder;
 
-  public function __construct(
-    EntityManagerInterface $entityManager,
-    LoadData $loader,
-    UserPasswordEncoderInterface $passwordEncoder
-  ) {
-    $this->loader = $loader;
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param UserPasswordEncoderInterface $passwordEncoder
+   */
+  public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
+  {
     $this->entityManager = $entityManager;
     $this->passwordEncoder = $passwordEncoder;
     parent::__construct();

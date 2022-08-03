@@ -3,15 +3,65 @@
 namespace App\Command;
 
 use App\Services\DelayedGiscomAPIAdapterService;
+use App\Services\InstanceService;
+use App\Services\ModuloPdfBuilderService;
+use App\Services\SchedulableActionRegistry;
+use App\Services\ScheduleActionService;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GeneratePdfCommand extends Command
 {
+
+
+  private $router;
+
+  private $scheme;
+
+  private $host;
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
+  /**
+   * @var string
+   */
+  private $locale;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+  /**
+   * @var ModuloPdfBuilderService
+   */
+  private $moduloPdfBuilderService;
+
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param RouterInterface $router
+   * @param string $scheme
+   * @param string $host
+   */
+  public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, TranslatorInterface $translator, ModuloPdfBuilderService $moduloPdfBuilderService, string $locale, string $scheme, string $host)
+  {
+    $this->entityManager = $entityManager;
+    $this->router = $router;
+    $this->translator = $translator;
+    $this->locale = $locale;
+    $this->scheme = $scheme;
+    $this->host = $host;
+    parent::__construct();
+
+    $this->moduloPdfBuilderService = $moduloPdfBuilderService;
+  }
 
   protected function configure()
   {
@@ -24,12 +74,10 @@ class GeneratePdfCommand extends Command
   {
     $io = new SymfonyStyle($input, $output);
 
-    $locale = $this->getContainer()->getParameter('locale');
-    $this->getContainer()->get('translator')->setLocale($locale);
-
-    $context = $this->getContainer()->get('router')->getContext();
-    $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
-    $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
+    $this->translator->setLocale($this->locale);
+    $context = $this->router->getContext();
+    $context->setHost($this->host);
+    $context->setScheme($this->scheme);
 
     $helper = $this->getHelper('question');
 
@@ -43,10 +91,7 @@ class GeneratePdfCommand extends Command
       return 1;
     }
 
-
-    $entityManager = $this->getContainer()->get('doctrine')->getManager();
-    $repository = $entityManager->getRepository('App\Entity\Pratica');
-    $pdfService  = $this->getContainer()->get('ocsdc.modulo_pdf_builder');
+    $repository = $this->entityManager->getRepository('App\Entity\Pratica');
 
     $count = 0;
     foreach ($applicationIds as $applicationId) {
@@ -58,7 +103,7 @@ class GeneratePdfCommand extends Command
           continue;
         }
 
-        $pdf = $pdfService->createForPratica($application);
+        $pdf = $this->moduloPdfBuilderService->createForPratica($application);
         $application->addModuloCompilato($pdf);
         $io->success("Generato pdf per la pratica: {$applicationId}");
         $count ++;
@@ -67,7 +112,7 @@ class GeneratePdfCommand extends Command
 
       }
     }
-    $entityManager->flush();
+    $this->entityManager->flush();
 
     $io->success("Sono stati generati {$count} pdf");
 

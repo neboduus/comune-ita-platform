@@ -6,14 +6,17 @@ use App\Entity\Ente;
 use App\Entity\Servizio;
 use App\Protocollo\PiTreProtocolloParameters;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class FixPeoPaymentSettingsCommand extends Command
@@ -35,15 +38,20 @@ class FixPeoPaymentSettingsCommand extends Command
     'domanda-permesso-di-costruire-in-sanatoria',
   ];
 
-  /**
-   * @var EntityManager
-   */
-  private $em;
 
   /**
-   * @var SymfonyStyle
+   * @var EntityManagerInterface
    */
-  private $io;
+  private $entityManager;
+
+  /**
+   * @param EntityManagerInterface $entityManager
+   */
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -54,17 +62,9 @@ class FixPeoPaymentSettingsCommand extends Command
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-    $this->em = $this->getContainer()->get('doctrine')->getManager();
-    $this->io = new SymfonyStyle($input, $output);
 
-    $locale = $this->getContainer()->getParameter('locale');
-    $this->getContainer()->get('translator')->setLocale($locale);
-
-    $context = $this->getContainer()->get('router')->getContext();
-    $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
-    $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
-
-    $repo = $this->em->getRepository('App\Entity\Servizio');
+    $io = new SymfonyStyle($input, $output);
+    $repo = $this->entityManager->getRepository('App\Entity\Servizio');
     $services = $repo->findBy(['slug' => $this->slugServices]);
 
     /** @var Servizio $s */
@@ -72,15 +72,15 @@ class FixPeoPaymentSettingsCommand extends Command
       try {
         foreach ($services as $s) {
           $s->setPaymentParameters($this->fixedValue);
-          $this->em->persist($s);
-          $this->io->success('Fixed service '.$s->getName());
+          $this->entityManager->persist($s);
+          $io->success('Fixed service '.$s->getName());
         }
-        $this->em->flush();
+        $this->entityManager->flush();
       } catch (\Exception $e) {
-        $this->io->error($e->getMessage());
+        $io->error($e->getMessage());
       }
     } else {
-      $this->io->note('No services to fix.');
+      $io->note('No services to fix.');
     }
 
     return 0;

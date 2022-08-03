@@ -5,17 +5,73 @@ namespace App\Command;
 use App\Entity\ScheduledAction;
 use App\Exception\DelayedScheduledActionException;
 use App\ScheduledAction\ScheduledActionHandlerInterface;
+use App\Services\InstanceService;
+use App\Services\Metrics\ScheduledActionMetrics;
+use App\Services\SchedulableActionRegistry;
 use App\Services\ScheduleActionService;
+use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
 use Doctrine\ORM\EntityRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class ScheduledActionCommand extends Command
 {
+
+  private $logger;
+
+  private $scheduleActionService;
+
+  private $router;
+
+  private $schedulableActionRegistry;
+
+  private $scheme;
+
+  private $host;
+  /**
+   * @var string
+   */
+  private $locale;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+  /**
+   * @var ScheduledActionMetrics
+   */
+  private $metrics;
+
+  public function __construct(
+    LoggerInterface $logger,
+    ScheduleActionService $scheduleActionService,
+    RouterInterface $router,
+    SchedulableActionRegistry $schedulableActionRegistry,
+    TranslatorInterface $translator,
+    ScheduledActionMetrics $metrics,
+    string $locale,
+    string $scheme,
+    string $host
+  ) {
+    $this->logger = $logger;
+    $this->scheduleActionService = $scheduleActionService;
+    $this->router = $router;
+    $this->schedulableActionRegistry = $schedulableActionRegistry;
+    $this->scheme = $scheme;
+    $this->host = $host;
+
+    parent::__construct();
+    $this->locale = $locale;
+    $this->translator = $translator;
+    $this->metrics = $metrics;
+  }
+
   protected function configure()
   {
     $this
@@ -38,18 +94,13 @@ class ScheduledActionCommand extends Command
     }
 
     // Default locale
-    $locale = $this->getContainer()->getParameter('locale');
-    $this->getContainer()->get('translator')->setLocale($locale);
+    $this->translator->setLocale($this->locale);
+    $context = $this->router->getContext();
+    $context->setHost($this->host);
+    $context->setScheme($this->scheme);
 
-    $context = $this->getContainer()->get('router')->getContext();
-    $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
-    $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
 
-    $logger = $this->getContainer()->get('logger');
-    $logger->info('Starting a scheduled action with options: ' . \json_encode($input->getOptions()));
-
-    /** @var ScheduleActionService $scheduleActionService */
-    $scheduleActionService = $this->getContainer()->get('ocsdc.schedule_action_service');
+    $this->logger->info('Starting a scheduled action with options: ' . \json_encode($input->getOptions()));
 
     $count = (int)$input->getOption('count');
     if (!$count) {
@@ -69,49 +120,48 @@ class ScheduledActionCommand extends Command
     }
 
     if (!$forceHostname) {
-      $logger->info("Try to reserve $count actions for host $hostname");
-      $scheduleActionService->reserveActions($hostname, $count, $oldReservationMinutes, $maxRetry);
+      $this->logger->info("Try to reserve $count actions for host $hostname");
+      $this->scheduleActionService->reserveActions($hostname, $count, $oldReservationMinutes, $maxRetry);
     } else {
       $hostname = $forceHostname;
-      $logger->info("Force execution for host $hostname");
+      $this->logger->info("Force execution for host $hostname");
     }
 
-    $actions = $scheduleActionService->getPendingActions($hostname);
+    $actions = $this->scheduleActionService->getPendingActions($hostname);
 
     $count = count($actions);
-    $logger->info("Execute $count actions for host $hostname");
+    $this->logger->info("Execute $count actions for host $hostname");
 
-    $metrics = $this->getContainer()->get('App\Services\Metrics\ScheduledActionMetrics');
     foreach ($actions as $action) {
       try {
-        $service = $this->getContainer()->get($action->getService());
+        $service = $this->schedulableActionRegistry->getByName($action->getService());
         if ($service instanceof ScheduledActionHandlerInterface) {
-          $logger->info('Execute ' . $action->getType() . ' with params ' . $action->getParams());
+          $this->logger->info('Execute ' . $action->getType() . ' with params ' . $action->getParams());
           try {
             $service->executeScheduledAction($action);
-            $scheduleActionService->markAsDone($action);
-            $metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'success');
+            $this->scheduleActionService->markAsDone($action);
+            $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'success');
           } catch (DelayedScheduledActionException $e) {
-              $logger->info($e->getMessage());
+              $this->logger->info($e->getMessage());
           } catch (\Throwable $e) {
             $message = $e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine();
-            $logger->error($message);
-            $scheduleActionService->removeHostAndSaveLog($action, $message);
-            $metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'error');
+            $this->logger->error($message);
+            $this->scheduleActionService->removeHostAndSaveLog($action, $message);
+            $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'error');
           }
         } else {
-          $logger->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
-          $scheduleActionService->markAsInvalid($action);
-          $metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
+          $this->logger->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
+          $this->scheduleActionService->markAsInvalid($action);
+          $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
         }
       } catch (ServiceNotFoundException $e) {
-        $logger->error($e->getMessage());
-        $scheduleActionService->markAsInvalid($action);
-        $metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
+        $this->logger->error($e->getMessage());
+        $this->scheduleActionService->markAsInvalid($action);
+        $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
       }
     }
 
-    $countByHostname = $scheduleActionService->getStatistic();
+    $countByHostname = $this->scheduleActionService->getStatistic();
     foreach ($countByHostname as $count) {
       $message = 'Pending ' . $count['count'] . ' actions ';
       if (empty($count['hostname'])) {
@@ -119,7 +169,7 @@ class ScheduledActionCommand extends Command
       } else {
         $message .= 'reserved by host ' . $count['hostname'];
       }
-      $logger->info($message);
+      $this->logger->info($message);
     }
   }
 }

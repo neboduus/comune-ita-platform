@@ -4,6 +4,10 @@ namespace App\Command;
 
 
 use App\Entity\Meeting;
+use App\Services\Manager\PraticaManager;
+use App\Services\SubscriptionsService;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,6 +16,26 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class DeleteDraftMeetingsCommand extends Command
 {
+
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param LoggerInterface $logger
+   */
+  public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
+  {
+    $this->entityManager = $entityManager;
+    $this->logger = $logger;
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -22,13 +46,10 @@ class DeleteDraftMeetingsCommand extends Command
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-    $logger = $this->getContainer()->get('logger');
 
-    $logger->info('Start procedure for deleting draft meetings with options: ' . \json_encode($input->getOptions()));
+    $this->logger->info('Start procedure for deleting draft meetings with options: ' . \json_encode($input->getOptions()));
 
-    $em = $this->getContainer()->get('doctrine')->getManager();
-
-    $meetings = $em->createQueryBuilder()
+    $meetings = $this->entityManager->createQueryBuilder()
       ->select('meeting')
       ->from('App:Meeting', 'meeting')
       ->where('meeting.status = :status')
@@ -38,18 +59,16 @@ class DeleteDraftMeetingsCommand extends Command
       ->getQuery()->getResult();
 
     if (empty($meetings)) {
-      $logger->info("No meetings to remove");
+      $this->logger->info("No meetings to remove");
     }
 
     foreach ($meetings as $meeting) {
       try {
-        $em->remove($meeting);
-        $em->flush();
-        $logger->info("Successfully removed draft meeting " . $meeting->getId());
+        $this->entityManager->remove($meeting);
+        $this->entityManager->flush();
+        $this->logger->info("Successfully removed draft meeting " . $meeting->getId());
       } catch (\Exception $exception) {
-        $logger->error(
-          "An error occurred while removing draft meeting " . $meeting->getId() . ": " . $exception->getMessage()
-        );
+        $this->logger->error("An error occurred while removing draft meeting " . $meeting->getId() . ": " . $exception->getMessage());
       }
     }
   }

@@ -3,6 +3,8 @@
 namespace App\Command;
 
 use App\Entity\Servizio;
+use App\Services\InstanceService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,19 +16,41 @@ use Symfony\Component\Console\Question\Question;
 use App\Entity\Categoria;
 use App\Entity\Ente;
 use App\Entity\Erogatore;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Class ServizioCreateCommand
  */
 class ServizioCreateCommand extends Command
 {
-    protected function configure()
-    {
-        $this
-            ->setName('ocsdc:crea-servizio')
-            ->addOption('file', 'f', InputOption::VALUE_OPTIONAL, 'Load data from file instead of interactively')
-            ->setDescription('Crea un record nella tabella servizi. Usare -f path/al/file.yml per la versione non interattiva');
-    }
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  /** @var InstanceService */
+  private $instanceService;
+
+  /**
+   * AdministratorCreateCommand constructor.
+   * @param EntityManagerInterface $entityManager
+   * @param InstanceService $instanceService
+   */
+  public function __construct(EntityManagerInterface $entityManager, InstanceService $instanceService)
+  {
+    $this->entityManager = $entityManager;
+    $this->instanceService = $instanceService;
+    parent::__construct();
+  }
+
+  protected function configure()
+  {
+    $this
+      ->setName('ocsdc:crea-servizio')
+      ->addOption('file', 'f', InputOption::VALUE_OPTIONAL, 'Load data from file instead of interactively')
+      ->setDescription(
+        'Crea un record nella tabella servizi. Usare -f path/al/file.yml per la versione non interattiva'
+      );
+  }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {

@@ -930,20 +930,11 @@ services:
   #  class: Craue\FormFlowBundle\Storage\DoctrineStorage
   #  public: false
   #  #arguments: [ "@doctrine.dbal.default_connection", "@ocsdc.form.flow.storage_key_generator" ]
-#
+
   #craue.form.flow.data_manager_default:
   #  class: App\Form\DataManager
   #  public: false
   #  #arguments: [ "@craue.form.flow.storage", "@security.token_storage", "@session" ]
-
-  #App\Command\ScheduledActionCommand:
-  #  $host: "%ocsdc_host%"
-  #  $scheme: "%ocsdc_scheme%"
-
-  #App\Command\SecureUserCommand:
-  #  $host: "%ocsdc_host%"
-  #  $scheme: "%ocsdc_scheme%"
-  #  $inactiveUserLifeTime: "%InactiveUserLifeTime%"
 
 
   App\Security\Voters\AttachmentVoter:
@@ -951,3 +942,21 @@ services:
       $hashValidity: '%hash_validity%'
     tags:
       - { name: security.voter }
+
+  App\Command\ScheduledActionCommand:
+    arguments:
+      $locale: "%locale%"
+      $host: "%ocsdc_host%"
+      $scheme: "%ocsdc_scheme%"
+
+  App\Command\SecureUserCommand:
+    arguments:
+      $host: "%ocsdc_host%"
+      $scheme: "%ocsdc_scheme%"
+      $inactiveUserLifeTime: "%InactiveUserLifeTime%"
+
+  App\Command\GeneratePdfCommand:
+    arguments:
+      $locale: "%locale%"
+      $host: "%ocsdc_host%"
+      $scheme: "%ocsdc_scheme%"

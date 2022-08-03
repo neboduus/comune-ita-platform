@@ -10,12 +10,12 @@ if [[ $INSTANCE_OVERRIDE == 'true' ]]; then
 
   echo "==> Override of instances is active: instances.yml will be overriden with environment variables"
 
-  if [[ -z $SYMFONY_ENV ]]; then
-    echo "  SYMFONY_ENV not set, assuming prod for security reason"
-    SYMFONY_ENV=prod
+  if [[ -z $APP_ENV ]]; then
+    echo "  APP_ENV not set, assuming prod for security reason"
+    APP_ENV=prod
   fi
 
-  instance_file="app/instances_${SYMFONY_ENV}.yml"
+  instance_file="app/instances_${APP_ENV}.yml"
 
   available_names='
 codice_meccanografico

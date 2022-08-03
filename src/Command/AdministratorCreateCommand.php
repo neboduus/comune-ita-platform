@@ -4,18 +4,39 @@ namespace App\Command;
 
 use App\Entity\AdminUser;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Class OperatoreCreateCommand
  */
 class AdministratorCreateCommand extends Command
 {
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  /** @var UserPasswordEncoderInterface */
+  private $passwordEncoder;
+
+  /**
+   * AdministratorCreateCommand constructor.
+   * @param EntityManagerInterface $entityManager
+   * @param UserPasswordEncoderInterface $passwordEncoder
+   */
+  public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
+  {
+    $this->entityManager = $entityManager;
+    $this->passwordEncoder = $passwordEncoder;
+    parent::__construct();
+  }
+
   protected function configure()
   {
     $this
@@ -63,16 +84,15 @@ class AdministratorCreateCommand extends Command
       $password = $helper->ask($input, $output, $question);
     }
 
-    $em = $this->getContainer()->get('doctrine')->getManager();
-    $repo = $em->getRepository('App\Entity\Ente');
+
+    $repo = $this->entityManager->getRepository('App\Entity\Ente');
     $ente = $repo->findOneBySlug($instance);
 
     if (!$ente) {
       throw new InvalidArgumentException("Ente non trovato");
     }
 
-    $um = $this->getContainer()->get('fos_user.user_manager');
-    $userRepo = $em->getRepository('App\Entity\AdminUser');
+    $userRepo = $this->entityManager->getRepository('App\Entity\AdminUser');
     $user = $userRepo->findOneByUsername($username);
 
     if ( !$user instanceof User ) {
@@ -89,10 +109,19 @@ class AdministratorCreateCommand extends Command
       ->setEnabled(true);
 
     try {
-      $um->updateUser($user);
+      $user->setPassword(
+        $this->passwordEncoder->encodePassword(
+          $user,
+          $password
+        )
+      );
+      $this->entityManager->persist($user);
+      $this->entityManager->flush();
       $output->writeln('Ok: generato nuovo admin');
-    } catch (\Exception $e) {
+      return 0;
+    } catch (Exception $e) {
       $output->writeln('Errore: '.$e->getMessage());
+      return 0;
     }
   }
 

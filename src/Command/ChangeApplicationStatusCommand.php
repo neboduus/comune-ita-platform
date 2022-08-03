@@ -4,16 +4,37 @@ namespace App\Command;
 
 
 use App\Entity\Pratica;
+use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
 class ChangeApplicationStatusCommand extends Command
 {
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  /** @var RouterInterface */
+  private $router;
+
+
+  /**
+   * AdministratorCreateCommand constructor.
+   * @param EntityManagerInterface $entityManager
+   */
+  public function __construct(EntityManagerInterface $entityManager, RouterInterface $router)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+    $this->router = $router;
+  }
 
   protected function configure()
   {
@@ -30,7 +51,7 @@ class ChangeApplicationStatusCommand extends Command
 
     $symfonyStyle = new SymfonyStyle($input, $output);
 
-    $context = $this->getContainer()->get('router')->getContext();
+    $context = $this->router->getContext();
     $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
     $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
 
@@ -43,20 +64,13 @@ class ChangeApplicationStatusCommand extends Command
       return 1;
     }
 
-    $em = $this->getContainer()->get('doctrine')->getManager();
-
-    $application = $em->getRepository('App\Entity\Pratica')->find($id);
+    $application = $this->entityManager->getRepository('App\Entity\Pratica')->find($id);
     if (!$application instanceof Pratica) {
       $symfonyStyle->error('Application with id:' . $id . ' not found.');
       return 1;
     }
 
     $allowedStatuses = Pratica::getStatuses();
-
-    //dump(!is_int($status));
-    /*if (!is_int($status)) {
-      $status = Pratica::getStatusCodeByName($status);
-    }*/
 
     if (!isset($allowedStatuses[$status])) {
       $symfonyStyle->error('Submitted status doesn\'t exists');
