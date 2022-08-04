@@ -83,10 +83,7 @@ abstract class AbstractAppTestCase extends WebTestCase
   protected $spy;
 
   protected $baseUri;
-  /**
-   * @var ContainerInterface|null
-   */
-  protected $container;
+
 
   /**
    * @inheritdoc
@@ -94,10 +91,9 @@ abstract class AbstractAppTestCase extends WebTestCase
   public function setUp()
   {
     $this->client = static::createClient();
-    $this->container = $this->client->getContainer();
-    $this->em = $this->container->get('doctrine')->getManager();
-    $this->router = $this->container->get('router');
-    $this->translator = $this->container->get('translator');
+    $this->em = self::$container->get('doctrine')->getManager();
+    $this->router = self::$container->get('router');
+    $this->translator = self::$container->get('translator');
     $this->baseUri = '/'.static::$kernel->getIdentifier();
     parent::setUp();
   }
@@ -167,7 +163,7 @@ abstract class AbstractAppTestCase extends WebTestCase
   protected function createCPSUser($termAccepted = true, $profileData = true, $additionalRole = null)
   {
     $data = $profileData ? $this->getCPSUserData() : $this->getCPSUserBaseData();
-    $user = $this->container->get('ocsdc.cps.userprovider')->provideUser($data);
+    $user = self::$container->get('ocsdc.cps.userprovider')->provideUser($data);
     if ($termAccepted) {
       $termsRepo = $this->em->getRepository('App:TerminiUtilizzo');
       $terms = $termsRepo->findByMandatory(true);
@@ -507,7 +503,7 @@ abstract class AbstractAppTestCase extends WebTestCase
    */
   protected function createOperatoreUser($username, $password, Ente $ente = null, $serviziAbilitati = null)
   {
-    $um = $this->container->get('fos_user.user_manager');
+    $um = self::$container->get('fos_user.user_manager');
 
     if (!$serviziAbilitati) {
       $serviziAbilitati = new ArrayCollection();
@@ -1005,7 +1001,7 @@ abstract class AbstractAppTestCase extends WebTestCase
     );
     $pratica = $this->createPratica($user, null, Pratica::STATUS_SUBMITTED, $erogatore, $servizio);
     $pratica->setEnte($ente);
-    $moduloCompilato = $this->container->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
+    $moduloCompilato = self::$container->get('ocsdc.modulo_pdf_builder')->createForPratica($pratica, $user);
     $pratica->addModuloCompilato($moduloCompilato);
 
     return $pratica;
