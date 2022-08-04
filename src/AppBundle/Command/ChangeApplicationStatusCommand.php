@@ -51,6 +51,11 @@ class ChangeApplicationStatusCommand extends ContainerAwareCommand
       return 1;
     }
 
+    if ($status === $application->getStatus()) {
+      $symfonyStyle->error('Application with id:' . $id . ' is already in status ' . $status);
+      return 1;
+    }
+
     $allowedStatuses = Pratica::getStatuses();
 
     //dump(!is_int($status));
