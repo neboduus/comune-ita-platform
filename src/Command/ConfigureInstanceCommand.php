@@ -9,6 +9,7 @@ use App\Entity\OperatoreUser;
 use App\Entity\User;
 use App\Model\Gateway;
 use App\Utils\Csv;
+use App\Utils\StringUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
@@ -210,7 +211,7 @@ class ConfigureInstanceCommand extends Command
     }
 
     if (empty($password)) {
-      $password = $this->randomPassword();
+      $password = StringUtils::randomPassword();
     }
 
     $user
@@ -237,20 +238,5 @@ class ConfigureInstanceCommand extends Command
       $this->symfonyStyle->text('Errore: ' . $e->getMessage());
       return null;
     }
-  }
-
-  /**
-   * @return string
-   */
-  private function randomPassword()
-  {
-    $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-    $pass = array(); //remember to declare $pass as an array
-    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-    for ($i = 0; $i < 8; $i++) {
-      $n = rand(0, $alphaLength);
-      $pass[] = $alphabet[$n];
-    }
-    return implode($pass); //turn the array into a string
   }
 }

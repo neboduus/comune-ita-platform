@@ -31,6 +31,7 @@ use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
 use App\Services\MailerService;
 use App\Services\Manager\ServiceManager;
+use App\Utils\StringUtils;
 use Doctrine\DBAL\DBALException;
 use App\Services\IOService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
@@ -60,6 +61,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -238,9 +241,10 @@ class AdminController extends AbstractController
    * @Route("/operatore/new", name="admin_operatore_new")
    * @Method({"GET", "POST"})
    * @param Request $request
+   * @param PasswordEncoderInterface $passwordEncoder
    * @return Response
    */
-  public function newOperatoreAction(Request $request)
+  public function newOperatoreAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
   {
     $operatoreUser = new Operatoreuser();
     $form = $this->createForm('App\Form\OperatoreUserType', $operatoreUser);
@@ -250,16 +254,27 @@ class AdminController extends AbstractController
       $em = $this->getDoctrine()->getManager();
       $ente = $this->instanceService->getCurrentInstance();
 
+
+
       $operatoreUser
         ->setEnte($ente)
         ->setPlainPassword(md5(time()))
         ->setConfirmationToken($this->tokenGenerator->generateToken())
         ->setPasswordRequestedAt(new \DateTime())
         ->setEnabled(true);
+
+      $operatoreUser->setPassword(
+        $passwordEncoder->encodePassword(
+          $operatoreUser,
+          StringUtils::randomPassword()
+        )
+      );
+
       $em->persist($operatoreUser);
       $em->flush();
 
-      $this->mailer->sendResettingEmailMessage($operatoreUser);
+      // Todo: sostituire funzionalità fos user
+      //$this->mailer->sendResettingEmailMessage($operatoreUser);
 
       $this->addFlash('feedback', $this->translator->trans('admin.create_operator_notify'));
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
@@ -331,7 +346,8 @@ class AdminController extends AbstractController
     $em->persist($operatoreUser);
     $em->flush();
 
-    $this->mailer->sendResettingEmailMessage($operatoreUser);
+    // Todo: sostituire funzionalità fos user
+    //$this->mailer->sendResettingEmailMessage($operatoreUser);
 
     return $this->redirectToRoute('admin_operatore_edit', array('id' => $operatoreUser->getId()));
   }
