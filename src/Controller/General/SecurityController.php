@@ -4,7 +4,7 @@ namespace App\Controller\General;
 
 use App\Security\AbstractAuthenticator;
 use App\Security\CasAuthenticator;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +16,7 @@ use App\Security\DedaLoginAuthenticator;
 use App\Security\DedaLogin\DedaLoginClient;
 use Exception;
 
-class SecurityController extends Controller
+class SecurityController extends AbstractController
 {
   /**
    * @var DedaLoginClient

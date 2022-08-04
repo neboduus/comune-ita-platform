@@ -974,14 +974,6 @@ class OperatoriController extends Controller
   }
 
   /**
-   * @Route("/logout", name="logout")
-   */
-  public function logoutAction()
-  {
-  }
-
-
-  /**
    * @return FormInterface
    */
   private function setupMessageForm(Pratica $pratica)

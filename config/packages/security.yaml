@@ -59,7 +59,6 @@ security:
           - lexik_jwt_authentication.jwt_token_authenticator
 
     backend:
-      logout_on_user_change: true
       stateless: false
       context: sdc_auth_context
       anonymous: true
@@ -80,25 +79,21 @@ security:
           - App\Security\LoginFormAuthenticator
 
     giscom_api:
-      logout_on_user_change: true
       pattern: ^/%prefix%/api/v\d+\.\d+/giscom/pratica/.*/.*
       http_basic:
         provider: in_memory
 
     ez_api:
-      logout_on_user_change: true
       pattern: ^/%prefix%/api/v\d+\.\d+/schedaInformativa/.*
       http_basic:
         provider: in_memory
 
     print:
-      logout_on_user_change: true
       pattern: ^/%prefix%/(%app_locales%)/print/pratica/.*
       http_basic:
         provider: in_memory
 
     open_login:
-      logout_on_user_change: true
       anonymous: true
       stateless: false
       context: sdc_auth_context
@@ -137,7 +132,7 @@ security:
     - { path: ^/%prefix%/(%app_locales%)/servizi/, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/%prefix%/(%app_locales%)/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/%prefix%/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/%prefix%/(%app_locales%)/operatori/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/operatori/reset-password, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
     - { path: ^/%prefix%/(%app_locales%)/(pratiche|terms_accept|user|documenti|subscriptions)/, role: ROLE_CPS_USER }
     - { path: ^/%prefix%/api/v\d+\.\d+/user/.*, role: ROLE_CPS_USER }
@@ -145,8 +140,8 @@ security:
     - { path: ^/%prefix%/api/session-auth, role: [ ROLE_CPS_USER, ROLE_OPERATORE, ROLE_ADMIN ] }
 
     - { path: ^/%prefix%/(%app_locales%)/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/(%app_locales%)/operatori/profile/edit, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
-    - { path: ^/%prefix%/(%app_locales%)/operatori/profile/change-password, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/change-password, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/logout, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/(%app_locales%)/operatori/subscriptions, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/(%app_locales%)/operatori/subscription-service, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/(%app_locales%)/operatori/subscriber, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
