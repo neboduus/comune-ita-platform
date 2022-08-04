@@ -6,12 +6,14 @@ use App\Entity\Ente;
 use App\Entity\Servizio;
 use App\Protocollo\PiTreProtocolloParameters;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
 class ProtocolloConfigureCommand extends Command
@@ -33,12 +35,22 @@ class ProtocolloConfigureCommand extends Command
   /**
    * @var EntityManager
    */
-  private $em;
+  private $entityManager;
 
   /**
    * @var SymfonyStyle
    */
   private $io;
+
+  /**
+   * AdministratorCreateCommand constructor.
+   * @param EntityManagerInterface $entityManager
+   */
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -49,7 +61,6 @@ class ProtocolloConfigureCommand extends Command
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-    $this->em = $this->getContainer()->get('doctrine')->getManager();
     $this->io = new SymfonyStyle($input, $output);
 
     $ente = $this->chooseEnte();
@@ -64,10 +75,10 @@ class ProtocolloConfigureCommand extends Command
     $choice = $this->chooseServizio();
 
     if ($choice != '*' && $choice != 'Tutti') {
-      $servizio = $this->em->getRepository('App\Entity\Servizio')->findOneByName($choice);
+      $servizio = $this->entityManager->getRepository('App\Entity\Servizio')->findOneByName($choice);
 
       if (!$servizio) {
-        $servizio = $this->em->getRepository('App\Entity\Servizio')->findOneBySlug($choice);
+        $servizio = $this->entityManager->getRepository('App\Entity\Servizio')->findOneBySlug($choice);
       }
 
       if (!$servizio) {
@@ -98,7 +109,7 @@ class ProtocolloConfigureCommand extends Command
       $enti[] = $entiEntity->getName();
     }
     $enteName = $this->io->choice('Seleziona l\'ente da configurare', $enti);
-    $ente = $this->em->getRepository('App\Entity\Ente')->findOneByName($enteName);
+    $ente = $this->entityManager->getRepository('App\Entity\Ente')->findOneByName($enteName);
     if (!$ente) {
       throw new InvalidArgumentException("Ente $enteName non trovato");
     }
@@ -148,8 +159,8 @@ class ProtocolloConfigureCommand extends Command
     $servizio->setProtocolRequired(true);
     $servizio->setProtocolHandler('pitre');
     $servizio->setProtocolloParameters($data);
-    $this->em->persist($servizio);
-    $this->em->flush();
+    $this->entityManager->persist($servizio);
+    $this->entityManager->flush();
   }
 
   private function storeAllServicesData(Ente $ente)
@@ -176,9 +187,9 @@ class ProtocolloConfigureCommand extends Command
       $servizio->setProtocolRequired(true);
       $servizio->setProtocolHandler('pitre');
       $servizio->setProtocolloParameters($data);
-      $this->em->persist($servizio);
+      $this->entityManager->persist($servizio);
     }
-    $this->em->flush();
+    $this->entityManager->flush();
   }
 
 
@@ -187,7 +198,7 @@ class ProtocolloConfigureCommand extends Command
    */
   private function getServizi()
   {
-    $repo = $this->em->getRepository('App\Entity\Servizio');
+    $repo = $this->entityManager->getRepository('App\Entity\Servizio');
     return $repo->findBy([
       'slug' => $this->slugServices
     ]);
@@ -198,7 +209,7 @@ class ProtocolloConfigureCommand extends Command
    */
   private function getEnti()
   {
-    $repo = $this->em->getRepository('App\Entity\Ente');
+    $repo = $this->entityManager->getRepository('App\Entity\Ente');
 
     return $repo->findAll();
   }

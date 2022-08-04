@@ -3,17 +3,56 @@
 namespace App\Command;
 
 use App\Entity\Pratica;
-use App\Services\DelayedGiscomAPIAdapterService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RemoveTooManyPdfCommand extends Command
 {
+
+  private $router;
+
+  private $scheme;
+
+  private $host;
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
+  /**
+   * @var string
+   */
+  private $locale;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param RouterInterface $router
+   * @param TranslatorInterface $translator
+   * @param string $locale
+   * @param string $scheme
+   * @param string $host
+   */
+  public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, TranslatorInterface $translator, string $locale, string $scheme, string $host)
+  {
+    $this->entityManager = $entityManager;
+    $this->router = $router;
+    $this->translator = $translator;
+    $this->locale = $locale;
+    $this->scheme = $scheme;
+    $this->host = $host;
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -26,12 +65,10 @@ class RemoveTooManyPdfCommand extends Command
   {
     $io = new SymfonyStyle($input, $output);
 
-    $locale = $this->getContainer()->getParameter('locale');
-    $this->getContainer()->get('translator')->setLocale($locale);
-
-    $context = $this->getContainer()->get('router')->getContext();
-    $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
-    $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
+    $this->translator->setLocale($this->locale);
+    $context = $this->router->getContext();
+    $context->setHost($this->host);
+    $context->setScheme($this->scheme);
 
     $helper = $this->getHelper('question');
 
@@ -45,9 +82,7 @@ class RemoveTooManyPdfCommand extends Command
       return 1;
     }
 
-
-    $entityManager = $this->getContainer()->get('doctrine')->getManager();
-    $repository = $entityManager->getRepository('App\Entity\Pratica');
+    $repository = $this->entityManager->getRepository('App\Entity\Pratica');
 
     $count = 0;
     foreach ($applicationIds as $applicationId) {
@@ -72,8 +107,8 @@ class RemoveTooManyPdfCommand extends Command
             continue;
           }
           $application->removeModuloCompilato($item);
-          $entityManager->remove($item);
-          $entityManager->persist($application);
+          $this->entityManager->remove($item);
+          $this->entityManager->persist($application);
           //$io->success("Rimosso modulo: {$modId}");
           ++$removed;
         }
@@ -82,7 +117,7 @@ class RemoveTooManyPdfCommand extends Command
       }
       $progressBar->finish();
     }
-    $entityManager->flush();
+    $this->entityManager->flush();
     $io->success("Sono stati rimossi {$count} pdf");
 
     return 0;

@@ -918,3 +918,9 @@ services:
       $locale: "%locale%"
       $host: "%ocsdc_host%"
       $scheme: "%ocsdc_scheme%"
+
+  App\Command\RemoveTooManyPdfCommand:
+    arguments:
+      $locale: "%locale%"
+      $host: "%ocsdc_host%"
+      $scheme: "%ocsdc_scheme%"
