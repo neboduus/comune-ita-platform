@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\BackOffice\BackOfficeInterface;
 use App\Entity\DematerializedFormPratica;
 use App\Event\PraticaOnChangeStatusEvent;
+use App\Services\BackOfficeCollection;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -13,51 +14,35 @@ class BackOfficePraticaListener
 {
 
   /**
-   * @var Container
+   * @var BackOfficeCollection
    */
-  private $container;
-
-  /**
-   * @var SessionInterface
-   */
-  private $session;
+  private $backOfficeCollection;
 
   /**
    * @var LoggerInterface
    */
   private $logger;
 
-  public function __construct(Container $container, LoggerInterface $logger, SessionInterface $session)
+  public function __construct(BackOfficeCollection $backOfficeCollection,  LoggerInterface $logger)
   {
-    $this->container = $container;
+    $this->backOfficeCollection = $backOfficeCollection;
     $this->logger = $logger;
-    $this->session = $session;
   }
 
-  /**
-   * @param PraticaOnChangeStatusEvent $event
-   * @throws \Exception
-   */
   public function onStatusChange(PraticaOnChangeStatusEvent $event)
   {
     $pratica = $event->getPratica();
     $service = $pratica->getServizio();
     $integrations = $service->getIntegrations();
 
-    if (!empty($integrations) && $pratica instanceof DematerializedFormPratica) {
+    if (!empty($integrations) && array_key_exists($event->getNewStateIdentifier(), $integrations) && $pratica instanceof DematerializedFormPratica) {
 
-      foreach ($integrations as $integration) {
-        /** @var BackOfficeInterface $backOfficeHandler */
-        $backOfficeHandler = $this->container->get($integration);
-        $result = $backOfficeHandler->execute($pratica);
-        if (is_array($result) && isset($result["error"])) {
-          $this->session->getFlashBag()->add(
-            'error',
-            $result["error"]
-          );
-          $this->logger->error($result["error"] . " for pratica " . $pratica->getId());
-          throw new \Exception($result["error"]);
-        }
+      /** @var BackOfficeInterface $backOfficeHandler */
+      $backOfficeHandler = $this->backOfficeCollection->getBackOffice($integrations[$event->getNewStateIdentifier()]);
+      if ($backOfficeHandler instanceof BackOfficeInterface) {
+        $backOfficeHandler->execute($pratica);
+      } else {
+        $this->logger->critical('Backoffice ' . $integrations[$event->getNewStateIdentifier()] . ' not loaded');
       }
     }
   }
