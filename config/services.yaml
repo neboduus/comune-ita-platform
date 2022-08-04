@@ -377,6 +377,7 @@ services:
 
   ocsdc.allegati.directory_namer:
     class: App\Services\DirectoryNamerService
+    public: true
 
   App\Validator\Constraints\ValidMimeTypeValidator:
     arguments:

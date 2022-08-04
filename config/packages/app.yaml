@@ -6,12 +6,6 @@ parameters:
   instance: ''
   protocollo: ''
   database_reconnect_attemps: '%env(DB_RECONNECT_ATTEMPS)%'
-  mailer_transport: '%env(MAILER_TRANSPORT)%'
-  mailer_host: '%env(MAILER_HOST)%'
-  mailer_port: '%env(MAILER_PORT)%'
-  mailer_user: '%env(MAILER_USER)%'
-  mailer_password: '%env(MAILER_PASSWORD)%'
-  mailer_encription: tls
   pec_mailer_transport: '%env(PEC_MAILER_TRANSPORT)%'
   pec_mailer_host: '%env(PEC_MAILER_HOST)%'
   pec_mailer_port: '%env(PEC_MAILER_PORT)%'
@@ -160,11 +154,6 @@ parameters:
   env(DB_USER): sdc
   env(DB_PASSWORD): sdc
   env(DB_RECONNECT_ATTEMPS): 3
-  env(MAILER_TRANSPORT): smtp
-  env(MAILER_HOST): 127.0.0.1
-  env(MAILER_PORT): '25'
-  env(MAILER_USER): null
-  env(MAILER_PASSWORD): null
   env(PEC_MAILER_TRANSPORT): smtp
   env(PEC_MAILER_HOST): smpt.pec.host
   env(PEC_MAILER_PORT): '465'
@@ -182,8 +171,8 @@ parameters:
   env(FOOTER_CREDITS): >-
     La <strong>Stanza del cittadino</strong> è una iniziativa progettuale del
     Consorzio dei Comuni Trentini
-  env(OCSDC_SCHEME): https
-  env(OCSDC_HOST): devsdc.opencontent.it
+  env(OCSDC_SCHEME): http
+  env(OCSDC_HOST): stanzadelcittadino.localtest.me
   env(GISCOM_PASSWORD): giscom
   env(GISCOM_ADAPTER_URL): https://www.giscom.cloud/WebAPI/
   env(GISCOM_ADAPTER_USERNAME): pippo
@@ -230,12 +219,6 @@ parameters:
   env(SHIB_SESSION_INDEX): shibb_Shib-Session-Index
   env(SHIB_AUTHENTICATION_INSTANT): shibb_Shib-Authentication-Instant
   env(SHIB_AUTHN_CONTEXT_CLASS): shibb_Shib-AuthnContext-Class
-  env(BOX_LOGIN_TITLE): Usi SPID o CPS?
-  env(BOX_LOGIN_TEXT): >-
-    Puoi autenticarti con SPID o Carta Provinciale dei Servizi per la
-    compilazione automatica dei campi ed il salvataggio della pratica nel tuo
-    profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)
-  env(BOX_LOGIN_BUTTON): Entra con SPID/CPS
   env(SENTRY_DSN): ''
   env(LOGIN_ROUTE): login_pat
   env(SINGLE_LOGOUT_URL): /Shibboleth.sso/Logout
@@ -265,4 +248,4 @@ parameters:
   env(JWT_SECRET_KEY): '%kernel.project_dir%/config/jwt/private.pem'
   env(JWT_PUBLIC_KEY): '%kernel.project_dir%/config/jwt/public.pem'
   env(JWT_PASSPHRASE): stanzadelcittadino
-  env(MAILER_URL): smtp://mailhog:1025
+  env(MAILER_URL): smtp://mailserver:1025
