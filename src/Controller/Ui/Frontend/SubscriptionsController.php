@@ -28,7 +28,7 @@ use Omines\DataTablesBundle\Column\TwigColumn;
 use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,7 +42,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * Class SubscriptionsController
  */
-class SubscriptionsController extends Controller
+class SubscriptionsController extends AbstractController
 {
   use DataTablesTrait;
 

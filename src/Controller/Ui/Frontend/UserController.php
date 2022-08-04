@@ -21,7 +21,7 @@ use DateTime;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -39,7 +39,7 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
  * @package App\Controller
  * @Route("/user")
  */
-class UserController extends Controller
+class UserController extends AbstractController
 {
 
   /** @var LoggerInterface */

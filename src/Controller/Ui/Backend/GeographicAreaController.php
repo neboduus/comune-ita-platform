@@ -5,7 +5,7 @@ namespace App\Controller\Ui\Backend;
 use App\Entity\GeographicArea;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +18,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class GeographicAreaController
  * @Route("/admin/geographic-areas")
  */
-class GeographicAreaController extends Controller
+class GeographicAreaController extends AbstractController
 {
   /**
    * @var EntityManagerInterface

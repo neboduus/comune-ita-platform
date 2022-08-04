@@ -164,7 +164,7 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
   }
 
   /**
-   * @param string $parameter
+   * @param string|null $parameter
    * @return array|mixed|null
    */
   public function getParameter(?string $parameter)

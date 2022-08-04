@@ -4,14 +4,14 @@ namespace App\Controller\General;
 
 use App\InstancesProvider;
 use Artprima\PrometheusMetricsBundle\Metrics\Renderer;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-class MetricsController extends Controller
+class MetricsController extends AbstractController
 {
 
   /**

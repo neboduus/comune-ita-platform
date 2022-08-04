@@ -7,7 +7,7 @@ use App\Services\BreadcrumbsService;
 use App\Services\Manager\ServiceManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
  * @package App\Controller
  * @Route("/search")
  */
-class SearchController extends Controller
+class SearchController extends AbstractController
 {
 
   /**

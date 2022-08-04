@@ -21,7 +21,7 @@ use Doctrine\ORM\EntityRepository;
 use Entity\Repository\CategoryRepository;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -35,7 +35,7 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
  * @package App\Controller
  * @Route("/servizi")
  */
-class ServiziController extends Controller
+class ServiziController extends AbstractController
 {
   /** @var InstanceService */
   private $instanceService;

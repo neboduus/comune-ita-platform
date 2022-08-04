@@ -162,25 +162,6 @@ class ServizioFormType extends AbstractType
     }
   }
 
-
-  private function arrayFlat($array, $prefix = '')
-  {
-    $result = array();
-    foreach ($array as $key => $value) {
-      if ($key == 'metadata' || $key == 'state') {
-        continue;
-      }
-      $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
-
-      if (is_array($value)) {
-        $result = array_merge($result, $this->arrayFlat($value, $new_key));
-      } else {
-        $result[$new_key] = $value;
-      }
-    }
-    return $result;
-  }
-
   /**
    * @param OptionsResolver $resolver
    */

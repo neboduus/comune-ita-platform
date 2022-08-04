@@ -10,12 +10,12 @@ use App\Services\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Services\SubscriptionsService;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SubscriberController extends Controller
+class SubscriberController extends AbstractController
 {
   /**
    * @var MailerService

@@ -31,7 +31,7 @@ use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
@@ -64,7 +64,7 @@ use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
  * Lasciamo il compito a ogni singola action
  * @Route("")
  */
-class AllegatoController extends Controller
+class AllegatoController extends AbstractController
 {
 
   /** @var TranslatorInterface $translator */

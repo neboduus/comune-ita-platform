@@ -10,7 +10,7 @@ use App\Services\WebhookService;
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +23,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class WebhookController
  * @Route("/admin/webhook")
  */
-class WebhookController extends Controller
+class WebhookController extends AbstractController
 {
   /**
    * @var EntityManagerInterface

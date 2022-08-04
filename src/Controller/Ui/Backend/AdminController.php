@@ -48,7 +48,7 @@ use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -68,7 +68,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Class AdminController
  * @Route("/admin")
  */
-class AdminController extends Controller
+class AdminController extends AbstractController
 {
   use DataTablesTrait;
   use FiltersTrait;

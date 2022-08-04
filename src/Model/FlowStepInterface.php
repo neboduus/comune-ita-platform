@@ -10,11 +10,11 @@ interface FlowStepInterface
    */
   public function getParameters();
 
+
   /**
-   * @param string $field
-   *
+   * @param string|null $parameter
    * @return mixed
    */
-  public function getParameter( string $parameter );
+  public function getParameter( ?string $parameter );
 
 }

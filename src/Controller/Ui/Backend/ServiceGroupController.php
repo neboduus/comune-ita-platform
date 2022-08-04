@@ -5,7 +5,7 @@ namespace App\Controller\Ui\Backend;
 use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -16,7 +16,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class ServiceGroupController
  * @Route("/admin/service-group")
  */
-class ServiceGroupController extends Controller
+class ServiceGroupController extends AbstractController
 {
   /**
    * @var TranslatorInterface

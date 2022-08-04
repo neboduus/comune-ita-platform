@@ -9,7 +9,7 @@ use App\Services\Manager\CategoryManager;
 use App\Services\Manager\PraticaManager;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +22,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  * Class PaymentGatewayController
  * @Route("/admin/categories")
  */
-class CategoryController extends Controller
+class CategoryController extends AbstractController
 {
   /**
    * @var EntityManagerInterface

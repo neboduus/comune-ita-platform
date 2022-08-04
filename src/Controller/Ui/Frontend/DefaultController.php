@@ -17,7 +17,7 @@ use Artprima\PrometheusMetricsBundle\Metrics\Renderer;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormInterface;
@@ -34,7 +34,7 @@ use Symfony\Component\Translation\TranslatorInterface;
  *
  * @package App\Controller
  */
-class DefaultController extends Controller
+class DefaultController extends AbstractController
 {
 
   /** @var LoggerInterface */

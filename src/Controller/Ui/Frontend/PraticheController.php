@@ -36,7 +36,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -59,7 +59,7 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
  * @package App\Controller
  * @Route("/pratiche")
  */
-class PraticheController extends Controller
+class PraticheController extends AbstractController
 {
 
   use DataTablesTrait;

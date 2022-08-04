@@ -23,7 +23,7 @@ use App\Utils\StringUtils;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Monolog\Logger;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,7 +41,7 @@ use Symfony\Component\VarDumper\VarDumper;
  * @package App\Controller
  * @Route("/v1.0")
  */
-class GiscomAPIController extends Controller
+class GiscomAPIController extends AbstractController
 {
 
   const CURRENT_API_VERSION = 'v1.0';
@@ -116,12 +116,6 @@ class GiscomAPIController extends Controller
     $this->fileService = $fileService;
   }
 
-
-  public function setContainer(ContainerInterface $container = null)
-  {
-    parent::setContainer($container);
-
-  }
 
   /**
    * @Route("/giscom/", name="giscom_api_ping")

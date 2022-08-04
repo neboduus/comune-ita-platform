@@ -6,7 +6,7 @@ use App\Http\TransparentPixelResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 /**
  * Class TrackingController
  */
-class TrackingController extends Controller
+class TrackingController extends AbstractController
 {
   /** @var EntityManagerInterface */
   private $entityManager;
