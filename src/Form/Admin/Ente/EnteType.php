@@ -27,7 +27,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class EnteType extends AbstractI18nType
@@ -71,11 +71,11 @@ class EnteType extends AbstractI18nType
     GatewayCollection $gatewayCollection
 )
   {
-    parent::__construct($dataMapper, $locale, $locales);
     $this->translator = $translator;
     $this->em = $entityManager;
     $this->backOfficeCollection = $backOffices;
     $this->gatewayCollection = $gatewayCollection;
+    parent::__construct($dataMapper, $locale, $locales);
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)

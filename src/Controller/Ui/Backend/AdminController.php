@@ -15,7 +15,6 @@ use App\Entity\Pratica;
 use App\Entity\ScheduledAction;
 use App\Entity\Servizio;
 use App\Entity\Webhook;
-use App\Form\Admin\ServiceFlow;
 use App\Form\Admin\Servizio\CardDataType;
 use App\Form\Admin\Servizio\FeedbackMessagesDataType;
 use App\Form\Admin\Servizio\FormIOBuilderRenderType;
@@ -86,9 +85,6 @@ class AdminController extends Controller
   /** @var TranslatorInterface */
   private $translator;
 
-  /** @var ServiceFlow */
-  private $serviceFlow;
-
   /** @var SchemaFactoryInterface */
   private $schemaFactory;
   /**
@@ -128,7 +124,6 @@ class AdminController extends Controller
    * @param FormServerApiAdapterService $formServer
    * @param TokenGeneratorInterface $tokenGenerator
    * @param TranslatorInterface $translator
-   * @param ServiceFlow $serviceFlow
    * @param SchemaFactoryInterface $schemaFactory
    * @param IOService $ioService
    * @param RouterInterface $router
@@ -144,7 +139,6 @@ class AdminController extends Controller
     FormServerApiAdapterService $formServer,
     TokenGeneratorInterface     $tokenGenerator,
     TranslatorInterface         $translator,
-    ServiceFlow                 $serviceFlow,
     SchemaFactoryInterface      $schemaFactory,
     IOService                   $ioService,
     RouterInterface             $router,
@@ -160,7 +154,6 @@ class AdminController extends Controller
     $this->formServer = $formServer;
     $this->tokenGenerator = $tokenGenerator;
     $this->translator = $translator;
-    $this->serviceFlow = $serviceFlow;
     $this->schemaFactory = $schemaFactory;
     $this->ioService = $ioService;
     $this->router = $router;

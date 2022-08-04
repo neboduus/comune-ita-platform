@@ -112,13 +112,10 @@ services:
 
   GuzzleHttp\Client: '@eight_points_guzzle.client.mypay'
 
-  i18n.datamapper:
-    class: App\Form\I18n\I18nDataMapper
-    autowire: true
 
   App\Form\Admin\RecipientType:
     arguments:
-      - "@i18n.datamapper"
+      - '@App\Form\I18n\I18nDataMapper'
       - "%locale%"
       - "%app_locales%"
     tags:
@@ -126,7 +123,7 @@ services:
 
   App\Form\Admin\GeographicAreaType:
     arguments:
-      - "@i18n.datamapper"
+      - '@App\Form\I18n\I18nDataMapper'
       - "%locale%"
       - "%app_locales%"
     tags:
@@ -134,7 +131,7 @@ services:
 
   App\Form\Admin\Servizio\GeneralDataType:
     arguments:
-      - "@i18n.datamapper"
+      - '@App\Form\I18n\I18nDataMapper'
       - "%locale%"
       - "%app_locales%"
     tags:
@@ -142,9 +139,16 @@ services:
 
   App\Form\Admin\Servizio\CardDataType:
     arguments:
-      - "@i18n.datamapper"
+      - '@App\Form\I18n\I18nDataMapper'
       - "%locale%"
       - "%app_locales%"
+    tags:
+      - { name: form.type }
+
+  App\Form\Admin\Ente\EnteType:
+    arguments:
+      $locale: "%locale%"
+      $locales: "%app_locales%"
     tags:
       - { name: form.type }
 
@@ -159,14 +163,6 @@ services:
     arguments:
       $locale: "%locale%"
       $locales: "%app_locales%"
-    tags:
-      - { name: form.type }
-
-  App\Form\Admin\Ente\EnteType:
-    arguments:
-      - "@i18n.datamapper"
-      - "%locale%"
-      - "%app_locales%"
     tags:
       - { name: form.type }
 
@@ -219,17 +215,14 @@ services:
       - "%payment_gateways%"
 
   App\Form\Scia\PraticaEdiliziaVincoliType:
-    autowire: true
     tags:
       - { name: form.type }
 
   App\Form\CalendarBackofficeType:
-    arguments: [ "@doctrine.orm.default_entity_manager", "@translator" ]
     tags:
       - { name: form.type }
 
   App\BackOffice\SubcriptionsBackOffice:
-    arguments: [ "@logger","@translator","@doctrine.orm.entity_manager" ]
     public: true
     tags: [ 'app.backoffice' ]
 
@@ -238,7 +231,6 @@ services:
     tags: [ 'app.backoffice' ]
 
   App\BackOffice\SubcriptionPaymentsBackOffice:
-    autowire: true
     public: true
     tags: [ 'app.backoffice' ]
 
@@ -256,10 +248,6 @@ services:
 
   App\Services\DirectoryNamerService:
     public: true
-
-  ocsdc.cps.userprovider:
-    class: App\Services\CPSUserProvider
-    arguments: [ "@doctrine.orm.default_entity_manager", "@logger" ]
 
   ocsdc.pat.authenticator:
     class: App\Security\PatAuthenticator
@@ -355,7 +343,7 @@ services:
       - { name: kernel.event_listener, event: kernel.request, priority: -10 }
 
   App\EventListener\CompleteProfileListener:
-    arguments: [ "@router","@security.token_storage", "@ocsdc.cps.userprovider", "%PasswordLifeTime%" ]
+    arguments: [ "@router","@security.token_storage", '@App\Services\CPSUserProvider', "%PasswordLifeTime%" ]
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: -100 }
 
@@ -618,11 +606,8 @@ services:
     tags:
       - { name: form.type }
 
-
   ocsdc.form.type.payment_gateway_type: '@App\Form\Base\PaymentGatewayType'
 
-  App\Form\PraticaFlowRegistry:
-    autowire: true
 
   ocsdc.form.flow.pratica:
     autowire: false
@@ -634,7 +619,7 @@ services:
       - "@translator"
       - "@ocsdc.pratica_status_service"
       - "@ocsdc.modulo_pdf_builder"
-      - "@ocsdc.allegati.dematerialized_attacher"
+      - '@App\Services\DematerializedFormAllegatiAttacherService'
       - "%prefix%"
       - "@formio.factory"
       - "@doctrine.orm.entity_manager"
@@ -695,7 +680,6 @@ services:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.formio }
 
   # Inzio operatore
-
   ocsdc.form.flow.praticaoperatore:
     class: App\Form\Operatore\Base\PraticaOperatoreFlow
     autowire: false
@@ -710,16 +694,6 @@ services:
     tags:
       - { name: ocsdc.pratica.flow, alias: ocsdc.form.flow.certificatonascitaoperatore }
 
-  # Flow service servizio
-  App\Form\Admin\ServiceFlow:
-    autowire: false
-    autoconfigure: false
-    parent: craue.form.flow
-    arguments: [ "@logger","@translator" ]
-
-  ocsdc.comunweb_content_provider:
-    class: App\Services\ComunwebContentProviderService
-    arguments: [ "@eight_points_guzzle.client.comunweb","@logger" ]
 
   App\Twig\AppExtension:
     autowire: true
@@ -823,10 +797,6 @@ services:
 
   App\Services\GiscomAPIAdapterServiceInterface: '@App\Services\DelayedGiscomAPIAdapterService'
 
-  ocsdc.allegati.dematerialized_attacher:
-    class: App\Services\DematerializedFormAllegatiAttacherService
-    arguments:
-      - '@doctrine.orm.entity_manager'
 
   App\EventListener\GiscomSendPraticaListener:
     tags:
@@ -924,18 +894,6 @@ services:
     autowire: true
     tags:
       - { name: prometheus_metrics_bundle.metrics_generator }
-
-
-  #craue.form.flow.storage_default:
-  #  class: Craue\FormFlowBundle\Storage\DoctrineStorage
-  #  public: false
-  #  #arguments: [ "@doctrine.dbal.default_connection", "@ocsdc.form.flow.storage_key_generator" ]
-
-  #craue.form.flow.data_manager_default:
-  #  class: App\Form\DataManager
-  #  public: false
-  #  #arguments: [ "@craue.form.flow.storage", "@security.token_storage", "@session" ]
-
 
   App\Security\Voters\AttachmentVoter:
     arguments:
