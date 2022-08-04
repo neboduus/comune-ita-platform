@@ -113,6 +113,7 @@ class PaymentDataType extends AbstractType
     $tenantGateways = $normalizedTenantGateways;
 
     $availableGateways = $this->gatewayCollection->getAvailablePaymentGateways();
+    $gatewaysChoice = [];
     foreach ($tenantGateways as $g) {
       $identifier = $g['identifier'];
       if (isset($availableGateways[$identifier])) {
