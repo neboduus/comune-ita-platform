@@ -2,7 +2,7 @@
 
 namespace App\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\Event;
 
 class KafkaEvent extends Event
 {

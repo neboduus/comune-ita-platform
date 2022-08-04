@@ -3,7 +3,7 @@
 namespace App\Event;
 
 use App\Entity\Pratica;
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\Event;
 
 class ProtocollaAllegatiOperatoreSuccessEvent extends Event
 {
