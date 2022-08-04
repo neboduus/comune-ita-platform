@@ -84,7 +84,7 @@ if ($request->server->has('APP_ENV') && in_array($request->server->get('APP_ENV'
 }
 
 $currentInstance = false;
-$instances = Yaml::parse(file_get_contents(__DIR__ . '/../app/instances_' . $env . '.yml'));
+$instances = Yaml::parse(file_get_contents(__DIR__ . '/../config/instances_' . $env . '.yml'));
 $instanceParams = $instances['instances'];
 
 
