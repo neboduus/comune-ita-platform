@@ -286,7 +286,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{servizio}/new", name="pratiche_new")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App\Entity\Servizio", options={"mapping": {"servizio": "slug"}})
    *
    * @param Request $request
    * @param Servizio $servizio
@@ -332,7 +332,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{servizio}/draft", name="pratiche_list_draft")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App\Entity\Servizio", options={"mapping": {"servizio": "slug"}})
    * @param Servizio $servizio
    *
    * @return Response
@@ -366,7 +366,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/compila/{pratica}", name="pratiche_compila")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -470,7 +470,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/draft/{pratica}", name="pratiche_draft")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -525,7 +525,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}", name="pratiche_show")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Pratica $pratica
    *
    * @return Response
@@ -571,7 +571,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/detail", name="pratica_show_detail")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Pratica $pratica
    *
    * @return Response
@@ -662,7 +662,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/withdraw", name="pratiche_withdraw")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -692,7 +692,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/payment-callback", name="pratiche_payment_callback")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -723,7 +723,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/delete", name="pratiche_delete")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -746,7 +746,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/formio/validate/{servizio}", name="formio_validate")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App\Entity\Servizio", options={"mapping": {"servizio": "slug"}})
    *
    * @param Request $request
    * @param Servizio $servizio
@@ -772,7 +772,7 @@ class PraticheController extends Controller
 
   /**
    * @Route("/{pratica}/pdf", name="pratiche_show_pdf")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *

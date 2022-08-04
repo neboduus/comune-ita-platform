@@ -122,7 +122,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{servizio}/new", name="pratiche_anonime_new")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App\Entity\Servizio", options={"mapping": {"servizio": "slug"}})
    * @param Request $request
    * @param Servizio $servizio
    *
@@ -167,7 +167,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{pratica}", name="pratiche_anonime_show")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *
@@ -205,7 +205,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{pratica}/payment-callback/{hash}", name="pratiche_anonime_payment_callback")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    * @param $hash
@@ -237,7 +237,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/{pratica}/pdf", name="pratiche_anonime_show_pdf")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -258,7 +258,7 @@ class PraticheAnonimeController extends Controller
 
   /**
    * @Route("/formio/validate/{servizio}", name="anonymous_formio_validate")
-   * @ParamConverter("servizio", class="App:Servizio", options={"mapping": {"servizio": "slug"}})
+   * @ParamConverter("servizio", class="App\Entity\Servizio", options={"mapping": {"servizio": "slug"}})
    *
    * @param Request $request
    * @param Servizio $servizio

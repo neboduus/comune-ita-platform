@@ -1125,7 +1125,7 @@ class OperatoriController extends Controller
 
   /**
    * @Route("/backoffice/{pratica}", name="save_backoffice_data")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    *

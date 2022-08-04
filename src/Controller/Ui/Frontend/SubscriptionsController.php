@@ -807,7 +807,7 @@ class SubscriptionsController extends Controller
 
   /**
    * @Route("operatori/subscriber/{subscriber}/edit", name="operatori_subscriber_edit")
-   * @ParamConverter("subscriber", class="App:Subscriber")
+   * @ParamConverter("subscriber", class="App\Entity\Subscriber")
    * @param Request $request the request
    * @param Subscriber $subscriber The Subscriber entity
    *

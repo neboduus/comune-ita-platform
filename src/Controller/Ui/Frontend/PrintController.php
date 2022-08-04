@@ -56,7 +56,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/pratica/{pratica}", name="print_pratiche")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Pratica $pratica
    *
    * @return Response
@@ -104,7 +104,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/pratica/{pratica}/show", name="print_pratiche_show")
-   * @ParamConverter("pratica", class="App:Pratica")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -138,7 +138,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/service/{service}", name="print_service")
-   * @ParamConverter("service", class="App:Servizio")
+   * @ParamConverter("service", class="App\Entity\Servizio")
    * @param Servizio $service
    *
    * @return array
@@ -159,7 +159,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/service/{service}/pdf", name="print_service_pdf")
-   * @ParamConverter("service", class="App:Servizio")
+   * @ParamConverter("service", class="App\Entity\Servizio")
    * @param Request $request
    * @param Servizio $service
    *
@@ -195,7 +195,7 @@ class PrintController extends Controller
 
   /**
    * @Route("/service/{service}/preview", name="preview_service")
-   * @ParamConverter("service", class="App:Servizio")
+   * @ParamConverter("service", class="App\Entity\Servizio")
    * @param Servizio $service
    *
    * @return Response

@@ -244,7 +244,7 @@ class CalendarsController extends Controller
 
   /**
    * @Route("operatori/calendars/{calendar}/edit", name="operatori_calendar_edit")
-   * @ParamConverter("calendar", class="App:Calendar")
+   * @ParamConverter("calendar", class="App\Entity\Calendar")
    * @param Request $request the request
    * @param Calendar $calendar The Calendar entity
    *

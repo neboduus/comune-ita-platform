@@ -263,7 +263,7 @@ class SubscriptionServicesController extends Controller
 
   /**
    * @Route("operatori/subscription-service/{subscriptionService}/edit", name="operatori_subscription-service_edit")
-   * @ParamConverter("subscriptionService", class="App:SubscriptionService")
+   * @ParamConverter("subscriptionService", class="App\Entity\SubscriptionService")
    * @param Request $request the request
    * @param SubscriptionService $subscriptionService The SubscriptionService entity
    *
