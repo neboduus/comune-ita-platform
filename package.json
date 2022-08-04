@@ -1,7 +1,7 @@
 {
   "name": "stanzadelcittadino",
   "author": "Opencontent S.c.a.r.l",
-  "version": "2.0.0-rc.4",
+  "version": "2.0.0-rc.5",
   "license": "GPL-3.0-only",
   "devDependencies": {
     "@babel/core": "7.12.16",
