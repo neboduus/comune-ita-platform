@@ -98,7 +98,7 @@ class MeetingService
     if ($flush) {
       $this->entityManager->flush();
     }
-    $this->dispatcher->dispatch(KafkaEvent::NAME, new KafkaEvent($meeting));
+    $this->dispatcher->dispatch(new KafkaEvent($meeting));
   }
 
   /**

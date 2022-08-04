@@ -39,7 +39,7 @@ class CalendarManager
     $this->entityManager->persist($calendar);
     $this->entityManager->flush();
 
-    $this->dispatcher->dispatch(KafkaEvent::NAME, new KafkaEvent($calendar));
+    $this->dispatcher->dispatch(new KafkaEvent($calendar));
   }
 
 

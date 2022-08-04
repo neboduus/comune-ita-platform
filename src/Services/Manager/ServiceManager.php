@@ -161,7 +161,7 @@ class ServiceManager
     $this->entityManager->persist($servizio);
     $this->entityManager->flush();
 
-    $this->dispatcher->dispatch(KafkaEvent::NAME, new KafkaEvent($servizio));
+    $this->dispatcher->dispatch(new KafkaEvent($servizio));
   }
 
   private function getNotSharedFacets(&$results)

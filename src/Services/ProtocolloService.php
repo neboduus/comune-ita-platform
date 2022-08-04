@@ -151,10 +151,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     }
 
     if ($dispatchSuccess) {
-      $this->dispatcher->dispatch(
-        ProtocolloEvents::ON_PROTOCOLLA_PRATICA_SUCCESS,
-        new ProtocollaPraticaSuccessEvent($pratica)
-      );
+      $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica));
     } else {
       throw new IncompleteExecutionException();
     }
@@ -188,10 +185,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       $this->entityManager->persist($pratica);
       $this->entityManager->flush();
     }
-    $this->dispatcher->dispatch(
-      ProtocolloEvents::ON_PROTOCOLLA_RICHIESTE_INTEGRAZIONE_SUCCESS,
-      new ProtocollaPraticaSuccessEvent($pratica)
-    );
+    $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica));
   }
 
   /**
@@ -332,7 +326,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
       $this->entityManager->flush();
 
-      $this->dispatcher->dispatch(ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_INTEGRAZIONE_SUCCESS, new ProtocollaPraticaSuccessEvent($pratica));
+      $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica));
     } else {
       throw new IncompleteExecutionException();
     }
@@ -387,10 +381,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
 
-    $this->dispatcher->dispatch(
-      ProtocolloEvents::ON_PROTOCOLLA_ALLEGATI_OPERATORE_SUCCESS,
-      new ProtocollaAllegatiOperatoreSuccessEvent($pratica)
-    );
+    $this->dispatcher->dispatch(new ProtocollaAllegatiOperatoreSuccessEvent($pratica));
   }
 
   /**

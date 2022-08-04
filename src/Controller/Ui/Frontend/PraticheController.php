@@ -416,8 +416,6 @@ class PraticheController extends AbstractController
     if ($pratica->getInstanceId() == null) {
       $pratica->setInstanceId($praticaFlowService->getInstanceId());
     }
-    $resumeURI = $praticaFlowService->getResumeUrl($request);
-    //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
 
     $form = $praticaFlowService->createForm();
     if ($praticaFlowService->isValid($form)) {

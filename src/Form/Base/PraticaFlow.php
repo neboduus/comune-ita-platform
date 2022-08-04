@@ -16,7 +16,7 @@ use App\Services\UserSessionService;
 use Craue\FormFlowBundle\Form\FormFlow;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface

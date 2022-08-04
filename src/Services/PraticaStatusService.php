@@ -13,7 +13,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PraticaStatusService
 {
@@ -201,8 +201,8 @@ class PraticaStatusService
         $this->entityManager->refresh($pratica);
         $this->entityManager->commit();
 
-        $this->dispatcher->dispatch(KafkaEvent::NAME, new KafkaEvent($pratica));
-        $this->dispatcher->dispatch(PraticaEvents::ON_STATUS_CHANGE, new PraticaOnChangeStatusEvent($pratica, $afterStatus, $beforeStatus));
+        $this->dispatcher->dispatch(new KafkaEvent($pratica));
+        $this->dispatcher->dispatch(new PraticaOnChangeStatusEvent($pratica, $afterStatus, $beforeStatus));
 
 
         $this->logger->info(

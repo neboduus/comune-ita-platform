@@ -97,7 +97,7 @@ class MessageManager
       $this->dispatchMailForMessage($message);
     }
 
-    $this->dispatcher->dispatch(MessageEvent::CREATED, new MessageEvent($message));
+    $this->dispatcher->dispatch(new MessageEvent($message));
   }
 
   /**
