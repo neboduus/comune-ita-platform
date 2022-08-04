@@ -13,6 +13,7 @@ use App\Entity\Pratica;
 use App\Entity\PraticaRepository;
 use App\Entity\Servizio;
 use App\Form\Base\PraticaFlow;
+use App\Form\PraticaFlowRegistry;
 use App\FormIO\ExpressionValidator;
 use App\Handlers\Servizio\ForbiddenAccessException;
 use App\Handlers\Servizio\ServizioHandlerRegistry;
@@ -372,7 +373,7 @@ class PraticheController extends AbstractController
    *
    * @return Response
    */
-  public function compilaAction(Request $request, Pratica $pratica)
+  public function compilaAction(Request $request, Pratica $pratica, PraticaFlowRegistry $praticaFlowRegistry)
   {
 
     if ($pratica->getStatus() !== Pratica::STATUS_DRAFT_FOR_INTEGRATION
@@ -400,7 +401,7 @@ class PraticheController extends AbstractController
     $this->breadcrumbsService->getBreadcrumbs()->addItem('breadcrumbs.compile');
 
     /** @var PraticaFlow $praticaFlowService */
-    $praticaFlowService = $this->get($pratica->getServizio()->getPraticaFlowServiceName());
+    $praticaFlowService = $praticaFlowRegistry->getByName($pratica->getServizio()->getPraticaFlowServiceName());
 
     if ($pratica->getServizio()->isPaymentRequired()) {
       $praticaFlowService->setPaymentRequired(true);

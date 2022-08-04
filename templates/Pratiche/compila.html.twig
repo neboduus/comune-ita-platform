@@ -52,7 +52,7 @@
 {% endblock %}
 
 {% block main_content %}
-  {% form_theme form ':form:ocsdc_form_style.html.twig' %}
+  {% form_theme form 'form/ocsdc_form_style.html.twig' %}
 
   <section class="container {{ form.vars.id }}">
     <div class="row">
@@ -96,7 +96,7 @@
 
     <div class="row hidden-xs">
       <div class="col-md-12 mt-4 mb-4">
-        {% include 'CraueFormFlowBundle:FormFlow:stepList.html.twig' %}
+        {% include '@CraueFormFlow/FormFlow/stepList.html.twig' %}
       </div>
     </div>
 
@@ -152,7 +152,7 @@
       </div>
       {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType == 'bollo') and pratica.statusName != 'STATUS_PAYMENT_PENDING' %}
         <div class="mt-5">
-          {% include 'CraueFormFlowBundle:FormFlow:buttons.html.twig' %}
+          {% include '@CraueFormFlow/FormFlow/buttons.html.twig' %}
         </div>
       {% endif %}
 
