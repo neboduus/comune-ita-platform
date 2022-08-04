@@ -626,7 +626,7 @@ class AdminController extends Controller
 
   /**
    * @Route("/servizio/{id}/edit", name="admin_servizio_edit")
-   * @ParamConverter("id", class="App:Servizio")
+   * @ParamConverter("id", class="App\Entity\Servizio")
    * @param Servizio $servizio
    * @param Request $request
    * @return Response
@@ -753,7 +753,7 @@ class AdminController extends Controller
 
   /**
    * @Route("/servizio/{servizio}/custom-validation", name="admin_servizio_custom_validation")
-   * @ParamConverter("servizio", class="App:Servizio")
+   * @ParamConverter("servizio", class="App\Entity\Servizio")
    * @param Request $request
    * @param Servizio $servizio
    *
@@ -860,7 +860,7 @@ class AdminController extends Controller
 
   /**
    * @Route("/servizio/{servizio}/schema", name="admin_servizio_schema_edit")
-   * @ParamConverter("servizio", class="App:Servizio")
+   * @ParamConverter("servizio", class="App\Entity\Servizio")
    * @param Request $request
    * @param Servizio $servizio
    * @return JsonResponse
