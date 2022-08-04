@@ -1,0 +1,30 @@
+{% extends '@App/Default/error.html.twig' %}
+{% block main_content %}
+  <section class="container px-4 my-4">
+    <div class="pb-5">
+      <div class="container px-4">
+        <div class="row mt-5">
+          <div class="col text-center">
+            <h1>{{ 'error_message_403'|trans }}</h1>
+            <div class="error-details">
+              {{ 'error_message_detail_403'|trans }}
+            </div>
+            <div class="mt-5">
+              <a href="{{ path('home') }}" class="btn btn-primary">
+                <svg class="icon icon-white">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-left"></use>
+                </svg>
+                {{ 'error_back_to_home'|trans }}
+              </a>
+              <a href="mailto:support@opencontent.it" class="btn btn-outline-primary">
+                <svg class="icon icon-primary">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
+                </svg>
+                {{ 'error_support'|trans }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

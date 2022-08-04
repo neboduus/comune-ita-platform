@@ -42,12 +42,12 @@
         },
     ] -%}
 
-    {% for button in craue_buttons if button.render %}
+    {% for button in craue_buttons %}
         {% if pratica
-            and flow.getCurrentStepLabel() is same as(constant('\\AppBundle\\Payment\\Gateway\\MyPay::PAYMENT_STEP_LABEL'))
+            and flow.getCurrentStepLabel() is same as(constant('\\App\\Payment\\Gateway\\MyPay::PAYMENT_STEP_LABEL'))
             and pratica.paymentData is defined
             and pratica.paymentData.overall_outcome is defined
-            and pratica.paymentData.overall_outcome is same as(constant('\\AppBundle\\Payment\\Gateway\\MyPay::ESITO_PENDING'))
+            and pratica.paymentData.overall_outcome is same as(constant('\\App\\Payment\\Gateway\\MyPay::ESITO_PENDING'))
             and button.label is same as('button.next') %}
             {% set disabled='disabled="disabled"' %}
         {% else %}
