@@ -48,7 +48,7 @@ USER wodby
 
 COPY --from=builder /var/www/html/vendor /var/www/html/vendor
 
-#ARG SYMFONY_ENV=prod
+#ARG APP_ENV=prod
 ENV PHP_FPM_USER=wodby
 ENV PHP_FPM_GROUP=wodby
 

@@ -128,7 +128,7 @@ services:
       OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       ENV: ${ENV:-DEV}
-      SYMFONY_ENV: ${SYMFONY_ENV:-dev}
+      APP_ENV: ${APP_ENV:-dev}
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
       DB_NAME: ${DB_PASSWORD:-sdc}

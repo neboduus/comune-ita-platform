@@ -17,7 +17,7 @@ services:
         wodby_version: 7.3-dev-macos
     environment:
       ENV: DEV
-      SYMFONY_ENV: dev
+      APP_ENV: dev
     volumes:
       - ./app:/var/www/html/app:rw,cached
       - ./src:/var/www/html/src:rw,cached

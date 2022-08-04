@@ -6,25 +6,25 @@
 |------------------------------|----------|-----------------|-------------|
 | OCSDC_SCHEME                 | No       | https           | Usato per i link inseriti nelle email transazionali |
 | OCSDC_HOST                   | No       | localtest.me | Usato per i link inseriti nelle email transazionali |
-| DB_DRIVER		       | No       | pdo_pgsql       | Database configuration |  
+| DB_DRIVER		       | No       | pdo_pgsql       | Database configuration |
 | DB_HOST                      | No       | postgres        | |
 | DB_PORT                      | No       | 5432            | |
 | DB_NAME                      | No       | sdc_multi       | |
 | DB_USER                      | No       | sdc             | |
-| DB_PASSWORD                  | No       | sdc             | |  
+| DB_PASSWORD                  | No       | sdc             | |
 | MAILER_TRANSPORT    	       | No       | smtp            | Configurazione server per l'invio di messaggi transazionali |
 | MAILER_HOST                  | Yes      | 127.0.0.1       | |
 | MAILER_PORT                  | No       | 25              | |
 | MAILER_USER                  | No       | null            | |
 | MAILER_PASSWORD              | No       | null            | |
 | PEC_MAILER_TRANSPORT         | No       | smtp            | Configurazione server per l'invio di messaggi ai sistemi di protocollo che accettano PEC
-| PEC_MAILER_HOST              | Yes      | smtp.pec.host   | 
+| PEC_MAILER_HOST              | Yes      | smtp.pec.host   |
 | PEC_MAILER_PORT              | No       | 465             |
 | PEC_MAILER_USER              | No       | null            |
 | PEC_MAILER_PASSWORD          | No       | null            |
-| PEC_DELIVERY_ADDRESS         | Yes      | pec.stanzadelcittadino@localtest.me | 
+| PEC_DELIVERY_ADDRESS         | Yes      | pec.stanzadelcittadino@localtest.me |
 | SECRET                       | Yes      | ThisTokenIsNotSoSecretChangeIt  | |
-| DEFAULT_FROM_EMAIL_ADDRESS   | No       | stanzadelcittadino@localtest.me |  | 
+| DEFAULT_FROM_EMAIL_ADDRESS   | No       | stanzadelcittadino@localtest.me |  |
 | WKHTMLBINARY                 | No       | wkhtmltopdf     | Valore non piu' utilizzato |
 | WKHTMLTOPDF_SERVICE          | Yes      | wkhtmltopdf     | Url dell'API del servizio Gotemberg |
 | EZ_PASSWORD                  | No       | ez              |  |
@@ -34,14 +34,14 @@
 | FORMSERVER_PRIVATE_URL       | Yes      | http//formserver | URL of the formserver used by PHP Process to update forms |
 | FORMSERVER_PUBLIC_URL        | Yes      | http://formserver.localtest.me | URL of the formserver used by application users and operators to render forms
 | FORMSERVER_ADMIN_URL         | Yes      | http://formserver.localtest.me | URL of the formserver used by administrators to render forms
-| HASH_VALIDITY                | No       | 1 | 
-| TOKEN_TTL                    | No       | 3600 | Durata del token di autenticazione in secondi | 
+| HASH_VALIDITY                | No       | 1 |
+| TOKEN_TTL                    | No       | 3600 | Durata del token di autenticazione in secondi |
 | RECAPTCHA_KEY                | Yes      |   | Credenziali del recaptcha usato sulle pratiche anonime
 | RECAPTCHA_SECRET             | Yes      |   | Credenziali del recaptcha usato sulle pratiche anonime
 | SENTRY_DSN                   | No       |   | Se configurato abilita l'integrazione con un server [Sentry](https://sentry.io) |
 | LOGIN_ROUTE                  | No       | login_pat | Autenticazione di default, sovrascribile per tenant
 | SINGLE_LOGOUT_URL            | No       | /Shibboleth.sso/Logout | Url a cui rendirizzare dopo il logout
-| BROWSERS_RESTRICTIONS        | No       | null            | 
+| BROWSERS_RESTRICTIONS        | No       | null            |
 | CACHE_MAX_AGE                | No       | 0               | Valore degli header `cache-control` restituiti dai path che consentono il caching
 | METRICS_TYPE                 | No       | in_memory       | Alternativa: redis
 | METRICS_REDIS_HOST           | No       | redis           |
@@ -73,11 +73,11 @@
 
 |           Nome               | Required |     Default     | Note        |
 |------------------------------|----------|-----------------|-------------|
-| PITRE_ADAPTER_URL            | No       | http://pitre    | Indirizzo del Pitre Soap Proxy | 
-| GISCOM_ADAPTER_URL           | No       | https://www.giscom.cloud/WebAPI/ | 
-| GISCOM_PASSWORD              | No       | giscom          | 
-| GISCOM_ADAPTER_USERNAME      | No       | pippo           | 
-| GISCOM_ADAPTER_PASSWORD      | No       | passw           | 
+| PITRE_ADAPTER_URL            | No       | http://pitre    | Indirizzo del Pitre Soap Proxy |
+| GISCOM_ADAPTER_URL           | No       | https://www.giscom.cloud/WebAPI/ |
+| GISCOM_PASSWORD              | No       | giscom          |
+| GISCOM_ADAPTER_USERNAME      | No       | pippo           |
+| GISCOM_ADAPTER_PASSWORD      | No       | passw           |
 | QUEUEIT_CUSTOMER_ID          | No       |                 | Integrazione con servizio [queue-it](https://queue-it.com/) |
 | QUEUEIT_SECRET               | No       |                 | Your 72 char secret key as specified in Go Queue-it self-service platform |
 | QUEUEIT_CONFIG_FILE          | No       |                 | Absolute path of [Queue-it configuration file](https://github.com/queueit/KnownUser.V3.PHP/blob/master/Documentation/README.md)
@@ -92,7 +92,7 @@ personalizzare: https://github.com/wodby/php
 
 ## Configurazione tenants
 
-Il sistema è _multitenant-multiple-databases_, i tenant configurati sono nel file `app/instances_${SYMFONY_ENV}.yml`
+Il sistema è _multitenant-multiple-databases_, i tenant configurati sono nel file `app/instances_${APP_ENV}.yml`
 
 E' possibile sovrascrivere il file dei tenant con alcune variabili d'ambiente:
 
