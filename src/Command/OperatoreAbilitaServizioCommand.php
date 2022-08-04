@@ -18,6 +18,16 @@ use Symfony\Component\Console\Question\Question;
  */
 class OperatoreAbilitaServizioCommand extends Command
 {
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+  }
+
   protected function configure()
   {
     $this
@@ -44,10 +54,8 @@ class OperatoreAbilitaServizioCommand extends Command
       $username = $helper->ask($input, $output, $question);
     }
 
-    /** @var EntityManagerInterface $em */
-    $em = $this->getContainer()->get('doctrine')->getManager();
+    $operatoriRepo = $this->entityManager->getRepository('App\Entity\OperatoreUser');
 
-    $operatoriRepo = $em->getRepository('App\Entity\OperatoreUser');
     /** @var OperatoreUser $user */
     $user = $operatoriRepo->findOneByUsername($username);
     if (!$user) {
@@ -70,7 +78,7 @@ class OperatoreAbilitaServizioCommand extends Command
       }
     }
 
-    $serviziRepo = $em->getRepository('App\Entity\Servizio');
+    $serviziRepo = $this->entityManager->getRepository('App\Entity\Servizio');
 
     if (empty($input->getOption('all')) && empty($input->getOption('services'))) {
 
@@ -114,9 +122,12 @@ class OperatoreAbilitaServizioCommand extends Command
       }
     }
 
-    $um = $this->getContainer()->get('fos_user.user_manager');
+
     try {
-      $um->updateUser($user);
+
+      $this->entityManager->persist($user);
+      $this->entityManager->flush();
+
       $output->writeln('Ok: utente '.$user->getUsername().' aggiornato correttamente');
     } catch (\Exception $e) {
       $output->writeln('Errore: '.$e->getMessage());

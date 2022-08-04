@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\DataFixtures\ORM\LoadData;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,6 +19,15 @@ class I18nMigrationsCommand extends Command
   private $servicesI18nFields = [
     'name', 'description', 'who', 'howto', 'specialCases', 'moreInfo', 'compilationInfo', 'finalIndications', 'feedbackMessages', 'howToDo', 'whatYouNeed', 'whatYouGet', 'costs'
   ];
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -35,11 +45,9 @@ class I18nMigrationsCommand extends Command
 
       $dryRun = $input->getOption('dry-run');
 
-      /** @var EntityManager $entityManager */
-      $entityManager = $this->getContainer()->get('doctrine')->getManager();
-      $translationsRepo = $entityManager->getRepository('Gedmo\Translatable\Entity\Translation');
+      $translationsRepo = $this->entityManager->getRepository('Gedmo\Translatable\Entity\Translation');
 
-      $services = $entityManager->getRepository('App\Entity\Servizio')->findAll();
+      $services = $this->entityManager->getRepository('App\Entity\Servizio')->findAll();
       $accessor = PropertyAccess::createPropertyAccessor();
 
       $servicesToUpdate = [];
@@ -55,9 +63,9 @@ class I18nMigrationsCommand extends Command
               }
           }
         }
-        $entityManager->persist($service);
+        $this->entityManager->persist($service);
       }
-      $entityManager->flush();
+      $this->entityManager->flush();
 
       if (!empty($servicesToUpdate)) {
         if (!$dryRun) {

@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\OpeningHour;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,15 +13,16 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class HotFixZeroMeetingQueueCommand extends Command
 {
-  /**
-   * @var EntityManager
-   */
-  private $em;
 
-  /**
-   * @var SymfonyStyle
-   */
-  private $io;
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -32,17 +34,16 @@ class HotFixZeroMeetingQueueCommand extends Command
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-    $this->em = $this->getContainer()->get('doctrine')->getManager();
-    $this->io = new SymfonyStyle($input, $output);
+    $io = new SymfonyStyle($input, $output);
 
     foreach ($this->getOpeningHours() as $openingHour) {
       if ($openingHour->getMeetingQueue() < 1) {
 
         $openingHour->setMeetingQueue(1);
-        $this->em->persist($openingHour);
-        $this->em->flush();
+        $this->entityManager->persist($openingHour);
+        $this->entityManager->flush();
 
-        $output->writeln('Fixed opening hour ' . $openingHour->getName() . ' for calendar ' . $openingHour->getCalendar()->getTitle());
+        $io->success('Fixed opening hour ' . $openingHour->getName() . ' for calendar ' . $openingHour->getCalendar()->getTitle());
 
       }
     }
@@ -54,7 +55,7 @@ class HotFixZeroMeetingQueueCommand extends Command
    */
   private function getOpeningHours()
   {
-    $repo = $this->em->getRepository('App\Entity\OpeningHour');
+    $repo = $this->entityManager->getRepository('App\Entity\OpeningHour');
 
     return $repo->findAll();
   }

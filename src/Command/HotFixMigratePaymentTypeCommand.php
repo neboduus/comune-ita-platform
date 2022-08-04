@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\SubscriptionService;
 use App\Model\SubscriptionPayment;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,15 +15,14 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class HotFixMigratePaymentTypeCommand extends Command
 {
-  /**
-   * @var EntityManager
-   */
-  private $em;
+  /** @var EntityManagerInterface */
+  private $entityManager;
 
-  /**
-   * @var SymfonyStyle
-   */
-  private $io;
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -34,8 +34,8 @@ class HotFixMigratePaymentTypeCommand extends Command
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-    $this->em = $this->getContainer()->get('doctrine')->getManager();
-    $this->io = new SymfonyStyle($input, $output);
+
+    $io = new SymfonyStyle($input, $output);
 
     foreach ($this->getSubscriptionServices() as $subscriptionService) {
       $migratedPaymentSettings = [];
@@ -52,11 +52,11 @@ class HotFixMigratePaymentTypeCommand extends Command
       $subscriptionService->setSubscriptionPayments($migratedPaymentSettings);
 
       try {
-        $this->em->persist($subscriptionService);
-        $this->em->flush();
-        $output->writeln('Migrated payment settings for subscription service ' . $subscriptionService->getName());
+        $this->entityManager->persist($subscriptionService);
+        $this->entityManager->flush();
+        $io->success('Migrated payment settings for subscription service ' . $subscriptionService->getName());
       } catch (ORMException $e) {
-        $output->writeln('Failed to migrate payment settings for subscription service ' . $subscriptionService->getName());
+        $io->error('Failed to migrate payment settings for subscription service ' . $subscriptionService->getName());
       }
     }
   }
@@ -67,7 +67,7 @@ class HotFixMigratePaymentTypeCommand extends Command
    */
   private function getSubscriptionServices()
   {
-    $repo = $this->em->getRepository('App\Entity\SubscriptionService');
+    $repo = $this->entityManager->getRepository('App\Entity\SubscriptionService');
 
     return $repo->findAll();
   }

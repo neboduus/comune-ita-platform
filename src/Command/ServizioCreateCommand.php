@@ -52,158 +52,153 @@ class ServizioCreateCommand extends Command
       );
   }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $name = "";
-        $handler = "";
-        $area = "";
-        $description = "";
-        $istruzioni = "";
-        $fcqn = "";
-        $flow = "";
-        $flowOperator = "";
-        $paymentParameters = [];
-        $paymentRequired = false;
-        $status = 1;
-        $additionalData = [
-            'urlModuloPrincipale' => '',
-            'urlModuliAggiuntivi' => []
-        ];
+  protected function execute(InputInterface $input, OutputInterface $output)
+  {
+    $name = "";
+    $handler = "";
+    $area = "";
+    $description = "";
+    $istruzioni = "";
+    $fcqn = "";
+    $flow = "";
+    $flowOperator = "";
+    $paymentParameters = [];
+    $paymentRequired = false;
+    $status = 1;
+    $additionalData = [
+      'urlModuloPrincipale' => '',
+      'urlModuliAggiuntivi' => []
+    ];
 
-        $shouldLoadFromFile = $input->getOption('file');
-        if ($shouldLoadFromFile) {
-            $output->writeln("<info>Loading data from file $shouldLoadFromFile</info>");
-            if (!file_exists($shouldLoadFromFile)) {
-                $output->writeln("<error>$shouldLoadFromFile file not found</error>");
-                die(1);
-            }
-            $parsed = json_decode(file_get_contents($shouldLoadFromFile), true);
-            $name = $parsed['name'];
-            $handler = $parsed['handler'];
-            $area = $parsed['area'];
-            $description = $parsed['description'];
-            $istruzioni = $parsed['istruzioni'];
-            $fcqn = $parsed['fcqn'];
-            $flow = $parsed['flow'];
-            $flowOperator = $parsed['flowOperator'];
-            $paymentParameters = $parsed['paymentParameters'];
-            $paymentRequired = $parsed['paymentRequired'];
-            $status = $parsed['status'];
-            $additionalData['urlModuloPrincipale'] = $parsed['url_modulo_principale'] ?? '';
-            $additionalData['urlModuliAggiuntivi'] = $parsed['url_moduli_aggiuntivi'] ?? [];
-        } else {
-            $output->writeln("<info>Loading data interactively</info>");
-            $helper = $this->getHelper('question');
+    $shouldLoadFromFile = $input->getOption('file');
+    if ($shouldLoadFromFile) {
+      $output->writeln("<info>Loading data from file $shouldLoadFromFile</info>");
+      if (!file_exists($shouldLoadFromFile)) {
+        $output->writeln("<error>$shouldLoadFromFile file not found</error>");
+        die(1);
+      }
+      $parsed = json_decode(file_get_contents($shouldLoadFromFile), true);
+      $name = $parsed['name'];
+      $handler = $parsed['handler'];
+      $area = $parsed['area'];
+      $description = $parsed['description'];
+      $istruzioni = $parsed['istruzioni'];
+      $fcqn = $parsed['fcqn'];
+      $flow = $parsed['flow'];
+      $flowOperator = $parsed['flowOperator'];
+      $paymentParameters = $parsed['paymentParameters'];
+      $paymentRequired = $parsed['paymentRequired'];
+      $status = $parsed['status'];
+      $additionalData['urlModuloPrincipale'] = $parsed['url_modulo_principale'] ?? '';
+      $additionalData['urlModuliAggiuntivi'] = $parsed['url_moduli_aggiuntivi'] ?? [];
+    } else {
+      $output->writeln("<info>Loading data interactively</info>");
+      $helper = $this->getHelper('question');
 
-            // Name
-            $question = new Question('Inserisci il nome del Servizio: ', '');
-            $question->setValidator(function ($answer) {
-                if (!is_string($answer) || empty($answer)) {
-                    throw new \RuntimeException(
-                        'Inserimento obbligatoorio'
-                    );
-                }
-                return $answer;
-            });
-            $name = $helper->ask($input, $output, $question);
-
-            // Handler
-            $question = new Question('Inserisci l\'handler del Servizio: ', '');
-            $question->setValidator(function ($answer) {
-                if (!is_string($answer)) {
-                    throw new \RuntimeException(
-                        'Inserisci una stringa'
-                    );
-                }
-                return $answer;
-            });
-            $handler = $helper->ask($input, $output, $question);
-
-            // Area
-            $question = new Question('Inserisci Area del Servizio: ', '');
-            $question->setValidator(function ($answer) {
-                if (empty($answer)) {
-                    throw new \RuntimeException(
-                        'Inserimento obbligatoorio'
-                    );
-                }
-                if (!is_numeric($answer)) {
-                    throw new \RuntimeException(
-                        'Sono ammessi solo numeri interi'
-                    );
-                }
-                return $answer;
-            });
-            $area = $helper->ask($input, $output, $question);
-
-            // Description
-            $question = new Question('Inserisci la descrizione del Servizio: ', '');
-            $description = $helper->ask($input, $output, $question);
-
-            // Istruzioni
-            $question = new Question('Inserisci le istruzioni del Servizio: ', '');
-            $istruzioni = $helper->ask($input, $output, $question);
-
-            // fcqn
-            $question = new Question('Inserisci fcqn del Servizio: ', '');
-            $fcqn = $helper->ask($input, $output, $question);
-
-            // flow
-            $question = new Question('Inserisci flow del Servizio: ', '');
-            $flow = $helper->ask($input, $output, $question);
-
-            // flow operatore
-            $question = new Question('Inserisci flow operatore del Servizio: ', '');
-            $flowOperator = $helper->ask($input, $output, $question);
+      // Name
+      $question = new Question('Inserisci il nome del Servizio: ', '');
+      $question->setValidator(function ($answer) {
+        if (!is_string($answer) || empty($answer)) {
+          throw new \RuntimeException(
+            'Inserimento obbligatoorio'
+          );
         }
+        return $answer;
+      });
+      $name = $helper->ask($input, $output, $question);
 
-        $manager = $this->getContainer()->get('doctrine')->getManager();
-        $serviziRepo = $manager->getRepository('App\Entity\Servizio');
-        $categoryRepo = $manager->getRepository('App\Entity\Categoria');
-
-        $servizio = $serviziRepo->findOneByName($name);
-        $ente = $this->getContainer()->get('ocsdc.instance_service')->getCurrentInstance();
-        if (!$servizio instanceof Servizio) {
-
-            $servizio = new Servizio();
-            $servizio
-                ->setName($name)
-                ->setHandler($handler)
-                ->setDescription($description)
-                ->setHowto($istruzioni)
-                ->setPraticaFCQN($fcqn)
-                ->setPraticaFlowServiceName($flow)
-                ->setPraticaFlowOperatoreServiceName($flowOperator)
-                ->setPaymentParameters($paymentParameters)
-                ->setPaymentRequired($paymentRequired)
-                ->setAdditionalData($additionalData)
-                ->setStatus($status)
-                ->setEnte($ente);
-
-            $area = $categoryRepo->findOneBySlug('edilizia-e-urbanistica');
-            if ($area instanceof Categoria) {
-                $servizio->setTopics($area);
-            }
-
-            $manager->persist($servizio);
-
-            $codiciMeccanograficiEnti = $this->getContainer()->getParameter('codice_meccanografico');
-            $enti = $manager->getRepository('App\Entity\Ente')->findBy(['codiceMeccanografico' => $codiciMeccanograficiEnti]);
-            foreach ($enti as $ente) {
-                $erogatore = new Erogatore();
-                $erogatore->setName('Erogatore di ' . $servizio->getName() . ' per ' . $ente->getName());
-                $erogatore->addEnte($ente);
-                $manager->persist($erogatore);
-                $servizio->activateForErogatore($erogatore);
-            }
-            $manager->flush();
-
-
-            $output->writeln("<info>Servizio creato correttamente</info>");
-
-        } else {
-            $output->writeln("<error>Servizio già presente, non verrà eseguita nessuan azione</error>");
+      // Handler
+      $question = new Question('Inserisci l\'handler del Servizio: ', '');
+      $question->setValidator(function ($answer) {
+        if (!is_string($answer)) {
+          throw new \RuntimeException(
+            'Inserisci una stringa'
+          );
         }
+        return $answer;
+      });
+      $handler = $helper->ask($input, $output, $question);
 
+      // Area
+      $question = new Question('Inserisci Area del Servizio: ', '');
+      $question->setValidator(function ($answer) {
+        if (empty($answer)) {
+          throw new \RuntimeException(
+            'Inserimento obbligatoorio'
+          );
+        }
+        if (!is_numeric($answer)) {
+          throw new \RuntimeException(
+            'Sono ammessi solo numeri interi'
+          );
+        }
+        return $answer;
+      });
+      $area = $helper->ask($input, $output, $question);
+
+      // Description
+      $question = new Question('Inserisci la descrizione del Servizio: ', '');
+      $description = $helper->ask($input, $output, $question);
+
+      // Istruzioni
+      $question = new Question('Inserisci le istruzioni del Servizio: ', '');
+      $istruzioni = $helper->ask($input, $output, $question);
+
+      // fcqn
+      $question = new Question('Inserisci fcqn del Servizio: ', '');
+      $fcqn = $helper->ask($input, $output, $question);
+
+      // flow
+      $question = new Question('Inserisci flow del Servizio: ', '');
+      $flow = $helper->ask($input, $output, $question);
+
+      // flow operatore
+      $question = new Question('Inserisci flow operatore del Servizio: ', '');
+      $flowOperator = $helper->ask($input, $output, $question);
     }
+
+
+    $serviziRepo = $this->entityManager->getRepository('App\Entity\Servizio');
+    $categoryRepo = $this->entityManager->getRepository('App\Entity\Categoria');
+
+    $servizio = $serviziRepo->findOneByName($name);
+    $ente = $this->instanceService->getCurrentInstance();
+    if (!$servizio instanceof Servizio) {
+
+      $servizio = new Servizio();
+      $servizio
+        ->setName($name)
+        ->setHandler($handler)
+        ->setDescription($description)
+        ->setHowto($istruzioni)
+        ->setPraticaFCQN($fcqn)
+        ->setPraticaFlowServiceName($flow)
+        ->setPraticaFlowOperatoreServiceName($flowOperator)
+        ->setPaymentParameters($paymentParameters)
+        ->setPaymentRequired($paymentRequired)
+        ->setAdditionalData($additionalData)
+        ->setStatus($status)
+        ->setEnte($ente);
+
+      $area = $categoryRepo->findOneBySlug('edilizia-e-urbanistica');
+      if ($area instanceof Categoria) {
+        $servizio->setTopics($area);
+      }
+
+      $this->entityManager->persist($servizio);
+      $erogatore = new Erogatore();
+      $erogatore->setName('Erogatore di ' . $servizio->getName() . ' per ' . $ente->getName());
+      $erogatore->addEnte($ente);
+      $this->entityManager->persist($erogatore);
+      $servizio->activateForErogatore($erogatore);
+      $this->entityManager->flush();
+
+
+      $output->writeln("<info>Servizio creato correttamente</info>");
+
+    } else {
+      $output->writeln("<error>Servizio già presente, non verrà eseguita nessuan azione</error>");
+    }
+
+  }
 }

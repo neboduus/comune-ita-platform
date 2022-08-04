@@ -395,7 +395,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function renderForPraticaIntegrationRequest(Pratica $pratica, RichiestaIntegrazioneDTO $integrationRequest)
   {
-    $html = $this->templating->render('App:Pratiche:pdf/parts/integration.html.twig', [
+    $html = $this->templating->render('Pratiche/pdf/parts/integration.html.twig', [
       'pratica' => $pratica,
       'richiesta_integrazione' => $integrationRequest,
       'user' => $pratica->getUser(),
@@ -420,13 +420,13 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());
 
     if ($cancel) {
-      $html = $this->templating->render('App:Pratiche:pdf/parts/cancel_integration.html.twig', [
+      $html = $this->templating->render('Pratiche/pdf/parts/cancel_integration.html.twig', [
         'pratica' => $pratica,
         'richiesta_integrazione' => $integrationRequest,
         'user' => $pratica->getUser(),
       ]);
     } else {
-      $html = $this->templating->render('App:Pratiche:pdf/parts/answer_integration.html.twig', [
+      $html = $this->templating->render('Pratiche/pdf/parts/answer_integration.html.twig', [
         'pratica' => $pratica,
         'richiesta_integrazione' => $integrationRequest,
         'integrazioni' => $integrations,
@@ -465,7 +465,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   public function renderForResponse(Pratica $pratica)
   {
     // Risposta Operatore di default
-    $html = $this->templating->render('App:Pratiche:pdf/RispostaOperatore.html.twig', [
+    $html = $this->templating->render('Pratiche/pdf/RispostaOperatore.html.twig', [
       'pratica' => $pratica,
       'user' => $pratica->getUser(),
     ]);
@@ -479,7 +479,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $placeholders = $this->praticaPlaceholderService->getPlaceholders($pratica);
 
       $html = $this->templating->render(
-        'App:Pratiche:pdf/RispostaOperatoreCustom.html.twig',
+        'Pratiche/pdf/RispostaOperatoreCustom.html.twig',
         array(
           'pratica' => $pratica,
           'placeholder' => $placeholders,
@@ -554,7 +554,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function renderForClass(Pratica $pratica, $className)
   {
-    $html = $this->templating->render('App:Pratiche:pdf/' . $className . '.html.twig', [
+    $html = $this->templating->render('Pratiche/pdf/' . $className . '.html.twig', [
       'pratica' => $pratica,
       'user' => $pratica->getUser(),
     ]);
@@ -686,7 +686,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   {
     $pratica = $this->em->getRepository(Pratica::class)->find($payment->getExternalKey());
     // Certificato di default
-    $html = $this->templating->render('@App/Subscriptions/pdf/Payment.html.twig', [
+    $html = $this->templating->render('Subscriptions/pdf/Payment.html.twig', [
       "payment"=>$payment,
       "pratica"=>$pratica
     ]);

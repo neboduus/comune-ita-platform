@@ -925,3 +925,13 @@ services:
       $locale: "%locale%"
       $host: "%ocsdc_host%"
       $scheme: "%ocsdc_scheme%"
+
+  App\Command\ChangeApplicationStatusCommand:
+    arguments:
+      $host: "%ocsdc_host%"
+      $scheme: "%ocsdc_scheme%"
+
+  App\Command\ProduceKafkaMessagesCommand:
+    arguments:
+      $host: "%ocsdc_host%"
+      $scheme: "%ocsdc_scheme%"

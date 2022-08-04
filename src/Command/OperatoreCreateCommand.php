@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\OperatoreUser;
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,6 +17,16 @@ use Symfony\Component\Console\Question\Question;
  */
 class OperatoreCreateCommand extends Command
 {
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+  }
+
   protected function configure()
   {
     $this
@@ -63,16 +74,14 @@ class OperatoreCreateCommand extends Command
       $password = $helper->ask($input, $output, $question);
     }
 
-    $em = $this->getContainer()->get('doctrine')->getManager();
-    $repo = $em->getRepository('App\Entity\Ente');
+    $repo = $this->entityManager->getRepository('App\Entity\Ente');
     $ente = $repo->findOneBySlug($instance);
 
     if (!$ente) {
       throw new InvalidArgumentException("Ente non trovato");
     }
 
-    $um = $this->getContainer()->get('fos_user.user_manager');
-    $userRepo = $em->getRepository('App\Entity\OperatoreUser');
+    $userRepo = $this->entityManager->getRepository('App\Entity\OperatoreUser');
     $user = $userRepo->findOneByUsername($username);
 
     if ( !$user instanceof User ) {
@@ -90,7 +99,8 @@ class OperatoreCreateCommand extends Command
       ->setLastChangePassword(new \DateTime());
 
     try {
-      $um->updateUser($user);
+      $this->entityManager->persist($user);
+      $this->entityManager->flush();
       $output->writeln('Ok: generato nuovo operatore');
     } catch (\Exception $e) {
       $output->writeln('Errore: '.$e->getMessage());

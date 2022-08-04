@@ -4,7 +4,9 @@ namespace App\Command;
 
 use App\Entity\Erogatore;
 use App\Entity\Servizio;
+use App\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,15 +15,21 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class HotFixMissingErogatoreCommand extends Command
 {
-  /**
-   * @var EntityManager
-   */
-  private $em;
+  /** @var EntityManagerInterface */
+  private $entityManager;
 
   /**
-   * @var SymfonyStyle
+   * @var InstanceService
    */
-  private $io;
+  private $instanceService;
+
+  public function __construct(EntityManagerInterface $entityManager, InstanceService $instanceService)
+  {
+    $this->entityManager = $entityManager;
+
+    parent::__construct();
+    $this->instanceService = $instanceService;
+  }
 
   protected function configure()
   {
@@ -33,10 +41,9 @@ class HotFixMissingErogatoreCommand extends Command
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-    $this->em = $this->getContainer()->get('doctrine')->getManager();
-    $this->io = new SymfonyStyle($input, $output);
+    $io = new SymfonyStyle($input, $output);
 
-    $ente = $this->getApplication()->getKernel()->getContainer()->get('ocsdc.instance_service')->getCurrentInstance();
+    $ente = $this->instanceService->getCurrentInstance();
 
     foreach ($this->getServizi() as $servizio) {
       if ( count($servizio->getErogatori()) < 1 ) {
@@ -44,13 +51,13 @@ class HotFixMissingErogatoreCommand extends Command
         $erogatore = new Erogatore();
         $erogatore->setName('Erogatore di '.$servizio->getName().' per '.$ente->getName());
         $erogatore->addEnte($ente);
-        $this->em->persist($erogatore);
+        $this->entityManager->persist($erogatore);
         $servizio->activateForErogatore($erogatore);
 
-        $this->em->persist($servizio);
-        $this->em->flush();
+        $this->entityManager->persist($servizio);
+        $this->entityManager->flush();
 
-        $output->writeln('Fixed Service ' . $servizio->getName());
+        $io->success('Fixed Service ' . $servizio->getName());
 
       }
     }
@@ -62,8 +69,7 @@ class HotFixMissingErogatoreCommand extends Command
    */
   private function getServizi()
   {
-    $repo = $this->em->getRepository('App\Entity\Servizio');
-
+    $repo = $this->entityManager->getRepository('App\Entity\Servizio');
     return $repo->findAll();
   }
 }

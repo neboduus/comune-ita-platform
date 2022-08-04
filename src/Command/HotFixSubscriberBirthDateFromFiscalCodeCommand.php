@@ -2,7 +2,9 @@
 
 namespace App\Command;
 
+use App\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -12,6 +14,19 @@ use CodiceFiscale\InverseCalculator;
 
 class HotFixSubscriberBirthDateFromFiscalCodeCommand extends Command
 {
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  /**
+   * AdministratorCreateCommand constructor.
+   * @param EntityManagerInterface $entityManager
+   */
+  public function __construct(EntityManagerInterface $entityManager, InstanceService $instanceService)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+  }
 
   protected function configure()
   {
@@ -29,9 +44,7 @@ class HotFixSubscriberBirthDateFromFiscalCodeCommand extends Command
 
       $run = $input->getOption('run');
 
-      /** @var EntityManager $entityManager */
-      $entityManager = $this->getContainer()->get('doctrine')->getManager();
-      $subscriberRepo = $entityManager->getRepository('App\Entity\Subscriber');
+      $subscriberRepo = $this->entityManager->getRepository('App\Entity\Subscriber');
       $subscribers = $subscriberRepo->findAll();
 
       $subscribersToFix = $subscribersFixed = 0;
@@ -45,14 +58,14 @@ class HotFixSubscriberBirthDateFromFiscalCodeCommand extends Command
           $subscribersToFix++;
           if ($run) {
             $s->setDateOfBirth($subject->getBirthDate());
-            $entityManager->persist($s);
+            $this->entityManager->persist($s);
             $subscribersFixed++;
           }
         }
       }
 
       if ($run) {
-        $entityManager->flush();
+        $this->entityManager->flush();
       }
 
       $io->success(

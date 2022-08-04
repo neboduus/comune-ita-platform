@@ -6,6 +6,7 @@ use App\DataFixtures\ORM\LoadData;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -56,6 +57,15 @@ class HotFixI18nSyncCommand extends Command
     ]
   ];
 
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  public function __construct(EntityManagerInterface $entityManager)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+  }
+
   protected function configure()
   {
     $this
@@ -72,9 +82,6 @@ class HotFixI18nSyncCommand extends Command
 
       $dryRun = $input->getOption('dry-run');
 
-      /** @var EntityManager $entityManager */
-      $entityManager = $this->getContainer()->get('doctrine')->getManager();
-
       foreach ($this->servicesI18nFields as $k => $v) {
         $sql = "select s.id, s.".$k.", e.content from servizio as s
               left join ext_translations as e on s.id::text = e.foreign_key and e.field = '".$v['ext_field']."' and e.locale = '".$this->defaultLocale."'
@@ -82,7 +89,7 @@ class HotFixI18nSyncCommand extends Command
 
         try {
 
-          $stmt = $entityManager->getConnection()->executeQuery($sql);
+          $stmt = $this->entityManager->getConnection()->executeQuery($sql);
           $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
           $symfonyStyle->note('Ci sono '. count($result) .' servizi da sincronizzare per il campo: '.$k);
           //$symfonyStyle->note(print_r($result, 1));
@@ -101,7 +108,7 @@ class HotFixI18nSyncCommand extends Command
                       (select t.content from ext_translations as t where t.field = '". $v['ext_field'] ."' and t.foreign_key = servizio.id::text and t.locale = '".$this->defaultLocale."')
                       where id = '".$r['id']."'";
                   }
-                  $entityManager->getConnection()->executeQuery($sql);
+                  $this->entityManager->getConnection()->executeQuery($sql);
                   $symfonyStyle->success('Aggiornato servizio: '.$r['id'].' campo: '.$k);
                 }
               }

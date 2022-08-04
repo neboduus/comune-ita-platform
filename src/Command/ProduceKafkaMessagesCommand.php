@@ -5,18 +5,54 @@ namespace App\Command;
 
 use App\Entity\Meeting;
 use App\Entity\Pratica;
+use App\Services\KafkaService;
 use Cassandra\Date;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\RouterInterface;
 
 
 class ProduceKafkaMessagesCommand extends Command
 {
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  /** @var RouterInterface */
+  private $router;
+  /**
+   * @var string
+   */
+  private $scheme;
+  /**
+   * @var string
+   */
+  private $host;
+  /**
+   * @var KafkaService
+   */
+  private $kafkaService;
+
+
+  /**
+   * AdministratorCreateCommand constructor.
+   * @param EntityManagerInterface $entityManager
+   */
+  public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, KafkaService $kafkaService, string $scheme, string $host)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+    $this->router = $router;
+    $this->scheme = $scheme;
+    $this->host = $host;
+    $this->kafkaService = $kafkaService;
+  }
 
   protected function configure()
   {
@@ -33,9 +69,9 @@ class ProduceKafkaMessagesCommand extends Command
 
     $symfonyStyle = new SymfonyStyle($input, $output);
 
-    $context = $this->getContainer()->get('router')->getContext();
-    $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
-    $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
+    $context = $this->router->getContext();
+    $context->setHost($this->host);
+    $context->setScheme($this->scheme);
 
     $id = $input->getOption('id');
     $date = $input->getOption('date');
@@ -50,10 +86,9 @@ class ProduceKafkaMessagesCommand extends Command
       }
     }
 
-    $em = $this->getContainer()->get('doctrine')->getManager();
     $notAllowedStatuses = [Pratica::STATUS_DRAFT];
 
-    $qb = $em->createQueryBuilder()
+    $qb = $this->entityManager->createQueryBuilder()
       ->select('pratica')
       ->from('App:Pratica', 'pratica')
       ->where('pratica.status NOT IN (:status)')
@@ -75,11 +110,10 @@ class ProduceKafkaMessagesCommand extends Command
     $messages = 0;
 
     if (!empty($applications)) {
-      $kafkaService = $this->getContainer()->get('ocsdc.kafka_service');
       /** @var Pratica $application */
       foreach ($applications as $application) {
         if (!$dryRun) {
-          $kafkaService->produceMessage($application);
+          $this->kafkaService->produceMessage($application);
           $messages++;
         }
       }

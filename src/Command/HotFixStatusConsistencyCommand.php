@@ -6,6 +6,7 @@ use App\Entity\Pratica;
 use App\Entity\PraticaRepository;
 use App\Services\PraticaStatusService;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,6 +14,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class HotFixStatusConsistencyCommand extends Command
 {
+
+  /** @var EntityManagerInterface */
+  private $entityManager;
+
+  /**
+   * @var PraticaStatusService
+   */
+  private $praticaStatusService;
+
+  public function __construct(EntityManagerInterface $entityManager, PraticaStatusService $praticaStatusService)
+  {
+    $this->entityManager = $entityManager;
+    parent::__construct();
+    $this->praticaStatusService = $praticaStatusService;
+  }
+
   protected function configure()
   {
 
@@ -30,11 +47,8 @@ class HotFixStatusConsistencyCommand extends Command
       $dryRun = $input->getOption('dry-run');
       $serviceId = $input->getOption('servizio');
 
-      /** @var PraticaStatusService $statusService */
-      $statusService = $this->getContainer()->get('ocsdc.pratica_status_service');
-
       /** @var PraticaRepository $repo */
-      $repo = $this->getContainer()->get('doctrine')->getRepository('App\Entity\Pratica');
+      $repo = $this->entityManager->getRepository('App\Entity\Pratica');
 
       $qb = $repo->createQueryBuilder('p')
         ->where('p.servizio = :servizio')
@@ -50,7 +64,7 @@ class HotFixStatusConsistencyCommand extends Command
         $index++;
         $output->writeln($index . ' ' . $pratica->getId());
         if (!$dryRun) {
-          $statusService->setNewStatus($pratica, Pratica::STATUS_REGISTERED);
+          $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_REGISTERED);
         }
       }
       return 0;

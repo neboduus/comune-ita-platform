@@ -4,6 +4,7 @@ namespace App\Command;
 
 
 use App\Entity\Pratica;
+use App\Services\PraticaStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Console\Command\Command;
@@ -23,17 +24,35 @@ class ChangeApplicationStatusCommand extends Command
 
   /** @var RouterInterface */
   private $router;
-
+  /**
+   * @var string
+   */
+  private $scheme;
+  /**
+   * @var string
+   */
+  private $host;
+  /**
+   * @var PraticaStatusService
+   */
+  private $praticaStatusService;
 
   /**
    * AdministratorCreateCommand constructor.
    * @param EntityManagerInterface $entityManager
+   * @param RouterInterface $router
+   * @param PraticaStatusService $praticaStatusService
+   * @param string $scheme
+   * @param string $host
    */
-  public function __construct(EntityManagerInterface $entityManager, RouterInterface $router)
+  public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, PraticaStatusService $praticaStatusService, string $scheme, string $host)
   {
     $this->entityManager = $entityManager;
     parent::__construct();
     $this->router = $router;
+    $this->scheme = $scheme;
+    $this->host = $host;
+    $this->praticaStatusService = $praticaStatusService;
   }
 
   protected function configure()
@@ -52,8 +71,8 @@ class ChangeApplicationStatusCommand extends Command
     $symfonyStyle = new SymfonyStyle($input, $output);
 
     $context = $this->router->getContext();
-    $context->setHost($this->getContainer()->getParameter('ocsdc_host'));
-    $context->setScheme($this->getContainer()->getParameter('ocsdc_scheme'));
+    $context->setHost($this->host);
+    $context->setScheme($this->scheme);
 
     $id = $input->getOption('id');
     $status = $input->getOption('status');
@@ -82,9 +101,8 @@ class ChangeApplicationStatusCommand extends Command
       return 1;
     }
 
-    $praticaStatusService = $this->getContainer()->get('ocsdc.pratica_status_service');
     try {
-      $praticaStatusService->setNewStatus($application, $status);
+      $this->praticaStatusService->setNewStatus($application, $status);
       $symfonyStyle->success('Application status changed succesfully' );
       return 0;
     } catch (\Exception $e) {

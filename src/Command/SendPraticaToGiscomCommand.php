@@ -44,8 +44,8 @@ class SendPraticaToGiscomCommand extends Command
       exit;
     }
 
-    $giscomeService = $this->getApplication()->getKernel()->getContainer()->get('ocsdc.giscom_api.adapter_direct');
-    $response = $giscomeService->sendPraticaToGiscom($application);
+    $giscomService = $this->getApplication()->getKernel()->getContainer()->get('ocsdc.giscom_api.adapter_direct');
+    $response = $giscomService->sendPraticaToGiscom($application);
 
     $status = $response->getStatusCode();
     if ($status == 201 || $status == 204) {
