@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * Class OperatoreCreateCommand
@@ -20,11 +21,20 @@ class OperatoreCreateCommand extends Command
 
   /** @var EntityManagerInterface */
   private $entityManager;
+  /**
+   * @var UserPasswordEncoderInterface
+   */
+  private $passwordEncoder;
 
-  public function __construct(EntityManagerInterface $entityManager)
+  /**
+   * @param EntityManagerInterface $entityManager
+   * @param UserPasswordEncoderInterface $passwordEncoder
+   */
+  public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
   {
     $this->entityManager = $entityManager;
     parent::__construct();
+    $this->passwordEncoder = $passwordEncoder;
   }
 
   protected function configure()
@@ -95,10 +105,15 @@ class OperatoreCreateCommand extends Command
       ->setEnte($ente)
       ->setCognome($cognome)
       ->setEnabled(true)
-      ->setPassword($password)
       ->setLastChangePassword(new \DateTime());
 
     try {
+      $user->setPassword(
+        $this->passwordEncoder->encodePassword(
+          $user,
+          $password
+        )
+      );
       $this->entityManager->persist($user);
       $this->entityManager->flush();
       $output->writeln('Ok: generato nuovo operatore');

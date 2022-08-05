@@ -25,7 +25,6 @@
 | PEC_DELIVERY_ADDRESS         | Yes      | pec.stanzadelcittadino@localtest.me |
 | SECRET                       | Yes      | ThisTokenIsNotSoSecretChangeIt  | |
 | DEFAULT_FROM_EMAIL_ADDRESS   | No       | stanzadelcittadino@localtest.me |  |
-| WKHTMLBINARY                 | No       | wkhtmltopdf     | Valore non piu' utilizzato |
 | WKHTMLTOPDF_SERVICE          | Yes      | wkhtmltopdf     | Url dell'API del servizio Gotemberg |
 | EZ_PASSWORD                  | No       | ez              |  |
 | PASSWORD_LIFE_TIME           | No       | 365             | Durata in giorni della password per amministratori e operatori: dopo questa data l'account resta attivo ma al primo login verra' richiesto il cambio password |

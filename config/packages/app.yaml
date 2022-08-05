@@ -14,7 +14,6 @@ parameters:
   pec_delivery_address: '%env(PEC_DELIVERY_ADDRESS)%'
   secret: '%env(SECRET)%'
   default_from_email_address: '%env(DEFAULT_FROM_EMAIL_ADDRESS)%'
-  wkhtmlbinary: '%env(WKHTMLBINARY)%'
   wkhtmltopdf_service: '%env(WKHTMLTOPDF_SERVICE)%'
   ez_password: '%env(EZ_PASSWORD)%'
   pitre_adapter_url: '%env(PITRE_ADAPTER_URL)%'
@@ -162,7 +161,6 @@ parameters:
   env(PEC_DELIVERY_ADDRESS): pec.stanzadelcittadino@localtest.me
   env(SECRET): ThisTokenIsNotSoSecretChangeIt
   env(DEFAULT_FROM_EMAIL_ADDRESS): stanzadelcittadino@localtest.me
-  env(WKHTMLBINARY): wkhtmltopdf
   env(WKHTMLTOPDF_SERVICE): wkhtmltopdf
   env(EZ_PASSWORD): ez
   env(PITRE_ADAPTER_URL): http://localhost:8080/

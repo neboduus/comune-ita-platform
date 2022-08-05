@@ -53,9 +53,7 @@ services:
       DB_NAME: ${DB_NAME:-sdc}
       DB_USER: ${DB_USER:-sdc}
       DB_PASSWORD: ${DB_PASSWORD:-sdc}
-      MAILER_HOST: ${MAILER_HOST:-mailserver}
-      MAILER_PORT: ${MAILER_PORT:-1025}
-      MAILER_ENCRYPTION: null
+      MAILER_URL: ${MAILER_URL:-smtp://mailserver:1025}
       PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
       PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
       PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
@@ -64,7 +62,6 @@ services:
       PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-:stanzadelcittadino@pec.net}
       SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
       DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-php@stanzadelcittadino.localtest.me}
-      #WKHTMLBINARY: ${WKHTMLBINARY:-wkhtmltopdf}
       WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-http://gotenberg:3000}
       #EZ_PASSWORD: ${EZ_PASSWORD:-ez}
       #PITRE_ADAPTER_URL: ${PITRE_ADAPTER_URL:-http://pitre-soap:8080/}
@@ -134,9 +131,7 @@ services:
       DB_NAME: ${DB_PASSWORD:-sdc}
       DB_USER: ${DB_USER:-sdc}
       DB_PASSWORD: ${DB_PASSWORD:-sdc}
-      MAILER_TRANSPORT: ${MAILER_TRANSPORT:-sendmail}
-      MAILER_HOST: ${MAILER_HOST:-mailserver}
-      MAILER_PORT: ${MAILER_PORT:-1025}
+      MAILER_URL: ${MAILER_URL:-smtp://mailserver:1025}
       PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
       PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
       PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
