@@ -15,7 +15,7 @@ if [[ $INSTANCE_OVERRIDE == 'true' ]]; then
     APP_ENV=prod
   fi
 
-  instance_file="app/instances_${APP_ENV}.yml"
+  instance_file="config/instances_${APP_ENV}.yml"
 
   available_names='
 codice_meccanografico
