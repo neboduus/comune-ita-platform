@@ -12,7 +12,7 @@ services:
       args:
         php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
     environment:
-      WEB_DOCUMENT_ROOT: /var/www/html/web
+      WEB_DOCUMENT_ROOT: /var/www/html/public
       WEB_PHP_SOCKET: php:9000
       ORGANIZATION: ${ORGANIZATION:-Comune di Qui}
       SERVER_NAME: ${SERVER_NAME:-stanzadelcittadino.localtest.me}
@@ -63,8 +63,7 @@ services:
       traefik.http.routers.openlogin-http.rule: Host(`auth.localtest.me`)
       traefik.http.routers.openlogin-http.entrypoints: web
     volumes:
-      #- ./openlogin/var:/srv/app/var:rw
-      - ./openlogin/spid:/srv/app/spid:ro
+      - ./compose_conf/openlogin/spid:/srv/app/spid:ro
 
   # identity provider di prova
   idp:
@@ -73,7 +72,7 @@ services:
     depends_on:
       - openlogin
     volumes:
-      - ./openlogin/idp:/app/conf
+      - ./compose_conf/openlogin/idp:/app/conf
     environment:
       FLASK_ENV: development
     labels:
