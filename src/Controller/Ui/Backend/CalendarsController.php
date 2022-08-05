@@ -21,7 +21,7 @@ use Omines\DataTablesBundle\Column\BoolColumn;
 use Omines\DataTablesBundle\Column\NumberColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
+use Omines\DataTablesBundle\DataTableFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +39,6 @@ use App\Services\Manager\CalendarManager;
  */
 class CalendarsController extends AbstractController
 {
-  use DataTablesTrait;
 
   private $em;
 
@@ -80,7 +79,7 @@ class CalendarsController extends AbstractController
    * Lists all Calendars
    * @Route("/operatori/calendars", name="operatori_calendars_index")
    */
-  public function indexCalendarsAction(Request $request)
+  public function indexCalendarsAction(Request $request, DataTableFactory $dataTableFactory)
   {
     $data = [];
     /** @var User $user */
@@ -111,7 +110,7 @@ class CalendarsController extends AbstractController
       );
     }
 
-    $table = $this->createDataTable()
+    $table = $dataTableFactory->createDataTable()
       ->add('title', TwigColumn::class, [
         'label' => 'calendars.table.title',
         'orderable' => true,

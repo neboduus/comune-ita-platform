@@ -1,11 +1,11 @@
 parameters:
-  version: 2.0.0-rc.10
+  version: 2.0.0-rc.11
   locale: it
   app_locales: it
   prefix: '%env(PREFIX)%'
   instance: ''
   protocollo: ''
-  database_reconnect_attemps: '%env(DB_RECONNECT_ATTEMPS)%'
+  database_reconnect_attemps: '%env(int:DB_RECONNECT_ATTEMPS)%'
   pec_mailer_transport: '%env(PEC_MAILER_TRANSPORT)%'
   pec_mailer_host: '%env(PEC_MAILER_HOST)%'
   pec_mailer_port: '%env(PEC_MAILER_PORT)%'
@@ -116,8 +116,8 @@ parameters:
   deda_login_env: prod
   kafka_url: '%env(KAFKA_URL)%'
   ksqldb_url: '%env(KSQLDB_URL)%'
-  kafka_event_version: '%env(KAFKA_EVENT_VERSION)%'
-  kafka_request_timeout: '%env(KAFKA_REQUEST_TIMEOUT)%'
+  kafka_event_version: '%env(int:KAFKA_EVENT_VERSION)%'
+  kafka_request_timeout: '%env(int:KAFKA_REQUEST_TIMEOUT)%'
   kafka_topics:
     applications: '%env(KAFKA_TOPIC_APPLICATIONS)%'
     services: '%env(KAFKA_TOPIC_SERVICES)%'

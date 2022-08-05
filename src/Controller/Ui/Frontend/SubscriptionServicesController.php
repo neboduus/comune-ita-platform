@@ -19,7 +19,7 @@ use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\MapColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
+use Omines\DataTablesBundle\DataTableFactory;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -37,7 +37,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class SubscriptionServicesController extends AbstractController
 {
-  use DataTablesTrait;
 
   /**
    * @var EntityManagerInterface
@@ -72,7 +71,7 @@ class SubscriptionServicesController extends AbstractController
    * Lists all SubscriptionService entities.
    * @Route("/operatori/subscription-service", name="operatori_subscription-service_index")
    */
-  public function indexSubscriptionServiceAction(Request $request)
+  public function indexSubscriptionServiceAction(Request $request, DataTableFactory $dataTableFactory)
   {
     /** @var User $user */
     $user = $this->getUser();
@@ -84,7 +83,7 @@ class SubscriptionServicesController extends AbstractController
     $items = $this->em->getRepository('App\Entity\SubscriptionService')->findAll();
 
 
-    $table = $this->createDataTable()
+    $table = $dataTableFactory->create()
       ->add('name', TwigColumn::class, [
         'className' => 'text-truncate',
         'label' => 'iscrizioni.nome',

@@ -43,7 +43,6 @@ use GuzzleHttp\Client;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -73,7 +72,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class AdminController extends AbstractController
 {
-  use DataTablesTrait;
   use FiltersTrait;
 
   /** @var InstanceService */
@@ -380,7 +378,7 @@ class AdminController extends AbstractController
    */
   public function indexLogsAction(Request $request)
   {
-    $table = $this->createDataTable()
+    $table = $this->dataTableFactory->create()
       ->add('type', TextColumn::class, ['label' => $this->translator->trans('event')])
       ->add('eventTime', DateTimeColumn::class, ['label' => $this->translator->trans('date'), 'format' => 'd-m-Y H:i', 'searchable' => false])
       ->add('user', TextColumn::class, ['label' => $this->translator->trans('meetings.labels.user')])

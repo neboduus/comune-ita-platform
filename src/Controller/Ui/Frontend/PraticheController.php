@@ -30,7 +30,6 @@ use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use Flagception\Manager\FeatureManagerInterface;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
 use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -62,8 +61,6 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
  */
 class PraticheController extends AbstractController
 {
-
-  use DataTablesTrait;
 
   /** @var InstanceService */
   private $instanceService;

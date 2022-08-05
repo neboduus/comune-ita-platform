@@ -884,17 +884,17 @@ services:
   App\Services\Metrics\ApplicationMetrics:
     autowire: true
     tags:
-      - { name: prometheus_metrics_bundle.metrics_generator }
+      - { name: prometheus_metrics_bundle.metrics_collector }
 
   App\Services\Metrics\ScheduledActionMetrics:
     autowire: true
     tags:
-      - { name: prometheus_metrics_bundle.metrics_generator }
+      - { name: prometheus_metrics_bundle.metrics_collector }
 
   App\Services\Metrics\UserMetrics:
     autowire: true
     tags:
-      - { name: prometheus_metrics_bundle.metrics_generator }
+      - { name: prometheus_metrics_bundle.metrics_collector }
 
   App\Security\Voters\AttachmentVoter:
     arguments:

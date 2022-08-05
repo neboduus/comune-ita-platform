@@ -25,7 +25,7 @@ use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
 use Omines\DataTablesBundle\Column\TwigColumn;
-use Omines\DataTablesBundle\Controller\DataTablesTrait;
+use Omines\DataTablesBundle\DataTableFactory;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -44,7 +44,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  */
 class SubscriptionsController extends AbstractController
 {
-  use DataTablesTrait;
 
   private $subscriptionsBackOffice;
   /**
@@ -108,12 +107,12 @@ class SubscriptionsController extends AbstractController
    * Lists all subscriptions entities.
    * @Route("/operatori/subscriptions/{subscriptionService}", name="operatori_subscriptions")
    */
-  public function showSubscriptionsAction(Request $request, SubscriptionService $subscriptionService)
+  public function showSubscriptionsAction(Request $request, SubscriptionService $subscriptionService, DataTableFactory $dataTableFactory)
   {
     /** @var OperatoreUser $user */
     $user = $this->getUser();
 
-    $table = $this->createDataTable()
+    $table = $dataTableFactory->create()
       ->add('show', TwigColumn::class, [
         'label' => '',
         'field' => 'subscriber.id',
