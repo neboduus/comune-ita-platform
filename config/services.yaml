@@ -766,7 +766,7 @@ services:
     arguments:
       - '@ocsdc.allegati.directory_namer'
       - '@vich_uploader.property_mapping_factory'
-      - '@filesystem'
+      - '@ocsdc.filesystem'
       - '@doctrine.orm.entity_manager'
     tags:
       - { name: 'validator.constraint_validator' }

@@ -42,7 +42,7 @@ class AtLeastOneAttachmentConstraintValidator extends ConstraintValidator
    *
    * @param DirectoryNamerService $directoryNamer
    * @param PropertyMappingFactory $pmf
-   * @param Filesystem $fs
+   * @param FileSystemService $fs
    * @param EntityManagerInterface $em
    */
   public function __construct(

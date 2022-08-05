@@ -310,7 +310,7 @@ class MailerService
     );
     $textPlain = strip_tags($textHtml);
 
-    $message = \Swift_Message::newInstance()
+    $message = (new \Swift_Message())
       ->setSubject($subject)
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
@@ -359,7 +359,7 @@ class MailerService
       );
     }
 
-    $message = \Swift_Message::newInstance()
+    $message = (new \Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()], null, $locale))
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
@@ -405,7 +405,7 @@ class MailerService
     $ente = $pratica->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
-    $message = \Swift_Message::newInstance()
+    $message = (new \Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
@@ -461,7 +461,7 @@ class MailerService
 
     if ($this->isValidEmail($toAddress)) {
       try {
-        $emailMessage = \Swift_Message::newInstance()
+        $emailMessage = (new \Swift_Message())
           ->setSubject($subject)
           ->setFrom($fromAddress, $fromName)
           ->setTo($toAddress, $toName)
@@ -605,7 +605,7 @@ class MailerService
     $ente = $operatoreUser->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
-    $emailMessage = \Swift_Message::newInstance()
+    $emailMessage = (new \Swift_Message())
       ->setSubject($subscriberMessage->getSubject())
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)

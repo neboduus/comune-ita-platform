@@ -296,13 +296,13 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     }
 
 
-    $message = \Swift_Message::newInstance()
+    $message = (new \Swift_Message())
       ->setSubject($subject)
       ->setFrom($sender, 'Stanza del Cittadino')
       ->setTo($receiver, $ente->getName())
       ->setBody(
         $this->templating->render(
-          '@App/Emails/Pec/content.html.twig',
+          'Emails/Pec/content.html.twig',
           array(
             'pratica' => $pratica,
             'type'    => $type
