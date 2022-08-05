@@ -25,7 +25,7 @@ class ServiceTableType implements DataTableTypeInterface
         'label' => 'Id',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Admin/table/services/_id.html.twig',
+        'template' => 'Admin/table/services/_id.html.twig',
       ])
       ->add('name', TextColumn::class, [
         'label' => 'Nome',
@@ -36,13 +36,13 @@ class ServiceTableType implements DataTableTypeInterface
         'label' => 'Gruppo',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Admin/table/services/_service_group.html.twig',
+        'template' => 'Admin/table/services/_service_group.html.twig',
       ])
       ->add('topics', TwigColumn::class, [
         'label' => 'Categoria',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Admin/table/services/_topics.html.twig',
+        'template' => 'Admin/table/services/_topics.html.twig',
       ])
       ->add('status', MapColumn::class, [
         'label' => 'general.stato',
@@ -61,7 +61,7 @@ class ServiceTableType implements DataTableTypeInterface
         'className' => 'w-25 text-right',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Admin/table/services/_actions.html.twig',
+        'template' => 'Admin/table/services/_actions.html.twig',
       ])
       ->createAdapter(ORMAdapter::class, [
         'entity' => Servizio::class,

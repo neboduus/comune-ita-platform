@@ -21,7 +21,7 @@ class PraticaTableType implements DataTableTypeInterface
         'label' => 'Id',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Pratiche/table/_id.html.twig',
+        'template' => 'Pratiche/table/_id.html.twig',
       ])
       ->add('status', MapColumn::class, [
         'label' => 'general.stato',
@@ -53,7 +53,7 @@ class PraticaTableType implements DataTableTypeInterface
         'className' => 'text-right',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Pratiche/table/_actions.html.twig',
+        'template' => 'Pratiche/table/_actions.html.twig',
       ])
       /*->add('updatedAt', DateTimeColumn::class, [
         'label' => 'Ultimo aggiornamento',

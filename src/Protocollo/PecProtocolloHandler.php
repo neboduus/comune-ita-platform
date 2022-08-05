@@ -312,7 +312,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       )
       ->addPart(
         $this->templating->render(
-          '@App/Emails/Pec/content.html.twig',
+          'Emails/Pec/content.html.twig',
           array(
             'pratica' => $pratica,
             'type'    => $type

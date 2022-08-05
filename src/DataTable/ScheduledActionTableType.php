@@ -31,7 +31,7 @@ class ScheduledActionTableType implements DataTableTypeInterface
         'label' => 'Id',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Admin/table/scheduledActions/_id.html.twig',
+        'template' => 'Admin/table/scheduledActions/_id.html.twig',
       ])
       ->add('type', MapColumn::class, [
         'label' => 'type',
@@ -57,7 +57,7 @@ class ScheduledActionTableType implements DataTableTypeInterface
         'label' => 'parameters',
         'orderable' => false,
         'searchable' => true,
-        'template' => '@App/Admin/table/scheduledActions/_params.html.twig',
+        'template' => 'Admin/table/scheduledActions/_params.html.twig',
       ])
       ->add('hostname', TextColumn::class, [
         'label' => 'Host',
@@ -75,7 +75,7 @@ class ScheduledActionTableType implements DataTableTypeInterface
         'searchable' => true,
         'field' => 'scheduled_action.status',
         'filter' => $filter,
-        'template' => '@App/Admin/table/scheduledActions/_status.html.twig',
+        'template' => 'Admin/table/scheduledActions/_status.html.twig',
       ])
       ->add('log', TextColumn::class, [
         'label' => 'Log',
@@ -99,7 +99,7 @@ class ScheduledActionTableType implements DataTableTypeInterface
         'label' => '',
         'orderable' => false,
         'searchable' => false,
-        'template' => '@App/Admin/table/scheduledActions/_actions.html.twig',
+        'template' => 'Admin/table/scheduledActions/_actions.html.twig',
       ])
       ->createAdapter(ORMAdapter::class, [
         'entity' => ScheduledAction::class,
