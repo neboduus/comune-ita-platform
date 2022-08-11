@@ -64,7 +64,7 @@ class SecureUserCommand extends Command
     $operators = $this->entityManager->getRepository(OperatoreUser::class)
       ->createQueryBuilder('o')
       ->where('o.enabled = true')
-      ->andWhere('o.lastChangePassword > :interval')
+      ->andWhere('o.lastChangePassword < :interval')
       ->setParameter('interval', $interval)
       ->getQuery()->getResult();
 

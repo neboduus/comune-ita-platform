@@ -26,6 +26,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Class SecurityController
@@ -139,7 +140,8 @@ class SecurityController extends AbstractController
           [
             'link' => $this->router->generate(
               'reset_password_confirm',
-              ['token' => $user->getConfirmationToken()]
+              ['token' => $user->getConfirmationToken()],
+              UrlGeneratorInterface::ABSOLUTE_URL
             ),
             'label' => 'Vai',
           ],
@@ -212,7 +214,7 @@ class SecurityController extends AbstractController
    */
   public function resetPasswordCheck(Request $request, string $token, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage, SessionInterface $session)
   {
-    $user = $entityManager->getRepository(User::class)->findOneBy(['passwordResetToken' => $token]);
+    $user = $entityManager->getRepository(User::class)->findOneBy(['confirmationToken' => $token]);
 
     if (!$token || !$user instanceof User) {
       $this->addFlash('danger', "Utente non trovato...");

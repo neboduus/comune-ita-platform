@@ -2,6 +2,7 @@ security:
   # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
   encoders:
     App\Entity\User: bcrypt
+    Symfony\Component\Security\Core\User\User: plaintext
 
   providers:
     chain_provider:
@@ -132,7 +133,7 @@ security:
     - { path: ^/%prefix%/(%app_locales%)/servizi/, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/%prefix%/(%app_locales%)/operatori/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/%prefix%/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
-    - { path: ^/%prefix%/operatori/reset-password, role: IS_AUTHENTICATED_ANONYMOUSLY }
+    - { path: ^/%prefix%/(%app_locales%)/operatori/reset-password, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
     - { path: ^/%prefix%/(%app_locales%)/(pratiche|terms_accept|user|documenti|subscriptions)/, role: ROLE_CPS_USER }
     - { path: ^/%prefix%/api/v\d+\.\d+/user/.*, role: ROLE_CPS_USER }

@@ -35,10 +35,9 @@ class BackOfficePraticaListener
     $service = $pratica->getServizio();
     $integrations = $service->getIntegrations();
 
-    if (!empty($integrations) && array_key_exists($event->getNewStateIdentifier(), $integrations) && $pratica instanceof DematerializedFormPratica) {
-
+    if (!empty($integrations) && $pratica instanceof DematerializedFormPratica) {
       /** @var BackOfficeInterface $backOfficeHandler */
-      $backOfficeHandler = $this->backOfficeCollection->getBackOffice($integrations[$event->getNewStateIdentifier()]);
+      $backOfficeHandler = $this->backOfficeCollection->getBackOffice(reset($integrations));
       if ($backOfficeHandler instanceof BackOfficeInterface) {
         $backOfficeHandler->execute($pratica);
       } else {

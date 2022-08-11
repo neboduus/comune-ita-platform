@@ -101,7 +101,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       preg_match_all("/\(([^\)]*)\)/", $data->getDematerializedForms()['flattened']['calendar'], $matches);
       $meetingId = trim(explode("#", $matches[1][0])[1]);
       $_meeting = $meetingId ? $this->em->getRepository('App\Entity\Meeting')->find($meetingId) : null;
-      if ($_meeting) {
+      if ($_meeting && !in_array($_meeting, $linkedMeetings)) {
         $linkedMeetings[] = $_meeting;
       }
 
