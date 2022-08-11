@@ -118,6 +118,7 @@ class CalendarBackofficeType extends AbstractType
         'label' => false,
         'expanded' => true,
         'multiple' => true,
+        'choice_label' => 'username',
       ])
       ->add('closing_periods', CollectionType::class, [
         'label' => false,

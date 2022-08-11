@@ -42,7 +42,7 @@
     </ul>
   </div>
   <div>
-    {% if pratica.paymentData is not empty %}
+    {% if pratica and pratica.paymentData is not empty %}
       <table class="table">
         <tr>
           <td><b>{{ 'operatori.gateway'|trans }}</b></td>
@@ -110,7 +110,7 @@
               :{{ paymentData.bollo_ora_emissione.second }}</td>
           </tr>
         {% else %}
-        ok
+          ok
         {% endif %}
       </table>
     {% endif %}

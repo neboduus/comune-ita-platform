@@ -157,7 +157,7 @@ class DocumentController extends AbstractController
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($folder->getTitle(), 'documenti_list_cpsuser', ['folderId' => $folderId]);
     $this->breadcrumbsService->getBreadcrumbs()->addItem($document->getTitle());
 
-    if ($folder->getOwner() == $user->getCodiceFiscale() || in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
+    if ($folder->getOwner() == $user || in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
       return $this->render('Document/cpsUserShowDocumento.html.twig', [
         'document' => $document,
         'user' => $user,
@@ -183,7 +183,7 @@ class DocumentController extends AbstractController
     $folder = $this->em->getRepository('App\Entity\Folder')->find($folderId);
     $document = $this->em->getRepository('App\Entity\Document')->find($documentId);
 
-    if ($folder->getOwner() != $user->getCodiceFiscale() && !in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
+    if ($folder->getOwner() != $user && !in_array($user->getCodiceFiscale(), (array)$document->getReadersAllowed())) {
       return new Response(null, Response::HTTP_UNAUTHORIZED);
     }
 

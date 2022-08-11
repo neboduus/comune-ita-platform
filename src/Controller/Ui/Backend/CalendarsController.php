@@ -110,7 +110,7 @@ class CalendarsController extends AbstractController
       );
     }
 
-    $table = $dataTableFactory->createDataTable()
+    $table = $dataTableFactory->create()
       ->add('title', TwigColumn::class, [
         'label' => 'calendars.table.title',
         'orderable' => true,
