@@ -97,6 +97,7 @@ parameters:
 
     token_ttl: 3600
 
+    recaptcha_api_host: 'www.recaptcha.net'
     recaptcha_key: ''
     recaptcha_secret: ''
 

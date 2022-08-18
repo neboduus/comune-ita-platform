@@ -251,6 +251,7 @@ lexik_jwt_authentication:
 
 # Recaptcha configuration
 ewz_recaptcha:
+  api_host: '%recaptcha_api_host%'
   public_key: '%recaptcha_key%'
   private_key: '%recaptcha_secret%'
   # Not needed as "%kernel.default_locale%" is the default value for the locale key

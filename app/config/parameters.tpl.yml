@@ -71,6 +71,7 @@ parameters:
     - p7c: application/pkcs7
     - zip: application/zip
   token_ttl: '%env(TOKEN_TTL)%'
+  recaptcha_api_host: '%env(RECAPTCHA_API_HOST)%'
   recaptcha_key: '%env(RECAPTCHA_KEY)%'
   recaptcha_secret: '%env(RECAPTCHA_SECRET)%'
   shibbolet_server_varnames:
@@ -198,6 +199,7 @@ parameters:
   env(FORMSERVER_ADMIN_URL): 'http://formserver.localtest.me'
   env(HASH_VALIDITY): '1'
   env(TOKEN_TTL): '3600'
+  env(RECAPTCHA_API_HOST): 'www.recaptcha.net'
   env(RECAPTCHA_KEY): ''
   env(RECAPTCHA_SECRET): ''
   env(SHIB_CODICEFISCALE): 'shibb_pat_attribute_codicefiscale'
