@@ -242,7 +242,7 @@ function newModal(info) {
   let end = new Date(info.end).toISOString().slice(11, 16);
 
   //Set cookie
-  setCookie("d_date_view",new Date(info.event.start))
+  setCookie("d_date_view",new Date(info.start))
   setCookie("d_view_type",info.view.type)
 
   $('#modalNewDate').val(date);
