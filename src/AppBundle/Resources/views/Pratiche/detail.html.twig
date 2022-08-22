@@ -107,11 +107,14 @@
               <h6>{{ 'pratica.numero' | trans }}:</h6>
               <code class="text-nowrap">{{ pratica.id }}</code>
             </div>
+          {% if pratica.submissionTime %}
             <div class="col-12 pb-3">
               <h6>{{ 'pratica.dettaglio.data_ora_presentazione' | trans }}:</h6>
               <span
-                class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</span>
+                class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}
+              </span>
             </div>
+            {% endif %}
             {% if  pratica.servizio.isProtocolrequired %}
               <div class="col-12 pb-3">
                 <h6>{{ 'pratica.protocollo' | trans }}:</h6>
