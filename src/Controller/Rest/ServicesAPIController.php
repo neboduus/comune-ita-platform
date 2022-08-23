@@ -323,7 +323,6 @@ class ServicesAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Service",
    *     in="body",
-   *     type="json",
    *     description="The service to create",
    *     required=true,
    *     @SWG\Schema(
@@ -446,7 +445,6 @@ class ServicesAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Service",
    *     in="body",
-   *     type="json",
    *     description="The service to create",
    *     required=true,
    *     @SWG\Schema(
@@ -553,7 +551,6 @@ class ServicesAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Service",
    *     in="body",
-   *     type="json",
    *     description="The service to create",
    *     required=true,
    *     @SWG\Schema(

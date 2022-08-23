@@ -217,7 +217,7 @@ class Document
    * @ORM\Column(name="expire_at", type="datetime", nullable=true)
    * @Assert\LessThanOrEqual("+10 years", message="Maximum availability interval is 10 years")
    * @Assert\GreaterThan("today", message="Expire date must be greater than current day")
-   * @SWG\Property(description="Document's expire date, after this date the document will not be available anymore")
+   * @SWG\Property(description="Document's expire date, after this date the document will not be available anymore", type="string", format="dateTime")
    * @Groups({"read", "write"})
    */
   private $expireAt;

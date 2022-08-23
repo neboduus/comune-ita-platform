@@ -134,7 +134,6 @@ class CategoriesAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Category",
    *     in="body",
-   *     type="json",
    *     description="The category to create",
    *     required=true,
    *     @SWG\Schema(
@@ -217,7 +216,6 @@ class CategoriesAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Category",
    *     in="body",
-   *     type="json",
    *     description="The category to update",
    *     required=true,
    *     @SWG\Schema(
@@ -311,7 +309,6 @@ class CategoriesAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Category",
    *     in="body",
-   *     type="json",
    *     description="The category to update",
    *     required=true,
    *     @SWG\Schema(

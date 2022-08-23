@@ -373,7 +373,6 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Calendar",
    *     in="body",
-   *     type="json",
    *     description="The calendar to create",
    *     required=true,
    *     @SWG\Schema(
@@ -461,7 +460,6 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Calendar",
    *     in="body",
-   *     type="json",
    *     description="The calendar to edit",
    *     required=true,
    *     @SWG\Schema(
@@ -559,7 +557,6 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Calendar",
    *     in="body",
-   *     type="json",
    *     description="The calendar to patch",
    *     required=true,
    *     @SWG\Schema(
@@ -878,7 +875,6 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Opening Hour",
    *     in="body",
-   *     type="json",
    *     description="The Opening Hour to create",
    *     required=true,
    *     @SWG\Schema(
@@ -973,7 +969,6 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Opening Hour",
    *     in="body",
-   *     type="json",
    *     description="The opening hour to create",
    *     required=true,
    *     @SWG\Schema(
@@ -1074,7 +1069,6 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Opening Hour",
    *     in="body",
-   *     type="json",
    *     description="The Opening Hour to patch",
    *     required=true,
    *     @SWG\Schema(

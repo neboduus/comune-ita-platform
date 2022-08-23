@@ -111,7 +111,6 @@ class TenantAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Tenant",
    *     in="body",
-   *     type="json",
    *     description="The tenant to edit",
    *     required=true,
    *     @SWG\Schema(
@@ -209,7 +208,6 @@ class TenantAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Tenant",
    *     in="body",
-   *     type="json",
    *     description="The tenant to edit",
    *     required=true,
    *     @SWG\Schema(

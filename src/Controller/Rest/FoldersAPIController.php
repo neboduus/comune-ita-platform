@@ -184,7 +184,6 @@ class FoldersAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Folders",
    *     in="body",
-   *     type="json",
    *     description="The Folder to create",
    *     required=true,
    *     @SWG\Schema(
@@ -267,7 +266,6 @@ class FoldersAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Folder",
    *     in="body",
-   *     type="json",
    *     description="The Folder to edit",
    *     required=true,
    *     @SWG\Schema(
@@ -362,7 +360,6 @@ class FoldersAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Folder",
    *     in="body",
-   *     type="json",
    *     description="The Folder to patch",
    *     required=true,
    *     @SWG\Schema(

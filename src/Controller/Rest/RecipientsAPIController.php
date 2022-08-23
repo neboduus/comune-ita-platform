@@ -141,7 +141,6 @@ class RecipientsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Recipient",
    *     in="body",
-   *     type="json",
    *     description="The recipient to create",
    *     required=true,
    *     @SWG\Schema(
@@ -232,7 +231,6 @@ class RecipientsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Recipient",
    *     in="body",
-   *     type="json",
    *     description="The recipient to update",
    *     required=true,
    *     @SWG\Schema(
@@ -334,7 +332,6 @@ class RecipientsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Recipient",
    *     in="body",
-   *     type="json",
    *     description="The recipient to update",
    *     required=true,
    *     @SWG\Schema(

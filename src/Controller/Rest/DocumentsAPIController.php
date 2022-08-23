@@ -216,7 +216,6 @@ class DocumentsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Documents",
    *     in="body",
-   *     type="json",
    *     description="The Document to create",
    *     required=true,
    *     @SWG\Schema(
@@ -312,7 +311,6 @@ class DocumentsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Document",
    *     in="body",
-   *     type="json",
    *     description="The Document to edit",
    *     required=true,
    *     @SWG\Schema(
@@ -406,7 +404,6 @@ class DocumentsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Document",
    *     in="body",
-   *     type="json",
    *     description="The Document to patch",
    *     required=true,
    *     @SWG\Schema(

@@ -299,7 +299,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      type="integer",
    *      required=false,
    *      description="Limit of the query",
-   *      maximum="100"
+   *      maximum=100
    *  )
    *
    * @SWG\Response(
@@ -564,7 +564,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Application",
    *     in="body",
-   *     type="json",
    *     description="The application to create",
    *     required=true,
    *     @SWG\Schema(
@@ -814,7 +813,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Backoffice data",
    *     in="body",
-   *     type="json",
    *     description="The application to update",
    *     required=true,
    *     @SWG\Schema(
@@ -1092,7 +1090,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Payment data",
    *     in="body",
-   *     type="json",
    *     description="Update payment data of an application",
    *     required=true,
    *     @SWG\Schema(
@@ -1214,7 +1211,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Application",
    *     in="body",
-   *     type="json",
    *     description="The application to patch",
    *     required=false,
    *     @SWG\Schema(
@@ -1226,7 +1222,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Register integration request",
    *     in="body",
-   *     type="json",
    *     description="Register integration request",
    *     required=false,
    *     @SWG\Schema(
@@ -1240,7 +1235,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Register integration answer",
    *     in="body",
-   *     type="json",
    *     description="Register integration answer",
    *     required=false,
    *     @SWG\Schema(
@@ -1443,7 +1437,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
-   *     type="json",
    *     description="The transition to create",
    *     required=true,
    *     @SWG\Schema(
@@ -1574,7 +1567,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
-   *     type="json",
    *     description="The transition to create",
    *     required=true,
    *     @SWG\Schema(
@@ -1768,7 +1760,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Transition",
    *     in="body",
-   *     type="json",
    *     description="The transition to create",
    *     required=true,
    *     @SWG\Schema(
@@ -1874,7 +1865,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
-   *     type="json",
    *     description="The transition to create",
    *     required=true,
    *     @SWG\Schema(
@@ -1964,7 +1954,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Messages",
    *     in="body",
-   *     type="json",
    *     description="Array of message's uuid to include in integration request response",
    *     required=false,
    *     @SWG\Schema(
@@ -2205,14 +2194,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Transition",
    *     in="body",
-   *     type="json",
    *     description="The transition to execute",
    *     required=true,
    *     @SWG\Schema(
    *        type="object",
    *        @SWG\Property(property="integration_outbound_protocol_document_id", type="string", description="Integration request protocol number"),
    *        @SWG\Property(property="integration_outbound_protocol_number", type="string", description="Integration request protocol document id"),
-   *        @SWG\Property(property="integration_outbound_protocolled_at", type="date-time", description="Integration request protocol date")
+   *        @SWG\Property(property="integration_outbound_protocolled_at", type="string", format="date-time", description="Integration request protocol date")
    *     )
    * )
    *
@@ -2322,14 +2310,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Transition",
    *     in="body",
-   *     type="json",
    *     description="The transition to execute",
    *     required=true,
    *     @SWG\Schema(
    *        type="object",
    *        @SWG\Property(property="integration_inbound_protocol_document_id", type="string", description="Integration answer protocol number"),
    *        @SWG\Property(property="integration_inbound_protocol_number", type="string", description="Integration answer protocol document id"),
-   *        @SWG\Property(property="integration_inbound_protocolled_at", type="date-time", description="Integration answer protocol date")
+   *        @SWG\Property(property="integration_inbound_protocolled_at", type="string", format="date-time", description="Integration answer protocol date")
    *     )
    * )
    *
@@ -2439,7 +2426,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
-   *     type="json",
    *     description="The message to create",
    *     required=true,
    *     @SWG\Schema(

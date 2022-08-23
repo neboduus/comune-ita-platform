@@ -111,42 +111,42 @@ class Application
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Creation time", type="int")
+   * @SWG\Property(description="Creation time", type="integer")
    * @Groups({"read"})
    */
   private $creationTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Creation date time", type="dateTime")
+   * @SWG\Property(description="Creation date time", type="string", format="dateTime")
    * @Groups({"read"})
    */
   private $createdAt;
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Submission time", type="int")
+   * @SWG\Property(description="Submission time", type="integer")
    * @Groups({"read"})
    */
   private $submissionTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Submission date time", type="dateTime")
+   * @SWG\Property(description="Submission date time", type="string", format="dateTime")
    * @Groups({"read"})
    */
   private $submittedAt;
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Latest status change timestamp", type="int")
+   * @SWG\Property(description="Latest status change timestamp", type="integer")
    * @Groups({"read"})
    */
   private $latestStatusChangeTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Latest status change time", type="dateTime")
+   * @SWG\Property(description="Latest status change time", type="string", format="dateTime")
    * @Groups({"read"})
    */
   private $latestStatusChangeAt;
@@ -189,14 +189,14 @@ class Application
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Protocol time", type="int")
+   * @SWG\Property(description="Protocol time", type="integer")
    * @Groups({"read"})
    */
   private $protocolTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Protocol date time", type="dateTime")
+   * @SWG\Property(description="Protocol date time", type="string", format="dateTime")
    * @Groups({"read", "write"})
    */
   private $protocolledAt;
@@ -256,14 +256,14 @@ class Application
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Outcome protocol time", type="int")
+   * @SWG\Property(description="Outcome protocol time", type="integer")
    * @Groups({"read"})
    */
   private $outcomeProtocolTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Outcome protocol date time", type="dateTime")
+   * @SWG\Property(description="Outcome protocol date time", type="string", format="dateTime")
    * @Groups({"read", "write"})
    */
   private $outcomeProtocolledAt;
@@ -271,7 +271,7 @@ class Application
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Pyment gateway used")
+   * @SWG\Property(description="Payment gateway used")
    * @Groups({"read", "write"})
    */
   private $paymentType;
@@ -279,7 +279,7 @@ class Application
   /**
    * @var array
    * @SWG\Property(property="payment_data", description="Payment data")
-   * @Serializer\Type("array")
+   * @Serializer\Type("array<string, string>")
    * @Groups({"read", "write"})
    */
   private $paymentData;
@@ -338,7 +338,7 @@ class Application
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Flow change date time", type="dateTime")
+   * @SWG\Property(description="Flow change date time", type="string", format="dateTime")
    * @Groups({"read"})
    */
   private $flowChangedAt;

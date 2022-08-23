@@ -297,7 +297,6 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * @SWG\Parameter(
    *     name="SubscriptionService",
    *     in="body",
-   *     type="json",
    *     description="The SubscriptionService to create",
    *     required=true,
    *     @SWG\Schema(
@@ -384,7 +383,6 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * @SWG\Parameter(
    *     name="SubscriptionService",
    *     in="body",
-   *     type="json",
    *     description="The subscriptionService to create",
    *     required=true,
    *     @SWG\Schema(
@@ -482,7 +480,6 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * @SWG\Parameter(
    *     name="SubscriptionService",
    *     in="body",
-   *     type="json",
    *     description="The Subscription Service to patch",
    *     required=true,
    *     @SWG\Schema(
@@ -893,7 +890,6 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * @SWG\Parameter(
    *     name="Subscription",
    *     in="body",
-   *     type="json",
    *     description="The Subscription to create",
    *     required=true,
    *     @SWG\Schema(
@@ -999,7 +995,6 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * @SWG\Parameter(
    *     name="Subscription",
    *     in="body",
-   *     type="json",
    *     description="The subscription to create",
    *     required=true,
    *     @SWG\Schema(
@@ -1119,7 +1114,6 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * @SWG\Parameter(
    *     name="Subscription",
    *     in="body",
-   *     type="json",
    *     description="The Subscription to patch",
    *     required=true,
    *     @SWG\Schema(

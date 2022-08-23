@@ -189,7 +189,6 @@ class UsersAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="User",
    *     in="body",
-   *     type="json",
    *     description="The user to create",
    *     required=true,
    *     @SWG\Schema(
@@ -291,7 +290,6 @@ class UsersAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="User",
    *     in="body",
-   *     type="json",
    *     description="The user to create",
    *     required=true,
    *     @SWG\Schema(
@@ -389,7 +387,6 @@ class UsersAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="User",
    *     in="body",
-   *     type="json",
    *     description="The service to create",
    *     required=true,
    *     @SWG\Schema(

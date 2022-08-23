@@ -205,7 +205,6 @@ class MeetingsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Meeting",
    *     in="body",
-   *     type="json",
    *     description="The meeting to create",
    *     required=true,
    *     @SWG\Schema(
@@ -353,7 +352,6 @@ class MeetingsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Meeting",
    *     in="body",
-   *     type="json",
    *     description="The meeting to edit",
    *     required=true,
    *     @SWG\Schema(
@@ -472,7 +470,6 @@ class MeetingsAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Meeting",
    *     in="body",
-   *     type="json",
    *     description="The meeting to patch",
    *     required=true,
    *     @SWG\Schema(

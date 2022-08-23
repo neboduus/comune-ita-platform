@@ -257,7 +257,6 @@ class SubscribersAPIController extends AbstractApiController
    * @SWG\Parameter(
    *     name="Subscriber",
    *     in="body",
-   *     type="json",
    *     description="The Subscriber to create",
    *     required=true,
    *     @SWG\Schema(
@@ -486,7 +485,6 @@ class SubscribersAPIController extends AbstractApiController
    * @SWG\Parameter(
    *     name="Subscriber",
    *     in="body",
-   *     type="json",
    *     description="The subscriber to edit",
    *     required=true,
    *     @SWG\Schema(
@@ -596,7 +594,6 @@ class SubscribersAPIController extends AbstractApiController
    * @SWG\Parameter(
    *     name="Subscriber",
    *     in="body",
-   *     type="json",
    *     description="The Subscriber to patch",
    *     required=true,
    *     @SWG\Schema(

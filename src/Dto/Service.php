@@ -37,7 +37,7 @@ class Service
    * @Serializer\Type("string")
    * @SWG\Property(description="Service's name")
    * @Groups({"read", "write"})
-   * @Assert\Length(max="255")
+   * @Assert\Length(max=255)
    */
   private $name;
 
@@ -223,7 +223,7 @@ class Service
   /**
    * @var array
    * @SWG\Property(property="payment_parameters", description="List of payment gateways available for the service and related parameters", type="object", ref=@Model(type=PaymentParameters::class))
-   * @Serializer\Type("array")
+   * @Serializer\Type("object")
    * @Groups({"read", "write"})
    */
   private $paymentParameters;

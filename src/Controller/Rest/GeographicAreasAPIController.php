@@ -142,7 +142,6 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="GeographicArea",
    *     in="body",
-   *     type="json",
    *     description="The geographic area to create",
    *     required=true,
    *     @SWG\Schema(
@@ -233,7 +232,6 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="GeographicArea",
    *     in="body",
-   *     type="json",
    *     description="The recipient to update",
    *     required=true,
    *     @SWG\Schema(
@@ -335,7 +333,6 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="GeographicArea",
    *     in="body",
-   *     type="json",
    *     description="The recipient to update",
    *     required=true,
    *     @SWG\Schema(

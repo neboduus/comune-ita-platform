@@ -17,7 +17,7 @@ class SubscriptionPayment implements \JsonSerializable
   /**
    * @var double
    * @Assert\GreaterThanOrEqual(0, message="L'importo del pagamento deve avere un valore positivo")
-   * @SWG\Property(description="Payment amount", type="double")
+   * @SWG\Property(description="Payment amount", type="number")
    */
   private $amount;
 

@@ -47,7 +47,7 @@ class Folder
    * @var string
    *
    * @ORM\Column(name="description", type="text", nullable=true)
-   * @SWG\Property(description="Folder's description", type="text")
+   * @SWG\Property(description="Folder's description", type="string")
    */
   private $description;
 

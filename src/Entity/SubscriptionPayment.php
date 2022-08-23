@@ -33,7 +33,7 @@ class SubscriptionPayment
 
   /**
    * @ORM\Column(type="decimal", scale=2, nullable=false)
-   * @SWG\Property(description="Subscription Payment's amount")
+   * @SWG\Property(description="Subscription Payment's amount", type="number")
    */
   private $amount = 0.00;
 

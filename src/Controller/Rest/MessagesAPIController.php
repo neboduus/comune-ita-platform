@@ -364,7 +364,6 @@ class MessagesAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
-   *     type="json",
    *     description="The message to create",
    *     required=true,
    *     @SWG\Schema(
@@ -480,7 +479,6 @@ class MessagesAPIController extends AbstractFOSRestController
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
-   *     type="json",
    *     description="The message to create",
    *     required=true,
    *     @SWG\Schema(
