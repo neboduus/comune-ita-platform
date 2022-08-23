@@ -161,7 +161,7 @@ servizio:
   nessun_template: 'BACKOFFICE'
   importa: 'Remote-Import'
   destinatari: "Nutzerkategorie"
-  sottotitolo: 'DA NON TRADURRE'
+  sottotitolo: 'Anträge und Eintragungen, Beiträge und Rangordnungen, Meldungen, Ermächtigungen und Konzessionen, Bestätigungen und Erklärungen, Zahlungen, Öffentliche Dienste.'
   aree_geografiche: "Geografische Zonen"
   consenti_richiesta_integrazione: "BACKOFFICE"
   no_topics: 'BACKOFFICE'
@@ -229,6 +229,7 @@ servizio:
   select_template: ''
   blank_template: ''
   templates_based_existing_services: ''
+  id_service: ''
 gruppo_di_servizi:
   gruppo_di_servizi: 'Kategorie von Diensten'
   nome: 'Name'
@@ -470,7 +471,7 @@ pratica:
   messaggio_operatore_vuoto: "Achtung: Es können keine leeren Nachrichten gesandt werden."
   select_new_status_application: ''
   you_want_cancel: ''
-  enter_correct_cf: ''
+  enter_correct_cf: 'Geben Sie eine korrekte Steuernummer ein!'
   application_new_create_services: ''
   application_create_success: ''
   back_services: ''
@@ -509,6 +510,7 @@ pratica:
   reject_pratice: ''
   failed: 'Fehlgeschlagen'
   warning_long_text: ""
+  presentante: ''
 STATUS_CANCELLED: 'Abgelehnt'
 STATUS_DRAFT: 'Entwurf'
 STATUS_PRE_SUBMIT: 'Gesendet'
@@ -704,7 +706,7 @@ documenti:
 iscrizione_asilo_nido:
   dettaglio:
     struttura: 'Einrichtung'
-    # Betreuungszeiten? 
+    # Betreuungszeiten?
     # orario corto, lungo ...?
     orario: 'Stundenplan'
     periodo: 'Zeitraum'
@@ -913,6 +915,13 @@ admin:
   show_service: ''
   show_api_service: ""
   payment_amount_description: ""
+  custom_validation:
+    custom_validation_for: ''
+    id_service: ''
+    id_field: ''
+    status_code: ''
+    field_label: ''
+    status_name: ''
 operatori:
   allega_risposta_firmata: 'Unterzeichnete Antwort anhängen'
   vai_al_dettaglio: 'Siehe Details'
@@ -1242,6 +1251,8 @@ messages:
   mail_to_me: ''
   mail_to_user: ''
   warning_pratice: ''
+  receives_why: ''
+  receives_why_description: ""
 messaggi:
   messaggio: 'Nachricht'
   invia: 'Senden'
@@ -2309,7 +2320,7 @@ calendars:
     description: "BACKOFFICE"
   drafts_duration:
     # cosa si intende per "appuntamento in bozza"?
-    # = app. provvisorio? 
+    # = app. provvisorio?
     # = app. non ancora fissato?
     label: "Dauer eines Termins im Entwurfstatus (in Minuten)"
     description: "BACKOFFICE"
@@ -2409,6 +2420,8 @@ calendars:
   print: 'Drucken'
   info: 'Erstellt von %owner% am %createdDate%, letzte Änderung am %updatedDate% um %updatedTime%'
   update_calendar: ''
+  update_meeting: ''
+  go_calendar: ''
 meetings:
   error:
     slot_unavailable: "Das ausgewählte Zeitfenster ist nicht verfügbar"
@@ -2551,6 +2564,7 @@ meetings:
     cancelled: 'cancelled'
     draft: 'draft'
     concluded: ''
+    completed: ''
   every_meetings: ''
   one_person: ""
   one_person_max: ""
@@ -2608,6 +2622,7 @@ backoffice:
       delete_service_group_success: ""
       delete_service_group_error: ""
       create_service_group_success: ""
+      welcome: ''
     subscription_service:
       payment:
         due_date: "Fälligkeit der Zahlung"
@@ -2620,7 +2635,7 @@ backoffice:
         add: "Zahlung hinzufügen"
         no_payments: "Es scheinen keine Zahlungen auf"
         required: "BACKOFFICE"
-        # "crea" ? 
+        # "crea" ?
         # "creare"?
         create_draft: "Vor Fälligkeit automatisch Entwurf eines Zahlungsvorgangs anlegen?"
         select_service: "Abo-Dienst auswählen"
@@ -2692,6 +2707,12 @@ backoffice:
     activation_point: ''
     action_execute: ''
     no_integration: ''
+    enable_integration_with: ""
+    with_appio: ""
+    enable_integration_access: ''
+  gateway:
+    enable: ''
+    payment_gateway: ''
 login_type:
   none: 'Keine/-r'
   login_pat: 'Spid PAT'
@@ -2739,6 +2760,8 @@ ente:
     label: 'BACKOFFICE'
     services: 'Dienste'
     categories: 'Kategorien'
+  nome: ''
+  meta: ''
 buttons:
   draft: 'Entwurf speichern'
   last_save: 'Zuletzt gespeichert:'
@@ -2771,6 +2794,10 @@ general:
   approval: ''
   forwarding: ''
   postponement: ''
+  follow_social: ''
+  retry: ''
+  import: ''
+  import_url: ''
 avanti: 'Weiter'
 categories:
   title: 'Kategorien'
@@ -2913,6 +2940,7 @@ payment:
   error_amount: ''
   error_select_type: ''
   type_payment: ''
+  payment_started: ""
 calendar_formio:
   at_hours: "Uhrzeit"
   draft_expiration_text: "Für die angegebene Uhrzeit wurde für Sie vorläufig ein Termin reserviert, der bis zum <b>%expire_at%</b> gültig ist."
@@ -2934,32 +2962,32 @@ previous: ''
 following: ''
 apply: ''
 cancel: ''
-from: ''
-to: ''
+from: 'von'
+to: 'bis'
 of: ''
-page: ''
+page: 'Seite'
 result: ''
 results: ''
 custom: ''
 waiting: ''
 digital_services: ''
 time:
-  year: ''
-  years: ''
-  months: ''
-  month: ''
-  week: ''
-  day: ''
-  hour: ''
-  minute: ''
-  weeks: ''
-  days: ''
-  hours: ''
-  minutes: ''
-  second: ''
-  seconds: ''
-  ago: ''
-  few_seconds_ago: ''
+  year: 'Jahr'
+  years: 'Jahre'
+  months: 'Monate'
+  month: 'Monat'
+  week: 'Woche'
+  day: 'Tag'
+  hour: 'Stunde'
+  minute: 'Minute'
+  weeks: 'Wochen'
+  days: 'Tage'
+  hours: 'Stunden'
+  minutes: 'Minuten'
+  second: 'Sekunde'
+  seconds: 'Sekunden'
+  ago: 'vor'
+  few_seconds_ago: 'vor wenigen Sekunden'
   last_5_minutes: ''
   last_15_minutes: ''
   last_30_minutes: ''
@@ -2989,10 +3017,11 @@ time:
   two_weeks_before: ""
   three_weeks_before: ""
   one_month_before: ""
+  now: ''
 characters: ''
 integrations: ''
 event: ''
-date: ''
+date: 'Datum'
 imported: ''
 for: ''
 provider_of: ''
@@ -3013,12 +3042,12 @@ status_missed: ''
 status_done: ''
 status_cancelled: ''
 status_draft: ''
-status_error: ''
+status_error: 'Fehler'
 status_concluded: ''
 cancel_info: ''
-from_date: ''
-from_to: ''
-info: ''
+from_date: 'vom'
+from_to: 'bis'
+info: 'Info'
 show_all: ''
 every: ''
 STATUS_WAITING: ''
@@ -3044,6 +3073,17 @@ scheduled_actions:
   "protocollo_upload_file'": ''
   "giscom_send_pratice'": ''
   "giscom_askCFs'": ''
-  "application_webhook'": ''
+  "application_webhook'": 'Webhook'
   "application_payment_reminder'": ''
   "produce_message'": ''
+login_callout_texts:
+  cta_button: ''
+  cas:
+    title: ''
+    text: ""
+  login_pat:
+    title: ''
+    text: ""
+  openlogin:
+    title: ''
+    text: ""
