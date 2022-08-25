@@ -54,8 +54,8 @@
                   {{ 'login_callout_texts.cas.title' | trans }}
                 {% elseif login_route == 'login_pat' %}
                   {{ 'login_callout_texts.login_pat.title' | trans }}
-                {% elseif login_route == 'openlogin' %}
-                  {{ 'login_callout_texts.openlogin.title' | trans }}
+                {% elseif login_route == 'login_open' %}
+                  {{ 'login_callout_texts.login_open.title' | trans }}
                 {% endif %}
               </div>
               <div class="body">
@@ -64,8 +64,8 @@
                   {{ 'login_callout_texts.cas.text' | trans | raw}}
                 {% elseif login_route == 'login_pat' %}
                   {{ 'login_callout_texts.login_pat.text' | trans | raw}}
-                {% elseif login_route == 'openlogin' %}
-                  {{ 'login_callout_texts.openlogin.text' | trans | raw}}
+                {% elseif login_route == 'login_open' %}
+                  {{ 'login_callout_texts.login_open.text' | trans | raw}}
                 {% endif %}
                 </p>
                   <a href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}"

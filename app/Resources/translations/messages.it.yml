@@ -2788,7 +2788,6 @@ login_callout_texts:
   login_pat:
     title: 'Usi SPID o CPS?'
     text: "Puoi autenticarti con SPID o Carta Provinciale dei Servizi per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)"
-  openlogin:
+  login_open:
     title: 'Usi SPID?'
     text: "Puoi autenticarti con SPID per la compilazione automatica dei campi ed il salvataggio della pratica nel tuo profilo. <br />(Si raccomanda l'utilizzo di Firefox o Chrome)"
-

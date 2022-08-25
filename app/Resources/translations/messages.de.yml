@@ -3084,6 +3084,6 @@ login_callout_texts:
   login_pat:
     title: ''
     text: ""
-  openlogin:
+  login_open:
     title: ''
     text: ""
