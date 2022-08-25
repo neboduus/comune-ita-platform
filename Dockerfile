@@ -68,7 +68,7 @@ ARG CI_COMMIT_TAG
 RUN chmod 755 ./compose_conf/scripts/*.sh
 RUN ./compose_conf/scripts/get-version.sh > /var/www/html/web/VERSION
 
-COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin
+COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin/
 RUN chmod 755 ./bin/*.sh
 
 RUN mkdir -p var/uploads && chown wodby:wodby var -R

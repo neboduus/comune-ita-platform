@@ -29,7 +29,7 @@ window.onload = function () {
     Formio.icons = 'fontawesome';
     Formio.createForm(document.getElementById('formio'), applicationFormContainer.data('formserver_url') + '/form/' + applicationFormContainer.data('form_id'), {
       noAlerts: true,
-      language: 'it',
+      language: language,
       i18n: FormioI18n.languages(),
       buttonSettings: {
         showCancel: false
@@ -55,7 +55,7 @@ window.onload = function () {
       // Triggered when they click the submit button.
       form.on('submit', function (submission) {
         let submitButton = applicationFormContainer.find('.btn-wizard-nav-submit');
-        submitButton.html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Salva ...')
+        submitButton.html(`<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> ${Translator.trans('salva', {}, 'messages',language)} ...`)
 
         let application = {};
         application.user = applicationFormContainer.data('user');
@@ -65,7 +65,7 @@ window.onload = function () {
 
         applications.postApplication(JSON.stringify(application))
           .fail(function (xhr, type, exception) {
-            submitButton.html('Salva')
+            submitButton.html(`${Translator.trans('salva', {}, 'messages',language)}`)
             Swal.fire(exception, '', 'error')
           })
           .done(function (data, code, xhr){
@@ -79,11 +79,11 @@ window.onload = function () {
 };
 
 $(document).ready(function () {
-
   let $input = $('#autocomplete-users')
   let $autocomplete = $('#users-list');
   let url = $input.data('url')
   const users = new Users()
+  users.init();
 
   $input.on('input', function (e) {
     const q = $input.val()

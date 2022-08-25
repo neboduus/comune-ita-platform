@@ -11,7 +11,9 @@ class Users {
 
   init() {
     const auth = new Auth();
-    this.token = auth.getToken();
+    auth.getSessionAuthTokenPromise().then( res => {
+      this.token = res.token
+    });
     this.basePath = new BasePath().getBasePath()
   }
 
