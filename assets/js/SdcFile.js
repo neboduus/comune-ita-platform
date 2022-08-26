@@ -255,7 +255,7 @@ export default class SdcFile extends File {
                 }).then(resp => {
                 }).catch(err => {
                   fileUpload.status = 'error';
-                  fileUpload.message = err;
+                  fileUpload.message = Translator.trans('pratica.error_upload_file_sdc', {}, 'messages', language);;
                   delete fileUpload.progress;
                   this.fileDropHidden = false;
                   this.redraw();
@@ -266,13 +266,13 @@ export default class SdcFile extends File {
                 fileUpload.message = Translator.trans('pratica.error_upload_file_sdc', {}, 'messages', language)
                 delete fileUpload.progress;
                 this.fileDropHidden = false;
-                 this.redraw();
-               this.triggerChange();
+                this.redraw();
+                this.triggerChange();
               })
             })
             .catch((response) => {
               fileUpload.status = 'error';
-              fileUpload.message = response;
+              fileUpload.message = Translator.trans('pratica.error_upload_file_sdc', {}, 'messages', language);
               delete fileUpload.progress;
               this.fileDropHidden = false;
               this.redraw();
