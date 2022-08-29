@@ -125,6 +125,16 @@ class UsersAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="User's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a User",
@@ -288,6 +298,16 @@ class UsersAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="User's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="User",
    *     in="body",
    *     description="The user to create",
@@ -385,6 +405,16 @@ class UsersAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="User's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="User",
    *     in="body",
    *     description="The service to create",
@@ -473,6 +503,16 @@ class UsersAPIController extends AbstractFOSRestController
    * Delete a User
    * @Rest\Delete("/{id}", name="users_api_delete")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="User's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."

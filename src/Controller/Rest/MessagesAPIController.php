@@ -103,6 +103,16 @@ class MessagesAPIController extends AbstractFOSRestController
    * Retreive Applications messages
    * @Rest\Get("/applications/{id}/messages", name="application_api_messages_get")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve list of messages for the application",
@@ -309,6 +319,26 @@ class MessagesAPIController extends AbstractFOSRestController
    * Retreive Application message
    * @Rest\Get("/applications/{id}/messages/{messageId}", name="application_api_message_get")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="messageId",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Message's uuid",
+   *     default="9d74b8ad-d0e6-4039-91b7-b2a3f023f064"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve a message of the application",
@@ -359,6 +389,16 @@ class MessagesAPIController extends AbstractFOSRestController
    *     description="The authentication Bearer",
    *     required=true,
    *     type="string"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
    * )
    *
    * @SWG\Parameter(
@@ -475,7 +515,26 @@ class MessagesAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
-   *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="messageId",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Message's uuid",
+   *     default="9d74b8ad-d0e6-4039-91b7-b2a3f023f064"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
@@ -592,6 +651,36 @@ class MessagesAPIController extends AbstractFOSRestController
    * Retreive a message applications attachment
    * @Rest\Get("/applications/{id}/messages/{messageId}/attachments/{attachmentId}", name="message_api_attachment_get")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="attachmentId",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Attachment's uuid",
+   *     default="9d74b8ad-d0e6-4039-91b7-b2a3f023f064"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="messageId",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="9d74b8ad-d0e6-4039-91b7-b2a3f023f064"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive attachment file",

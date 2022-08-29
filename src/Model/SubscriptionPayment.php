@@ -67,6 +67,7 @@ class SubscriptionPayment implements \JsonSerializable
    * @var Servizio
    * @Assert\NotNull(message="Il servizio di pagamento è obbligatorio")
    * @Assert\NotBlank (message="Il servizio di pagamento non può essere vuoto")
+   * @SWG\Property(description="Payment service", type="object")
    */
   private $paymentService;
 

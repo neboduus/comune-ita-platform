@@ -164,6 +164,16 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Document's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Document",
@@ -309,6 +319,16 @@ class DocumentsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Document's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="Document",
    *     in="body",
    *     description="The Document to edit",
@@ -402,6 +422,16 @@ class DocumentsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Document's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="Document",
    *     in="body",
    *     description="The Document to patch",
@@ -493,6 +523,16 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Document's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
@@ -538,6 +578,16 @@ class DocumentsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Document's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Download a document",

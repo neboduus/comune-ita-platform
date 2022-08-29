@@ -103,7 +103,17 @@ class CalendarsAPIController extends AbstractFOSRestController
   /**
    * Retreive a Calendar
    * @Rest\Get("/{id}", name="calendar_api_get")
-   *
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Calendar",
@@ -149,6 +159,16 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     description="Retreive Calendar's availabilities",
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *      name="available",
    *      in="query",
@@ -266,6 +286,26 @@ class CalendarsAPIController extends AbstractFOSRestController
    *      description="Get all availabilities apart from calendar configurations"
    *  )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="date",
+   *     in="path",
+   *     type="string",
+   *     format="dateTime",
+   *     required=true,
+   *     description="Date",
+   *     default="2022-08-25T00:00:00"
+   * )
+   * 
    * @SWG\Parameter(
    *      name="exclude",
    *      in="query",
@@ -458,6 +498,16 @@ class CalendarsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="Calendar",
    *     in="body",
    *     description="The calendar to edit",
@@ -555,6 +605,16 @@ class CalendarsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="Calendar",
    *     in="body",
    *     description="The calendar to patch",
@@ -651,6 +711,16 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
@@ -727,6 +797,16 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Retrieve all Opening Hours of a Calendar
    * @Rest\Get("/{calendar_id}/opening-hours", name="opening-hours_api_get")
    *
+   * @SWG\Parameter(
+   *     name="calendar_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive the Opening Hours of a Calendar",
@@ -769,6 +849,26 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Retrieve an Opening Hour of a Calendar
    * @Rest\Get("/{calendar_id}/opening-hours/{id}", name="opening-hour_api_get")
    *
+   * @SWG\Parameter(
+   *     name="calendar_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Opening hour's uuid",
+   *     default="9d74b8ad-d0e6-4039-91b7-b2a3f023f064"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive an Opening Hour of a Calendar",
@@ -822,6 +922,26 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="calendar_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Opening hour's uuid",
+   *     default="9d74b8ad-d0e6-4039-91b7-b2a3f023f064"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
@@ -872,6 +992,16 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="calendar_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Opening Hour",
    *     in="body",
@@ -966,6 +1096,26 @@ class CalendarsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="calendar_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Opening hour's uuid",
+   *     default="9d74b8ad-d0e6-4039-91b7-b2a3f023f064"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Opening Hour",
    *     in="body",
@@ -1067,6 +1217,26 @@ class CalendarsAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="calendar_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Opening hour's uuid",
+   *     default="9d74b8ad-d0e6-4039-91b7-b2a3f023f064"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="Opening Hour",
    *     in="body",
    *     description="The Opening Hour to patch",
@@ -1160,7 +1330,15 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Retreive a Calendar opening hours overlaps
    * @Rest\Get("/{id}/overlaps", name="calendar-overlaps_api_get")
    *
-   *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Calendar's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
    *
    * @SWG\Parameter(
    *      name="opening_hours",

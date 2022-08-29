@@ -505,6 +505,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json object instead of version 1.* where are flattened strings"
    *  )
+   * 
+   * @SWG\Parameter(
+   *      name="id",
+   *      in="path",
+   *      type="string",
+   *      format="uuid",
+   *      required=true,
+   *      description="Application's uuid",
+   *      default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   *  )
    *
    * @SWG\Response(
    *     response=200,
@@ -743,6 +753,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json objet instead of version 1.* the are flattened strings"
    *  )
+   * 
+   * @SWG\Parameter(
+   *      name="id",
+   *      in="path",
+   *      type="string",
+   *      format="uuid",
+   *      required=true,
+   *      description="Application's uuid",
+   *      default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
    *
    * @SWG\Response(
    *     response=200,
@@ -809,7 +829,17 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     required=true,
    *     type="string"
    * )
-   *
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Backoffice data",
    *     in="body",
@@ -916,6 +946,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Retrieve application history
    * @Rest\Get("/{id}/history", name="application_api_get_history")
    *
+   * @SWG\Parameter(
+   *      name="id",
+   *      in="path",
+   *      type="string",
+   *      format="uuid",
+   *      required=true,
+   *      description="Application's uuid",
+   *      default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve application history",
@@ -962,6 +1002,26 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Retrieve an Applications attachment
    * @Rest\Get("/{id}/attachments/{attachmentId}", name="application_api_attachment_get")
    *
+   * @SWG\Parameter(
+   *      name="id",
+   *      in="path",
+   *      type="string",
+   *      format="uuid",
+   *      required=true,
+   *      description="Application's uuid",
+   *      default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *      name="attachmentId",
+   *      in="path",
+   *      type="string",
+   *      format="uuid",
+   *      required=true,
+   *      description="Application's uuid",
+   *      default="cf25adff-5aa9-4dc8-be16-1cc6797bc44a"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve attachment file",
@@ -1028,6 +1088,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      description="Test parameter"
    *  )
    *
+   * @SWG\Parameter(
+   *      name="id",
+   *      in="path",
+   *      type="string",
+   *      format="uuid",
+   *      required=true,
+   *      description="Application's uuid",
+   *      default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retrieve an Application"
@@ -1087,6 +1157,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Payment data",
    *     in="body",
@@ -1207,7 +1287,17 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     required=true,
    *     type="string"
    * )
-   *
+   * 
+   * @SWG\Parameter(
+   *      name="id",
+   *      in="path",
+   *      type="string",
+   *      format="uuid",
+   *      required=true,
+   *      description="Application's uuid",
+   *      default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Application",
    *     in="body",
@@ -1377,6 +1467,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="Updated"
@@ -1434,6 +1534,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
@@ -1564,6 +1674,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",
@@ -1698,6 +1818,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="Updated"
@@ -1755,6 +1885,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     description="The authentication Bearer",
    *     required=true,
    *     type="string"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
    * )
    *
    * @SWG\Parameter(
@@ -1861,6 +2001,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     required=true,
    *     type="string"
    * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
    *
    * @SWG\Parameter(
    *     name="Message",
@@ -1949,6 +2099,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     description="The authentication Bearer",
    *     required=true,
    *     type="string"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
    * )
    *
    * @SWG\Parameter(
@@ -2044,6 +2204,15 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
    *
    * @SWG\Response(
    *     response=204,
@@ -2108,6 +2277,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="Updated"
@@ -2189,6 +2368,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     description="The authentication Bearer",
    *     required=true,
    *     type="string"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
    * )
    *
    * @SWG\Parameter(
@@ -2305,6 +2494,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     description="The authentication Bearer",
    *     required=true,
    *     type="string"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
    * )
    *
    * @SWG\Parameter(
@@ -2423,6 +2622,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Application's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Message",
    *     in="body",

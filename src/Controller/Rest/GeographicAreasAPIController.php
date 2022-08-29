@@ -87,6 +87,16 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    *      type="string"
    *  )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Geographic area's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a GeographicArea",
@@ -230,6 +240,16 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    *  )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Geographic area's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="GeographicArea",
    *     in="body",
    *     description="The recipient to update",
@@ -331,6 +351,16 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    *  )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Geographic area's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="GeographicArea",
    *     in="body",
    *     description="The recipient to update",
@@ -415,6 +445,16 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * Delete a geographic area
    * @Rest\Delete("/{id}", name="geographic_area_api_delete")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Geographic area's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."

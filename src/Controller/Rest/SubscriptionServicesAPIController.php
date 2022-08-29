@@ -122,6 +122,16 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Retreive a SubscriptionService
    * @Rest\Get("/{id}", name="subscription-services_api_get")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a SubscriptionService",
@@ -161,6 +171,16 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Retreive a SubscriptionService's Payment settings
    * @Rest\Get("/{id}/payment-settings", name="subscription-service_payment-settings_api_get")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *      name="required",
    *      in="query",
@@ -381,6 +401,16 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="SubscriptionService",
    *     in="body",
    *     description="The subscriptionService to create",
@@ -478,6 +508,16 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="SubscriptionService",
    *     in="body",
    *     description="The Subscription Service to patch",
@@ -569,6 +609,16 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
@@ -650,6 +700,16 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Retrieve all Subscriptions of a Subscription Service
    * @Rest\Get("/{subscription_service_id}/subscriptions", name="subscriptions_api_get")
    *
+   * @SWG\Parameter(
+   *     name="subscription_service_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive the Subscriptions of a Subscription Service",
@@ -713,6 +773,26 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Retrieve a Subscription of a SubscriptionService
    * @Rest\Get("/{subscription_service_id}/subscriptions/{id}", name="subscription_api_get")
    *
+   * @SWG\Parameter(
+   *     name="subscription_service_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Subscription of a SubscriptionService",
@@ -786,6 +866,26 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="subscription_service_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *      name="version",
    *      in="query",
@@ -879,6 +979,16 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="subscription_service_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *      name="version",
    *      in="query",
@@ -984,6 +1094,26 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="subscription_service_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *      name="version",
    *      in="query",
@@ -1103,6 +1233,26 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="subscription_service_id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription service's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscription's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *      name="version",
    *      in="query",

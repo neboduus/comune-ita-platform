@@ -244,7 +244,7 @@ class Document
   private $correlatedServices;
 
   /**
-   * * @var \DateTime
+   * @var \DateTime
    *
    * @ORM\Column(name="created_at", type="datetime")
    * @SWG\Property(description="Document's creation date")

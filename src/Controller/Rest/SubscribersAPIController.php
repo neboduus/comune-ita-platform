@@ -173,6 +173,16 @@ class SubscribersAPIController extends AbstractApiController
    * Retrieve a Subscriber
    * @Rest\Get("/{id}", name="subscriber_api_get")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscriber's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Subscriber",
@@ -390,6 +400,16 @@ class SubscribersAPIController extends AbstractApiController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscriber's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *      name="version",
    *      in="query",
    *      type="string",
@@ -474,6 +494,16 @@ class SubscribersAPIController extends AbstractApiController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscriber's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *      name="version",
    *      in="query",
@@ -583,6 +613,16 @@ class SubscribersAPIController extends AbstractApiController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Subscriber's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *      name="version",
    *      in="query",

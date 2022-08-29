@@ -14,6 +14,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Operation;
 use Swagger\Annotations as SWG;
 use Symfony\Component\Translation\TranslatorInterface;
 use function Aws\boolean_value;
@@ -87,6 +88,16 @@ class CategoriesAPIController extends AbstractFOSRestController
    * Retreive a Category by id
    * @Rest\Get("/{id}", name="category_api_get")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Category's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Category",
@@ -122,7 +133,11 @@ class CategoriesAPIController extends AbstractFOSRestController
   /**
    * Create a Category
    * @Rest\Post(name="categories_api_post")
-   *
+   * 
+   * @Operation(
+   *    consumes={"application/json"},
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Authorization",
    *     in="header",
@@ -204,7 +219,10 @@ class CategoriesAPIController extends AbstractFOSRestController
   /**
    * Edit full Category
    * @Rest\Put("/{id}", name="categories_api_put")
-   *
+   * 
+   * @Operation(
+   *    consumes={"application/json"},
+   * )
    * @SWG\Parameter(
    *     name="Authorization",
    *     in="header",
@@ -213,6 +231,16 @@ class CategoriesAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Category's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Category",
    *     in="body",
@@ -307,6 +335,16 @@ class CategoriesAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Category's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="Category",
    *     in="body",
    *     description="The category to update",
@@ -391,6 +429,16 @@ class CategoriesAPIController extends AbstractFOSRestController
    * Delete a Category
    * @Rest\Delete("/{id}", name="category_api_delete")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Category's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."

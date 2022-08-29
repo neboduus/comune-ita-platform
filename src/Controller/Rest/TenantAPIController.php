@@ -109,6 +109,16 @@ class TenantAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="identifier",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Tenant's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="Tenant",
    *     in="body",
    *     description="The tenant to edit",
@@ -205,6 +215,16 @@ class TenantAPIController extends AbstractFOSRestController
    *     type="string"
    * )
    *
+   * @SWG\Parameter(
+   *     name="identifier",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Tenant's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Parameter(
    *     name="Tenant",
    *     in="body",

@@ -165,6 +165,16 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * Retreive a Service group by id or slug
    * @Rest\Get("/{id}", name="service_group_api_get")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Service group's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=200,
    *     description="Retreive a Service group by id or slug",
@@ -306,6 +316,16 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Service group's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="Service group",
    *     in="body",
    *     description="The service group to create",
@@ -396,6 +416,16 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * )
    *
    * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Service group's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
+   * @SWG\Parameter(
    *     name="Service group",
    *     in="body",
    *     description="The service group to create",
@@ -478,6 +508,16 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * Delete a Service group
    * @Rest\Delete("/{id}", name="service_gropu_api_delete")
    *
+   * @SWG\Parameter(
+   *     name="id",
+   *     in="path",
+   *     type="string",
+   *     format="uuid",
+   *     required=true,
+   *     description="Service group's uuid",
+   *     default="5365eab1-8741-43e6-bae1-9326da6734a2"
+   * )
+   * 
    * @SWG\Response(
    *     response=204,
    *     description="The resource was deleted successfully."

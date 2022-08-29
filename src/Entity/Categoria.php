@@ -36,7 +36,7 @@ class Categoria implements Translatable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
-   * @SWG\Property(description="Category name")
+   * @SWG\Property(description="Category name", example="Ambiente")
    * @Groups({"read", "write"})
    */
   private $name;

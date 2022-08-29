@@ -215,7 +215,7 @@ class Service
   /**
    * @var integer
    * @Serializer\Type("integer")
-   * @SWG\Property(description="Accepts values: 0 - Not Rquired, 1 - Immediate, 2 - Referred")
+   * @SWG\Property(description="Accepts values: 0 - Not Required, 1 - Immediate, 2 - Referred")
    * @Groups({"read", "write"})
    */
   private $paymentRequired;
