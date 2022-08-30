@@ -3,8 +3,8 @@ applicationSuite: OpenCity Italia
 name: OpenCity Italia - La Stanza del Cittadino
 url: https://gitlab.com/opencontent/stanza-del-cittadino/core
 landingURL: https://opencityitalia.it/
-releaseDate: '2022-08-05'
-softwareVersion: 2.0.0-rc.18
+releaseDate: '2022-08-31'
+softwareVersion: 2.0.0
 developmentStatus: stable
 softwareType: standalone/web
 platforms:
