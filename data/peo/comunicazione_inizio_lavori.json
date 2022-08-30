@@ -1,0 +1,19 @@
+{
+  "slug": "comunicazione-inizio-lavori",
+  "name": "Comunicazione Inizio Lavori",
+  "handler": "",
+  "area": 32,
+  "fcqn": "App\\Entity\\ComunicazioneInizioLavori",
+  "flow": "ocsdc.form.flow.scia_pratica_edilizia",
+  "flowOperator": "ocsdc.form.flow.operatore.standardallegatonofirma",
+  "description": "Comunicazione Inizio Lavori",
+  "istruzioni": "Durante la compilazione della pratica ti sarà chiesto di inserire gli allegati relativi alla pratica e di effettuare un pagamento (tramite annullamento di una marca da bollo)",
+  "url_modulo_principale": "https://s3.eu-west-3.amazonaws.com/ocsdc-moduli/7_Comunicazione+INIZIO+LAVORI_rev_15novRE.pdf",
+  "url_moduli_aggiuntivi": [
+
+  ],
+  "paymentParameters": null,
+  "paymentRequired": false,
+  "status": 1
+}
+

@@ -1,0 +1,31 @@
+{% if pratica.operatore %}
+  {% if pratica.operatore == user %}
+    {{ include('Operatori/parts/approva_o_rigetta.html.twig') }}
+  {% else %}
+    {{ include('Operatori/parts/riassegna.html.twig') }}
+  {% endif %}
+{% else %}
+  <div class="row mb-5">
+    <div class="col-12 d-flex justify-content-center">
+      {% if pratica.status == 1900 %}
+        {{ 'operatori.attesa_modulo_compilato'|trans }}
+      {% elseif pratica.status > 1900 and pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
+        {{ 'operatori.attesa_modulo_protocollato'|trans }}
+      {% elseif pratica.servizio.isPaymentRequired and pratica.status <= 1510 %}
+        {{ include('Operatori/parts/_change_status_paid.html.twig') }}
+      {% elseif pratica.status == 20000 %}
+        {{ 'operatori.pratica_ritirata'|trans({
+          '%data%': pratica.latestStatusChangeTimestamp | date(ocsdc_default_date_format),
+          '%ore%': pratica.latestStatusChangeTimestamp | date('H:i:s')})| raw }}
+      {% elseif pratica.servizio.workflow == constant('WORKFLOW_APPROVAL', pratica.servizio) and pratica.status in [2000, 3000] %}
+        <a class="btn btn-primary"
+           href="{{ path('operatori_autoassing_pratica', {'pratica': pratica}) }}">
+          <svg class="icon icon-light" href="#">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-unlocked"></use>
+          </svg>
+          {{ 'operatori.prendi_in_carico_pratica' | trans }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}

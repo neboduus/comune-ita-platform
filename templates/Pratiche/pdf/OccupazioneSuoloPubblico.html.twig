@@ -1,0 +1,83 @@
+<html>
+<head>
+    {{ include('Pratiche/pdf/parts/style.html.twig', {'pratica':pratica, 'user': user}) }}
+</head>
+<body>
+{{ include('Pratiche/pdf/parts/base.html.twig', {'pratica':pratica, 'user': user}) }}
+
+<div class="chiede center-title">
+    {{ 'pratica.pdf.chiede'|trans() }}
+</div>
+
+<p class="richiesta">
+    <p>
+        {{ 'occupazione_suolo_pubblico.pdf.richiesta'|trans({'%nomeIniziativa%':pratica.nomeIniziativa})|raw }}
+    </p>
+
+    <p><strong>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.title'|trans }}</strong></p>
+    <table class="table">
+        <tr>
+            <th>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.ragione_sociale'|trans }}</th>
+            <td>{{ pratica.ragioneSocialeOrgRichiedente }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.indirizzo'|trans }}</th>
+            <td>{{ pratica.indirizzoOrgRichiedente }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.civico'|trans }}</th>
+            <td>{{ pratica.civicoOrgRichiedente }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.cap'|trans }}</th>
+            <td>{{ pratica.capOrgRichiedente }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.comune'|trans }}</th>
+            <td>{{ pratica.comuneOrgRichiedente }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'steps.occupazione_suolo_pubblico.org_richiedente.provincia'|trans }}</th>
+            <td>{{ pratica.provinciaOrgRichiedente }}</td>
+        </tr>
+    </table>
+
+    <p><strong>{{ 'steps.occupazione_suolo_pubblico.occupazione.title'|trans }}</strong></p>
+    <table class="table">
+        <tr>
+            <th>{{ 'steps.occupazione_suolo_pubblico.occupazione.indirizzo'|trans }}</th>
+            <td>{{ pratica.indirizzoOccupazione }}</td>
+        </tr>
+        <tr>
+            <th>{{ 'steps.occupazione_suolo_pubblico.occupazione.civico'|trans }}</th>
+            <td>{{ pratica.civicoOccupazione }}</td>
+        </tr>
+
+    </table>
+
+    <p><strong>{{ 'steps.occupazione_suolo_pubblico.tipologia_occupazione.title'|trans }}</strong></p>
+    <table class="table">
+        {% if pratica.tipologiaOccupazione is null or pratica.tipologiaOccupazione == 'temporanea' %}
+            <tr>
+                <th width="1">{{ 'steps.occupazione_suolo_pubblico.tipologia_occupazione.tipologia'|trans }}</th>
+                <td>Temporanea</td>
+            </tr>
+            <tr>
+                <th>{{ 'steps.occupazione_suolo_pubblico.tempo_occupazione.inizio_giorno'|trans }}</th>
+                <td>{{ pratica.inizioOccupazioneGiorno|date(ocsdc_default_date_format) }} - {{ pratica.inizioOccupazioneOra }}</td>
+            </tr>
+            <tr>
+                <th>{{ 'steps.occupazione_suolo_pubblico.tempo_occupazione.fine_giorno'|trans }}</th>
+                <td>{{ pratica.fineOccupazioneGiorno|date(ocsdc_default_date_format) }} - {{ pratica.fineOccupazioneOra }}</td>
+            </tr>
+        {% endif %}
+    </table>
+
+{{ include('Pratiche/pdf/parts/data_luogo.html.twig', {'pratica':pratica, 'user': user}) }}
+
+{{ include('Pratiche/pdf/parts/payment_gateway.html.twig', {'pratica':pratica, 'user': user}) }}
+
+{{ include('Pratiche/pdf/parts/dati_autenticazione.html.twig', {'pratica':pratica,  'user': user}) }}
+{{ include('Pratiche/pdf/parts/footer.html.twig') }}
+</body>
+</html>

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-readonly env=${SYMFONY_ENV:-prod}
+readonly env=${APP_ENV:-prod}
 
-if [[ ! -f app/instances_${env}.yml ]]; then
+if [[ ! -f config/instances_${env}.yml ]]; then
   echo "Error, instances yaml not found! Are you sure you are executing this script from project's root directory?"
   exit 1
 fi
 
-grep identifier app/instances_${env}.yml | sed 's/[^+]\+:\s*\([-a-z]\+\)\+\(.*\)/\1/'
+grep identifier config/instances_${env}.yml | sed 's/[^+]\+:\s*\([-a-z]\+\)\+\(.*\)/\1/'

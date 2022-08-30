@@ -1,5 +1,5 @@
 # prepare assets for symfony
-FROM node:12.13.0 as assets
+FROM node:14.20.0-slim as assets
 
 RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
@@ -11,7 +11,7 @@ RUN yarn install
 COPY assets ./assets
 RUN npx browserslist@latest --update-db && \
     yarn encore production
-RUN ls -l web
+RUN ls -l public
 
 # prepare the vendor dir for symfony
 FROM wodby/php:${wodby_version:-7.3} as builder
@@ -21,10 +21,6 @@ USER root
 WORKDIR /var/www/html
 
 COPY ./composer.json ./composer.lock ./
-
-# app dir is required for classmaps entry in composer.json
-COPY app ./app
-
 RUN composer install --no-scripts --prefer-dist --no-suggest
 
 # prepare the final image
@@ -52,34 +48,35 @@ USER wodby
 
 COPY --from=builder /var/www/html/vendor /var/www/html/vendor
 
-#ARG SYMFONY_ENV=prod
+#ARG APP_ENV=prod
 ENV PHP_FPM_USER=wodby
 ENV PHP_FPM_GROUP=wodby
 
 WORKDIR /var/www/html
 
 COPY --chown=wodby:wodby ./ .
-COPY --chown=wodby:wodby --from=assets /home/node/app/web /var/www/html/web
+COPY --chown=wodby:wodby --from=assets /home/node/app/public /var/www/html/public
 
 # Add version file
 ARG CI_COMMIT_REF_NAME=no-branch
 ARG CI_COMMIT_SHORT_SHA=1234567
 ARG CI_COMMIT_TAG
 RUN chmod 755 ./compose_conf/scripts/*.sh
-RUN ./compose_conf/scripts/get-version.sh > /var/www/html/web/VERSION
+RUN ./compose_conf/scripts/get-version.sh > /var/www/html/public/VERSION
 
 COPY --chown=wodby:wodby ./compose_conf/bin/*.sh ./bin/
 RUN chmod 755 ./bin/*.sh
 
 RUN mkdir -p var/uploads && chown wodby:wodby var -R
 
-RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
+#RUN cp app/config/parameters.tpl.yml app/config/parameters.yml
 
 HEALTHCHECK --interval=1m --timeout=3s \
         CMD /usr/local/bin/php-fpm-healthcheck
 
 # lo script richiede che il file dei parametri sia già al suo posto
-RUN composer run-script post-docker-install-cmd
+# RUN composer run-script post-install-cmd
+RUN php bin/console assets:install public --no-cleanup
 
 # il container wodby/php prevede una dir dove mettere script lanciati prima
 # di far partire PHP-FPM
@@ -88,4 +85,4 @@ COPY compose_conf/php/init.d/*.sh /docker-entrypoint-init.d/
 ENV LOGS_PATH=php://stderr PHP_DATE_TIMEZONE=Europe/Rome
 
 # generate js transaltions file
-RUN php bin/console bazinga:js-translation:dump web --format=js --pattern=/translations/{domain}.{_format}
+RUN php bin/console bazinga:js-translation:dump public --format=js --pattern=/translations/{domain}.{_format}

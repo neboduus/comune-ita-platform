@@ -1,0 +1,36 @@
+# EightPoints GuzzleBundle
+# A full list of configuration options can be found here:
+# https://github.com/8p/EightPointsGuzzleBundle/blob/master/src/Resources/doc/configuration-reference.md
+eight_points_guzzle:
+  clients:
+
+    messages:
+      base_url: ''
+      options:
+        timeout: 1
+        headers:
+          Accept: 'application/json'
+
+    protocollo_cct:
+      base_url: '%env(PITRE_ADAPTER_URL)%'
+      options:
+        timeout: 120
+        headers:
+          Accept: 'application/json'
+    comunweb:
+      options:
+        timeout: 3
+        headers:
+          Accept: 'application/json'
+    mypay:
+      base_url: '%env(MYPAY_ADAPTER_URL)%'
+    giscom:
+      base_url: '%env(GISCOM_ADAPTER_URL)%'
+      options:
+        timeout: 120
+        verify: false
+        auth:
+          - '%env(GISCOM_ADAPTER_USERNAME)%' # login
+          - '%env(GISCOM_ADAPTER_PASSWORD)%' # password
+        headers:
+          Accept: 'application/json'

@@ -1,0 +1,49 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>{{ 'iscrizioni.edit_registry' | trans }}</h1>
+      </div>
+
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        <div class="row">
+          <div class="col-6">{{ form_row(form.name) }}</div>
+          <div class="col-6">{{ form_row(form.surname) }}</div>
+        </div>
+        <div class="row">
+          <div class="col-6">{{ form_row(form.fiscal_code) }}</div>
+          <div class="col-6">{{ form_row(form.email) }}</div>
+        </div>
+        <div class="row">
+          <div class="col-6">{{ form_row(form.date_of_birth) }}</div>
+          <div class="col-6">{{ form_row(form.place_of_birth) }}</div>
+        </div>
+        <div class="row">
+          <div class="col-9">{{ form_row(form.address) }}</div>
+          <div class="col-3">{{ form_row(form.house_number) }}</div>
+        </div>
+        <div class="row">
+          <div class="col-9">{{ form_row(form.municipality) }}</div>
+          <div class="col-3">{{ form_row(form.postal_code) }}</div>
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <input class="btn btn-warning mr-1" type="submit" value="{{ 'modifica' | trans }}"/>
+          </div>
+          <div class="col-6 text-right">
+            <a class="btn btn-100 mr-1" href="{{ path('operatori_subscriber_show', {'subscriber': subscriber.id }) }}">
+              {{ 'iscrizioni.back_to_subscriber' | trans }}
+            </a>
+          </div>
+        </div>
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

@@ -1,0 +1,32 @@
+twig:
+  default_path: '%kernel.project_dir%/templates'
+  debug: '%kernel.debug%'
+  strict_variables: '%kernel.debug%'
+  exception_controller: null
+  form_themes:
+    - 'bootstrap_4_layout.html.twig'
+    #- '@VichUploaderBundle/Form/fields.html.twig'
+    - 'form/fields.html.twig'
+    - '@EWZRecaptcha/Form/ewz_recaptcha_widget.html.twig'
+  globals:
+    header_top:
+      title: "%header_top_title%"
+      link: "%header_top_link%"
+    footer_credits: "%footer_credits%"
+    ocsdc_iter_duration_start_status: "%ocsdc_iter_duration_start_status%"
+    ocsdc_iter_duration_end_statuses: "%ocsdc_iter_duration_end_statuses%"
+    ocsdc_default_date_format: "%ocsdc_default_date_format%"
+    ocsdc_default_datetime_format: "%ocsdc_default_datetime_format%"
+    ocsdc_slim_datetime_format: "%ocsdc_slim_datetime_format%"
+    ocsdc_default_moment_datetime_format: "%ocsdc_default_moment_datetime_format%"
+    ocsdc_default_time_format: "%ocsdc_default_time_format%"
+    ocsdc_scheme: "%ocsdc_scheme%"
+    ocsdc_host: "%ocsdc_host%"
+    instance_service: "@ocsdc.instance_service"
+    version_service: '@App\Services\VersionService'
+    backoffices: "@ocsdc.backoffices"
+    login_route: "%login_route%"
+    protocollo_handler: "@ocsdc.protocollo.handler"
+    locale: "%locale%"
+    app_locales: "%app_locales%"
+    prefix: "%prefix%"

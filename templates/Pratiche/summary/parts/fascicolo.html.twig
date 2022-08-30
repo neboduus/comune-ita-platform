@@ -1,0 +1,7 @@
+<div class="link-list-wrapper multiline">
+  <ul class="link-list">
+    {% for parent in applications_in_folder %}
+      <li>{{ include('Pratiche/summary/parts/fascicolo_pratica.html.twig', {'pratica': parent, 'reference': pratica}) }}</li>
+    {% endfor %}
+  </ul>
+</div>

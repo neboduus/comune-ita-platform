@@ -2,19 +2,19 @@
 
 namespace Tests\Flows;
 
-use AppBundle\Entity\Allegato;
-use AppBundle\Entity\SciaPraticaEdilizia;
-use AppBundle\Entity\ComponenteNucleoFamiliare;
-use AppBundle\Entity\Ente;
-use AppBundle\Entity\ModuloCompilato;
-use AppBundle\Entity\OperatoreUser;
-use AppBundle\Entity\Pratica;
-use AppBundle\Entity\Servizio;
-use AppBundle\Entity\User;
-use AppBundle\Services\CPSUserProvider;
+use App\Entity\Allegato;
+use App\Entity\SciaPraticaEdilizia;
+use App\Entity\ComponenteNucleoFamiliare;
+use App\Entity\Ente;
+use App\Entity\ModuloCompilato;
+use App\Entity\OperatoreUser;
+use App\Entity\Pratica;
+use App\Entity\Servizio;
+use App\Entity\User;
+use App\Services\CPSUserProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Tests\AppBundle\Base\AbstractAppTestCase;
+use Tests\App\Base\AbstractAppTestCase;
 
 
 class SciaPraticaEdiliziaTest extends AbstractAppTestCase

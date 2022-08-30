@@ -27,8 +27,6 @@ services:
       retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data/pgdata
-    ports:
-      - 5432:5432
 
   php:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
@@ -47,17 +45,15 @@ services:
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       PHP_FPM_LOG_LEVEL: error
       ENV: ${ENV:-DEV}
-      SYMFONY_ENV: ${SYMFONY_ENV:-dev}
+      APP_ENV: ${APP_ENV:-dev}
       ENABLE_MIGRATIONS: 'true'
       ENABLE_INSTANCE_CONFIG: 'true'
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
-      #DB_NAME: ${DB_NAME:-sdc_multi}
-      #DB_USER: ${DB_USER:-sdc}
-      #DB_PASSWORD: ${DB_PASSWORD:-sdc}
-      MAILER_HOST: ${MAILER_HOST:-mailserver}
-      MAILER_PORT: ${MAILER_PORT:-1025}
-      MAILER_ENCRYPTION: null
+      DB_NAME: ${DB_NAME:-sdc}
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      MAILER_URL: ${MAILER_URL:-smtp://mailserver:1025}
       PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
       PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
       PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
@@ -66,7 +62,6 @@ services:
       PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-:stanzadelcittadino@pec.net}
       SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
       DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-php@stanzadelcittadino.localtest.me}
-      #WKHTMLBINARY: ${WKHTMLBINARY:-wkhtmltopdf}
       WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-http://gotenberg:3000}
       #EZ_PASSWORD: ${EZ_PASSWORD:-ez}
       #PITRE_ADAPTER_URL: ${PITRE_ADAPTER_URL:-http://pitre-soap:8080/}
@@ -130,12 +125,13 @@ services:
       OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       ENV: ${ENV:-DEV}
-      SYMFONY_ENV: ${SYMFONY_ENV:-dev}
+      APP_ENV: ${APP_ENV:-dev}
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
-      MAILER_TRANSPORT: ${MAILER_TRANSPORT:-sendmail}
-      MAILER_HOST: ${MAILER_HOST:-mailserver}
-      MAILER_PORT: ${MAILER_PORT:-1025}
+      DB_NAME: ${DB_PASSWORD:-sdc}
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      MAILER_URL: ${MAILER_URL:-smtp://mailserver:1025}
       PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
       PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
       PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
@@ -289,4 +285,3 @@ services:
       traefik.docker.network: 'default'
       traefik.http.services.mailserver.loadbalancer.server.port: 8025
       traefik.http.routers.mailserver.rule: 'Host(`mail.localtest.me`)'
-

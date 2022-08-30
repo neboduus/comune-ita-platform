@@ -1,0 +1,147 @@
+{% extends 'Default/index.html.twig' %}
+{% block title %}Cerca - Stanza del cittadino{% endblock %}
+
+{% block main_content %}
+  <section class="container">
+    <div class="row">
+      <div class="col-12 px-lg-4 py-lg-2">
+        <h1>Risultati della ricerca</h1>
+      </div>
+    </div>
+
+    <form class="mt-3 mb-5" action="{{ path('search') }}" method="get">
+      <div class="d-block d-lg-none d-xl-none text-center">
+        <a href="#filterCollapse" role="button" class="btn btn-primary collapsed" data-toggle="collapse"
+           aria-expanded="false" aria-controls="filterCollapse">
+          <i class="fa fa-filter" aria-hidden="true"></i> {{ 'search.filters'|trans }}
+        </a>
+      </div>
+
+      <div class="row">
+        <aside class="col-lg-3">
+          <div class="d-lg-block d-xl-block collapse mt-5" id="filterCollapse">
+
+            <div class="form-group floating-labels">
+              <div class="form-label-group pr-2">
+                <input type="text" class="form-control  search-text" name="q" value="{{ filters.q }}" placeholder="{{ 'search.label'|trans }}">
+                <button type="submit" class="autocomplete-icon btn btn-link" aria-label="{{ 'search.label'|trans }}">
+                  <svg class="icon">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-search"></use>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {% if facets.topics_id|length > 0 %}
+              <div class="pt-4 pt-lg-0">
+                <h6 class="text-uppercase">{{ 'search.topics'|trans }}</h6>
+                <div class="mt-2">
+                  {% for f in facets.topics_id %}
+                    <div class="form-check">
+                      <input id="f-{{ f.id }}" type="checkbox" name="topics_id[]" value="{{ f.id }}"
+                             {% if f.id in filters.fields %}checked="checked"{% endif %}>
+                      <label for="f-{{ f.id }}">{{ f.name }}</label>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {% if facets.recipient_id|length > 0 %}
+              <div class="pt-4 pt-lg-5">
+                <h6 class="text-uppercase">{{ 'search.recipients'|trans }}</h6>
+                <div class="mt-2">
+                  {% for f in facets.recipient_id %}
+                    <div class="form-check">
+                      <input id="f-{{ f.id }}" type="checkbox" name="recipient_id[]" value="{{ f.id }}"
+                             {% if f.id in filters.fields %}checked="checked"{% endif %}>
+                      <label for="f-{{ f.id }}">{{ f.name }}</label>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {% if facets.geographic_area_id|length > 0 %}
+              <div class="pt-4 pt-lg-5">
+                <h6 class="text-uppercase">{{ 'search.geographic_areas'|trans }}</h6>
+                <div class="mt-2">
+                  {% for f in facets.geographic_area_id %}
+                    <div class="form-check">
+                      <input id="f-{{ f.id }}" type="checkbox" name="geographic_area_id[]" value="{{ f.id }}"
+                             {% if f.id in filters.fields %}checked="checked"{% endif %}>
+                      <label for="f-{{ f.id }}">{{ f.name }}</label>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="pt-4 pt-lg-5">
+              <div class="row">
+                <div class="col">
+                  <button type="submit" class="btn btn-primary">
+                    {{ 'search.apply_filters'|trans }}
+                  </button>
+                </div>
+                {% if filters.fields|length > 0 or filters.q != '' %}
+                  <div class="col">
+                    <a href="{{ path('search') }}" class="btn btn-outline-secondary">
+                      {{ 'search.reset_filters'|trans }}
+                    </a>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+
+          </div>
+        </aside>
+
+        <div class="col-lg-9">
+          <div class="search-results mb-4 pl-lg-5 mt-3 mt-lg-5">
+
+            <div class="row">
+              <div class="col-md-12 col-lg-3 mb-3 text-center text-lg-left">
+                <p class="m-0 text-nowrap"><small>{{ 'search.results_count'|transchoice(services|length)|raw }}</small>
+                </p>
+              </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2">
+              {% for servizio in services %}
+                <div class="col mb-3">
+                  <div data-object_id="3981"
+                       class="card h-100 card-teaser p-3 position-relative overflow-hidden rounded border ">
+                    <div class="card-body pr-3">
+                      {% if servizio.topics %}
+                        <div class="mb-2 category-top">
+                          <a href="{{ path('category_show', {'slug': servizio.topics.slug}) }}" class="category text-decoration-none">
+                            <span class="category">{{ servizio.topics.name }}</span>
+                          </a>
+                        </div>
+                      {% endif %}
+                      <p class="mb-3 h6 font-weight-normal">
+                        {% if servizio.sharedWithGroup %}
+                          <a href="{{ path('service_group_show', {'slug': servizio.serviceGroup.slug}) }}"
+                             title="{{ servizio.fullName }}">{{ servizio.fullName }}</a>
+                        {% else %}
+                        <a href="{{ path('servizi_show', {'slug': servizio.slug}) }}"
+                           title="{{ servizio.name }}">{{ servizio.name }}</a>
+                        {% endif %}
+                      </p>
+                      <div class="card-text">
+                        <div class="mt-1">
+                          {{ servizio.description|abstract }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </section>
+{% endblock %}

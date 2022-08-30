@@ -1,0 +1,12 @@
+artprima_prometheus_metrics:
+  namespace: sdc
+  type: in_memory # possible values: in_memory, apcu, redis
+  ignored_routes:
+    - prometheus_bundle_prometheus
+    - _wdt
+
+  # used to disable default application metrics
+  disable_default_metrics: true
+
+  # used to enable console metrics
+  enable_console_metrics: false

@@ -1,0 +1,94 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('operator-new-application') }}
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4" data-token="{{ token }}">
+    <div class="row">
+      <div class="col-lg-12 py-lg-2 mb-5">
+        <h3>{{ 'pratica.nuova_pratica'|trans({'%name%': service.name}) }}</h3>
+      </div>
+
+      <div class="col-xs-12 offset-lg-1 col-lg-3 order-lg-2">
+        {% if application.user %}
+          <div id="application-owner" class="row pb-5">
+            <div class="col-4 col-lg-12">
+              <p><strong>{{ 'pratica.create_new_application_for' | trans }}</strong></p>
+            </div>
+            <div class="col-8 col-lg-12">
+              <div class="row">
+                <div class="col-2">
+                  <svg class="icon icon-primary icon-padded icon-lg"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use></svg>
+                </div>
+                <div class="col-8 pl-3">
+                  <strong class="text-primary">{{ application.user.fullName }}</strong><br />
+                  <small>{{ application.user.codiceFiscale }}</small>
+                </div>
+                <div class="col-2">
+                  <a href="{{ path('new_application_by_operator', {'servizio': service.id })}}">
+                    <svg class="icon icon-danger icon-padded icon-lg"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-circle"></use></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% else %}
+          <div class="callout">
+            <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg><span class="sr-only">{{ 'pratica.find_user' | trans }}</span> {{ 'pratica.guide' | trans }}</div>
+              {{ 'pratica.find_user_message' | trans | raw }}
+          </div>
+          <div class="form-group pb-5">
+            <input type="search" placeholder="{{ 'pratica.find_user' | trans }}" id="autocomplete-users" name="autocomplete-test" data-url="{{ path('new_application_by_operator', {'servizio': service.id}) }}">
+            <span class="autocomplete-icon" aria-hidden="true">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </span>
+            <ul id="users-list" class="autocomplete-list"></ul>
+          </div>
+        {% endif %}
+
+        <a href="{{ path('backend_services_index') }}" class="d-none d-lg-block btn-sm btn-secondary w-100">
+          <svg class="icon icon-sm icon-white mr-2">
+            <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-left"></use>
+          </svg>
+          {{ 'pratica.back_services' | trans }}
+        </a>
+
+      </div>
+
+      <div class="col-xs-12 col-lg-8 order-lg-1">
+        <div id="formio" class="w-100"
+             data-formserver_url="{{ formserver_url }}"
+             data-form_id="{{ service.formIoId }}"
+             data-submission="{% if cps_user_data %}{{ cps_user_data | json_encode }}{% endif %}"
+             data-service="{{ service.id }}"
+             data-user="{% if application.user %}{{ application.user.id }}{% endif %}"
+        >
+        </div>
+        <div id="feedback" class="row d-none">
+          <div class="col-12">
+            <div class="alert alert-success pb-5">
+              <p>{{ 'pratica.application_create_success' | trans }}</p>
+            </div>
+          </div>
+          <div class="col-12">
+            <a href="{{ path('new_application_by_operator', {'servizio': service.id}) }}" class="btn btn-primary">
+              <svg class="icon icon-sm icon-white mr-2">
+                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
+              </svg>
+              {{ 'pratica.application_new_create_services' | trans }}
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+{% endblock %}

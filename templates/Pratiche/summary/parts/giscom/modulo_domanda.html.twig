@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-12 pt-2"><strong>{{ 'steps.scia.modulo_default.label'|trans() }}</strong></div>
+  <div class="col-3"></div>
+  <div class="col-9">
+    <div id="no-more-tables">
+      <table class="table table-striped table-sm cf">
+        <thead class="cf">
+        <tr>
+          <th>{{ 'pratica.dettaglio.allegato.file'|trans }}</th>
+          <th>{{ 'pratica.dettaglio.allegato.descrizione'|trans }}</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if pratica.dematerializedForms.moduloDomanda.id|length>0 %}
+          <tr>
+            <td data-title="{{ 'pratica.dettaglio.allegato.file'|trans }}">
+              {{ pratica.dematerializedForms.moduloDomanda.name }}
+            </td>
+            <td data-title="{{ 'pratica.dettaglio.allegato.descrizione'|trans }}">
+              <small>Modulo principale</small>
+            </td>
+            <td data-title="" class="text-right">
+              {{ include('Pratiche/summary/parts/download_allegato.html.twig', {'pratica':pratica, 'user': user, 'allegato_id': pratica.dematerializedForms.moduloDomanda.id}) }}
+            </td>
+          </tr>
+        {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

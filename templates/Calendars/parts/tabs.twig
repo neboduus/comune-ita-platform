@@ -1,0 +1,56 @@
+<div id="hidden" class="hidden"
+     data-url='{{ path("calendar-day-availabilities_api_get", {'id': 'calendar_id', 'date': 'date'}) }}'
+     data-calendar='{{ calendar.id }}'
+     data-events='{{ events | json_encode }}'
+     data-duration='{{ minDuration }}'
+     data-token='{{ token }}'
+     data-range-time-event='{{ rangeTimeEvent | json_encode }}'
+     data-overlaps='{{ calendar.allowOverlaps }}'
+></div>
+<div class="menu-wrapper user-menu nav-tabs-hidescroll mt-4">
+  <ul class="nav nav-tabs auto nav-tabs-icon-text no-background" id="tab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab"
+         aria-controls="calendar" aria-selected="true">
+        <svg class="icon icon-sm">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
+        </svg>
+        {{ 'calendars.calendar' | trans }}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="meetings-tab" data-toggle="tab" href="#meetings" role="tab"
+         aria-controls="meetings" aria-selected="false">
+        <svg class="icon icon-sm">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-list"></use>
+        </svg>
+        {{ 'calendars.meetings' | trans }}
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" id="detail-tab" data-toggle="tab" href="#detail" role="tab"
+         aria-controls="detail" aria-selected="false">
+        <svg class="icon icon-sm">
+          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
+        </svg>
+        {{ 'calendars.detail' | trans }}
+      </a>
+    </li>
+  </ul>
+</div>
+<div class="row">
+  <div class="col">
+    <!-- prettier-ignore -->
+    <div class="tab-content mt-5 mt-md-3" id="myTabContent">
+      <div class="tab-pane fade show active" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
+        {{ include('Calendars/parts/showFullCalendar.html.twig') }}
+      </div>
+      <div class="tab-pane fade" id="meetings" role="tabpanel" aria-labelledby="meetings-tab">
+        {{ include('Calendars/parts/showTable.html.twig') }}
+      </div>
+      <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab">
+        {{ include('Calendars/parts/showDetails.html.twig') }}
+      </div>
+    </div>
+  </div>
+</div>

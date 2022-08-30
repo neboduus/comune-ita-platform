@@ -1,0 +1,32 @@
+{% extends 'Default/index.html.twig' %}
+
+{% block stylesheets %}
+  {% if calendar.type == constant('App\\Entity\\Calendar::TYPE_TIME_FIXED') %}
+    {{ encore_entry_link_tags('fullcalendar-manager') }}
+  {% elseif calendar.type == constant('\\App\\Entity\\Calendar::TYPE_TIME_VARIABLE') %}
+    {{ encore_entry_link_tags('fullcalendar-dynamic-manager') }}
+  {% endif %}
+  <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css"/>
+{% endblock %}
+
+{% block javascripts %}
+  {% if calendar.type == constant('\\App\\Entity\\Calendar::TYPE_TIME_FIXED') %}
+    {{ encore_entry_script_tags('fullcalendar-manager') }}
+  {% elseif calendar.type == constant('\\App\\Entity\\Calendar::TYPE_TIME_VARIABLE') %}
+    {{ encore_entry_script_tags('fullcalendar-dynamic-manager') }}
+  {% endif %}
+  <script type="text/javascript" src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+{% endblock %}
+
+{% block main_content %}
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        <h1>{{ calendar.title }}</h1>
+      </div>
+    </div>
+    {{ include('Calendars/parts/tabs.twig') }}
+    {{ include('Calendars/parts/lastModified.html.twig') }}
+    {{ include('Calendars/parts/action_buttons.twig') }}
+  </section>
+{% endblock %}

@@ -1,0 +1,206 @@
+{% extends 'Default/index.html.twig' %}
+
+{% set ente = instance_service.getCurrentInstance() %}
+
+{% block stylesheets %}
+  {{ encore_entry_link_tags('compile') }}
+  <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4.13/lib/theme-default/index.css">
+  <style>
+    .callout .body p {
+      font-family: "Titillium Web", Geneva, Tahoma, sans-serif !important;
+    }
+  </style>
+{% endblock %}
+
+{% block javascripts %}
+  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
+  <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
+  {{ encore_entry_script_tags('compile') }}
+  {% if form.vars.helper.vueApp %}
+    <script src="{{ asset('bundles/app/js/components/' ~ form.vars.helper.vueApp ~ '.js') }}"></script>
+    <script>
+      let vueBundledData = {{ form.vars.helper.vueBundledData|raw }};
+      new Vue({
+        el: "#vueApp"
+      });
+    </script>
+  {% endif %}
+  <script>
+    new Vue({
+      el: "#compilationNotes",
+      data: {
+        compilationNotes: null,
+        endpointUrl: '{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/api/v1.0/user/{{ form.vars.data.id }}/notes'
+      },
+      created: function () {
+        var self = this;
+        axios.get(this.endpointUrl)
+          .then(function (res) {
+            if (res.data) {
+              self.compilationNotes = res.data;
+            }
+          })
+      },
+      methods: {
+        onSave: function () {
+          axios.post(this.endpointUrl, this.compilationNotes)
+        }
+      }
+    })
+  </script>
+{% endblock %}
+
+{% block main_content %}
+  {% form_theme form 'form/ocsdc_form_style.html.twig' %}
+
+  <section class="container {{ form.vars.id }}">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        {% if pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
+          <h1>{{ 'pratica.integrazione_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
+          <small>{{ 'pratica.integrazione_pratica_description'|trans() }}</small>
+          {% if pratica.haUnaRichiestaDiIntegrazioneAttiva and pratica.getRichiestaDiIntegrazioneAttiva is not null %}
+            {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
+            <div class="alert alert-warning">
+              {{ pratica.getRichiestaDiIntegrazioneAttiva.description }}
+              (
+              <small>
+                <a
+                  href="{{ path( download_allegato_path, {'allegato': pratica.getRichiestaDiIntegrazioneAttiva.id}) }}">{{ 'allegato.scarica_allegato_richiesta_integrazione'|trans }}</a>
+              </small>
+              )
+            </div>
+          {% endif %}
+        {% else %}
+          <h1>{{ pratica.servizio.name }}</h1>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if pratica.servizio.legacy %}
+      <div class="row">
+        <div class="col-lg-12 px-lg-4">
+          <h4 class="mb-5">
+            {{ 'pratica.passo_uno_di_tanti'|trans({'%current%':flow.getCurrentStepNumber(),'%total%':flow.stepCount}) }}
+            -
+            {% if form.vars.helper.stepTitle|length > 0 %}
+              {{ form.vars.helper.stepTitle }}
+            {% else %}
+              {{ flow.currentStepLabel()|trans }}
+            {% endif %}
+          </h4>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="row hidden-xs">
+      <div class="col-md-12 mt-4 mb-4">
+        {% include '@CraueFormFlow/FormFlow/stepList.html.twig' %}
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
+      <div class="px-lg-4 {{ (currentStep.formType == "App\\Form\\Base\\SelectPaymentGatewayType" or
+      currentStep.formType == "App\\Form\\Base\\PaymentGatewayType") ? 'col-lg-12' : 'col-lg-8' }}">
+        {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
+        <div class="step-{{ flow.getCurrentStepNumber() }}">
+          {{ form_errors(form) }}
+
+            {% if form.vars.helper.descriptionText|length > 0 and not (pratica.statusName == 'STATUS_PAYMENT_PENDING' and form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType != 'mypay') %}
+              {{ form.vars.helper.descriptionText|raw }}
+            {% endif %}
+
+          {% if currentStep.formType == "App\\Form\\Base\\SummaryType" %}
+            <p>{{ 'steps.common.conferma.payment_help_text_top' | trans }}</p>
+            {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+          {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+            <p><b>{{ 'steps.common.conferma.help_text_top'|trans }}</b></p>
+            {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
+          {% endif %}
+          {{ form_rest(form) }}
+
+          <div id="vueApp">
+            {% if form.vars.helper.vueApp %}
+            <{{ form.vars.helper.vueApp }}></{{ form.vars.helper.vueApp }}>
+            {% endif %}
+          </div>
+        </div>
+
+      {# Sezione pagamenti diveso da MyPay e Bollo #}
+      {% if pratica.paymentType is not null and pratica.paymentType != 'bollo' and pratica.paymentType != 'mypay' %}
+        {{ include('Pratiche/parts/_payment.twig') }}
+      {% endif %}
+
+
+      {% if currentStep.formType == "App\\Form\\FormIO\\FormIORenderType" %}
+        <div id="formio"
+             class="editable formio-front"
+             data-locale="{{ app.request.locale }}"
+             data-formserver_url="{{ formserver_url }}"
+             data-form_id="{{ pratica.servizio.formIoId }}"
+             data-form_validate="{{ path( 'formio_validate', {'servizio': pratica.servizio.slug}) }}">
+        </div>
+      {% endif %}
+
+      <div id="formio-custom-errors" class="alert alert-danger alert-dismissible" style="display: none" role="alert"
+           auto-close="5000">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType == 'bollo') and pratica.statusName != 'STATUS_PAYMENT_PENDING' %}
+        <div class="mt-5">
+          {% include '@CraueFormFlow/FormFlow/buttons.html.twig' %}
+        </div>
+      {% endif %}
+
+      {{ form_end(form) }}
+    </div>
+
+    <div class="pt-5 pt-lg-2
+    {{ (currentStep.formType == "App\\Form\\Base\\SelectPaymentGatewayType" or
+      currentStep.formType == "App\\Form\\Base\\PaymentGatewayType") ? 'd-none' : 'col-lg-4' }}">
+      {% if form.vars.helper.guideText|length > 0 %}
+        <div class="callout">
+          <div class="callout-title">
+            <svg class="icon">
+              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use>
+            </svg>
+            {{ 'pratica.guida_utente'|trans }}
+          </div>
+          <div class="body">
+            <p>{{ form.vars.helper.guideText|raw }}</p>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if is_granted('ROLE_USER') %}
+        <div class="d-none" id="save-draft-container">
+          <button id="save-draft" class="btn btn-outline-primary w-100"
+                  data-save-draft-url="{{ path('pratiche_draft', {'pratica': pratica}) }}">
+            <i class="fa fa-floppy-o" aria-hidden="true"></i> {{ 'buttons.draft'|trans }}
+          </button>
+          <small
+            class="save-draft-info w-100 mt-1 text-center text-info {% if pratica.dematerializedForms is not defined or pratica.dematerializedForms|length <= 0 %}d-none{% endif %}"><i
+              class="fa fa-clock-o" aria-hidden="true"></i> {{ 'buttons.last_save'|trans }}
+            <span>{{ pratica.updatedAt|date('U')|time_ago }}</span></small>
+        </div>
+      {% endif %}
+
+      {# Info compilazione specificate nel servizio #}
+      {{ include('Pratiche/parts/compilation_info.html.twig') }}
+
+      {# Note compilazione per utente #}
+      {{ include('Pratiche/parts/user_compilation_notes.html.twig') }}
+
+    </div>
+    </div>
+  </section>
+
+  {# Modal di conferma #}
+  {{ include('Pratiche/parts/confirm_modal.html.twig') }}
+
+{% endblock %}
+

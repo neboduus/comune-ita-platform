@@ -1,0 +1,29 @@
+{% set ente = instance_service.getCurrentInstance() %}
+{% set customName = ente.getMetaAsArray('name') %}
+{% set enteName = customName != '' ? customName :  ente.name %}
+{% set host_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' %}
+{% set logoMeta = ente.getMetaAsArray('logo') %}
+{% set logo = logoMeta  ? logoMeta :  host_url ~ 'bundles/app/images/logo-default.png' %}
+
+<!doctype html>
+<html lang="it">
+<head>
+  {{ include('Pratiche/pdf/parts/style.html.twig') }}
+</head>
+<body>
+
+<main>
+  <div class="header">
+    <div class="text-center">
+      {% if ente %}
+        <img class="logo" src="{{ logo }}" alt="{{ enteName }}"/>
+        <h2>{{ enteName }}</h2>
+      {% endif %}
+    </div>
+  </div>
+
+  {% block pdf_content %}{% endblock %}
+</main>
+
+</body>
+</html>

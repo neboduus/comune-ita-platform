@@ -1,9 +1,0 @@
-imports:
-  - { resource: common/monolog.yml }
-  - { resource: parameters.yml }
-  - { resource: security.yml }
-  - { resource: services.yml }
-  - { resource: app.yml }
-  - { resource: bundles/ }
-  - { resource: config.yml }
-
