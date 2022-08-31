@@ -193,7 +193,6 @@ class KafkaService implements ScheduledActionHandlerInterface
     $data['event_created_at'] = $date->format(DateTime::W3C);
     $data['event_version'] = $this->kafkaEventVersion;
     $data['app_version'] = $this->versionService->getVersion();
-    $data = json_encode($data);
 
     $data = json_encode($data);
     $params = [
