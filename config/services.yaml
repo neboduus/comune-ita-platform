@@ -427,14 +427,17 @@ services:
       $kafkaEventVersion: "%kafka_event_version%"
       $topics: "%kafka_topics%"
       $kafkaRequestTimeout: "%kafka_request_timeout%"
+    tags:
+      - { name: 'ocsdc.schedule_action_handler', alias: 'ocsdc.kafka_service' }
 
   ocsdc.kafka_service: '@App\Services\KafkaService'
 
-  ocsdc.reminder_service:
-    class: App\Services\ReminderService
+  App\Services\ReminderService:
     autowire: true
+    tags:
+      - { name: 'ocsdc.schedule_action_handler', alias: 'ocsdc.reminder_service' }
 
-  App\Services\ReminderService: "@ocsdc.reminder_service"
+  ocsdc.reminder_service: '@App\Services\ReminderService'
 
   ocsdc.io_service:
     class: App\Services\IOService
