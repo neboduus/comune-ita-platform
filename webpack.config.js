@@ -32,7 +32,7 @@ Encore
   .addEntry('fullcalendar-manager', './assets/js/fullcalendar-manager.js')
   .addEntry('fullcalendar-dynamic-manager', './assets/js/fullcalendar-dynamic-manager.js')
   .addEntry('chars-operator', './assets/js/Charts/chart-operator.js')
-  .addEntry('jquery-ui-only-calendar', './assets/js/jquery-ui-custom-calendar.js')
+  .addEntry('profile', './assets/js/User/Profile/profile.js')
   .addEntry('outdated-browser-rework', './assets/js/outdated-browser-rework.js')
   .addEntry('edit-operator', './assets/js/edit-operator')
   .addEntry('operator-show-application', './assets/js/pages/operator-show-application')
@@ -79,7 +79,7 @@ Encore
     from: './assets/app/',
     //to: '../bundles/app/[path][name].[hash:8].[ext]',
     to: '../../bundles/app/[path][name].[ext]',
-    pattern: /\.(ico|png|jpg|jpeg|svg|gif|pdf|js|css)$/,
+    pattern: /\.(ico|png|jpg|jpeg|svg|gif|pdf|js|css|json|txt|ttf|woff|woff2|eot)$/,
   })
 .copyFiles({
       from: './assets/images',

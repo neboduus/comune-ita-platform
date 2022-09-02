@@ -4,15 +4,16 @@
 {% block title %}{{ pratica.servizio.name }} - Stanza del cittadino{% endblock %}
 {% block stylesheets %}
   {{ encore_entry_link_tags('user-show-application') }}
-  <link rel="stylesheet" href="https://unpkg.com/element-ui@1.4.13/lib/theme-default/index.css">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/element-ui/1.4.13/theme-default/index.css" integrity="sha512-698XkMvQis2vuqDf9fvwdvAjVWsAEwb/2yUWZZyzEEd/z3M++P03dmS/oxSIUGe7hg2aaS+MXUKQqMKi2iolxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block javascripts %}
   {{ encore_entry_script_tags('user-show-application') }}
 
-  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
-  <script src="//unpkg.com/element-ui@1.4.13/lib/index.js"></script>
-  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js" integrity="sha512-yNMXFsZbP+Hii2fM4n1EvhKbBCZ2NAfW1FvlN6yB1ZanH+1sEcNV2rPEg6qCMRT/4dY01ELCdD75WflfTHdKJg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/element-ui/1.4.13/index.js" integrity="sha512-cxMPoY2pP9tAt+qy1y/9zQTKAFNtW9DT5tKin9+0qYml+iK6HdaqOS/r523pNmmps3c4E3v5rZSBQb0aA5EFKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
   {% if user.idp != 'anonymous' and pratica.operatore %}
     <script type="application/javascript">

@@ -3,13 +3,24 @@
 {% block stylesheets %}
 
   {{ parent() }}
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/w/bs4/dt-1.10.18/datatables.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
-  <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jq-3.2.1/dt-1.10.16/datatables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.min.js" integrity="sha512-OQlawZneA7zzfI6B1n1tjUuo3C5mtYuAWpQdg+iI9mkDoo7iFzTqnQHf+K5ThOWNJ9AbXL4+ZDwH7ykySPQc+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <script>
+    const lang = document.documentElement.lang.toString();
+    //Default
+    let url_language = '/bundles/app/js/libs/datatables/it-IT.json';
+    if(lang === 'en'){
+      url_language = '/bundles/app/js/libs/datatables/en-GB.json';
+    }else if(lang === 'de'){
+      url_language = '/bundles/app/js/libs/datatables/de-DE.json';
+    }
     // Datatable
     $('#payments-table').DataTable({
       "order": [[3, "desc"]],
@@ -22,7 +33,7 @@
         {orderable: false, targets: 5}
       ],
       language: {
-        url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/it_it.json'
+        url: url_language
       },
       stateSave: true,
       dom: "<'row'<'col-6 pt-2'l><'col-6'f>>" +
@@ -34,7 +45,7 @@
     $('#missing-payments-table').DataTable({
       "order": [0, "desc"],
       language: {
-        url: 'https://cdn.datatables.net/plug-ins/1.11.3/i18n/it_it.json'
+        url: '/bundles/app/js/libs/datatables/it-IT.json'
       },
       stateSave: true,
       dom: "<'row'<'col-6 pt-2'l><'col-6'f>>" +

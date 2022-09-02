@@ -3,7 +3,6 @@
 {% set ente = instance_service.getCurrentInstance() %}
 
 {% block stylesheets %}
-  <script src="//unpkg.com/axios/dist/axios.min.js"></script>
   {{ encore_entry_link_tags('compile') }}
 {% endblock %}
 
@@ -71,7 +70,7 @@
                   <a href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}"
                      class="btn btn-primary btn-lg mt-1 btn-block w-100">
                      <span class="d-inline-block">
-                  <img class="icon" src="{{ asset('bundles/app/images/spid-user.svg') }}">
+                  <img class="icon" src="{{ asset('bundles/app/images/spid-user.svg') }}" alt="icon">
                 </span>
                   <span class="ml-2 d-inline-block">{{ 'login_callout_texts.cta_button' | trans }}</span>
                   </a>
