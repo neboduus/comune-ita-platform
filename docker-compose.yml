@@ -111,6 +111,7 @@ services:
       shibb_Shib-Session-Index: abc123abc123abc123abc123abc123abc123abc123
       shibb_Shib-Authentication-Instant: 2000-01-01T00-00Z
       #shibb_Shib-AuthnContext-Class: urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard
+      GOOGLE_TAG_MANAGER_KEY: ${GOOGLE_TAG_MANAGER_KEY:-null}
 
   cron:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
