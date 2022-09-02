@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/outdated-browser/1.1.5/outdatedbrowser.min.css"
         integrity="sha256-KNfTksp/+PcmJJ0owdo8yBLi/SVMQrH/PNPm25nR/pI=" crossorigin="anonymous"/>
     {% endif %}
+    {% if   google_tag_manager_key is defined and   google_tag_manager_key is not null  %}
     <!-- Google Tag Manager -->
     <script>(function (w, d, s, l, i) {
         w[l] = w[l] || [];
@@ -30,6 +31,7 @@
         f.parentNode.insertBefore(j, f);
       })(window, document, 'script', 'dataLayer', 'GTM-TTVNWDL');</script>
     <!-- End Google Tag Manager -->
+    {% endif %}
     <script>
       // Plain Javascript
       //event listener: DOM ready
@@ -64,11 +66,14 @@
   {% endblock %}
 </head>
 <body>
+
+{% if google_tag_manager_key is defined and google_tag_manager_key is not null  %}
 <!-- Google Tag Manager (noscript) -->
 <noscript>
   <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TTVNWDL" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
 <!-- End Google Tag Manager (noscript) -->
+{% endif %}
 
 {% block header %}{% endblock %}
 {% block content_container %}{% endblock %}

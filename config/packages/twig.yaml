@@ -30,3 +30,4 @@ twig:
     locale: "%locale%"
     app_locales: "%app_locales%"
     prefix: "%prefix%"
+    google_tag_manager_key: "%google_tag_manager_key%"

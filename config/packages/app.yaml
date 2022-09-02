@@ -145,6 +145,7 @@ parameters:
   analytics:
     plan: '%env(ANALYTICS_PLAN)%'
   google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+  google_tag_manager_key: '%env(GOOGLE_TAG_MANAGER_KEY)%'
   env(PREFIX): ''
   env(DB_DRIVER): pdo_pgsql
   env(DB_HOST): postgres
@@ -247,3 +248,4 @@ parameters:
   env(JWT_PUBLIC_KEY): '%kernel.project_dir%/config/jwt/public.pem'
   env(JWT_PASSPHRASE): stanzadelcittadino
   env(MAILER_URL): smtp://mailserver:1025
+  env(GOOGLE_TAG_MANAGER_KEY): null
