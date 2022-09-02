@@ -3,20 +3,21 @@
 
 {% block stylesheets %}
   {{ parent() }}
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jq-3.6.0/dt-1.12.1/datatables.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
-  <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jq-3.6.0/dt-1.12.1/datatables.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <script>
     const lang = document.documentElement.lang.toString();
     //Default
-    let url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/it-IT.json';
+    let url_language = '/bundles/app/js/libs/datatables/it-IT.json';
     if(lang === 'en'){
-      url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/en-GB.json';
+      url_language = '/bundles/app/js/libs/datatables/en-GB.json';
     }else if(lang === 'de'){
-      url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/de-DE.json';
+      url_language = '/bundles/app/js/libs/datatables/de-DE.json';
     }
     // Datatable
     $('#service-table').DataTable({

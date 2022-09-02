@@ -6,7 +6,6 @@
   {% elseif calendar.type == constant('\\App\\Entity\\Calendar::TYPE_TIME_VARIABLE') %}
     {{ encore_entry_link_tags('fullcalendar-dynamic-manager') }}
   {% endif %}
-  <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css"/>
 {% endblock %}
 
 {% block javascripts %}
@@ -15,7 +14,6 @@
   {% elseif calendar.type == constant('\\App\\Entity\\Calendar::TYPE_TIME_VARIABLE') %}
     {{ encore_entry_script_tags('fullcalendar-dynamic-manager') }}
   {% endif %}
-  <script type="text/javascript" src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
 {% endblock %}
 
 {% block main_content %}

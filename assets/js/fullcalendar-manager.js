@@ -6,10 +6,10 @@ import listPligin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
 import allLocales from '@fullcalendar/core/locales-all';
+import printJS from "print-js";
 
 require("bootstrap-italia");
 require("../css/app.scss");
-require("jquery");
 
 require('@fullcalendar/core/main.min.css');
 require('@fullcalendar/daygrid/main.min.css');
@@ -19,6 +19,7 @@ require('@fullcalendar/bootstrap/main.min.css');
 
 const language = document.documentElement.lang.toString();
 $(document).ready(function () {
+
   // Hide all buttons
   $("#edit_alert").hide();
   $("#no_slots_edit_alert").hide();
@@ -152,6 +153,18 @@ $(document).ready(function () {
     $('.fc-listWeek-button').hide()
     $('.fc-listMonth-button').hide()
     $('.fc-listDay-button').show()
+  })
+
+  $('#print').on('click', () =>{
+    printJS({
+      printable: 'container-fullcalendar',
+      type: 'html',
+      scanStyles: false,
+      css: ['https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/core/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/daygrid/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/timegrid/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/list/main.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/4.2.0/bootstrap/main.min.css']})
   })
 });
 
