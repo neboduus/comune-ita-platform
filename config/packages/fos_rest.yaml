@@ -8,9 +8,15 @@ fos_rest:
   view:
     view_response_listener: true
     #formats:
-    #    json: true
+    #  json: true
     #templating_formats:
     #    html: true
+  body_listener:
+    enabled: true
+    throw_exception_on_unsupported_content_type: true
+    decoders:
+      json: fos_rest.decoder.json
+  allowed_methods_listener: true
   serializer:
     serialize_null: true
   exception:
@@ -19,3 +25,7 @@ fos_rest:
     rules:
       - { path: ^/%prefix%/api, prefer_extension: true, fallback_format: json, priorities: [ 'json' ] }
       - { path: ^/%prefix%, prefer_extension: true, fallback_format: html, priorities: [ 'html', '*/*' ] }
+#services:
+#  fos_rest.decoder.json:
+#    class: FOS\RestBundle\Decoder\JsonDecoder
+#    public: true
