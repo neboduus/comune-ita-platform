@@ -383,7 +383,7 @@ pratica:
   vai_alla_pratica: 'Vai alla pratica'
   vai_al_pagamento: 'Vai al pagamento'
   crea_nuova_pratica: 'Effettua una nuova richiesta'
-  ritira_la_pratica: 'Annulla la richiesta'
+  ritira_la_pratica: 'Ritira pratica'
   nuova_pratica: 'Nuova pratica: %name%'
   integrazione_pratica: 'Integrazione pratica: %name%'
   integrazione_pratica_description: "Sono state richieste alcuni integrazioni per la pratica che hai inviato: correggi tutti i campi esposti contrasseganti dall'asterisco (*)"

@@ -285,7 +285,7 @@ pratica:
   # Bearbeitungsdauer
   tooltip_durata_iter: "Bearbeitungsdauer: zirka"
   vai_alla_pratica: 'Hier finden Sie den Vorgang'
-  ritira_la_pratica: 'Anfrage annullieren'
+  ritira_la_pratica: 'Abheben Vorgang'
   nuova_pratica: 'Neuer Vorgang: %name%'
   integrazione_pratica: 'Ergänzung Vorgang: %name%'
   # pratica può essere anche sinonimo di "file"???
