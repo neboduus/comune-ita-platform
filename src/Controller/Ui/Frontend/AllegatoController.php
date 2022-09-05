@@ -164,11 +164,10 @@ class AllegatoController extends AbstractController
         $session->start();
       }
 
-      $content = json_decode($request->getContent(), true);
-      $fileName = $content['original_filename'];
-      $description = $content['description'] ?? Allegato::DEFAULT_DESCRIPTION;
-      $mimeType = $content['mime_type'] ?? Allegato::DEFAULT_MIME_TYPE;
-      $protocolRequired = $content['protocol_required'] ?? true;
+      $fileName = $request->request->get('original_filename');
+      $description = $request->request->get('description') ?? Allegato::DEFAULT_DESCRIPTION;
+      $mimeType = $request->request->get('mime_type') ?? Allegato::DEFAULT_MIME_TYPE;
+      $protocolRequired = $request->request->get('protocol_required') ?? true;
 
       $allegato = new Allegato();
       $user  = $this->getUser();
@@ -223,8 +222,7 @@ class AllegatoController extends AbstractController
         $session->start();
       }
 
-      $content = json_decode($request->getContent(), true);
-      $fileHash = $content['file_hash'];
+      $fileHash = $request->request->get('file_hash');
       $allegato->setFileHash($fileHash);
       $allegato->setExpireDate(null);
       $this->entityManager->persist($allegato);
