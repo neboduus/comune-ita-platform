@@ -119,7 +119,7 @@ class InfoPayment {
                       <a class="card-tag px-0 px-sm-2" href="javascript:void(0)">${InfoPayment.switchStatus(data[i].status)}</a>
                     </div>
                     <div class="category-top">
-                      <a class="category" href="javascript:void(0)">${Translator.trans('payment.created_at', {}, 'messages', InfoPayment.$language)}</a>
+                      <a class="category" href="javascript:void(0)">${Translator.trans('date', {}, 'messages', InfoPayment.$language)}</a>
                       <span class="data">${moment(moment.utc(data[i].created_at).toDate()).local(InfoPayment.$language).format('DD/MM/YYYY - HH:mm')}</span>
                     </div>
                   </div>
