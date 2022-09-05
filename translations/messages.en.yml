@@ -263,7 +263,7 @@ pratica:
   iter: 'Procedure'
   tooltip_durata_iter: "Duration of the process: approx"
   vai_alla_pratica: 'Go to file'
-  ritira_la_pratica: 'Cancel request'
+  ritira_la_pratica: 'Withdraw request'
   nuova_pratica: 'new file: %name%'
   integrazione_pratica: 'File integration: %name%'
   integrazione_pratica_description: "Some additions have been requested for the practice you sent: correct all the fields shown marked with an asterisk (*)"
