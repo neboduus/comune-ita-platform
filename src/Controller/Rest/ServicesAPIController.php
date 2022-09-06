@@ -726,6 +726,11 @@ class ServicesAPIController extends AbstractFOSRestController
     $category = $this->em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
     if ($category instanceof Categoria) {
       $serviceDto->setTopics($category);
+    } else {
+      $category = $this->em->getRepository(Categoria::class)->findOneBy([], ['name' => 'ASC']);
+      if ($category instanceof Categoria) {
+        $serviceDto->setTopics($category);
+      }
     }
 
     $serviceGroup = $this->em->getRepository('App\Entity\ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]
