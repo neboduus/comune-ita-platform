@@ -1,7 +1,15 @@
 doctrine:
   dbal:
-    url: 'postgres://%env(DB_USER)%:%env(DB_PASSWORD)%@%env(DB_HOST)%/%env(DB_NAME)%?server_version=11'
-    driver: 'postgresql'
+    #url: 'postgres://%env(DB_USER)%:%env(DB_PASSWORD)%@%env(DB_HOST)%/%env(DB_NAME)%?server_version=11'
+    #driver: 'postgresql'
+    driver: '%database_driver%'
+    server_version: '11'
+    host: '%database_host%'
+    port: '%database_port%'
+    dbname: '%database_name%'
+    user: '%database_user%'
+    password: '%database_password%'
+    charset: utf8
 
   orm:
     auto_generate_proxy_classes: true
