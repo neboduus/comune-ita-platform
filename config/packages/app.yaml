@@ -2,6 +2,12 @@ parameters:
   version: 2.0.1-rc.2
   locale: it
   app_locales: it
+  database_driver: '%env(DB_DRIVER)%'
+  database_host: '%env(DB_HOST)%'
+  database_port: '%env(DB_PORT)%'
+  database_name: '%env(DB_NAME)%'
+  database_user: '%env(DB_USER)%'
+  database_password: '%env(DB_PASSWORD)%'
   prefix: '%env(PREFIX)%'
   instance: ''
   protocollo: ''

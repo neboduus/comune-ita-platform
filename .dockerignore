@@ -1,9 +1,10 @@
-app/config/parameters.yml
 ./vendor/
 ./bower_components/
 ./node_modules/
 .docker-sync/
 .git/
+.gitlab/
+.idea/
 ./example/
 ./doc/
 ./var/cache/*
