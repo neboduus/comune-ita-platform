@@ -566,6 +566,11 @@ class AdminController extends AbstractController
         $category = $em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
         if ($category instanceof Categoria) {
           $serviceDto->setTopics($category);
+        } else {
+          $category = $em->getRepository(Categoria::class)->findOneBy([], ['name' => 'ASC']);
+          if ($category instanceof Categoria) {
+            $serviceDto->setTopics($category);
+          }
         }
 
         $service = $serviceDto->toEntity();
@@ -802,7 +807,6 @@ class AdminController extends AbstractController
    */
   public function newServiceAction(Request $request)
   {
-
     $servizio = new Servizio();
     $ente = $this->instanceService->getCurrentInstance();
 
@@ -812,12 +816,16 @@ class AdminController extends AbstractController
     $servizio->setEnte($ente);
     $servizio->setStatus(Servizio::STATUS_CANCELLED);
     $servizio->setProtocolRequired(false);
+    $category = $this->entityManager->getRepository(Categoria::class)->findOneBy([], ['name' => 'ASC']);
+    if ($category instanceof Categoria) {
+      $servizio->setTopics($category);
+    }
 
     // Erogatore
     $erogatore = new Erogatore();
     $erogatore->setName($this->translator->trans('provider_of') . ' ' . $servizio->getName() . ' ' . $this->translator->trans('for') . ' ' . $ente->getName());
     $erogatore->addEnte($ente);
-    $this->getDoctrine()->getManager()->persist($erogatore);
+    $this->entityManager->persist($erogatore);
     $servizio->activateForErogatore($erogatore);
 
     $this->serviceManager->save($servizio);

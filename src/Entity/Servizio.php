@@ -99,7 +99,7 @@ class Servizio implements Translatable
 
   /**
    * @ORM\ManyToOne(targetEntity="Categoria", inversedBy="services")
-   * @ORM\JoinColumn(name="topics", referencedColumnName="id", nullable=true)
+   * @ORM\JoinColumn(name="topics", referencedColumnName="id", nullable=false)
    * @Serializer\Exclude()
    */
   private $topics;
