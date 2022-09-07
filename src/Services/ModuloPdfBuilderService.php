@@ -621,7 +621,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   public function generatePdfUsingGotemberg( Pratica $pratica, $showProtocolNumber = false )
   {
     $locale = $pratica->getLocale();
-    $url = $this->router->generate('print_pratiche', ['_locale' => $locale, 'pratica' => $pratica, 'protocol', $showProtocolNumber], UrlGeneratorInterface::ABSOLUTE_URL);
+    $url = $this->router->generate('print_pratiche', ['_locale' => $locale, 'pratica' => $pratica, 'protocol' => $showProtocolNumber], UrlGeneratorInterface::ABSOLUTE_URL);
     $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
     $request = new URLRequest($url);
     $request->setPaperSize(GotembergRequest::A4);
