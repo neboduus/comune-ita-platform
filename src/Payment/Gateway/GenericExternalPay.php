@@ -25,6 +25,7 @@ use GuzzleHttp\Psr7\Request;
 class GenericExternalPay extends AbstractPaymentData implements EventSubscriberInterface
 {
 
+  const IDENTIFIER = 'generic-external';
   const IMPORTO = 'total_amounts';
 
   /**
@@ -63,7 +64,7 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
 
   public function getIdentifier(): string
   {
-    return 'generic-external';
+    return self::IDENTIFIER;
   }
 
   public static function getPaymentParameters()

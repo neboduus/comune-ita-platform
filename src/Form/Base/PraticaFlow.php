@@ -9,6 +9,7 @@ use App\Entity\PraticaRepository;
 use App\Form\Extension\TestiAccompagnatoriProcedura;
 use App\FormIO\SchemaFactoryInterface;
 use App\Logging\LogConstants;
+use App\Payment\Gateway\Bollo;
 use App\Services\DematerializedFormAllegatiAttacherService;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
@@ -154,7 +155,9 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     if ($pratica->getStatus() == Pratica::STATUS_DRAFT) {
       $pratica->setSubmissionTime(time());
       $this->statusService->setNewStatus($pratica, Pratica::STATUS_PRE_SUBMIT);
-
+    } elseif($pratica->getStatus() == Pratica::STATUS_PAYMENT_PENDING && $pratica->getPaymentType() == Bollo::IDENTIFIER && $pratica->getServizio()->isPaymentDeferred()) {
+      // Todo: eliminare else quando eliminiamo il bollo
+      $this->statusService->setNewStatus($pratica, Pratica::STATUS_PAYMENT_SUCCESS);
     } elseif ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
 
       // Creo il file principale per le integrazioni
