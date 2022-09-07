@@ -16,9 +16,11 @@ use Symfony\Component\Form\Extension\Core\Type\TimeType;
 class Bollo extends AbstractPaymentData implements EventSubscriberInterface
 {
 
+  const IDENTIFIER = 'bollo';
+
   public function getIdentifier(): string
   {
-    return 'bollo';
+    return self::IDENTIFIER;
   }
 
   public static function getPaymentParameters()

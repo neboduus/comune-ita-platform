@@ -37,6 +37,8 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
    * overall_outcome: -1 for pending, 0 for good, values from documentation for other cases
    */
 
+  const IDENTIFIER = 'mypay';
+
   const PAYMENT_ATTEMPTS = 'payment_attempts';
   const IMPORTO = 'total_amounts';
   const OVERALL_OUTCOME = 'overall_outcome';
@@ -96,7 +98,7 @@ class MyPay extends AbstractPaymentData implements EventSubscriberInterface
 
   public function getIdentifier(): string
   {
-    return 'mypay';
+    return self::IDENTIFIER;
   }
 
   public static function getPaymentParameters(): array

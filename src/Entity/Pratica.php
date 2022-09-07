@@ -1778,7 +1778,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    */
   public function getPaymentData()
   {
-    return $this->paymentData;
+    return $this->paymentData ?? [];
   }
 
   /**
