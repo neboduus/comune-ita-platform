@@ -174,6 +174,12 @@
                            href="#max-response-time-section"><span>{{ 'gruppo_di_servizi.max_response_time_list' | trans }}</span></a>
                       </li>
                     {% endif %}
+                    {% if servizio.getNotStickyServices.count > 0 %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#related-service"><span>{{ 'documenti.documento.servizi_correlati' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                   </ul>
                 </div>
               </div>
@@ -288,6 +294,16 @@
           {% endfor %}
         </div>
       </section>
+      <section class="col offset-lg-4">
+        {% if servizio.getNotStickyServices.count > 0 %}
+          <div class="row flex-column py-5 ml-2 ml-lg-0">
+            <h2 class="mb-2 mb-lg-4 mb-3" id="related-service">{{ 'documenti.documento.servizi_correlati' | trans }}</h2>
+            {% for item in servizio.getNotStickyServices %}
+              {{ include('Servizi/parts/panel/service-related.html.twig', {'servizio':item}) }}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </section>
     </div>
   </section>
   {% if servizio.getStickyServices.count > 0 %}
@@ -300,18 +316,6 @@
             </div>
           {% endfor %}
         </div>
-      </div>
-    </section>
-  {% endif %}
-
-  {% if servizio.getNotStickyServices.count > 0 %}
-    <section class="container py-5">
-      <div class="row">
-        {% for item in servizio.getNotStickyServices %}
-          <div class="col-12 col-sm-6 col-lg-4">
-            {{ include('Servizi/parts/panel/servizio.html.twig', {'servizio':item}) }}
-          </div>
-        {% endfor %}
       </div>
     </section>
   {% endif %}

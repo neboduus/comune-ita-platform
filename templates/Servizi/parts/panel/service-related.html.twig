@@ -1,0 +1,14 @@
+<div class="link-list-wrapper">
+  <ul class="link-list">
+    <li class="shadow mb-3 p-3">
+      <a class="list-item icon-left" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
+        <span class="list-item-title-icon-wrapper ml-3">
+          <svg class="icon icon-sm icon-color" aria-hidden="true">
+            <use href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use></svg>
+          <span class="list-item-title font-weight-semibold"> {{ servizio.name }}</span>
+        </span>
+        <p class="ml-3 mb-0">{{ servizio.description|abstract }}</p>
+      </a>
+    </li>
+  </ul>
+</div>
