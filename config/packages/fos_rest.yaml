@@ -17,6 +17,7 @@ fos_rest:
     decoders:
       json: fos_rest.decoder.json
   allowed_methods_listener: true
+  param_fetcher_listener: force
   serializer:
     serialize_null: true
   exception:
