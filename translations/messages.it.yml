@@ -792,6 +792,15 @@ documenti:
     validity_begin: "Data di inizio validità"
     validity_end: "Data di fine validità"
     store: "Salvare il file?"
+    invalid_original_name: 'Il valore del parametro original_filename non è una stringa ASCII valida'
+    invalid_folder: "L'identificativo della cartella specificata non è valido"
+    invalid_owner: "L'utente specificato non risulta essere il proprietario della cartella"
+    invalid_mime_type: "Mime type non ammesso"
+    missing_extension: "E'obbligatoruo specificare l'estensione del file nel parametro original_filename"
+    invalid_extension: "Estersione non ammessa"
+    non_matching_md5: "L'MD5 del file non coincide con quanto specificato nel parametro md5"
+    non_matching_mime_type: "Il mime type del file non coincide con quanto specificato nel parametro mime_type"
+    duplicated_file: "Il file è già presente"
   cartella:
     nome: "Nome cartella"
     data_creazione: "Data di creazione"

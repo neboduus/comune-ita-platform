@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Document;
+use App\Services\Manager\DocumentManager;
+use League\Flysystem\FileExistsException;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -16,15 +18,24 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DocumentAPIType extends AbstractType
 {
-  private $rootDir;
   private $allowedExtensions;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+  /**
+   * @var DocumentManager
+   */
+  private $documentManager;
 
-  public function __construct($rootDir, $allowedExtensions)
+  public function __construct($allowedExtensions, TranslatorInterface $translator, DocumentManager $documentManager)
   {
-    $this->rootDir = $rootDir;
+    $this->translator = $translator;
+    $this->documentManager = $documentManager;
     $this->allowedExtensions = array_merge(...$allowedExtensions);
   }
 
@@ -86,7 +97,7 @@ class DocumentAPIType extends AbstractType
         'required' => false,
         'label' => 'documenti.documento.validity_begin'
       ])
-          ->add('validity_end', DateTimeType::class, [
+      ->add('validity_end', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => false,
         'label' => 'documenti.documento.validity_end'
@@ -122,79 +133,68 @@ class DocumentAPIType extends AbstractType
 
     $ASCII_fileName = mb_convert_encoding($document->getOriginalFilename(), "ASCII", "auto");
     if ($ASCII_fileName != $document->getOriginalFilename()) {
-      return $event->getForm()->addError(new FormError('Original filename non è una stringa ASCII valida'));
+      return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.invalid_original_name')));
     }
 
     // Check folder
     if (!$document->getFolder()) {
-      return $event->getForm()->addError(new FormError('Cartella non valida'));
+      return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.invalid_folder')));
     }
-    if ($document->getOwner() != $document->getFolder()->getOwner()) {
-      return $event->getForm()->addError(new FormError('L\'utente fornito non è il proprietario della cartella'));
+
+    if ($document->getOwner() !== $document->getFolder()->getOwner()) {
+      return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.invalid_owner')));
     }
 
     if (!in_array($document->getMimeType(), $this->allowedExtensions)) {
-      return $event->getForm()->addError(
-        new FormError('Mime type non valido')
-      );
+      return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.invalid_mime_type')));
     }
 
     $extension = explode('.', $document->getOriginalFilename());
     if (count($extension) < 2) {
-      return $event->getForm()->addError(
-        new FormError('E\'obbligatorio specificare l\'estensione del file le campo original_filename')
-      );
-
+      return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.missing_extension')));
     } else if (!array_key_exists(end($extension), $this->allowedExtensions)) {
-      return $event->getForm()->addError(new FormError('Estensione non valida'));
+      return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.invalid_extension')));
     }
 
     $extension = end($extension);
 
-    $directory = $this->rootDir . '/../var/uploads/documents/users/' . $document->getOwnerId() . DIRECTORY_SEPARATOR . $document->getFolderId();
-    if (!is_dir($directory))
-      mkdir($directory, 0770, true);
-
-    $fileName  = $directory . DIRECTORY_SEPARATOR . $document->getId() . '.' . $extension;
     if ($form->get("file")->getData()) {
       // If both file and address are provided, keep file
       $document->setAddress(null);
       $document->setStore(true);
       $base64 = explode(',', $form->get("file")->getData());
-      $base64=end($base64);
-
-      try {
-        $this->saveFileToLocalFileSystem($fileName, base64_decode($base64), $document->getMimeType());
-      } catch (\Exception $e) {
-        return $event->getForm()->addError(
-          new FormError($e->getMessage())
-        );
-      }
+      $base64 = end($base64);
+      $content = base64_decode($base64);
     } else {
-      $store = $document->isStore();
-      if ($store) {
-        $fileName = $directory . DIRECTORY_SEPARATOR . $document->getId() . '.' . $extension;
-        $content = file_get_contents($document->getAddress());
-        try {
-          $this->saveFileToLocalFileSystem($fileName, $content, $document->getMimeType());
-        } catch (\Exception $e) {
-          return $event->getForm()->addError(
-            new FormError($e->getMessage())
-          );
-        }
-      } else {
-        $fileName = $document->getAddress();
+      $content = file_get_contents($document->getAddress());
+    }
+
+    $md5 = md5($content);
+    if ($document->getMd5() && $document->getMd5() !== $md5) {
+      return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.non_matching_md5')));
+    } else if (!$document->getMd5()) {
+      $document->setMd5($md5);
+    }
+
+    $f = finfo_open();
+    $mime_type = finfo_buffer($f, $content, FILEINFO_MIME_TYPE);
+    if ($document->getMimeType() !== $mime_type) {
+      return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.non_matching_mime_type')));
+    }
+
+    if ($document->isStore()) {
+      try {
+        $this->documentManager->save($document, $content);
+      } catch (FileExistsException $e) {
+        return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.duplicated_file')));
       }
     }
 
-    if ($document->getMd5() && $document->getMd5() != md5_file($fileName)) {
-      return $event->getForm()->addError(new FormError('L\'md5 non coincide'));
-    } else if (!$document->getMd5()) {
-      $document->setMd5(md5_file($fileName));
-    }
+    return $event;
   }
 
-  public function configureOptions(OptionsResolver $resolver)
+  public
+  function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
       'data_class' => 'App\Entity\Document',
@@ -205,24 +205,5 @@ class DocumentAPIType extends AbstractType
   public function getBlockPrefix()
   {
     return 'app_bundle_document_api';
-  }
-
-  /**
-   * @param $filename string file path
-   * @param $content string file content
-   * @param $mimeType string file mime type (for validity check)
-   * @throws \Exception
-   */
-  private function saveFileToLocalFileSystem($filename, $content, $mimeType) {
-    $fileSize = file_put_contents($filename, $content);
-    if ($fileSize > 16000000) {
-      unlink($filename);
-      throw new \Exception('Documento troppo grande');
-    }
-    $fileMimeType = mime_content_type($filename);
-    if ($fileMimeType != $mimeType) {
-      unlink($filename);
-      throw new \Exception('Il Mime type non coincide');
-    }
   }
 }

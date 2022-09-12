@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Entity\Allegato;
 use App\Utils\StringUtils;
 use Aws\S3\S3Client;
+use League\Flysystem\FileExistsException;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\FilesystemInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -219,8 +220,16 @@ class FileService
    */
   private function createPresignedRequest(Allegato $allegato)
   {
+    $request = $this->getPresignedRequest(
+      $this->getFilenameWithPath($allegato, true),
+      $allegato->getMimeType() ?? $this->getMimeType($allegato),
+      $this->getDispositionFilename($allegato)
+    );
+    return new RedirectResponse((string)$request->getUri());
+  }
+
+  public function getPresignedRequest($path, $mimeType, $filename) {
     $responseHeaderBag = new ResponseHeaderBag();
-    $filename = $this->getDispositionFilename($allegato);
     $disposition = $responseHeaderBag->makeDisposition(
       ResponseHeaderBag::DISPOSITION_ATTACHMENT,
       $filename
@@ -228,13 +237,11 @@ class FileService
 
     $command = $this->s3Client->getCommand('GetObject', [
       'Bucket' => $this->s3Bucket,
-      'Key' => $this->getFilenameWithPath($allegato, true),
-      'ResponseContentType' => $allegato->getMimeType() ?? $this->getMimeType($allegato),
+      'Key' => $path,
+      'ResponseContentType' => $mimeType,
       'ResponseContentDisposition' => $disposition,
     ]);
-    $request = $this->s3Client->createPresignedRequest($command, self::PRESIGNED_GET_EXPIRE_STRING);
-
-    return new RedirectResponse((string)$request->getUri());
+    return $this->s3Client->createPresignedRequest($command, self::PRESIGNED_GET_EXPIRE_STRING);
   }
 
   public function createPresignedPostRequest(Allegato $allegato)
@@ -306,6 +313,14 @@ class FileService
   private function isAllowedPresignedRequest()
   {
     return !empty($this->s3Bucket) && $this->uploadDestination === 's3_filesystem';
+  }
+
+  /**
+   * @throws FileExistsException
+   */
+  public function write($filePath, $fileContent): bool
+  {
+    return $this->fileSystem->write($filePath, $fileContent);
   }
 
 }

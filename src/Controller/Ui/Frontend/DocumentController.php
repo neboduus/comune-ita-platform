@@ -7,6 +7,7 @@ namespace App\Controller\Ui\Frontend;
 use App\Logging\LogConstants;
 use App\Services\BreadcrumbsService;
 use App\Services\InstanceService;
+use App\Services\Manager\DocumentManager;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -44,7 +45,10 @@ class DocumentController extends AbstractController
    * @var BreadcrumbsService
    */
   private $breadcrumbsService;
-
+  /**
+   * @var DocumentManager
+   */
+  private $documentManager;
 
   /**
    * DocumentController constructor.
@@ -52,13 +56,15 @@ class DocumentController extends AbstractController
    * @param EntityManagerInterface $em
    * @param LoggerInterface $logger
    * @param BreadcrumbsService $breadcrumbsService
+   * @param DocumentManager $documentManager
    */
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, LoggerInterface $logger, BreadcrumbsService $breadcrumbsService)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, LoggerInterface $logger, BreadcrumbsService $breadcrumbsService, DocumentManager $documentManager)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->logger = $logger;
     $this->breadcrumbsService = $breadcrumbsService;
+    $this->documentManager = $documentManager;
 
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.documenti'), 'folders_list_cpsuser');
 
@@ -187,37 +193,7 @@ class DocumentController extends AbstractController
       return new Response(null, Response::HTTP_UNAUTHORIZED);
     }
 
-    $extension = explode('.', $document->getOriginalFilename());
-    $extension = end($extension);
-
-    $filePath = '../var/uploads/documents/users/' .
-      $document->getOwnerId() . DIRECTORY_SEPARATOR . $document->getFolderId() .
-      DIRECTORY_SEPARATOR . $document->getId() . '.' . $extension;
-
-    if (!file_exists($filePath) && $document->getAddress()) {
-      $filePath = $document->getAddress();
-    }
-
-    try {
-      $fileContent = file_get_contents($filePath);
-    } catch (\Exception $exception) {
-      return new Response(null, Response::HTTP_NOT_FOUND);
-    }
-
-    // Provide a name for your file with extension
-    $filename = $document->getOriginalFilename();
-    // Return a response with a specific content
-    $response = new Response($fileContent);
-    // Create the disposition of the file
-    $disposition = $response->headers->makeDisposition(
-      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-      $filename
-    );
-    // Set the content disposition
-    $response->headers->set('Content-Disposition', $disposition);
-    // Set the content type
-    $response->headers->set('Content-Type', $document->getMimeType());
-
+    $response = $this->documentManager->download($document);
     try {
       $document->setLastReadAt(new \DateTime());
       $document->setDownloadsCounter($document->getDownloadsCounter() + 1);
