@@ -34,82 +34,81 @@ class DocumentAPIType extends AbstractType
       ->add('owner', EntityType::class, [
         'class' => 'App\Entity\CPSUser',
         'required' => true,
-        'label' => 'Proprietario'
+        'label' => 'documenti.documento.owner'
       ])
       ->add('folder', EntityType::class, [
         'class' => 'App\Entity\Folder',
         'required' => true,
-        'label' => 'Cartella'
+        'label' => 'documenti.documento.folder'
       ])
       ->add('md5', TextType::class, [
-        'label' => 'md5',
+        'label' => 'documenti.documento.md5',
         'required' => false
       ])
       ->add('mime_type', TextType::class, [
-        'label' => 'mime-Type del file',
+        'label' => 'documenti.documento.mime_type',
         'required' => false
       ])
       ->add('original_filename', TextType::class, [
-        'label' => 'nome originale del file',
+        'label' => 'documenti.documento.original_filename',
         'required' => false
       ])
       ->add('address', UrlType::class, [
-        'label' => 'Url del file',
+        'label' => 'documenti.documento.address',
         'required' => false
       ])
       ->add('file', TextType::class, [
-        'label' => 'File',
+        'label' => 'documenti.documento.file',
         'required' => false,
         'mapped' => false
       ])
       ->add('title', TextType::class, [
-        'label' => 'Titolo',
+        'label' => 'documenti.documento.title',
         'required' => true
       ])
       ->add('topics', EntityType::class, [
         'class' => 'App\Entity\Categoria',
-        'label' => 'Topics',
+        'label' => 'documenti.documento.Topics',
         'multiple' => true
       ])
       ->add('description', TextareaType::class, [
-        'label' => 'Descrizione',
+        'label' => 'documenti.documento.description',
         'required' => false
       ])
       ->add('readers_allowed', CollectionType::class, [
         'entry_type' => TextType::class,
-        'label' => 'Cf di chi puo vedere questo documento',
+        'label' => 'documenti.documento.readers_allowed',
         'required' => false,
         'allow_add' => true
       ])
       ->add('validity_begin', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => false,
-        'label' => 'Data di inizio validità'
+        'label' => 'documenti.documento.validity_begin'
       ])
           ->add('validity_end', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => false,
-        'label' => 'Data di fine validità'
+        'label' => 'documenti.documento.validity_end'
       ])
       ->add('expire_at', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => false,
-        'label' => 'Data di scadenza'
+        'label' => 'documenti.documento.expire_at'
       ])
       ->add('due_date', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => false,
-        'label' => 'Data di scadenza'
+        'label' => 'documenti.documento.data_scadenza'
       ])
       ->add('correlated_services', EntityType::class, [
         'class' => 'App\Entity\Servizio',
-        'label' => 'Servizi correlati',
+        'label' => 'documenti.cartella.servizi_correlati',
         'multiple' => true
       ])
       ->add('store', CheckboxType::class, [
-        'label' => 'Salvare il file?',
-        'required' => false,
-        'mapped' => false
+        'label' => 'documenti.documento.store',
+        'required' => false
       ])
       ->addEventListener(FormEvents::SUBMIT, array($this, 'onSubmit'));
   }
@@ -160,6 +159,7 @@ class DocumentAPIType extends AbstractType
     if ($form->get("file")->getData()) {
       // If both file and address are provided, keep file
       $document->setAddress(null);
+      $document->setStore(true);
       $base64 = explode(',', $form->get("file")->getData());
       $base64=end($base64);
 
@@ -171,7 +171,7 @@ class DocumentAPIType extends AbstractType
         );
       }
     } else {
-      $store = $form->get("store")->getData();
+      $store = $document->isStore();
       if ($store) {
         $fileName = $directory . DIRECTORY_SEPARATOR . $document->getId() . '.' . $extension;
         $content = file_get_contents($document->getAddress());
