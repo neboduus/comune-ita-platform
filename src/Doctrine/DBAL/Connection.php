@@ -46,7 +46,7 @@ class Connection extends DBALConnection implements ConnectionInterface
   }
 
   /**
-   * @param string $query
+   * @param string $sql
    * @param array $params
    * @param array $types
    * @param QueryCacheProfile|null $qcp
@@ -55,7 +55,7 @@ class Connection extends DBALConnection implements ConnectionInterface
    *
    * @throws \Doctrine\DBAL\Exception
    */
-  public function executeQuery($query, array $params = array(), $types = array(), QueryCacheProfile $qcp = null)
+  public function executeQuery($sql, array $params = array(), $types = array(), QueryCacheProfile $qcp = null)
   {
     $stmt = null;
     $attempt = 0;
@@ -63,9 +63,9 @@ class Connection extends DBALConnection implements ConnectionInterface
     while ($retry) {
       $retry = false;
       try {
-        $stmt = parent::executeQuery($query, $params, $types, $qcp);
+        $stmt = parent::executeQuery($sql, $params, $types, $qcp);
       } catch (\Exception $e) {
-        if ($this->canTryAgain($attempt) && $this->isRetryableException($e, $query)) {
+        if ($this->canTryAgain($attempt) && $this->isRetryableException($e, $sql)) {
           $this->close();
           ++$attempt;
           $retry = true;
@@ -177,7 +177,7 @@ class Connection extends DBALConnection implements ConnectionInterface
   }
 
   /**
-   * @return void
+   * @return bool|void
    * @throws \Exception
    */
   public function beginTransaction()

@@ -10,6 +10,10 @@ doctrine:
     user: '%database_user%'
     password: '%database_password%'
     charset: utf8
+    wrapper_class: 'App\Doctrine\DBAL\Connection'
+    driver_class: 'App\Doctrine\DBAL\Driver\PDOPgSql\Driver'
+    options:
+      x_reconnect_attempts: "%database_reconnect_attemps%" #3
 
   orm:
     auto_generate_proxy_classes: true
