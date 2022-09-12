@@ -18,7 +18,7 @@ bozze_servizio: 'Vorgangsentwürfe zu diesem Dienst'
 # pratiche in compilazione = pratiche in bozza?
 msg_bozze_servizio: 'Achtung! Es sind bereits Vorgangsentwürfe zum ausgewählten Dienst vorhanden.'
 lista_pratiche_bozza: 'Vorgangsentwurf'
-pratica_ricevuta: 'Die Anfrage wurde gesendet. Danke für die Zusammenarbeit'
+pratica_ricevuta: 'Der Antrag wurde gesendet. Danke für die Zusammenarbeit'
 welcome: 'Willkommen,'
 completa_profilo: "Überprüfen Sie, ob die E-Mail korrekt ist, vervollständigen und bestätigen Sie Ihre Profildaten"
 aggiorna_profilo: "Ihre Daten wurden erfolgreich aktualisiert."
@@ -27,7 +27,7 @@ error_support: "Technischen Support kontaktieren"
 error_message: "Ups!"
 error_message_detail: "Etwas ist schiefgelaufen"
 error_message_403: "403 | Zugriff verweigert"
-error_message_detail_403: "Sie haben keine Zugangsberechtigung für diesen Bereich"
+error_message_detail_403: "Sie haben keine Zugriffsrechte für diesen Bereich"
 error_message_404: "404 | Seite nicht gefunden"
 # verschoben?
 error_message_detail_404: "Die von Ihnen gesuchte Seite wurde möglicherweise entfernt, hat Adresse geändert oder ist vorübergehend nicht verfügbar"
@@ -42,7 +42,7 @@ fake_email_message: 'Sie müssen Ihre E-Mail aktualisieren, um fortzufahren'
 nav:
   home: 'Startseite'
   dashboard: 'Mein Konto'
-  servizi: 'Alle Fachdienste'
+  servizi: 'A-Z Dienste'
   pratiche: 'Meine Vorgänge'
   profilo: 'Mein Profil'
   allegati: 'Meine Anhänge'
@@ -60,7 +60,7 @@ nav:
     impostazioni_istanza: 'BACKOFFICE'
     operatori: 'BACKOFFICE'
     servizi: 'BACKOFFICE'
-    gruppo_servizi: 'Kategorie von Diensten'
+    gruppo_servizi: 'Gruppe von Diensten'
     webhook: 'BACKOFFICE'
     metodi_pagamento: 'Zahlungsarten'
     strumenti: 'Extras'
@@ -75,23 +75,23 @@ nav:
     ente: 'Behörde'
     categorie: 'Kategorien'
     impostazioni_istanza_descrizione: "Einstellungen_Antrag_Beschreibung"
-    servizi_descrizione: 'Onlinedienste_Beschreibung'
+    servizi_descrizione: 'Verwaltung der Dienste'
     operatori_descrizione: 'Sachbearbeiter_Beschreibung'
-    gruppo_servizi_descrizione: 'Gruppe_Onlinedienste_Beschreibung'
+    gruppo_servizi_descrizione: 'Verwaltung der Gruppen'
     webhook_descrizione: 'Webhook_Beschreibung'
     azioni_programmate_descrizione: 'Zielvorgaben_Beschreibung'
     logs_descrizione: 'Logs_Beschreibung'
     statistiche: 'Statistiken'
     statistiche_descrizione: 'Statistiken_Beschreibung'
     title: 'Titel'
-    create_new_operator: ''
+    create_new_operator: 'Neue/-n Sachbearbeiter/-in erstellen'
   backoffices:
     # cosa si intende per "servizio a sottoscrizione"?
     servizi_sottoscrizione: 'Abo-Dienste'
     prenotazione_appuntamenti: 'Terminvormerkung'
     pagamenti_servizi_sottoscrizione: 'Zahlungen für Abo-Dienste'
-    request_protocol: ''
-    protocol_type: ''
+    request_protocol: 'Registrierung erforderlich?'
+    protocol_type: 'Art des Protokolls'
   header:
     profile: "Profil"
     logout: "Abmelden"
@@ -109,17 +109,17 @@ servizio:
   cancellato: 'Der Dienst wurde gelöscht'
   sospeso: 'Der Dienst ist derzeit nicht aktiv'
   schedulato: 'Der Dienst ist aktiv vom %from% bis zum %to%'
-  accedi_al_servizio: 'Zum Onlinedienst %name%'
+  accedi_al_servizio: 'Zum Online-Dienst %name%'
   browser_restricted: "Ihr Browser wird nicht unterstützt oder ist veraltet. Bitte versuchen Sie es erneut mit einem aktualisierten Browser."
   attivo_per: "Dieser Dienst ist für folgende Nutzerinnen und Nutzer freigeschaltet:"
   # ha senso tradurlo?
   servizi_area_title: '%area%'
   # =sevizio online?
-  vai: "Hier geht's zum Onlinedienst"
+  vai: "Hier geht's zum Online-Dienst"
   # = servizio online?
-  torna: "Zurück zum Onlinedienst"
+  torna: "Zurück zum Online-Dienst"
   # =servizio online?
-  il_servizio: 'Der Onlinedienst'
+  il_servizio: 'Der Online-Dienst'
   area_tematica: 'Themenbereich'
   imis:
     download_pdf_imis: 'Laden Sie das PDF %name% herunter'
@@ -138,19 +138,19 @@ servizio:
   a_chi_si_rivolge: "Wer kann diesen Dienst nutzen?"
   copertura: "Landesgerichtssprengel"
   copertura_helper: "Landesgerichtssprengel"
-  accedere: "Den Dienst in Anspruch nehmen"
+  accedere: "Hier geht's zum Online-Dienst"
   casi_particolari: "Sonderfälle"
   maggiori_info: "Nähere Informationen"
   in_evidenza: "Hervorheben?"
   # "compilazione" nel senso di  ...."elaborazione" del servizio?
-  info_compilazione: "Informationen, die während der ..... des Onlinedienstes angezeigt werden"
+  info_compilazione: "Informationen, die bei einer Anfrage zu diesem Dienst angezeigt werden"
   # "compilazione" nel senso di ...? vedi "info_compilazione"
   indicazioni_finali: "Informationen, die nach Beendigung der Anfrage für diesen Dienst angezeigt werden"
   stato: "Status"
   data_attivazione: "Encryption"
   data_cessazione: "Datum, an dem der Dienst endet "
-  gruppo: "Kategorie"
-  condiviso_con_gruppo: "Daten dieses Dienstes mit Kategorie teilen"
+  gruppo: "Gruppe"
+  condiviso_con_gruppo: "Daten dieses Dienstes mit Gruppe teilen"
   # OK? (corrisponde a Login?)
   livello_accesso: "Login"
   suggerisci_login: "Automatischer Login"
@@ -167,14 +167,14 @@ servizio:
   no_topics: 'BACKOFFICE'
   no_recipients: 'Es wurde keine Nutzerkategorie angegeben'
   no_geographic_areas: 'Es wurde keine geografische Zone angegeben.'
-  shared_with_group_message: 'Dieser Dienst teilt die Daten mit der Dienstkategorie, weiter unten werden die verknüpften Inhalte angezeigt.'
-  shared_with_group_action: 'Dienstkategorie bearbeiten'
+  shared_with_group_message: 'Dieser Dienst teilt die Daten mit der Dienstgruppe, weiter unten werden die verknüpften Inhalte angezeigt.'
+  shared_with_group_action: 'Dienstgruppe bearbeiten'
   sottotitolo_categorie: "Untertitel_Kategorien"
   generali: "allgemein"
   modulo_utente: "Formblatt_Benutzer"
   modulo_backoffice: "Formblatt_Backoffice"
   id_pratica: "ID_Vorgang"
-  nome_servizio: "Name_Onlinedienst"
+  nome_servizio: "Name_Dienst"
   nome_completo: "Vollständiger Name"
   data_corrente: "Aktuelles Datum"
   data_acquisizione: "Erfassungsdatum"
@@ -188,19 +188,19 @@ servizio:
   machine_readable: 'machine_readable'
   preview: 'Preview'
   print: 'drucken'
-  name_service_warning: "Warnhinweis Onlinedienstname"
+  name_service_warning: "Achtung! Zu lange Dateinamen erschweren die Navigation, daher werden einfache Namen ohne normative Verweise empfohlen (dafür können Sie das Feld \"Weitere Informationen\" verwenden)."
   i18n:
     default_language_module_alert: 'Default_Warnmeldung_Sprachmodul'
     string: 'String'
     translation: 'Übersetzung'
-    translations: ''
-    translations_module: ''
+    translations: 'Übersetzungen'
+    translations_module: 'Übersetzungsmodul'
   indice: "Index"
   azioni: "Aktionen"
   altri_servizi_disponibili: "andere verfügbare Dienste"
   condividi: "teilen"
   torna_indietro: "zurück"
-  how_to_do: "Wie vorgehen"
+  how_to_do: "Wie gehen Sie vor?"
   what_you_need: "Was brauchen Sie?"
   what_you_get: "Was bekommen Sie?"
   costs: "Gebühren"
@@ -209,29 +209,35 @@ servizio:
   max_response_time_text: "Nach Übermittlung einer Anfrage erhalten Sie binnen %time% Tagen eine Antwort."
   max_response_time_list: "maximale Antwortzeit"
   active_from_date_to_date: "Der Dienst ist vom %from% bis %to% aktiv"
-  copy_url: ''
-  url_copied: ''
-  validate_submit: ''
-  validate_error_service: ''
-  validate_service: ''
-  impossible_delete_service: ''
-  service_successfully_deleted: ''
-  success_import_service: ''
-  error_create_form: ''
-  error_import: ''
-  error_from_save: ''
-  draft_message: ""
-  placeholders_available: ''
-  communication_citizen: ""
-  create_new_form: ''
-  create_new_form_blank_template: ''
-  max_limit_of: ''
-  select_template: ''
-  blank_template: ''
-  templates_based_existing_services: ''
-  id_service: ''
+  copy_url: 'Kopiere URL'
+  url_copied: 'URL kopiert'
+  validate_submit: 'validate submit'
+  validate_error_service: 'Fehlermeldung im Falle einer fehlenden Validierung'
+  validate_service: 'Validierung erfolgreich gespeichert'
+  impossible_delete_service: 'Der Dienst kann nicht gelöscht werden. Es sind Vorgänge damit verknüpft.'
+  service_successfully_deleted: 'Dienst erfolgreich gelöschg'
+  success_import_service: 'Dienst erfolgreich importiert'
+  error_create_form: 'Bei der Erstellung des Form ist ein Fehler aufgetreten.'
+  error_import: 'Beim Importieren ist ein Fehler aufgetreten.'
+  error_from_save: 'Beim Speichern ist ein Fehler aufgetreten.'
+  # ... da completare
+  # Domanda:
+  # "attraverso l'accesso diretto alla compilazione del servizio" = "attraverso l'accesso al servizio" ?
+  # .... "durch direkten Zugriff auf den Onlinedienst" ?
+  draft_message: "Die Mitteilung wird nur dann an die Nutzerin/den Nutzer gesendet, wenn ein  Vorgangsentwurf auf ihren/seinen Namen und nicht durch direkten Zugriff auf den Online-Dienst."
+  placeholders_available: 'Verfügbare Placeholders'
+  # vedasi frase identica in: draft_message   context "servizio"
+  communication_citizen: "Die Mitteilung wird nur dann an die Nutzerin/den Nutzer gesendet, wenn ein  Vorgangsentwurf auf ihren/seinen Namen und nicht durch direkten Zugriff auf den Online-Dienst."
+  create_new_form: 'Erstelle neues Form'
+  create_new_form_blank_template: 'Beginnen Sie ganz neu mit einer leeren Vorlage'
+  # Domanda: inserire un massimo di (che cosa?)
+  max_limit_of: 'Maximale Zeichenanzahl'
+  select_template: 'Wählen Sie eine leere Vorlage aus, um mit einem neuen Formular zu beginnen'
+  blank_template: 'Template leer'
+  templates_based_existing_services: 'Auf bereits vorhandenen Diensten basierende Vorlagen'
+  id_service: 'ID Dienst'
 gruppo_di_servizi:
-  gruppo_di_servizi: 'Kategorie von Diensten'
+  gruppo_di_servizi: 'Gruppe von Diensten'
   nome: 'Name'
   descrizione: 'Beschreibung'
   url: 'Url'
@@ -240,20 +246,20 @@ gruppo_di_servizi:
   modifica: 'Bearbeiten'
   rimuovi: 'Entfernen'
   elimina: 'Löschen'
-  crea: 'Neue Kategorie von Diensten erstellen'
+  crea: 'Neue Gruppe von Diensten erstellen'
   attivata: 'Aktiviert'
   disattivata: 'Deaktiviert'
-  servizi: 'Dienste der Kategorie'
-  nessun_servizio: 'Es scheinen keine Dienste in dieser Kategorie auf'
+  servizi: 'Dienste der Gruppe'
+  nessun_servizio: 'Es scheinen keine Dienste in dieser Gruppe auf'
   torna_alla_lista: 'Zurück zur Liste'
-  servizio_rimosso: 'Korrekt entfernter Dienst'
-  errore_rimozione: 'Das Entfernen des Dienstes ist nicht möglich'
+  servizio_rimosso: 'Erfolgreich entfernter Dienst'
+  errore_rimozione: 'Der Dienst kann nicht entfernt werden.'
   cos_e: "Worum handelt es sich?"
   # qual il soggetto sottinteso?
   a_chi_si_rivolge: "Wer kann diese Dienste nutzen?"
   copertura: "Landesgerichtssprengel"
   copertura_helper: "Landesgerichtssprengel"
-  accedere: "Den Dienst in Anspruch nehmen"
+  accedere: "Hier geht's zum Online-Dienst"
   casi_particolari: "Sonderfälle"
   maggiori_info: "Nähere Informationen"
   in_evidenza: "Hervorheben?"
@@ -279,13 +285,13 @@ pratica:
   guida_utente: 'Leitfaden'
   email:
     status_change:
-      subject: 'Die Anfrage Nr. %id% wurde aktualisiert'
+      subject: 'Der Antrag Nr. %id% wurde aktualisiert'
   # Bitte anschauen
   iter: 'Bearbeitungsablauf'
   # Bearbeitungsdauer
   tooltip_durata_iter: "Bearbeitungsdauer: zirka"
   vai_alla_pratica: 'Hier finden Sie den Vorgang'
-  ritira_la_pratica: 'Abheben Vorgang'
+  ritira_la_pratica: 'Den Antrag annullieren'
   nuova_pratica: 'Neuer Vorgang: %name%'
   integrazione_pratica: 'Ergänzung Vorgang: %name%'
   # pratica può essere anche sinonimo di "file"???
@@ -294,7 +300,7 @@ pratica:
   riprendi_pratica: "Weiter ausfüllen"
   empty: 'Es scheinen keine Vorgänge zu Ihrer Person auf.'
   protocollo: 'Registrierung'
-  numero: 'Nummer der Anfrage'
+  numero: 'Referenznummer des Antrags'
   in_attesa_protocollo: 'Warten auf Registrierung'
   protocollo_non_richiesto: '(nicht erforderlich)'
   # anfragende Person
@@ -345,7 +351,7 @@ pratica:
     allegati_protocollo: 'Anhänge zur Registrierung gesendet'
     allegati_no_protocollo: 'Anhänge nicht zur Registrierung gesendet'
   dettaglio:
-    data_ora_presentazione: 'Anfrage gestellt am'
+    data_ora_presentazione: 'Antrag gestellt am'
     # alle ore? um .... Uhr
     alle: 'um'
     stato: 'aktueller Status'
@@ -362,10 +368,10 @@ pratica:
     richiedente.email: 'E-Mail-Adresse'
     nucleo_familiare: 'Haushalt'
     compilazione: 'Ausfüllen'
-    ritiro: 'Die Anfrage Nr. %id% betreffend %servizio% ist von %%user_name% zurückgezogen worden'
+    ritiro: 'Der Antrag Nr. %id% betreffend %servizio% ist von %%user_name% zurückgezogen worden'
     esito:
-      accettata: 'Die Anfrage wurde angenommen'
-      rifiutata: 'Die Anfrage wurde abgelehnt'
+      accettata: 'Der Antrag wurde angenommen'
+      rifiutata: 'Der Antrag wurde abgelehnt'
     componente_nucleo_familiare:
       cognome: 'Nachname'
       nome: 'Vorname'
@@ -377,14 +383,14 @@ pratica:
     # Ich würde anstatt beigefügte "angehängte" Dateien schreiben.
     # Dateien anhängen....
     allegati: 'angehängte Dateien'
-    richiesta_integrazioni: 'Ersuchen um Ergänzung'
+    richiesta_integrazioni: 'Anfrage um Ergänzung'
     risposte_integrazioni: 'Antworten auf Ergänzungen'
     allegato:
       file: 'Dateiname'
       descrizione: 'Beschreibung'
       pratiche_list_intro: 'Anhang'
       allegato: 'Anhang'
-    modulocompilato: 'ausgefülltes Formular'
+    modulocompilato: 'ausgefülltes Formblatt'
     stato_1000: 'Entwurf'
     stato_1500: 'Zahlung noch ausständig'
     stato_1510: "Zahlung noch nicht abgeschlossen"
@@ -400,8 +406,8 @@ pratica:
     stato_8000: 'Abgelehnt (ausstehende Registrierung des Ergebnisdokuments)'
     stato_9000: 'Abgelehnt'
     stato_20000: 'zurückgezogen'
-    stato_4100: 'Ersuchen um Ergänzung'
-    stato_4100_legacy: 'Ersuchen um Ergänzung (ausstehende Registrierung)'
+    stato_4100: 'Anfrage um Ergänzung'
+    stato_4100_legacy: 'Anfrage um Ergänzung (ausstehende Registrierung)'
     stato_4200: 'Ausstehende Ergänzungen'
     stato_4300: 'Ergänzungen erledigt '
     stato_4300_legacy: 'Ausstehende Registrierung der Ergänzungen'
@@ -421,20 +427,20 @@ pratica:
       # messaggi di posta elettronica?
       descrizione_messaggi: 'Auflistung der Anhänge'
       descrizione_risposta: 'Auflistung der Antwortdateien zum Vorgang und diesbezügliche Anhänge.'
-      descrizione_richieste_integrazioni: 'Beschreibung_Ergänzungsanträge'
+      descrizione_richieste_integrazioni: 'Liste der Dateien betreffend den Antrag auf Ergänzung'
       descrizione_risposte_integrazioni: 'Beschreibung_Rückantwort_Ergänzungen'
       descrizione_ritiro: 'Beschreibung_Zurückziehung des Vorgangs'
     integrazioni:
-      alert: "Warnmeldung"
-      button: 'Taste'
+      alert: "Es wurde ein Antrag auf Ergänzung gestellt"
+      button: 'Auf den Antrag auf Ergänzung antworten'
     or: 'oder'
     cambio_operatore: 'Sachbearbeiterwechsel'
-    il: ''
+    il: 'am'
   messaggi:
-    oggetto: 'Neue Nachricht zu Anfrage Nr. %pratica%'
+    oggetto: 'Neue Mitteilung betreffend den Antrag Nr. %pratica%'
     messaggio: '%message% <img src="%link%">'
   modulo:
-    descrizione: 'Formular nomeservizio ausgefüllt am datacompilazione'
+    descrizione: 'Formblatt nomeservizio ausgefüllt am datacompilazione'
     descrizioneRisposta: 'Dienstleistung nomeservizio, Antwort erstellt am datacompilazione'
   appunti_compilazione:
     titolo: 'Anmerkungen hinzufügen'
@@ -445,8 +451,8 @@ pratica:
   crea_nuova_pratica: 'Neuen Vorgang anlegen'
   vai_al_pagamento: 'Hier geht''s zur Zahlung'
   payment_reminder:
-    message: "Sehr geehrte/-r Frau/Herr<strong>%user_name%</strong>,<br /> zur Anfrage Nr. <b>%id%</b> betreffend <b>%service_fullname%</b> ist noch eine Zahlung ausständig. Bitte verwenden Sie die unten angeführten Links, um die erforderliche Zahlung vorzunehmen."
-    subject: "Zahlungserinnerung betreffend Anfrage Nr. %pratica%"
+    message: "Sehr geehrte/-r Frau/Herr<strong>%user_name%</strong>,<br /> zum Antrag Nr. <b>%id%</b> betreffend <b>%service_fullname%</b> ist noch eine Zahlung ausständig. Bitte verwenden Sie die unten angeführten Links, um die erforderliche Zahlung vorzunehmen."
+    subject: "Zahlungserinnerung betreffend den Antrag Nr. %pratica%"
   vedi_tutte: 'siehe alle'
   # ..._evidenza
   pratiche_in_evidenzia: 'relevante Vorgänge'
@@ -454,8 +460,8 @@ pratica:
     tipologie_pagamento: "Zahlungsarten"
     paga_online: "online bezahlen"
     paga_offline: "nicht online bezahlen"
-    immediate_payment_description: ''
-    delayed_payment_description: ""
+    immediate_payment_description: 'Die sofortige Zahlung ist erforderlich, nachdem die Bereitschaft zum Absenden eines Vorgangs bestätigt wurde; wird die Zahlung nicht geleistet, bleibt der Vorgang im Status "zu zahlen". Er ist für die Sachbearbeiterinnen und Sachbearbeiter sichtbar, kann aber nicht übernommen werden.'
+    delayed_payment_description: "Die nachträgliche Zahlung ist nach dem Abschicken des Vorgangs erforderlich. Die Sachbearbeiterinnen und Sachbearbeiter können den Vorgang unter Angabe eines des zu zahlenden Betrags genehmigen. Erst nach Genehmigung wird die Zahlung verlangt. "
   protocol_number: 'Registrierungsnummer'
   file_name: 'Dateiname'
   hash: 'Datei-Hash'
@@ -469,48 +475,48 @@ pratica:
   carica_allegato: "Anhang hochladen"
   messaggio_operatore: "Sind Sie sicher, dass Sie fortfahren möchten? Wenn Sie fortfahren, wird eine E-Mail an den/die Sachbearbeiter/-in gesandt, der/die Ihren Vorgang übernommen hat."
   messaggio_operatore_vuoto: "Achtung: Es können keine leeren Nachrichten gesandt werden."
-  select_new_status_application: ''
-  you_want_cancel: ''
+  select_new_status_application: 'Wähle den neuen Status des Vorgangs'
+  you_want_cancel: 'Sind Sie sicher, dass Sie absagen möchten?'
   enter_correct_cf: 'Geben Sie eine korrekte Steuernummer ein!'
-  application_new_create_services: ''
-  application_create_success: ''
-  back_services: ''
-  create_new_application_for: ''
-  find_user_message: ""
+  application_new_create_services: 'Erstellen Sie einen neuen Vorgang für diesen Dienst'
+  application_create_success: 'Vorgang erfolgreich erstellt'
+  back_services: 'Gehe zur Liste der Dienste zurück'
+  create_new_application_for: 'Sie erstellen einen neuen Vorgang für:'
+  find_user_message: "<p>Suchen Sie die Nutzerin/den Nutzer anhand der Steuernummer, um sie bzw. ihn mit dem Vorgang zu verknüpfen.</p><p>Falls nicht vorhanden, können Sie die Nutzerdaten direkt in das Formblatt eingeben, der Nutzer wird dann automatisch angelegt.</p>"
   guide: 'Hilfe'
-  find_user: ''
+  find_user: 'Suche Nutzer/-in '
   create_applications: 'Vorgang erstellen'
   select_message: 'Nachricht auswählen'
-  reply_attachments: ''
+  reply_attachments: 'Anhänge Antwort'
   applications: 'Vorgang'
-  applications_statistics: ''
-  applications_number: ''
-  error_upload_file_sdc: ""
+  applications_statistics: 'Statistik Vorgänge'
+  applications_number: 'Anzahl Vorgänge'
+  error_upload_file_sdc: "Fehler beim Hochladen der Dateien, bitte versuchen Sie es später noch einmal oder kontaktieren Sie den Administrator"
   filtra_per_stato: 'Nach Status sortieren'
   filtra_per_data: 'Nach Datum sortieren'
-  messaggio_a_utente: ""
+  messaggio_a_utente: "Sind Sie sicher, dass Sie fortfahren möchten? Wenn sie fortfahren, wird ein E-Mail an die Nutzerin bzw. den Nutzer an die E-Mail-Adresse %email% gesendet."
   messaggio_letto: "Nachricht wurde gelesen am"
   messaggio_creato: "Nachricht wurde erstellt am"
   messaggio_consegnato: "Nachricht wurde erstellt am"
-  conferma_invio_pratica: ""
+  conferma_invio_pratica: "Sind Sie sicher, dass Sie den Vorgang abschicken möchten?"
   no_application_found: 'Es wurde kein Vorgang gefunden'
-  date_in: ''
+  date_in: 'Datum der Eingabe'
   last_status_change: 'Letzte Statusänderung'
   filter_by_processing: 'Nach Bearbeitung sortieren'
   all_the: 'Alle'
-  in_charge_of: ''
-  to_assign: ''
-  search_for: ''
-  text_search_for: ''
-  results_page: ''
-  collate: ''
-  cancel_search: ''
-  search_reload: ''
-  approved_pratice: ''
-  reject_pratice: ''
+  in_charge_of: 'Übernommen von'
+  to_assign: 'Zuzuweisen'
+  search_for: 'Suche nach'
+  text_search_for: 'Suchbegriff'
+  results_page: 'Ergebnisse pro Seite'
+  collate: 'Zuordnen'
+  cancel_search: 'Suche beenden'
+  search_reload: 'Suche neu laden'
+  approved_pratice: 'Vorgang genehmigen'
+  reject_pratice: 'Vorgang ablehnen'
   failed: 'Fehlgeschlagen'
-  warning_long_text: ""
-  presentante: ''
+  warning_long_text: "<small class='form-text text-muted' id='warning-text-length'> \nAchtung! Zu lange Dateinamen erschweren die Navigation, daher werden einfache Namen ohne normative Verweise empfohlen (dafür können Sie das Feld <b>\"Maggiori informazioni\"</b> verwenden). </small>"
+  presentante: 'Anfragende Person'
 STATUS_CANCELLED: 'Abgelehnt'
 STATUS_DRAFT: 'Entwurf'
 STATUS_PRE_SUBMIT: 'Gesendet'
@@ -524,7 +530,7 @@ STATUS_PAYMENT_PENDING: 'Zahlung noch ausständig'
 STATUS_PAYMENT_OUTCOME_PENDING: "Zahlung noch nicht abgeschlossen"
 STATUS_PAYMENT_SUCCESS: "Zahlung erfolgreich abgeschlossen"
 STATUS_PAYMENT_ERROR: "Zahlung abgelehnt"
-STATUS_REQUEST_INTEGRATION: 'Ersuchen um Ergänzung'
+STATUS_REQUEST_INTEGRATION: 'Anfrage um Ergänzung'
 STATUS_DRAFT_FOR_INTEGRATION: 'Ausstehende Ergänzungen'
 STATUS_SUBMITTED_AFTER_INTEGRATION: 'Ausstehende Registrierung der Ergänzungen'
 STATUS_REGISTERED_AFTER_INTEGRATION: 'Registrierte Ergänzungen '
@@ -538,8 +544,8 @@ iscrizioni:
   no_pagamenti: "Es sind keine Zahlungen zu diesem Eintrag vorhanden"
   no_iscrizione: "Der gesuchte Eintrag existiert nicht oder ist gelöscht worden"
   no_pagamento: "Die gesuchte Zahlung existiert nicht oder ist gelöscht worden"
-  accesso_negato: "Sie haben nicht die erforderlichen Zugriffsrechte, um diesen Eintrag zu sehen"
-  modifica_negata: "Sie haben nicht die erforderlichen Zugriffsrechte, um diesen Entrag zu bearbeiten"
+  accesso_negato: "Sie sind nicht berechtigt, diesen Eintrag anzuzeigen."
+  modifica_negata: "Sie sind nicht berechtigt, diesen diesen Entrag zu bearbeiten."
   torna_alle_iscrizioni: "Zurück zu den Einträgen"
   torna_all_iscrizione: "Zurück zum Eintrag"
   condividi: "Teilen"
@@ -668,20 +674,20 @@ iscrizioni:
   status_active: "Status aktiv"
   status_withdraw: "Status widerrufen"
   withdraw_description: "Beschreibung widerrufen"
-  id_action: ''
-  log_action: ''
-  send_message: ''
-  welcome: ''
-  row_index: ""
-  missing_related_cfs: ""
-  underage_subscriber: ""
+  id_action: 'ID Aktion'
+  log_action: 'Log Aktion'
+  send_message: 'Nachricht gesendet'
+  welcome: 'Willkommen'
+  row_index: "(Zeile %index%)"
+  missing_related_cfs: "(Zeile %index%) Die Nutzerin/Der Nutzer %fiscal_code% ist minderjährig und es ist keine gemeinsame Nutzerin/kein gemeinsamer Nutzer registriert."
+  underage_subscriber: "(Zeile %index%) Die Nutzerin/Der Nutzer %fiscal_code% ist minderjährig und es gibt keine beauftragten Personen für diese Registrierung"
 documenti:
   i_miei_documenti: "Meine Dokumente"
   no_documenti: "Es sind keine Dokumente vorhanden"
   no_folder: "Der gesuchte Ordner existiert nicht oder wurde entfernt"
   # Hier und folgende würde ich "Datei" sagen.
   no_document: "Das gesuchte Dokument existiert nicht oder wurde entfernt"
-  no_document_permissions: "Sie verfügen nicht über die erforderlichen Berechtigungen, um dieses Dokument anzuzeigen"
+  no_document_permissions: "Sie sind nicht berechtigt, dieses Dokument anzuzeigen."
   document_search_error: "Bei der Suche nach den Dokumenten ist ein Fehler aufgetreten"
   torna_alla_cartella: "Zurück zum Ordner"
   torna_alle_cartelle: "Zurück zu den Ordnern"
@@ -834,9 +840,9 @@ errori:
   allegato:
     tipo_non_valido: "Das Dateiformat des Anhangs %s  wird nicht unterstützt"
   pratica:
-    change_status: ""
-    new_status: ''
-    change_status_invalid: ""
+    change_status: "Status des Vorgangs von <b>%before_status%</b> auf <b>%after_status%</b> des Dienstes %service_name%  mit ID %id% ändern."
+    new_status: 'Status des Vorgangs "%status%" nicht gefunden'
+    change_status_invalid: "Anfrage auf Änderung des Status des Vorgangs ist nicht gültig"
 user:
   dashboard:
     title: 'Mein Konto'
@@ -902,26 +908,26 @@ user:
   welcome: 'Willkommen'
   welcome_msg: 'Die Anmeldung wurde erfolgreich durchgeführt'
   forgot_password: 'Passwort vergessen?'
-  forgot_password_description: ''
+  forgot_password_description: 'Wenn Sie Ihr Passwort vergessen haben, geben Sie bitte Ihren Benutzernamen oder Ihre E-Mail-Adresse ein.'
 admin:
   usage:
     user_title: 'BACKOFFICE'
     active_user_title: 'BACKOFFICE'
-  create_operator_notify: ''
-  delete_operator_notify: ''
-  error_delete_operator_notify: ""
-  url_service: ''
-  url_api_service: ''
-  show_service: ''
-  show_api_service: ""
-  payment_amount_description: ""
+  create_operator_notify: 'Sachbearbeiterin/Sachbearbeiter erfolgreich erstellt'
+  delete_operator_notify: 'Sachbearbeiterin/Sachbearbeiter erfolgreich gelöscht'
+  error_delete_operator_notify: "Sachberarbeiter/-in kann nicht gelöscht werden. Es sind Vorgänge damit verknüpft."
+  url_service: 'URL des Dienstes'
+  url_api_service: 'API-URL des Dienstes'
+  show_service: 'Klicken Sie hier, um den Dienst anzusehen'
+  show_api_service: "Zum Kopieren der URL API des Dienstes hier klicken"
+  payment_amount_description: "(Der Betrag wird vom System über den Wert des Feldes \"payment_amount\" bestimmt)"
   custom_validation:
-    custom_validation_for: ''
-    id_service: ''
-    id_field: ''
-    status_code: ''
-    field_label: ''
-    status_name: ''
+    custom_validation_for: 'custom validation for'
+    id_service: 'id service'
+    id_field: 'id field'
+    status_code: 'Status-Code'
+    field_label: 'field label'
+    status_name: 'Status Name'
 operatori:
   allega_risposta_firmata: 'Unterzeichnete Antwort anhängen'
   vai_al_dettaglio: 'Siehe Details'
@@ -945,7 +951,7 @@ operatori:
   riapri_pratica: "Vorgang erneut öffnen"
   richiedi_integrazioni_tpl: "Sehr geehrte/-r Frau/Herr <b>%user_name%, </b><br/> wir teilen Ihnen mit, dass die Daten zu Ihrer Anfrage betreffend <b>%servizio%</b> noch nicht vollständig sind.<br/>[Inserire motivazione]<br/>Steigen Sie in Ihr Bürgerservicekonto ein, um die Ergänzung vorzunehmen."
   modulo: "BACKOFFICE\n"
-  richiesta: 'Anfrage'
+  richiesta: 'Antrag'
   protocollo_arrivo: 'Eingang'
   protocollo_partenza: 'Start'
   numero_fascicolo: 'BACKOFFICE'
@@ -971,7 +977,7 @@ operatori:
   data_ora_ricevuta: "Datum und Uhrzeit der Empfangsbestätigung"
   commenti_e_modifiche: 'Kommentare'
   aggiungi_commento: 'Kommentar hinzufügen'
-  allegati_modulo: 'Ausgefülltes Formular und beigefügte Unterlagen'
+  allegati_modulo: 'Ausgefülltes Formblatt und beigefügte Unterlagen'
   allegati_messaggi: 'Nachrichtenanhänge'
   messaggi:
     titolo: 'Nachrichten'
@@ -997,13 +1003,13 @@ operatori:
     consegnato_il: 'Nachricht gesendet am %data%'
     letto_il: 'Nachricht gelesen am %data%'
     feedback_inviato: "BACKOFFICE"
-    pratica_id: ""
-    errore_carica_allegato: ""
+    pratica_id: "Vorgang-ID:"
+    errore_carica_allegato: "befindet sich in einem Status, in dem keinen Dateien angehängt werden können."
   suggerimento_login: 'Wenn Sie sich mit SPID/Bürgerkarte anmelden, werden die Felder automatisch ausgefüllt und der Vorgang in Ihrem Profil gespeichert.'
   login: "Login"
-  scarica: 'Anfrage'
+  scarica: 'Datei betreffend den Antrag'
   info: "Info"
-  iter_completato: "Die Anfrage wurde am %data% um %ore% Uhr <strong>%statusName%</strong>  "
+  iter_completato: "Der Antrag wurde am %data% um %ore% Uhr <strong>%statusName%</strong>  "
   pratica_ritirata: "Der Vorgang wurde am %data% um %ore% Uhr zurückgezogen"
   pratica_correlata: "Aggiungi nota interna\n"
   fascicolo: "BACKOFFICE"
@@ -1011,22 +1017,22 @@ operatori:
   no_pratica_correlata: "Aggiungi nota interna\n"
   ultime_pratiche: "BACKOFFICE"
   inviata_il_alle: "gesendet am %data% um %ore% Uhr"
-  recaptcha: 'Klicken Sie auf „Ich bin kein Roboter“ und danach auf „Senden", um die Anfrage abzuschicken.'
+  recaptcha: 'Klicken Sie auf „Ich bin kein Roboter“ und danach auf „Senden", um den Antrag abzuschicken.'
   scarica_ricevuta_provvisoria: 'BACKOFFICE'
   attesa_ricevuta: 'BACKOFFICE'
   attesa_modulo_compilato: 'BACKOFFICE'
-  attesa_modulo_compilato_info: 'Das ausgefüllte Formular wird zuerst in ein PDF umgewandelt und dann zur Registrierung weitergeleitet. PDF-Konvertierung ist im Gange.'
+  attesa_modulo_compilato_info: 'Das ausgefüllte Formblatt wird zuerst in ein PDF umgewandelt und dann zur Registrierung weitergeleitet. PDF-Konvertierung ist im Gange.'
   attesa_modulo_protocollato: 'BACKOFFICE'
   attesa_pagamento: 'Zahlung noch ausständig'
-  attesa_protocollo_info: "<strong>Achtung:</strong> Die ausgefüllte Anfrage samt allen eventuellen Anhängen wurde an das Registrierungssystem weitergeleitet.<br /> Sobald die Registrierung erfolgt ist, erhalten Sie eine Bestätigungs-E-Mail."
+  attesa_protocollo_info: "<strong>Achtung:</strong> Der ausgefüllte Antrag samt allen eventuellen Anhängen wurde an das Registrierungssystem weitergeleitet.<br /> Sobald die Registrierung erfolgt ist, erhalten Sie eine Bestätigungs-E-Mail."
   attesa_ricevuta_info: "Warten auf PDF-Quittung zum Herunterladen und Ausdrucken."
   controlla_richiesta_protocollata_loggato: "Wenn Sie die Seite neu laden oder über „Menü“ auf den Vorgang zugreifen, können Sie überprüfen, ob die Registrierung erfolgt ist."
   controlla_richiesta_protocollata_anonimo: "Wenn Sie die Seite neu laden, können Sie überprüfen, ob die Registrierung erfolgt ist."
   controlla_ricevuta_loggato: "Die Empfangsbestätigung bleibt in Ihrem persönlichen Nutzerbereich unter <i>Meine Vorgänge</i> verfügbar. "
   controlla_ricevuta_anonimo: "Kontrolle_Empfangsbestätigung_anonym"
-  scarica_ricevuta_provvisoria_info: "<strong>Achtung:</strong> Die ausgefüllte Anfrage samt allen eventuellen Anhängen wurde an das Registrierungssystem weitergeleitet.<br /> Sobald die Registrierung erfolgt ist, erhalten Sie eine Bestätigungs-E-Mail.<br /> Wenn Sie die Seite neu laden oder vom Menü aus unter <em>Meine Vorgänge</em> auf den Vorgang zugreifen, können Sie überprüfen, ob die Registrierung erfolgt ist."
-  scarica_modulo_compilato: 'Ausgefülltes Formular herunterladen'
-  scarica_richiesta_protocollata: 'Registrierte Anfrage herunterladen'
+  scarica_ricevuta_provvisoria_info: "<strong>Achtung:</strong> Der ausgefüllte Antrag samt allen eventuellen Anhängen wurde an das Registrierungssystem weitergeleitet.<br /> Sobald die Registrierung erfolgt ist, erhalten Sie eine Bestätigungs-E-Mail.<br /> Wenn Sie die Seite neu laden oder vom Menü aus unter <em>Meine Vorgänge</em> auf den Vorgang zugreifen, können Sie überprüfen, ob die Registrierung erfolgt ist."
+  scarica_modulo_compilato: 'Ausgefülltes Formblatt herunterladen'
+  scarica_richiesta_protocollata: 'Registrierten Antrag herunterladen'
   scarica_ricevuta: 'Empfangsbestätigung herunterladen'
   scarica_risposta_firmata: 'Antwortdatei'
   torna_alla_lista_operatori: 'Zurück zur Liste der Sachbearbeiter/-innen'
@@ -1038,7 +1044,7 @@ operatori:
         esito_label: "persönliche Nachricht"
         esito_help: "BACKOFFICE"
         # rivedere versione italiana (inserire ; dopo "diverso")
-        payment_amount_help: "Der aufscheinende Betrag wurde im Formular oder durch die Einstellungen berechnet. Falls erforderlich, kann ein anderer Betrag eingefügt werden; wird als Betrag „0“ eingegeben, ist die Nutzerin/der Nutzer von der Zahlung befreit und der Vorgang kann sofort genehmigt werden."
+        payment_amount_help: "Der aufscheinende Betrag wurde im Formblatt oder durch die Einstellungen berechnet. Falls erforderlich, kann ein anderer Betrag eingefügt werden; wird als Betrag „0“ eingegeben, ist die Nutzerin/der Nutzer von der Zahlung befreit und der Vorgang kann sofort genehmigt werden."
         allega_label: "Anhänge"
         allega_help: "Eventuelle Dateien in PDF-, JPG-, JPEG- oder P7M-Format anhängen"
     upload_risposta_firmata:
@@ -1105,65 +1111,65 @@ operatori:
   accetta_richiesta_integrazione: 'Ergänzungsanfrage annehmen'
   tooltip_accetta_richiesta_disabilitato: "Tooltipp_Annahme_Anfrage_deaktiviert"
   scarica_ritiro: 'Download_Zurückziehung des Vorgangs'
-  pratica_annullata: ""
-  copy_application_helper: ""
-  copy_protocol_helper: ""
-  protocol_number_assigned: ""
-  download_csv_data: ""
-  table_options: ""
-  citizen_identity_verified: ""
-  payment_executed: ""
-  waiting_payment_outcome: ""
-  no_payment: ""
-  apply_and_close: ''
-  error_pratice_state: ''
-  integration_accepted_success: ''
-  integration_accepted_error: ''
-  integration_succes: ''
-  error_change_state_description: ''
-  error_change_state: ''
-  error_update_change_state: ''
-  change_status_success: ''
-  error_status_selected: ''
-  send_request_integration: ''
-  send_request_integration_description: ""
-  inegrations_request: ''
-  enabled_services: ''
-  form_field: ''
-  scheda: ""
-  copy_url_service_group: ""
-  public_url_service_group: ""
-  delete_service_group: ''
-  delete_services: ""
-  delete_webhook: ""
-  create_webhook_success: ""
-  delete_webhook_success: ""
-  delete_webhook_error: ""
-  no_permission_calendar: ""
-  create_calendar_success: ""
-  create_calendar_error: ""
-  create_calendar_error_name: ""
-  delete_calendar_success: ""
-  delete_calendar_error: ""
-  update_calendar_success: ""
-  delete_subscription_service: ""
-  delete_subscription_service_success: ""
-  delete_subscription_service_error: ""
-  delete_operator: ""
+  pratica_annullata: "Der Vorgang %id% wurde annulliert"
+  copy_application_helper: "Zum Kopieren der Vorgang-ID anklicken"
+  copy_protocol_helper: "Zum Kopieren der Protokollnummer anklicken"
+  protocol_number_assigned: "Zugeteilte Protokollnummer"
+  download_csv_data: "Klicken Sie, um die Daten im CSV-Format herunterzuladen"
+  table_options: "Tabellenoptionen"
+  citizen_identity_verified: "Identität verifiziert"
+  payment_executed: "Zahlung durchgeführt"
+  waiting_payment_outcome: "In Erwartung des Ergebnisses der Zahlung"
+  no_payment: "Es ist keine Zahlung vorgesehen"
+  apply_and_close: 'Anwenden und schließen '
+  error_pratice_state: 'Der Vorgang ist nicht im richtigen Status'
+  integration_accepted_success: 'Nachtrag erfolgreich angenommen'
+  integration_accepted_error: 'Während der Annahme ist ein Fehler aufgetreten.'
+  integration_succes: 'Ergänzung erfolgreich angefordert'
+  error_change_state_description: 'Fehler beim Ändern des Status des Vorgangs'
+  error_change_state: 'Beim Ändern des Status des Vorgangs ist ein Fehler aufgetreten.'
+  error_update_change_state: 'Der Status des Vorgangs kann nicht geändert werden.'
+  change_status_success: 'Status des Vorgangs erfolgreich geändert.'
+  error_status_selected: 'Der ausgewählte Status ist kein für diesen Vorgang zulässiger Status'
+  send_request_integration: 'Anfrage auf Ergänzung abschicken'
+  send_request_integration_description: "Verwenden Sie dieses Feld, um die Anfrage um Ergänzung zu begründen.<br /> Nach dem Versenden erhält die Nutzerin/der Nutzer eine Nachricht mit dem angegebenen Text, und eventuelle Antworten können im Bereich \"Nachrichten\" abgerufen werden."
+  inegrations_request: 'Ergänzung anfordern'
+  enabled_services: 'Berechtigt'
+  form_field: 'Eingabefeld'
+  scheda: "Datenblatt"
+  copy_url_service_group: "Kopiere öffentliche URL der Kategorie von Diensten"
+  public_url_service_group: "öffentliche URL der Gruppe von Diensten"
+  delete_service_group: 'Sind Sie sicher, dass Sie fortfahren möchten? Die Gruppe von Diensten wird endgültig gelöscht.'
+  delete_services: "Sind Sie sicher, dass Sie fortfahren möchten? Der Dienst wird aus der Gruppe von Diensten gelöscht."
+  delete_webhook: "Sind Sie sicher, dass Sie fortfahren möchten? Webhook wird endgültig gelöscht."
+  create_webhook_success: "Webhook erfolgreich erstellt"
+  delete_webhook_success: "Webhook erfolgreich gelöscht."
+  delete_webhook_error: "Webhook kann nicht gelöscht werden. Es sind Dienste damit verknüpft."
+  no_permission_calendar: "Sie sind nicht berechtigt, diesen Kalender zu löschen."
+  create_calendar_success: "Kalender erfolgreich erstellt."
+  create_calendar_error: "Erstellung fehlgeschlagen"
+  create_calendar_error_name: "Erstellung fehlgeschlagen: es ist bereits ein Kalender mit Namen vorhanden"
+  delete_calendar_success: "Kalender erfolgreich gelöscht."
+  delete_calendar_error: "Der Kalender kann nicht gelöscht werden."
+  update_calendar_success: "Kalender erfolgreich geändert."
+  delete_subscription_service: "Sind Sie sicher, dass sie fortfahren möchten? Der Abo-Dienst wird endgültig gelöscht."
+  delete_subscription_service_success: "Abo erfolgreich gelöscht."
+  delete_subscription_service_error: "Abo kann nicht gelöscht werden."
+  delete_operator: "Sind Sie sicher, dass Sie fortfahren möchten? Sachbearbeiter/-in wird endgültig gelöscht."
 allegato:
   nome_file: 'Dateiname'
   descrizione_file: 'Beschreibung der Datei'
   scarica_allegato: 'Datei herunterladen'
   scarica_allegato_bozza: 'Die Datei herunterladen'
   scarica_allegato_in_attesa_di_protocollazione: 'BACKOFFICE'
-  scarica_allegato_richiesta_integrazione: "Datei mit Ergänzungsanfrage herunterladen"
+  scarica_allegato_richiesta_integrazione: "Datei betreffend den Antrag auf Ergänzung herunterladen"
   crea_allegato: 'Anlage hochladen'
   non_supportato: "Das Format der Datei, die Sie hochladen möchten, wird nicht unterstützt. Es werden folgende Dateiformate unterstützt: pdf, jpg, jpeg, gif, png, p7m"
   guida_alla_compilazione:
     crea: 'Wählen Sie die Datei aus, die hochgeladen werden soll. Es muss eine Bild- (png bmp gif jpg) oder eine pdf-Datei sein. Geben Sie der Datei eine Beschreibung, damit sie leichter identifiziert werden kann.'
   non_cancellabile: 'Dieser Anhang befindet sich unter „erfolgreich gesendete Formulare“ und kann daher nicht gelöscht werden'
   aggiungi: 'Anhang hinzufügen'
-  cancellato: 'Anhang korrekt gelöscht'
+  cancellato: 'Anhang erfolgreich gelöscht'
   protocollo:
     protocollato: 'registriert'
     in_attesa: 'Registrierung noch ausständig'
@@ -1181,26 +1187,26 @@ email:
     no_info: '<i>Information nicht verfügbar</i>'
     user:
       status:
-        pre.submit: "wir teilen Ihnen mit, dass Ihre Anfrage betreffend <strong>%servizio%</strong> erfolgreich gesendet worden ist. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an."
-        submitted: "wir haben Ihre Anfrage betreffend <strong>%servizio%</strong> erhalten. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an. Im Anhang finden Sie das von Ihnen ausgefüllte Formular.<br /><strong>Achtung:</strong> Dies ist nur die Bestätigung für den Eingang der Anfrage, aber NICHT die Erledigung der Anfrage; wir werden Sie mit einer späteren E-Mail über die Annahme oder die Ablehnung der Anfrage benachrichtigen."
-        registered: "ihre Anfrage betreffend <strong>%servizio%</strong> wurde registriert. Die Registrierungsnummer lautet: <strong>%protocollo%</strong>. Ein/-e Sachberarbeiter/-in wird die Anfrage so bald wie möglich prüfen und bearbeiten."
-        cancelled: 'wir teilen Ihnen mit, dass Ihre Anfrage betreffend <strong>%servizio%</strong> abgelehnt wurde. Die Nummer der Anfrage lautet:<strong>%pratica_id%</strong></strong>.'
-        complete: 'wir teilen Ihnen mit, dass Ihrer Anfrage betreffend <strong>%servizio%</strong> stattgegeben wurde. Die Nummer der Anfrage lautet:<strong>%pratica_id%</strong>.'
-        complete.waitallegatioperatore: 'wir teilen Ihnen mit, dass Ihre Anfrage betreffend <strong>%servizio%</strong> bearbeitet wurde. Es ist noch die Registrierung der neuen Anhänge ausständig'
-        pending: "wir teilen Ihnen mit, dass ein/-e Mitarbeiter/-in die Bearbeitung ihrer Anfrage betreffend <strong>%servizio%</strong> übernommen hat."
+        pre.submit: "wir teilen Ihnen mit, dass Ihr Antrag betreffend <strong>%servizio%</strong> erfolgreich gesendet worden ist. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an."
+        submitted: "wir haben Ihren Antrag betreffend <strong>%servizio%</strong> erhalten. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an. Im Anhang finden Sie das von Ihnen ausgefüllte Formblatt.<br /><strong>Achtung:</strong> Dies ist nur die Bestätigung für den Eingang des Antrags, aber NICHT die Bearbeitung des Antrags; wir werden Sie mit einer späteren E-Mail über die Annahme oder die Ablehnung des Antrags benachrichtigen."
+        registered: "Ihr Antrag betreffend <strong>%servizio%</strong> wurde registriert. Die Registrierungsnummer lautet: <strong>%protocollo%</strong>. Ein/-e Sachberarbeiter/-in wird den Antrag so bald wie möglich prüfen und bearbeiten."
+        cancelled: 'Ihr Antrag betreffend <strong>%servizio%</strong> wurde abgelehnt. Die Referenznummer des Antrags lautet:<strong>%pratica_id%</strong></strong>.'
+        complete: 'Wir teilen Ihnen mit, dass Ihrem Antrag betreffend <strong>%servizio%</strong> stattgegeben wurde. Die Referenznummer des Antrags lautet:<strong>%pratica_id%</strong>.'
+        complete.waitallegatioperatore: 'Wir teilen Ihnen mit, dass Ihr Antrag betreffend <strong>%servizio%</strong> bearbeitet wurde. Es ist noch die Registrierung der neuen Anhänge ausständig'
+        pending: "Wir teilen Ihnen mit, dass ein/-e Mitarbeiter/-in die Bearbeitung ihres Antrags betreffend <strong>%servizio%</strong> übernommen hat."
         draft: "wir teilen Ihnen mit, dass unter Ihrem Namen ein Vorgangsentwurf betreffend  <strong>%servizio%</strong> erstellt worden ist. Steigen Sie in Ihr Bürgerservicekonto ein und schauen Sie unter  <i>Meine Vorgänge</i> nach, wenn Sie die Anfrage senden wollen."
-        draft.for.integration: "wir teilen Ihnen mit, dass die Daten zu Ihrer Anfrage betreffend <strong>%servizio%</strong> noch nicht vollständig sind. Steigen Sie in Ihr Bürgerservicekonto ein, um die Ergänzung vorzunehmen."
-        submitted.after.integration: "wir teilen Ihnen mit, dass wir die Ergänzung zu Ihrer Anfrage betreffend <strong>%servizio%</strong> erhalten haben."
-        registered.after.integration: "wir teilen Ihnen mit, dass die Ergänzung zu Ihrer Anfrage mit Registrierungsnummer <strong>%protocollo%</strong> betreffend <strong>%servizio%</strong> registriert wurde. <br /> Ein/-e Sachberarbeiter/-in wird die Anfrage so bald wie möglich prüfen und bearbeiten."
-        pending.after.integration: "wir teilen Ihnen mit, dass sich bereits ein/-e Sachbearbeiter/-in mit der Ergänzung zu Ihrer Anfrage betreffend <strong>%servizio%</strong> befasst."
-        withdraw: "wir teilen Ihnen mit, dass Ihre Anfrage betreffend <strong>%servizio%</strong> erfolgreich zurückgezogen wurde. Die Nummer der Anfrage lautet:<strong>%pratica_id%</strong>, geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
+        draft.for.integration: "Wir teilen Ihnen mit, dass die Daten zu Ihrem Antrag betreffend <strong>%servizio%</strong> noch nicht vollständig sind. Steigen Sie in Ihr Bürgerservicekonto ein, um die Ergänzung vorzunehmen."
+        submitted.after.integration: "Wir teilen Ihnen mit, dass wir die Ergänzung zu Ihrem Antrag betreffend <strong>%servizio%</strong> erhalten haben."
+        registered.after.integration: "Wir teilen Ihnen mit, dass die Ergänzung zu Ihrem Antrag mit Registrierungsnummer <strong>%protocollo%</strong> betreffend <strong>%servizio%</strong> registriert wurde. <br /> Ein/-e Sachberarbeiter/-in wird den Antrag so bald wie möglich prüfen und bearbeiten."
+        pending.after.integration: "Wir teilen Ihnen mit, dass ein/-e Sachbearbeiter/-in die Ergänzung zu Ihrem Antrag betreffend <strong>%servizio%</strong> derzeit bearbeitet."
+        withdraw: "Wir teilen Ihnen mit, dass Ihr Antrag betreffend <strong>%servizio%</strong> erfolgreich zurückgezogen wurde. Die Referenznummer des Antrags lautet:<strong>%pratica_id%</strong>, geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
         payment:
-          pending: "wir teilen Ihnen mit, dass zu Ihrer Anfrage betreffend <strong>%servizio%</strong> noch die Zahlung ausständig ist."
-          success: "wir teilen Ihnen mit, dass die Zahlung zu Ihrer Anfrage betreffend <strong>%servizio%</strong> erfolgreich abgewickelt wurde."
-          error: "wir teilen Ihnen mit, dass während des Zahlungsvorgangs zu Ihrer Anfrage betreffend <strong>%servizio%</strong> ein Fehler aufgetreten ist."
+          pending: "Wir teilen Ihnen mit, dass zu Ihrem Antrag betreffend <strong>%servizio%</strong> noch die Zahlung ausständig ist."
+          success: "Wir teilen Ihnen mit, dass die Zahlung zu Ihrem Antrag betreffend <strong>%servizio%</strong> erfolgreich abgewickelt wurde."
+          error: "Wir teilen Ihnen mit, dass während des Zahlungsvorgangs zu Ihrem Antrag betreffend <strong>%servizio%</strong> ein Fehler aufgetreten ist."
           outcome:
-            pending: "wir teilen Ihnen mit, dass zu Ihrer Anfrage betreffend <strong>%servizio%</strong> noch die Zahlung ausständig ist. "
-        revoked: "wir teilen Ihnen mit, dass Ihre Anfrage betreffend <strong>%servizio%</strong> annulliert wurde. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an."
+            pending: "Wir teilen Ihnen mit, dass zu Ihrem Antrag betreffend <strong>%servizio%</strong> noch das Zahlungsergebnis ausständig ist. "
+        revoked: "Wir teilen Ihnen mit, dass Ihr Antrag betreffend <strong>%servizio%</strong> annulliert wurde. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an."
     operatore:
       status:
         submitted: "BACKOFFICE"
@@ -1210,11 +1216,11 @@ email:
         complete.waitallegatioperatore: "BACKOFFICE"
         pending: "Sie haben den Vorgang der Nutzerin/des Nutzers  <strong>%user_pratica%</strong> betreffend<strong>%servizio%</strong> übernommen"
         payment:
-          pending: "zur Anfrage von <strong>%user_pratica%</strong> betreffend <strong>%servizio%</strong> ist noch die Zahlung ausständig"
-          success: "die Zahlung zur Anfrage von <strong>%user_pratica%</strong> betreffend <strong>%servizio%</strong> wurde erfolgreich abgewickelt."
-          error: "während des Zahlungsvorgangs zur Anfrage von <strong>%user_pratica%</strong> betreffend <strong>%servizio%</strong> ist ein Fehler aufgetreten."
+          pending: "Zum Antrag von <strong>%user_pratica%</strong> betreffend <strong>%servizio%</strong> ist noch die Zahlung ausständig"
+          success: "Die Zahlung zum Antrag von <strong>%user_pratica%</strong> betreffend <strong>%servizio%</strong> wurde erfolgreich abgewickelt."
+          error: "Während des Zahlungsvorgangs zum Antrag von <strong>%user_pratica%</strong> betreffend <strong>%servizio%</strong> ist ein Fehler aufgetreten."
           outcome:
-            pending: "zur Anfrage von <strong>%user_pratica%</strong> betreffend <strong>%servizio%</strong> ist noch das Zahlungsergebnis ausständig"
+            pending: "Zum Antrag von <strong>%user_pratica%</strong> betreffend <strong>%servizio%</strong> ist noch das Zahlungsergebnis ausständig"
         draft: 'Entwurf'
         withdraw: "BACKOFFICE"
         revoked: "BACKOFFICE"
@@ -1222,37 +1228,37 @@ email:
 messages:
   pratica:
     status:
-      1900: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass Ihre Anfrage betreffend <strong>%servizio%</strong> erfolgreich gesendet worden ist. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
-      1500: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass zu Ihrer Anfrage betreffend <strong>%servizio%</strong> noch die Zahlung ausständig ist. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
-      1510: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass zu Ihrer Anfrage betreffend <strong>%servizio%</strong> noch das Zahlungsergebnis ausständig ist. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
-      1520: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass die Zahlung zu Ihrer Anfrage betreffend <strong>%servizio%</strong> erfolgreich abgewickelt wurde. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
-      1530: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass während des Zahlungsvorgangs zu Ihrer Anfrage betreffend <strong>%servizio%</strong> ein Fehler aufgetreten ist. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
-      2000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir haben Ihre Anfrage betreffend <strong>%servizio%</strong> erhalten. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an. Im Anhang finden Sie das von Ihnen ausgefüllte Formular.<br /><strong>Achtung:</strong> Dies ist nur die Bestätigung für den Eingang der Anfrage, aber NICHT die Erledigung der Anfrage. Wir werden Sie mit einer späteren E-Mail über die Annahme oder die Ablehnung der Anfrage benachrichtigen.<br />Wir danken für die Zusammenarbeit."
-      3000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihre Anfrage betreffend <strong>%servizio%</strong> wurde registriert. Die Registrierungsnummer lautet: <strong>%protocollo%</strong>. Ein/-e Sachberarbeiter/-in wird die Anfrage so bald wie möglich prüfen und bearbeiten.<br />Wir danken für die Zusammenarbeit."
-      4000: 'Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> ein/-e Sachbearbeiter/-in hat mit der Bearbeitung Ihrer Anfrage betreffend <strong>%servizio%</strong> begonnen.<br />Wir danken für die Zusammenarbeit.'
+      1900: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass Ihr Antrag betreffend <strong>%servizio%</strong> erfolgreich gesendet worden ist. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
+      1500: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass zu Ihrem Antrag betreffend <strong>%servizio%</strong> noch die Zahlung ausständig ist. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
+      1510: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass zu Ihrem Antrag betreffend <strong>%servizio%</strong> noch das Zahlungsergebnis ausständig ist. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
+      1520: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass die Zahlung zu Ihrem Antrag betreffend <strong>%servizio%</strong> erfolgreich abgewickelt wurde. Die Nummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Referenznummer an.<br />Wir danken für die Zusammenarbeit."
+      1530: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass während des Zahlungsvorgangs zu Ihrem Antrag betreffend <strong>%servizio%</strong> ein Fehler aufgetreten ist. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
+      2000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir haben Ihren Antrag betreffend <strong>%servizio%</strong> erhalten. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an. Im Anhang finden Sie das von Ihnen ausgefüllte Formblatt.<br /><strong>Achtung:</strong> Dies ist nur die Bestätigung für den Eingang des Antrags, aber NICHT die Bearbeitung des Antrags. Wir werden Sie mit einer späteren E-Mail über die Annahme oder die Ablehnung des Antrags benachrichtigen.<br />Wir danken für die Zusammenarbeit."
+      3000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde registriert. Die Registrierungsnummer lautet: <strong>%protocollo%</strong>. Ein/-e Sachberarbeiter/-in wird den Antrag so bald wie möglich prüfen und bearbeiten.<br />Wir danken für die Zusammenarbeit."
+      4000: 'Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> ein/-e Sachbearbeiter/-in hat mit der Bearbeitung Ihres Antrags betreffend <strong>%servizio%</strong> begonnen.<br />Wir danken für die Zusammenarbeit.'
       5000: '5000'
       6000: '6000'
       # A cosa si riferisce "Con il seguente messaggio:" ?
       # Potrei avere un esempio?
-      7000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihrer Anfrage betreffend <strong>%servizio%</strong> wurde stattgegeben. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>.<br />Benachrichtigung:<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
+      7000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihrem Antrag betreffend <strong>%servizio%</strong> wurde stattgegeben. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br />Benachrichtigung:<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
       8000: '8000'
       # A cosa si riferisce "Con il seguente messaggio:" ?
       # Potrei avere un esempio?
-      9000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihre Anfrage betreffend <strong>%servizio%</strong> wurde abgelehnt. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>.<br />Benachrichtigung:<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
-      20000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihre Anfrage betreffend <strong>%servizio%</strong> wurde erfolgreich zurückgezogen. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
+      9000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde abgelehnt. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br />Benachrichtigung:<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
+      20000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde erfolgreich zurückgezogen. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
       1000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass unter Ihrem Namen ein Vorgangsentwurf betreffend  <strong>%servizio%</strong> erstellt worden ist. Steigen Sie in Ihr Bürgerservicekonto ein und schauen Sie unter  <i>Meine Vorgänge</i> nach, wenn Sie die Anfrage senden wollen.<br />Wir danken für die Zusammenarbeit."
-      50000: "Sehr geehrte/-r Frau/Herr<strong>%user_name%</strong>,<br /> Ihre Anfrage betreffend <strong>%servizio%</strong> wurde annulliert. Die Nummer der Anfrage lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Nachrichten zu dieser Anfrage stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
+      50000: "Sehr geehrte/-r Frau/Herr<strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde annulliert. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
     no_reason: '<i>Keine Nachricht angegeben<i>'
   subject_label: 'Betreff'
   message_label: 'Nachricht'
-  status_request: ''
-  enable_sending_message: ""
-  messages_label: ''
-  mail_to_me: ''
-  mail_to_user: ''
-  warning_pratice: ''
-  receives_why: ''
-  receives_why_description: ""
+  status_request: 'Status der Anfrage'
+  enable_sending_message: "Senden von Nachrichten aktivieren?"
+  messages_label: 'Nachrichten'
+  mail_to_me: 'Wollen Sie ein E-Mail an sich selbst senden?'
+  mail_to_user: 'Es wird eine Nachricht an die Nutzeradresse gesendet.'
+  warning_pratice: 'Nach Bearbeitung des Vorgangs sind keine Änderungen mehr möglich.'
+  receives_why: 'Sie erhalten diese Nachricht, weil sie einen Dienst genutzt haben'
+  receives_why_description: "Bei Problemben antworten Sie bitte nicht auf diese E-Mail, sondern verwenden Sie die auf der Webseite angegebenen Kontakte."
 messaggi:
   messaggio: 'Nachricht'
   invia: 'Senden'
@@ -1297,7 +1303,7 @@ steps:
     conferma:
       label: 'Überprüfung und Bestätigung'
       title: 'Überprüfung und Bestätigung'
-      sei_sicuro_di_inviare: 'Sind Sie sicher, dass der Vordruck korrekt ausgefüllt ist und dass Sie die Unterlagen absenden möchten?'
+      sei_sicuro_di_inviare: 'Sind Sie sicher, dass das Formblatt richtig ausgefüllt ist und dass Sie die Unterlagen absenden möchten?'
       si: 'Ja, ich bin mir sicher.'
       'no': 'Nein'
       payment_help_text_top: 'DA NON TRADURRE'
@@ -2226,7 +2232,7 @@ steps:
   formio:
     # "scheda del servizio" = "scheda del servizio" in "Condividi scheda del servizio con il gruppo"?
     # ... o nel senso di  "scheda descrittiva del servizio" ?
-    generic_violation_message: "Das Formular scheint nicht korrekt ausgefüllt zu sein, bitte versuchen Sie es erneut oder kontaktieren Sie das in der Dienstbeschreibung angegebene Servicecenter."
+    generic_violation_message: "Das Formblatt scheint nicht richtig ausgefüllt zu sein, bitte versuchen Sie es erneut oder kontaktieren Sie das in der Dienstbeschreibung angegebene Servicecenter."
     attachments_violation_message: "DA NON TRADURRE"
     payment_violation_message: "DA NON TRADURRE"
     fiscalcode_violation_message: "DA NON TRADURRE"
@@ -2262,7 +2268,7 @@ protocollo:
   pec:
     email:
       abstract:
-        send_applcation: 'Es ist ein neuer Vorgang für folgenden Onlinedienst eingegangen: %name%'
+        send_applcation: 'Es ist ein neuer Vorgang für folgenden Online-Dienst eingegangen: %name%'
         send_integration: 'Es ist eine Ergänzung zu folgendem Vorgang eingegangen: %name%'
         send_attachment: 'Es ist ein Anhang zu folgendem Vorgang eingegangen: %name%'
         send_result: 'Es ist eine Antwort zu folgendem Vorgang eingegangen: %name%'
@@ -2291,10 +2297,10 @@ gateway:
     download_receipt_button: "Zahlungsbestätigung herunterladen"
     download_text: "Klicken Sie auf den folgenden Button, um das PDF-Dokument (Zahlungsbescheid) herunterzuladen. Sie können die Zahlung bei einem Postamt, am Bankomatschalter, bei einer Sisal-Annahmestelle, über die Apps \"IO\" oder Satispay vornehmen."
     name: 'MyPay'
-    ipa_code: ''
-    password: ''
-    data: ''
-    id_type: ''
+    ipa_code: 'IPA-Code der Behörde'
+    password: 'Passwort Behörde'
+    data: 'spezifische Daten für die Einhebung'
+    id_type: 'id type'
   add: Zahlungsart hinzufügen
   name: Name
   description: Beschreibung
@@ -2419,9 +2425,9 @@ calendars:
   back_to_calendars: 'Zurück zur Liste'
   print: 'Drucken'
   info: 'Erstellt von %owner% am %createdDate%, letzte Änderung am %updatedDate% um %updatedTime%'
-  update_calendar: ''
-  update_meeting: ''
-  go_calendar: ''
+  update_calendar: 'Kalender ändern'
+  update_meeting: 'Termin ändern'
+  go_calendar: 'Gehe zum Kalender'
 meetings:
   error:
     slot_unavailable: "Das ausgewählte Zeitfenster ist nicht verfügbar"
@@ -2431,14 +2437,14 @@ meetings:
     no_opening_hour_with_overlaps: "Die Öffnungszeiten sind obligatorisch, wenn es Überschneidungen im Kalender gibt."
     invalid_meeting: "Termin ungültig"
     not_unique: "Pro Vorgang ist nur 1 zu bestätigendes oder bestätigtes Meeting möglich."
-    one_moved: ""
-    moved: ""
-    times: ''
-    unable_availabilities: ''
-    save_slot: ""
-    update_slot: ""
-    save_delete_slot: ""
-    slot_hours_invalid: ''
+    one_moved: "Dieser Termin wurde 1 Mal verschoben"
+    moved: "Dieser Termin wurde"
+    times: 'Mal'
+    unable_availabilities: 'Abrufen der freien Plätze für das ausgewählte Datum nicht möglich.'
+    save_slot: "Beim Speichern des Termins ist ein Fehler aufgetreten."
+    update_slot: "Beim Ändern des Termins ist ein Fehler aufgetreten."
+    save_delete_slot: "Beim Stornieren des Termins ist ein Fehler aufgetreten."
+    slot_hours_invalid: 'Wählen Sie eine gültige Uhrzeit'
   no_email_warning: 'BACKOFFICE'
   default_draft_message: "Termin im Entwurfstatus"
   no_info: "<i>Information nicht verfügbar</i>"
@@ -2483,8 +2489,8 @@ meetings:
     invalid_meeting:
       invalid: "<h3>%service%</h3><p>Der von Ihnen gewünschte Termin am  <b>date</b> um <b>hour</b> Uhr kann leider nicht vorgemerkt werden, da die ausgewählte Uhrzeit nicht verfügbar ist.</p>"
       subject: "Termin ungültig"
-    cancel_with_contact: '<br><p>Wenn Sie den vorgeschlagenen Termin nicht wahrnehmen können, annullieren Sie ihn bitte unter folgendem Link:<a href="cancel_link"><b> link</b></a></p></a> oder kontaktieren Sie uns unter folgender Adresse: <a href="mailto:email_address"><b>email_address</b></a></p>'
-    cancel_without_contact: '<br><p>Wenn Sie den vorgeschlagenen Termin nicht wahrnehmen können, annullieren Sie ihn bitte unter folgendem Link:<a href="cancel_link"><b> link</b></a></p>'
+    cancel_with_contact: '<br><p>Wenn Sie den vorgeschlagenen Termin nicht wahrnehmen können, sagen Sie ihn bitte unter folgendem Link:<a href="cancel_link"><b> link</b></a></p></a> ab oder kontaktieren Sie uns unter folgender Adresse: <a href="mailto:email_address"><b>email_address</b></a></p>'
+    cancel_without_contact: '<br><p>Wenn Sie den vorgeschlagenen Termin nicht wahrnehmen können, sagen Sie ihn bitte unter folgendem Link:<a href="cancel_link"><b> link</b></a></p> ab.'
     info_with_contact: '<br><p><i>Sie erhalten diese Nachricht, weil Ihre E-Mail-Adresse zur Vormerkung eines Termins verwendet wurde, sollten Sie keine diesbezügliche Anfrage gestellt haben, bitten wir Sie, diese Nachricht zu ignorieren oder den Vorfall zu melden an: <a href="mailto:email_address"><b>email_address</b></a></i></p>'
     # presso ente?
     info_without_contact: '<br><p><i>Sie erhalten diese Nachricht, weil Ihre E-Mail-Adresse zur Vormerkung eines Termins verwendet wurde, sollten Sie keine diesbezügliche Anfrage gestellt haben, bitten wir Sie, diese Nachricht zu ignorieren  </i></p>'
@@ -2554,7 +2560,7 @@ meetings:
       save: "Auf die Terminänderung folgt eine Benachrichtigung der Nutzerin/des Nutzers. Sind Sie sicher, dass Sie fortfahren möchten?"
     extend_draft_for_days: 'Weitere %num% Tage reservieren'
     extend_draft_for_one_day: '1 weiteren Tag reservieren'
-    no_name: ''
+    no_name: 'Name nicht angegeben'
   status:
     pending: 'pending'
     approved: 'approved'
@@ -2563,24 +2569,24 @@ meetings:
     done: 'done'
     cancelled: 'cancelled'
     draft: 'draft'
-    concluded: ''
-    completed: ''
-  every_meetings: ''
-  one_person: ""
-  one_person_max: ""
-  people_same_time: ''
-  meeting_place: ''
-  contact: ''
-  min_cancel: ""
-  days_to_date: ""
-  delete: ''
-  export_excel: ''
-  export_csv: ''
-  export_pdf: ''
-  print: ''
-  excel: ''
-  csv: ''
-  pdf: ''
+    concluded: 'Abgeschlossen'
+    completed: 'Vervollständigt'
+  every_meetings: 'Jeder Termin dauert '
+  one_person: "Es ist auch möglich, immer nur eine Person zu empfangen"
+  one_person_max: "Es ist auch möglich, höchstens _ Personen zu empfangen"
+  people_same_time: 'Personen gleichzeitig'
+  meeting_place: 'Ort'
+  contact: 'Kontakt'
+  min_cancel: "Eine Terminabsage ist möglich bis spätestens"
+  days_to_date: "Tage ab dem Datum des Termins"
+  delete: 'Termin absagen'
+  export_excel: 'Exportieren als Excel-Datei'
+  export_csv: 'Exportieren als CSV-Datei'
+  export_pdf: 'Exportieren als PDF-Datei'
+  print: 'Ausdrucken'
+  excel: 'Excel'
+  csv: 'CSV'
+  pdf: 'PDF'
 backoffice:
   entity:
     mailers: 'BACKOFFICE'
@@ -2600,14 +2606,14 @@ backoffice:
       calendar_error: 'Encryption'
       save_meeting_error: 'Beim Speichern der Vormerkung ist ein Fehler aufgetreten.'
       invalid_slot: 'Das ausgewählte Zeitfenster ist ungültig oder nicht verfügbar'
-      external_calendar: ''
-      delete_external_calendar: ''
-      no_external_calendar: ''
-      add_external_calendar: ''
-      delete_closure: ''
-      closure_days: ''
-      no_closure_days: ''
-      add_closure_days: ''
+      external_calendar: 'Externe Kalender'
+      delete_external_calendar: 'Lösche externen Kalender'
+      no_external_calendar: 'Keine externen Kalender vorhanden'
+      add_external_calendar: 'Externen Kalender hinzufügen'
+      delete_closure: 'Lösche Schließtage'
+      closure_days: 'Schließtage'
+      no_closure_days: 'Es sind keine Schließzeiten vorhanden'
+      add_closure_days: 'Schließzeit hinzufügen'
     subscriptions:
       subscription_service_error: 'DA NON TRADURRE'
       subscriber_error: 'DA NON TRADURRE'
@@ -2618,11 +2624,11 @@ backoffice:
       duplicate_error: "DA NON TRADURRE"
       update_subscription_error: "Während der Aktualisierung des Eintrags ist ein Fehler aufgetreten"
       delete_subscription_error: "Während der Löschung des Eintrags ist ein Fehler aufgetreten"
-      date_format_subscriber_error: ''
-      delete_service_group_success: ""
-      delete_service_group_error: ""
-      create_service_group_success: ""
-      welcome: ''
+      date_format_subscriber_error: 'Datum %natoAIl% in nicht gültigem Format, Nutzer %fiscal_code% nicht importiert'
+      delete_service_group_success: "Gruppe von Diensten erfolgreich gelöscht."
+      delete_service_group_error: "Die Gruppe kann nicht gelöscht werden. Es sind Dienste damit verknüpft"
+      create_service_group_success: "Gruppe von Diensten erfolgreich erstellt."
+      welcome: 'Willkommen'
     subscription_service:
       payment:
         due_date: "Fälligkeit der Zahlung"
@@ -2660,13 +2666,13 @@ backoffice:
         advanced_settings: "advanced_settings"
         meta_helper: "meta_helper"
         import_helper: "import_helper"
-        solvent_subscriber: ""
-        missing_subscribers: ""
+        solvent_subscriber: "Zahlungsfähige Abonnenten"
+        missing_subscribers: "Missing subscribers"
       invalid_service: "Die Service-ID %service_id% ist ungültig."
       invalid_meta: "BACKOFFICE"
       no_service: "Die Service-ID %service_id% entspricht keinem bestehenden Service."
       duplicate_identifier: "Doppelter Bezeichner %identifier% nicht zulässig für die Zahlung am %date%  mit Zahlungsgrund „%payment_reason%“"
-      no_payment: "Zahlung ist für folgenden Onlinedienst nicht verfügbar: %service_name%"
+      no_payment: "Zahlung ist für folgenden Online-Dienst nicht verfügbar: %service_name%"
       invalid_date: "Das Format der Uhrzeit ist nicht korrekt."
       identifier_change_not_allowed: "Der Zahlungsidentifikator „%payment_identifier%“ kann nicht geändert werden: Es sind bereits Vorgänge für diese Zahlung erstellt worden."
       messages:
@@ -2684,9 +2690,9 @@ backoffice:
       close: "Schließen"
       loading: "Wird geladen..."
       all: "Alle"
-      subscription_service: "Abonnementpflichtiger Onlinedienst"
+      subscription_service: "Abonnementpflichtiger Online-Dienst"
       links: "Links"
-      subscription_service_payments: "Zahlungen für abonnementpflichtige Onlinedienste"
+      subscription_service_payments: "Zahlungen für abonnementpflichtige Online-Dienste"
       created: "created"
       duplicate_error: "duplicate_error"
       deleted: "deleted"
@@ -2696,23 +2702,23 @@ backoffice:
       identifier_payments: "identifier_payments"
       no_integration_subscription: "no_integration_subscription"
       no_integration_additional_payment: "no_integration_additional_payment"
-      type_payment: ''
-      select_option: ''
-      new_subscription_service: ""
-      update_subscription_service: ""
-      search_students: ''
+      type_payment: 'Art der Zahlung'
+      select_option: 'Wählen sie eine Option'
+      new_subscription_service: "Erstellen Sie einen neuen Abo-Dienst"
+      update_subscription_service: "Abo-Dienst ändern"
+      search_students: 'Suche Schüler/-innen'
     invalid_action: "Die ausgewählte Aktion ist nicht verfügbar."
     related_payments_error: "related_payments_error"
     edit_integration_error: "edit_integration_error"
-    activation_point: ''
-    action_execute: ''
-    no_integration: ''
-    enable_integration_with: ""
-    with_appio: ""
-    enable_integration_access: ''
+    activation_point: 'activation point'
+    action_execute: 'Auszuführende Aktion'
+    no_integration: 'Keine Ergänzung vorgesehen'
+    enable_integration_with: "enable integration with"
+    with_appio: "IO-App"
+    enable_integration_access: 'enable integration access'
   gateway:
-    enable: ''
-    payment_gateway: ''
+    enable: 'enable'
+    payment_gateway: 'Zahlungsgateways'
 login_type:
   none: 'Keine/-r'
   login_pat: 'Spid PAT'
@@ -2731,11 +2737,11 @@ app_io:
   errore:
     parametro_mancante: "BACKOFFICE"
   admin_helper: "BACKOFFICE"
-  title: ''
-  config_parameters: ""
+  title: 'IO-App'
+  config_parameters: "Konfigurationsparameter für die Vervollständigung mittels IO-App"
   notify:
-    no_send: ""
-    success_send: ""
+    no_send: "Die Benachrichtigung wurde NICHT gesendet. Fehler:"
+    success_send: "Die Benachrichtigung wurde erfolgreich gesendet, ID"
 STATUS_REVOKED: 'Annulliert'
 ente:
   linkable_application_meetings:
@@ -2748,7 +2754,7 @@ ente:
   certificato: 'Zertifikat'
   chiave_certificato: 'Schlüssel'
   password_certifcato: 'Passwort Zertifikat'
-  app_io: 'IO-APP aktivieren'
+  app_io: 'IO-App aktivieren'
   backoffices: 'BACKOFFICE'
   mailers:
     title: 'BACKOFFICE'
@@ -2760,8 +2766,8 @@ ente:
     label: 'BACKOFFICE'
     services: 'Dienste'
     categories: 'Kategorien'
-  nome: ''
-  meta: ''
+  nome: 'Name'
+  meta: 'Meta'
 buttons:
   draft: 'Entwurf speichern'
   last_save: 'Zuletzt gespeichert:'
@@ -2783,28 +2789,28 @@ general:
     created: 'korrekt erstellt'
     updated: 'Erfolgreich aktualisiert'
   search: 'Suchen'
-  anonymous: ''
-  social: ''
-  level_spid_1: ''
-  level_spid_2: ''
-  cie: ''
-  form_template: ''
-  payment_data: ''
-  protocol_data: ''
-  approval: ''
-  forwarding: ''
-  postponement: ''
-  follow_social: ''
-  retry: ''
-  import: ''
-  import_url: ''
+  anonymous: 'Anonym'
+  social: 'Social'
+  level_spid_1: 'Spid Stufe 1'
+  level_spid_2: 'Spid  Stufe 2'
+  cie: 'Europäische Identitätskarte (CIE)'
+  form_template: 'Formularvorlage'
+  payment_data: 'Daten der Zahlung'
+  protocol_data: 'Protokoll-Daten'
+  approval: 'approval'
+  forwarding: 'Weiterleiten'
+  postponement: 'Verschiebungen'
+  follow_social: 'Folge uns auf'
+  retry: 'Wiederholen'
+  import: 'Importieren'
+  import_url: 'import url'
 avanti: 'Weiter'
 categories:
   title: 'Kategorien'
   parent: 'Stammkategorie'
   all: 'Alle Kategorien'
   services_number: '# Dienste'
-  services_group_number: '# Kategorie von Diensten'
+  services_group_number: '# Gruppe von Diensten'
   cant_delete_title: 'Kann nicht gelöscht werden'
   cant_delete_content: 'BACKOFFICE'
   delete_success: 'BACKOFFICE'
@@ -2819,7 +2825,7 @@ categories:
   error_reference_children: 'BACKOFFICE'
 load_more: 'Sonstiges...'
 recipients:
-  title: "Nutzer/-in\n"
+  title: "Nutzerkategorie\n"
   all: 'Alle Nutzer/-innen'
   delete_success: 'Nutzerin/Nutzer erfolgreich gelöscht'
   delete_error: 'Nutzerin/Nutzer kann nicht gelöscht werden, es sind damit verknüpfte Dienste vorhanden'
@@ -2845,7 +2851,7 @@ withdraw: 'widerrufen'
 activate: 'freischalten'
 tutti: 'alle'
 error_message_401: "Fehlermeldung_401"
-error_message_detail_401: "Fehlermeldung_Detail_401"
+error_message_detail_401: "Sie haben keine Berechtigung für den Zugriff auf diesen Bereich."
 practice_of: 'Vorgang_vom'
 from_date_to_date: "von_Datum_bis_Datum"
 search:
@@ -2888,11 +2894,11 @@ payment:
   pay_online:
     title: "online bezahlen"
     description: "Verwenden Sie Ihre Kredit- oder Debitkarte für eine schnelle Online-Zahlung Ihrer Gebühren in nur wenigen Schritten."
-    creditor: "auf der Webseite Ihres Kreditinstituts"
+    creditor: "Auf der Webseite Ihres Kreditinstituts"
     creditor_description: "Befolgen Sie die vom Kreditinstitut verlangten Schritte und vervollständigen Sie die Zahlung über pagoPA. <strong> Wählen Sie den für Sie am besten geeigneten Zahlungsdienstleister </strong>."
-    homebanking: "Mit Homebanking"
+    homebanking: "Im Homebanking"
     homebanking_description: "Gehen Sie auf das Portal Ihrer Bank. Suchen Sie im Menü nach pagoPA und zahlen Sie über Ihr Konto."
-    app_payment: "Auf Ihrer Bezahl-App"
+    app_payment: "In Ihrer Bezahl-App"
     app_payment_description: "Öffnen Sie Ihre bevorzugte Bezahl-App. Suchen Sie im Menu nach pagoPA und scannen Sie den QR-Code."
     online_services: "Online-Bezahldienste"
     online_services_description: "pagoPA ist auch in die wichtigsten Online-Zahlungsdienste eingebunden, die Sie nutzen können, auch wenn Sie nicht deren Kunde sind."
@@ -2933,14 +2939,14 @@ payment:
   warning: "Achtung"
   operator:
     change_status_message: "Erzwungene Änderung des Vorgangsstatus in: BEZAHLT"
-  mypay_error: ""
-  error_select_payment: ""
-  check_payment: ""
-  parameters_needed_for: ''
-  error_amount: ''
-  error_select_type: ''
-  type_payment: ''
-  payment_started: ""
+  mypay_error: "Beim Erstellen der Zahlungsanweisung ist ein Fehler aufgetreten. Bitte kontaktieren Sie den Support."
+  error_select_payment: "Sie müssen mindestens eine Zahlungsart wählen"
+  check_payment: "Zahlung überprüfen"
+  parameters_needed_for: 'Erforderliche Parameter für %gateway%'
+  error_amount: 'Sie müssen einen Wert größer als Null eingeben'
+  error_select_type: 'Sie müssen mindestens eine Zahlungsart wählen'
+  type_payment: 'Art der Zahlung'
+  payment_started: "Zahlung in Bearbeitung, warten Sie auf das Ergebnis."
 calendar_formio:
   at_hours: "Uhrzeit"
   draft_expiration_text: "Für die angegebene Uhrzeit wurde für Sie vorläufig ein Termin reserviert, der bis zum <b>%expire_at%</b> gültig ist."
@@ -2955,22 +2961,22 @@ calendar_formio:
   from_range_error_value: "Wert"
   from_range_error_not_valid: "nicht gültig"
   unavailable: "Nicht verfügbar"
-sum: ''
-average: ''
-counts: ''
-previous: ''
-following: ''
-apply: ''
-cancel: ''
+sum: 'Summe'
+average: 'Durchschnitt'
+counts: 'Zählung'
+previous: 'Zurück'
+following: 'Weiter'
+apply: 'Ausführen'
+cancel: 'Löschen'
 from: 'von'
 to: 'bis'
-of: ''
+of: ' '
 page: 'Seite'
-result: ''
-results: ''
-custom: ''
-waiting: ''
-digital_services: ''
+result: 'Ergebnis'
+results: 'Ergebnisse'
+custom: 'Personalisiert'
+waiting: 'Warten'
+digital_services: 'Digitale Dienste powered by'
 time:
   year: 'Jahr'
   years: 'Jahre'
@@ -2988,102 +2994,102 @@ time:
   seconds: 'Sekunden'
   ago: 'vor'
   few_seconds_ago: 'vor wenigen Sekunden'
-  last_5_minutes: ''
-  last_15_minutes: ''
-  last_30_minutes: ''
-  last_hour: ''
-  last_3_hours: ''
-  last_6_hours: ''
-  last_12_hours: ''
-  last_day: ''
-  last_2_days: ''
-  last_7_days: ''
-  last_30_days: ''
-  last_90_days: ''
-  today: ''
-  yesterday: ''
-  this_week: ''
-  last_week: ''
-  this_month: ''
-  last_month: ''
-  one_hour_before: ""
-  two_hours_before: ""
-  four_hours_before: ""
-  eight_hours_before: ""
-  one_day_before: ""
-  two_days_before: ""
-  three_days_before: ""
-  one_week_before: ""
-  two_weeks_before: ""
-  three_weeks_before: ""
-  one_month_before: ""
-  now: ''
-characters: ''
-integrations: ''
-event: ''
+  last_5_minutes: 'Termine der letzten 5 Minuten'
+  last_15_minutes: 'Termine der letzten 15 Minuten'
+  last_30_minutes: 'Termine der letzten 30 Minuten'
+  last_hour: 'Termine der letzten Stunde'
+  last_3_hours: 'Termine der letzten 3 Stunden'
+  last_6_hours: 'Termine der letzten 6 Stunden'
+  last_12_hours: 'Termine der letzten 12 Stunden'
+  last_day: 'Termine des letzten Tages'
+  last_2_days: 'Termine der letzten 2 Tage'
+  last_7_days: 'Termine der letzten 7 Tage'
+  last_30_days: 'Termine der letzten 30 Tage'
+  last_90_days: 'Termine der letzten 90 Tage'
+  today: 'Heute'
+  yesterday: 'Gestern'
+  this_week: 'In dieser Woche'
+  last_week: 'In der vergangenen Woche'
+  this_month: 'In diesem Monat'
+  last_month: 'Im vergangenen Monat'
+  one_hour_before: "1 Stunde vorher"
+  two_hours_before: "2 Stunden vorher"
+  four_hours_before: "4 Stunden vorher"
+  eight_hours_before: "8 Stunden vorher"
+  one_day_before: "1 Tag vorher"
+  two_days_before: "2 Tage vorher"
+  three_days_before: "3 Tage vorher"
+  one_week_before: "1 Woche vorher"
+  two_weeks_before: "2 Wochen vorher"
+  three_weeks_before: "3 Wochen vorher"
+  one_month_before: "1 Monat vorher (30 Tage)"
+  now: 'Uhrzeig'
+characters: 'Buchstaben'
+integrations: 'Ergänzungen'
+event: 'Termin'
 date: 'Datum'
-imported: ''
-for: ''
-provider_of: ''
-enabled: ''
-not_enabled: ''
-type: ''
-parameters: ''
-created_at: ''
-updated_at: ''
-copy_id: ''
-copied_id: ''
-schedule: ''
-status_pending: ''
-status_approved: ''
-status_approved_1: ''
-status_refused: ''
-status_missed: ''
-status_done: ''
-status_cancelled: ''
-status_draft: ''
+imported: 'importiert'
+for: 'für'
+provider_of: 'provider of'
+enabled: 'Berechtigt'
+not_enabled: 'Nicht berechtigt'
+type: 'Typ'
+parameters: 'Parameter'
+created_at: 'Erstellungsdatum'
+updated_at: 'Letzte Aktualisierung'
+copy_id: 'Kopiere ID'
+copied_id: 'ID kopiert'
+schedule: 'Zeitplan'
+status_pending: 'Genehmigung ausständig'
+status_approved: 'Bestätigt'
+status_approved_1: 'Genehmigt'
+status_refused: 'Abgewiesen'
+status_missed: 'Fehlt'
+status_done: 'Erledigt'
+status_cancelled: 'Annulliert'
+status_draft: 'Entwurf'
 status_error: 'Fehler'
-status_concluded: ''
-cancel_info: ''
+status_concluded: 'Abgeschlossen'
+cancel_info: 'Infos zur Absage'
 from_date: 'vom'
 from_to: 'bis'
 info: 'Info'
-show_all: ''
-every: ''
-STATUS_WAITING: ''
-STATUS_DONE: ''
-STATUS_INVALID: ''
-STATUS_PAYMENT_NOT_REQUIRED: ''
-STATUS_PAYMENT_REQUIRED: ''
-STATUS_PAYMENT_DEFERRED: ''
-STATUS_APPLICATION_PAID: ''
-STATUS_APPLICATION_PRE_SUBMIT: ''
-STATUS_APPLICATION_SUBMITTED: ''
-STATUS_APPLICATION_REGISTERED: ''
-STATUS_APPLICATION_ASSIGNMENT: ''
-STATUS_APPLICATION_COMPLETED: ''
-STATUS_APPLICATION_CANCELLED: ''
+show_all: 'Alles anzeigen'
+every: 'jede/-n'
+STATUS_WAITING: 'In der Wartephase'
+STATUS_DONE: 'Vervollständigt'
+STATUS_INVALID: 'Ungültig'
+STATUS_PAYMENT_NOT_REQUIRED: 'Nicht erforderlich'
+STATUS_PAYMENT_REQUIRED: 'Unverzüglich'
+STATUS_PAYMENT_DEFERRED: 'Später'
+STATUS_APPLICATION_PAID: 'Vorgang bezahlt'
+STATUS_APPLICATION_PRE_SUBMIT: 'Vorgang gesendet'
+STATUS_APPLICATION_SUBMITTED: 'Vorgang erfasst'
+STATUS_APPLICATION_REGISTERED: 'Vorgang registriert'
+STATUS_APPLICATION_ASSIGNMENT: 'Vorgang übernommen'
+STATUS_APPLICATION_COMPLETED: 'Vorgang angenommen'
+STATUS_APPLICATION_CANCELLED: 'Vorgang abgelehnt'
 scheduled_actions:
-  "create_pdf'": ''
-  "protocollo_send_pratice'": ''
-  "protocollo_send_attach'": ''
-  "protocollo_send_withdraw'": ''
-  "protocollo_send_integrations'": ''
-  "protocollo_refresh_pratice'": ''
-  "protocollo_upload_file'": ''
-  "giscom_send_pratice'": ''
-  "giscom_askCFs'": ''
+  "create_pdf'": 'Erstelle PDF'
+  "protocollo_send_pratice'": 'Registriere den Vorgang'
+  "protocollo_send_attach'": 'Registriere ergänzende Anhänge'
+  "protocollo_send_withdraw'": 'Registriere die Abholung'
+  "protocollo_send_integrations'": 'Registriere die Anfrage um Ergänzung'
+  "protocollo_refresh_pratice'": 'Registriere das Ergebnis'
+  "protocollo_upload_file'": 'Registriere die Anhänge'
+  "giscom_send_pratice'": 'Vorgang an Giscom senden'
+  "giscom_askCFs'": 'Giscom Anforderung Steuernummer'
   "application_webhook'": 'Webhook'
-  "application_payment_reminder'": ''
-  "produce_message'": ''
+  "application_payment_reminder'": 'Zahlungserinnerung'
+  "produce_message'": 'Kafka Nachricht'
 login_callout_texts:
-  cta_button: ''
+  cta_button: 'Enter'
   cas:
-    title: ''
-    text: ""
+    title: 'Verwenden Sie SPID?'
+    text: "Sie können sich mit SPID authentifizieren, um die Felder automatisch auszufüllen und den Vorgang in Ihrem Profil zu speichern.  <br />(Empfohlene Browser Firefox oder Chrome)"
   login_pat:
-    title: ''
-    text: ""
-  login_open:
-    title: ''
-    text: ""
+    title: 'Verwenden Sie SPID oder Bürgerkarte?'
+    text: " Sie können sich mit SPID oder mit Bürgerkarte authentifizieren, um die Felder automatisch auszufüllen und den Vorgang in Ihrem Profil zu speichern  <br />(Empfohlene Browser Firefox oder Chrome)"
+  openlogin:
+    title: 'Verwenden Sie SPID?'
+    text: "Sie können sich mit SPID authentifizieren, um die Felder automatisch auszufüllen und den Vorgang in Ihrem Profil zu speichern.  <br />(Empfohlener Browser Firefox oder Chrome)"
