@@ -4,8 +4,8 @@ namespace App\Security;
 
 use App\Services\InstanceService;
 use App\Services\UserSessionService;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
+//use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
+//use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -25,20 +25,19 @@ class DedaLoginAuthenticator extends OpenLoginAuthenticator
    * @param $loginRoute
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
-   * @param MetricsCollectorInterface $userMetrics
    * @param JWTTokenManagerInterface $JWTTokenManager
    */
+  // TODO: riabilitare le metriche nella classe appena soddisfatte le altre dipendenze di Prometheus
   public function __construct(
     UrlGeneratorInterface     $urlGenerator,
                               $loginRoute,
     UserSessionService        $userSessionService,
     InstanceService           $instanceService,
-    MetricsCollectorInterface $userMetrics,
     JWTTokenManagerInterface  $JWTTokenManager,
     SessionInterface          $session
   )
   {
-    parent::__construct($urlGenerator, $loginRoute, $userSessionService, $instanceService, $userMetrics, $JWTTokenManager);
+    parent::__construct($urlGenerator, $loginRoute, $userSessionService, $instanceService, $JWTTokenManager);
     $this->session = $session;
   }
 

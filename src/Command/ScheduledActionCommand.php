@@ -6,10 +6,10 @@ use App\Entity\ScheduledAction;
 use App\Exception\DelayedScheduledActionException;
 use App\ScheduledAction\ScheduledActionHandlerInterface;
 use App\Services\InstanceService;
-use App\Services\Metrics\ScheduledActionMetrics;
+// use App\Services\Metrics\ScheduledActionMetrics;
 use App\Services\SchedulableActionRegistry;
 use App\Services\ScheduleActionService;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
+//use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -43,10 +43,6 @@ class ScheduledActionCommand extends Command
    * @var TranslatorInterface
    */
   private $translator;
-  /**
-   * @var ScheduledActionMetrics
-   */
-  private $metrics;
 
   public function __construct(
     LoggerInterface $logger,
@@ -54,7 +50,6 @@ class ScheduledActionCommand extends Command
     RouterInterface $router,
     SchedulableActionRegistry $schedulableActionRegistry,
     TranslatorInterface $translator,
-    ScheduledActionMetrics $metrics,
     string $locale,
     string $scheme,
     string $host
@@ -69,7 +64,8 @@ class ScheduledActionCommand extends Command
     parent::__construct();
     $this->locale = $locale;
     $this->translator = $translator;
-    $this->metrics = $metrics;
+    // TODO: riabilitare le metriche nella classe appena soddisfatte le altre dipendenze di Prometheus
+    // $this->metrics = $metrics;
   }
 
   protected function configure()
@@ -140,24 +136,24 @@ class ScheduledActionCommand extends Command
           try {
             $service->executeScheduledAction($action);
             $this->scheduleActionService->markAsDone($action);
-            $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'success');
+            // $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'success');
           } catch (DelayedScheduledActionException $e) {
               $this->logger->info($e->getMessage());
           } catch (\Throwable $e) {
             $message = $e->getMessage() . ' on ' . $e->getFile() . '#' . $e->getLine();
             $this->logger->error($message);
             $this->scheduleActionService->removeHostAndSaveLog($action, $message);
-            $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'error');
+            // $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'error');
           }
         } else {
           $this->logger->error($action->getService() . ' must implements ' . ScheduledActionHandlerInterface::class);
           $this->scheduleActionService->markAsInvalid($action);
-          $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
+          // $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
         }
       } catch (ServiceNotFoundException $e) {
         $this->logger->error($e->getMessage());
         $this->scheduleActionService->markAsInvalid($action);
-        $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
+        // $this->metrics->incScheduledAction($instance, $action->getService(), $action->getType(), 'invalid');
       }
     }
 

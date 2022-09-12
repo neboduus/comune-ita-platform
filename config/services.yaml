@@ -261,7 +261,7 @@ services:
       - "%login_route%"
       - '@App\Services\UserSessionService'
       - '@ocsdc.instance_service'
-      - '@App\Services\Metrics\UserMetrics'
+      # - '@App\Services\Metrics\UserMetrics'
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
 
   ocsdc.openlogin.authenticator:
@@ -271,7 +271,7 @@ services:
       - "%login_route%"
       - '@App\Services\UserSessionService'
       - '@ocsdc.instance_service'
-      - '@App\Services\Metrics\UserMetrics'
+      # - '@App\Services\Metrics\UserMetrics'
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
 
   ocsdc.dedalogin.authenticator:
@@ -281,7 +281,7 @@ services:
       - "%login_route%"
       - '@App\Services\UserSessionService'
       - '@ocsdc.instance_service'
-      - '@App\Services\Metrics\UserMetrics'
+      # - '@App\Services\Metrics\UserMetrics'
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
       - "@session"
 
@@ -292,7 +292,7 @@ services:
       - "%login_route%"
       - '@App\Services\UserSessionService'
       - '@ocsdc.instance_service'
-      - '@App\Services\Metrics\UserMetrics'
+      # - '@App\Services\Metrics\UserMetrics'
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
       - "%cas_login_url%"
       - "%cas_validation_url%"
@@ -890,20 +890,20 @@ services:
     arguments: [ '@router', "%single_logout_url%" ]
 
 
-  App\Services\Metrics\ApplicationMetrics:
-    autowire: true
-    tags:
-      - { name: prometheus_metrics_bundle.metrics_collector }
+  # App\Services\Metrics\ApplicationMetrics:
+  #   autowire: true
+  #   tags:
+  #     - { name: prometheus_metrics_bundle.metrics_collector }
 
-  App\Services\Metrics\ScheduledActionMetrics:
-    autowire: true
-    tags:
-      - { name: prometheus_metrics_bundle.metrics_collector }
+  # App\Services\Metrics\ScheduledActionMetrics:
+  #   autowire: true
+  #   tags:
+  #     - { name: prometheus_metrics_bundle.metrics_collector }
 
-  App\Services\Metrics\UserMetrics:
-    autowire: true
-    tags:
-      - { name: prometheus_metrics_bundle.metrics_collector }
+  # App\Services\Metrics\UserMetrics:
+  #   autowire: true
+  #   tags:
+  #     - { name: prometheus_metrics_bundle.metrics_collector }
 
   App\Security\Voters\AttachmentVoter:
     arguments:

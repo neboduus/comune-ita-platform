@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1b01c6c86aff215e58b35c7e3b9c2067",
+    "content-hash": "06fd9b62aed27a5205974291e637be81",
     "packages": [
         {
             "name": "anyx/login-gate-bundle",
@@ -79,71 +79,6 @@
             "time": "2020-10-14T11:12:25+00:00"
         },
         {
-            "name": "artprima/prometheus-metrics-bundle",
-            "version": "1.12.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/artprima/prometheus-metrics-bundle.git",
-                "reference": "1ef34e0dca78205932f9688b4d371f65f7b4a9dc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/artprima/prometheus-metrics-bundle/zipball/1ef34e0dca78205932f9688b4d371f65f7b4a9dc",
-                "reference": "1ef34e0dca78205932f9688b4d371f65f7b4a9dc",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^7.3|^8.0",
-                "promphp/prometheus_client_php": "^2.2",
-                "symfony/config": "^4.4|^5.1.5",
-                "symfony/dependency-injection": "^4.4|^5.1.5",
-                "symfony/http-kernel": "^4.4|^5.1.5"
-            },
-            "require-dev": {
-                "escapestudios/symfony2-coding-standard": "^3.11",
-                "friendsofphp/php-cs-fixer": "^2.17",
-                "phpunit/phpunit": "^8.0|^9.0",
-                "squizlabs/php_codesniffer": "^3.5",
-                "symfony/browser-kit": "^4.4|^5.0",
-                "symfony/framework-bundle": "^4.4|^5.0",
-                "symfony/yaml": "^4.4|^5.0"
-            },
-            "suggest": {
-                "ext-apcu": "Required if using APCu as prometheus metrics backend",
-                "ext-redis": "Required if using Redis as prometheus metrics backend",
-                "symfony/stopwatch": "Required if you want to measure request duration"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "Artprima\\PrometheusMetricsBundle\\": "./"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Denis Voytyuk",
-                    "email": "ask@artprima.cz"
-                }
-            ],
-            "description": "Symfony 4/5 Prometheus Metrics Bundle",
-            "keywords": [
-                "Metrics",
-                "prometheus",
-                "symfony",
-                "symfony-bundle"
-            ],
-            "support": {
-                "issues": "https://github.com/artprima/prometheus-metrics-bundle/issues",
-                "source": "https://github.com/artprima/prometheus-metrics-bundle/tree/1.12.0"
-            },
-            "time": "2021-06-01T18:06:21+00:00"
-        },
-        {
             "name": "aws/aws-crt-php",
             "version": "v1.0.2",
             "source": {
@@ -195,16 +130,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.235.3",
+            "version": "3.235.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d14bf468240f5bd8a0754b8a8248ff219ebada02"
+                "reference": "3b002b92369dbcb8d86f32546cb324eabcd19a4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d14bf468240f5bd8a0754b8a8248ff219ebada02",
-                "reference": "d14bf468240f5bd8a0754b8a8248ff219ebada02",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3b002b92369dbcb8d86f32546cb324eabcd19a4e",
+                "reference": "3b002b92369dbcb8d86f32546cb324eabcd19a4e",
                 "shasum": ""
             },
             "require": {
@@ -281,9 +216,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.235.3"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.235.5"
             },
-            "time": "2022-09-07T18:17:39+00:00"
+            "time": "2022-09-09T18:19:38+00:00"
         },
         {
             "name": "behat/transliterator",
@@ -2401,16 +2336,16 @@
         },
         {
             "name": "exercise/htmlpurifier-bundle",
-            "version": "4.1",
+            "version": "4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Exercise/HTMLPurifierBundle.git",
-                "reference": "6642e1c96a5aa969e95328031ab84589c6c87123"
+                "reference": "153e71b36d90060b5ba52efdec75d6b4bf0fe9bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Exercise/HTMLPurifierBundle/zipball/6642e1c96a5aa969e95328031ab84589c6c87123",
-                "reference": "6642e1c96a5aa969e95328031ab84589c6c87123",
+                "url": "https://api.github.com/repos/Exercise/HTMLPurifierBundle/zipball/153e71b36d90060b5ba52efdec75d6b4bf0fe9bd",
+                "reference": "153e71b36d90060b5ba52efdec75d6b4bf0fe9bd",
                 "shasum": ""
             },
             "require": {
@@ -2457,9 +2392,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Exercise/HTMLPurifierBundle/issues",
-                "source": "https://github.com/Exercise/HTMLPurifierBundle/tree/4.1"
+                "source": "https://github.com/Exercise/HTMLPurifierBundle/tree/4.1.1"
             },
-            "time": "2022-08-28T15:48:42+00:00"
+            "time": "2022-08-29T10:31:19+00:00"
         },
         {
             "name": "exsyst/swagger",
@@ -3631,16 +3566,16 @@
         },
         {
             "name": "jms/serializer",
-            "version": "3.18.1",
+            "version": "3.18.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/serializer.git",
-                "reference": "32956d3e3e1938f8130523a94297399d2b26fea7"
+                "reference": "329e29c323fb1e5c65b4ae4c77ba747678755a6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/serializer/zipball/32956d3e3e1938f8130523a94297399d2b26fea7",
-                "reference": "32956d3e3e1938f8130523a94297399d2b26fea7",
+                "url": "https://api.github.com/repos/schmittjoh/serializer/zipball/329e29c323fb1e5c65b4ae4c77ba747678755a6c",
+                "reference": "329e29c323fb1e5c65b4ae4c77ba747678755a6c",
                 "shasum": ""
             },
             "require": {
@@ -3715,7 +3650,7 @@
             ],
             "support": {
                 "issues": "https://github.com/schmittjoh/serializer/issues",
-                "source": "https://github.com/schmittjoh/serializer/tree/3.18.1"
+                "source": "https://github.com/schmittjoh/serializer/tree/3.18.2"
             },
             "funding": [
                 {
@@ -3723,27 +3658,27 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-24T15:26:21+00:00"
+            "time": "2022-09-12T08:40:16+00:00"
         },
         {
             "name": "jms/serializer-bundle",
-            "version": "4.0.2",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/schmittjoh/JMSSerializerBundle.git",
-                "reference": "62657a1217f1378764cdd69a27d55f476bce277a"
+                "reference": "408ad721f9b7b5c1fb9bfff93f54868e946a12fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/schmittjoh/JMSSerializerBundle/zipball/62657a1217f1378764cdd69a27d55f476bce277a",
-                "reference": "62657a1217f1378764cdd69a27d55f476bce277a",
+                "url": "https://api.github.com/repos/schmittjoh/JMSSerializerBundle/zipball/408ad721f9b7b5c1fb9bfff93f54868e946a12fd",
+                "reference": "408ad721f9b7b5c1fb9bfff93f54868e946a12fd",
                 "shasum": ""
             },
             "require": {
                 "jms/metadata": "^2.5",
                 "jms/serializer": "^3.15",
                 "php": "^7.2 || ^8.0",
-                "symfony/dependency-injection": "^3.3 || ^4.0 || ^5.0 || ^6.0",
+                "symfony/dependency-injection": "^3.4 || ^4.0 || ^5.0 || ^6.0",
                 "symfony/framework-bundle": "^3.0 || ^4.0 || ^5.0 || ^6.0"
             },
             "require-dev": {
@@ -3802,7 +3737,7 @@
             ],
             "support": {
                 "issues": "https://github.com/schmittjoh/JMSSerializerBundle/issues",
-                "source": "https://github.com/schmittjoh/JMSSerializerBundle/tree/4.0.2"
+                "source": "https://github.com/schmittjoh/JMSSerializerBundle/tree/4.1.0"
             },
             "funding": [
                 {
@@ -3810,7 +3745,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-12-01T12:22:07+00:00"
+            "time": "2022-09-12T08:45:12+00:00"
         },
         {
             "name": "johngrogg/ics-parser",
@@ -5997,73 +5932,6 @@
                 "source": "https://github.com/phpstan/phpdoc-parser/tree/1.8.0"
             },
             "time": "2022-09-04T18:59:06+00:00"
-        },
-        {
-            "name": "promphp/prometheus_client_php",
-            "version": "v2.6.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PromPHP/prometheus_client_php.git",
-                "reference": "df77bbcc65bd173f2ffaf40ab4e1ca8716da8ce6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PromPHP/prometheus_client_php/zipball/df77bbcc65bd173f2ffaf40ab4e1ca8716da8ce6",
-                "reference": "df77bbcc65bd173f2ffaf40ab4e1ca8716da8ce6",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "php": "^7.2|^8.0"
-            },
-            "replace": {
-                "endclothing/prometheus_client_php": "*",
-                "jimdo/prometheus_client_php": "*",
-                "lkaemmerling/prometheus_client_php": "*"
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "^6.3|^7.0",
-                "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^1.5.4",
-                "phpstan/phpstan-phpunit": "^1.1.0",
-                "phpstan/phpstan-strict-rules": "^1.1.0",
-                "phpunit/phpunit": "^9.4",
-                "squizlabs/php_codesniffer": "^3.6",
-                "symfony/polyfill-apcu": "^1.6"
-            },
-            "suggest": {
-                "ext-apc": "Required if using APCu.",
-                "ext-redis": "Required if using Redis.",
-                "promphp/prometheus_push_gateway_php": "An easy client for using Prometheus PushGateway.",
-                "symfony/polyfill-apcu": "Required if you use APCu on PHP8.0+"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Prometheus\\": "src/Prometheus/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Lukas Kämmerling",
-                    "email": "kontakt@lukas-kaemmerling.de"
-                }
-            ],
-            "description": "Prometheus instrumentation library for PHP applications.",
-            "support": {
-                "issues": "https://github.com/PromPHP/prometheus_client_php/issues",
-                "source": "https://github.com/PromPHP/prometheus_client_php/tree/v2.6.2"
-            },
-            "time": "2022-06-30T03:46:23+00:00"
         },
         {
             "name": "psr/cache",

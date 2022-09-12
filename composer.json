@@ -32,7 +32,6 @@
     "ext-json": "*",
     "ext-simplexml": "*",
     "anyx/login-gate-bundle": "2.0.3",
-    "artprima/prometheus-metrics-bundle": "*",
     "craue/formflow-bundle": "*",
     "davidepastore/codice-fiscale": "^0.9.0",
     "doctrine/data-fixtures": "*",

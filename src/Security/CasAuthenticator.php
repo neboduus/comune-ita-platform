@@ -6,7 +6,7 @@ use App\Dto\UserAuthenticationData;
 use App\Entity\CPSUser;
 use App\Services\InstanceService;
 use App\Services\UserSessionService;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
+//use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -33,11 +33,6 @@ class CasAuthenticator extends AbstractAuthenticator
 
   private $instanceService;
 
-  /**
-   * @var MetricsCollectorInterface
-   */
-  private $userMetrics;
-
   private $casLoginUrl;
 
   private $casValidationUrl;
@@ -54,7 +49,6 @@ class CasAuthenticator extends AbstractAuthenticator
    * @param $loginRoute
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
-   * @param MetricsCollectorInterface $userMetrics
    * @param JWTTokenManagerInterface $JWTTokenManager
    * @param $casLoginUrl
    * @param $casValidationUrl
@@ -65,7 +59,6 @@ class CasAuthenticator extends AbstractAuthenticator
     $loginRoute,
     UserSessionService $userSessionService,
     InstanceService $instanceService,
-    MetricsCollectorInterface $userMetrics,
     JWTTokenManagerInterface $JWTTokenManager,
     $casLoginUrl,
     $casValidationUrl,
@@ -76,7 +69,8 @@ class CasAuthenticator extends AbstractAuthenticator
     $this->loginRoute = $loginRoute;
     $this->userSessionService = $userSessionService;
     $this->instanceService = $instanceService;
-    $this->userMetrics = $userMetrics;
+    // TODO: riabilitare le metriche nella classe appena soddisfatte le altre dipendenze di Prometheus
+    //$this->userMetrics = $userMetrics;
     $this->JWTTokenManager = $JWTTokenManager;
     $this->casLoginUrl = $casLoginUrl;
     $this->casValidationUrl = $casValidationUrl;
@@ -186,7 +180,7 @@ class CasAuthenticator extends AbstractAuthenticator
       'sessionIndex' => '',
     ];
 
-    $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-open', $data['authenticationMethod'], $data['spidLevel']);
+    // $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-open', $data['authenticationMethod'], $data['spidLevel']);
 
     return UserAuthenticationData::fromArray($data);
   }

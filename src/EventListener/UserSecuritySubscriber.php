@@ -8,7 +8,7 @@ use App\Entity\AdminUser;
 use App\Entity\CPSUser;
 use App\Entity\OperatoreUser;
 use App\Services\InstanceService;
-use App\Services\Metrics\UserMetrics;
+//use App\Services\Metrics\UserMetrics;
 use FOS\UserBundle\Event\UserEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\FOSUserEvents;
@@ -34,23 +34,19 @@ class UserSecuritySubscriber implements EventSubscriberInterface
    * @var InstanceService
    */
   private $instanceService;
-  /**
-   * @var UserMetrics
-   */
-  private $userMetrics;
 
   /**
    * LastLoginListener constructor.
    *
    * @param RouterInterface $router
    * @param InstanceService $instanceService
-   * @param UserMetrics $userMetrics
    */
-  public function __construct(RouterInterface $router, InstanceService $instanceService, UserMetrics $userMetrics)
+  public function __construct(RouterInterface $router, InstanceService $instanceService)
   {
     $this->router = $router;
     $this->instanceService = $instanceService;
-    $this->userMetrics = $userMetrics;
+    // TODO: reimplementare le metriche nella classe appena aggiornato il bundle di Prometheus
+    // $this->userMetrics = $userMetrics;
   }
 
   /**
@@ -83,7 +79,7 @@ class UserSecuritySubscriber implements EventSubscriberInterface
    */
   public function onAuthenticationSuccessFailure(AuthenticationFailureEvent $event)
   {
-    $this->userMetrics->incLoginFailure($this->instanceService->getCurrentInstance()->getSlug(), 'backend', $event->getAuthenticationException()->getMessage());
+    //$this->userMetrics->incLoginFailure($this->instanceService->getCurrentInstance()->getSlug(), 'backend', $event->getAuthenticationException()->getMessage());
   }
 
 }

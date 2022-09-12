@@ -13,7 +13,7 @@ use App\Entity\TerminiUtilizzo;
 use App\Logging\LogConstants;
 use App\Security\AbstractAuthenticator;
 use App\Security\LogoutSuccessHandler;
-use Artprima\PrometheusMetricsBundle\Metrics\Renderer;
+//use Artprima\PrometheusMetricsBundle\Metrics\Renderer;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -51,9 +51,9 @@ class DefaultController extends AbstractController
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    * @param InstanceService $instanceService
-   * @param Renderer $metricsRenderer
    */
-  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, InstanceService $instanceService, Renderer $metricsRenderer)
+  //TODO: ripristinare le metriche e il metricsRender quando prometheus plugin sarà riattivato
+  public function __construct(TranslatorInterface $translator, LoggerInterface $logger, InstanceService $instanceService)
   {
     $this->logger = $logger;
     $this->translator = $translator;

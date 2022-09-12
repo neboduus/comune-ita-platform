@@ -7,9 +7,9 @@ kernel:
   resource: ../../src/Kernel.php
   type: annotation
 
-prometheus:
-  path: /prometheus.json
-  defaults: { _controller: App\Controller\General\MetricsController::prometheusAction}
+# prometheus:
+#   path: /prometheus.json
+#   defaults: { _controller: App\Controller\General\MetricsController::prometheusAction}
 
 status:
   path: /php-status
