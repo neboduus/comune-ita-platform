@@ -18,6 +18,7 @@
 .unison*
 docker-compose.override.yml
 /compose_conf/pitre-wrapper
+.DS_Store
 
 ###> symfony/framework-bundle ###
 /.env.local
@@ -49,3 +50,4 @@ docker-compose.override.yml
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+

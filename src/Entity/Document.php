@@ -262,6 +262,14 @@ class Document
   private $updatedAt;
 
   /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=false, options={"default":"false"})
+   * @SWG\Property(description="If the document should be saved in the filesystem")
+   * @Groups({"read", "write"})
+   */
+  private $store;
+
+  /**
    * Document constructor.
    * @throws \Exception
    */
@@ -273,6 +281,7 @@ class Document
       $this->downloadsCounter = 0;
       $this->correlatedServices = new ArrayCollection();
       $this->topics = new ArrayCollection();
+      $this->store = false;
     }
   }
 
@@ -297,7 +306,7 @@ class Document
   }
 
   /**
-   * Get Owner
+   * Set Owner
    *
    * @param User|null $owner
    * @return $this
@@ -323,17 +332,27 @@ class Document
   }
 
   /**
-   * @Serializer\VirtualProperty(name="store")
-   * @Serializer\Type("boolean")
-   * @SWG\Property(description="Save document in filesystem", type="boolean")
-   * @Serializer\SerializedName("store")
-   * @Groups({"write"})
+   * Get store
    *
+   * @return bool
    */
-  public function isStore()
+  public function isStore(): bool
   {
-    return false;
+    return $this->store;
   }
+
+  /**
+   * Set store
+   *
+   * @param bool $store
+   * @return $this
+   */
+  public function setStore(bool $store): self
+  {
+    $this->store = $store;
+    return $this;
+  }
+
 
   /**
    * @Serializer\VirtualProperty(name="file")
