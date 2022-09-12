@@ -171,7 +171,7 @@ services:
       - { name: form.type }
 
   App\Form\DocumentAPIType:
-    arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
+    arguments: ['%allowed_extensions%' ]
     tags:
       - { name: form.type }
 

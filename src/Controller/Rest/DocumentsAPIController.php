@@ -8,6 +8,8 @@ use App\Entity\Document;
 use App\Entity\OperatoreUser;
 use App\Security\Voters\DocumentVoter;
 use App\Services\InstanceService;
+use App\Services\Manager\DocumentManager;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -48,13 +50,14 @@ class DocumentsAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   private $logger;
 
-  public function __construct(TranslatorInterface $translator, $rootDir, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
+  public function __construct(TranslatorInterface $translator, $rootDir, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger, DocumentManager $documentManager)
   {
     $this->translator = $translator;
     $this->rootDir = $rootDir;
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
+    $this->documentManager = $documentManager;
   }
 
   /**
@@ -276,12 +279,13 @@ class DocumentsAPIController extends AbstractFOSRestController
       ];
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
-    $em = $this->getDoctrine()->getManager();
 
     try {
-      $em->persist($document);
-      $em->flush();
+      $this->em->persist($document);
+      $this->em->flush();
 
+    } catch (UniqueConstraintViolationException $e) {
+      return $this->view(["Il file " .  $document->getTitle() . " already exists"], Response::HTTP_BAD_REQUEST);
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
@@ -557,10 +561,11 @@ class DocumentsAPIController extends AbstractFOSRestController
    * )
    * @SWG\Tag(name="documents")
    *
+   * @param Request $request
    * @param $id
    * @return View|Response
    */
-  public function downloadDocumentAction($id)
+  public function downloadDocumentAction(Request $request, $id)
   {
     $document = $this->em->getRepository('App\Entity\Document')->find($id);
 
@@ -570,36 +575,17 @@ class DocumentsAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $extension = explode('.', $document->getOriginalFilename());
-    $extension = end($extension);
-
-    $fileName = '../var/uploads/documents/users/' .
-      $document->getOwnerId() . DIRECTORY_SEPARATOR . $document->getFolderId() .
-      DIRECTORY_SEPARATOR . $document->getId() . '.' . $extension;
-
-    if (!file_exists($fileName) && $document->getAddress()) {
-      $fileName = $document->getAddress();
-    }
-
     try {
-      $fileContent = file_get_contents($fileName);
+      return $this->documentManager->download($document);
     } catch (\Exception $exception) {
-      return $this->view(["File non trovato"], Response::HTTP_BAD_REQUEST);
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
+      ];
+      $this->logger->error($exception->getMessage(), ['request' => $request]);
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
-
-    // Provide a name for your file with extension
-    $filename = $document->getOriginalFilename();
-    // Return a response with a specific content
-    $response = new Response($fileContent);
-    // Create the disposition of the file
-    $disposition = $response->headers->makeDisposition(
-      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-      $filename
-    );
-    // Set the content disposition
-    $response->headers->set('Content-Disposition', $disposition);
-    // Dispatch request
-    return $response;
   }
 
   /**
