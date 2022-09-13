@@ -2,6 +2,7 @@
 
 namespace App\Form\Admin\Servizio;
 
+use App\Entity\Categoria;
 use App\Entity\FormIO;
 use App\Entity\SciaPraticaEdilizia;
 use App\Entity\Servizio;
@@ -164,6 +165,11 @@ class FormIOTemplateType extends AbstractType
     $service->setPaymentRequired($ServiceToClone->isPaymentRequired() ?? false);
     $service->setPaymentParameters($ServiceToClone->getPaymentParameters() ?? []);
     $service->setIntegrations($ServiceToClone->getIntegrations() ?? []);
+    // If the category is not valid, the standard category is already set
+    if ($ServiceToClone->getTopics() && $ServiceToClone->getTopics() instanceof Categoria)
+    {
+      $service->setTopics($ServiceToClone->getTopics());
+    }
 
     $feedbackMessages = [];
     foreach ($ServiceToClone->getFeedbackMessages() as $item) {
