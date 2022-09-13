@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity
@@ -21,45 +21,45 @@ class SubscriptionPayment
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @SWG\Property(description="Subscription's uuid")
+   * @OA\Property(description="Subscription's uuid")
    */
   protected $id;
 
   /**
    * @ORM\Column(type="string", length=255, nullable=false)
-   * @SWG\Property(description="Subscription Payment's name")
+   * @OA\Property(description="Subscription Payment's name")
    */
   private $name;
 
   /**
    * @ORM\Column(type="decimal", scale=2, nullable=false)
-   * @SWG\Property(description="Subscription Payment's amount")
+   * @OA\Property(description="Subscription Payment's amount")
    */
   private $amount = 0.00;
 
   /**
    * @ORM\Column(type="datetime", nullable=true)
-   * @SWG\Property(description="Subscription Payment creation date")
+   * @OA\Property(description="Subscription Payment creation date")
    */
   private $paymentDate;
 
   /**
    * @ORM\Column(type="string", length=255, nullable=true)
-   * @SWG\Property(description="Subscription Payment's external key")
+   * @OA\Property(description="Subscription Payment's external key")
    */
   private $externalKey;
 
   /**
    * @var string
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Subscription Payment's description, accepts html tags")
+   * @OA\Property(description="Subscription Payment's description, accepts html tags")
    */
   private $description;
 
   /**
    * @ORM\ManyToOne(targetEntity="App\Entity\Subscription", inversedBy="subscriptionPayments")
    * @ORM\JoinColumn(nullable=false)
-   * @SWG\Property(description="Subscription payment")
+   * @OA\Property(description="Subscription payment")
    */
   private $subscription;
 

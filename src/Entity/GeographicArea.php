@@ -10,7 +10,7 @@ use Gedmo\Translatable\Translatable;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -27,7 +27,7 @@ class GeographicArea implements Translatable
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @Serializer\Type("string")
-   * @SWG\Property(description="Geographic Area id")
+   * @OA\Property(description="Geographic Area id")
    * @Groups({"read"})
    */
   protected $id;
@@ -39,7 +39,7 @@ class GeographicArea implements Translatable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
-   * @SWG\Property(description="Geographic Area name")
+   * @OA\Property(description="Geographic Area name")
    * @Groups({"read", "write"})
    */
   private $name;
@@ -50,7 +50,7 @@ class GeographicArea implements Translatable
    * @Gedmo\Slug(fields={"name"})
    * @ORM\Column(type="string", length=255, unique=true)
    * @Serializer\Type("string")
-   * @SWG\Property(description="Geographic Area slug")
+   * @OA\Property(description="Geographic Area slug")
    * @Groups({"read"})
    */
   private $slug;
@@ -60,7 +60,7 @@ class GeographicArea implements Translatable
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @Serializer\Type("string")
-   * @SWG\Property(description="Geographic Area description")
+   * @OA\Property(description="Geographic Area description")
    * @Groups({"read", "write"})
    */
   private $description;

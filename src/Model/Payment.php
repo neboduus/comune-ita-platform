@@ -5,42 +5,42 @@ namespace App\Model;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
 class Payment
 {
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Payment uuid")
+   * @OA\Property(description="Payment uuid")
    * @Groups({"read"})
    */
   private $id;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Payment user id")
+   * @OA\Property(description="Payment user id")
    * @Groups({"read"})
    */
   private $userId;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Payment user id")
+   * @OA\Property(description="Payment user id")
    * @Groups({"read"})
    */
   private $type;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Payment user id")
+   * @OA\Property(description="Payment user id")
    * @Groups({"read"})
    */
   private $tenantId;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Payment user id")
+   * @OA\Property(description="Payment user id")
    * @Groups({"read"})
    */
   private $serviceId;
@@ -48,7 +48,7 @@ class Payment
   /**
    * @var DateTime
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Created at date time")
+   * @OA\Property(description="Created at date time")
    * @Groups({"read"})
    */
   private $createdAt;
@@ -56,35 +56,35 @@ class Payment
   /**
    * @var DateTime
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Created at date time")
+   * @OA\Property(description="Created at date time")
    * @Groups({"read"})
    */
   private $updatedAt;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Payment user id")
+   * @OA\Property(description="Payment user id")
    * @Groups({"read"})
    */
   private $status;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Payment user id")
+   * @OA\Property(description="Payment user id")
    * @Groups({"read"})
    */
   private $reason;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Payment user id")
+   * @OA\Property(description="Payment user id")
    * @Groups({"read"})
    */
   private $remoteId;
 
   /**
    * @var PaymentTransaction
-   * @SWG\Property(type="object", ref=@Model(type=PaymentTransaction::class, groups={"read"}))
+   * @OA\Property(type="object", ref=@Model(type=PaymentTransaction::class, groups={"read"}))
    * @Serializer\Type("array")
    * @Groups({"read"})
    */

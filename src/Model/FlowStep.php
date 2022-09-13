@@ -5,7 +5,7 @@ namespace App\Model;
 
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 
 class FlowStep implements FlowStepInterface, \JsonSerializable
@@ -15,7 +15,7 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: identifier")
    * @Assert\NotNull(message="This field is mandatory: identifier")
-   * @SWG\Property(description="Human-readable unique identifiers")
+   * @OA\Property(description="Human-readable unique identifiers")
    */
   private $identifier;
 
@@ -24,7 +24,7 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: title")
    * @Assert\NotNull(message="This field is mandatory: title")
-   * @SWG\Property(description="Step's title")
+   * @OA\Property(description="Step's title")
    */
   private $title;
 
@@ -33,28 +33,28 @@ class FlowStep implements FlowStepInterface, \JsonSerializable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: type")
    * @Assert\NotNull(message="This field is mandatory: type")
-   * @SWG\Property(description="Step's type, accepts values: formio")
+   * @OA\Property(description="Step's type, accepts values: formio")
    */
   private $type;
 
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Step's description, accepts html tags")
+   * @OA\Property(description="Step's description, accepts html tags")
    */
   private $description;
 
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Compilation guide, accepts html tags")
+   * @OA\Property(description="Compilation guide, accepts html tags")
    */
   private $guide;
 
   /**
    * @var array
    * @Serializer\Type("array<string, string>")
-   * @SWG\Property(description="Specific parameters for flow step")
+   * @OA\Property(description="Specific parameters for flow step")
    *
    */
   private $parameters = array();

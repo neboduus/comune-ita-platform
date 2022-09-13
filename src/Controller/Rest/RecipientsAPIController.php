@@ -14,7 +14,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 /**
  * Class RecipientsAPIController
@@ -47,24 +48,26 @@ class RecipientsAPIController extends AbstractFOSRestController
    * List all Recipients
    * @Rest\Get("", name="recipients_api_list")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false,
-   *      type="string"
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of recipients",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Recipient::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=Recipient::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Tag(name="recipients")
+   * @OA\Tag(name="recipients")
    * @param Request $request
    * @return View
    */
@@ -78,25 +81,27 @@ class RecipientsAPIController extends AbstractFOSRestController
    * Retreive a Recipient by id
    * @Rest\Get("/{id}", name="recipient_api_get")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false,
-   *      type="string"
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Recipient",
    *     @Model(type=Recipient::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Recipient not found"
    * )
-   * @SWG\Tag(name="recipients")
+   * @OA\Tag(name="recipients")
    *
    * @param Request $request
    * @param string $id
@@ -122,50 +127,46 @@ class RecipientsAPIController extends AbstractFOSRestController
    * Create a Recipient
    * @Rest\Post(name="recipients_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false,
-   *      type="string"
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Recipient",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The recipient to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Recipient::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Recipient::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Recipient"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="recipients")
+   * @OA\Tag(name="recipients")
    *
    * @param Request $request
    * @return View
@@ -213,54 +214,50 @@ class RecipientsAPIController extends AbstractFOSRestController
    * Edit full Recipient
    * @Rest\Put("/{id}", name="recipients_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false,
-   *      type="string"
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Recipient",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The recipient to update",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Recipient::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Recipient::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full Recipient"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="recipients")
+   * @OA\Tag(name="recipients")
    *
    * @param $id
    * @param Request $request
@@ -315,54 +312,50 @@ class RecipientsAPIController extends AbstractFOSRestController
    * Patch a Recipient
    * @Rest\Patch("/{id}", name="recipients_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false,
-   *      type="string"
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Recipient",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The recipient to update",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Recipient::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Recipient::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Recipient"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="recipients")
+   * @OA\Tag(name="recipients")
    *
    * @param $id
    * @param Request $request
@@ -417,17 +410,17 @@ class RecipientsAPIController extends AbstractFOSRestController
    * Delete a Recipient
    * @Rest\Delete("/{id}", name="recipient_api_delete")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="recipients")
+   * @OA\Tag(name="recipients")
    *
    * @Method("DELETE")
    * @param $id

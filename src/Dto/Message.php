@@ -13,7 +13,7 @@ use DateTime;
 use Exception;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use \App\Entity\Message as MessageEntity;
@@ -23,7 +23,7 @@ class Message
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Message's uuid", type="string")
+   * @OA\Property(description="Message's uuid", type="string")
    * @Groups({"read"})
    */
   private $id;
@@ -32,21 +32,21 @@ class Message
    * @Assert\NotBlank(message="Message is mandatory")
    * @Assert\NotNull(message="Message is mandatory")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Message, accepts html tags")
+   * @OA\Property(description="Message, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $message;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Message subject")
+   * @OA\Property(description="Message subject")
    * @Groups({"read", "write"} )
    */
   private $subject;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Author of the message (uuid)")
+   * @OA\Property(description="Author of the message (uuid)")
    * @Groups({"read"})
    */
   private $author;
@@ -55,21 +55,21 @@ class Message
    * @Assert\NotBlank(message="Application is mandatory")
    * @Assert\NotNull(message="Application is mandatory")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Application of the message (uuid)")
+   * @OA\Property(description="Application of the message (uuid)")
    * @Groups({"read"})
    */
   private $application;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Visibility ")
+   * @OA\Property(description="Visibility ")
    * @Groups({"read", "write"})
    */
   private $visibility;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Email the message was sent to")
+   * @OA\Property(description="Email the message was sent to")
    * @Groups({"read", "write"})
    */
   private $email;
@@ -77,7 +77,7 @@ class Message
   /**
    * @var DateTime
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Created at date time")
+   * @OA\Property(description="Created at date time")
    * @Groups({"read"})
    */
   private $createdAt;
@@ -85,7 +85,7 @@ class Message
   /**
    * @var DateTime|null
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Sent at date time")
+   * @OA\Property(description="Sent at date time")
    * @Groups({"read", "write"})
    */
   private $sentAt;
@@ -93,7 +93,7 @@ class Message
   /**
    * @var DateTime|null
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Read date time")
+   * @OA\Property(description="Read date time")
    * @Groups({"read", "write"})
    */
   private $readAt;
@@ -101,14 +101,14 @@ class Message
   /**
    * @var DateTime|null
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Clicked at date time")
+   * @OA\Property(description="Clicked at date time")
    * @Groups({"read", "write"})
    */
   private $clickedAt;
 
   /**
    * @var File[]
-   * @SWG\Property(property="attachments", type="array", @SWG\Items(ref=@Model(type=File::class, groups={"read", "write"})))
+   * @OA\Property(property="attachments", type="array", @OA\Items(ref=@Model(type=File::class, groups={"read", "write"})))
    * @Serializer\Type("array")
    * @Groups({"read", "write"})
    */
@@ -117,7 +117,7 @@ class Message
   /**
    * @var bool
    * @Serializer\Type("bool")
-   * @SWG\Property(description="Is protocol required?")
+   * @OA\Property(description="Is protocol required?")
    * @Groups({"read", "write"})
    */
   private $protocolRequired;
@@ -125,14 +125,14 @@ class Message
   /**
    * @var DateTime|null
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Protocolled at date time")
+   * @OA\Property(description="Protocolled at date time")
    * @Groups({"read", "write"})
    */
   private $protocolledAt;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Protocol number")
+   * @OA\Property(description="Protocol number")
    * @Groups({"read", "write"})
    */
   private $protocolNumber;

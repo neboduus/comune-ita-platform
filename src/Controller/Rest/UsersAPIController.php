@@ -18,7 +18,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -53,36 +54,32 @@ class UsersAPIController extends AbstractFOSRestController
    * List all Users
    * @Rest\Get("", name="users_api_list")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *     name="cf",
    *     in="query",
-   *     type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *     description="Fiscal code of the user"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of users",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=User::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=User::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="users")
+   * @OA\Tag(name="users")
    * @param Request $request
    * @return View
    */
@@ -117,30 +114,24 @@ class UsersAPIController extends AbstractFOSRestController
    * Retreive a User by id
    * @Rest\Get("/{id}", name="user_api_get")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a User",
    *     @Model(type=User::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="User not found"
    * )
-   * @SWG\Tag(name="users")
+   * @OA\Tag(name="users")
    *
    * @param Request $request
    * @param string $id
@@ -178,42 +169,36 @@ class UsersAPIController extends AbstractFOSRestController
    * Create a User
    * @Rest\Post(name="users_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="User",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The user to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=User::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=User::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a User"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="users")
+   * @OA\Tag(name="users")
    *
    * @param Request $request
    * @return View
@@ -280,46 +265,40 @@ class UsersAPIController extends AbstractFOSRestController
    * Edit full User
    * @Rest\Put("/{id}", name="users_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="User",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The user to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=User::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=User::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full User"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="users")
+   * @OA\Tag(name="users")
    *
    * @param $id
    * @param Request $request
@@ -378,46 +357,40 @@ class UsersAPIController extends AbstractFOSRestController
    * Patch a User
    * @Rest\Patch("/{id}", name="users_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="User",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The service to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=User::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=User::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a User"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="users")
+   * @OA\Tag(name="users")
    *
    * @param $id
    * @param Request $request
@@ -476,17 +449,17 @@ class UsersAPIController extends AbstractFOSRestController
    * Delete a User
    * @Rest\Delete("/{id}", name="users_api_delete")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="users")
+   * @OA\Tag(name="users")
    *
    * @Method("DELETE")
    * @param $id

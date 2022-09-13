@@ -3,18 +3,18 @@
 
 namespace App\Model;
 
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 
 class ExternalCalendar implements \JsonSerializable
 {
   /**
-   * @SWG\Property(description="External calendar's name", type="string")
+   * @OA\Property(description="External calendar's name", type="string")
    */
   private $name;
 
   /**
-   * @SWG\Property(description="External calendar's url", type="string")
+   * @OA\Property(description="External calendar's url", type="string")
    */
   private $url;
 

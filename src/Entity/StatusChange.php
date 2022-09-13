@@ -4,7 +4,7 @@
 namespace App\Entity;
 
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StatusChange

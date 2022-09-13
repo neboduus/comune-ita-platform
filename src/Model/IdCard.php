@@ -5,7 +5,7 @@ namespace App\Model;
 
 
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class IdCard implements \JsonSerializable
 {
@@ -14,7 +14,7 @@ class IdCard implements \JsonSerializable
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="Id card's number")
+   * @OA\Property(description="Id card's number")
    */
   private $numero;
 
@@ -23,7 +23,7 @@ class IdCard implements \JsonSerializable
    *
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="Id card's city")
+   * @OA\Property(description="Id card's city")
    */
   private $comuneRilascio;
 
@@ -31,7 +31,7 @@ class IdCard implements \JsonSerializable
    * @var \DateTime
    *
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Id card's date")
+   * @OA\Property(description="Id card's date")
    */
   private $dataRilascio;
 
@@ -39,7 +39,7 @@ class IdCard implements \JsonSerializable
    * @var \DateTime
    *
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Id card's expire date")
+   * @OA\Property(description="Id card's expire date")
    */
   private $dataScadenza;
 

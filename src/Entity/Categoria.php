@@ -9,7 +9,7 @@ use Gedmo\Translatable\Translatable;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -24,7 +24,7 @@ class Categoria implements Translatable
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @Serializer\Type("string")
-   * @SWG\Property(description="Category id")
+   * @OA\Property(description="Category id")
    * @Groups({"read"})
    */
   protected $id;
@@ -36,7 +36,7 @@ class Categoria implements Translatable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
-   * @SWG\Property(description="Category name")
+   * @OA\Property(description="Category name")
    * @Groups({"read", "write"})
    */
   private $name;
@@ -47,7 +47,7 @@ class Categoria implements Translatable
    * @Gedmo\Slug(fields={"name"})
    * @ORM\Column(type="string", length=255, unique=true)
    * @Serializer\Type("string")
-   * @SWG\Property(description="Category slug")
+   * @OA\Property(description="Category slug")
    * @Groups({"read"})
    */
   private $slug;
@@ -57,7 +57,7 @@ class Categoria implements Translatable
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @Serializer\Type("string")
-   * @SWG\Property(description="Category description")
+   * @OA\Property(description="Category description")
    * @Groups({"read", "write"})
    */
   private $description;
@@ -200,7 +200,7 @@ class Categoria implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("parent_id")
-   * @SWG\Property(description="Parent category id")
+   * @OA\Property(description="Parent category id")
    * @Groups({"read", "write"})
    */
   public function getParentId()

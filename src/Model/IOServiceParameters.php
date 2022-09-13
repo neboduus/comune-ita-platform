@@ -5,7 +5,7 @@ namespace App\Model;
 
 
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class IOServiceParameters
@@ -17,7 +17,7 @@ class IOServiceParameters
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: service_id")
    * @Assert\NotNull(message="This field is mandatory: service_id")
-   * @SWG\Property(description="IO Service id")
+   * @OA\Property(description="IO Service id")
    */
   private $IOserviceId;
 
@@ -26,7 +26,7 @@ class IOServiceParameters
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: primary_key")
    * @Assert\NotNull(message="This field is mandatory: primary_key")
-   * @SWG\Property(description="IO Service primary key")
+   * @OA\Property(description="IO Service primary key")
    */
   private $primaryKey;
 
@@ -35,7 +35,7 @@ class IOServiceParameters
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: secondary_key")
    * @Assert\NotNull(message="This field is mandatory: secondary_key")
-   * @SWG\Property(description="IO Service secondary key")
+   * @OA\Property(description="IO Service secondary key")
    */
   private $secondaryKey;
 

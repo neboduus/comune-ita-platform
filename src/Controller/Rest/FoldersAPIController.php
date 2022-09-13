@@ -17,7 +17,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -54,41 +55,39 @@ class FoldersAPIController extends AbstractFOSRestController
    * List all Folders
    * @Rest\Get("", name="folders_api_list")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
-   * * @SWG\Parameter(
+   * @Security(name="Bearer")
+   * @OA\Parameter(
    *     name="cf",
    *     in="query",
-   *     type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *     description="Fiscal code of the folder's owner"
    * )
-   * * @SWG\Parameter(
+   * @OA\Parameter(
    *     name="title",
    *     in="query",
-   *     type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *     description="Folder's title"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of Folders",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Folder::class))
+   *         @OA\Items(ref=@Model(type=Folder::class))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="folders")
+   * @OA\Tag(name="folders")
    * @param Request $request
    * @return View
    */
@@ -125,30 +124,24 @@ class FoldersAPIController extends AbstractFOSRestController
    * Retreive a Folder
    * @Rest\Get("/{id}", name="folder_api_get")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Folder",
    *     @Model(type=Folder::class)
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Folder not found"
    * )
-   * @SWG\Tag(name="folders")
+   * @OA\Tag(name="folders")
    *
    * @param $id
    * @return View
@@ -173,42 +166,36 @@ class FoldersAPIController extends AbstractFOSRestController
    * Create a Folder
    * @Rest\Post(name="folders_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Folders",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Folder to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Folder::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Folder::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Folder"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="folders")
+   * @OA\Tag(name="folders")
    *
    * @param Request $request
    * @return View
@@ -256,46 +243,40 @@ class FoldersAPIController extends AbstractFOSRestController
    * Edit full Folder
    * @Rest\Put("/{id}", name="folders_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Folder",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Folder to edit",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Folder::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Folder::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full Folder"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="folders")
+   * @OA\Tag(name="folders")
    *
    * @param $id
    * @param Request $request
@@ -351,46 +332,40 @@ class FoldersAPIController extends AbstractFOSRestController
    * Patch a Folders
    * @Rest\Patch("/{id}", name="folders_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Folder",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Folder to patch",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Folder::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Folder::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Folder"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="folders")
+   * @OA\Tag(name="folders")
    *
    * @param $id
    * @param Request $request
@@ -446,25 +421,19 @@ class FoldersAPIController extends AbstractFOSRestController
    * Delete a Folder
    * @Rest\Delete("/{id}", name="folders_api_delete")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="folders")
+   * @OA\Tag(name="folders")
    *
    * @Method("DELETE")
    * @param $id

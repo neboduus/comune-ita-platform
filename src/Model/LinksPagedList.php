@@ -3,28 +3,28 @@
 namespace App\Model;
 
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class LinksPagedList
 {
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Total number of objects")
+   * @OA\Property(description="Total number of objects")
    */
   private $self;
 
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Link to to prev page")
+   * @OA\Property(description="Link to to prev page")
    */
   private $prev;
 
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Link to next page")
+   * @OA\Property(description="Link to next page")
    */
   private $next;
 

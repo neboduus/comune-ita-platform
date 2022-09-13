@@ -22,9 +22,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 
 /**
@@ -58,50 +59,50 @@ class SubscribersAPIController extends AbstractApiController
    * Retrieve all Subscribers
    * @Rest\Get("", name="subscribers_api_get")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="fiscalCode",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Subscriber fiscal code"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="subscription",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Subscription id"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive all subscriptions",
    *      @Model(type=Subscriber::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="subscribers")
+   * @OA\Tag(name="subscribers")
    *
    * @return View
    */
@@ -173,38 +174,34 @@ class SubscribersAPIController extends AbstractApiController
    * Retrieve a Subscriber
    * @Rest\Get("/{id}", name="subscriber_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Subscriber",
    *      @Model(type=Subscriber::class, groups={"read"})
    * )
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Subscription not found"
    * )
-   * @SWG\Tag(name="subscribers")
+   * @OA\Tag(name="subscribers")
    *
    * @param Request $request
    * @param $id
@@ -238,50 +235,46 @@ class SubscribersAPIController extends AbstractApiController
    * Create a Subscriber
    * @Rest\Post("", name="subscriber_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Subscriber",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Subscriber to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Subscriber::class, groups={"read"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Subscriber::class, groups={"read"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Subscriber"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="subscribers")
+   * @OA\Tag(name="subscribers")
    *
    * @param Request $request
    *
@@ -382,33 +375,29 @@ class SubscribersAPIController extends AbstractApiController
    * Delete a Subscriber
    * @Rest\Delete("/{id}", name="subscriber_api_delete")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="subscribers")
+   * @OA\Tag(name="subscribers")
    *
    * @param $id
    * @param Request $request
@@ -467,54 +456,50 @@ class SubscribersAPIController extends AbstractApiController
    * Edit full Subscriber
    * @Rest\Put("/{id}", name="subscriber_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Subscriber",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The subscriber to edit",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Subscriber::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Subscriber::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full subscriber"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="subscribers")
+   * @OA\Tag(name="subscribers")
    *
    * @param Request $request
    * @param $id
@@ -577,54 +562,50 @@ class SubscribersAPIController extends AbstractApiController
    * Patch a Subscription
    * @Rest\Patch("/{id}", name="subscriber_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Subscriber",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Subscriber to patch",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Subscriber::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Subscriber::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Subscriber"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="subscribers")
+   * @OA\Tag(name="subscribers")
    *
    * @param Request $request
    * @param $id

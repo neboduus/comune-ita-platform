@@ -5,7 +5,7 @@ namespace App\Model;
 
 use App\Entity\Servizio;
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SubscriptionPayment implements \JsonSerializable
@@ -17,7 +17,7 @@ class SubscriptionPayment implements \JsonSerializable
   /**
    * @var double
    * @Assert\GreaterThanOrEqual(0, message="L'importo del pagamento deve avere un valore positivo")
-   * @SWG\Property(description="Payment amount", type="double")
+   * @OA\Property(description="Payment amount", type="number")
    */
   private $amount;
 
@@ -25,7 +25,7 @@ class SubscriptionPayment implements \JsonSerializable
    * @var string
    * @Assert\NotNull(message="La causale di pagamento è obbligatorio")
    * @Assert\NotBlank (message="La causale di pagamento non può essere vuota")
-   * @SWG\Property(description="Payment reason", type="string")
+   * @OA\Property(description="Payment reason", type="string")
    */
   private $paymentReason;
 
@@ -33,26 +33,26 @@ class SubscriptionPayment implements \JsonSerializable
    * @var string
    * @Assert\NotNull(message="L'identificativo del pagamento è obbligatorio")
    * @Assert\NotBlank (message="L'identificativo del pagamento non può essere vuoto")
-   * @SWG\Property(description="Payment identifier", type="string")
+   * @OA\Property(description="Payment identifier", type="string")
    */
   private $paymentIdentifier;
 
 
   /**
    * @var string
-   * @SWG\Property(description="Subscription service code", type="string")
+   * @OA\Property(description="Subscription service code", type="string")
    */
   private $subscriptionServiceCode;
 
   /**
    * @var bool
-   * @SWG\Property(description="Create draft application before due date?", type="boolean")
+   * @OA\Property(description="Create draft application before due date?", type="boolean")
    */
   private $createDraft = true;
 
   /**
    * @var string
-   * @SWG\Property(description="Payment type", type="string", enum={"subscription_fee", "additional_required", "additional_optional"})
+   * @OA\Property(description="Payment type", type="string", enum={"subscription_fee", "additional_required", "additional_optional"})
    */
   private $type;
 
@@ -181,7 +181,7 @@ class SubscriptionPayment implements \JsonSerializable
    * @Serializer\VirtualProperty(name="meta")
    * @Serializer\Type("array<string, string>")
    * @Serializer\SerializedName("meta")
-   * @SWG\Property(description="Payment metadata", type="array", @SWG\Items(type="object"))
+   * @OA\Property(description="Payment metadata", type="array", @OA\Items(type="object"))
    */
   public function getMetaAsArray(): array
   {

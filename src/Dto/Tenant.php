@@ -9,7 +9,7 @@ use App\Entity\Ente as TenantEntity;
 use App\Model\Gateway;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -18,7 +18,7 @@ class Tenant
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Message's uuid", type="string")
+   * @OA\Property(description="Message's uuid", type="string")
    * @Groups({"read"})
    */
   private $id;
@@ -28,7 +28,7 @@ class Tenant
    * @Assert\NotBlank(message="Mechanographic code is mandatory")
    * @Assert\NotNull(message="Mechanographic code is mandatory")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Tenant mechanographic code")
+   * @OA\Property(description="Tenant mechanographic code")
    * @Groups({"read", "write"})
    */
   private $mechanographicCode;
@@ -37,7 +37,7 @@ class Tenant
    * @Assert\NotBlank(message="Administrative code is mandatory")
    * @Assert\NotNull(message="Administrative code is mandatory")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Tenant administrative code")
+   * @OA\Property(description="Tenant administrative code")
    * @Groups({"read", "write"})
    */
   private $administrativeCode;
@@ -46,42 +46,42 @@ class Tenant
    * @Assert\NotBlank(message="Site url is mandatory")
    * @Assert\NotNull(message="Site url is mandatory")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Link on the title of each page")
+   * @OA\Property(description="Link on the title of each page")
    * @Groups({"read", "write"})
    */
   private $siteUrl;
 
   /**
    * @Serializer\Type("object")
-   * @SWG\Property(description="Tenant graphic appearance")
+   * @OA\Property(description="Tenant graphic appearance")
    * @Groups({"read", "write"})
    */
   private $meta;
 
   /**
    * @Serializer\Type("bool")
-   * @SWG\Property(description="Enable App IO integration")
+   * @OA\Property(description="Enable App IO integration")
    * @Groups({"read", "write"})
    */
   private $ioEnabled;
 
   /**
    * @Serializer\Type("array")
-   * @SWG\Property(property="gateways", description="List of payment gateways and related parameters", type="array", @SWG\Items(type="object", ref=@Model(type=Gateway::class)))
+   * @OA\Property(property="gateways", description="List of payment gateways and related parameters", type="array", @OA\Items(type="object", ref=@Model(type=Gateway::class)))
    * @Groups({"read", "write"})
    */
   private $gateways;
 
   /**
    * @Serializer\Type("array")
-   * @SWG\Property(property="backoffice_enabled_integrations", description="List of backoffices, available options are 'operatori_subscription-service_index', 'operatori_calendars_index'", type="array", @SWG\Items(type="string"))
+   * @OA\Property(property="backoffice_enabled_integrations", description="List of backoffices, available options are 'operatori_subscription-service_index', 'operatori_calendars_index'", type="array", @OA\Items(type="string"))
    * @Groups({"read", "write"})
    */
   private $backofficeEnabledIntegrations;
 
   /**
    * @Serializer\Type("bool")
-   * @SWG\Property(description="Enable linkable application meetings")
+   * @OA\Property(description="Enable linkable application meetings")
    * @Groups({"read", "write"})
    */
   private $linkableApplicationMeetings;

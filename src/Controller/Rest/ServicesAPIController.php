@@ -40,8 +40,9 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SC;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use function Aws\boolean_value;
 
@@ -113,71 +114,85 @@ class ServicesAPIController extends AbstractFOSRestController
    * List all Services
    * @Rest\Get("", name="services_api_list")
    *
-   * * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="q",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Search text"
    *  )
    *
-   * * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="status",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Status of service, accepted values: 1 - Pubblished, 2 - Suspended, 4 - scheduled"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="topics_id",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Id of the category"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="service_group_id",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Id of the service group"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="recipient_id",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Id of the recipient"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="geographic_area_id",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Id of the geographic area"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="grouped",
    *      in="query",
-   *      type="boolean",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="If false grouped services are excluded from results"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of services",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Service::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=Service::class, groups={"read"}))
    *     )
    * )
-   * @SWG\Tag(name="services")
+   * @OA\Tag(name="services")
    */
   public function getServicesAction(Request $request)
   {
@@ -212,12 +227,12 @@ class ServicesAPIController extends AbstractFOSRestController
    * Retreive service's facets
    * @Rest\Get("/facets", name="service_api_facets")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive service's facets"
    * )
    *
-   * @SWG\Tag(name="services")
+   * @OA\Tag(name="services")
    *
    */
   public function facetsAction()
@@ -230,17 +245,17 @@ class ServicesAPIController extends AbstractFOSRestController
    * Retreive a Service
    * @Rest\Get("/{id}", name="service_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Service",
    *     @Model(type=Service::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Service not found"
    * )
-   * @SWG\Tag(name="services")
+   * @OA\Tag(name="services")
    *
    * @param $id
    * @return View
@@ -271,16 +286,16 @@ class ServicesAPIController extends AbstractFOSRestController
    * Retreive form Service schema
    * @Rest\Get("/{id}/form", name="form_service_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive service Form schma"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Form schema not found"
    * )
-   * @SWG\Tag(name="services")
+   * @OA\Tag(name="services")
    *
    * @param $id
    * @return View
@@ -312,42 +327,36 @@ class ServicesAPIController extends AbstractFOSRestController
    * Create a Service
    * @Rest\Post(name="services_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Service",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The service to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Service::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Service::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Service"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="services")
+   * @OA\Tag(name="services")
    *
    * @param Request $request
    * @return View
@@ -435,46 +444,40 @@ class ServicesAPIController extends AbstractFOSRestController
    * Edit full Service
    * @Rest\Put("/{id}", name="services_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Service",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The service to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Service::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Service::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full Service"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="services")
+   * @OA\Tag(name="services")
    *
    * @param $id
    * @param Request $request
@@ -542,46 +545,40 @@ class ServicesAPIController extends AbstractFOSRestController
    * Patch a Service
    * @Rest\Patch("/{id}", name="services_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Service",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The service to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Service::class, groups={"write"})
-   *     )
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Service::class, groups={"write"})
+   *         )
+   *    )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Service"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="services")
+   * @OA\Tag(name="services")
    *
    * @param $id
    * @param Request $request
@@ -649,17 +646,17 @@ class ServicesAPIController extends AbstractFOSRestController
    * Delete a Service
    * @Rest\Delete("/{id}", name="services_api_delete")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="services")
+   * @OA\Tag(name="services")
    *
    * @Method("DELETE")
    */

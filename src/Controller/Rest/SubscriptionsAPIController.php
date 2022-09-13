@@ -25,9 +25,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
 
 /**
@@ -61,30 +62,30 @@ class SubscriptionsAPIController extends AbstractApiController
    * Check wether the subscription is a valid one
    * @Rest\Get("/availability", name="validity_subscription_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *    response=200,
    *    description="Subscription is valid",
-   *    @SWG\Schema(
+   *    @OA\JsonContent(
    *       type="object",
-   *       @SWG\Property(property="result", type="boolean")
+   *       @OA\Property(property="result", type="boolean")
    *    )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *    response=400,
    *    description="Invalid request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *    response=406,
    *    description="Duplicate subscription",
-   *    @SWG\Schema(
+   *    @OA\JsonContent(
    *       type="object",
-   *       @SWG\Property(property="result", type="boolean")
+   *       @OA\Property(property="result", type="boolean")
    *    )
    *
    * )
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    * @param Request $request
    * @return View
    *
@@ -127,105 +128,115 @@ class SubscriptionsAPIController extends AbstractApiController
    * Retrieve all Subscriptions
    * @Rest\Get("", name="subscriptions_api_get_v2")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="subscriptionService",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Subscription service id"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="code",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Subscription service code"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="tags",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="List of comma-separated subscription service tags"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="subscriptionsAvailable",
    *      in="query",
-   *      type="boolean",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Filter by suscriptions availability"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="subscriptionServiceStatus",
    *      in="query",
-   *      type="integer",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Subscription service status (available statuses are 0-pending, 1-active, 2-unactive)"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="fiscalCode",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Subscriber fiscal code"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="status",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Subscription status, (available statuses are 'active' or 'withdraw')"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive all subscriptions",
-   *     @SWG\schema(
+   *     @OA\JsonContent(
    *     		type="array",
-   *          	@SWG\items(
+   *          	@OA\items(
    *          		type="object",
-   *              	@SWG\Property(property="id", type="string", description="Subscription identifier", format="uuid"),
-   *              	@SWG\Property(property="subscriber_name", type="string", description="Subscriber name"),
-   *                @SWG\Property(property="subscriber_surname", type="string", description="Subscriber surname"),
-   *                @SWG\Property(property="subscriber_fiscal_code", type="string", description="Subscriber fiscale code"),
-   *                @SWG\Property(property="related_cfs", type="array", description="Subscription related cfs", @SWG\items(type="string")),
-   *                @SWG\Property(property="subscription_service_name", type="string", description="Subscription service name"),
-   *                @SWG\Property(property="subscription_service_code", type="string", description="Subscription service code"),
-   *                @SWG\Property(property="subscription_service_id", type="string", description="Subscription service identifier", format="uuid"),
-   *                @SWG\Property(property="status", type="string", description="Subscription status (active or withdraw)", enum={"active", "withdraw"}),
-   *                @SWG\Property(property="created_at", type="string", format="date-time", description="Subscription creation datetime")
+   *              	@OA\Property(property="id", type="string", description="Subscription identifier", format="uuid"),
+   *              	@OA\Property(property="subscriber_name", type="string", description="Subscriber name"),
+   *                @OA\Property(property="subscriber_surname", type="string", description="Subscriber surname"),
+   *                @OA\Property(property="subscriber_fiscal_code", type="string", description="Subscriber fiscale code"),
+   *                @OA\Property(property="related_cfs", type="array", description="Subscription related cfs", @OA\items(type="string")),
+   *                @OA\Property(property="subscription_service_name", type="string", description="Subscription service name"),
+   *                @OA\Property(property="subscription_service_code", type="string", description="Subscription service code"),
+   *                @OA\Property(property="subscription_service_id", type="string", description="Subscription service identifier", format="uuid"),
+   *                @OA\Property(property="status", type="string", description="Subscription status (active or withdraw)", enum={"active", "withdraw"}),
+   *                @OA\Property(property="created_at", type="string", format="date-time", description="Subscription creation datetime")
    *          	),
    *      )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @return View
    */
@@ -331,50 +342,46 @@ class SubscriptionsAPIController extends AbstractApiController
    * Retrieve a Subscription
    * @Rest\Get("/{id}", name="subscription_api_get_v2")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Subscription",
-   *     @SWG\schema(
+   *     @OA\JsonContent(
    *     		type="object",
-   *        @SWG\Property(property="id", type="string", description="Subscription identifier", format="uuid"),
-   *        @SWG\Property(property="subscriber_name", type="string", description="Subscriber name"),
-   *        @SWG\Property(property="subscriber_surname", type="string", description="Subscriber surname"),
-   *        @SWG\Property(property="subscriber_fiscal_code", type="string", description="Subscriber fiscale code"),
-   *        @SWG\Property(property="related_cfs", type="array", description="Subscription related cfs", @SWG\items(type="string")),
-   *        @SWG\Property(property="subscription_service_name", type="string", description="Subscription service name"),
-   *        @SWG\Property(property="subscription_service_code", type="string", description="Subscription service code"),
-   *        @SWG\Property(property="subscription_service_id", type="string", description="Subscription service identifier", format="uuid"),
-   *        @SWG\Property(property="status", type="string", description="Subscription status (active or withdraw)", enum={"active", "withdraw"}),
-   *        @SWG\Property(property="created_at", type="string", format="date-time", description="Subscription creation datetime")
+   *        @OA\Property(property="id", type="string", description="Subscription identifier", format="uuid"),
+   *        @OA\Property(property="subscriber_name", type="string", description="Subscriber name"),
+   *        @OA\Property(property="subscriber_surname", type="string", description="Subscriber surname"),
+   *        @OA\Property(property="subscriber_fiscal_code", type="string", description="Subscriber fiscale code"),
+   *        @OA\Property(property="related_cfs", type="array", description="Subscription related cfs", @OA\items(type="string")),
+   *        @OA\Property(property="subscription_service_name", type="string", description="Subscription service name"),
+   *        @OA\Property(property="subscription_service_code", type="string", description="Subscription service code"),
+   *        @OA\Property(property="subscription_service_id", type="string", description="Subscription service identifier", format="uuid"),
+   *        @OA\Property(property="status", type="string", description="Subscription status (active or withdraw)", enum={"active", "withdraw"}),
+   *        @OA\Property(property="created_at", type="string", format="date-time", description="Subscription creation datetime")
    *    ),
    * )
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Subscription not found"
    * )
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param Request $request
    * @param $id
@@ -420,38 +427,34 @@ class SubscriptionsAPIController extends AbstractApiController
    * Delete a Subscription
    * @Rest\Delete("/{id}", name="subscription_api_delete_v2")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
    *
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param $id
    * @param Request $request
@@ -512,50 +515,46 @@ class SubscriptionsAPIController extends AbstractApiController
    * Create a Subscription
    * @Rest\Post("", name="subscription_api_post_v2")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Subscription",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Subscription to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Subscription::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Subscription::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Subscription"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param Request $request
    *
@@ -619,54 +618,50 @@ class SubscriptionsAPIController extends AbstractApiController
    * Edit full Subscription
    * @Rest\Put("/{id}", name="subscription_api_put_v2")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Subscription",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The subscription to edit",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Subscription::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Subscription::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full subscription"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param Request $request
    * @param $id
@@ -739,54 +734,50 @@ class SubscriptionsAPIController extends AbstractApiController
    * Patch a Subscription
    * @Rest\Patch("/{id}", name="subscription_api_patch_v2")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. Version 1 is not available"
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Subscription",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Subscription to patch",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Subscription::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Subscription::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Subscription"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param Request $request
    * @param $id

@@ -16,7 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -55,17 +56,17 @@ class TenantAPIController extends AbstractFOSRestController
    * @Rest\Get("/info", name="tenants_api_info")
    *
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Tenant info"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Tenant not found"
    * )
    *
-   * @SWG\Tag(name="tenants")
+   * @OA\Tag(name="tenants")
    */
   public function getTenantInfoAction(Request $request)
   {
@@ -100,50 +101,44 @@ class TenantAPIController extends AbstractFOSRestController
    * Edit Tenant
    * @Rest\Put("/{identifier}", name="tenant_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Tenant",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The tenant to edit",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Tenant::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Tenant::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full Tenant"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
-   * @SWG\Response(
+   * @OA\Response(
    *     response=401,
    *     description="Unauthorized"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="Tenants")
+   * @OA\Tag(name="tenants")
    *
    * @param $identifier
    * @param Request $request
@@ -198,46 +193,40 @@ class TenantAPIController extends AbstractFOSRestController
    * Patch a Tenant
    * @Rest\Patch("/{identifier}", name="tenant_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Tenant",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The tenant to edit",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Tenant::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Tenant::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch tenant"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="Tenants")
+   * @OA\Tag(name="tenants")
    *
    * @param $identifier
    * @param Request $request

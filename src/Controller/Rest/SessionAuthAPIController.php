@@ -3,13 +3,15 @@
 
 namespace App\Controller\Rest;
 
+use Nelmio\ApiDocBundle\Annotation\Security;
+
 
 use App\Entity\User;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 
 class SessionAuthAPIController extends AbstractFOSRestController
@@ -33,16 +35,16 @@ class SessionAuthAPIController extends AbstractFOSRestController
    * Retreive a session auth token
    * @Rest\Get("/session-auth", name="user_session_auth_token_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive an Auth Token"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="SessionAuth")
+   * @OA\Tag(name="SessionAuth")
    *
    * @return View
    */

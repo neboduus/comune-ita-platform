@@ -3,14 +3,14 @@
 namespace App\Model;
 
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class MetaPagedList
 {
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Total number of objects")
+   * @OA\Property(description="Total number of objects")
    */
   private $count;
 
@@ -18,7 +18,7 @@ class MetaPagedList
   /**
    * @var array
    * @Serializer\Type("array<string, string>")
-   * @SWG\Property(description="Specific parameters for flow step")
+   * @OA\Property(description="Specific parameters for flow step")
    *
    */
   private $parameter = array();

@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class Gateway implements \JsonSerializable
 {
@@ -17,14 +17,14 @@ class Gateway implements \JsonSerializable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: identifier")
    * @Assert\NotNull(message="This field is mandatory: identifier")
-   * @SWG\Property(description="Human-readable unique identifiers")
+   * @OA\Property(description="Human-readable unique identifiers")
    */
   private $identifier;
 
   /**
    * @var array
    * @Serializer\Type("array<string, string>")
-   * @SWG\Property(description="Specific parameters for gateways")
+   * @OA\Property(description="Specific parameters for gateways")
    *
    */
   private $parameters = array();

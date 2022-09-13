@@ -17,7 +17,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass="App\Entity\ServizioRepository")
@@ -53,7 +53,7 @@ class Servizio implements Translatable
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @SWG\Property(description="Service's uuid")
+   * @OA\Property(description="Service's uuid")
    */
   protected $id;
 
@@ -64,7 +64,7 @@ class Servizio implements Translatable
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
    * @Assert\Length(max="255")
-   * @SWG\Property(description="Service's name")
+   * @OA\Property(description="Service's name")
    */
   private $name;
 
@@ -73,7 +73,7 @@ class Servizio implements Translatable
    *
    * @Gedmo\Slug(fields={"name"})
    * @ORM\Column(type="string", length=255)
-   * @SWG\Property(description="Human-readable unique identifier, if empty will be generated from service's name")
+   * @OA\Property(description="Human-readable unique identifier, if empty will be generated from service's name")
    */
   private $slug;
 
@@ -108,7 +108,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Service's description, accepts html tags")
+   * @OA\Property(description="Service's description, accepts html tags")
    */
   private $description;
 
@@ -116,7 +116,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Compilation guide, accepts html tags")
+   * @OA\Property(description="Compilation guide, accepts html tags")
    */
   private $howto;
 
@@ -125,7 +125,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="How to fill in the application")
+   * @OA\Property(description="How to fill in the application")
    */
   private $howToDo;
 
@@ -134,7 +134,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="What you need to fill in the application")
+   * @OA\Property(description="What you need to fill in the application")
    */
   private $whatYouNeed;
 
@@ -143,7 +143,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="The outcome of the application")
+   * @OA\Property(description="The outcome of the application")
    */
   private $whatYouGet;
 
@@ -152,7 +152,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Costs of this application")
+   * @OA\Property(description="Costs of this application")
    */
   private $costs;
 
@@ -161,7 +161,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Textual description of whom the service is addressed, accepts html tags")
+   * @OA\Property(description="Textual description of whom the service is addressed, accepts html tags")
    */
   private $who;
 
@@ -169,7 +169,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
+   * @OA\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
    */
   private $specialCases;
 
@@ -177,7 +177,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Other info, accepts html tags")
+   * @OA\Property(description="Other info, accepts html tags")
    */
   private $moreInfo;
 
@@ -185,7 +185,7 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Information shown to the citizen during the compilation of the service, accepts html tags")
+   * @OA\Property(description="Information shown to the citizen during the compilation of the service, accepts html tags")
    */
   private $compilationInfo;
 
@@ -193,14 +193,14 @@ class Servizio implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Indications shown to the citizen at the end of the compilation of the service, accepts html tags")
+   * @OA\Property(description="Indications shown to the citizen at the end of the compilation of the service, accepts html tags")
    */
   private $finalIndications;
 
   /**
    * @var string[]
    * @ORM\Column(type="array", nullable=true)
-   * @SWG\Property(description="Geographical area covered by service", type="array", @SWG\Items(type="string"))
+   * @OA\Property(description="Geographical area covered by service", type="array", @OA\Items(type="string"))
    */
   private $coverage;
 
@@ -239,7 +239,7 @@ class Servizio implements Translatable
   /**
    * @var FlowStep[]
    * @ORM\Column(type="json", nullable=true)
-   * @SWG\Property(property="flow_steps", type="array", @SWG\Items(ref=@Model(type=FlowStep::class)))
+   * @OA\Property(property="flow_steps", type="array", @OA\Items(ref=@Model(type=FlowStep::class)))
    */
   private $flowSteps;
 
@@ -252,14 +252,14 @@ class Servizio implements Translatable
 
   /**
    * @ORM\Column(type="integer", nullable=true, options={"default":"0"})
-   * @SWG\Property(description="Accepts values: 0 - Not required, 1 - Required, 2 - Deferred")
+   * @OA\Property(description="Accepts values: 0 - Not required, 1 - Required, 2 - Deferred")
    */
   private $paymentRequired;
 
   /**
    * @var array
    * @ORM\Column(type="json", nullable=true)
-   * @SWG\Property(property="payment_parameters", description="List of payment gateways available for the service and related parameters", type="object", ref=@Model(type=PaymentParameters::class))
+   * @OA\Property(property="payment_parameters", description="List of payment gateways available for the service and related parameters", type="object", ref=@Model(type=PaymentParameters::class))
    */
   private $paymentParameters;
 
@@ -274,7 +274,7 @@ class Servizio implements Translatable
    * @var string
    * @ORM\Column(type="string", nullable=true)
    * @Serializer\Exclude()
-   * @SWG\Property(description="Accepts html characters")
+   * @OA\Property(description="Accepts html characters")
    *
    */
   protected $handler;
@@ -282,7 +282,7 @@ class Servizio implements Translatable
   /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true)
-   * @SWG\Property(description="If selected the service will be shown at the top of the page")
+   * @OA\Property(description="If selected the service will be shown at the top of the page")
    */
   private $sticky;
 
@@ -290,34 +290,34 @@ class Servizio implements Translatable
    * @ORM\Column(type="integer")
    * @Assert\NotBlank(message="identifier")
    * @Assert\NotNull()
-   * @SWG\Property(description="Accepts values: 0 - Hidden, 1 - Pubblished, 2 - Suspended")
+   * @OA\Property(description="Accepts values: 0 - Hidden, 1 - Pubblished, 2 - Suspended")
    */
   private $status;
 
   /**
    * @ORM\Column(type="integer", nullable=true)
-   * @SWG\Property(description="Accepts values: 0 - Anonymous, 1000 - Social, 2000 - Spid level 1, 3000 - Spid level 2, 4000 - Cie")
+   * @OA\Property(description="Accepts values: 0 - Anonymous, 1000 - Social, 2000 - Spid level 1, 3000 - Spid level 2, 4000 - Cie")
    */
   private $accessLevel;
 
   /**
    * @var bool
    * @ORM\Column(name="login_suggested", type="boolean", nullable=true)
-   * @SWG\Property(description="Enable or disable the suggestion to log in to auto-complete some fields")
+   * @OA\Property(description="Enable or disable the suggestion to log in to auto-complete some fields")
    */
   private $loginSuggested;
 
   /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true, options={"default":"1"})
-   * @SWG\Property(description="If selected the application will be registered in tenants protocol")
+   * @OA\Property(description="If selected the application will be registered in tenants protocol")
    */
   private $protocolRequired;
 
   /**
    * @var string
    * @ORM\Column(type="string", nullable=true)
-   * @SWG\Property(description="Service protocol handler: dummy, pec, pitre, infor")
+   * @OA\Property(description="Service protocol handler: dummy, pec, pitre, infor")
    */
   private $protocolHandler;
 
@@ -325,7 +325,7 @@ class Servizio implements Translatable
    * @var FeedbackMessage[]
    * @Gedmo\Translatable
    * @ORM\Column(type="json", nullable=true)
-   * @SWG\Property(description="Service feedback messages")
+   * @OA\Property(description="Service feedback messages")
    */
   private $feedbackMessages;
 
@@ -358,49 +358,49 @@ class Servizio implements Translatable
   /**
    * @ORM\ManyToOne(targetEntity="App\Entity\ServiceGroup", inversedBy="services")
    * @ORM\JoinColumn(name="service_group_id", referencedColumnName="id", nullable=true)
-   * @SWG\Property(description="Service group id", type="string")
+   * @OA\Property(description="Service group id", type="string")
    */
   private $serviceGroup;
 
   /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true, options={"default":"0"})
-   * @SWG\Property(description="If selected the service will share the group's descriptipn")
+   * @OA\Property(description="If selected the service will share the group's descriptipn")
    */
   private $sharedWithGroup;
 
   /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true, options={"default":"0"})
-   * @SWG\Property(description="If selected, service's applications can be reopend")
+   * @OA\Property(description="If selected, service's applications can be reopend")
    */
   private $allowReopening;
 
   /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true, options={"default":"1"})
-   * @SWG\Property(description="If selected, service's applications can be withdraw")
+   * @OA\Property(description="If selected, service's applications can be withdraw")
    */
   private $allowWithdraw;
 
   /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true, options={"default":"0"})
-   * @SWG\Property(description="If selected, operator can request integrations for applications on this service")
+   * @OA\Property(description="If selected, operator can request integrations for applications on this service")
    */
   private $allowIntegrationRequest;
 
   /**
    * @var integer
    * @ORM\Column(type="integer", nullable=true, options={"default":"0"})
-   * @SWG\Property(description="Service workflow type, accepts values: 0 - Approval, 1 - Forward")
+   * @OA\Property(description="Service workflow type, accepts values: 0 - Approval, 1 - Forward")
    */
   private $workflow;
 
   /**
    * @var array
    * @ORM\Column(name="io_service_parameters", type="json", nullable=true)
-   * @SWG\Property(property="io_service_parameters", description="List of parameters required for integration with the io app", type="object", ref=@Model(type=IOServiceParameters::class))
+   * @OA\Property(property="io_service_parameters", description="List of parameters required for integration with the io app", type="object", ref=@Model(type=IOServiceParameters::class))
    */
   private $IOServiceParameters;
 
@@ -438,7 +438,7 @@ class Servizio implements Translatable
   /**
    * @var integer
    * @ORM\Column(type="integer", nullable=true)
-   * @SWG\Property(description="Maximum service delivery time in days. The service will be answered within <maxResponseTime> days.")
+   * @OA\Property(description="Maximum service delivery time in days. The service will be answered within <maxResponseTime> days.")
    */
   private $maxResponseTime;
 
@@ -726,7 +726,7 @@ class Servizio implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("response_type")
-   * @SWG\Property(description="Service's response type")
+   * @OA\Property(description="Service's response type")
    */
   public function getResponseType()
   {
@@ -899,7 +899,7 @@ class Servizio implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("topics")
-   * @SWG\Property(description="Service's topic (uuid)")
+   * @OA\Property(description="Service's topic (uuid)")
    */
   public function getTopicsId()
   {

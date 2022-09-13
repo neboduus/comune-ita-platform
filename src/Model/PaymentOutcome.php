@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 
 class PaymentOutcome implements \JsonSerializable
@@ -29,7 +29,7 @@ class PaymentOutcome implements \JsonSerializable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: status")
    * @Assert\NotNull(message="This field is mandatory: status")
-   * @SWG\Property(description="Payment status")
+   * @OA\Property(description="Payment status")
    */
   private $status;
 
@@ -38,7 +38,7 @@ class PaymentOutcome implements \JsonSerializable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: status_code")
    * @Assert\NotNull(message="This field is mandatory: status_code")
-   * @SWG\Property(description="Payment status code")
+   * @OA\Property(description="Payment status code")
    */
   private $statusCode;
 
@@ -47,14 +47,14 @@ class PaymentOutcome implements \JsonSerializable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: status_message")
    * @Assert\NotNull(message="This field is mandatory: status_message")
-   * @SWG\Property(description="Payment status message")
+   * @OA\Property(description="Payment status message")
    */
   private $statusMessage;
 
   /**
    * @var array
    * @Serializer\Type("array")
-   * @SWG\Property(description="Payment data")
+   * @OA\Property(description="Payment data")
    *
    */
   private $data;

@@ -3,21 +3,21 @@
 namespace App\Model;
 
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class ParametersMetaPagedList
 {
   /**
    * @var string
    * @Serializer\Type("intenger")
-   * @SWG\Property(description="Query offset of the list")
+   * @OA\Property(description="Query offset of the list")
    */
   private $offset;
 
   /**
    * @var string
    * @Serializer\Type("intenger")
-   * @SWG\Property(description="Query limit of the list")
+   * @OA\Property(description="Query limit of the list")
    */
   private $limit;
 

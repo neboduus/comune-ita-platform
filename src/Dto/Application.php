@@ -13,28 +13,28 @@ use App\Services\PraticaStatusService;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class Application
 {
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Application's uuid")
+   * @OA\Property(description="Application's uuid")
    * @Groups({"read"})
    */
   protected $id;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's user (uuid)")
+   * @OA\Property(description="Applications's user (uuid)")
    * @Groups({"read", "write"})
    */
   private $user;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's user name")
+   * @OA\Property(description="Applications's user name")
    * @Groups({"read"})
    */
   private $userName;
@@ -42,51 +42,51 @@ class Application
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's service slug")
+   * @OA\Property(description="Applications's service slug")
    * @Groups({"read"})
-   * @SWG\Property(description="Applications's service (slug)")
+   * @OA\Property(description="Applications's service (slug)")
    * @Groups({"read", "write"})
    */
   private $service;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's service ID")
+   * @OA\Property(description="Applications's service ID")
    * @Groups({"read"})
    */
   private $serviceId;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's service name")
+   * @OA\Property(description="Applications's service name")
    * @Groups({"read"})
    */
   private $serviceName;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's service group name")
+   * @OA\Property(description="Applications's service group name")
    * @Groups({"read"})
    */
   private $serviceGroupName;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's tenant (uuid)")
+   * @OA\Property(description="Applications's tenant (uuid)")
    * @Groups({"read"})
    */
   private $tenant;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's subject")
+   * @OA\Property(description="Applications's subject")
    * @Groups({"read"})
    */
   private $subject;
 
   /**
    * @var array
-   * @SWG\Property(property="data", description="Applcation's data")
+   * @OA\Property(property="data", description="Applcation's data")
    * @Groups({"read", "write"})
    * @Serializer\Type("array")
    */
@@ -94,7 +94,7 @@ class Application
 
   /**
    * @var ModuloCompilato[]
-   * @SWG\Property(property="compiled_modules", description="Compiled module file")
+   * @OA\Property(property="compiled_modules", description="Compiled module file")
    * @Serializer\Type("array")
    * @Groups({"read"})
    */
@@ -102,7 +102,7 @@ class Application
 
   /**
    * @var Allegato[]
-   * @SWG\Property(property="attachments", description="Attachments list", type="array", @SWG\Items(type="object"))
+   * @OA\Property(property="attachments", description="Attachments list", type="array", @OA\Items(type="object"))
    * @Serializer\Type("array")
    * @Groups({"read"})
    */
@@ -111,77 +111,77 @@ class Application
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Creation time", type="int")
+   * @OA\Property(description="Creation time", type="integer")
    * @Groups({"read"})
    */
   private $creationTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Creation date time", type="dateTime")
+   * @OA\Property(description="Creation date time", type="string", format="date-time")
    * @Groups({"read"})
    */
   private $createdAt;
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Submission time", type="int")
+   * @OA\Property(description="Submission time", type="integer")
    * @Groups({"read"})
    */
   private $submissionTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Submission date time", type="dateTime")
+   * @OA\Property(description="Submission date time", type="string", format="date-time")
    * @Groups({"read"})
    */
   private $submittedAt;
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Latest status change timestamp", type="int")
+   * @OA\Property(description="Latest status change timestamp", type="integer")
    * @Groups({"read"})
    */
   private $latestStatusChangeTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Latest status change time", type="dateTime")
+   * @OA\Property(description="Latest status change time", type="string", format="date-time")
    * @Groups({"read"})
    */
   private $latestStatusChangeAt;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's protocol folder number")
+   * @OA\Property(description="Applications's protocol folder number")
    * @Groups({"read", "write"})
    */
   private $protocolFolderNumber;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's protocol folder code")
+   * @OA\Property(description="Applications's protocol folder code")
    * @Groups({"read", "write"})
    */
   private $protocolFolderCode;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's protocol number")
+   * @OA\Property(description="Applications's protocol number")
    * @Groups({"read", "write"})
    */
   private $protocolNumber;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's protocol document number")
+   * @OA\Property(description="Applications's protocol document number")
    * @Groups({"read", "write"})
    */
   private $protocolDocumentId;
 
   /**
    * @var array
-   * @SWG\Property(property="protocol_numbers", type="array", @SWG\Items(type="object"), description="Protocol numbers related to application")
+   * @OA\Property(property="protocol_numbers", type="array", @OA\Items(type="object"), description="Protocol numbers related to application")
    * @Serializer\Type("array<array>")
    * @Groups({"read"})
    */
@@ -189,14 +189,14 @@ class Application
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Protocol time", type="int")
+   * @OA\Property(description="Protocol time", type="integer")
    * @Groups({"read"})
    */
   private $protocolTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Protocol date time", type="dateTime")
+   * @OA\Property(description="Protocol date time", type="string", format="date-time")
    * @Groups({"read", "write"})
    */
   private $protocolledAt;
@@ -204,21 +204,21 @@ class Application
   /**
    * @var bool
    * @Serializer\Type("boolean")
-   * @SWG\Property(description="If selected the service will be shown at the top of the page")
+   * @OA\Property(description="If selected the service will be shown at the top of the page")
    * @Groups({"read", "write"})
    */
   private $outcome;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Outocome motivation")
+   * @OA\Property(description="Outocome motivation")
    * @Groups({"read", "write"})
    */
   private $outcomeMotivation;
 
   /**
    * @var Allegato
-   * @SWG\Property(property="outcome_file", type="string", description="Outocome file")
+   * @OA\Property(property="outcome_file", type="string", description="Outocome file")
    * @Serializer\Type("array")
    * @Groups({"read"})
    */
@@ -226,7 +226,7 @@ class Application
 
   /**
    * @var Allegato[]
-   * @SWG\Property(property="outcome_attachments", description="Outcome attachments list", type="array", @SWG\Items(type="object"))
+   * @OA\Property(property="outcome_attachments", description="Outcome attachments list", type="array", @OA\Items(type="object"))
    * @Serializer\Type("array")
    * @Groups({"read"})
    */
@@ -234,21 +234,21 @@ class Application
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's outcome protocol number")
+   * @OA\Property(description="Applications's outcome protocol number")
    * @Groups({"read", "write"})
    */
   private $outcomeProtocolNumber;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications's outcome protocol document number")
+   * @OA\Property(description="Applications's outcome protocol document number")
    * @Groups({"read", "write"})
    */
   private $outcomeProtocolDocumentId;
 
   /**
    * @var array
-   * @SWG\Property(property="outcome_protocol_numbers", type="array", @SWG\Items(type="object"), description="Protocol numbers related to application's outcome")
+   * @OA\Property(property="outcome_protocol_numbers", type="array", @OA\Items(type="object"), description="Protocol numbers related to application's outcome")
    * @Serializer\Type("array<array>")
    * @Groups({"read"})
    */
@@ -256,14 +256,14 @@ class Application
 
   /**
    * @Serializer\Type("int")
-   * @SWG\Property(description="Outcome protocol time", type="int")
+   * @OA\Property(description="Outcome protocol time", type="integer")
    * @Groups({"read"})
    */
   private $outcomeProtocolTime;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Outcome protocol date time", type="dateTime")
+   * @OA\Property(description="Outcome protocol date time", type="string", format="date-time")
    * @Groups({"read", "write"})
    */
   private $outcomeProtocolledAt;
@@ -271,14 +271,14 @@ class Application
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Pyment gateway used")
+   * @OA\Property(description="Pyment gateway used")
    * @Groups({"read", "write"})
    */
   private $paymentType;
 
   /**
    * @var array
-   * @SWG\Property(property="payment_data", description="Payment data")
+   * @OA\Property(property="payment_data", description="Payment data")
    * @Serializer\Type("array")
    * @Groups({"read", "write"})
    */
@@ -286,35 +286,35 @@ class Application
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications status")
+   * @OA\Property(description="Applications status")
    * @Groups({"read", "write"})
    */
   private $status;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications status name")
+   * @OA\Property(description="Applications status name")
    * @Groups({"read"})
    */
   private $statusName;
 
   /**
    * @var array
-   * @SWG\Property(property="authentication", type="object", description="User authentication data")
+   * @OA\Property(property="authentication", type="object", description="User authentication data")
    * @Groups({"read"})
    */
   private $authentication;
 
   /**
    * @Serializer\Type("array")
-   * @SWG\Property(description="Applications links")
+   * @OA\Property(description="Applications links")
    * @Groups({"read"})
    */
   private $links;
 
   /**
    * @var Meeting[]
-   * @SWG\Property(property="meetings", description="Application linked meetings", type="array", @SWG\Items(type="string"))
+   * @OA\Property(property="meetings", description="Application linked meetings", type="array", @OA\Items(type="string"))
    * @Serializer\Type("array")
    * @Groups({"read"})
    */
@@ -322,7 +322,7 @@ class Application
 
   /**
    * @var Allegato[]
-   * @SWG\Property(property="integrations", description="Integrations list", type="array", @SWG\Items(type="object"))
+   * @OA\Property(property="integrations", description="Integrations list", type="array", @OA\Items(type="object"))
    * @Serializer\Type("array")
    * @Groups({"read"})
    */
@@ -330,7 +330,7 @@ class Application
 
   /**
    * @var array
-   * @SWG\Property(property="backoffice_data", description="Applcation's backoffice data")
+   * @OA\Property(property="backoffice_data", description="Applcation's backoffice data")
    * @Groups({"read"})
    * @Serializer\Type("array")
    */
@@ -338,14 +338,14 @@ class Application
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Flow change date time", type="dateTime")
+   * @OA\Property(description="Flow change date time", type="string", format="date-time")
    * @Groups({"read"})
    */
   private $flowChangedAt;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Applications notes user complitaion")
+   * @OA\Property(description="Applications notes user complitaion")
    * @Groups({"read", "write"})
    */
   private $userCompilationNotes;

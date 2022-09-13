@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
 use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
@@ -28,7 +28,7 @@ class ServiceGroup implements Translatable
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @SWG\Property(description="Service's uuid")
+   * @OA\Property(description="Service's uuid")
    * @Groups({"read"})
    */
   protected $id;
@@ -39,7 +39,7 @@ class ServiceGroup implements Translatable
    * @ORM\Column(type="string", length=255, unique=true)
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
-   * @SWG\Property(description="Service's name")
+   * @OA\Property(description="Service's name")
    * @Groups({"read", "write"})
    */
   private $name;
@@ -49,7 +49,7 @@ class ServiceGroup implements Translatable
    *
    * @Gedmo\Slug(fields={"name"})
    * @ORM\Column(type="string", length=255)
-   * @SWG\Property(description="Human-readable unique identifier, if empty will be generated from service's name")
+   * @OA\Property(description="Human-readable unique identifier, if empty will be generated from service's name")
    * @Groups({"read"})
    */
   private $slug;
@@ -58,7 +58,7 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Services group description")
+   * @OA\Property(description="Services group description")
    * @Groups({"read", "write"})
    */
   private $description;
@@ -67,7 +67,7 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Compilation guide, accepts html tags")
+   * @OA\Property(description="Compilation guide, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $howto;
@@ -76,7 +76,7 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="How to fill in the application")
+   * @OA\Property(description="How to fill in the application")
    * @Groups({"read", "write"})
    */
   private $howToDo;
@@ -85,7 +85,7 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="What you need to fill in the application")
+   * @OA\Property(description="What you need to fill in the application")
    * @Groups({"read", "write"})
    */
   private $whatYouNeed;
@@ -94,7 +94,7 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="The outcome of the application")
+   * @OA\Property(description="The outcome of the application")
    * @Groups({"read", "write"})
    */
   private $whatYouGet;
@@ -103,7 +103,7 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Costs of this application")
+   * @OA\Property(description="Costs of this application")
    * @Groups({"read", "write"})
    */
   private $costs;
@@ -112,7 +112,7 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Textual description of whom the service is addressed, accepts html tags")
+   * @OA\Property(description="Textual description of whom the service is addressed, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $who;
@@ -121,7 +121,7 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
+   * @OA\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $specialCases;
@@ -130,7 +130,7 @@ class ServiceGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
-   * @SWG\Property(description="Other info, accepts html tags")
+   * @OA\Property(description="Other info, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $moreInfo;
@@ -138,7 +138,7 @@ class ServiceGroup implements Translatable
   /**
    * @var string[]
    * @ORM\Column(type="array", nullable=true)
-   * @SWG\Property(description="Geographical area covered by service", type="array", @SWG\Items(type="string"))
+   * @OA\Property(description="Geographical area covered by service", type="array", @OA\Items(type="string"))
    * @Groups({"read", "write"})
    */
   private $coverage;
@@ -146,7 +146,7 @@ class ServiceGroup implements Translatable
   /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true)
-   * @SWG\Property(description="If selected the service group will be shown at the top of the page")
+   * @OA\Property(description="If selected the service group will be shown at the top of the page")
    * @Groups({"read", "write"})
    */
   private $sticky;
@@ -154,7 +154,7 @@ class ServiceGroup implements Translatable
   /**
    * @var bool
    * @ORM\Column(type="boolean", nullable=true)
-   * @SWG\Property(description="Set true if application of  of this service group need to be registerd in folders")
+   * @OA\Property(description="Set true if application of  of this service group need to be registerd in folders")
    * @Groups({"read", "write"})
    */
   private $registerInFolder;
@@ -520,7 +520,7 @@ class ServiceGroup implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\SerializedName("services_count")
    * @Serializer\Type("integer")
-   * @SWG\Property(description="Related services count", type="integer", @SWG\Items(type="integer"))
+   * @OA\Property(description="Related services count", type="array", @OA\Items(type="integer"))
    * @Groups({"read"})
    */
   public function getServicesCount()
@@ -567,7 +567,7 @@ class ServiceGroup implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("topics")
-   * @SWG\Property(description="Service's topic (uuid)")
+   * @OA\Property(description="Service's topic (uuid)")
    * @Groups({"read", "write"})
    */
   public function getTopicsId()
@@ -582,7 +582,7 @@ class ServiceGroup implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\SerializedName("recipients")
    * @Serializer\Type("array")
-   * @SWG\Property(description="Service's recipients object defines an id and name", type="array", @SWG\Items(type="object"))
+   * @OA\Property(description="Service's recipients object defines an id and name", type="array", @OA\Items(type="object"))
    * @Groups({"read", "write"})
    */
   public function getRecipientsIds()
@@ -641,7 +641,7 @@ class ServiceGroup implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\SerializedName("geographic_areas")
    * @Serializer\Type("array")
-   * @SWG\Property(description="Service's geographic areas object defines an id and name", type="array", @SWG\Items(type="object"))
+   * @OA\Property(description="Service's geographic areas object defines an id and name", type="array", @OA\Items(type="object"))
    * @Groups({"read", "write"})
    */
   public function getGeographicAreasIds()

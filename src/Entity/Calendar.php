@@ -12,7 +12,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use App\Model\DateTimeInterval;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -61,7 +61,7 @@ class Calendar
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @SWG\Property(description="Calendar's uuid", type="string")
+   * @OA\Property(description="Calendar's uuid", type="string")
    * @Groups({"read", "kafka"})
    */
   private $id;
@@ -70,7 +70,7 @@ class Calendar
    * @ORM\ManyToOne(targetEntity="App\Entity\User")
    * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (owner)")
-   * @SWG\Property(description="Calendar's owner id", type="string")
+   * @OA\Property(description="Calendar's owner id", type="string")
    * @Serializer\Exclude()
    */
   private $owner;
@@ -80,7 +80,7 @@ class Calendar
    *
    * @ORM\Column(name="title", type="string", length=255, unique=true)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (title)")
-   * @SWG\Property(description="Calendar's title", type="string")
+   * @OA\Property(description="Calendar's title", type="string")
    * @Groups({"read", "kafka"})
    */
   private $title;
@@ -90,7 +90,7 @@ class Calendar
    *
    * @ORM\Column(name="type", type="string", length=255, options={"default" : Calendar::TYPE_TIME_FIXED})
    * @Assert\Choice(choices=Calendar::CALENDAR_TYPES, message="Choose a valid type.")
-   * @SWG\Property(description="Calendar's slots type", type="string")
+   * @OA\Property(description="Calendar's slots type", type="string")
    * @Groups({"read", "kafka"})
    */
   private $type = self::TYPE_TIME_FIXED;
@@ -100,7 +100,7 @@ class Calendar
    *
    * @ORM\Column(name="contact_email", type="string", length=255, nullable=true)
    * @Assert\Email(message="Email non valida")
-   * @SWG\Property(description="Calendar's contact email", type="string")
+   * @OA\Property(description="Calendar's contact email", type="string")
    * @Groups({"read", "kafka"})
    */
   private $contactEmail;
@@ -110,7 +110,7 @@ class Calendar
    *
    * @ORM\Column(name="rolling_days", type="integer")
    * @Assert\LessThanOrEqual(message="Maximum window is 180 days", value=180)
-   * @SWG\Property(description="Calendar's rolling days", type="integer")
+   * @OA\Property(description="Calendar's rolling days", type="integer")
    * @Groups({"read", "kafka"})
    */
   private $rollingDays;
@@ -119,7 +119,7 @@ class Calendar
    * @var int
    *
    * @ORM\Column(name="drafts_duration", type="integer", nullable=false)
-   * @SWG\Property(description="Calendar draft meetings duration (minutes)", type="integer")
+   * @OA\Property(description="Calendar draft meetings duration (minutes)", type="integer")
    * @Assert\GreaterThan(0, message="La durata delle bozza deve avere un valore positivo")
    * @Groups({"kafka"})
    */
@@ -131,7 +131,7 @@ class Calendar
    *
    * @ORM\Column(name="drafts_duration_increment", type="integer", nullable=true)
    * @Assert\GreaterThanOrEqual (0, message="La durata dell'incremento della bozza deve avere un valore positivo")
-   * @SWG\Property(description="Calendar draft meetings duration increment (days)", type="integer")
+   * @OA\Property(description="Calendar draft meetings duration increment (days)", type="integer")
    * @Groups({"kafka"})
    */
   private $draftsDurationIncrement;
@@ -140,7 +140,7 @@ class Calendar
    * @var int
    *
    * @ORM\Column(name="minimum_scheduling_notice", type="integer", nullable=true)
-   * @SWG\Property(description="Calendar's minimum scheduling notice", type="integer")
+   * @OA\Property(description="Calendar's minimum scheduling notice", type="integer")
    * @Assert\Expression(
    *     "this.getRollingDays() * 24 > value",
    *     message="Must be less than rolling days"
@@ -153,7 +153,7 @@ class Calendar
    * @var int
    *
    * @ORM\Column(name="allow_cancel_days", type="integer", nullable=true)
-   * @SWG\Property(description="Calendar's minimum days to allow cancel", type="integer")
+   * @OA\Property(description="Calendar's minimum days to allow cancel", type="integer")
    * @Groups({"read", "kafka"})
    */
   private $allowCancelDays;
@@ -163,7 +163,7 @@ class Calendar
    * @var bool
    *
    * @ORM\Column(name="allow_overlaps", type="boolean", options={"default" : 0})
-   * @SWG\Property(description="Allow calendar's opening hours overlaps", type="boolean")
+   * @OA\Property(description="Allow calendar's opening hours overlaps", type="boolean")
    * @Groups({"read", "kafka"})
    */
   private $allowOverlaps;
@@ -172,7 +172,7 @@ class Calendar
    * @var bool
    *
    * @ORM\Column(name="is_moderated", type="boolean")
-   * @SWG\Property(description="Calendar's moderation mode", type="boolean")
+   * @OA\Property(description="Calendar's moderation mode", type="boolean")
    * @Groups({"read", "kafka"})
    */
   private $isModerated;
@@ -184,7 +184,7 @@ class Calendar
    *      joinColumns={@ORM\JoinColumn(name="calendar_id", referencedColumnName="id")},
    *      inverseJoinColumns={@ORM\JoinColumn(name="operator_id", referencedColumnName="id")}
    *      )
-   * @SWG\Property(description="Calendar's moderators", type="array", @SWG\Items(type="string"))
+   * @OA\Property(description="Calendar's moderators", type="array", @OA\Items(type="string"))
    * @Serializer\Exclude()
    */
   private $moderators;
@@ -200,14 +200,14 @@ class Calendar
    *
    * @ORM\Column(name="location", type="text")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (location)")
-   * @SWG\Property(description="Calendar's location", type="string")
+   * @OA\Property(description="Calendar's location", type="string")
    * @Groups({"read", "kafka"})
    */
   private $location;
 
   /**
    * @ORM\Column(name="external_calendars", type="json", nullable=true)
-   * @SWG\Property(description="Calendar's external calendars", type="array", @SWG\Items(ref=@Model(type=ExternalCalendar::class)))
+   * @OA\Property(description="Calendar's external calendars", type="array", @OA\Items(ref=@Model(type=ExternalCalendar::class)))
    * @Groups({"read", "kafka"})
    */
   private $externalCalendars;
@@ -216,21 +216,21 @@ class Calendar
    * @var DateTimeInterval[]
    *
    * @ORM\Column(name="closing_periods", type="json", nullable=true)
-   * @SWG\Property(description="Calendar's closing periods", type="array", @SWG\Items(ref=@Model(type=DateTimeInterval::class)))
+   * @OA\Property(description="Calendar's closing periods", type="array", @OA\Items(ref=@Model(type=DateTimeInterval::class)))
    * @Groups({"read", "kafka"})
    */
   private $closingPeriods;
 
   /**
    * @ORM\Column(type="datetime")
-   * @SWG\Property(description="Calendar's creation date")
+   * @OA\Property(description="Calendar's creation date")
    * @Groups({"read", "kafka"})
    */
   private $createdAt;
 
   /**
    * @ORM\Column(type="datetime")
-   * @SWG\Property(description="Calendar's last modified date")
+   * @OA\Property(description="Calendar's last modified date")
    * @Groups({"read", "kafka"})
    */
   private $updatedAt;
@@ -573,7 +573,7 @@ class Calendar
   /**
    * @Serializer\VirtualProperty(name="moderators")
    * @Serializer\Type("array")
-   * @SWG\Items(type="string")
+   * @OA\Items(type="string")
    * @Serializer\SerializedName("moderators")
    * @Groups({"read"})
    */
@@ -589,7 +589,7 @@ class Calendar
   /**
    * @Serializer\VirtualProperty(name="moderator_ids")
    * @Serializer\Type("array")
-   * @SWG\Items(type="string")
+   * @OA\Items(type="string")
    * @Serializer\SerializedName("moderator_ids")
    * @Groups({"kafka"})
    */
