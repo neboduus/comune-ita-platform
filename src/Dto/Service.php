@@ -16,7 +16,7 @@ use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 class Service
@@ -24,7 +24,7 @@ class Service
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Service's uuid")
+   * @OA\Property(description="Service's uuid")
    * @Groups({"read"})
    */
   protected $id;
@@ -35,7 +35,7 @@ class Service
    * @Assert\NotBlank(message="This field is mandatory: name")
    * @Assert\NotNull(message="This field is mandatory: name")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Service's name")
+   * @OA\Property(description="Service's name")
    * @Groups({"read", "write"})
    * @Assert\Length(max="255")
    */
@@ -46,14 +46,14 @@ class Service
    *
    * @Gedmo\Slug(fields={"name"})
    * @Serializer\Type("string")
-   * @SWG\Property(description="Human-readable unique identifier, if empty will be generated from service's name")
+   * @OA\Property(description="Human-readable unique identifier, if empty will be generated from service's name")
    * @Groups({"read"})
    */
   private $slug;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Services's tenant id")
+   * @OA\Property(description="Services's tenant id")
    * @Groups({"read", "write"})
    */
   private $tenant;
@@ -61,7 +61,7 @@ class Service
   /**
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="Services's topic slug")
+   * @OA\Property(description="Services's topic slug")
    * @Groups({"read", "write"})
    */
   private $topics;
@@ -69,7 +69,7 @@ class Service
   /**
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="Services's topic id")
+   * @OA\Property(description="Services's topic id")
    * @Groups({"read"})
    */
   private $topics_id;
@@ -77,7 +77,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Service's description, accepts html tags")
+   * @OA\Property(description="Service's description, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $description;
@@ -85,7 +85,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Compilation guide, accepts html tags")
+   * @OA\Property(description="Compilation guide, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $howto;
@@ -93,7 +93,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="How to fill in the application")
+   * @OA\Property(description="How to fill in the application")
    * @Groups({"read", "write"})
    */
   private $howToDo;
@@ -101,7 +101,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="What you need to fill in the application")
+   * @OA\Property(description="What you need to fill in the application")
    * @Groups({"read", "write"})
    */
   private $whatYouNeed;
@@ -109,7 +109,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="The outcome of the application")
+   * @OA\Property(description="The outcome of the application")
    * @Groups({"read", "write"})
    */
   private $whatYouGet;
@@ -117,7 +117,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Costs of this application")
+   * @OA\Property(description="Costs of this application")
    * @Groups({"read", "write"})
    */
   private $costs;
@@ -125,7 +125,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Textual description of whom the service is addressed, accepts html tags")
+   * @OA\Property(description="Textual description of whom the service is addressed, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $who;
@@ -133,7 +133,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
+   * @OA\Property(description="Textual description of any special cases for obtaining the service, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $specialCases;
@@ -141,7 +141,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Other info, accepts html tags")
+   * @OA\Property(description="Other info, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $moreInfo;
@@ -149,7 +149,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Information shown to the citizen during the compilation of the service, accepts html tags")
+   * @OA\Property(description="Information shown to the citizen during the compilation of the service, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $compilationInfo;
@@ -157,7 +157,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Indications shown to the citizen at the end of the compilation of the service, accepts html tags")
+   * @OA\Property(description="Indications shown to the citizen at the end of the compilation of the service, accepts html tags")
    * @Groups({"read", "write"})
    */
   private $finalIndications;
@@ -165,7 +165,7 @@ class Service
   /**
    * @var string[]
    * @Serializer\Type("array<string>")
-   * @SWG\Property(description="Geographical area covered by service", type="array", @SWG\Items(type="string"))
+   * @OA\Property(description="Geographical area covered by service", type="array", @OA\Items(type="string"))
    * @Groups({"read", "write"})
    */
   private $coverage;
@@ -173,7 +173,7 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Response type from service, possible values: <br/> standard - Operator can accept or reject the application <br/> attachment - Operator can accept or reject the application and in case of acceptance, attach a response file <br/> signed_attachment - Operator can accept or reject the application and in case of acceptance, attach a signed response file")
+   * @OA\Property(description="Response type from service, possible values: <br/> standard - Operator can accept or reject the application <br/> attachment - Operator can accept or reject the application and in case of acceptance, attach a response file <br/> signed_attachment - Operator can accept or reject the application and in case of acceptance, attach a signed response file")
    * @Groups({"read", "write"})
    */
   private $response_type;
@@ -182,7 +182,7 @@ class Service
    * @var FlowStep[]
    * @Assert\NotBlank(message="You have to specify at least one step: flow_steps")
    * @Assert\NotNull(message="You have to specify at least one step: flow_steps")
-   * @SWG\Property(property="flow_steps", type="array", @SWG\Items(ref=@Model(type=FlowStep::class)))
+   * @OA\Property(property="flow_steps", type="array", @OA\Items(ref=@Model(type=FlowStep::class)))
    * @Serializer\Type("array")
    * @Groups({"read", "write"})
    */
@@ -191,7 +191,7 @@ class Service
   /**
    * @var bool
    * @Serializer\Type("boolean")
-   * @SWG\Property(description="Set true if a protocol is required")
+   * @OA\Property(description="Set true if a protocol is required")
    * @Groups({"read", "write"})
    */
   private $protocolRequired;
@@ -199,14 +199,14 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Protocol handler type")
+   * @OA\Property(description="Protocol handler type")
    * @Groups({"read", "write"})
    */
   private $protocolHandler;
 
   /**
    * @var array
-   * @SWG\Property(property="protocollo_parameters", description="Service's parameters for tenant's register"))
+   * @OA\Property(property="protocollo_parameters", description="Service's parameters for tenant's register"))
    * @Serializer\Type("array<string, string>")
    * @Groups({"read", "write"})
    */
@@ -215,14 +215,14 @@ class Service
   /**
    * @var integer
    * @Serializer\Type("integer")
-   * @SWG\Property(description="Accepts values: 0 - Not Rquired, 1 - Immediate, 2 - Referred")
+   * @OA\Property(description="Accepts values: 0 - Not Rquired, 1 - Immediate, 2 - Referred")
    * @Groups({"read", "write"})
    */
   private $paymentRequired;
 
   /**
    * @var array
-   * @SWG\Property(property="payment_parameters", description="List of payment gateways available for the service and related parameters", type="object", ref=@Model(type=PaymentParameters::class))
+   * @OA\Property(property="payment_parameters", description="List of payment gateways available for the service and related parameters", type="object", ref=@Model(type=PaymentParameters::class))
    * @Serializer\Type("array")
    * @Groups({"read", "write"})
    */
@@ -230,7 +230,7 @@ class Service
 
   /**
    * @var array
-   * @SWG\Property(property="integrations", description="Service's backoffice integration")
+   * @OA\Property(property="integrations", description="Service's backoffice integration")
    * @Serializer\Type("array")
    * @Groups({"read", "write"})
    */
@@ -240,7 +240,7 @@ class Service
   /**
    * @var bool
    * @Serializer\Type("boolean")
-   * @SWG\Property(description="If selected the service will be shown at the top of the page")
+   * @OA\Property(description="If selected the service will be shown at the top of the page")
    * @Groups({"read", "write"})
    */
   private $sticky;
@@ -249,49 +249,49 @@ class Service
    * @Assert\NotBlank(message="This field is mandatory: name")
    * @Assert\NotNull(message="This field is mandatory: name")
    * @Serializer\Type("integer")
-   * @SWG\Property(description="Accepts values: 0 - Hidden, 1 - Pubblished, 2 - Suspended, 3 - private, 4 - scheduled")
+   * @OA\Property(description="Accepts values: 0 - Hidden, 1 - Pubblished, 2 - Suspended, 3 - private, 4 - scheduled")
    * @Groups({"read", "write"})
    */
   private $status;
 
   /**
    * @Serializer\Type("integer")
-   * @SWG\Property(description="Accepts values: 0 - Anonymous, 1000 - Social, 2000 - Spid Level 1, 3000 - Spid Level 2, 4000 - Cie")
+   * @OA\Property(description="Accepts values: 0 - Anonymous, 1000 - Social, 2000 - Spid Level 1, 3000 - Spid Level 2, 4000 - Cie")
    * @Groups({"read", "write"})
    */
   private $accessLevel;
 
   /**
    * @var bool
-   * @SWG\Property(description="Enable or disable the suggestion to log in to auto-complete some fields")
+   * @OA\Property(description="Enable or disable the suggestion to log in to auto-complete some fields")
    * @Groups({"read", "write"})
    */
   private $loginSuggested;
 
   /**
    * @Serializer\Type("datetime")
-   * @SWG\Property(description="Scheduled from date time")
+   * @OA\Property(description="Scheduled from date time")
    * @Groups({"read", "write"})
    */
   private $scheduledFrom;
 
   /**
    * @Serializer\Type("datetime")
-   * @SWG\Property(description="Scheduled to date time")
+   * @OA\Property(description="Scheduled to date time")
    * @Groups({"read", "write"})
    */
   private $scheduledTo;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Services groups (slug)")
+   * @OA\Property(description="Services groups (slug)")
    * @Groups({"read", "write"})
    */
   private $serviceGroup;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Services group id")
+   * @OA\Property(description="Services group id")
    * @Groups({"read", "write"})
    */
   private $serviceGroupId;
@@ -299,7 +299,7 @@ class Service
   /**
    * @var bool
    * @Serializer\Type("boolean")
-   * @SWG\Property(description="If selected the service will share the group's descriptipn")
+   * @OA\Property(description="If selected the service will share the group's descriptipn")
    * @Groups({"read", "write"})
    */
   private $sharedWithGroup;
@@ -307,7 +307,7 @@ class Service
   /**
    * @var bool
    * @Serializer\Type("boolean")
-   * @SWG\Property(description="If selected, service's applications can be reopend")
+   * @OA\Property(description="If selected, service's applications can be reopend")
    * @Groups({"read", "write"})
    */
   private $allowReopening;
@@ -315,7 +315,7 @@ class Service
   /**
    * @var bool
    * @Serializer\Type("boolean")
-   * @SWG\Property(description="If selected, service's applications can be withdraw")
+   * @OA\Property(description="If selected, service's applications can be withdraw")
    * @Groups({"read", "write"})
    */
   private $allowWithdraw;
@@ -323,7 +323,7 @@ class Service
   /**
    * @var bool
    * @Serializer\Type("boolean")
-   * @SWG\Property(description="If selected, operator can request integrations for applications on this service")
+   * @OA\Property(description="If selected, operator can request integrations for applications on this service")
    * @Groups({"read", "write"})
    */
   private $allowIntegrationRequest;
@@ -331,14 +331,14 @@ class Service
   /**
    * @var integer
    * @Serializer\Type("integer")
-   * @SWG\Property(description="If selected, service's applications can be reopend")
+   * @OA\Property(description="If selected, service's applications can be reopend")
    * @Groups({"read", "write"})
    */
   private $workflow;
 
   /**
    * @var array
-   * @SWG\Property(property="io_parameters", description="Io parameters", type="object", ref=@Model(type=IOServiceParameters::class))
+   * @OA\Property(property="io_parameters", description="Io parameters", type="object", ref=@Model(type=IOServiceParameters::class))
    * @Serializer\Exclude()
    */
   private $ioParameters;
@@ -346,7 +346,7 @@ class Service
   /**
    * @var string[]
    * @Serializer\Type("array<string>")
-   * @SWG\Property(description="Service's recipients name", type="array", @SWG\Items(type="string"))
+   * @OA\Property(description="Service's recipients name", type="array", @OA\Items(type="string"))
    * @Groups({"read"})
    */
   private $recipients;
@@ -354,7 +354,7 @@ class Service
   /**
    * @var string[]
    * @Serializer\Type("array<string>")
-   * @SWG\Property(description="Service's recipients id", type="array", @SWG\Items(type="string"))
+   * @OA\Property(description="Service's recipients id", type="array", @OA\Items(type="string"))
    * @Groups({"read", "write"})
    */
   private $recipientsId;
@@ -362,7 +362,7 @@ class Service
   /**
    * @var string[]
    * @Serializer\Type("array<string>")
-   * @SWG\Property(description="Service's geographic areas name", type="array", @SWG\Items(type="string"))
+   * @OA\Property(description="Service's geographic areas name", type="array", @OA\Items(type="string"))
    * @Groups({"read"})
    */
   private $geographicAreas;
@@ -370,7 +370,7 @@ class Service
   /**
    * @var string[]
    * @Serializer\Type("array<string>")
-   * @SWG\Property(description="Service's geographic areas id", type="array", @SWG\Items(type="string"))
+   * @OA\Property(description="Service's geographic areas id", type="array", @OA\Items(type="string"))
    * @Groups({"read", "write"})
    */
   private $geographicAreasId;
@@ -378,7 +378,7 @@ class Service
   /**
    * @var integer
    * @Serializer\Type("integer")
-   * @SWG\Property(description="Maximum service delivery time in days. The service will be answered within <maxResponseTime> days.")
+   * @OA\Property(description="Maximum service delivery time in days. The service will be answered within <maxResponseTime> days.")
    * @Groups({"read", "write"})
    */
   private $maxResponseTime;

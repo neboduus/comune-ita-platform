@@ -1,8 +1,8 @@
 nelmio_api_doc:
   documentation:
     info:
-      x-api-id: "sdc-api-2-2-0"
-      x-audience: "external-public"
+      # x-api-id: "sdc-api-2-2-0"
+      # x-audience: "external-public"
       title: "SDC Api Definition"
       description: ""
       version: "2.2.0"
@@ -13,12 +13,12 @@ nelmio_api_doc:
       license:
         name: "GNU General Public License, version 2"
         url: "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"
-    securityDefinitions:
-      Bearer:
-        type: apiKey
-        description: 'Authorization: Bearer {jwt}'
-        name: Authorization
-        in: header
+    components:
+      securitySchemes:
+        Bearer:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
     security:
       - Bearer: [ ]
   areas:

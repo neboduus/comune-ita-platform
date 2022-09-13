@@ -22,7 +22,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
@@ -72,21 +73,21 @@ class MeetingsAPIController extends AbstractFOSRestController
    * List all Meetings
    * @Rest\Get("", name="meetings_api_list")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of meetings",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Meeting::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=Meeting::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="meetings")
+   * @OA\Tag(name="meetings")
    */
   public function getMeetingsAction(Request $request)
   {
@@ -139,22 +140,22 @@ class MeetingsAPIController extends AbstractFOSRestController
    * Retreive a Meeting
    * @Rest\Get("/{id}", name="meeting_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Meeting",
    *     @Model(type=Meeting::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Meeting not found"
    * )
-   * @SWG\Tag(name="meetings")
+   * @OA\Tag(name="meetings")
    *
    * @param $id
    * @return View
@@ -194,36 +195,30 @@ class MeetingsAPIController extends AbstractFOSRestController
    * Create a Meeting
    * @Rest\Post(name="meetings_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Meeting",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The meeting to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Meeting::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Meeting::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Meeting"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
-   * @SWG\Tag(name="meetings")
+   * @OA\Tag(name="meetings")
    *
    * @param Request $request
    * @return View
@@ -342,46 +337,40 @@ class MeetingsAPIController extends AbstractFOSRestController
    * Edit full Meeting
    * @Rest\Put("/{id}", name="meetings_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Meeting",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The meeting to edit",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Meeting::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Meeting::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full Meeting"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="meetings")
+   * @OA\Tag(name="meetings")
    *
    * @param $id
    * @param Request $request
@@ -461,46 +450,40 @@ class MeetingsAPIController extends AbstractFOSRestController
    * Patch a Meeting
    * @Rest\Patch("/{id}", name="meetings_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Meeting",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The meeting to patch",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Meeting::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Meeting::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Meeting"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="meetings")
+   * @OA\Tag(name="meetings")
    *
    * @param $id
    * @param Request $request
@@ -581,25 +564,19 @@ class MeetingsAPIController extends AbstractFOSRestController
    * Delete a Meeting
    * @Rest\Delete("/{id}", name="meetings_api_delete")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="meetings")
+   * @OA\Tag(name="meetings")
    *
    * @Method("DELETE")
    * @param $id

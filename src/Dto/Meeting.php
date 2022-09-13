@@ -8,83 +8,83 @@ use App\Entity\OpeningHour;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 class Meeting
 {
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's uuid")
+   * @OA\Property(description="Meeting's uuid")
    * @Groups({"read"})
    */
   protected $id;
 
   /**
-   * @SWG\Property(description="Meeting's calendar")
+   * @OA\Property(description="Meeting's calendar")
    * @Groups({"read"})
    */
   private $calendar;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's user ID (uuid)", format="uuid")
+   * @OA\Property(description="Meeting's user ID (uuid)", format="uuid")
    * @Groups({"read"})
    */
   private $userId;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's application ID (uuid)", format="uuid")
+   * @OA\Property(description="Meeting's application ID (uuid)", format="uuid")
    * @Groups({"read"})
    */
   private $applicationId;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's service ID (uuid)", format="uuid")
+   * @OA\Property(description="Meeting's service ID (uuid)", format="uuid")
    * @Groups({"read"})
    */
   private $serviceId;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's user email", format="uuid")
+   * @OA\Property(description="Meeting's user email", format="uuid")
    * @Groups({"read"})
    */
   private $email;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's user phone number")
+   * @OA\Property(description="Meeting's user phone number")
    * @Groups({"read"})
    */
   private $phoneNumber;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's user fiscal code")
+   * @OA\Property(description="Meeting's user fiscal code")
    * @Groups({"read"})
    */
   private $fiscalCode;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's user name")
+   * @OA\Property(description="Meeting's user name")
    * @Groups({"read"})
    */
   private $name;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's user surname")
+   * @OA\Property(description="Meeting's user surname")
    * @Groups({"read"})
    */
   private $surname;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting's tenant ID(uuid)", format="uuid")
+   * @OA\Property(description="Meeting's tenant ID(uuid)", format="uuid")
    * @Groups({"read"})
    */
   private $tenantId;
@@ -92,7 +92,7 @@ class Meeting
 
   /**
    * @var OpeningHour
-   * @SWG\Property(property="opening_hour", description="Meeting's Opening hour")
+   * @OA\Property(property="opening_hour", description="Meeting's Opening hour")
    * @Groups({"read"})
    */
   private $openingHour;
@@ -100,21 +100,21 @@ class Meeting
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Creation date time", type="dateTime")
+   * @OA\Property(description="Creation date time", type="string", format="date-time")
    * @Groups({"read"})
    */
   private $createdAt;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Meeting status name")
+   * @OA\Property(description="Meeting status name")
    * @Groups({"read"})
    */
   private $statusName;
 
   /**
    * @Serializer\Type("array")
-   * @SWG\Property(description="Application's session")
+   * @OA\Property(description="Application's session")
    * @Groups({"read"})
    */
   private $session;

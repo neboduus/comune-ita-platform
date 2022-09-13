@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
 
@@ -30,7 +30,7 @@ class Folder
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @SWG\Property(description="Folder id", type="string")
+   * @OA\Property(description="Folder id", type="string")
    */
   private $id;
 
@@ -39,7 +39,7 @@ class Folder
    *
    * @ORM\Column(name="title", type="string", length=255, nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (title)")
-   * @SWG\Property(description="Folder's title", type="string")
+   * @OA\Property(description="Folder's title", type="string")
    */
   private $title;
 
@@ -47,7 +47,7 @@ class Folder
    * @var string
    *
    * @ORM\Column(name="description", type="text", nullable=true)
-   * @SWG\Property(description="Folder's description", type="text")
+   * @OA\Property(description="Folder's description", type="string")
    */
   private $description;
 
@@ -55,7 +55,7 @@ class Folder
    * @ORM\ManyToOne(targetEntity="App\Entity\CPSUser")
    * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (owner)")
-   * @SWG\Property(description="Folder's owner id", type="string")
+   * @OA\Property(description="Folder's owner id", type="string")
    * @Serializer\Exclude()
    */
   private $owner;
@@ -63,7 +63,7 @@ class Folder
   /**
    * @ORM\OneToMany(targetEntity="App\Entity\Document", mappedBy="folder")
    * @Serializer\Exclude()
-   * @SWG\Property(description="Folder's documents")
+   * @OA\Property(description="Folder's documents")
    */
   private $documents;
 
@@ -71,7 +71,7 @@ class Folder
    * @ORM\ManyToOne(targetEntity="App\Entity\Ente")
    * @ORM\JoinColumn(name="tenant_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (tenant)")
-   * @SWG\Property(description="Folder's tenant id", type="string")
+   * @OA\Property(description="Folder's tenant id", type="string")
    * @Serializer\Exclude()
    */
   private $tenant;
@@ -83,20 +83,20 @@ class Folder
    *      joinColumns={@ORM\JoinColumn(name="folder_id", referencedColumnName="id")},
    *      inverseJoinColumns={@ORM\JoinColumn(name="service_id", referencedColumnName="id")}
    *      )
-   * @SWG\Property(description="Folder's correlated services", type="array",  @SWG\Items(type="string"))
+   * @OA\Property(description="Folder's correlated services", type="array",  @OA\Items(type="string"))
    * @Serializer\Exclude()
    */
   private $correlatedServices;
 
   /**
    * @ORM\Column(name="created_at", type="datetime")
-   * @SWG\Property(description="Folder's creation date")
+   * @OA\Property(description="Folder's creation date")
    */
   private $createdAt;
 
   /**
    * @ORM\Column(name="updated_at", type="datetime")
-   * @SWG\Property(description="Folder's last modified date")
+   * @OA\Property(description="Folder's last modified date")
    */
   private $updatedAt;
 

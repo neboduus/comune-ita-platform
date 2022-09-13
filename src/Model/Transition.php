@@ -8,7 +8,7 @@ use App\Entity\StatusChange;
 use App\Entity\User;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class Transition
@@ -17,14 +17,14 @@ class Transition
    * @Assert\NotBlank(message="This field is mandatory: Status code")
    * @Assert\NotNull(message="This field is mandatory: Status code")
    * @Serializer\Type("int")
-   * @SWG\Property(description="Status code", type="integer")
+   * @OA\Property(description="Status code", type="integer")
    * @Groups({"read"})
    */
   private $statusCode;
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Status name")
+   * @OA\Property(description="Status name")
    * @Groups({"read"})
    */
   private $statusName;
@@ -37,7 +37,7 @@ class Transition
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="Status Message")
+   * @OA\Property(description="Status Message")
    * @Groups({"read", "write"})
    */
   private $message;
@@ -45,14 +45,14 @@ class Transition
   /**
    * @var User
    * @Serializer\Type("string")
-   * @SWG\Property(description="Status Message Id")
+   * @OA\Property(description="Status Message Id")
    * @Groups({"read"})
    */
   private $messageId;
 
   /**
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Transition date time", type="string")
+   * @OA\Property(description="Transition date time", type="string")
    * @Groups({"read"})
    */
   private $date;

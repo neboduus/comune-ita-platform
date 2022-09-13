@@ -20,7 +20,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -61,54 +62,56 @@ class DocumentsAPIController extends AbstractFOSRestController
    * List all Documents
    * @Rest\Get("", name="documents_api_list")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *     name="cf",
    *     in="query",
-   *     type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *     description="Fiscal code of the document's owner"
    * )
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *     name="title",
    *     in="query",
-   *     type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *     description="Document's title"
    * )
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *     name="folder-title",
    *     in="query",
-   *     type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *     description="Document's folder title"
    * )
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *     name="folder",
    *     in="query",
-   *     type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *     description="Document's folder id"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of documents",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Document::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=Document::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="documents")
+   * @OA\Tag(name="documents")
    * @param Request $request
    * @return View
    */
@@ -156,30 +159,24 @@ class DocumentsAPIController extends AbstractFOSRestController
    * Retreive a Document
    * @Rest\Get("/{id}", name="document_api_get")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Document",
    *     @Model(type=Document::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Document not found"
    * )
-   * @SWG\Tag(name="documents")
+   * @OA\Tag(name="documents")
    *
    * @param $id
    * @return View
@@ -205,43 +202,37 @@ class DocumentsAPIController extends AbstractFOSRestController
    * Create a Document
    * @Rest\Post(name="documents_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Documents",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Document to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Document::class, groups={"write"}),
-   *         additionalProperties=true
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Document::class, groups={"write"}),
+   *             additionalProperties=true
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Document"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="documents")
+   * @OA\Tag(name="documents")
    *
    * @param Request $request
    * @return View
@@ -301,46 +292,40 @@ class DocumentsAPIController extends AbstractFOSRestController
    * Edit full Document
    * @Rest\Put("/{id}", name="documents_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Document",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Document to edit",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Document::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Document::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full Document"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="documents")
+   * @OA\Tag(name="documents")
    *
    * @param $id
    * @param Request $request
@@ -395,46 +380,40 @@ class DocumentsAPIController extends AbstractFOSRestController
    * Patch a Document
    * @Rest\Patch("/{id}", name="documents_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Document",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Document to patch",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Document::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Document::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Document"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="documents")
+   * @OA\Tag(name="documents")
    *
    * @param $id
    * @param Request $request
@@ -488,25 +467,19 @@ class DocumentsAPIController extends AbstractFOSRestController
    * Delete a Document
    * @Rest\Delete("/{id}", name="document_api_delete")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="documents")
+   * @OA\Tag(name="documents")
    *
    * @Method("DELETE")
    * @param $id
@@ -533,29 +506,23 @@ class DocumentsAPIController extends AbstractFOSRestController
    * Download a document
    * @Rest\Get("/{id}/download", name="document_download")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Download a document",
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Document not found"
    * )
-   * @SWG\Tag(name="documents")
+   * @OA\Tag(name="documents")
    *
    * @param $id
    * @return View|Response

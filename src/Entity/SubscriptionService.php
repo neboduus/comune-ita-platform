@@ -10,7 +10,7 @@ use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 
 /**
@@ -28,7 +28,7 @@ class SubscriptionService
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @Serializer\Type("string")
-   * @SWG\Property(description="Subscription Service's uuid")
+   * @OA\Property(description="Subscription Service's uuid")
    */
   private $id;
 
@@ -37,7 +37,7 @@ class SubscriptionService
    * @Assert\NotBlank (message="Il campo nome è un parametro obbligatorio")
    * @ORM\Column(name="code", type="string", length=255, unique=true)
    * @Serializer\Type("string")
-   * @SWG\Property(description="Subscription Service's code")
+   * @OA\Property(description="Subscription Service's code")
    */
   private $code;
 
@@ -46,7 +46,7 @@ class SubscriptionService
    * @Assert\NotBlank (message="Il campo codice è un parametro obbligatorio")
    * @ORM\Column(name="name", type="string", length=255)
    * @Serializer\Type("string")
-   * @SWG\Property(description="Subscription Service's name")
+   * @OA\Property(description="Subscription Service's name")
    */
   private $name;
 
@@ -55,7 +55,7 @@ class SubscriptionService
    * @Assert\NotBlank (message="Il campo descrizione è un parametro obbligatorio")
    * @ORM\Column(name="description", type="text", nullable=true)
    * @Serializer\Type("string")
-   * @SWG\Property(description="Subscription Service's description")
+   * @OA\Property(description="Subscription Service's description")
    */
   private $description;
 
@@ -68,7 +68,7 @@ class SubscriptionService
    * @Assert\LessThanOrEqual(propertyPath="beginDate", message="La data di inizio iscrizione deve essere minore o oguale alla data di inizio corso")
    * @Assert\LessThanOrEqual(propertyPath="endDate",  message="La data di inizio iscrizione deve essere minore o oguale alla data di fine corso")
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Subscription Service's subscriptions start date")
+   * @OA\Property(description="Subscription Service's subscriptions start date")
    */
   private $subscriptionBegin;
 
@@ -78,7 +78,7 @@ class SubscriptionService
    * @Assert\NotBlank (message="Il campo data di fine iscrizioni è un parametro obbligatorio")
    * @ORM\Column(name="subscription_end", type="datetime")
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Subscription Service's subscriptions end date")
+   * @OA\Property(description="Subscription Service's subscriptions end date")
    */
   private $subscriptionEnd;
 
@@ -89,7 +89,7 @@ class SubscriptionService
    * @Assert\LessThanOrEqual(propertyPath="endDate",  message="La data di inizio corso deve essere minore o oguale alla data di fine corso")
    * @ORM\Column(name="begin_date", type="datetime")
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Subscription Service's start date")
+   * @OA\Property(description="Subscription Service's start date")
    */
   private $beginDate;
 
@@ -99,7 +99,7 @@ class SubscriptionService
    * @Assert\NotBlank (message="Il campo data di inizio è un parametro obbligatorio")
    * @ORM\Column(name="end_date", type="datetime")
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Subscription Service's end date")
+   * @OA\Property(description="Subscription Service's end date")
    */
   private $endDate;
 
@@ -110,7 +110,7 @@ class SubscriptionService
    * @Assert\GreaterThanOrEqual(0, message="Il limite di iscritti deve essere un valore positivo")
    * @Serializer\Exclude(if="!object.getSubscribersLimit()")
    * @Serializer\Type("integer")
-   * @SWG\Property(description="Subscription Service's maximum number of subscribers")
+   * @OA\Property(description="Subscription Service's maximum number of subscribers")
    */
   private $subscribersLimit;
 
@@ -120,7 +120,7 @@ class SubscriptionService
    * @ORM\Column(name="subscription_message", type="text", length=255, nullable=true)
    * @Serializer\Exclude(if="!object.getSubscriptionMessage()")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Subscription Service's subscription message")
+   * @OA\Property(description="Subscription Service's subscription message")
    */
   private $subscriptionMessage;
 
@@ -130,7 +130,7 @@ class SubscriptionService
    * @ORM\Column(name="begin_message", type="text", length=255, nullable=true)
    * @Serializer\Exclude(if="!object.getBeginMessage()")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Subscription Service's begin message")
+   * @OA\Property(description="Subscription Service's begin message")
    */
   private $beginMessage;
 
@@ -140,7 +140,7 @@ class SubscriptionService
    * @ORM\Column(name="end_message", type="text", nullable=true)
    * @Serializer\Exclude(if="!object.getEndMessage()")
    * @Serializer\Type("string")
-   * @SWG\Property(description="Subscription Service's end message")
+   * @OA\Property(description="Subscription Service's end message")
    */
   private $endMessage;
 
@@ -149,7 +149,7 @@ class SubscriptionService
    * @Assert\NotBlank(message="Seleziona un'opzione. Lo stato è un parametro obbligatorio")
    * @Assert\NotNull()
    * @Serializer\Type("integer")
-   * @SWG\Property(description="Accepts values: 0 - Waiting, 1 - Active, 2 - Unactive")
+   * @OA\Property(description="Accepts values: 0 - Waiting, 1 - Active, 2 - Unactive")
    */
   private $status;
 
@@ -157,8 +157,8 @@ class SubscriptionService
    * @var array
    * @ORM\Column(name="payments", type="json", nullable=true)
    * @Serializer\Type("array")
-   * @SWG\Property(type="array", @SWG\Items(type="object"), description="Subscription Service's payments: Array of Subscription Payments. A Subscription payment is defined by an amount and a date")
-   * @SWG\Items(type="string")
+   * @OA\Property(type="array", @OA\Items(type="object"), description="Subscription Service's payments: Array of Subscription Payments. A Subscription payment is defined by an amount and a date")
+   * @OA\Items(type="string")
    */
   protected $subscriptionPayments;
 
@@ -166,7 +166,7 @@ class SubscriptionService
    * @var string[]
    * @ORM\Column(name="tags", type="array", nullable=true)
    * @Serializer\Type("array<string>")
-   * @SWG\Property(type="array", @SWG\Items(type="string"), description="Subscription Service's tags. (String of comma sepatared tags)")
+   * @OA\Property(type="array", @OA\Items(type="string"), description="Subscription Service's tags. (String of comma sepatared tags)")
    */
   protected $tags;
 
@@ -174,14 +174,14 @@ class SubscriptionService
   /**
    * @ORM\OneToMany(targetEntity="App\Entity\Subscription", mappedBy="subscription_service")
    * @Serializer\Exclude()
-   * @SWG\Property(description="Subscription Service's subscriptions")
+   * @OA\Property(description="Subscription Service's subscriptions")
    */
   private $subscriptions;
 
   /**
    * @ORM\Column(type="datetime", options={"default"="CURRENT_TIMESTAMP"})
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Subscription Service's creation date")
+   * @OA\Property(description="Subscription Service's creation date")
    */
   private $created_at;
 
@@ -630,7 +630,7 @@ class SubscriptionService
    * @Serializer\VirtualProperty(name="subscriptions_left")
    * @Serializer\SerializedName("subscriptions_left")
    * @Serializer\Exclude(if="!object.getSubscribersLimit()")
-   * @SWG\Property(description="Subscriptions left before maximum limit is reached")
+   * @OA\Property(description="Subscriptions left before maximum limit is reached")
    *
    * @return integer
    */
@@ -648,7 +648,7 @@ class SubscriptionService
    *
    * @Serializer\VirtualProperty(name="days_left")
    * @Serializer\SerializedName("days_left")
-   * @SWG\Property(description="Days left before Subscription Service ends")
+   * @OA\Property(description="Days left before Subscription Service ends")
    *
    * @return integer
    * @throws \Exception
@@ -667,7 +667,7 @@ class SubscriptionService
    *
    * @Serializer\VirtualProperty(name="subscription_days_left")
    * @Serializer\SerializedName("subscription_days_left")
-   * @SWG\Property(description="Days left before subscriptions time ends")
+   * @OA\Property(description="Days left before subscriptions time ends")
    *
    * @return integer
    * @throws \Exception
@@ -686,7 +686,7 @@ class SubscriptionService
    *
    * @Serializer\VirtualProperty(name="availability")
    * @Serializer\SerializedName("availability")
-   * @SWG\Property(description="Subscription Service's availability")
+   * @OA\Property(description="Subscription Service's availability")
    *
    * @return bool
    * @throws \Exception

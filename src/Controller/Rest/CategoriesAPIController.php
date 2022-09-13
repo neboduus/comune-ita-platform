@@ -14,7 +14,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Translation\TranslatorInterface;
 use function Aws\boolean_value;
 
@@ -45,24 +46,26 @@ class CategoriesAPIController extends AbstractFOSRestController
    * List all Categories
    * @Rest\Get("", name="categories_api_list")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="not_empty",
    *      in="query",
-   *      type="boolean",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="If true empty categories are excluded from results"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of categories",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Categoria::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=Categoria::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Tag(name="categories")
+   * @OA\Tag(name="categories")
    * @param Request $request
    * @return View
    */
@@ -87,17 +90,17 @@ class CategoriesAPIController extends AbstractFOSRestController
    * Retreive a Category by id
    * @Rest\Get("/{id}", name="category_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Category",
    *     @Model(type=Categoria::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Category not found"
    * )
-   * @SWG\Tag(name="categories")
+   * @OA\Tag(name="categories")
    *
    * @param Request $request
    * @param string $id
@@ -123,42 +126,36 @@ class CategoriesAPIController extends AbstractFOSRestController
    * Create a Category
    * @Rest\Post(name="categories_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Category",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The category to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Categoria::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Categoria::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Category"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="categories")
+   * @OA\Tag(name="categories")
    *
    * @param Request $request
    * @return View
@@ -206,46 +203,40 @@ class CategoriesAPIController extends AbstractFOSRestController
    * Edit full Category
    * @Rest\Put("/{id}", name="categories_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Category",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The category to update",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Categoria::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Categoria::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full Category"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="categories")
+   * @OA\Tag(name="categories")
    *
    * @param $id
    * @param Request $request
@@ -300,46 +291,40 @@ class CategoriesAPIController extends AbstractFOSRestController
    * Patch a Category
    * @Rest\Patch("/{id}", name="categories_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Category",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The category to update",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Categoria::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Categoria::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Category"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="categories")
+   * @OA\Tag(name="categories")
    *
    * @param $id
    * @param Request $request
@@ -394,17 +379,17 @@ class CategoriesAPIController extends AbstractFOSRestController
    * Delete a Category
    * @Rest\Delete("/{id}", name="category_api_delete")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="categories")
+   * @OA\Tag(name="categories")
    *
    * @Method("DELETE")
    * @param $id

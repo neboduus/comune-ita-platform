@@ -2,6 +2,8 @@
 
 namespace App\Controller\Rest;
 
+use Nelmio\ApiDocBundle\Annotation\Security;
+
 use App\Entity\Pratica;
 use App\Services\InstanceService;
 use Doctrine\ORM\EntityManager;
@@ -9,7 +11,7 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
@@ -27,30 +29,30 @@ class StatusAPIController extends AbstractFOSRestController
    * Retreive an Application status
    * @Rest\Get("/applications/{id}", name="status_application_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *    response=200,
    *    description="Application has been accepted",
-   *    @SWG\Schema(
+   *    @OA\JsonContent(
    *       type="object",
-   *       @SWG\Property(property="result", type="boolean")
+   *       @OA\Property(property="result", type="boolean")
    *    )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *    response=404,
    *    description="Not found application"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *    response=406,
    *    description="Application status is rejected or pending",
-   *    @SWG\Schema(
+   *    @OA\JsonContent(
    *       type="object",
-   *       @SWG\Property(property="result", type="boolean")
+   *       @OA\Property(property="result", type="boolean")
    *    )
    *
    * )
-   * @SWG\Tag(name="status")
+   * @OA\Tag(name="status")
    *
    * @param $id
    * @return \FOS\RestBundle\View\View

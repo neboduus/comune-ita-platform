@@ -15,7 +15,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
 /**
  * Class GeographicAreasAPIController
@@ -48,24 +49,26 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * List all geographic area
    * @Rest\Get("", name="geographic_areas_api_list")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
-   *      required=false,
-   *      type="string"
+   *      required=false  ,
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of geographic areas",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=GeographicArea::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=GeographicArea::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Tag(name="geographic-areas")
+   * @OA\Tag(name="geographic-areas")
    * @param Request $request
    * @return View
    */
@@ -79,25 +82,27 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * Retreive a geographic area by id
    * @Rest\Get("/{id}", name="geographic_area_api_get")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false,
-   *      type="string"
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a GeographicArea",
    *     @Model(type=GeographicArea::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="GeographicArea not found"
    * )
-   * @SWG\Tag(name="geographic-areas")
+   * @OA\Tag(name="geographic-areas")
    *
    * @param Request $request
    * @param string $id
@@ -123,50 +128,46 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * Create a geographic area
    * @Rest\Post(name="geographic_areas_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false,
-   *      type="string"
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Parameter(
-   *     name="GeographicArea",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The geographic area to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=GeographicArea::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=GeographicArea::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a GeographicArea"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="geographic-areas")
+   * @OA\Tag(name="geographic-areas")
    *
    * @param Request $request
    * @return View
@@ -214,54 +215,50 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * Edit full geographic area
    * @Rest\Put("/{id}", name="geographic_areas_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false,
-   *      type="string"
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Parameter(
-   *     name="GeographicArea",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The recipient to update",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=GeographicArea::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=GeographicArea::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full GeographicArea"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="geographic-areas")
+   * @OA\Tag(name="geographic-areas")
    *
    * @param $id
    * @param Request $request
@@ -316,54 +313,50 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * Patch a geographic area
    * @Rest\Patch("/{id}", name="geographic_areas_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false,
-   *      type="string"
+   *      @OA\Schema(
+   *           type="string"
+   *      )
    *  )
    *
-   * @SWG\Parameter(
-   *     name="GeographicArea",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The recipient to update",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=GeographicArea::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=GeographicArea::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a GeographicArea"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="geographic-areas")
+   * @OA\Tag(name="geographic-areas")
    *
    * @param $id
    * @param Request $request
@@ -418,17 +411,17 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    * Delete a geographic area
    * @Rest\Delete("/{id}", name="geographic_area_api_delete")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="geographic-areas")
+   * @OA\Tag(name="geographic-areas")
    *
    * @Method("DELETE")
    * @param $id

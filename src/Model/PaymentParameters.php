@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 
 class PaymentParameters
@@ -19,13 +19,13 @@ class PaymentParameters
   /**
    * @var double
    * @Serializer\Type("double")
-   * @SWG\Property(description="Service's cost")
+   * @OA\Property(description="Service's cost")
    */
   private $totalAmounts;
 
   /**
    * @var Gateway[]
-   * @SWG\Property(property="gateways", type="array", @SWG\Items(ref=@Model(type=Gateway::class)))
+   * @OA\Property(property="gateways", type="array", @OA\Items(ref=@Model(type=Gateway::class)))
    */
   private $gateways;
 

@@ -7,7 +7,7 @@ use App\Entity\CPSUser;
 use App\Model\IdCard;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use JMS\Serializer\Annotation\Groups;
 
@@ -16,7 +16,7 @@ class User
 
   /**
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's uuid")
+   * @OA\Property(description="User's uuid")
    * @Groups({"read"})
    */
   protected $id;
@@ -27,7 +27,7 @@ class User
    * @Assert\NotBlank(message="This field is mandatory: codice_fiscale")
    * @Assert\NotNull(message="This field is mandatory: codice_fiscale")
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's fiscal code")
+   * @OA\Property(description="User's fiscal code")
    * @Groups({"read", "write"})
    */
   private $codiceFiscale;
@@ -36,7 +36,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's name")
+   * @OA\Property(description="User's name")
    * @Groups({"read", "write"})
    */
   private $nome;
@@ -45,7 +45,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's surname")
+   * @OA\Property(description="User's surname")
    * @Groups({"read", "write"})
    */
   private $cognome;
@@ -54,7 +54,7 @@ class User
    * @var \DateTime
    *
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="User's birth day yyyy-mm-dd")
+   * @OA\Property(description="User's birth day yyyy-mm-dd")
    * @Groups({"read", "write"})
    */
   private $dataNascita;
@@ -63,7 +63,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's birth place")
+   * @OA\Property(description="User's birth place")
    * @Groups({"read", "write"})
    */
   private $luogoNascita;
@@ -72,7 +72,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's surname birth code")
+   * @OA\Property(description="User's surname birth code")
    * @Groups({"read", "write"})
    */
   private $codiceNascita;
@@ -81,7 +81,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's birth province")
+   * @OA\Property(description="User's birth province")
    * @Groups({"read", "write"})
    */
   private $provinciaNascita;
@@ -90,7 +90,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's birth nation")
+   * @OA\Property(description="User's birth nation")
    * @Groups({"read", "write"})
    */
   private $statoNascita;
@@ -99,7 +99,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's gender")
+   * @OA\Property(description="User's gender")
    * @Groups({"read", "write"})
    */
   private $sesso;
@@ -108,7 +108,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's phone")
+   * @OA\Property(description="User's phone")
    * @Groups({"read", "write"})
    */
   private $telefono;
@@ -117,7 +117,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's mobile phone")
+   * @OA\Property(description="User's mobile phone")
    * @Groups({"read", "write"})
    */
   private $cellulare;
@@ -126,7 +126,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's email")
+   * @OA\Property(description="User's email")
    * @Groups({"read", "write"})
    */
   private $email;
@@ -135,7 +135,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's address")
+   * @OA\Property(description="User's address")
    * @Groups({"read", "write"})
    */
   private $indirizzoDomicilio;
@@ -144,7 +144,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's zip code")
+   * @OA\Property(description="User's zip code")
    * @Groups({"read", "write"})
    */
   private $capDomicilio;
@@ -153,7 +153,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's city")
+   * @OA\Property(description="User's city")
    * @Groups({"read", "write"})
    */
   private $cittaDomicilio;
@@ -162,7 +162,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's province")
+   * @OA\Property(description="User's province")
    * @Groups({"read", "write"})
    */
   private $provinciaDomicilio;
@@ -171,7 +171,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's nation")
+   * @OA\Property(description="User's nation")
    * @Groups({"read", "write"})
    */
   private $statoDomicilio;
@@ -180,7 +180,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's address")
+   * @OA\Property(description="User's address")
    * @Groups({"read", "write"})
    */
   private $indirizzoResidenza;
@@ -189,7 +189,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's zip code")
+   * @OA\Property(description="User's zip code")
    * @Groups({"read", "write"})
    */
   private $capResidenza;
@@ -198,7 +198,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's city")
+   * @OA\Property(description="User's city")
    * @Groups({"read", "write"})
    */
   private $cittaResidenza;
@@ -207,7 +207,7 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's province")
+   * @OA\Property(description="User's province")
    * @Groups({"read", "write"})
    */
   private $provinciaResidenza;
@@ -216,14 +216,14 @@ class User
    * @var string
    *
    * @Serializer\Type("string")
-   * @SWG\Property(description="User's nation")
+   * @OA\Property(description="User's nation")
    * @Groups({"read", "write"})
    */
   private $statoResidenza;
 
   /**
    * @var IdCard
-   * @SWG\Property(type="object", description="User's document", ref=@Model(type=IdCard::class))
+   * @OA\Property(type="object", description="User's document", ref=@Model(type=IdCard::class))
    * @Serializer\Exclude()
    */
   private $idCard;

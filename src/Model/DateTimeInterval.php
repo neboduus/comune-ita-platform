@@ -3,7 +3,7 @@
 
 namespace App\Model;
 
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 
 class DateTimeInterval implements \JsonSerializable
@@ -11,14 +11,14 @@ class DateTimeInterval implements \JsonSerializable
   /**
    * @var \DateTime
    *
-   * @SWG\Property(description="Datetime interval's start date")
+   * @OA\Property(description="Datetime interval's start date")
    */
   private $fromTime;
 
   /**
    * @var \DateTime
    *
-   * @SWG\Property(description="Datetime interval's end date")
+   * @OA\Property(description="Datetime interval's end date")
    */
   private $toTime;
 

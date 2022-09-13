@@ -54,7 +54,7 @@
     "league/flysystem-aws-s3-v3": "*",
     "league/html-to-markdown": "*",
     "lexik/jwt-authentication-bundle": "*",
-    "nelmio/api-doc-bundle": "^3.7",
+    "nelmio/api-doc-bundle": "^4.0.0",
     "nesbot/carbon": "*",
     "omines/datatables-bundle": "*",
     "oneup/flysystem-bundle": "*",

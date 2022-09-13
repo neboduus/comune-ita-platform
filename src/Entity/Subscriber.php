@@ -9,7 +9,7 @@ use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use JMS\Serializer\Annotation as Serializer;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -22,7 +22,7 @@ class Subscriber
     /**
      * @ORM\Column(type="guid")
      * @ORM\Id
-     * @SWG\Property(description="Subscriber's uuid")
+     * @OA\Property(description="Subscriber's uuid")
      * @Groups({"read"})
      */
     protected $id;
@@ -31,7 +31,7 @@ class Subscriber
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="name")
      * @Assert\NotNull()
-     * @SWG\Property(description="Subscriber's name")
+     * @OA\Property(description="Subscriber's name")
      * @Groups({"read"})
      */
     private $name;
@@ -40,7 +40,7 @@ class Subscriber
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="surname")
      * @Assert\NotNull()
-     * @SWG\Property(description="Subscriber's surname")
+     * @OA\Property(description="Subscriber's surname")
      * @Groups({"read"})
      */
     private $surname;
@@ -48,7 +48,7 @@ class Subscriber
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Subscription", mappedBy="subscriber")
      * @Serializer\Exclude()
-     * @SWG\Property(description="Subscriber's subscriptions")
+     * @OA\Property(description="Subscriber's subscriptions")
      */
     private $subscriptions;
 
@@ -56,7 +56,7 @@ class Subscriber
      * @ORM\Column(type="date")
      * @Assert\NotBlank(message="date_of_birth")
      * @Assert\NotNull()
-     * @SWG\Property(description="Subscriber's date of birth")
+     * @OA\Property(description="Subscriber's date of birth")
      * @Groups({"read"})
      */
     private $date_of_birth;
@@ -65,7 +65,7 @@ class Subscriber
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="place_of_birth")
      * @Assert\NotNull()
-     * @SWG\Property(description="Subscriber's place of birth")
+     * @OA\Property(description="Subscriber's place of birth")
      * @Groups({"read"})
      */
     private $place_of_birth;
@@ -74,42 +74,42 @@ class Subscriber
      * @ORM\Column(type="string", length=16)
      * @Assert\NotBlank(message="fiscal_code")
      * @Assert\NotNull()
-     * @SWG\Property(description="Subscriber's fiscal code")
+     * @OA\Property(description="Subscriber's fiscal code")
      * @Groups({"read"})
      */
     private $fiscal_code;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @SWG\Property(description="Subscriber's address")
+     * @OA\Property(description="Subscriber's address")
      * @Groups({"read", "write"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @SWG\Property(description="Subscriber's house number")
+     * @OA\Property(description="Subscriber's house number")
      * @Groups({"read", "write"})
      */
     private $house_number;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @SWG\Property(description="Subscriber's municipality")
+     * @OA\Property(description="Subscriber's municipality")
      * @Groups({"read", "write"})
      */
     private $municipality;
 
     /**
      * @ORM\Column(type="string", length=5, nullable=true)
-     * @SWG\Property(description="Subscriber's postal code")
+     * @OA\Property(description="Subscriber's postal code")
      * @Groups({"read", "write"})
      */
     private $postal_code;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @SWG\Property(description="Subscriber's email")
+     * @OA\Property(description="Subscriber's email")
      * @Groups({"read"})
      */
     private $email;

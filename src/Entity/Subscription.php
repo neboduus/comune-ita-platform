@@ -10,7 +10,7 @@ use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity
@@ -31,7 +31,7 @@ class Subscription
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @SWG\Property(description="Subscription's uuid")
+   * @OA\Property(description="Subscription's uuid")
    * @Groups({"read"})
    */
   protected $id;
@@ -40,14 +40,14 @@ class Subscription
    * @ORM\ManyToOne(targetEntity="App\Entity\Subscriber", inversedBy="subscriptions")
    * @ORM\JoinColumn(nullable=false)
    * @Serializer\Exclude()
-   * @SWG\Property(description="Subscription's subscriber")
+   * @OA\Property(description="Subscription's subscriber")
    */
   private $subscriber;
 
   /**
    * @ORM\OneToMany(targetEntity="App\Entity\SubscriptionPayment", mappedBy="subscription")
    * @Serializer\Exclude()
-   * @SWG\Property(description="Subscription Payments")
+   * @OA\Property(description="Subscription Payments")
    */
   private $subscriptionPayments;
 
@@ -55,13 +55,13 @@ class Subscription
    * @ORM\ManyToOne(targetEntity="App\Entity\SubscriptionService", inversedBy="subscriptions")
    * @Serializer\Exclude()
    * @ORM\JoinColumn(nullable=false)
-   * @SWG\Property(description="Subscription's Subscription Service")
+   * @OA\Property(description="Subscription's Subscription Service")
    */
   private $subscription_service;
 
   /**
    * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
-   * @SWG\Property(description="Subscription's related fiscal codes", type="array", @SWG\Items(type="string"))
+   * @OA\Property(description="Subscription's related fiscal codes", type="array", @OA\Items(type="string"))
    * @Groups({"read", "write"})
    * @var $relatedCFs array
    */
@@ -71,13 +71,13 @@ class Subscription
    * @ORM\Column(type="string", nullable=false, options={"default":"active"})
    * @Serializer\Type("string")
    * @Groups({"read", "write"})
-   * @SWG\Property(description="Subscription status: available statuses are 'active' or 'withdraw'")
+   * @OA\Property(description="Subscription status: available statuses are 'active' or 'withdraw'")
    */
   private $status = self::STATUS_ACTIVE;
 
   /**
    * @ORM\Column(type="datetime", options={"default"="CURRENT_TIMESTAMP"})
-   * @SWG\Property(description="Subscription's creation date")
+   * @OA\Property(description="Subscription's creation date")
    * @Groups({"read"})
    */
   private $created_at;
@@ -228,7 +228,7 @@ class Subscription
    * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("subscriber")
-   * @SWG\Property(description="Subscription's subscriber")
+   * @OA\Property(description="Subscription's subscriber")
    * @Groups({"read", "write"})
    */
   public function getSubscriberId()
@@ -242,7 +242,7 @@ class Subscription
    * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("subscription_service")
-   * @SWG\Property(description="Subscription's subscription service")
+   * @OA\Property(description="Subscription's subscription service")
    * @Groups({"read", "write"})
    */
   public function getSubscriptionServiceId()

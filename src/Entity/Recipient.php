@@ -10,7 +10,7 @@ use Gedmo\Translatable\Translatable;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
@@ -27,7 +27,7 @@ class Recipient implements Translatable
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @Serializer\Type("string")
-   * @SWG\Property(description="Recipient id")
+   * @OA\Property(description="Recipient id")
    * @Groups({"read"})
    */
   protected $id;
@@ -39,7 +39,7 @@ class Recipient implements Translatable
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="name")
    * @Assert\NotNull()
-   * @SWG\Property(description="Recipient name")
+   * @OA\Property(description="Recipient name")
    * @Groups({"read", "write"})
    */
   private $name;
@@ -50,7 +50,7 @@ class Recipient implements Translatable
    * @Gedmo\Slug(fields={"name"})
    * @ORM\Column(type="string", length=255, unique=true)
    * @Serializer\Type("string")
-   * @SWG\Property(description="Recipient slug")
+   * @OA\Property(description="Recipient slug")
    * @Groups({"read"})
    */
   private $slug;
@@ -60,7 +60,7 @@ class Recipient implements Translatable
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @Serializer\Type("string")
-   * @SWG\Property(description="Recipient description")
+   * @OA\Property(description="Recipient description")
    * @Groups({"read", "write"})
    */
   private $description;

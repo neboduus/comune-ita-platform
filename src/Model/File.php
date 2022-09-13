@@ -7,7 +7,7 @@ namespace App\Model;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class File
@@ -16,7 +16,7 @@ class File
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="File's uuid")
+   * @OA\Property(description="File's uuid")
    * @Groups({"read"})
    */
   private $id;
@@ -26,7 +26,7 @@ class File
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: name")
    * @Assert\NotNull(message="This field is mandatory: name")
-   * @SWG\Property(description="Name of the file")
+   * @OA\Property(description="Name of the file")
    * @Groups({"read", "write"})
    */
   private $name;
@@ -36,7 +36,7 @@ class File
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: mimeType")
    * @Assert\NotNull(message="This field is mandatory: mimeType")
-   * @SWG\Property(description="MimeType of the file")
+   * @OA\Property(description="MimeType of the file")
    * @Groups({"read", "write"})
    */
   private $mimeType;
@@ -47,7 +47,7 @@ class File
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="This field is mandatory: file")
    * @Assert\NotNull(message="This field is mandatory: file")
-   * @SWG\Property(description="The content of the file in base64")
+   * @OA\Property(description="The content of the file in base64")
    * @Groups({"write"})
    */
   private $file;
@@ -55,7 +55,7 @@ class File
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Download url")
+   * @OA\Property(description="Download url")
    * @Groups({"read"})
    */
   private $url;
@@ -63,7 +63,7 @@ class File
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Original file name")
+   * @OA\Property(description="Original file name")
    * @Groups({"read"})
    */
   private $originalName;
@@ -71,7 +71,7 @@ class File
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Description")
+   * @OA\Property(description="Description")
    * @Groups({"read"})
    */
   private $description;
@@ -79,7 +79,7 @@ class File
   /**
    * @var DateTime
    * @Serializer\Type("DateTime")
-   * @SWG\Property(description="Created datetime")
+   * @OA\Property(description="Created datetime")
    * @Groups({"read"})
    */
   private $createdAt;
@@ -87,7 +87,7 @@ class File
   /**
    * @var boolean
    * @Serializer\Type("bool")
-   * @SWG\Property(description="Protocol required")
+   * @OA\Property(description="Protocol required")
    * @Groups({"read"})
    */
   private $protocolRequired;
@@ -95,7 +95,7 @@ class File
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Protocol number")
+   * @OA\Property(description="Protocol number")
    * @Groups({"read"})
    */
   private $protocolNumber;

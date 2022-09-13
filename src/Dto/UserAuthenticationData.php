@@ -2,7 +2,7 @@
 
 namespace App\Dto;
 
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use JMS\Serializer\Annotation\ExclusionPolicy;
@@ -18,7 +18,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Autentication method")
+   * @OA\Property(description="Autentication method")
    * @Groups({"read"})
    * @Expose
    */
@@ -27,7 +27,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Autentication session id")
+   * @OA\Property(description="Autentication session id")
    * @Groups({"read"})
    * @Expose
    */
@@ -36,7 +36,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Autentication spid code")
+   * @OA\Property(description="Autentication spid code")
    * @Groups({"read"})
    * @Expose
    */
@@ -45,7 +45,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Autentication session level")
+   * @OA\Property(description="Autentication session level")
    * @Groups({"read"})
    * @Expose
    */
@@ -54,7 +54,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Autentication certificate issuer")
+   * @OA\Property(description="Autentication certificate issuer")
    * @Groups({"read"})
    * @Expose
    */
@@ -63,7 +63,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Autentication certificate subject")
+   * @OA\Property(description="Autentication certificate subject")
    * @Groups({"read"})
    * @Expose
    */
@@ -72,7 +72,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Autentication certificate")
+   * @OA\Property(description="Autentication certificate")
    * @Groups({"read"})
    * @Expose
    */
@@ -81,7 +81,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Autentication instant")
+   * @OA\Property(description="Autentication instant")
    * @Groups({"read"})
    * @Expose
    */
@@ -90,7 +90,7 @@ class UserAuthenticationData implements \JsonSerializable, \ArrayAccess, \Counta
   /**
    * @var string
    * @Serializer\Type("string")
-   * @SWG\Property(description="Autentication session index")
+   * @OA\Property(description="Autentication session index")
    * @Groups({"read"})
    * @Expose
    */

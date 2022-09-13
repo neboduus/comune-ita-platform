@@ -14,6 +14,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,7 +22,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FOS\RestBundle\Controller\Annotations as Rest;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 
 
 /**
@@ -54,31 +55,35 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * List all SubscriptionService
    * @Rest\Get("", name="subscription-services_api_list")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="available",
    *      in="query",
-   *      type="boolean",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Filter results by subscription services availability. Availability is computed on service status, subscriptions due date and subscriptions limit"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="tags",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Filter results by subscription services tags (Comma separated values)"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of SubscriptionServices",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=SubscriptionService::class))
+   *         @OA\Items(ref=@Model(type=SubscriptionService::class))
    *     )
    * )
-   * @SWG\Tag(name="subscription-services")
+   * @OA\Tag(name="subscription-services")
    */
   public function getSubscriptionServicesAction(Request $request)
   {
@@ -122,17 +127,17 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Retreive a SubscriptionService
    * @Rest\Get("/{id}", name="subscription-services_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a SubscriptionService",
    *     @Model(type=SubscriptionService::class)
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Subscription Service not found"
    * )
-   * @SWG\Tag(name="subscription-services")
+   * @OA\Tag(name="subscription-services")
    *
    * @param $id
    * @return View
@@ -161,57 +166,67 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Retreive a SubscriptionService's Payment settings
    * @Rest\Get("/{id}/payment-settings", name="subscription-service_payment-settings_api_get")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="required",
    *      in="query",
-   *      type="boolean",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Filter results by payment mandatory option"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="create_draft",
    *      in="query",
-   *      type="boolean",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Filter results by payment draft creation option"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="subscription_fee",
    *      in="query",
-   *      type="boolean",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Filter results by payment type (subscription fee or additional payment)"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="availbale",
    *      in="query",
-   *      type="boolean",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Filter results by payment availability (future payments)"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="identifier",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Filter results by subscription payment identifier"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a SubscriptionService's payments",
    *     @Model(type=SubscriptionPayment::class)
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Subscription Service not found"
    * )
-   * @SWG\Tag(name="subscription-services")
+   * @OA\Tag(name="subscription-services")
    *
    * @param $id
    * @return View
@@ -286,42 +301,36 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Create a SubscriptionService
    * @Rest\Post(name="subscription-services_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="SubscriptionService",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The SubscriptionService to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=SubscriptionService::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=SubscriptionService::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a SubscriptionService"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="subscription-services")
+   * @OA\Tag(name="subscription-services")
    *
    * @param Request $request
    * @return View
@@ -373,46 +382,40 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Edit full SubscriptionService
    * @Rest\Put("/{id}", name="subscription-services_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="SubscriptionService",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The subscriptionService to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=SubscriptionService::class)
-   *     )
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=SubscriptionService::class)
+   *         )
+   *     ) 
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full subscriptionService"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="subscription-services")
+   * @OA\Tag(name="subscription-services")
    *
    * @param $id
    * @param Request $request
@@ -471,46 +474,40 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Patch a SubscriptionService
    * @Rest\Patch("/{id}", name="subscription-services_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="SubscriptionService",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Subscription Service to patch",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=SubscriptionService::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=SubscriptionService::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a SubscriptionService"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="subscription-services")
+   * @OA\Tag(name="subscription-services")
    *
    * @param $id
    * @param Request $request
@@ -564,30 +561,24 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Delete a Service
    * @Rest\Delete("/{id}", name="subscription-services_api_delete")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
    *
-   * @SWG\Tag(name="subscription-services")
+   * @OA\Tag(name="subscription-services")
    *
    * @Method("DELETE")
    * @param $id
@@ -653,38 +644,34 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Retrieve all Subscriptions of a Subscription Service
    * @Rest\Get("/{subscription_service_id}/subscriptions", name="subscriptions_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive the Subscriptions of a Subscription Service",
    *   @Model(type=Subscription::class, groups={"read"})
    * )
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Subscriptions not found"
    * )
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    * @param Request $request
    * @param $subscription_service_id
    *
@@ -716,38 +703,34 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Retrieve a Subscription of a SubscriptionService
    * @Rest\Get("/{subscription_service_id}/subscriptions/{id}", name="subscription_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Subscription of a SubscriptionService",
    *      @Model(type=Subscription::class, groups={"read"})
    * )
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Subscription not found"
    * )
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param Request $request
    * @param $subscription_service_id
@@ -781,38 +764,34 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Delete a Subscription
    * @Rest\Delete("/{subscription_service_id}/subscriptions/{id}", name="subscription_api_delete")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
    *
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param Request $request
    * @param $subscription_service_id
@@ -874,50 +853,46 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Create a Subscription
    * @Rest\Post("/{subscription_service_id}/subscriptions", name="subscription_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1"
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Subscription",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Subscription to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Subscription::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Subscription::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Subscription"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param Request $request
    *
@@ -980,54 +955,50 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Edit full Subscription
    * @Rest\Put("/{subscription_service_id}/subscriptions/{id}", name="subscription_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1"
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Subscription",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The subscription to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Subscription::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Subscription::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full subscription"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param Request $request
    * @param $subscription_service_id
@@ -1100,54 +1071,50 @@ class SubscriptionServicesAPIController extends AbstractApiController
    * Patch a Subscription
    * @Rest\Patch("/{subscription_service_id}/subscriptions/{id}", name="subscription_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1"
    *  )
    *
-   * @SWG\Parameter(
-   *     name="Subscription",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Subscription to patch",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Subscription::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Subscription::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Subscription"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="subscriptions")
+   * @OA\Tag(name="subscriptions")
    *
    * @param Request $request
    * @param $subscription_service_id

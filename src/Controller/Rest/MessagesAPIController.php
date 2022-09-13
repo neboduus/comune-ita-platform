@@ -41,8 +41,9 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SC;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -103,25 +104,25 @@ class MessagesAPIController extends AbstractFOSRestController
    * Retreive Applications messages
    * @Rest\Get("/applications/{id}/messages", name="application_api_messages_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of messages for the application",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Message::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=Message::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Applcaitons not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @return View
@@ -153,57 +154,61 @@ class MessagesAPIController extends AbstractFOSRestController
    * Retreive Applications messages
    * @Rest\Get("/v2/applications/{id}/messages", name="v2_application_api_messages_get")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="Authorization",
    *      in="header",
    *      description="The authentication Bearer",
-   *      required=false,
-   *      type="string"
+   *      required=false
    *  )
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. From version 2 list of messages are paginated"
    *  )
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="offset",
    *      in="query",
-   *      type="integer",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Offset of the query"
    *  )
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="limit",
    *      in="query",
-   *      type="integer",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
-   *      description="Limit of the query",
-   *      maximum="100"
+   *      description="Limit of the query"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of messages for the application",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="object",
-   *         @SWG\Property(property="meta", type="object", ref=@Model(type=MetaPagedList::class)),
-   *         @SWG\Property(property="links", type="object", ref=@Model(type=LinksPagedList::class)),
-   *         @SWG\Property(property="data", type="array", @SWG\Items(ref=@Model(type=Message::class, groups={"read"})))
+   *         @OA\Property(property="meta", type="object", ref=@Model(type=MetaPagedList::class)),
+   *         @OA\Property(property="links", type="object", ref=@Model(type=LinksPagedList::class)),
+   *         @OA\Property(property="data", type="array", @OA\Items(ref=@Model(type=Message::class, groups={"read"})))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Applcaitons not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -309,25 +314,25 @@ class MessagesAPIController extends AbstractFOSRestController
    * Retreive Application message
    * @Rest\Get("/applications/{id}/messages/{messageId}", name="application_api_message_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve a message of the application",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Message::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=Message::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Message not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $messageId
    * @return View
@@ -353,42 +358,36 @@ class MessagesAPIController extends AbstractFOSRestController
    * Create a Message
    * @Rest\Post("/applications/{id}/messages",name="application_message_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Message",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The message to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Message::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Message::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Message created"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -468,47 +467,41 @@ class MessagesAPIController extends AbstractFOSRestController
    * Patch an application message
    * @Rest\Patch("/applications/{id}/messages/{messageId}",name="application_message_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
    *
-   * @SWG\Parameter(
-   *     name="Message",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The message to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Message::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Message::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a message"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param $messageId
@@ -594,16 +587,16 @@ class MessagesAPIController extends AbstractFOSRestController
    * Retreive a message applications attachment
    * @Rest\Get("/applications/{id}/messages/{messageId}/attachments/{attachmentId}", name="message_api_attachment_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive attachment file",
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Attachment not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $messageId
    * @param $attachmentId

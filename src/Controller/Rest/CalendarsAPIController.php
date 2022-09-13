@@ -21,7 +21,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Services\Manager\CalendarManager;
 
@@ -64,24 +65,26 @@ class CalendarsAPIController extends AbstractFOSRestController
    * List all Calendars
    * @Rest\Get("", name="calendars_api_list")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of calendars",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Calendar::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=Calendar::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="type",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Filter results by calendar type"
    *  )
    *
-   * @SWG\Tag(name="calendars")
+   * @OA\Tag(name="calendars")
    */
   public function getCalendarsAction(Request $request)
   {
@@ -104,17 +107,17 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Retreive a Calendar
    * @Rest\Get("/{id}", name="calendar_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Calendar",
    *     @Model(type=Calendar::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Calendar not found"
    * )
-   * @SWG\Tag(name="calendars")
+   * @OA\Tag(name="calendars")
    *
    * @param $id
    * @return View
@@ -144,48 +147,56 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Retreive a Calendar availabilities
    * @Rest\Get("/{id}/availabilities", name="calendar-availabilities_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
-   *     description="Retreive Calendar's availabilities",
+   *     description="Retreive Calendar's availabilities"
    * )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="available",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Get only available dates: available dates includes at least one available slot"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="from_time",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Get availabilities from given date"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="to_time",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Get availabilities to given date"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="opening_hours",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Get availabilities related to selected opening hours"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Calendar not found"
    * )
-   * @SWG\Tag(name="calendars")
+   * @OA\Tag(name="calendars")
    *
    * @param $id
    * @param Request $request
@@ -258,48 +269,56 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Retreive a Calendar availabilities by Date
    * @Rest\Get("/{id}/availabilities/{date}", name="calendar-day-availabilities_api_get")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="all",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Get all availabilities apart from calendar configurations"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="exclude",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Ignore given meeting availability"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="available",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Get only available slots"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="opening_hours",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Get availabilities related to selected opening hours"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive Calendar's availabilities per date",
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Calendar not found"
    * )
-   * @SWG\Tag(name="calendars")
+   * @OA\Tag(name="calendars")
    *
    * @param $id
    * @param $date
@@ -362,42 +381,36 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Create a Calendar
    * @Rest\Post(name="calendars_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Calendar",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The calendar to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Calendar::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Calendar::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Calendar"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="calendars")
+   * @OA\Tag(name="calendars")
    *
    * @param Request $request
    * @return View
@@ -450,46 +463,40 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Edit full Calendar
    * @Rest\Put("/{id}", name="calendars_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Calendar",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The calendar to edit",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Calendar::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Calendar::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full Calendar"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="calendars")
+   * @OA\Tag(name="calendars")
    *
    * @param $id
    * @param Request $request
@@ -548,46 +555,40 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Patch a Calendar
    * @Rest\Patch("/{id}", name="calendars_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Calendar",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The calendar to patch",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Calendar::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Calendar::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Calendar"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="calendars")
+   * @OA\Tag(name="calendars")
    *
    * @param $id
    * @param Request $request
@@ -646,25 +647,19 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Delete a Calendar
    * @Rest\Delete("/{id}", name="calendars_api_delete")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="calendars")
+   * @OA\Tag(name="calendars")
    *
    * @Method("DELETE")
    * @param $id
@@ -730,20 +725,20 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Retrieve all Opening Hours of a Calendar
    * @Rest\Get("/{calendar_id}/opening-hours", name="opening-hours_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive the Opening Hours of a Calendar",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=OpeningHour::class))
+   *         @OA\Items(ref=@Model(type=OpeningHour::class))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Opening Hours not found"
    * )
-   * @SWG\Tag(name="opening hours")
+   * @OA\Tag(name="opening hours")
    * @param $calendar_id
    *
    * @return View
@@ -772,20 +767,20 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Retrieve an Opening Hour of a Calendar
    * @Rest\Get("/{calendar_id}/opening-hours/{id}", name="opening-hour_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive an Opening Hour of a Calendar",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=OpeningHour::class))
+   *         @OA\Items(ref=@Model(type=OpeningHour::class))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Opening Hour not found"
    * )
-   * @SWG\Tag(name="opening hours")
+   * @OA\Tag(name="opening hours")
    *
    * @param $calendar_id
    * @param $id
@@ -817,25 +812,19 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Delete an Opening Hour of a Calendar
    * @Rest\Delete("/{calendar_id}/opening-hours/{id}", name="opening-hour_api_delete")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="opening hours")
+   * @OA\Tag(name="opening hours")
    *
    * @param $calendar_id
    * @param $id
@@ -867,42 +856,36 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Create an Opening Hour
    * @Rest\Post("/{calendar_id}/opening-hours", name="opening-hour_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Opening Hour",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Opening Hour to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=OpeningHour::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=OpeningHour::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create an Opening Hour"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="opening hours")
+   * @OA\Tag(name="opening hours")
    *
    * @param $calendar_id
    * @param Request $request
@@ -962,46 +945,40 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Edit full Opening Hour
    * @Rest\Put("/{calendar_id}/opening-hours/{id}", name="opening-hour_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Opening Hour",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The opening hour to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=OpeningHour::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=OpeningHour::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full opening hour"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="opening hours")
+   * @OA\Tag(name="opening hours")
    *
    * @param Request $request
    * @param $calendar_id
@@ -1063,46 +1040,40 @@ class CalendarsAPIController extends AbstractFOSRestController
    * Patch a Opening Hour
    * @Rest\Patch("/{calendar_id}/opening-hours/{id}", name="opening-hour_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Opening Hour",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The Opening Hour to patch",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=OpeningHour::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=OpeningHour::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a  Opening Hour"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="opening hours")
+   * @OA\Tag(name="opening hours")
    *
    * @param Request $request
    * @param $calendar_id
@@ -1168,24 +1139,26 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    *
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="opening_hours",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Get overlaps related to selected opening hours"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive Calendar's opening hours overlaps",
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Calendar not found"
    * )
-   * @SWG\Tag(name="calendars")
+   * @OA\Tag(name="calendars")
    *
    * @param $id
    * @param Request $request

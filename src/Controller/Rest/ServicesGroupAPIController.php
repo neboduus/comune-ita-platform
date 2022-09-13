@@ -21,7 +21,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Ramsey\Uuid\Uuid;
 use function Aws\boolean_value;
 
@@ -57,48 +58,56 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * List all Services groups
    * @Rest\Get("", name="services_groups_api_list")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="topics_id",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Id of the category"
    *  )
    *
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="recipient_id",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Id of the recipient"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="geographic_area_id",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Id of the geographic area"
    *  )
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="not_empty",
    *      in="query",
-   *      type="boolean",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="If true empty services groups are excluded from results"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of services groups",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=ServiceGroup::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=ServiceGroup::class, groups={"read"}))
    *     )
    * )
-   * @SWG\Tag(name="services-groups")
+   * @OA\Tag(name="services-groups")
    */
   public function getServicesGroupsAction(Request $request)
   {
@@ -165,17 +174,17 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * Retreive a Service group by id or slug
    * @Rest\Get("/{id}", name="service_group_api_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retreive a Service group by id or slug",
    *     @Model(type=ServiceGroup::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="services-groups")
+   * @OA\Tag(name="services-groups")
    *
    * @param $id
    * @return View
@@ -206,42 +215,36 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * Create a Service Group
    * @Rest\Post(name="services_group_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Service Group",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The service group to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=ServiceGroup::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=ServiceGroup::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create a Service group"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="services-groups")
+   * @OA\Tag(name="services-groups")
    *
    * @param Request $request
    * @return View
@@ -298,46 +301,40 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * Edit full Service group
    * @Rest\Put("/{id}", name="service_group_api_put")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Service group",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The service group to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=ServiceGroup::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=ServiceGroup::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Edit full Service group"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="services-groups")
+   * @OA\Tag(name="services-groups")
    *
    * @param Request $request
    * @return View
@@ -389,46 +386,40 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * Patch a Service group
    * @Rest\Patch("/{id}", name="service_group_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Service group",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The service group to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=ServiceGroup::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=ServiceGroup::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch a Service group"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="services-groups")
+   * @OA\Tag(name="services-groups")
    *
    * @param Request $request
    * @return View
@@ -481,17 +472,17 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    * Delete a Service group
    * @Rest\Delete("/{id}", name="service_gropu_api_delete")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="The resource was deleted successfully."
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="services-groups")
+   * @OA\Tag(name="services-groups")
    *
    * @Method("DELETE")
    */

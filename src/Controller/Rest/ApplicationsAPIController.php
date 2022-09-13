@@ -68,8 +68,9 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SC;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -223,102 +224,125 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *
    * @Rest\Get("", name="applications_api_list")
    *
-   * @SWG\Parameter(
-   *      name="Authorization",
-   *      in="header",
-   *      description="The authentication Bearer",
-   *      required=false,
-   *      type="string"
-   *  )
-   * @SWG\Parameter(
+   * @Security(name="Bearer")
+   * 
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json object instead of version 1.* where are flattened strings"
-   *  )
-   * @SWG\Parameter(
+   * )
+   * 
+   * @OA\Parameter(
    *      name="service",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Slug of the service"
-   *  )
-   * @SWG\Parameter(
+   * )
+   * 
+   * @OA\Parameter(
    *      name="order",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Order field. Default creationTime"
-   *  )
-   * @SWG\Parameter(
+   * )
+   * 
+   * @OA\Parameter(
    *      name="sort",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Sorting criteria of the order field. Default ASC"
-   *  )
-   * @SWG\Parameter(
+   * )
+   * 
+   * @OA\Parameter(
    *      name="createdAt[after|before|strictly_after|strictly_before]",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Created at filter, format yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"
-   *  )
-   * @SWG\Parameter(
+   * )
+   * 
+   * @OA\Parameter(
    *      name="updatedAt[after|before|strictly_after|strictly_before]",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Updated at filter, format yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"
-   *  )
-   * @SWG\Parameter(
+   * )
+   * 
+   * @OA\Parameter(
    *      name="submittedAt[after|before|strictly_after|strictly_before]",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Submitted at filter, format yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"
-   *  )
-   * @SWG\Parameter(
+   * )
+   * 
+   * @OA\Parameter(
    *      name="status",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Status code of application"
-   *  )
-   * @SWG\Parameter(
+   * )
+   * 
+   * @OA\Parameter(
    *      name="offset",
    *      in="query",
-   *      type="integer",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Offset of the query"
-   *  )
-   * @SWG\Parameter(
+   * )
+   * 
+   * @OA\Parameter(
    *      name="limit",
    *      in="query",
-   *      type="integer",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
-   *      description="Limit of the query",
-   *      maximum="100"
-   *  )
+   *      description="Limit of the query"
+   * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of applications",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="object",
-   *         @SWG\Property(property="meta", type="object", ref=@Model(type=MetaPagedList::class)),
-   *         @SWG\Property(property="links", type="object", ref=@Model(type=LinksPagedList::class)),
-   *         @SWG\Property(property="data", type="array", @SWG\Items(ref=@Model(type=Application::class, groups={"read"})))
+   *         @OA\Property(property="meta", type="object", ref=@Model(type=MetaPagedList::class)),
+   *         @OA\Property(property="links", type="object", ref=@Model(type=LinksPagedList::class)),
+   *         @OA\Property(property="data", type="array", @OA\Items(ref=@Model(type=Application::class, groups={"read"})))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    */
 
   public function getApplicationsAction(Request $request)
@@ -498,30 +522,32 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Retrieve an Application
    * @Rest\Get("/{id}", name="application_api_get")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json object instead of version 1.* where are flattened strings"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve an Application",
    *     @Model(type=Application::class, groups={"read"})
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -553,42 +579,36 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Create an Application
    * @Rest\Post(name="applications_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Application",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The application to create",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Application::class, groups={"write"})
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Application::class, groups={"write"})
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create an Application"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param Request $request
    * @return View
@@ -737,33 +757,35 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @Rest\Get("/{id}/backoffice", name="application_backoffice_api_get")
    *
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="version",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json objet instead of version 1.* the are flattened strings"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve backoffice data of an application",
-   *     @SWG\Schema(
+   *     @OA\Schema(
    *         type="object",
-   *         @SWG\Property(property="backoffice_data", type="object")
+   *         @OA\Property(property="backoffice_data", type="object")
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -803,42 +825,36 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @Rest\Put("/{id}/backoffice", name="applications_backoffice_api_put")
    * @Rest\Post("/{id}/backoffice", name="applications_backoffice_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Backoffice data",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The application to update",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         @SWG\Property(property="backoffice_data", type="object")
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="backoffice_data", type="object")
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=201,
    *     description="Create or update backoffice data"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param Request $request
    * @return View
@@ -918,25 +934,25 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Retrieve application history
    * @Rest\Get("/{id}/history", name="application_api_get_history")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve application history",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Transition::class))
+   *         @OA\Items(ref=@Model(type=Transition::class))
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -964,21 +980,21 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Retrieve an Applications attachment
    * @Rest\Get("/{id}/attachments/{attachmentId}", name="application_api_attachment_get")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve attachment file",
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Attachment not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @return View|Response
@@ -1022,29 +1038,31 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Retrieve an Application paymnet's info
    * @Rest\Get("/{id}/payment", name="application_api_payment_get")
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="test",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Test parameter"
    *  )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve an Application"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -1081,52 +1099,46 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @Route("/{id}/payment", name="applications_payment_api_post")
    * @Rest\Post("/{id}/payment", name="applications_payment_api_post")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Payment data",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="Update payment data of an application",
    *     required=true,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=PaymentOutcome::class)
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=PaymentOutcome::class)
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=422,
    *     description="Unprocessable Entity"
    * )
    *
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -1203,74 +1215,53 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Patch an Application
    * @Rest\Patch("/{id}", name="applications_api_patch")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Application",
-   *     in="body",
-   *     type="json",
-   *     description="The application to patch",
+   * @OA\RequestBody(
+   *     description="The application to patch | Register integration request | Register integration answer",
    *     required=false,
-   *     @SWG\Schema(
-   *         type="object",
-   *         ref=@Model(type=Application::class, groups={"write"})
+   *     @OA\JsonContent(
+   *         oneOf={
+   *             @OA\Schema(
+   *                 type="object",
+   *                 ref=@Model(type=Application::class, groups={"write"})
+   *             ),
+   *             @OA\Schema(
+   *                 type="object",
+   *                 @OA\Property(property="integration_outbound_protocol_document_id", type="string", description="Integration request protocol number"),
+   *                 @OA\Property(property="integration_outbound_protocol_number", type="string", description="Integration request protocol document id"),
+   *                 @OA\Property(property="integration_outbound_protocolled_at", type="string", description="Integration request protocol date")
+   *             ),
+   *             @OA\Schema(
+   *                 type="object",
+   *                 @OA\Property(property="integration_inbound_protocol_document_id", type="string", description="Integration answer protocol number"),
+   *                 @OA\Property(property="integration_inbound_protocol_number", type="string", description="Integration answer protocol document id"),
+   *                 @OA\Property(property="integration_inbound_protocolled_at", type="string", description="Integration answer protocol date")
+   *             )
+   *         }
    *     )
    * )
    *
-   * @SWG\Parameter(
-   *     name="Register integration request",
-   *     in="body",
-   *     type="json",
-   *     description="Register integration request",
-   *     required=false,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="integration_outbound_protocol_document_id", type="string", description="Integration request protocol number"),
-   *        @SWG\Property(property="integration_outbound_protocol_number", type="string", description="Integration request protocol document id"),
-   *        @SWG\Property(property="integration_outbound_protocolled_at", type="string", description="Integration request protocol date")
-   *     )
-   * )
-   *
-   * @SWG\Parameter(
-   *     name="Register integration answer",
-   *     in="body",
-   *     type="json",
-   *     description="Register integration answer",
-   *     required=false,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="integration_inbound_protocol_document_id", type="string", description="Integration answer protocol number"),
-   *        @SWG\Property(property="integration_inbound_protocol_number", type="string", description="Integration answer protocol document id"),
-   *        @SWG\Property(property="integration_inbound_protocolled_at", type="string", description="Integration answer protocol date")
-   *     )
-   * )
-   *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Patch an Application"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=400,
    *     description="Bad request"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -1375,29 +1366,23 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Submit an application
    * @Rest\Post("/{id}/transition/submit", name="application_api_post_transition_submit")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -1432,44 +1417,38 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Register an Application
    * @Rest\Post("/{id}/transition/register", name="application_api_post_transition_register")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Message",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The transition to create",
    *     required=true,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="protocol_folder_number", type="string", description="Protocol folder number"),
-   *        @SWG\Property(property="protocol_folder_code", type="string", description="Protocol folder code"),
-   *        @SWG\Property(property="protocol_number", type="string", description="Protocol number"),
-   *        @SWG\Property(property="protocol_document_id", type="string", description="Protocol document id")
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="protocol_folder_number", type="string", description="Protocol folder number"),
+   *             @OA\Property(property="protocol_folder_code", type="string", description="Protocol folder code"),
+   *             @OA\Property(property="protocol_number", type="string", description="Protocol number"),
+   *             @OA\Property(property="protocol_document_id", type="string", description="Protocol document id")
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -1563,42 +1542,36 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Register application outcome
    * @Rest\Post("/{id}/transition/register-outcome", name="application_api_post_transition_register_outcome")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Message",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The transition to create",
    *     required=true,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="protocol_number", type="string", description="Outcome protocol number"),
-   *        @SWG\Property(property="protocol_document_id", type="string", description="Outcome protocol document id")
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="protocol_number", type="string", description="Outcome protocol number"),
+   *             @OA\Property(property="protocol_document_id", type="string", description="Outcome protocol document id")
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -1698,29 +1671,23 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Assign an operator to an Application
    * @Rest\Post("/{id}/transition/assign", name="application_api_post_transition_assign")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -1757,43 +1724,37 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @Rest\Post("/{id}/transition/accept", name="application_api_post_transition_accept")
    * @Rest\Post("/{id}/transition/reject", name="application_api_post_transition_reject")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Transition",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The transition to create",
    *     required=true,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="message", type="string", description="Application outcome"),
-   *        @SWG\Property(property="attachments", type="array", @SWG\Items(ref=@Model(type=FileModel::class)))
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="message", type="string", description="Application outcome"),
+   *             @OA\Property(property="attachments", type="array", @OA\Items(ref=@Model(type=FileModel::class)))
+   *         )
    *     )
    * )
    *
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -1863,43 +1824,37 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Request integration on an application
    * @Rest\Post("/{id}/transition/request-integration", name="application_api_post_transition_request_integration")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Message",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The transition to create",
    *     required=true,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="message", type="string", description="Reason of the integration request"),
-   *        @SWG\Property(property="attachments", type="array", @SWG\Items(ref=@Model(type=FileModel::class)))
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="message", type="string", description="Reason of the integration request"),
+   *             @OA\Property(property="attachments", type="array", @OA\Items(ref=@Model(type=FileModel::class)))
+   *         )
    *     )
    * )
    *
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -1953,41 +1908,35 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Accept integration on an application
    * @Rest\Post("/{id}/transition/accept-integration", name="application_api_post_transition_accept_integration")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Messages",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="Array of message's uuid to include in integration request response",
    *     required=false,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="messages", type="array", @SWG\Items(type="string"))
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="messages", type="array", @OA\Items(type="string"))
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -2047,30 +1996,24 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Cancel integration request on an application
    * @Rest\Post("/{id}/transition/cancel-integration", name="application_api_post_transition_cancel_integration")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -2111,29 +2054,23 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Withdraw an application
    * @Rest\Post("/{id}/transition/withdraw", name="application_api_post_transition_withdraw")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -2194,43 +2131,37 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Register application integration request
    * @Rest\Post("/{id}/transition/register-integration-request", name="application_api_post_transition_register_integration_request")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Transition",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The transition to execute",
    *     required=true,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="integration_outbound_protocol_document_id", type="string", description="Integration request protocol number"),
-   *        @SWG\Property(property="integration_outbound_protocol_number", type="string", description="Integration request protocol document id"),
-   *        @SWG\Property(property="integration_outbound_protocolled_at", type="date-time", description="Integration request protocol date")
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="integration_outbound_protocol_document_id", type="string", description="Integration request protocol number"),
+   *             @OA\Property(property="integration_outbound_protocol_number", type="string", description="Integration request protocol document id"),
+   *             @OA\Property(property="integration_outbound_protocolled_at", type="string", format="date-time", description="Integration request protocol date")
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -2311,43 +2242,37 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Register application integration answer
    * @Rest\Post("/{id}/transition/register-integration-answer", name="application_api_post_transition_register_integration_answer")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Transition",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The transition to execute",
    *     required=true,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="integration_inbound_protocol_document_id", type="string", description="Integration answer protocol number"),
-   *        @SWG\Property(property="integration_inbound_protocol_number", type="string", description="Integration answer protocol document id"),
-   *        @SWG\Property(property="integration_inbound_protocolled_at", type="date-time", description="Integration answer protocol date")
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="integration_inbound_protocol_document_id", type="string", description="Integration answer protocol number"),
+   *             @OA\Property(property="integration_inbound_protocol_number", type="string", description="Integration answer protocol document id"),
+   *             @OA\Property(property="integration_inbound_protocolled_at", type="string", format="date-time", description="Integration answer protocol date")
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request
@@ -2428,43 +2353,37 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Force change application status payment pending by to payment success
    * @Rest\Post("/{id}/transition/complete-payment", name="application_api_post_transition_complete_payment")
    *
-   * @SWG\Parameter(
-   *     name="Authorization",
-   *     in="header",
-   *     description="The authentication Bearer",
-   *     required=true,
-   *     type="string"
-   * )
+   * @Security(name="Bearer")
    *
-   * @SWG\Parameter(
-   *     name="Message",
-   *     in="body",
-   *     type="json",
+   * @OA\RequestBody(
    *     description="The message to create",
    *     required=true,
-   *     @SWG\Schema(
-   *        type="object",
-   *        @SWG\Property(property="message", type="string", description="Text message"),
-   *        @SWG\Property(property="subject", type="string", description="Subject message text"),
-   *        @SWG\Property(property="visibility", type="boolean", description="Visibility of message")
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="message", type="string", description="Text message"),
+   *             @OA\Property(property="subject", type="string", description="Subject message text"),
+   *             @OA\Property(property="visibility", type="boolean", description="Visibility of message")
+   *         )
    *     )
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=204,
    *     description="Updated"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=403,
    *     description="Access denied"
    * )
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=404,
    *     description="Application not found"
    * )
-   * @SWG\Tag(name="applications")
+   * @OA\Tag(name="applications")
    *
    * @param $id
    * @param Request $request

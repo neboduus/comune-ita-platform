@@ -12,7 +12,7 @@ use Gedmo\Timestampable\Traits\TimestampableEntity;
 use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use JMS\Serializer\Annotation as Serializer;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -39,7 +39,7 @@ class Meeting
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @SWG\Property(description="Meeting's uuid", type="string")
+   * @OA\Property(description="Meeting's uuid", type="string")
    * @Groups({"read", "kafka"})
    */
   private $id;
@@ -48,7 +48,7 @@ class Meeting
  * @ORM\ManyToOne(targetEntity="App\Entity\Calendar")
  * @ORM\JoinColumn(name="calendar_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
  * @Assert\NotBlank(message="Questo campo è obbligatorio (calendar)")
- * @SWG\Property(description="Meeting's calendar id", type="string")
+ * @OA\Property(description="Meeting's calendar id", type="string")
  * @Groups({"kafka"})
  */
   private $calendar;
@@ -56,7 +56,7 @@ class Meeting
   /**
    * @ORM\ManyToOne(targetEntity="App\Entity\OpeningHour", inversedBy="meetings")
    * @ORM\JoinColumn(name="opening_hour_id", referencedColumnName="id", nullable=true)
-   * @SWG\Property(description="Meeting's opening hour id", type="string")
+   * @OA\Property(description="Meeting's opening hour id", type="string")
    * @Groups({"kafka"})
    */
   private $openingHour;
@@ -65,7 +65,7 @@ class Meeting
    * @var string
    *
    * @ORM\Column(name="email", type="string", length=255, nullable=true)
-   * @SWG\Property(description="Meeting's user email", type="string")
+   * @OA\Property(description="Meeting's user email", type="string")
    * @Groups({"read", "write", "kafka"})
    */
   private $email;
@@ -74,7 +74,7 @@ class Meeting
    * @var string
    *
    * @ORM\Column(name="phone_number", type="string", nullable=true)
-   * @SWG\Property(description="Meeting's user phone number", type="string")
+   * @OA\Property(description="Meeting's user phone number", type="string")
    * @Groups({"read", "write", "kafka"})
    */
   private $phoneNumber;
@@ -83,7 +83,7 @@ class Meeting
    * @var string
    *
    * @ORM\Column(name="fiscal_code", type="string", length=16, nullable=true)
-   * @SWG\Property(description="Meeting's user fiscal code", type="string")
+   * @OA\Property(description="Meeting's user fiscal code", type="string")
    * @Groups({"read", "write", "kafka"})
    */
   private $fiscalCode;
@@ -92,7 +92,7 @@ class Meeting
    * @var string
    *
    * @ORM\Column(name="name", type="string", length=255, nullable=true)
-   * @SWG\Property(description="Meeting's user name", type="string")
+   * @OA\Property(description="Meeting's user name", type="string")
    * @Groups({"read", "write", "kafka"})
    */
   private $name;
@@ -100,7 +100,7 @@ class Meeting
   /**
    * @ORM\ManyToOne(targetEntity="App\Entity\CPSUser")
    * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
-   * @SWG\Property(description="Meeting's user id", type="string")
+   * @OA\Property(description="Meeting's user id", type="string")
    * @Serializer\Exclude()
    */
   private $user;
@@ -110,7 +110,7 @@ class Meeting
    *
    * @ORM\Column(name="from_time", type="datetime")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (from Time)")
-   * @SWG\Property(description="Meeting's from Time")
+   * @OA\Property(description="Meeting's from Time")
    * @Groups({"read", "write", "kafka"})
    */
   private $fromTime;
@@ -120,7 +120,7 @@ class Meeting
    *
    * @ORM\Column(name="to_time", type="datetime")
    * @Assert\NotBlank(message="Questo campo è obbligatorio (to Time)")
-   * @SWG\Property(description="Meeting's to Time")
+   * @OA\Property(description="Meeting's to Time")
    * @Groups({"read", "write", "kafka"})
    */
   private $toTime;
@@ -129,7 +129,7 @@ class Meeting
    * @var string
    *
    * @ORM\Column(name="user_message", type="text", nullable=true)
-   * @SWG\Property(description="Meeting's User Message", type="string")
+   * @OA\Property(description="Meeting's User Message", type="string")
    * @Groups({"read", "write", "kafka"})
    */
   private $userMessage;
@@ -138,7 +138,7 @@ class Meeting
    * @var string
    *
    * @ORM\Column(name="motivation_outcome", type="text", nullable=true)
-   * @SWG\Property(description="Meeting's Operator Message", type="string")
+   * @OA\Property(description="Meeting's Operator Message", type="string")
    * @Groups({"read", "write", "kafka"})
    */
   private $motivationOutcome;
@@ -154,7 +154,7 @@ class Meeting
    *
    * @ORM\Column(name="videoconference_link", type="string", nullable=true)
    * @Assert\Url(message="url non valido (videoconferenceLink)")
-   * @SWG\Property(description="Meeting's videoconference link", type="string")
+   * @OA\Property(description="Meeting's videoconference link", type="string")
    * @Groups({"read", "write", "kafka"})
    */
   private $videoconferenceLink;
@@ -163,14 +163,14 @@ class Meeting
    * @ORM\Column(type="integer")
    * @Assert\NotBlank(message="Seleziona un'opzione. Lo stato è un parametro obbligatorio")
    * @Assert\NotNull()
-   * @SWG\Property(description="Meeting's status", type="integer")
+   * @OA\Property(description="Meeting's status", type="integer")
    * @Groups({"read", "write"})
    */
   private $status;
 
   /**
    * @ORM\Column(type="integer", nullable=false)
-   * @SWG\Property(description="Meeting's rescheduled times", type="integer")
+   * @OA\Property(description="Meeting's rescheduled times", type="integer")
    * @Groups({"read", "write", "kafka"})
    */
   private $rescheduled;
@@ -179,7 +179,7 @@ class Meeting
    * @var string
    *
    * @ORM\Column(name="cancel_link", type="string", length=255, nullable=true)
-   * @SWG\Property(description="Meeting's cancel link", type="string")
+   * @OA\Property(description="Meeting's cancel link", type="string")
    * @Serializer\Exclude()
    */
   private $cancelLink;
@@ -188,7 +188,7 @@ class Meeting
    * @var \DateTime
    *
    * @ORM\Column(name="draft_expiration", type="datetime", nullable=true)
-   * @SWG\Property(description="Meeting draft expiration time")
+   * @OA\Property(description="Meeting draft expiration time")
    * @Groups({"read", "write", "kafka"})
    */
   private $draftExpiration;
@@ -196,7 +196,7 @@ class Meeting
   /**
    * @var \DateTime
    * @ORM\Column(type="date", nullable=true)
-   * @SWG\Property(description="First available date when meeting was created, format Y-m-d")
+   * @OA\Property(description="First available date when meeting was created, format Y-m-d")
    * @Serializer\Type("DateTime<'Y-m-d'>")
    * @Groups({"read", "write", "kafka"})
    */
@@ -205,7 +205,7 @@ class Meeting
   /**
    * @var \DateTime
    * @ORM\Column(type="time", nullable=true)
-   * @SWG\Property(description="First available end time")
+   * @OA\Property(description="First available end time")
    * @Serializer\Exclude()
    */
   private $firstAvailableStartTime;
@@ -213,7 +213,7 @@ class Meeting
   /**
    * @var \DateTime
    * @ORM\Column(type="time", nullable=true)
-   * @SWG\Property(description="First available end time")
+   * @OA\Property(description="First available end time")
    * @Serializer\Exclude()
    */
   private $firstAvailableEndTime;
@@ -221,7 +221,7 @@ class Meeting
   /**
    * @var \DateTime
    * @ORM\Column(type="datetime", nullable=true)
-   * @SWG\Property(description="Datetime when first availability was stored")
+   * @OA\Property(description="Datetime when first availability was stored")
    * @Groups({"read", "write", "kafka"})
    */
   private $firstAvailabilityUpdatedAt;

@@ -2,6 +2,8 @@
 
 namespace App\Controller\Rest;
 
+use Nelmio\ApiDocBundle\Annotation\Security;
+
 use App\Entity\CPSUser;
 use App\Model\Payment;
 use App\Entity\OperatoreUser;
@@ -21,7 +23,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Nelmio\ApiDocBundle\Annotation\Model;
-use Swagger\Annotations as SWG;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -68,25 +70,27 @@ class PaymentsAPIController extends AbstractFOSRestController
    * @Rest\Get("", name="payments_api_list")
    *
    *
-   * @SWG\Parameter(
+   * @OA\Parameter(
    *      name="remote_id",
    *      in="query",
-   *      type="string",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
    *      required=false,
    *      description="Uuid of remote object of payments"
    *  )
    *
    *
-   * @SWG\Response(
+   * @OA\Response(
    *     response=200,
    *     description="Retrieve list of services",
-   *     @SWG\Schema(
+   *     @OA\JsonContent(
    *         type="array",
-   *         @SWG\Items(ref=@Model(type=Payment::class, groups={"read"}))
+   *         @OA\Items(ref=@Model(type=Payment::class, groups={"read"}))
    *     )
    * )
    *
-   * @SWG\Tag(name="payments")
+   * @OA\Tag(name="payments")
    * @param Request $request
    * @return View
    */
