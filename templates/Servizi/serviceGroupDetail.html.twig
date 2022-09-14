@@ -177,7 +177,7 @@
                     {% if servizio.getNotStickyServices.count > 0 %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
-                           href="#related-service"><span>{{ 'documenti.documento.servizi_correlati' | trans }}</span></a>
+                           href="#related-service"><span>{{ 'documenti.servizi_correlati' | trans }}</span></a>
                       </li>
                     {% endif %}
                   </ul>
@@ -297,7 +297,7 @@
       <section class="col offset-lg-4">
         {% if servizio.getNotStickyServices.count > 0 %}
           <div class="row flex-column py-5 ml-2 ml-lg-0">
-            <h2 class="mb-2 mb-lg-4 mb-3" id="related-service">{{ 'documenti.documento.servizi_correlati' | trans }}</h2>
+            <h2 class="mb-2 mb-lg-4 mb-3" id="related-service">{{ 'documenti.servizi_correlati' | trans }}</h2>
             {% for item in servizio.getNotStickyServices %}
               {{ include('Servizi/parts/panel/service-related.html.twig', {'servizio':item}) }}
             {% endfor %}
