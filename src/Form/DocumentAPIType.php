@@ -114,7 +114,7 @@ class DocumentAPIType extends AbstractType
       ])
       ->add('correlated_services', EntityType::class, [
         'class' => 'App\Entity\Servizio',
-        'label' => 'documenti.cartella.servizi_correlati',
+        'label' => 'documenti.servizi_correlati',
         'multiple' => true
       ])
       ->add('store', CheckboxType::class, [
