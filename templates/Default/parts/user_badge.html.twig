@@ -94,7 +94,7 @@
         </div>
       {% endif %}
     </div>
-  {% else %}
+  {% elseif login_route != constant('App\\Security\\AbstractAuthenticator::LOGIN_TYPE_NONE') %}
     <div class="header-slim-right-zone">
       <div class="it-access-top-wrapper">
         <a data-login-top-button="" class="btn btn-icon btn-full" href="{{ path('user_dashboard') }}"
