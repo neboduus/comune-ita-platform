@@ -118,26 +118,19 @@
                     <div class="row">
                       <div class="col-12 col-md-6">
                         <div class="form-group">
-                          {% if not user.dataNascita %}
-                            {{ form_row(form.data_nascita, {'label': 'user.profile.data_nascita'|trans()}) }}
-                          {% else %}
-                            <label for="data_nascita">{{ 'user.profile.data_nascita'|trans() }}</label>
-                            <input type="text" class="form-control" id="data_nascita" required="required"
-                                   value="{% if not user.dataNascita is empty %}{{ user.dataNascita | date('d/m/Y') }}{% endif %}"
-                                   disabled="disabled">
-                          {% endif %}
+                          {{ form_row(form.data_nascita, {'label': 'user.profile.data_nascita'|trans()}) }}
                         </div>
                       </div>
                       <div class="col-12 col-md-6">
                         <div class="form-group">
-                          {% if not user.luogoNascita %}
-                            {{ form_row(form.luogo_nascita, {'label': 'user.profile.luogo_nascita'|trans()}) }}
+                          {% if form.luogo_nascita.vars.choices is defined %}
+                            <div class="bootstrap-select-wrapper">
+                              {{ form_row(form.luogo_nascita, {'label': 'user.profile.luogo_nascita'|trans()}) }}
+                            </div>
                           {% else %}
-                            <label for="luogo_nascita">{{ 'user.profile.luogo_nascita'|trans() }}</label>
-                            <input type="text" class="form-control" id="luogo_nascita" required="required"
-                                   value="{{ user.municipalityFromCode(user.luogoNascita) }}"
-                                   disabled="disabled">
+                            {{ form_row(form.luogo_nascita, {'label': 'user.profile.luogo_nascita'|trans()}) }}
                           {% endif %}
+
                         </div>
                       </div>
                     </div>

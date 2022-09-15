@@ -1406,6 +1406,7 @@ class CPSUser extends User
     $data["Crotone"] = 'KR';
     $data["Cuneo"] = 'CN';
     $data["Enna"] = 'EN';
+    $data["Estero"] = 'EE';
     $data["Fermo"] = 'FM';
     $data["Ferrara"] = 'FE';
     $data["Firenze"] = 'FI';

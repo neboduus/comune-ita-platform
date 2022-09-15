@@ -20,7 +20,6 @@ use App\Services\RemoteContentProviderServiceInterface;
 use DateTime;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -28,11 +27,9 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatorInterface;
-use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class UserController
@@ -118,11 +115,9 @@ class UserController extends AbstractController
       3
     );
 
-    $threads = [];
-
     $documents = [];
+    // Todo: spostare in DocumentsRepository
     $documentRepo = $this->getDoctrine()->getRepository('App\Entity\Document');
-
     $sql = 'SELECT document.id from document where document.last_read_at is null and ((readers_allowed)::jsonb @> \'"' . $user->getCodiceFiscale() . '"\' or document.owner_id = \'' . $user->getId() . '\')';
     $stmt = $this->getDoctrine()->getConnection()->prepare($sql);
     $documentsIds = $stmt->executeQuery()->fetchAllAssociative();
@@ -135,7 +130,6 @@ class UserController extends AbstractController
       'user' => $user,
       'servizi' => $servizi,
       'pratiche' => $pratiche,
-      'threads' => $threads,
       'documents' => $documents
     ]);
   }
@@ -189,6 +183,8 @@ class UserController extends AbstractController
       ->setEmailContatto($data['email_contatto'])
       ->setCellulareContatto($data['cellulare_contatto'])
       ->setCpsTelefono($data['telefono_contatto'])
+      ->setDataNascita($data['data_nascita'])
+      ->setLuogoNascita($data['luogo_nascita'])
       ->setStatoNascita($data['stato_nascita'])
       ->setIdCard($data['id_card'])
       ->setSdcIndirizzoResidenza($data['sdc_indirizzo_residenza'])
@@ -204,14 +200,6 @@ class UserController extends AbstractController
 
     if (!$user->getSesso() && isset($data['sesso'])){
       $user->setSesso($data['sesso']);
-    }
-
-    if (!$user->getDataNascita() && isset($data['data_nascita'])){
-      $user->setDataNascita($data['data_nascita']);
-    }
-
-    if (!$user->getLuogoNascita() && isset($data['luogo_nascita'])){
-      $user->setLuogoNascita($data['luogo_nascita']);
     }
 
     if (!$user->getProvinciaNascita() && isset($data['provincia_nascita'])){
@@ -269,6 +257,9 @@ class UserController extends AbstractController
       ->add('id_card', IdCardType::class,
         ['label' => false, 'data' => $user->getIdCard(), 'required' => false]
       )
+      ->add('data_nascita', DateType::class,
+        ['widget' => 'single_text', 'required' => true, 'label' => false, 'data' => $user->getDataNascita()]
+      )
       ->add('stato_nascita', TextType::class,
         ['label' => false, 'data' => $user->getStatoNascita(), 'required' => false]
       )
@@ -318,17 +309,17 @@ class UserController extends AbstractController
       );
     }
 
-    if (!$user->getDataNascita()){
-      $formBuilder->add('data_nascita', DateType::class,
-        ['widget' => 'single_text', 'required' => true, 'label' => false]
-      );
-    }
-
-    if (!$user->getLuogoNascita()) {
+    // Luogo di nascita
+    try {
+      MunicipalityConverter::translate($user->getLuogoNascita());
       $formBuilder->add('luogo_nascita', ChoiceType::class,
-        ['label' => false, 'required' => true, 'choices' => MunicipalityConverter::getCodes(),  'choice_label' => function ($value) {
+        ['label' => false, 'required' => true, 'data' => $user->getMunicipalityFromCode($user->getLuogoNascita()), 'choices' => MunicipalityConverter::getCodes(),  'choice_label' => function ($value) {
           return $value;
-        },]
+        }]
+      );
+    } catch (\Exception $e) {
+      $formBuilder->add('luogo_nascita', TextType::class,
+        ['label' => false, 'data' => $user->getLuogoNascita(), 'required' => true]
       );
     }
 
@@ -346,7 +337,7 @@ class UserController extends AbstractController
   /**
    * @Route("/latest_news", name="user_latest_news")
    * @param Request $request
-   *
+   * @deprecated deprecated since version 1.6.5
    * @return JsonResponse
    */
   public function latestNewsAction(Request $request)
@@ -361,6 +352,7 @@ class UserController extends AbstractController
 
   /**
    * @Route("/latest_deadlines", name="user_latest_deadlines")
+   * @deprecated deprecated since version 1.6.5
    * @param Request $request
    *
    * @return JsonResponse
@@ -375,6 +367,10 @@ class UserController extends AbstractController
     return $response;
   }
 
+  /**
+   * @return \App\Entity\Ente[]|array|object[]
+   * @deprecated deprecated since version 1.6.5
+   */
   private function getEntiFromCurrentUser()
   {
     $entityManager = $this->getDoctrine()->getManager();
