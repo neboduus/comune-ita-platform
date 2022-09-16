@@ -185,7 +185,7 @@ parameters:
   env(PASSWORD_LIFE_TIME): '365'
   env(INACTIVE_USER_LIFE_TIME): '545'
   env(LOGS_PATH): '%kernel.logs_dir%/%kernel.environment%.log'
-  env(FORMSERVER_PRIVATE_URL): http//formserver
+  env(FORMSERVER_PRIVATE_URL): http://formserver
   env(FORMSERVER_PUBLIC_URL): http://formserver.localtest.me
   env(FORMSERVER_ADMIN_URL): http://formserver.localtest.me
   env(HASH_VALIDITY): '1'
