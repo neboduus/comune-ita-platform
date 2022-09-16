@@ -135,7 +135,7 @@ servizio:
   categoria: "Kategorie"
   cos_e: "Worum handelt es sich?"
   descrizione: "Beschreibung"
-  a_chi_si_rivolge: "Wer kann diesen Dienst nutzen?"
+  a_chi_si_rivolge: "Wer kann die angebotenen Dienste nutzen?"
   copertura: "Landesgerichtssprengel"
   copertura_helper: "Landesgerichtssprengel"
   accedere: "Hier geht's zum Online-Dienst"
@@ -167,8 +167,8 @@ servizio:
   no_topics: 'BACKOFFICE'
   no_recipients: 'Es wurde keine Nutzerkategorie angegeben'
   no_geographic_areas: 'Es wurde keine geografische Zone angegeben.'
-  shared_with_group_message: 'Dieser Dienst teilt die Daten mit der Dienstgruppe, weiter unten werden die verknüpften Inhalte angezeigt.'
-  shared_with_group_action: 'Dienstgruppe bearbeiten'
+  shared_with_group_message: 'Dieser Dienst teilt die Daten mit der Gruppe von Diensten, weiter unten werden die verknüpften Inhalte angezeigt.'
+  shared_with_group_action: 'Gruppe von Diensten bearbeiten'
   sottotitolo_categorie: "Untertitel_Kategorien"
   generali: "allgemein"
   modulo_utente: "Formblatt_Benutzer"
@@ -256,7 +256,7 @@ gruppo_di_servizi:
   errore_rimozione: 'Der Dienst kann nicht entfernt werden.'
   cos_e: "Worum handelt es sich?"
   # qual il soggetto sottinteso?
-  a_chi_si_rivolge: "Wer kann diese Dienste nutzen?"
+  a_chi_si_rivolge: "Wer kann die angebotenen Dienste nutzen?"
   copertura: "Landesgerichtssprengel"
   copertura_helper: "Landesgerichtssprengel"
   accedere: "Hier geht's zum Online-Dienst"
@@ -703,20 +703,6 @@ documenti:
     data_scadenza: "Ablaufdatum"
     servizi_correlati: "damit zusammenhängende Dienste"
     no_servizi_correlati: "Es scheinen keine Dienste auf, die mit diesem Dokument in Zusammenhang stehen"
-    owner: ""
-    folder: ""
-    md5: "md5"
-    mime_type: ""
-    original_filename: ""
-    address: ""
-    file: ""
-    title: ""
-    topics: ""
-    description: ""
-    readers_allowed: ""
-    validity_begin: ""
-    validity_end: ""
-    store: ""
   cartella:
     nome: "Name des Ordners"
     data_creazione: "Erstellungsdatum"
@@ -1151,7 +1137,7 @@ operatori:
   enabled_services: 'Berechtigt'
   form_field: 'Eingabefeld'
   scheda: "Datenblatt"
-  copy_url_service_group: "Kopiere öffentliche URL der Kategorie von Diensten"
+  copy_url_service_group: "Kopiere öffentliche URL der Gruppe von Diensten"
   public_url_service_group: "öffentliche URL der Gruppe von Diensten"
   delete_service_group: 'Sind Sie sicher, dass Sie fortfahren möchten? Die Gruppe von Diensten wird endgültig gelöscht.'
   delete_services: "Sind Sie sicher, dass Sie fortfahren möchten? Der Dienst wird aus der Gruppe von Diensten gelöscht."
