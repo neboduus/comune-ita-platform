@@ -322,6 +322,7 @@ class MeetingService
     $slots = [];
     $startDate = max($from ?? new DateTime(), $openingHour->getStartDate())->format('Y-m-d');
     $endDate = min($to ?? (new DateTime())->modify('+1year'), $openingHour->getEndDate())->format('Y-m-d');
+    $originalEndDate = clone $openingHour->getEndDate();
     foreach ($this->explodeDays($openingHour, $all, $startDate, $endDate) as $date) {
       $futureEvent = $date >= (new DateTime())->format('Y-m-d');
       // Monthly view availability: Check day only, without time
@@ -340,6 +341,7 @@ class MeetingService
         $slots[] = $this->getCalendarEvent('Apertura', $start, $end, false);
       }
     }
+    $openingHour = $openingHour->setEndDate($originalEndDate);
     return $slots;
   }
 
