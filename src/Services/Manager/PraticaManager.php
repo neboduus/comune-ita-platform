@@ -866,4 +866,5 @@ class PraticaManager
     }
     return $files;
   }
+
 }
