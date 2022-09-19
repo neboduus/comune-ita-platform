@@ -35,6 +35,7 @@ use App\Services\ModuloPdfBuilderService;
 use App\Services\PaymentService;
 use App\Services\PraticaStatusService;
 use App\Utils\FormUtils;
+use App\Utils\StringUtils;
 use App\Utils\UploadedBase64File;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -225,7 +226,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @Rest\Get("", name="applications_api_list")
    *
    * @Security(name="Bearer")
-   * 
+   *
    * @OA\Parameter(
    *      name="version",
    *      in="query",
@@ -235,7 +236,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Version of Api, default 1. From version 2 data field keys are exploded in a json object instead of version 1.* where are flattened strings"
    * )
-   * 
+   *
    * @OA\Parameter(
    *      name="service",
    *      in="query",
@@ -245,7 +246,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Slug of the service"
    * )
-   * 
+   *
    * @OA\Parameter(
    *      name="order",
    *      in="query",
@@ -255,7 +256,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Order field. Default creationTime"
    * )
-   * 
+   *
    * @OA\Parameter(
    *      name="sort",
    *      in="query",
@@ -265,7 +266,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Sorting criteria of the order field. Default ASC"
    * )
-   * 
+   *
    * @OA\Parameter(
    *      name="createdAt[after|before|strictly_after|strictly_before]",
    *      in="query",
@@ -275,7 +276,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Created at filter, format yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"
    * )
-   * 
+   *
    * @OA\Parameter(
    *      name="updatedAt[after|before|strictly_after|strictly_before]",
    *      in="query",
@@ -285,7 +286,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Updated at filter, format yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"
    * )
-   * 
+   *
    * @OA\Parameter(
    *      name="submittedAt[after|before|strictly_after|strictly_before]",
    *      in="query",
@@ -295,7 +296,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Submitted at filter, format yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"
    * )
-   * 
+   *
    * @OA\Parameter(
    *      name="status",
    *      in="query",
@@ -305,7 +306,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Status code of application"
    * )
-   * 
+   *
    * @OA\Parameter(
    *      name="offset",
    *      in="query",
@@ -315,7 +316,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Offset of the query"
    * )
-   * 
+   *
    * @OA\Parameter(
    *      name="limit",
    *      in="query",
@@ -648,9 +649,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $schema = $result['schema'];
     $this->praticaManager->setSchema($schema);
     $flatSchema = $this->praticaManager->arrayFlat($schema, true);
-    $flatData = $this->praticaManager->arrayFlat($applicationModel->getData());
+    $cleanedData = StringUtils::cleanData($applicationModel->getData());
+    $flatData = $this->praticaManager->arrayFlat($cleanedData);
 
-    if (empty($applicationModel->getData())) {
+    if (empty($cleanedData)) {
       return $this->view(["Empty application are not allowed"], Response::HTTP_BAD_REQUEST);
     }
 
@@ -669,8 +671,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       'schema' => $flatSchema,
     ];
 
-    if (!empty($applicationModel->getData())) {
-      $data['data'] = $applicationModel->getData();
+    if (!empty($cleanedData)) {
+      $data['data'] = $cleanedData;
       $data['flattened'] = $flatData;
     }
 

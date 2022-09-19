@@ -75,4 +75,16 @@ class StringUtils
     return implode($pass); //turn the array into a string
   }
 
+
+  /**
+   * @param array $data
+   * @return array
+   */
+  public static function cleanData(array $data): array
+  {
+    $dataString = str_replace("\\u0000", "",  json_encode($data));
+    $dataString = str_replace("\\x00", "",  $dataString);
+    return (array)json_decode($dataString, true);
+  }
+
 }

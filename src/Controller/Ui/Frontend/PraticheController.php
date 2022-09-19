@@ -28,6 +28,7 @@ use App\Services\Manager\MessageManager;
 use App\Services\Manager\PraticaManager;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
+use App\Utils\StringUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Flagception\Manager\FeatureManagerInterface;
 use Omines\DataTablesBundle\DataTableFactory;
@@ -482,10 +483,11 @@ class PraticheController extends AbstractController
     }
 
     $flatSchema = $this->praticaManager->arrayFlat($schema, true);
-    $flatData = $this->praticaManager->arrayFlat($request->request);
+    $cleanedData = StringUtils::cleanData($request->request->all());
+    $flatData = $this->praticaManager->arrayFlat($cleanedData);
 
     $data = [
-      'data' => $request->request->all(),
+      'data' => $cleanedData,
       'flattened' => $flatData,
       'schema' => $flatSchema,
     ];

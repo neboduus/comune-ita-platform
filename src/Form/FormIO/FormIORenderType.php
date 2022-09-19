@@ -12,6 +12,7 @@ use App\FormIO\Schema;
 use App\FormIO\SchemaFactoryInterface;
 use App\Services\FormServerApiAdapterService;
 use App\Services\UserSessionService;
+use App\Utils\StringUtils;
 use App\Validator\Constraints\ExpressionBasedFormIOConstraint;
 use DateTime;
 use Doctrine\ORM\EntityManager;
@@ -32,6 +33,7 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotEqualTo;
 use function json_encode;
+use App\Services\Manager\PraticaManager;
 
 
 class FormIORenderType extends AbstractType
@@ -71,6 +73,11 @@ class FormIORenderType extends AbstractType
    */
   private $userSessionService;
 
+  /**
+   * @var PraticaManager
+   */
+  private $praticaManager;
+
   private $constraintGroups = ['flow_formIO_step1', 'flow_FormIOAnonymous_step1', 'Default'];
 
   private static $applicantUserMap = [
@@ -91,10 +98,12 @@ class FormIORenderType extends AbstractType
     'applicant.gender.gender' => 'getSessoAsString',
     'cell_number' => 'getCellulare'
   ];
+
   /**
    * @var TranslatorInterface
    */
   private $translator;
+
 
   /**
    * FormIORenderType constructor.
@@ -105,6 +114,7 @@ class FormIORenderType extends AbstractType
    * @param SessionInterface $session
    * @param UserSessionService $userSessionService
    * @param TranslatorInterface $translator
+   * @param PraticaManager $praticaManager
    */
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -113,6 +123,7 @@ class FormIORenderType extends AbstractType
     LoggerInterface $logger,
     SessionInterface $session,
     UserSessionService $userSessionService,
+    PraticaManager $praticaManager,
     TranslatorInterface $translator
   )
   {
@@ -123,6 +134,7 @@ class FormIORenderType extends AbstractType
     $this->session = $session;
     $this->userSessionService = $userSessionService;
     $this->translator = $translator;
+    $this->praticaManager = $praticaManager;
   }
 
   /**
@@ -208,11 +220,12 @@ class FormIORenderType extends AbstractType
 
     $compiledData = [];
     $flattenedData = [];
-    $flattenedSchema = $this->arrayFlat($this->schema, true);
+    $flattenedSchema = $this->praticaManager->arrayFlat($this->schema, true);
 
     if (isset($event->getData()['dematerialized_forms'])) {
       $compiledData = (array)json_decode($event->getData()['dematerialized_forms'], true);
-      $flattenedData = $this->arrayFlat($compiledData);
+      $compiledData = StringUtils::cleanData($compiledData);
+      $flattenedData = $this->praticaManager->arrayFlat($compiledData);
     }
 
     if ($pratica->getServizio()->isPaymentRequired() && !$this->isPaymentValid($compiledData)) {
@@ -440,37 +453,6 @@ class FormIORenderType extends AbstractType
     }
 
     return $data->toArray();
-  }
-
-  /**
-   * @param $array
-   * @param bool $isSchema
-   * @param string $prefix
-   * @return array
-   */
-  private function arrayFlat($array, $isSchema = false, $prefix = '')
-  {
-    $result = array();
-    foreach ($array as $key => $value) {
-
-      if ($key === 'metadata' || $key === 'state') {
-        continue;
-      }
-
-      $isFile = false;
-      if (!$isSchema && isset($this->schema[$key]['type']) &&
-        ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'sdcfile' || $this->schema[$key]['type'] == 'financial_report')) {
-        $isFile = true;
-      }
-      $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
-
-      if (is_array($value) && !$isFile) {
-        $result = array_merge($result, $this->arrayFlat($value, $isSchema, $new_key));
-      } else {
-        $result[$new_key] = $value;
-      }
-    }
-    return $result;
   }
 
   /**
