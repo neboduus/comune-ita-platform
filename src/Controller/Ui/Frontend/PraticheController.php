@@ -475,6 +475,9 @@ class PraticheController extends AbstractController
    */
   public function draftAction(Request $request, Pratica $pratica)
   {
+    if ($pratica->getStatus() !== Pratica::STATUS_DRAFT) {
+      return new JsonResponse(['status' => 'Application status is not valid'], Response::HTTP_BAD_REQUEST);
+    }
     $service = $pratica->getServizio();
     $schema = null;
     $result = $this->formServerService->getFormSchema($service->getFormIoId());
