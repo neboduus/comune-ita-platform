@@ -18,7 +18,6 @@ use App\Protocollo\Exception\AlreadyUploadException;
 use App\Protocollo\Exception\IncompleteExecutionException;
 use App\Protocollo\Exception\ParentNotRegisteredException;
 use App\Protocollo\PredisposedProtocolHandlerInterface;
-use App\Protocollo\ProtocolloEvents;
 use App\Protocollo\ProtocolloHandlerInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -151,7 +150,8 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     }
 
     if ($dispatchSuccess) {
-      $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica), ProtocollaPraticaSuccessEvent::NAME);
+      // Nb: I subscriber sono registrati sulla classe quindi non va passato il secondo parametro Name
+      $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica));
     } else {
       throw new IncompleteExecutionException();
     }
@@ -185,7 +185,8 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       $this->entityManager->persist($pratica);
       $this->entityManager->flush();
     }
-    $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica), ProtocollaPraticaSuccessEvent::NAME);
+    // Nb: I subscriber sono registrati sulla classe quindi non va passato il secondo parametro Name
+    $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica));
   }
 
   /**
@@ -326,7 +327,8 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
       $this->entityManager->flush();
 
-      $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica), ProtocollaPraticaSuccessEvent::NAME);
+      // Nb: I subscriber sono registrati sulla classe quindi non va passato il secondo parametro Name
+      $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica));
     } else {
       throw new IncompleteExecutionException();
     }
@@ -373,15 +375,14 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
         $this->handler->protocolPredisposedAttachment($pratica, $rispostaOperatore);
       } catch (\Exception $e) {
         $this->logger->error("Errore nella predisposizione della pratica", ['pratica' => $pratica->getId()]);
-        $dispatchSuccess = false;
       }
     }
 
     $this->entityManager->persist($rispostaOperatore);
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
-
-    $this->dispatcher->dispatch(new ProtocollaAllegatiOperatoreSuccessEvent($pratica), ProtocollaAllegatiOperatoreSuccessEvent::NAME);
+    // Nb: I subscriber sono registrati sulla classe quindi non va passato il secondo parametro Name
+    $this->dispatcher->dispatch(new ProtocollaAllegatiOperatoreSuccessEvent($pratica));
   }
 
   /**

@@ -26,7 +26,6 @@ use App\FormIO\Schema;
 use App\FormIO\SchemaComponent;
 use App\FormIO\SchemaFactoryInterface;
 use App\Logging\LogConstants;
-use App\Protocollo\ProtocolloEvents;
 use App\Services\InstanceService;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
