@@ -283,6 +283,5 @@ services:
     image: mailhog/mailhog
     labels:
       traefik.enable: 'true'
-      traefik.docker.network: 'default'
       traefik.http.services.mailserver.loadbalancer.server.port: 8025
       traefik.http.routers.mailserver.rule: 'Host(`mail.localtest.me`)'
