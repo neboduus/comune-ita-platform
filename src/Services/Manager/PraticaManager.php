@@ -4,13 +4,11 @@
 namespace App\Services\Manager;
 
 
-use App\Dto\Application;
 use App\Entity\Allegato;
 use App\Entity\AllegatoMessaggio;
 use App\Entity\CPSUser;
 use App\Entity\FormIO;
 use App\Entity\Message;
-use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
 use App\Entity\PraticaRepository;
 use App\Entity\RichiestaIntegrazioneDTO;
@@ -19,27 +17,24 @@ use App\Entity\RispostaIntegrazioneRepository;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
 use App\Entity\User;
-use App\Event\DispatchEmailFromMessageEvent;
-use App\Event\ProtocollaPraticaSuccessEvent;
-use App\Form\FormIO\FormIORenderType;
 use App\FormIO\Schema;
 use App\FormIO\SchemaComponent;
 use App\FormIO\SchemaFactoryInterface;
 use App\Logging\LogConstants;
+use App\Payment\Gateway\Bollo;
+use App\Payment\Gateway\MyPay;
+use App\Protocollo\ProtocolloEvents;
 use App\Services\InstanceService;
 use App\Services\ModuloPdfBuilderService;
+use App\Services\PaymentService;
 use App\Services\PraticaStatusService;
 use App\Utils\UploadedBase64File;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\NonUniqueResultException;
-use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\ORMException;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -105,6 +100,10 @@ class PraticaManager
    * @var MessageManager
    */
   private $messageManager;
+  /**
+   * @var PaymentService
+   */
+  private $paymentService;
 
   /**
    * PraticaManagerService constructor.
@@ -115,7 +114,8 @@ class PraticaManager
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
    * @param SchemaFactoryInterface $schemaFactory
-   * @param MessageManager $messageManager
+   * @param MessageManager $messageManager ,
+   * @param PaymentService $paymentService
    */
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -125,7 +125,8 @@ class PraticaManager
     TranslatorInterface $translator,
     LoggerInterface $logger,
     SchemaFactoryInterface $schemaFactory,
-    MessageManager $messageManager
+    MessageManager $messageManager,
+    PaymentService $paymentService
   )
   {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
@@ -136,6 +137,7 @@ class PraticaManager
     $this->translator = $translator;
     $this->schemaFactory = $schemaFactory;
     $this->messageManager = $messageManager;
+    $this->paymentService = $paymentService;
   }
 
   /**
@@ -216,12 +218,12 @@ class PraticaManager
 
     if ($pratica->getOperatore() && $pratica->getOperatore()->getFullName() === $user->getFullName()) {
       throw new BadRequestHttpException(
-        "La pratica è già assegnata a {$pratica->getOperatore()->getFullName()}"
+        $this->translator->trans('pratica.already_assigned', ['%operator_fullname%' => $pratica->getOperatore()->getFullName()])
       );
     }
 
     if ($pratica->getServizio()->isProtocolRequired() && $pratica->getNumeroProtocollo() === null) {
-      throw new BadRequestHttpException("La pratica non ha ancora un numero di protocollo");
+      throw new BadRequestHttpException($this->translator->trans('pratica.no_protocol_number'));
     }
 
     $pratica->setOperatore($user);
@@ -255,7 +257,7 @@ class PraticaManager
       || $pratica->getStatus() == Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE
       || $pratica->getStatus() == Pratica::STATUS_CANCELLED
       || $pratica->getStatus() == Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE) {
-      throw new BadRequestHttpException('La pratica è già stata elaborata');
+      throw new BadRequestHttpException($this->translator->trans('pratica.already_processed'));
     }
 
     if ($pratica->getRispostaOperatore() == null) {
@@ -272,6 +274,19 @@ class PraticaManager
       $statusChange->setOperatore($user->getFullName());
 
       if ($pratica->getServizio()->isPaymentDeferred() && $pratica->getPaymentAmount() > 0) {
+        // Seleziono il primo gateway disponibile
+        $selectedGateways = $pratica->getServizio()->getPaymentParameters()['gateways'] ?? [];
+        if (!$selectedGateways) {
+          throw new BadRequestHttpException($this->translator->trans('payment.no_selected_gateways'));
+        }
+        $identifier = array_keys($selectedGateways)[0];
+
+        if (!in_array($identifier, [Bollo::IDENTIFIER, MyPay::IDENTIFIER])) {
+          // Mantengo la logica precedente
+          $pratica->setPaymentData($this->paymentService->createPaymentData($pratica));
+          $pratica->setPaymentType($identifier);
+        }
+
         $this->praticaStatusService->setNewStatus(
           $pratica,
           Pratica::STATUS_PAYMENT_PENDING,
@@ -339,7 +354,7 @@ class PraticaManager
   {
 
     if ($pratica->getStatus() == Pratica::STATUS_WITHDRAW) {
-      throw new BadRequestHttpException('La pratica è già stata elaborata');
+      throw new BadRequestHttpException($this->translator->trans('pratica.already_processed'));
     }
 
     if ($pratica->getWithdrawAttachment() == null) {

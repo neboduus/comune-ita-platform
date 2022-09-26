@@ -4,23 +4,14 @@
 namespace App\Dto;
 
 use App\Entity\Allegato;
-use App\Entity\Meeting;
-use App\Entity\ModuloCompilato;
 use App\Entity\Pratica;
 use App\Entity\RichiestaIntegrazione;
 use App\Entity\RispostaIntegrazione;
 use App\Entity\RispostaIntegrazioneRepository;
 use App\Entity\UserSession;
-use App\Form\Admin\Servizio\FormIOI18nType;
 use App\Payment\GatewayCollection;
-use App\Payment\PaymentDataInterface;
 use App\Services\PraticaStatusService;
-use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use JMS\Serializer\Annotation as Serializer;
-use JMS\Serializer\Annotation\Groups;
-use OpenApi\Annotations as OA;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -408,7 +399,7 @@ class ApplicationDto extends AbstractDto
    * @param Pratica $pratica
    * @return mixed
    */
-  public function preparePaymentData($pratica)
+  public function preparePaymentData(Pratica $pratica)
   {
     if (!empty($pratica->getPaymentData())) {
       $availableGateways = $this->gatewayCollection->getAvailablePaymentGateways();

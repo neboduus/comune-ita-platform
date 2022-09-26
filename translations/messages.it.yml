@@ -396,6 +396,9 @@ pratica:
   file_name: 'Nome del file'
   hash: 'Hash del file'
   error_upload_file_sdc: "Errore durante il caricamento dei file, riprova più tardi oppure contatta l'amministratore"
+  already_processed: 'La pratica è già stata elaborata'
+  already_assigned: 'La pratica è già assegnata a %operator_fullname%'
+  no_protocol_number: 'La pratica non ha ancora un numero di protocollo'
   in_attesa_protocollo: 'In attesa di protocollazione'
   protocollo_non_richiesto: '(non necessario)'
   richiedente: 'Richiedente'
@@ -2670,6 +2673,8 @@ payment:
   parameters_needed_for: 'Parametri necessari per %gateway%'
   error_amount: 'Devi inserire un costo maggiore di zero'
   error_select_type: 'Devi scegliere almeno un metodo di pagamento'
+  error_too_many_gateways: 'Non è più possibile selezionare più di un metodo di pagamento'
+  no_selected_gateways: 'Per questo servizio non è stato selezionato alcun metodo di pagamento'
   pay_office:
     title: "Paga sul territorio"
     description: "Potrai pagare successivamente il servizio richiesto, scaricando il modulo PDF tramite il pulsante sottostante."
