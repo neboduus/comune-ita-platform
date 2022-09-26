@@ -686,7 +686,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
           'title' => 'There was an error during save process',
           'description' => $e->getMessage(),
         ];
-
         return $this->view($data, Response::HTTP_BAD_REQUEST);
       }
     } else {
@@ -701,7 +700,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $user = $this->praticaManager->checkUser($data);
       } catch (\Exception $e) {
         $this->logger->error($e->getMessage());
-
         return $this->view(["Something is wrong"], Response::HTTP_INTERNAL_SERVER_ERROR);
       }
     }

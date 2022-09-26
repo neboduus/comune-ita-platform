@@ -171,7 +171,8 @@ class AllegatoController extends AbstractController
 
       $allegato = new Allegato();
       $user  = $this->getUser();
-      if ($user instanceof CPSUser || $user instanceof User) {
+      // Gli allegati sono di proprietà dei soli utenti
+      if ($user instanceof CPSUser) {
         $allegato->setOwner($user);
       }
 
