@@ -93,14 +93,15 @@ class PaymentDataType extends AbstractType
 
     $paymentParameters = $service->getPaymentParameters();
     $selectedGateways = isset($paymentParameters['gateways']) ? $paymentParameters['gateways'] : [];
-    $selectedGatewaysIentifiers = $selectedGatewaysParameters = [];
+    $selectedGatewaysParameters = [];
+    $selectedGatewaysIdentifiers = [];
 
     foreach ($selectedGateways as $s) {
       if ($s instanceof Gateway) {
-        $selectedGatewaysIentifiers [] = $s->getIdentifier();
+        $selectedGatewaysIdentifiers [] = $s->getIdentifier();
         $selectedGatewaysParameters[$s->getIdentifier()] = $s->getParameters();
       } else {
-        $selectedGatewaysIentifiers [] = $s['identifier'];
+        $selectedGatewaysIdentifiers [] = $s['identifier'];
         $selectedGatewaysParameters [$s['identifier']] = $s['parameters'];
       }
     }
@@ -150,7 +151,7 @@ class PaymentDataType extends AbstractType
         'attr' => (($fromForm && $paymentAmount > 0) ? ['readonly' => 'readonly'] : [])
       ])
       ->add('gateways', ChoiceType::class, [
-        'data' => $selectedGatewaysIentifiers,
+        'data' => $selectedGatewaysIdentifiers,
         'choices' => $gatewaysChoice,
         'choice_attr' => function($choice, $key, $value) use ($availableGateways, $service) {
           // adds a class like attending_yes, attending_no, etc
@@ -242,6 +243,12 @@ class PaymentDataType extends AbstractType
           }
           $gateways[$g] = $gateway;
         }
+      }
+
+      if (count($gateways) > 1) {
+        $event->getForm()->addError(
+          new FormError($this->translator->trans('payment.error_too_many_gateways'))
+        );
       }
 
       $paymentParameters = [];
