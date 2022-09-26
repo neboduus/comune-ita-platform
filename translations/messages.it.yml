@@ -104,6 +104,7 @@ from_to: 'al'
 info: 'Informazioni'
 show_all: 'Vedi tutto'
 every: 'Ogni'
+save_changed: 'Ci sono delle modifiche da <b>salvare</b>.'
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'
@@ -2734,6 +2735,7 @@ payment:
   mypay_error: "C'è stato un errore nella creazione della richiesta di pagamento, contatta l'assistenza."
   error_select_payment: "Devi scegliere almeno un metodo di pagamento"
   check_payment: "Verifica pagamento"
+  no_config_tenant_payment: "Nessuna configurazione di pagamento trovata"
 calendar_formio:
   at_hours: "alle ore"
   draft_expiration_text: "Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno"

@@ -39,6 +39,7 @@ operatore: "Sachbearbeiter/-in"
 credits: "Die Einführung des Bürgerservicekontos erfolgt im Rahmen eines Versuchsprojekts der %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Sie müssen Ihre E-Mail aktualisieren, um fortzufahren'
+save_changed: 'Es gibt einige Änderungen beim <b>Speichern</b>.'
 nav:
   home: 'Startseite'
   dashboard: 'Mein Konto'
@@ -2947,6 +2948,7 @@ payment:
   error_select_type: 'Sie müssen mindestens eine Zahlungsart wählen'
   type_payment: 'Art der Zahlung'
   payment_started: "Zahlung in Bearbeitung, warten Sie auf das Ergebnis."
+  no_config_tenant_payment: "Keine Zahlungskonfiguration gefunden"
 calendar_formio:
   at_hours: "Uhrzeit"
   draft_expiration_text: "Für die angegebene Uhrzeit wurde für Sie vorläufig ein Termin reserviert, der bis zum <b>%expire_at%</b> gültig ist."
