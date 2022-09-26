@@ -97,11 +97,15 @@ class Gateways {
     $('.external-pay-choice').each((i, e) => {
       const gatewayIdentifier = $(e).data('identifier');
       const tenantId = $(e).data('tenant');
-      const url = $(e).data('url') + '/tenants/schema';
+      const serviceId = $(e).data('service');
+      const gatewayType = serviceId ? 'services' : 'tenants'
+      const url = $(e).data('url') + '/' + gatewayType + '/schema';
+
 
       const $gatewaySettingsContainer = $('<div id="ente_' + gatewayIdentifier + '" class="gateway-form-type"></div>');
       let settings = {
-        "id": tenantId
+        "id": serviceId ? serviceId : tenantId,
+        ...serviceId  && { tenant_id: tenantId },
       }
 
       Gateways.getTenantsSchema(url).then((result) => {
@@ -133,7 +137,7 @@ class Gateways {
 
             form.nosubmit = true;
             form.on('submit', function (submission) {
-              const url = $(e).data('url') + + '/tenants/' + tenantId;
+              const url = $(e).data('url') + '/' + gatewayType + '/' + settings.id;
               Gateways.putTenantId(url, JSON.stringify(submission.data))
                 .then(function (response) {
                   form.emit('submitDone', submission)
@@ -142,9 +146,8 @@ class Gateways {
               });
             });
             form.ready.then((event) => {
-              const url = $(e).data('url') + + '/tenants/' + tenantId;
+              const url = $(e).data('url')  + '/' + gatewayType + '/' + settings.id;
               Gateways.getTenantId(url).then((res)=>{
-                debugger
                 form.submission = {
                   data: res
                 };
