@@ -57,7 +57,7 @@ class PraticaManager
     'applicant.cell_number' => 'getCellulare',
     'applicant.phone_number' => 'getTelefono',
     'applicant.gender.gender' => 'getSessoAsString',
-    'cell_number' => 'getCellulare'
+    'cell_number' => 'getCellulare',
   ];
 
   /**
@@ -202,7 +202,7 @@ class PraticaManager
       $statusChange
     );
 
-    if($message['message'] !== null) {
+    if ($message['message'] !== null) {
       $this->generateStatusMessage($pratica, $message['message'], $message['subject'], [], $message['visibility']);
     }
 
@@ -292,7 +292,7 @@ class PraticaManager
           Pratica::STATUS_PAYMENT_PENDING,
           $statusChange
         );
-      }  else {
+      } else {
 
         if ($protocolloIsRequired) {
           $this->praticaStatusService->setNewStatus(
@@ -369,13 +369,13 @@ class PraticaManager
       $statusChange
     );
 
-      $this->logger->info(
-        LogConstants::PRATICA_WITHDRAW,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId(),
-        ]
-      );
+    $this->logger->info(
+      LogConstants::PRATICA_WITHDRAW,
+      [
+        'pratica' => $pratica->getId(),
+        'user' => $pratica->getUser()->getId(),
+      ]
+    );
   }
 
   /**
@@ -404,7 +404,9 @@ class PraticaManager
     $message->setProtocolRequired(false);
     $message->setVisibility(Message::VISIBILITY_APPLICANT);
     $message->setMessage($data['message']);
-    $message->setSubject($this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()]));
+    $message->setSubject(
+      $this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()])
+    );
     $message->setAuthor($user);
 
     foreach ($data['attachments'] as $attachment) {
@@ -441,7 +443,11 @@ class PraticaManager
   public function cancelIntegration(Pratica $pratica, User $user)
   {
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
-    $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione($pratica, [], true);
+    $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione(
+      $pratica,
+      [],
+      true
+    );
     $pratica->addAllegato($integrationsAnswer);
 
     if (!$user instanceof CPSUser) {
@@ -462,7 +468,10 @@ class PraticaManager
   public function acceptIntegration(Pratica $pratica, User $user, $messages = null)
   {
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION);
-    $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione($pratica, $messages);
+    $integrationsAnswer = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRispostaIntegrazione(
+      $pratica,
+      $messages
+    );
     $pratica->addAllegato($integrationsAnswer);
 
     if (!$user instanceof CPSUser) {
@@ -551,8 +560,13 @@ class PraticaManager
    * @param string $subject
    * @return Message
    */
-  public function generateStatusMessage(Pratica $pratica, string $text, string $subject, array $callToActions = [], $visibility = Message::VISIBILITY_APPLICANT): Message
-  {
+  public function generateStatusMessage(
+    Pratica $pratica,
+    string $text,
+    string $subject,
+    array $callToActions = [],
+    $visibility = Message::VISIBILITY_APPLICANT
+  ): Message {
     $message = new Message();
     $message->setApplication($pratica);
     $message->setProtocolRequired(false);
@@ -570,7 +584,8 @@ class PraticaManager
     return $message;
   }
 
-  public function createDraftApplication(Servizio $servizio, CPSUser $user, array $additionalDematerializedData) {
+  public function createDraftApplication(Servizio $servizio, CPSUser $user, array $additionalDematerializedData)
+  {
     $pratica = new FormIO();
     $pratica->setUser($user);
     $pratica->setServizio($servizio);
@@ -583,24 +598,24 @@ class PraticaManager
           'completename' => [
             'data' => [
               'name' => $user->getNome(),
-              'surname' => $user->getCognome()
-            ]
+              'surname' => $user->getCognome(),
+            ],
           ],
           'gender' => [
             'data' => [
-              'gender' => $user->getSessoAsString()
-            ]
+              'gender' => $user->getSessoAsString(),
+            ],
           ],
           'Born' => [
             'data' => [
               'natoAIl' => $user->getDataNascita()->format('d/m/Y'),
-              'place_of_birth' => $user->getLuogoNascita()
-            ]
+              'place_of_birth' => $user->getLuogoNascita(),
+            ],
           ],
           'fiscal_code' => [
             'data' => [
               'fiscal_code' => $user->getCodiceFiscale(),
-            ]
+            ],
           ],
           'address' => [
             'data' => [
@@ -609,22 +624,24 @@ class PraticaManager
               'municipality' => $user->getCittaResidenza(),
               'postal_code' => $user->getCapResidenza(),
               'county' => $user->getProvinciaResidenza(),
-            ]
+            ],
           ],
           'email_address' => $user->getEmail(),
           'email_repeat' => $user->getEmail(),
           'cell_number' => $user->getCellulare(),
           'phone_number' => $user->getTelefono(),
-        ]
+        ],
       ],
       'cell_number' => $user->getCellulare(),
-      'phone_number' => $user->getTelefono()
+      'phone_number' => $user->getTelefono(),
     ];
 
-    $pratica->setDematerializedForms(["data" => array_merge(
-      $additionalDematerializedData,
-      $cpsUserData
-    )]);
+    $pratica->setDematerializedForms([
+      "data" => array_merge(
+        $additionalDematerializedData,
+        $cpsUserData
+      ),
+    ]);
 
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
@@ -652,7 +669,7 @@ class PraticaManager
         ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'sdcfile' || $this->schema[$key]['type'] == 'financial_report')) {
         $isFile = true;
       }
-      $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
+      $new_key = $prefix.(empty($prefix) ? '' : '.').$key;
 
       if (is_array($value) && !$isFile) {
         $result = array_merge($result, $this->arrayFlat($value, $isSchema, $new_key));
@@ -660,6 +677,7 @@ class PraticaManager
         $result[$new_key] = $value;
       }
     }
+
     return $result;
   }
 
@@ -673,7 +691,6 @@ class PraticaManager
 
     $user = null;
     if ($cf) {
-      //$userRepo = $this->entityManager->getRepository('App\Entity\CPSUser');
       $qb = $this->entityManager->createQueryBuilder()
         ->select('u')
         ->from('App:CPSUser', 'u')
@@ -704,11 +721,21 @@ class PraticaManager
         ->setNome($data['flattened']['applicant.data.completename.data.name'] ?? '')
         ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ?? '')
         ->setDataNascita($birthDay)
-        ->setLuogoNascita(isset($data['flattened']['applicant.data.Born.data.place_of_birth']) && !empty($data['flattened']['applicant.data.Born.data.place_of_birth']) ? $data['flattened']['applicant.data.Born.data.place_of_birth'] : '')
-        ->setSdcIndirizzoResidenza(isset($data['flattened']['applicant.data.address.data.address']) && !empty($data['flattened']['applicant.data.address.data.address']) ? $data['flattened']['applicant.data.address.data.address'] : '')
-        ->setSdcCittaResidenza(isset($data['flattened']['applicant.data.address.data.municipality']) && !empty($data['flattened']['applicant.data.address.data.municipality']) ? $data['flattened']['applicant.data.address.data.municipality'] : '')
-        ->setSdcCapResidenza(isset($data['flattened']['applicant.data.address.data.postal_code']) && !empty($data['flattened']['applicant.data.address.data.postal_code']) ? $data['flattened']['applicant.data.address.data.postal_code'] : '')
-        ->setSdcProvinciaResidenza(isset($data['flattened']['applicant.data.address.data.county']) && !empty($data['flattened']['applicant.data.address.data.county']) ? $data['flattened']['applicant.data.address.data.county'] : '');
+        ->setLuogoNascita(
+          isset($data['flattened']['applicant.data.Born.data.place_of_birth']) && !empty($data['flattened']['applicant.data.Born.data.place_of_birth']) ? $data['flattened']['applicant.data.Born.data.place_of_birth'] : ''
+        )
+        ->setSdcIndirizzoResidenza(
+          isset($data['flattened']['applicant.data.address.data.address']) && !empty($data['flattened']['applicant.data.address.data.address']) ? $data['flattened']['applicant.data.address.data.address'] : ''
+        )
+        ->setSdcCittaResidenza(
+          isset($data['flattened']['applicant.data.address.data.municipality']) && !empty($data['flattened']['applicant.data.address.data.municipality']) ? $data['flattened']['applicant.data.address.data.municipality'] : ''
+        )
+        ->setSdcCapResidenza(
+          isset($data['flattened']['applicant.data.address.data.postal_code']) && !empty($data['flattened']['applicant.data.address.data.postal_code']) ? $data['flattened']['applicant.data.address.data.postal_code'] : ''
+        )
+        ->setSdcProvinciaResidenza(
+          isset($data['flattened']['applicant.data.address.data.county']) && !empty($data['flattened']['applicant.data.address.data.county']) ? $data['flattened']['applicant.data.address.data.county'] : ''
+        );
 
       $user->addRole('ROLE_USER')
         ->addRole('ROLE_CPS_USER')
@@ -724,19 +751,38 @@ class PraticaManager
   /**
    * @param array $data
    * @param CPSUser $user
+   * @param null $applicationId
    * @throws Exception
    */
-  public function validateUserData(array $data, CPSUser $user)
+  public function validateUserData(array $data, CPSUser $user, $applicationId = null)
   {
     if (strcasecmp($data['applicant.data.fiscal_code.data.fiscal_code'], $user->getCodiceFiscale()) != 0) {
+      $this->logger->error("Fiscal code Mismatch", [
+          'pratica' => $applicationId ?? '-',
+          'cps' => $user->getCodiceFiscale(),
+          'form' => $data['applicant.data.fiscal_code.data.fiscal_code'],
+        ]
+      );
       throw new Exception($this->translator->trans('steps.formio.fiscalcode_violation_message'));
     }
 
     if (strcasecmp($data['applicant.data.completename.data.name'], $user->getNome()) != 0) {
+      $this->logger->error("Name Mismatch", [
+          'pratica' => $applicationId ?? '-',
+          'cps' => $user->getCodiceFiscale(),
+          'form' => $data['applicant.data.completename.data.name'],
+        ]
+      );
       throw new Exception($this->translator->trans('steps.formio.name_violation_message'));
     }
 
     if (strcasecmp($data['applicant.data.completename.data.surname'], $user->getCognome()) != 0) {
+      $this->logger->error("Surname Mismatch", [
+          'pratica' => $applicationId ?? '-',
+          'cps' => $user->getCodiceFiscale(),
+          'form' => $data['applicant.data.completename.data.surname'],
+        ]
+      );
       throw new Exception($this->translator->trans('steps.formio.surname_violation_message'));
     }
   }
@@ -794,6 +840,7 @@ class PraticaManager
         }
       }
     }
+
     return $data->toArray();
   }
 
@@ -816,6 +863,13 @@ class PraticaManager
               $attachment->setDescription($file['fileType']);
               $this->entityManager->persist($attachment);
             }
+
+            // Imposto il proprietario per gli allegati appena creati se non presente
+            if (!$attachment->getOwner() instanceof CPSUser) {
+              $attachment->setOwner($pratica->getUser());
+              $this->entityManager->persist($attachment);
+            }
+
             $attachments[] = $id;
             $pratica->addAllegato($attachment);
           } else {
@@ -854,9 +908,10 @@ class PraticaManager
     $count += $pratica->getRichiesteIntegrazione()->count();
 
     if ($pratica->getRispostaOperatore()) {
-      $count ++;
+      $count++;
     }
     $count += $pratica->getAllegatiOperatore()->count();
+
     return $count;
   }
 
@@ -886,10 +941,11 @@ class PraticaManager
         //$files [$labelParts[0]][end($labelParts)][]= Application::prepareFormioFile($data['flattened'][$component->getName()]);
         foreach ($data['flattened'][$component->getName()] as $f) {
           $id = $f['data']['id'];
-          $files [$page][$label][]= $attachments[$id];
+          $files [$page][$label][] = $attachments[$id];
         }
       }
     }
+
     return $files;
   }
 

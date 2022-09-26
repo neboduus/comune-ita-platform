@@ -30,7 +30,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotEqualTo;
 use function json_encode;
 use App\Services\Manager\PraticaManager;
@@ -247,35 +247,15 @@ class FormIORenderType extends AbstractType
       $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.generic_violation_message')));
     }
 
-    // Check su conformità codice fiscale
+    // Check su conformità utente
     if ($pratica->getUser() instanceof CPSUser) {
-      if (strcasecmp($flattenedData['applicant.data.fiscal_code.data.fiscal_code'], $pratica->getUser()->getCodiceFiscale()) != 0) {
-        $this->logger->error("Fiscal code Mismatch", [
-            'pratica' => $pratica->getId(),
-            'cps' => $pratica->getUser()->getCodiceFiscale(),
-            'form' => $flattenedData['applicant.data.fiscal_code.data.fiscal_code']]
-        );
-        $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.fiscalcode_violation_message')));
-      }
-
-      if (strcasecmp($flattenedData['applicant.data.completename.data.name'], $pratica->getUser()->getNome()) != 0) {
-        $this->logger->error("Name Mismatch", [
-            'pratica' => $pratica->getId(),
-            'cps' => $pratica->getUser()->getCodiceFiscale(),
-            'form' => $flattenedData['applicant.data.completename.data.name']]
-        );
-        $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.name_violation_message')));
-      }
-
-      if (strcasecmp($flattenedData['applicant.data.completename.data.surname'], $pratica->getUser()->getCognome()) != 0) {
-        $this->logger->error("Surname Mismatch", [
-            'pratica' => $pratica->getId(),
-            'cps' => $pratica->getUser()->getCodiceFiscale(),
-            'form' => $flattenedData['applicant.data.completename.data.surname']]
-        );
-        $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.surname_violation_message')));
+      try {
+        $this->praticaManager->validateUserData($flattenedData, $pratica->getUser(), $pratica->getId());
+      } catch (\Exception $e) {
+        $event->getForm()->addError(new FormError($e->getMessage()));
       }
     }
+
 
     $formData = [
       'data' => $compiledData,

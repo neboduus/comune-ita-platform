@@ -46,7 +46,6 @@ final class Version20220826160810 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
         $this->addSql('COMMENT ON COLUMN ente.gateways IS \'(DC2Type:json_array)\'');
         $this->addSql('COMMENT ON COLUMN servizio.additional_data IS \'(DC2Type:json_array)\'');
         $this->addSql('COMMENT ON COLUMN servizio.flow_steps IS \'(DC2Type:json_array)\'');
