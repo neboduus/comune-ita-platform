@@ -721,6 +721,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $pratica->setEnte($this->is->getCurrentInstance());
       $pratica->setServizio($service);
       $pratica->setStatus($applicationModel->getStatus(), $statusChange);
+      $this->praticaManager->validateDematerializedData($data);
       $pratica->setDematerializedForms($data);
       if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
         $pratica->setSubmissionTime(time());

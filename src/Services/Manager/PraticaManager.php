@@ -742,6 +742,18 @@ class PraticaManager
   }
 
   /**
+   * @param array $data
+   * @throws Exception
+   */
+  public function validateDematerializedData(array $data)
+  {
+    if (!$data['data'] || !$data['flattened']) {
+      $this->logger->error("Received empty dematerialized data");
+      throw new Exception($this->translator->trans('steps.formio.empty_data_violation_message'));
+    }
+  }
+
+  /**
    * @param Schema $schema
    * @param CPSUser $user
    * @return mixed

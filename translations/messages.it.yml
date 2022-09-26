@@ -1529,6 +1529,7 @@ steps:
       guida_alla_compilazione: 'Specifica uso per il certificato'
       uso: 'Specifica uso per il certificato'
   formio:
+    empty_data_violation_message: "Il modulo non risulta essere compilato, la preghiamo di riprovare o contattare il supporto tecnico indicato nella scheda del servizio."
     generic_violation_message: "Il modulo non sembra essere compilato correttamente, la preghiamo di riprovare o contattare il supporto tecnico indicato nella scheda del servizio."
     attachments_violation_message: "Si è verificato un problema durante il salvataggio degli allegati, si prega di ricompilare la domanda e ripetere l'invio."
     payment_violation_message: "Si è verificato un problema con i dati del pagamento, impossibile inviare la pratica"

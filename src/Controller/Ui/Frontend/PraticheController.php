@@ -18,12 +18,10 @@ use App\FormIO\ExpressionValidator;
 use App\Handlers\Servizio\ForbiddenAccessException;
 use App\Handlers\Servizio\ServizioHandlerRegistry;
 use App\Logging\LogConstants;
-use App\Model\CallToAction;
 use App\Security\Voters\ApplicationVoter;
 use App\Services\BreadcrumbsService;
 use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
-use App\Services\MailerService;
 use App\Services\Manager\MessageManager;
 use App\Services\Manager\PraticaManager;
 use App\Services\ModuloPdfBuilderService;
@@ -36,13 +34,7 @@ use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -52,7 +44,6 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 /**
  * Class PraticheController
@@ -496,6 +487,7 @@ class PraticheController extends AbstractController
     ];
 
     try {
+      $this->praticaManager->validateDematerializedData($data);
       $pratica->setDematerializedForms($data);
       $this->entityManager->persist($pratica);
       $this->entityManager->flush();
@@ -503,6 +495,7 @@ class PraticheController extends AbstractController
       return new JsonResponse(['status' => 'ok']);
 
     } catch (\Exception $e) {
+      $this->logger->error("Received empty dematerialized data for application " . $pratica->getId());
       return new JsonResponse(['status' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 

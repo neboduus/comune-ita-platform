@@ -277,12 +277,18 @@ class FormIORenderType extends AbstractType
       }
     }
 
-
-    $pratica->setDematerializedForms([
+    $formData = [
       'data' => $compiledData,
       'flattened' => $flattenedData,
       'schema' => $flattenedSchema
-    ]);
+    ];
+    try {
+      $this->praticaManager->validateDematerializedData($formData);
+      $pratica->setDematerializedForms($formData);
+    } catch (\Exception $ex) {
+      $this->logger->error("Received empty dematerialized data for application " . $pratica->getId());
+      $event->getForm()->addError(new FormError($ex->getMessage()));
+    }
 
     $attachments = [];
     foreach ($flattenedData as $key => $value) {
