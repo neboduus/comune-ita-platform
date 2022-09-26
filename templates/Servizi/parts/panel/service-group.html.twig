@@ -20,7 +20,7 @@
       </h5>
       <p class="card-text">{{ servizio.description|abstract }}</p>
       <a class="read-more stretched-link" href="{{ path('service_group_show', {'slug': servizio.slug}) }}">
-        <span class="text">Leggi di più</span>
+        <span class="text">{{ 'read_more' | trans }}</span>
         <svg class="icon">
           <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-right"></use>
         </svg>
