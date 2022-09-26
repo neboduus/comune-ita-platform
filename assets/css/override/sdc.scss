@@ -226,7 +226,6 @@ form[name="upload_allegato_operatore"] {
   padding: 1rem;
   border: 1px solid #ccc;
   background-color: #efefef;
-  margin: 0.5rem 0 1.5rem 2rem;
   fieldset {
     margin-bottom: 2rem;
     legend {
@@ -407,5 +406,11 @@ svg{
 }
 
 .list-item-title{
-  font-size: 18px;
+  font-size: 1em;
+}
+
+.save-alert{
+  right: 0;
+  z-index: 99;
+  top: 0;
 }

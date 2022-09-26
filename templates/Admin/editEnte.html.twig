@@ -17,7 +17,8 @@
                                   href="#default-settings" role="tab" aria-controls="default-settings-tab"
                                   aria-selected="true">{{ 'backoffice.entity.setting'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="protocol-tab" data-toggle="tab" href="#protocol" role="tab"
-                                  aria-controls="protocol-tab" aria-selected="false">{{ 'nav.admin.tenant.protocollo'|trans }}</a></li>
+                                  aria-controls="protocol-tab"
+                                  aria-selected="false">{{ 'nav.admin.tenant.protocollo'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="mailers-tab" data-toggle="tab" href="#mailers" role="tab"
                                   aria-controls="mailers-tab"
                                   aria-selected="false">{{ 'backoffice.entity.mailers'|trans }}</a></li>
@@ -25,14 +26,16 @@
                                   aria-controls="meta-tab"
                                   aria-selected="false">{{ 'backoffice.entity.meta'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="payments-tab" data-toggle="tab" href="#payments" role="tab"
-                                  aria-controls="payments-tab" aria-selected="false">{{ 'nav.admin.tenant.pagamenti'|trans }}</a></li>
+                                  aria-controls="payments-tab"
+                                  aria-selected="false">{{ 'nav.admin.tenant.pagamenti'|trans }}</a></li>
           <li class="nav-item"><a class="nav-link" id="options-tab" data-toggle="tab" href="#options" role="tab"
-                                  aria-controls="options-tab" aria-selected="false">{{ 'nav.admin.tenant.opzioni'|trans }}</a></li>
+                                  aria-controls="options-tab"
+                                  aria-selected="false">{{ 'nav.admin.tenant.opzioni'|trans }}</a></li>
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane p-3 fade show active" id="default-settings" role="tabpanel"
                aria-labelledby="default-settings-tab">
-              <p>{{ 'login_type.label'|trans }} <strong>{{ ('login_type.'~login_route)|trans }}</strong></p>
+            <p>{{ 'login_type.label'|trans }} <strong>{{ ('login_type.'~login_route)|trans }}</strong></p>
             <hr>
             {{ form_row(form.name) }}
             {{ form_row(form.codice_meccanografico) }}
@@ -108,7 +111,8 @@
               <div class="row mt-4">
                 <div class="col-9"></div>
                 <div class="col-3">
-                  <button type="button" id="add-mailer" class="btn btn-xs btn-secondary btn-block">{{ 'aggiungi' | trans }}</button>
+                  <button type="button" id="add-mailer"
+                          class="btn btn-xs btn-secondary btn-block">{{ 'aggiungi' | trans }}</button>
                 </div>
               </div>
             </div>
@@ -118,7 +122,8 @@
             {{ form_row(form.backoffice_enabled_integrations) }}
             <div id="linkable_application_meetings" class="form-group">
               {{ form_widget(form.linkable_application_meetings) }}
-              <span class="text-info px-2"><i class="fa fa-info-circle"></i> {{ 'ente.linkable_application_meetings.helper' | trans }} </span>
+              <span class="text-info px-2"><i
+                  class="fa fa-info-circle"></i> {{ 'ente.linkable_application_meetings.helper' | trans }} </span>
             </div>
           </div>
 
@@ -127,12 +132,60 @@
           </div>
 
           <div class="tab-pane p-3 fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
-            {{ form_rest(form) }}
+            <div class="alert alert-warning position-fixed bg-white right-fix save-alert d-none" role="alert">
+              {{ 'save_changed' | trans | raw }}
+            </div>
+
+            <div class="form-check-group form-check">
+              {{ form_label(form.gateways) }}
+              {% for key,gateway in form.gateways.children %}
+                  <div class="card card-bg my-3" id="accordion-{{ gateway.vars.value }}">
+                    <div class="card-body" id="heading-{{ gateway.vars.value }}">
+                      <div class="top-icon">
+                        {% if  gateway.vars.value == 'efil' %}
+                          <img class="icon w-auto" src="{{ asset('bundles/app/images/efil.svg') }}"
+                               alt="efil"/>
+                        {% elseif gateway.vars.value == 'mypay' or gateway.vars.value ==  'mypay2.0' %}
+                          <img class="icon w-auto" src="{{ asset('bundles/app/images/maypay.png') }}"
+                               alt="mypay"/>
+                        {% elseif gateway.vars.value == 'bollo' %}
+                          <svg class="icon icon-50">
+                            <use href="/bootstrap-italia/dist/svg/sprite.svg#it-fullscreen"></use>
+                          </svg>
+                          {% else %}
+                            <svg class="icon icon-50">
+                              <use href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use>
+                            </svg>
+                        {% endif %}
+                      </div>
+                      <h4 class="mb-0">
+                        <div class="" data-toggle="collapse" data-target="#collapse-{{ gateway.vars.value }}"
+                             aria-expanded="{{ gateway.vars.checked ? true : false }}" aria-controls="collapse-{{ gateway.vars.value }}">
+                          {{ form_widget(gateway) }}
+                          {{ form_label(gateway) }}
+                          {{ form_errors(gateway) }}
+                        </div>
+                      </h4>
+                    </div>
+                  {% if gateway.vars.value != 'bollo' and gateway.vars.value != 'mypay' and gateway.vars.data %}
+                    <div id="collapse-{{ gateway.vars.value }}" class="collapse {{ gateway.vars.checked ? 'show' : '' }}"
+                         aria-labelledby="heading-{{ gateway.vars.value }}" data-parent="#accordion-{{ gateway.vars.value }}">
+                      <div class="card-body" id="card-collapse-{{ gateway.vars.value }}"></div>
+                    </div>
+                    {% elseif gateway.vars.value == 'mypay' %}
+                      <div id="collapse-{{ gateway.vars.value }}" class="collapse {{ gateway.vars.checked ? 'show' : '' }}"
+                           aria-labelledby="heading-{{ gateway.vars.value }}" data-parent="#accordion-{{ gateway.vars.value }}">
+                        <div class="card-body" id="card-collapse-{{ gateway.vars.value }}">
+                          {{ form_row(form.mypay) }}
+                        </div>
+                      </div>
+                    {% endif %}
+                  </div>
+              {% endfor %}
+
+            </div>
           </div>
-
-
         </div>
-        <hr>
         <div class="form-group">
           <button type="submit" id="ente_save" class="btn-primary btn">{{ 'salva'|trans }}</button>
           <a href="{{ path('admin_servizio_index') }}" class="btn btn-secondary">{{ 'annulla'|trans }}</a>
