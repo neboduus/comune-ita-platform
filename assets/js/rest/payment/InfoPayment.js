@@ -2,7 +2,7 @@ import moment from "moment";
 import Auth from "../auth/Auth";
 
 
-const PAGOPA = require('../../../images/payments/pagppa.png');
+const PAGOPA = require('../../../app/images/gateways/pagppa.png');
 
 class InfoPayment {
 

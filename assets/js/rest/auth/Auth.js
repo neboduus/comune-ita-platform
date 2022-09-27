@@ -11,7 +11,6 @@ class Auth {
   init() {
     this.token = null;
     this.basePath = new BasePath().getBasePath()
-    console.log(this.basePath)
   }
 
   getSessionAuthToken() {
@@ -21,7 +20,6 @@ class Auth {
         method: "GET",
         dataType: 'json', // type of response data
         success: function (data, status, xhr) {   // success callback function
-          console.log('getSessionAuthToken')
           self.token = data.token;
         },
         error: function (jqXhr, textStatus, errorMessage) { // error callback

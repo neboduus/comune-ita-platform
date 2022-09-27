@@ -132,12 +132,7 @@
           </div>
 
           <div class="tab-pane p-3 fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
-            <div class="alert alert-warning position-fixed bg-white right-fix save-alert d-none" role="alert">
-              {{ 'save_changed' | trans | raw }}
-            </div>
-
             {{ include('Admin/gateways/_gateways_list.html.twig') }}
-
           </div>
         </div>
         <div class="form-group">
