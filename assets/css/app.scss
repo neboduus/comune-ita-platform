@@ -259,7 +259,14 @@ display: none;
   font-size: 12px;
 }
 
-.icon-50{
+.icon{
+  &-50{
   height: 50px;
   width: 50px;
 }
+  &-70{
+    height: 70px;
+    width: 70px;
+  }
+}
+
