@@ -286,7 +286,7 @@ class AllegatoController extends AbstractController
           $allegato->setDescription($description);
           $allegato->setOriginalFilename($request->get('name'));
           $user  = $this->getUser();
-          if ($user instanceof CPSUser || $user instanceof User) {
+          if ($user instanceof CPSUser) {
             $allegato->setOwner($user);
           }
           $allegato->setHash(hash('sha256', $session->getId()));
