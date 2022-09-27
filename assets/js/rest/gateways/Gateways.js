@@ -60,14 +60,14 @@ class Gateways {
     let initGatewayValue = [] // Value on load page
     let currentGatewayValue = [] // Value on change
 
-    $('#payments').find('input[type="checkbox"]').each(function(){
+    $('.row-payments').find('input[type="checkbox"]').each(function(){
       if(this.checked){
         initGatewayValue.push($(this).val());
         currentGatewayValue = initGatewayValue
       }
     })
     // On change
-    $('#payments').find('input[type="checkbox"]').change(function () {
+    $('.row-payments').find('input[type="checkbox"]').change(function () {
       if (this.checked) {
         currentGatewayValue.push(this.value)
       } else {

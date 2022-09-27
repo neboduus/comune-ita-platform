@@ -1,19 +1,27 @@
+<div class="alert alert-warning position-fixed bg-white right-fix save-alert d-none" role="alert">
+  {{ 'save_changed' | trans | raw }}
+</div>
 <div class="form-check-group form-check row-payments">
   {{ form_label(form.gateways) }}
+  {% set identifier = '' %}
   {% for key,gateway in form.gateways.children %}
-    <div class="card card-bg my-3" id="accordion-{{ gateway.vars.value }}">
-      <div class="card-body" id="heading-{{ gateway.vars.value }}">
+    {% set identifier = gateway.vars.value != 'mypay2.0' ? gateway.vars.value : 'mypay2'  %}
+    <div class="card card-bg my-3" id="accordion-{{ identifier }}">
+      <div class="card-body" id="heading-{{ identifier }}">
         <div class="top-icon">
           {% if  gateway.vars.value == 'efil' %}
-            <img class="icon w-auto" src="{{ asset('bundles/app/images/efil.svg') }}"
+            <img class="icon w-auto" src="{{ asset('bundles/app/images/gateways/efil.svg') }}"
                  alt="efil"/>
-          {% elseif gateway.vars.value == 'mypay' or gateway.vars.value ==  'mypay2.0' %}
-            <img class="icon w-auto" src="{{ asset('bundles/app/images/mypay.png') }}"
+          {% elseif gateway.vars.value in 'mypay' %}
+            <img class="icon w-auto" src="{{ asset('bundles/app/images/gateways/mypay.png') }}"
                  alt="mypay"/>
           {% elseif gateway.vars.value == 'bollo' %}
             <svg class="icon icon-50">
               <use href="/bootstrap-italia/dist/svg/sprite.svg#it-fullscreen"></use>
             </svg>
+          {% elseif gateway.vars.value == 'iris' %}
+            <img class="icon w-auto" src="{{ asset('bundles/app/images/gateways/pagppa.png') }}"
+                 alt="iris"/>
           {% else %}
             <svg class="icon icon-50">
               <use href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use>
@@ -21,23 +29,23 @@
           {% endif %}
         </div>
         <h4 class="mb-0">
-          <div class="" data-toggle="collapse" data-target="#collapse-{{ gateway.vars.value }}"
-               aria-expanded="{{ gateway.vars.checked ? true : false }}" aria-controls="collapse-{{ gateway.vars.value }}">
+          <div class="" data-toggle="collapse" data-target="#collapse-{{ identifier }}"
+               aria-expanded="{{ gateway.vars.checked ? true : false }}" aria-controls="collapse-{{ identifier }}">
             {{ form_widget(gateway) }}
             {{ form_label(gateway) }}
             {{ form_errors(gateway) }}
           </div>
         </h4>
       </div>
-      {% if gateway.vars.value != 'bollo' and gateway.vars.value != 'mypay' and gateway.vars.data %}
-        <div id="collapse-{{ gateway.vars.value }}" class="collapse {{ gateway.vars.checked ? 'show' : '' }}"
-             aria-labelledby="heading-{{ gateway.vars.value }}" data-parent="#accordion-{{ gateway.vars.value }}">
-          <div class="card-body" id="card-collapse-{{ gateway.vars.value }}"></div>
+      {% if identifier != 'bollo' and identifier != 'mypay' and gateway.vars.data %}
+        <div id="collapse-{{ identifier }}" class="collapse {{ gateway.vars.checked ? 'show' : '' }}"
+             aria-labelledby="heading-{{ identifier }}" data-parent="#accordion-{{ identifier }}">
+          <div class="card-body" id="card-collapse-{{ identifier }}"></div>
         </div>
-      {% elseif gateway.vars.value == 'mypay' %}
-        <div id="collapse-{{ gateway.vars.value }}" class="collapse {{ gateway.vars.checked ? 'show' : '' }}"
-             aria-labelledby="heading-{{ gateway.vars.value }}" data-parent="#accordion-{{ gateway.vars.value }}">
-          <div class="card-body" id="card-collapse-{{ gateway.vars.value }}">
+      {% elseif identifier == 'mypay' %}
+        <div id="collapse-{{ identifier }}" class="collapse {{ gateway.vars.checked ? 'show' : '' }}"
+             aria-labelledby="heading-{{ identifier }}" data-parent="#accordion-{{ identifier }}">
+          <div class="card-body" id="card-collapse-{{ identifier }}">
             {{ form_row(form.mypay) }}
           </div>
         </div>

@@ -656,7 +656,7 @@ iscrizioni:
   invalid_file: "Il file selezionato non è valido"
   empty_file: "Il file selezionato è vuoto"
   subscriptions_limit_reached: "Il numero di iscrizioni è superiore al numero massimo consentito"
-  no_payments_config: "Nessun sono presenti configurazioni di pagamento"
+  no_payments_config: "Non sono presenti configurazioni di pagamento"
   missing_payment_config: "Nessun pagamento trovato con identificativo %identifier%"
   no_payment_service: 'Il servizio specificato nella configurazione di pagamento non esiste'
   missing_subscriber: '(Riga %index%) Non è stato trovato alcun iscritto con codice fiscale %fiscal_code%'

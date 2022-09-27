@@ -410,7 +410,7 @@ svg{
 }
 
 .save-alert{
-  right: 0;
-  z-index: 99;
-  top: 0;
+  right: 16px;
+  z-index: 2147483001; // greater than announcekit-widget
+  top: 16px;
 }

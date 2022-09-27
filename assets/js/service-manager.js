@@ -463,7 +463,7 @@ $(document).ready(function () {
     });
     paymentRequiredField.trigger('change');
 
-    if( $('#payments-tab').length > 0){
+    if( $('#gateways-tab, #payments-tab').length > 0){
       Gateways.init();
     }
   }
