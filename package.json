@@ -19,6 +19,9 @@
     "webpack-notifier": "1.13.0"
   },
   "dependencies": {
+    "@fontsource/lora": "^4.5.11",
+    "@fontsource/roboto-mono": "^4.5.8",
+    "@fontsource/titillium-web": "^4.5.9",
     "@fullcalendar/bootstrap": "4.2.0",
     "@fullcalendar/core": "4.2.0",
     "@fullcalendar/daygrid": "4.2.0",
