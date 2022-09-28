@@ -1,5 +1,5 @@
 parameters:
-  version: 2.1.0
+  version: 2.1.1
   locale: it
   app_locales: it
   database_driver: '%env(DB_DRIVER)%'
