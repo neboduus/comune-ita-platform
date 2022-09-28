@@ -5,7 +5,7 @@
   {{ form_label(form.gateways) }}
   {% set identifier = '' %}
   {% for key,gateway in form.gateways.children %}
-    {% set identifier = gateway.vars.value != 'mypay2.0' ? gateway.vars.value : 'mypay2'  %}
+    {% set identifier =  '.' in gateway.vars.value ? gateway.vars.value|replace({'.': ""}) : gateway.vars.value  %}
     <div class="card card-bg my-3" id="accordion-{{ identifier }}">
       <div class="card-body" id="heading-{{ identifier }}">
         <div class="top-icon">
