@@ -101,8 +101,10 @@ class Gateways {
       const gatewayType = serviceId ? 'services' : 'tenants'
       const url = $(e).data('url') + '/' + gatewayType + '/schema';
 
+      // Sanitized for "." in name
+      const sanitizeIdentifier = gatewayIdentifier.replace(/\./g, '');
 
-      const $gatewaySettingsContainer = $('<div id="ente_' + gatewayIdentifier + '" class="gateway-form-type"></div>');
+      const $gatewaySettingsContainer = $('<div id="ente_' + sanitizeIdentifier + '" class="gateway-form-type"></div>');
       let settings = {
         "id": serviceId ? serviceId : tenantId,
         ...serviceId  && { tenant_id: tenantId },
@@ -110,8 +112,9 @@ class Gateways {
 
       Gateways.getTenantsSchema(url).then((result) => {
         // Creo l'elemento a cui appendere il form
-        $('#card-collapse-' + gatewayIdentifier).html($gatewaySettingsContainer)
-        Formio.createForm(document.getElementById('ente_' + gatewayIdentifier), result, {
+
+        $('#card-collapse-' + sanitizeIdentifier).html($gatewaySettingsContainer)
+        Formio.createForm(document.getElementById('ente_' + sanitizeIdentifier), result, {
           noAlerts: true,
           buttonSettings: {showCancel: false},
         })
@@ -132,7 +135,6 @@ class Gateways {
               if(initForm && isReady){
                 Gateways.detectChangeFormIO(initForm,event.data)
               }
-
             })
 
             form.nosubmit = true;
@@ -162,9 +164,9 @@ class Gateways {
           })
       }).catch(err => {
         if(err.status === 404){
-          $('#card-collapse-' + gatewayIdentifier).html(`<div>${Translator.trans('iscrizioni.no_payments_config', {}, 'messages', this.$language)}</div>`)
+          $('#card-collapse-' + sanitizeIdentifier).html(`<div>${Translator.trans('iscrizioni.no_payments_config', {}, 'messages', this.$language)}</div>`)
         }else{
-          $('#card-collapse-' + gatewayIdentifier).html('<div>'+ err.statusText + '</div>')
+          $('#card-collapse-' + sanitizeIdentifier).html('<div>'+ err.statusText + '</div>')
         }
 
       })
