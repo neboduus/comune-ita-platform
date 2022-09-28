@@ -72,14 +72,14 @@ Encore
     from: './node_modules/bootstrap-italia/dist/',
     //to: '../bootstrap-italia/dist/[path][name].[hash:8].[ext]',
     to: '../../bootstrap-italia/dist/[path][name].[ext]',
-    pattern: /\.(eot|ttf|woff|woff2|svg)$/,
+    pattern: /\.(svg)$/,
   })
   // Todo: verifica se spostare a livello di php
   .copyFiles({
     from: './assets/app/',
     //to: '../bundles/app/[path][name].[hash:8].[ext]',
     to: '../../bundles/app/[path][name].[ext]',
-    pattern: /\.(ico|png|jpg|jpeg|svg|gif|pdf|js|css|json|txt|ttf|woff|woff2|eot)$/,
+    pattern: /\.(ico|png|jpg|jpeg|svg|gif|pdf|js|css|json|txt)$/,
   })
 .copyFiles({
       from: './assets/images',
