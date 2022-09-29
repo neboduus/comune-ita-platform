@@ -134,7 +134,7 @@ class StatusMessagePraticaListener
         /** @var StatusChange $statusChange */
 
         $statusChange = $pratica->getStoricoStati()->get($timestamp);
-        $statusChange[0][1]["message_id"] = $messageCreated->getId();
+        $statusChange[0][1]["message_id"] = $messageCreated->getId()->toString();
         $pratica->getStoricoStati()->set($timestamp, $statusChange);
 
         $this->entityManager->persist($pratica);
