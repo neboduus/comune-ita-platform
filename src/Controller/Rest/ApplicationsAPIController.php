@@ -78,6 +78,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 /**
  * Class ApplicationsAPIController
@@ -719,7 +720,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $pratica->setEnte($this->is->getCurrentInstance());
       $pratica->setServizio($service);
       $pratica->setStatus($applicationModel->getStatus(), $statusChange);
-      $this->praticaManager->validateDematerializedData($data);
+      $this->praticaManager->validateDematerializedData($data, $pratica);
       $pratica->setDematerializedForms($data);
       if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
         $pratica->setSubmissionTime(time());
@@ -735,17 +736,22 @@ class ApplicationsAPIController extends AbstractFOSRestController
           $this->pdfBuilder->createForPraticaAsync($pratica, $applicationModel->getStatus());
         }
       }
+    } catch (ValidatorException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during data validation',
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
 
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
         'description' => 'Contact technical support at support@opencontent.it',
       ];
-      $this->logger->error(
-        $e->getMessage(),
-        ['request' => $request]
-      );
+      $this->logger->error($e->getMessage(), ['request' => $request]);
 
       return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
     }
