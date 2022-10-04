@@ -9,5 +9,78 @@ services:
       #DEBUG: 1
       VERBOSE: 1
 
+  efil-proxy:
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/efil-payment-proxy:1.0.2
+    environment:
+      KAFKA_TOPIC_NAME: "payments"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+      KAFKA_GROUP_ID: "efil_payment_proxy"
+      EFIL_FEED_URL: "https://services.integrazione.plugandpay.it/Feed/DigitBusFeed.svc"
+      EFIL_DELIVER_URL: "https://services.integrazione.plugandpay.it/Deliver/DigitBusDeliver.svc"
+      EFIL_PDF_URL: "https://generatorpdf.integrazione.plugandpay.it/GeneratorPdf.svc"
+      EFIL_ONLINE_PAYMENT_URL: "https://pagatowisp.integrazione.plugandpay.it/ToWisp/Redirect"
+      BASE_PATH_EVENT: "sdc-payments/efil-dev/payments/"
+      BASE_PATH_CONFIG: "sdc-payments/efil-dev/tenants/"
+      STORAGE_TYPE: "MINIO"
+      STORAGE_ENDPOINT: "minio:9000"
+      STORAGE_KEY: "AKIAIOSFODNN7EXAMPLE"
+      STORAGE_SECRET: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+      STORAGE_BUCKET_NAME: "payments"
+      APP_ID: "efil:1.0.2"
+      FORM_SCHEMA_PATH: "../config"
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: 'default'
+      traefik.http.services.efil.loadbalancer.server.port: 8000
+      traefik.http.routers.efil.rule: 'Host(`efil.localtest.me`)'
+
+
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+    volumes:
+      - ./var/bucket:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
+      MINIO_SECRET_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: 'default'
+      traefik.http.services.minio.loadbalancer.server.port: 9000
+      traefik.http.routers.minio.rule: 'Host(`minio.localtest.me`)'
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      while ! /usr/bin/mc config host add minio http://minio:9000 AKIAIOSFODNN7EXAMPLE wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY;
+      do echo 'Wait minio to startup...' && sleep 0.1; done;
+      /usr/bin/mc mb minio/payments;
+      /usr/bin/mc policy set public minio/payments;
+      exit 0;
+      "
+
+  payment-dispatcher:
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/payment-dispatcher:1.1.2
+    environment:
+      KAFKA_TOPIC_APPLICATIONS: applications
+      KAFKA_TOPIC_PAYMENTS: payments
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+      KAFKA_CONSUMER_GROUP_PREFIX: payment-dispatcher
+      PROMETHEUS_JOB_NAME: payment_dispatcher
+      APP_ID: "payment-dispatcher:1.1.2"
+      KSQLDB_SERVER: http://ksqldb-server:8088
+
+  payments-poller:
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/payments-poller:0.0.5
+    environment:
+      KSQLDB_SERVER: http://ksqldb-server:8088
+      LOOP_TIME: 90
 
 
