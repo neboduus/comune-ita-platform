@@ -1536,6 +1536,7 @@ steps:
     fiscalcode_violation_message: "Il codice fiscale inserito non coincide con quello restituito dal sistema di autenticazione."
     name_violation_message: "Il Nome non coincide con quello restituito dal sistema di autenticazione"
     surname_violation_message: "Il Cognome non coincide con quello restituito dal sistema di autenticazione"
+    duplicated_unique_id: 'Non è possibile inviare la pratica: è già stata presentata una richiesta per questo servizio'
   occupazione_suolo_pubblico:
     nomeIniziativa: 'Nome Manifestazione/Evento'
     guida_alla_compilazione: 'Inserisci i campi richiesti. I campi marcati con un asterisco (*) sono obbligatori'

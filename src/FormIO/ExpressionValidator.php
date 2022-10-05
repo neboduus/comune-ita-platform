@@ -42,7 +42,7 @@ class ExpressionValidator
    * @param string $value
    * @return string[]
    */
-  public function validateData(Servizio $servizio, $value)
+  public function validateData(Servizio $servizio, string $value)
   {
     $formIOId = $servizio->getFormIoId();
     $expression = $servizio->getPostSubmitValidationExpression();

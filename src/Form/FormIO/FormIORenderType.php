@@ -263,10 +263,10 @@ class FormIORenderType extends AbstractType
       'schema' => $flattenedSchema
     ];
     try {
-      $this->praticaManager->validateDematerializedData($formData);
+      $this->praticaManager->validateDematerializedData($formData, $pratica);
       $pratica->setDematerializedForms($formData);
     } catch (\Exception $ex) {
-      $this->logger->error("Received empty dematerialized data for application " . $pratica->getId());
+      $this->logger->error("Received invalid dematerialized data for application {$pratica->getId()}: {$ex->getMessage()}");
       $event->getForm()->addError(new FormError($ex->getMessage()));
     }
 

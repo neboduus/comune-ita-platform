@@ -44,6 +44,7 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 /**
  * Class PraticheController
@@ -487,15 +488,17 @@ class PraticheController extends AbstractController
     ];
 
     try {
-      $this->praticaManager->validateDematerializedData($data);
+      $this->praticaManager->validateDematerializedData($data, $pratica);
       $pratica->setDematerializedForms($data);
       $this->entityManager->persist($pratica);
       $this->entityManager->flush();
 
       return new JsonResponse(['status' => 'ok']);
-
+    } catch (ValidatorException $e) {
+      $this->logger->error("Received invalid dematerialized data for application {$pratica->getId()}: {$e->getMessage()}");
+      return new JsonResponse(['status' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
     } catch (\Exception $e) {
-      $this->logger->error("Received empty dematerialized data for application " . $pratica->getId());
+      $this->logger->error("An error occurred while saving application {$pratica->getId()}: {$e->getMessage()}");
       return new JsonResponse(['status' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 

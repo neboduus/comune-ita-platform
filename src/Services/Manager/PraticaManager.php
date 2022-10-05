@@ -17,6 +17,7 @@ use App\Entity\RispostaIntegrazioneRepository;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
 use App\Entity\User;
+use App\FormIO\ExpressionValidator;
 use App\FormIO\Schema;
 use App\FormIO\SchemaComponent;
 use App\FormIO\SchemaFactoryInterface;
@@ -37,6 +38,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 class PraticaManager
 {
@@ -105,6 +107,9 @@ class PraticaManager
    */
   private $paymentService;
 
+  /** @var ExpressionValidator */
+  private $expressionValidator;
+
   /**
    * PraticaManagerService constructor.
    * @param EntityManagerInterface $entityManager
@@ -115,7 +120,8 @@ class PraticaManager
    * @param LoggerInterface $logger
    * @param SchemaFactoryInterface $schemaFactory
    * @param MessageManager $messageManager ,
-   * @param PaymentService $paymentService
+   * @param PaymentService $paymentService,
+   * @param ExpressionValidator $expressionValidator
    */
   public function __construct(
     EntityManagerInterface $entityManager,
@@ -126,7 +132,8 @@ class PraticaManager
     LoggerInterface $logger,
     SchemaFactoryInterface $schemaFactory,
     MessageManager $messageManager,
-    PaymentService $paymentService
+    PaymentService $paymentService,
+    ExpressionValidator $expressionValidator
   )
   {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
@@ -138,6 +145,7 @@ class PraticaManager
     $this->schemaFactory = $schemaFactory;
     $this->messageManager = $messageManager;
     $this->paymentService = $paymentService;
+    $this->expressionValidator = $expressionValidator;
   }
 
   /**
@@ -791,11 +799,17 @@ class PraticaManager
    * @param array $data
    * @throws Exception
    */
-  public function validateDematerializedData(array $data)
+  public function validateDematerializedData(array $data, Pratica $pratica)
   {
     if (!$data['data'] || !$data['flattened']) {
       $this->logger->error("Received empty dematerialized data");
-      throw new Exception($this->translator->trans('steps.formio.empty_data_violation_message'));
+      throw new ValidatorException($this->translator->trans('steps.formio.empty_data_violation_message'));
+    }
+
+    $errors = $this->expressionValidator->validateData($pratica->getServizio(), json_encode($data['data']));
+    if (!empty($errors)){
+      $this->logger->error("Received duplcated unique_id");
+      throw new ValidatorException($this->translator->trans('steps.formio.duplicated_unique_id'));
     }
   }
 
