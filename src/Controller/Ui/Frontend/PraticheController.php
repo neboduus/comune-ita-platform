@@ -384,7 +384,7 @@ class PraticheController extends AbstractController
     }
 
     $user = $this->getUser();
-    $this->checkUserCanAccessPratica($pratica, $user);
+    $this->denyAccessUnlessGranted(ApplicationVoter::COMPILE, $pratica, "User can not compile application {$pratica->getId()}");
 
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($pratica->getServizio()->getName(), "servizi_show", ['slug' => $pratica->getServizio()->getSlug(),]);
     $this->breadcrumbsService->getBreadcrumbs()->addItem('breadcrumbs.compile');
@@ -501,22 +501,6 @@ class PraticheController extends AbstractController
 
   }
 
-  private function checkUserCanAccessPratica(Pratica $pratica, CPSUser $user)
-  {
-    $praticaUser = $pratica->getUser();
-    $isTheOwner = $praticaUser->getId() === $user->getId();
-    $cfs = $pratica->getRelatedCFs();
-    if (!is_array($cfs)) {
-      $cfs = [$cfs];
-    }
-    $isRelated = in_array($user->getCodiceFiscale(), $cfs);
-
-
-    if (!$isTheOwner && !$isRelated) {
-      throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
-    }
-  }
-
   /**
    * @Route("/{pratica}", name="pratiche_show")
    * @ParamConverter("pratica", class="App\Entity\Pratica")
@@ -529,7 +513,7 @@ class PraticheController extends AbstractController
 
     /** @var CPSUser $user */
     $user = $this->getUser();
-    $this->checkUserCanAccessPratica($pratica, $user);
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica, "User can not read application {$pratica->getId()}");
     $resumeURI = $request->getUri();
 
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
@@ -583,7 +567,7 @@ class PraticheController extends AbstractController
 
     /** @var CPSUser $user */
     $user = $this->getUser();
-    $this->checkUserCanAccessPratica($pratica, $user);
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica, "User can not read application {$pratica->getId()}");
     $tab = $request->query->get('tab', false);
 
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
@@ -665,8 +649,6 @@ class PraticheController extends AbstractController
    */
   public function withdrawAction(Request $request, Pratica $pratica)
   {
-    /** @var CPSUser $user */
-    $user = $this->getUser();
     if ($this->isGranted(ApplicationVoter::WITHDRAW, $pratica)) {
       $withdrawAttachment = $this->pdfBuilderService->createWithdrawForPratica($pratica);
       $pratica->addAllegato($withdrawAttachment);
@@ -695,8 +677,7 @@ class PraticheController extends AbstractController
    */
   public function paymentCallbackAction(Request $request, Pratica $pratica)
   {
-    $user = $this->getUser();
-    $this->checkUserCanAccessPratica($pratica, $user);
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica, "User can not read application {$pratica->getId()}");
     $outcome = $request->get('esito');
 
     if ($outcome == 'OK') {
@@ -725,8 +706,7 @@ class PraticheController extends AbstractController
    */
   public function deleteAction(Request $request, Pratica $pratica)
   {
-    $user = $this->getUser();
-    $this->checkUserCanAccessPratica($pratica, $user);
+    $this->denyAccessUnlessGranted(ApplicationVoter::DELETE, $pratica, "User can not delete application {$pratica->getId()}");
     if ($pratica->getStatus() != Pratica::STATUS_DRAFT) {
       throw new UnauthorizedHttpException("Pratica can't be deleted, not in draft status");
     }
@@ -775,8 +755,7 @@ class PraticheController extends AbstractController
    */
   public function showPdfAction(Pratica $pratica): Response
   {
-    $user = $this->getUser();
-    $this->checkUserCanAccessPratica($pratica, $user);
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica, "User can not read application {$pratica->getId()}");
     $fileContent = $this->pdfBuilderService->renderForPratica($pratica, true);
 
     // Provide a name for your file with extension

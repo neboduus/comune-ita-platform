@@ -4,6 +4,7 @@
 namespace App\Security\Voters;
 
 
+use App\Entity\CPSUser;
 use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
 use App\Entity\Servizio;
@@ -24,6 +25,7 @@ class ApplicationVoter extends Voter
   const ACCEPT_OR_REJECT = 'accept_or_reject';
   const WITHDRAW = 'withdraw';
   const COMPILE = 'compile';
+  const DELETE = 'delete';
 
 
   /**
@@ -51,7 +53,8 @@ class ApplicationVoter extends Voter
       self::ASSIGN,
       self::ACCEPT_OR_REJECT,
       self::WITHDRAW,
-      self::COMPILE
+      self::COMPILE,
+      self::DELETE
     ])) {
       return false;
     }
@@ -93,6 +96,8 @@ class ApplicationVoter extends Voter
         return $this->canWithdraw($pratica, $user);
       case self::COMPILE:
         return $this->canCompile($pratica, $user);
+      case self::DELETE:
+        return $this->canDelete($pratica, $user);
     }
 
     throw new \LogicException('This code should not be reached!');
@@ -104,7 +109,15 @@ class ApplicationVoter extends Voter
     if ($this->canEdit($pratica, $user)) {
       return true;
     }
-    return $user === $pratica->getUser();
+
+    $isTheOwner = $pratica->getUser() === $user;
+    $cfs = $pratica->getRelatedCFs();
+    if (!is_array($cfs)) {
+      $cfs = [$cfs];
+    }
+    $isRelated = $user instanceof CPSUser && in_array($user->getCodiceFiscale(), $cfs);
+
+    return $isTheOwner || $isRelated;
   }
 
   private function canEdit(Pratica $pratica, User $user)
@@ -161,7 +174,7 @@ class ApplicationVoter extends Voter
     }
 
     // Se il servizio ha un workflow di tipo inoltro e la pratica è stata "inoltrata" NON deve comparire il pulsante ritira.
-    if ($pratica->getServizio()->getWorkflow() == Servizio::WORKFLOW_FORWARD &&  $pratica->getStatus() !== Pratica::STATUS_PRE_SUBMIT) {
+    if ($pratica->getServizio()->getWorkflow() == Servizio::WORKFLOW_FORWARD && $pratica->getStatus() !== Pratica::STATUS_PRE_SUBMIT) {
       return false;
     }
 
@@ -170,7 +183,7 @@ class ApplicationVoter extends Voter
       return false;
     }
 
-    return in_array($pratica->getStatus(),  [Pratica::STATUS_PRE_SUBMIT, Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING]);
+    return in_array($pratica->getStatus(), [Pratica::STATUS_PRE_SUBMIT, Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING]);
   }
 
   private function canCompile(Pratica $pratica, User $user)
@@ -187,5 +200,10 @@ class ApplicationVoter extends Voter
       }
     }
     return $canCompile;
+  }
+
+  private function canDelete(Pratica $pratica, User $user)
+  {
+    return $user === $pratica->getUser();
   }
 }
