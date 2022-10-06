@@ -162,7 +162,7 @@ class Subscription
 
   public function getRelatedCFs()
   {
-    return $this->relatedCFs;
+    return $this->parseRelatedCfs($this->$relatedCFs);
   }
 
   public function removeRelatedCf($fiscalCode)
@@ -187,14 +187,26 @@ class Subscription
     return $this;
   }
 
+  private function parseRelatedCfs($relatedCFs)
+  {
+    if (!is_array($relatedCFs)) {
+      if (is_array(json_decode($relatedCFs, true))) {
+        return json_decode($relatedCFs, true);
+      } else {
+        throw new Exception("Error parsing relatedCFs");
+      }
+    } else {
+      return $relatedCFs;
+    }
+  }
+
   /**
    * @param array $relatedCFs
    * @return $this
    */
   public function setRelatedCFs($relatedCFs)
   {
-    $this->relatedCFs = $relatedCFs;
-
+    $this->relatedCFs = $this->parseRelatedCFs($relatedCFs);
     return $this;
   }
 
