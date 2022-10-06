@@ -28,7 +28,7 @@ final class Version20220803131855 extends AbstractMigration
     $this->addSql('ALTER TABLE utente ALTER updated_at SET NOT NULL');
     $this->addSql('CREATE UNIQUE INDEX UNIQ_DE45B3E0F85E0677 ON utente (username)');
     $this->addSql("UPDATE servizio SET pratica_fcqn = REPLACE(pratica_fcqn, 'AppBundle', 'App')");
-    $this->addSql("UPDATE servizio SET integrations = REPLACE(integrations::TEXT,'App','AppBundle')::JSON");
+    $this->addSql("UPDATE servizio SET integrations = REPLACE(integrations::TEXT,'AppBundle','App')::JSON");
   }
 
   public function down(Schema $schema): void
@@ -41,6 +41,6 @@ final class Version20220803131855 extends AbstractMigration
     $this->addSql('DROP INDEX general_translations_lookup_idx');
     $this->addSql('ALTER TABLE ext_translations ALTER object_class TYPE VARCHAR(255)');
     $this->addSql("UPDATE servizio SET pratica_fcqn = REPLACE(pratica_fcqn, 'App', 'AppBundle')");
-    $this->addSql("UPDATE servizio SET integrations = REPLACE(integrations::TEXT,'AppBundle','App')::JSON");
+    $this->addSql("UPDATE servizio SET integrations = REPLACE(integrations::TEXT,'App','AppBundle')::JSON");
   }
 }
