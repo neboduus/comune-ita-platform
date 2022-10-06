@@ -105,6 +105,8 @@ info: 'Informazioni'
 show_all: 'Vedi tutto'
 every: 'Ogni'
 save_changed: 'Ci sono delle modifiche da <b>salvare</b>.'
+help_link: 'Link utili'
+no_value: 'Nessun valore'
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'

@@ -544,7 +544,7 @@
           <div class="modal-body">
             <table class="table table-sm">
             <tr>
-                <th></th>
+                <th aria-label="{% endverbatim %}{{ 'no_value' | trans }}{% verbatim %}"></th>
                 <th>{% endverbatim %}{{ 'view' | trans }}{% verbatim %}</th>
                 <th>{% endverbatim %}{{ 'sum' | trans }}{% verbatim %}</th>
                 <th>{% endverbatim %}{{ 'average' | trans }}{% verbatim %}</th>
@@ -615,6 +615,7 @@
   <thead>
     <tr>
       <th style="white-space:nowrap">
+      <span class="sr-only">{{ 'operatori.table_options' | trans }}</span>
         {{if meta.schema}}
           <button type="button" class="btn btn-secondary btn-xs text-nowrap py-1 px-2" data-toggle="modal" data-target="#tableOptions">{% endverbatim %}{{ 'operatori.table_options' | trans }}{% verbatim %}</button>
         {{/if}}
@@ -631,15 +632,15 @@
       <th>
         <div class="d-flex">
           <div class="text-nowrap mr-1">{% endverbatim %}{{ 'pratica.date_in' | trans }}{% verbatim %} </div>
-          <a href="#" data-sort="submissionTime" data-order="asc"><svg class="icon icon-xs {{if meta.parameter.sort == 'submissionTime' && meta.parameter.order == 'asc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg></a>
-          <a href="#" data-sort="submissionTime" data-order="desc"><svg class="icon icon-xs {{if meta.parameter.sort == 'submissionTime' && meta.parameter.order == 'desc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-down"></use></svg></a>
+          <a aria-label="it-arrow-up" href="#" data-sort="submissionTime" data-order="asc"><svg class="icon icon-xs {{if meta.parameter.sort == 'submissionTime' && meta.parameter.order == 'asc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg></a>
+          <a aria-label="it-arrow-down" href="#" data-sort="submissionTime" data-order="desc"><svg class="icon icon-xs {{if meta.parameter.sort == 'submissionTime' && meta.parameter.order == 'desc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-down"></use></svg></a>
         </div>
       </th>
       <th>
         <div class="d-flex">
           <div class="text-nowrap mr-1">{% endverbatim %}{{ 'pratica.last_status_change' | trans }}{% verbatim %} </div>
-          <a href="#" data-sort="latestStatusChangeTimestamp" data-order="asc"><svg class="icon icon-xs {{if meta.parameter.sort == 'latestStatusChangeTimestamp' && meta.parameter.order == 'asc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg></a>
-          <a href="#" data-sort="latestStatusChangeTimestamp" data-order="desc"><svg class="icon icon-xs {{if meta.parameter.sort == 'latestStatusChangeTimestamp' && meta.parameter.order == 'desc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-down"></use></svg></a>
+          <a aria-label="it-arrow-up" href="#" data-sort="latestStatusChangeTimestamp" data-order="asc"><svg class="icon icon-xs {{if meta.parameter.sort == 'latestStatusChangeTimestamp' && meta.parameter.order == 'asc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg></a>
+          <a aria-label="it-arrow-down" href="#" data-sort="latestStatusChangeTimestamp" data-order="desc"><svg class="icon icon-xs {{if meta.parameter.sort == 'latestStatusChangeTimestamp' && meta.parameter.order == 'desc'}}icon-black{{else}}icon-light{{/if}}"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-down"></use></svg></a>
         </div>
       </th>
       {{if !meta.parameter.stato}}
@@ -682,12 +683,12 @@
        <td>
         {{if idp == "spid" }}
           <span data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.citizen_identity_verified' | trans }}{% verbatim %}">
-            <img class="icon" src={% endverbatim %}"{{ asset('bundles/app/images/spid.svg') }}"{% verbatim %}>
+            <img alt="icon-spid" class="icon" src={% endverbatim %}"{{ asset('bundles/app/images/spid.svg') }}"{% verbatim %}>
           </span>
         {{/if}}
         {{if idp == "cps/cns" }}
           <span data-toggle="tooltip" title="{% endverbatim %}{{ 'operatori.citizen_identity_verified' | trans }}{% verbatim %}">
-            <img class="icon" src={% endverbatim %}"{{ asset('bundles/app/images/cns.png') }}"{% verbatim %}>
+            <img alt="icon-cns" class="icon" src={% endverbatim %}"{{ asset('bundles/app/images/cns.png') }}"{% verbatim %}>
           </span>
         {{/if}}
       </td>
@@ -860,6 +861,7 @@
                 <option value="3">{{ 'servizio.id_pratica' | trans }}</option>
               </select>
               <div class="input-group-append">
+                <label for="filter-query" class="sr-only">{{ 'pratica.text_search_for' | trans }}</label>
                 <input type="text" class="chosen-input" name="query" id="filter-query" placeholder="{{ 'pratica.text_search_for' | trans }}">
               </div>
             </div>
@@ -878,7 +880,7 @@
         </div>
         <div class="col-6 col-sm-6 col-md-8 col-lg-3 mb-5">
           <div class="label-sm-wrapper">
-            <label for="filter-status-range">{{ 'pratica.last_status_change' | trans }}</label>
+            <label for="status-range">{{ 'pratica.last_status_change' | trans }}</label>
             <input type="text" id="status-range" name="status-range" class="chosen-input" onkeydown="event.preventDefault()">
           </div>
         </div>

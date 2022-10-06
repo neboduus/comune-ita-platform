@@ -7,9 +7,10 @@
       <div class="modal-body">
         <div class="form-group">
           <div class="input-group">
+            <label for="search-subscriber" class="sr-only">{{ 'backoffice.integration.subscription_service.search_students' | trans }}</label>
             <input type="text" class="form-control"
                    id="search-subscriber"
-                   placeholder="{{ 'backoffice.integration.subscription_service.search_students' | trans }}" aria-describedby="search-subscriber-description">
+                   placeholder="{{ 'backoffice.integration.subscription_service.search_students' | trans }}">
             <div class="input-group-append">
               <button class="btn btn-outline-primary" type="button" id="search-btn"
                       data-url="{{ path('operatori_subscription-service_search') }}">
