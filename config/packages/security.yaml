@@ -135,10 +135,10 @@ security:
     - { path: ^/%prefix%/api/doc, role: IS_AUTHENTICATED_ANONYMOUSLY }
     - { path: ^/%prefix%/(%app_locales%)/operatori/reset-password, role: IS_AUTHENTICATED_ANONYMOUSLY }
 
+    - { path: ^/%prefix%/(%app_locales%)/pratiche/.*/pdf, role: [ ROLE_CPS_USER, ROLE_OPERATORE ] }
     - { path: ^/%prefix%/(%app_locales%)/(pratiche|terms_accept|user|documenti|subscriptions)/, role: ROLE_CPS_USER }
     - { path: ^/%prefix%/api/v\d+\.\d+/user/.*, role: ROLE_CPS_USER }
 
-    - { path: ^/%prefix%/(%app_locales%)/pratiche/.*/pdf, role: [ ROLE_CPS_USER, ROLE_OPERATORE ] }
     - { path: ^/%prefix%/api/session-auth, role: [ ROLE_CPS_USER, ROLE_OPERATORE, ROLE_ADMIN ] }
 
     - { path: ^/%prefix%/(%app_locales%)/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
