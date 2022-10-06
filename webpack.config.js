@@ -2,6 +2,8 @@ const Encore = require('@symfony/webpack-encore');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const package = require("./package.json");
 //const webpack = require('webpack');
+const CompressionPlugin = require("compression-webpack-plugin");
+const zlib = require("zlib");
 
 Encore
   // directory where compiled assets will be stored
@@ -53,7 +55,7 @@ Encore
   // uncomment if you use TypeScript
   //.enableTypeScriptLoader()
 
-  .configureBabel(function(babelConfig) {
+  .configureBabel(function (babelConfig) {
     babelConfig.plugins.push('@babel/plugin-proposal-class-properties');
   })
   // Todo: da verifcare cosa fa
@@ -81,11 +83,23 @@ Encore
     to: '../../bundles/app/[path][name].[ext]',
     pattern: /\.(ico|png|jpg|jpeg|svg|gif|pdf|js|css|json|txt)$/,
   })
-.copyFiles({
-      from: './assets/images',
-      to: 'images/[path][name].[ext]',
-      pattern: /\.(png|jpg|jpeg|svg)$/
-   })
+  .copyFiles({
+    from: './assets/images',
+    to: 'images/[path][name].[ext]',
+    pattern: /\.(png|jpg|jpeg|svg)$/
+  })
+  .addPlugin(new CompressionPlugin({
+    filename: "[path][base].br",
+    algorithm: "brotliCompress",
+    test: /\.(js|css|html|svg)$/,
+    compressionOptions: {
+      params: {
+        [zlib.constants.BROTLI_PARAM_QUALITY]: 11
+      },
+    },
+    threshold: 10240,
+    minRatio: 0.8,
+  }))
 ;
 
 module.exports = Encore.getWebpackConfig();

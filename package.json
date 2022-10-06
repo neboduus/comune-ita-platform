@@ -11,6 +11,7 @@
     "@release-it/bumper": "release-it/bumper",
     "@symfony/webpack-encore": "1.2.0",
     "babel-loader": "8.2.2",
+    "compression-webpack-plugin": "^10.0.0",
     "copy-webpack-plugin": "7.0.0",
     "file-loader": "6.2.0",
     "node-sass": "5.0.0",
