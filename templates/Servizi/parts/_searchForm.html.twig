@@ -1,7 +1,8 @@
 <form action="{{ path('search') }}" method="get">
   <div class="form-group floating-labels">
     <div class="form-label-group">
-      <input type="text" autocomplete="off" class="form-control search-text" name="q" placeholder="{{ 'search.label'|trans }}">
+      <label for="search-field" class="sr-only">{{ 'search.label'|trans }}</label>
+      <input type="text" autocomplete="off" class="form-control search-text" name="q" placeholder="{{ 'search.label'|trans }}" id="search-field">
       <button type="submit" class="autocomplete-icon btn btn-link" aria-label="{{ 'search.label'|trans }}">
         <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-search"></use></svg>
       </button>

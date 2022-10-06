@@ -1,9 +1,11 @@
 <button class="btn btn-link btn-xs p0" type="button" data-toggle="popover" title="{{ 'iscrizioni.id_action' | trans }}" data-content="{{ row.id }}">
+  <label class="sr-only">{{ 'iscrizioni.id_action' | trans }}</label>
   <svg class="icon icon-sm icon-primary"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>
 </button>
 
 {% if row.status == 1 and row.log %}
   <button class="btn btn-link btn-xs p0 action-log" type="button" data-title="{{ 'iscrizioni.log_action' | trans }}" data-content="{{ row.log }}">
+    <label class="sr-only">{{ 'iscrizioni.log_action' | trans }}</label>
     <svg class="icon icon-sm icon-danger"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-error"></use></svg>
   </button>
 {% endif %}

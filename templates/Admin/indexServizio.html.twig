@@ -67,7 +67,7 @@
               <th>{{ 'general.url'|trans }}</th>
               <th>{{ 'servizio.livello_accesso'|trans }}</th>
               <th>{{ 'general.stato'|trans }}</th>
-              <th></th>
+              <th aria-label="{{ 'no_value' | trans() }}" ></th>
             </tr>
             </thead>
             <tbody>
@@ -95,6 +95,7 @@
                      data-html="true" title="{{ 'admin.url_service' | trans }}"
                      data-content="{{ 'admin.show_service' | trans }}">
                     <i class="fa fa-external-link" aria-hidden="true"></i>
+                    <span class="sr-only">{{ 'admin.show_service' | trans }}</span>
                   </a>
                   {% if item.status != constant('STATUS_CANCELLED', item) %}
                     <a class="btn btn-xs btn-outline-secondary clone" href="#"
@@ -104,6 +105,7 @@
                        data-html="true" title="{{ 'admin.url_api_service' | trans }}"
                        data-content="{{ 'admin.show_api_service' | trans }}">
                       <i class="fa fa-file-code-o" aria-hidden="true"></i>
+                      <span class="sr-only">{{ 'admin.show_api_service' | trans }}</span>
                     </a>
                   {% endif %}
                 </td>
@@ -115,8 +117,8 @@
                 <td>
                   {{ statuses[item.status] }}
                   {% if item.status == 4 %}
-                    <small class="d-block">da {{ item.scheduledFrom|date(ocsdc_default_datetime_format) }}</small>
-                    <small class="d-block">a {{ item.scheduledTo|date(ocsdc_default_datetime_format) }}</small>
+                    <small class="d-block">{{ "from" | trans }} {{ item.scheduledFrom|date(ocsdc_default_datetime_format) }}</small>
+                    <small class="d-block">{{ "to" | trans }} {{ item.scheduledTo|date(ocsdc_default_datetime_format) }}</small>
                   {% endif %}
                 </td>
                 <td class="text-right">
@@ -198,6 +200,7 @@
       <div class="col-lg-8 px-lg-4 py-lg-2 mt-4">
         <form action="{{ path('admin_servizio_import') }}" method="post">
           <div class="form-group">
+            <label for="import-input" class="sr-only">{{ 'servizio.importa'|trans }}</label>
             <div class="input-group">
               <div class="input-group-prepend">
                 <div class="input-group-text">
@@ -206,7 +209,7 @@
                   </svg>
                 </div>
               </div>
-              <input type="text" class="form-control" name="url">
+              <input type="text" class="form-control" name="url" id="import-input">
               <div class="input-group-append">
                 <button class="btn btn-secondary" type="submit">{{ 'servizio.importa'|trans }}</button>
               </div>
