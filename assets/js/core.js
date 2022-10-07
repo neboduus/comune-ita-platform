@@ -4,7 +4,7 @@ require("summernote/dist/summernote-bs4.css")
 require("ion-rangeslider");
 require("ion-rangeslider/css/ion.rangeSlider.css")
 require('bootstrap');
-require('bootstrap-select');
+//require('bootstrap-select');
 require('svgxuse');
 require('bootstrap-italia/src/js/plugins/polyfills/array.from');
 require('bootstrap-italia/src/js/plugins/circular-loader/CircularLoader-v1.3');
@@ -15,7 +15,7 @@ require('bootstrap-italia/src/js/plugins/i-sticky/i-sticky');
 require('bootstrap-italia/src/js/plugins/sticky-header');
 require('bootstrap-italia/src/js/plugins/sticky-wrapper');
 require('bootstrap-italia/src/js/plugins/ie');
-require('bootstrap-italia/src/js/plugins/fonts-loader');
+//require('bootstrap-italia/src/js/plugins/fonts-loader');
 require('bootstrap-italia/src/js/plugins/autocomplete');
 require('bootstrap-italia/src/js/plugins/back-to-top');
 require('bootstrap-italia/src/js/plugins/componente-base');
@@ -36,7 +36,7 @@ require('bootstrap-italia/src/js/plugins/timepicker');
 require('bootstrap-italia/src/js/plugins/input-number');
 //require('bootstrap-italia/src/js/plugins/carousel');
 require('bootstrap-italia/src/js/plugins/transfer');
-require('bootstrap-italia/src/js/plugins/select');
+//require('bootstrap-italia/src/js/plugins/select');
 //require('bootstrap-italia/src/js/plugins/custom-select');
 require('bootstrap-italia/src/js/plugins/rating');
 require('bootstrap-italia/src/js/plugins/dimmer');

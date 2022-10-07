@@ -146,7 +146,7 @@
                           <form action="{{ path('operatori_show_change_status', {'pratica': pratica.id}) }}"
                                 method="post">
                             <div class="form-group">
-                              <div class="bootstrap-select-wrapper">
+                              <div class="select-wrapper">
                                 <select title="{{ 'pratica.select_new_status_application' | trans }}" name="status"
                                         required="required">
                                   {% for state in pratica.allowedStates %}

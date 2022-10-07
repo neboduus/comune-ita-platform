@@ -1,6 +1,7 @@
 {% extends 'Default/index.html.twig' %}
 
 {% block stylesheets %}
+  {{ parent() }}
   {% if calendar.type == constant('App\\Entity\\Calendar::TYPE_TIME_FIXED') %}
     {{ encore_entry_link_tags('fullcalendar-manager') }}
   {% elseif calendar.type == constant('\\App\\Entity\\Calendar::TYPE_TIME_VARIABLE') %}
@@ -9,6 +10,7 @@
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {% if calendar.type == constant('\\App\\Entity\\Calendar::TYPE_TIME_FIXED') %}
     {{ encore_entry_script_tags('fullcalendar-manager') }}
   {% elseif calendar.type == constant('\\App\\Entity\\Calendar::TYPE_TIME_VARIABLE') %}

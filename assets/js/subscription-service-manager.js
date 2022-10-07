@@ -1,9 +1,5 @@
 import moment from "moment";
 import {TextEditor} from "./utils/TextEditor";
-
-require("bootstrap-italia");
-require("../css/app.scss");
-require("jquery"); // Load jQuery as a module
 const lang = document.documentElement.lang.toString();
 moment.locale(lang)
 
@@ -203,7 +199,7 @@ $(document).ready(function () {
     });
   })
 
-  $('.bootstrap-select-wrapper.select-payment-wrapper').hide();
+  $('.select-wrapper.select-payment-wrapper').hide();
   $('#modal-service-error').hide();
   $('#modal-payment-error').hide();
 
@@ -211,7 +207,7 @@ $(document).ready(function () {
 
   $('#modal_select_service').on('change', function () {
     $('#modal_copy').attr('disabled', true);
-    let select = $('.bootstrap-select-wrapper.select-payment-wrapper');
+    let select = $('.select-wrapper.select-payment-wrapper');
     select.setOptionsToSelect([]);
     select.hide();
     if (!this.value) {
