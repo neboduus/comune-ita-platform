@@ -1,11 +1,13 @@
 {% extends 'Default/index.html.twig' %}
 
 {% block stylesheets %}
+  {{ parent() }}
   {{ encore_entry_link_tags('subscription-service-manager') }}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('subscription-service-manager') }}
 {% endblock %}
 

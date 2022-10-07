@@ -19,7 +19,7 @@
           <h6 class="text-warning">{{ 'iscrizioni.modals.confirm_edit.description_title' | trans }}</h6>
           <p>{{ 'iscrizioni.modals.confirm_edit.description_text' | trans }}</p>
         </div>
-        <div class="bootstrap-select-wrapper mt-4">
+        <div class="select-wrapper mt-4">
           <select title="{{ 'backoffice.integration.subscription_service.select_option' | trans }}" id="new-subscription-service" data-live-search="true" data-live-search-placeholder="Cerca opzioni">
             {% for subscriptionService in subscriptionServices %}
               <option value="{{ subscriptionService.id }}">{{ subscriptionService.name }}</option>

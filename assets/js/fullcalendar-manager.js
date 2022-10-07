@@ -5,11 +5,10 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPligin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
-import allLocales from '@fullcalendar/core/locales-all';
+import itLocale from '@fullcalendar/core/locales/it';
+import enLocale from '@fullcalendar/core/locales/en-gb';
+import deLocale from '@fullcalendar/core/locales/de';
 import printJS from "print-js";
-
-require("bootstrap-italia");
-require("../css/app.scss");
 
 require('@fullcalendar/core/main.min.css');
 require('@fullcalendar/daygrid/main.min.css');
@@ -72,7 +71,7 @@ $(document).ready(function () {
     plugins: [dayGridPlugin, timeGridPlugin, listPligin, interactionPlugin, bootstrapPlugin],
     themeSystem: 'bootstrap',
     locale: language,
-    locales: allLocales,
+    locales: [itLocale,enLocale,deLocale],
     timeZone: 'Europe/Rome',
     nowIndicator: true,
     eventColor: '#3478BD',

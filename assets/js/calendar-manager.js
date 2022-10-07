@@ -1,6 +1,3 @@
-require("bootstrap-italia");
-require("../css/app.scss");
-require("jquery"); // Load jQuery as a module
 require("summernote");
 require("summernote/dist/summernote-bs4.css");
 

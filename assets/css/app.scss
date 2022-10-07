@@ -272,11 +272,16 @@ display: none;
   }
 }
 
+a.list-item.left-icon {
+  position: relative;
+  padding-left: inherit !important;
+}
+
 // Hide checkbox gateways
-.row-payments{
+.row-payments {
   .form-check > [type='checkbox'] + label::after,
   .form-check > [type='checkbox'] + label::before {
-   z-index: -2;
+    z-index: -2;
   }
 
   .collapse-header *[data-toggle='collapse'] {

@@ -38,7 +38,7 @@
       {% if services|length > 0 %}
         <div class="col-xs-12 col-md-6"></div>
         <div class="col-xs-12 col-md-6 mb-3 col-md-offset-5 px-lg-4 py-lg-2">
-          <div class="bootstrap-select-wrapper">
+          <div class="select-wrapper">
             <label>{{ 'pratica.filtra_per_servizio' | trans }}</label>
             <select id="services">
               <option value="{{ path('pratiche_list') }}">{{ 'tutti' | trans }}</option>
@@ -60,7 +60,7 @@
         <div class="row">
 
           <div class="col-12 d-md-none d-lg-none d-xl-none">
-            <div class="bootstrap-select-wrapper">
+            <div class="select-wrapper">
               <select class="form-control select_tabs">
                 {% for key, value in tab_pratiche %}
                   <option value="#{{ key }}">{{ ('user.dashboard.pratiche_' ~ key)|trans }}
