@@ -518,6 +518,9 @@ pratica:
   failed: 'Fehlgeschlagen'
   warning_long_text: "<small class='form-text text-muted' id='warning-text-length'> \nAchtung! Zu lange Dateinamen erschweren die Navigation, daher werden einfache Namen ohne normative Verweise empfohlen (dafür können Sie das Feld <b>\"Maggiori informazioni\"</b> verwenden). </small>"
   presentante: 'Anfragende Person'
+  already_processed: ''
+  already_assigned: ''
+  no_protocol_number: ''
 STATUS_CANCELLED: 'Abgelehnt'
 STATUS_DRAFT: 'Entwurf'
 STATUS_PRE_SUBMIT: 'Gesendet'
@@ -702,14 +705,36 @@ documenti:
     scaduto: "Das Dokument ist am <b>%validity_end%</b>è <b> verfallen"
     rinnova: "DA NON TRADURRE"
     data_scadenza: "Ablaufdatum"
-    servizi_correlati: "damit zusammenhängende Dienste"
     no_servizi_correlati: "Es scheinen keine Dienste auf, die mit diesem Dokument in Zusammenhang stehen"
+    owner: ""
+    folder: ""
+    md5: ""
+    mime_type: ""
+    original_filename: ""
+    address: ""
+    file: ""
+    title: ""
+    topics: ""
+    description: ""
+    readers_allowed: ""
+    validity_begin: ""
+    validity_end: ""
+    store: ""
+    invalid_original_name: ''
+    invalid_folder: ""
+    invalid_owner: ""
+    invalid_mime_type: ""
+    missing_extension: ""
+    invalid_extension: ""
+    non_matching_md5: ""
+    non_matching_mime_type: ""
+    duplicated_file: ""
   cartella:
     nome: "Name des Ordners"
     data_creazione: "Erstellungsdatum"
-    servizi_correlati: "damit zusammenhängende Dienste"
     no_documenti: "In diesem Ordner sind keine Dokumente vorhanden"
     no_servizi_correlati: "Es scheinen keine Dienste auf, die mit diesem Ordner in Zusammenhang stehen"
+  servizi_correlati: "damit zusammenhängende Dienste"
 iscrizione_asilo_nido:
   dettaglio:
     struttura: 'Einrichtung'
@@ -910,6 +935,10 @@ user:
   welcome_msg: 'Die Anmeldung wurde erfolgreich durchgeführt'
   forgot_password: 'Passwort vergessen?'
   forgot_password_description: 'Wenn Sie Ihr Passwort vergessen haben, geben Sie bitte Ihren Benutzernamen oder Ihre E-Mail-Adresse ein.'
+  reset_password:
+    subject: ''
+    message: ''
+    btn: ""
 admin:
   usage:
     user_title: 'BACKOFFICE'
@@ -1405,13 +1434,6 @@ steps:
         guida_alla_compilazione: 'DA NON TRADURRE'
         tipologia_certificato: 'DA NON TRADURRE'
         uso: "DA NON TRADURRE"
-      AttoMorte:
-        label: 'DA NON TRADURRE'
-        title: 'DA NON TRADURRE'
-        description: "DA NON TRADURRE"
-        guida_alla_compilazione: "DA NON TRADURRE"
-        tipologia_certificato: 'DA NON TRADURRE'
-        uso: "DA NON TRADURRE"
       EstrattoMorte:
         label: 'DA NON TRADURRE'
         title: 'DA NON TRADURRE'
@@ -1433,208 +1455,12 @@ steps:
         guida_alla_compilazione: "DA NON TRADURRE"
         tipologia_certificato: 'DA NON TRADURRE'
         uso: "DA NON TRADURRE"
-      AttoMatrimonio:
-        label: 'DA NON TRADURRE'
-        title: "DA NON TRADURRE"
-        description: "DA NON TRADURRE"
-        guida_alla_compilazione: "DA NON TRADURRE"
-        tipologia_certificato: 'DA NON TRADURRE'
-        uso: "DA NON TRADURREDA NON TRADURRE"
     uso:
       label: 'DA NON TRADURRE'
       title: 'DA NON TRADURRE'
       description: 'DA NON TRADURRE'
       guida_alla_compilazione: 'DA NON TRADURRE'
       uso: 'DA NON TRADURRE'
-  allacciamento_acquedotto:
-    dati_immobile:
-      label: 'DA NON TRADURRE'
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-      datiImmobile: "DA NON TRADURRE"
-      qualifica: "DA NON TRADURRE"
-      provincia: "Provinz"
-      comune: "Gemeinde"
-      indirizzo: "Anschrift"
-      numero_civico: "Hausnummer"
-      cap: "PLZ"
-      scala: "Stiege"
-      piano: "Stock"
-      interno: "Intern"
-      catasto_categoria: "DA NON TRADURRE"
-      catasto_codice_comune: "DA NON TRADURRE"
-      catasto_foglio: "DA NON TRADURRE"
-      catasto_sezione: "DA NON TRADURRE"
-      catasto_mappale: "DA NON TRADURRE"
-      catasto_subalterno: "DA NON TRADURRE"
-    dati_intervento:
-      label: 'DA NON TRADURRE'
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-      tipo_intervento: "DA NON TRADURRE"
-      tipo_allaccio: "DA NON TRADURRE"
-      tipo_uso: "DA NON TRADURRE"
-      diametro_rete_interna: "DA NON TRADURRE"
-    dati_contatto:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      guida_alla_compilazione: "DA NON TRADURRE"
-      use_alternate: "DA NON TRADURRE"
-      indirizzo: "Anschrift"
-      numero_civico: "Hausnummer"
-      cap: "PLZ"
-      comune: "Gemeinde"
-  autolettura_acqua:
-    dati_intestatario:
-      label: 'DA NON TRADURRE'
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-      intestatario_codice_utente: "DA NON TRADURRE"
-      intestatario_nome: "Vorname"
-      intestatario_cognome: "Nachname"
-      intestatario_indirizzo: "Anschrift"
-      intestatario_cap: "PLZ"
-      intestatario_citta: "Ort"
-      intestatario_telefono: "Telefonnummer für etwaige Mitteilungen"
-      intestatario_email: "E-Mail-Adresse für etwaige Mitteilungen"
-    dati_contatore:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-      contatore_numero: "DA NON TRADURRE"
-      contatore_uso: "DA NON TRADURRE"
-      contatore_unita_immobiliari: "DA NON TRADURRE"
-    dati_lettura:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-      lettura_metri_cubi: "DA NON TRADURRE"
-      lettura_data: "DA NON TRADURRE"
-    note:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-  cambio_residenza:
-    dichiarazione_provenienza:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-      comune: "DA NON TRADURRE"
-      altro_comune: "DA NON TRADURRE"
-      estero: "DA NON TRADURREDA NON TRADURRE"
-      aire: "DA NON TRADURRE"
-      altro: "DA NON TRADURRE"
-    dichiarazione_provenienza_dettaglio:
-      label: 'DA NON TRADURRE'
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione:
-        nessun_allegato: "DA NON TRADURRE"
-        altro_comune: "DA NON TRADURRE"
-        stato_estero: "DA NON TRADURRE"
-        aire: "DA NON TRADURRE"
-        altro_motivo: "DA NON TRADURRE"
-    dati_residenza:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-      provincia: "Provinz"
-      comune: "Gemeinde"
-      indirizzo: "Straße/Platz"
-      numero_civico: "Hausnummer"
-      scala: "Stiege"
-      piano: "Stock"
-      interno: "Intern"
-    attualmente_residenti:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-    tipologia_occupazione:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-      proprietario: "DA NON TRADURRE"
-      locazione: "DA NON TRADURRE"
-      locazione_erp: "DA NON TRADURRE"
-      comodato: "DA NON TRADURRE"
-      usufruttuario: "DA NON TRADURRE"
-      autocertificazione: "DA NON TRADURRE"
-    tipologia_occupazione_dettaglio:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione:
-        proprietario: "DA NON TRADURRE"
-        locazione: "DA NON TRADURRE"
-        locazione_erp: "DA NON TRADURRE"
-        comodato: "DA NON TRADURRE"
-        usufruttuario: "DA NON TRADURRE"
-        autocertificazione: "DA NON TRADURRE"
-      proprietario:
-        catasto_sezione: "DA NON TRADURRE"
-        catasto_foglio: "DA NON TRADURRE"
-        catasto_particella: "DA NON TRADURRE"
-        catasto_subalterno: "DA NON TRADURRE"
-      contratto:
-        agenzia: "DA NON TRADURRE"
-        numero: "DA NON TRADURRE"
-        data: "DA NON TRADURRE"
-      verbale_consegna: "DA NON TRADURRE"
-      usufruttuario_info: "DA NON TRADURRE"
-      autocertificazione: "DA NON TRADURRE"
-    informazioni_accertamento:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: "DA NON TRADURRE"
-  contributo_pannolini:
-    dati_bambino:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      guida_alla_compilazione: 'DA NON TRADURRE'
-      nome: 'Vorname'
-      cognome: 'Nachname'
-      luogo_nascita: 'Geburtsort'
-      data_nascita: 'Geburtsdatum'
-    dati_acquisto:
-      label: "DA NON TRADURRE"
-      title: "DA NON TRADURRE"
-      guida_alla_compilazione: 'DA NON TRADURRE'
-      tipo_pannolini: 'DA NON TRADURRE'
-      punto_vendita: 'DA NON TRADURRE'
-      data_acquisto: 'DA NON TRADURRE'
-      totale_spesa: "DA NON TRADURRE"
-    dati_conto_corrente:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      guida_alla_compilazione: 'DA NON TRADURRE'
-  iscrizione_asilo_nido:
-    seleziona_nido:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      guida_alla_compilazione: "DA NON TRADURRE"
-    accettazione_utilizzo:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      guida_alla_compilazione: "DA NON TRADURRE"
-      accetto_utilizzo: 'DA NON TRADURRE'
-    seleziona_orari:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      guida_alla_compilazione: "DA NON TRADURRE"
-      seleziona_orario: 'DA NON TRADURRE'
-      periodo_iscrizione_da: 'DA NON TRADURRE'
-      periodo_iscrizione_a: 'DA NON TRADURRE'
-      error: "DA NON TRADURRE"
-    dati_bambino:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      guida_alla_compilazione: 'DA NON TRADURRE'
-      nome: 'Vorname'
-      cognome: 'Nachname'
-      luogo_nascita: 'Geburtsort'
-      data_nascita: 'Geburtsdatum'
-    allega_attestazione_icef:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      guida_alla_compilazione: "DA NON TRADURRE"
   occupazione_suolo_pubblico:
     nomeIniziativa: 'DA NON TRADURRE'
     guida_alla_compilazione: 'DA NON TRADURRE'
@@ -1674,26 +1500,6 @@ steps:
       fine_ora: 'DA NON TRADURRE'
       error: 'DA NON TRADURRE'
     importo:
-      guida_alla_compilazione: "DA NON TRADURRE"
-  contributo_associazioni:
-    tipologia_attivita:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      tipologia: 'DA NON TRADURRE'
-      commerciale: 'DA NON TRADURRE'
-      non_commerciale: 'DA NON TRADURRE'
-      guida_alla_compilazione: "DA NON TRADURRE"
-    contributo:
-      label: 'DA NON TRADURRE'
-      title: 'DA NON TRADURRE'
-      tipologia_contributo: 'DA NON TRADURRE'
-      beni_strumentali: 'DA NON TRADURRE'
-      fini_istituzionali_commerciali: 'DA NON TRADURRE'
-      fini_istituzionali_non_commerciali: 'DA NON TRADURRE'
-      manifestazione_istituzionale_non_commerciale: 'DA NON TRADURRE'
-      commerciale: 'DA NON TRADURRE'
-      descrizione: 'Beschreibung'
-      anno: 'DA NON TRADURRE'
       guida_alla_compilazione: "DA NON TRADURRE"
   scia:
     error:
@@ -2194,14 +2000,6 @@ steps:
         PUP_ALTRO:
           title: "DA NON TRADURRE"
           description: "DA NON TRADURRE"
-  atto_nascita:
-    dati_atto:
-      title: 'DA NON TRADURRE'
-      label: 'DA NON TRADURRE'
-      guida_alla_compilazione: "DA NON TRADURRE"
-      nome_soggetto_certificato: "DA NON TRADURRE"
-      cognome_soggetto_certificato: "DA NON TRADURRE"
-      cf_soggetto_certificato: "DA NON TRADURRE"
   certificato_morte:
     dati_atto:
       title: 'DA NON TRADURRE'
@@ -2210,14 +2008,6 @@ steps:
       nome_soggetto_certificato: "DA NON TRADURRE"
       cognome_soggetto_certificato: "DA NON TRADURRE"
       data_morte_soggetto_certificato: "DA NON TRADURRE"
-  atto_morte:
-    dati_atto:
-      title: "DA NON TRADURRE"
-      label: 'DA NON TRADURRE'
-      guida_alla_compilazione: "DA NON TRADURRE"
-      nome_soggetto_certificato: "DA NON TRADURRE"
-      cognome_soggetto_certificato: "DA NON TRADURRE"
-      cf_soggetto_certificato: "DA NON TRADURRE"
   certificato_matrimonio:
     dati_atto:
       title: "DA NON TRADURRE"
@@ -2239,6 +2029,7 @@ steps:
     fiscalcode_violation_message: "DA NON TRADURRE"
     name_violation_message: "DA NON TRADURRE"
     surname_violation_message: "DA NON TRADURRE"
+    empty_data_violation_message: ""
 protocollo:
   recipientIDArray: 'Dokumentempfänger/-innen (recipientIDArray)'
   recipientTypeIDArray: 'Nutzerkategorie (recipientTypeIDArray)'
@@ -2805,6 +2596,7 @@ general:
   retry: 'Wiederholen'
   import: 'Importieren'
   import_url: 'import url'
+  enabled: ''
 avanti: 'Weiter'
 categories:
   title: 'Kategorien'
@@ -2948,10 +2740,12 @@ payment:
   error_select_type: 'Sie müssen mindestens eine Zahlungsart wählen'
   type_payment: 'Art der Zahlung'
   payment_started: "Zahlung in Bearbeitung, warten Sie auf das Ergebnis."
-  no_config_tenant_payment: "Keine Zahlungskonfiguration gefunden"
+  error_too_many_gateways: ''
+  no_selected_gateways: ''
+  no_config_tenant_payment: ""
 calendar_formio:
   at_hours: "Uhrzeit"
-  draft_expiration_text: "Für die angegebene Uhrzeit wurde für Sie vorläufig ein Termin reserviert, der bis zum <b>%expire_at%</b> gültig ist."
+  draft_expiration_text: "Für die angegebene Uhrzeit wurde für Sie vorläufig ein Termin reserviert, der bis zum gültig ist"
   draft_expiration_text_end: "Senden Sie Ihre Anfrage vor Ablauf der Frist, um Ihre Terminreservierung zu bestätigen und die Priorität für den ausgewählten Tag und die Uhrzeit nicht zu verlieren"
   availability_error: "Beim Abrufen der Verfügbarkeit ist ein Fehler aufgetreten, bitte versuchen Sie es erneut."
   no_availability_error: "Eine Terminbuchung an diesem Tag ist nicht möglich, weil alle verfügbaren Zeitfenster bereits vergeben sind."
@@ -3095,3 +2889,21 @@ login_callout_texts:
   openlogin:
     title: 'Verwenden Sie SPID?'
     text: "Sie können sich mit SPID authentifizieren, um die Felder automatisch auszufüllen und den Vorgang in Ihrem Profil zu speichern.  <br />(Empfohlener Browser Firefox oder Chrome)"
+aggiorna: ''
+security:
+  password: ''
+  current_password: ''
+  change_password: ''
+  invalid_password: ''
+  non_matching_password: ''
+  new_password: ''
+  repeat_password: ''
+  password_required: ''
+  password_min_length: ''
+  password_number_check: ''
+  password_special_check: ''
+  password_upper_check: ''
+  changed_password: ''
+  remember_me: ''
+  login: ''
+  password_reset: ''

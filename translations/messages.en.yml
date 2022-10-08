@@ -40,7 +40,7 @@ nav:
   home: 'Homepage'
   dashboard: 'My room'
   servizi: 'All services'
-  pratiche: 'My paperwork'
+  pratiche: 'My practices'
   profilo: 'My profile'
   allegati: 'My attachments'
   documenti: 'My documents'
@@ -213,6 +213,7 @@ servizio:
   select_template: 'Select a starting template for creating the form'
   blank_template: 'Blank template'
   templates_based_existing_services: 'Templates based on existing services'
+  id_service: ''
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
@@ -264,7 +265,7 @@ pratica:
   iter: 'Procedure'
   tooltip_durata_iter: "Duration of the process: approx"
   vai_alla_pratica: 'Go to file'
-  ritira_la_pratica: 'Withdraw request'
+  ritira_la_pratica: 'Cancel request'
   nuova_pratica: 'new file: %name%'
   integrazione_pratica: 'File integration: %name%'
   integrazione_pratica_description: "Some additions have been requested for the practice you sent: correct all the fields shown marked with an asterisk (*)"
@@ -477,6 +478,10 @@ pratica:
   reject_pratice: 'Reject practice'
   failed: 'Failed'
   warning_long_text: "<small class='form-text text-muted' id='warning-text-length'>Beware, titles that are too long make navigation more difficult. We recommend the use of simple titles without normative references and the use of the <b>\"More information\"</b> field present in the service sheet.</small>"
+  presentante: 'applicant'
+  already_processed: ''
+  already_assigned: ''
+  no_protocol_number: ''
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
@@ -656,7 +661,6 @@ documenti:
     scaduto: "The document <b>expired</b> on the <b>%validity_end%</b>"
     rinnova: ", it is possible to renew it by accessing the services listed below"
     data_scadenza: "Expiration date"
-    servizi_correlati: "Related services"
     no_servizi_correlati: "There are no related services to this document"
     owner: "Owner"
     folder: "Folder"
@@ -672,12 +676,21 @@ documenti:
     validity_begin: "Validity start date"
     validity_end: "Validity end date"
     store: "Save the file?"
+    invalid_original_name: ''
+    invalid_folder: ""
+    invalid_owner: ""
+    invalid_mime_type: ""
+    missing_extension: ""
+    invalid_extension: ""
+    non_matching_md5: ""
+    non_matching_mime_type: ""
+    duplicated_file: ""
   cartella:
     nome: "Folder's name"
     data_creazione: "Creation date"
-    servizi_correlati: "Related services"
     no_documenti: "There are no documents in this folder"
     no_servizi_correlati: "There are no related services to this folder"
+  servizi_correlati: "Related services"
 iscrizione_asilo_nido:
   dettaglio:
     struttura: 'Structure'
@@ -874,6 +887,10 @@ user:
   welcome_msg: 'welcome_msg'
   forgot_password: 'Did you forget your password?'
   forgot_password_description: 'If you have forgotten your password, please enter your username or email address.'
+  reset_password:
+    subject: ''
+    message: ''
+    btn: ""
 admin:
   usage:
     user_title: 'User number'
@@ -886,6 +903,13 @@ admin:
   show_service: 'Click to view the service'
   show_api_service: "Click to copy the service API URL"
   payment_amount_description: "(The form determines the amount via the value of the 'payment_amount' field)"
+  custom_validation:
+    custom_validation_for: ''
+    id_service: ''
+    id_field: ''
+    status_code: ''
+    field_label: ''
+    status_name: ''
 operatori:
   allega_risposta_firmata: 'Attach your signed response'
   vai_al_dettaglio: 'View detail'
@@ -1210,6 +1234,8 @@ messages:
   mail_to_me: 'Send mail to yourself?'
   mail_to_user: 'A message will be sent to the user''s address'
   warning_pratice: 'Once the file has been processed, it will no longer be possible to make changes'
+  receives_why: ''
+  receives_why_description: ""
 messaggi:
   messaggio: 'Message'
   invia: 'Send'
@@ -1354,13 +1380,6 @@ steps:
         guida_alla_compilazione: 'Choose the type for the required certificate'
         tipologia_certificato: 'Type of certificate'
         uso: "Specify the reasoned request"
-      AttoMorte:
-        label: 'Type and use'
-        title: 'Type and use'
-        description: "Detailed specification of the use of the certificate"
-        guida_alla_compilazione: "Detailed specification of the use of the certificate"
-        tipologia_certificato: 'Type of certificate'
-        uso: "Specify the reasoned request"
       EstrattoMorte:
         label: 'Type and use'
         title: 'Type and use'
@@ -1382,208 +1401,12 @@ steps:
         guida_alla_compilazione: "Specify the certificate type"
         tipologia_certificato: 'Type of certificate'
         uso: "Specify the reasoned request"
-      AttoMatrimonio:
-        label: 'Type and use'
-        title: "Type and use"
-        description: "Detailed specification of the use of the certificate"
-        guida_alla_compilazione: "Detailed specification of the use of the certificate"
-        tipologia_certificato: 'Type of certificate'
-        uso: "Specify the reasoned request"
     uso:
       label: 'Type and use'
       title: 'Type and use'
       description: 'Specify use for the certificate'
       guida_alla_compilazione: 'Specify use for the certificate'
       uso: 'Specify use for the certificate'
-  allacciamento_acquedotto:
-    dati_immobile:
-      label: 'Property'
-      title: "Property data"
-      guida_alla_compilazione: "Enter the data of the property and for what reason the request is made"
-      datiImmobile: "Property data"
-      qualifica: "Qualification of the applicant"
-      provincia: "Province"
-      comune: "City"
-      indirizzo: "Address"
-      numero_civico: "House number"
-      cap: "CAP"
-      scala: "Stair"
-      piano: "Floor"
-      interno: "Interior"
-      catasto_categoria: "cadastral category"
-      catasto_codice_comune: "Cadastral code of the municipality"
-      catasto_foglio: "Page"
-      catasto_sezione: "Section"
-      catasto_mappale: "Map particle"
-      catasto_subalterno: "subordinate"
-    dati_intervento:
-      label: 'Intervention'
-      title: "Type of intervention"
-      guida_alla_compilazione: "Enter the intervention data"
-      tipo_intervento: "Type of intervention"
-      tipo_allaccio: "Type of connection"
-      tipo_uso: "Type of use"
-      diametro_rete_interna: "Internal net diameter"
-    dati_contatto:
-      label: 'Contacts'
-      title: 'Contacts'
-      guida_alla_compilazione: "Specify address for communications and refunds"
-      use_alternate: "uses the following data"
-      indirizzo: "Address"
-      numero_civico: "House number"
-      cap: "CAP"
-      comune: "City"
-  autolettura_acqua:
-    dati_intestatario:
-      label: 'Accountholder'
-      title: "Data of the contract holder"
-      guida_alla_compilazione: "The data of the contract holder can be found in the last invoice received"
-      intestatario_codice_utente: "User code"
-      intestatario_nome: "Name"
-      intestatario_cognome: "Surname"
-      intestatario_indirizzo: "Address"
-      intestatario_cap: "CAP"
-      intestatario_citta: "City"
-      intestatario_telefono: "Telephone number for any communications"
-      intestatario_email: "Email address for any communications"
-    dati_contatore:
-      label: "Meter"
-      title: "Meter"
-      guida_alla_compilazione: "The meter data can be found on the last invoice received"
-      contatore_numero: "Number (to be read on the brass ring of the counter)"
-      contatore_uso: "Type of use of the meter"
-      contatore_unita_immobiliari: "Number of real estate units (apartments, shops, offices, ...) served by the meter"
-    dati_lettura:
-      label: "Reading"
-      title: "Reading data"
-      guida_alla_compilazione: "The meter is read by considering the whole black digits (those before a comma) from left to right. If the last number is not aligned with the others, the lower one must be considered. The hands of watches, on the other hand, should not be read."
-      lettura_metri_cubi: "Reading of cubic meters"
-      lettura_data: "Detection date"
-    note:
-      label: "Other communications"
-      title: "Other communications"
-      guida_alla_compilazione: "Use this field for reporting faults or other communications"
-  cambio_residenza:
-    dichiarazione_provenienza:
-      label: "Origin"
-      title: "Declaration of origin"
-      guida_alla_compilazione: "Declaration of origin: from another municipality, from abroad or from the same municipality"
-      comune: "Declaration of change of residence within the same municipality"
-      altro_comune: "Residence declaration from another municipality"
-      estero: "Residence declaration from abroad"
-      aire: "Declaration of residence of Italian citizens registered with AIRE (Registry of Italians residing abroad) coming from abroad"
-      altro: "Residence declaration for another reason"
-    dichiarazione_provenienza_dettaglio:
-      label: 'Origin (detail)'
-      title: "Details of origin"
-      guida_alla_compilazione:
-        nessun_allegato: "No further information is required for the selected source type"
-        altro_comune: "Indicate the municipality of origin"
-        stato_estero: "Indicate the foreign country of origin"
-        aire: "Indicate the foreign country and the AIRE municipality of origin"
-        altro_motivo: "Specify the reason"
-    dati_residenza:
-      label: "Residence"
-      title: "Residence data"
-      guida_alla_compilazione: "Specify the new residence address"
-      provincia: "Province"
-      comune: "City"
-      indirizzo: "Street/Square"
-      numero_civico: "House number"
-      scala: "Stair"
-      piano: "Floor"
-      interno: "Interior"
-    attualmente_residenti:
-      label: "Residents"
-      title: "People already registered in the new home"
-      guida_alla_compilazione: "Enter any people already residing in the house for which you are applying for residence"
-    tipologia_occupazione:
-      label: "Typology"
-      title: "Type of occupation"
-      guida_alla_compilazione: "Declaration regarding the type of occupation of the new residence"
-      proprietario: "Home owner"
-      locazione: "Holder of the lease duly registered with the Revenue Agency"
-      locazione_erp: "Holder of a lease contract relating to a Public Residential Building"
-      comodato: "Bailee with free loan-for-use contract duly registered with the Revenue Agency"
-      usufruttuario: "Usufructuary"
-      autocertificazione: "Self-certification of the owner of the apartment"
-    tipologia_occupazione_dettaglio:
-      label: "Typology (detail)"
-      title: "Details of the type of occupation"
-      guida_alla_compilazione:
-        proprietario: "Specifies the cadastral values ​​of the owned home"
-        locazione: "Specify the details of the lease duly registered with the Revenue Agency"
-        locazione_erp: "Attach the lease agreement relating to a Public Residential Building property"
-        comodato: "Specify the details of the free loan agreement duly registered with the Revenue Agency"
-        usufruttuario: "Indicate useful data to allow their verification"
-        autocertificazione: "Attach the self-certification of the apartment's owner"
-      proprietario:
-        catasto_sezione: "Section"
-        catasto_foglio: "Page"
-        catasto_particella: "Particle / Map"
-        catasto_subalterno: "Subordinate"
-      contratto:
-        agenzia: "Revenue agency address"
-        numero: "Contract number"
-        data: "Date of conclusion of the contract"
-      verbale_consegna: "Scanning of the contract or the delivery report of the property"
-      usufruttuario_info: "Constitutive title"
-      autocertificazione: "Self-certification of the owner of the apartment"
-    informazioni_accertamento:
-      label: "Assassment"
-      title: "Information for data verification"
-      guida_alla_compilazione: "Report any preferred days and times for verification by the judicial authorities"
-  contributo_pannolini:
-    dati_bambino:
-      label: 'Child''s detail'
-      title: 'Child''s detail'
-      guida_alla_compilazione: 'Enter the details of the child you bought diapers for'
-      nome: 'Name'
-      cognome: 'Surname'
-      luogo_nascita: 'Birth place'
-      data_nascita: 'Birth date'
-    dati_acquisto:
-      label: "Purchase details"
-      title: "Purchase details"
-      guida_alla_compilazione: 'Enter the data relating to the receipt, the scan of the receipt will be attached in the next step'
-      tipo_pannolini: 'Type of nappies purchased'
-      punto_vendita: 'Store name'
-      data_acquisto: 'Purchase date'
-      totale_spesa: "Amount spent (enter the amount spent on diapers only)"
-    dati_conto_corrente:
-      label: 'Bank account data'
-      title: 'Bank account data'
-      guida_alla_compilazione: 'Enter the bank account data'
-  iscrizione_asilo_nido:
-    seleziona_nido:
-      label: 'Structure'
-      title: 'Structure selection'
-      guida_alla_compilazione: "Select from the drop-down menu the nursery to which you want to enroll the child"
-    accettazione_utilizzo:
-      label: 'Acceptance'
-      title: 'Terms of use of the structure'
-      guida_alla_compilazione: "Read and accept the conditions of use of the kindergarten you have selected"
-      accetto_utilizzo: 'I have read the terms of use of the structure'
-    seleziona_orari:
-      label: 'Times and period'
-      title: 'Selection of times and registration period'
-      guida_alla_compilazione: "Select the time you prefer from the drop-down menu and write the period in which you intend to enroll the child in the nursery"
-      seleziona_orario: 'Selected time'
-      periodo_iscrizione_da: 'Registration period from'
-      periodo_iscrizione_a: 'Periodo iscrizione to'
-      error: "The registration end date must be greater than the start date"
-    dati_bambino:
-      label: 'Child''s data'
-      title: 'Child''s data'
-      guida_alla_compilazione: 'Enter the details of the child you wish to enroll'
-      nome: 'Name'
-      cognome: 'Surname'
-      luogo_nascita: 'Birth place'
-      data_nascita: 'Date of birth'
-    allega_attestazione_icef:
-      label: 'ICEF certification'
-      title: 'ICEF certification for early childhood services'
-      guida_alla_compilazione: "Attach the ICEF certificate for early childhood services (in the absence of the certificate, the maximum rates will be applied. Any discounted rate will be used from the first day of the month following that of presentation of the certificate to the Municipality)"
   occupazione_suolo_pubblico:
     nomeIniziativa: 'Show / Event Name'
     guida_alla_compilazione: 'Enter the requested fields. Fields marked with an asterisk (*) are required'
@@ -1624,26 +1447,6 @@ steps:
       error: 'Select a start day earlier than the end day'
     importo:
       guida_alla_compilazione: "Enter the correct amount for the practice. <br/> Find the calculation instructions at this address: <a href='http://www.comune.rovereto.tn.it/istruzioni-per-calcolo-importi'> Municipality of Rovereto - Instructions for calculating the amounts</a>"
-  contributo_associazioni:
-    tipologia_attivita:
-      label: 'A'
-      title: 'Type of activity'
-      tipologia: 'Select the type of activity'
-      commerciale: 'Carries out commercial activity'
-      non_commerciale: 'Doesn''t carry out commercial activity (art. 108 of the Consolidated Income Tax Act)'
-      guida_alla_compilazione: "Select the type of activity that the organization carries out"
-    contributo:
-      label: 'Use of the contribution'
-      title: 'Use of the contribution'
-      tipologia_contributo: 'Type of contribution'
-      beni_strumentali: 'Purchase of capital goods'
-      fini_istituzionali_commerciali: 'Activities for the pursuit of institutional purposes of a commercial nature'
-      fini_istituzionali_non_commerciali: 'Activities for the pursuit of institutional purposes of no commercial nature'
-      manifestazione_istituzionale_non_commerciale: 'Event falling within the institutional activity of no commercial nature'
-      commerciale: 'Commercial activity'
-      descrizione: 'Description'
-      anno: 'Year of activity'
-      guida_alla_compilazione: "Select the type of grant and enter the description and year of the activity for which you are applying"
   scia:
     error:
       allegato_richiesto: "Attach at least one file in the %field% field"
@@ -2143,14 +1946,6 @@ steps:
         PUP_ALTRO:
           title: "y) further provisions and acts of consent provided for by particular provisions as well as by the PUP"
           description: "description"
-  atto_nascita:
-    dati_atto:
-      title: 'Deed data'
-      label: 'Deed data'
-      guida_alla_compilazione: "If another person other than the applicant, indicate the complete details of the person to whom the deed refers"
-      nome_soggetto_certificato: "Name of the person to whom the document refers"
-      cognome_soggetto_certificato: "Surname of the person to whom the deed refers"
-      cf_soggetto_certificato: "Tax Code of the person to whom the deed refers"
   certificato_morte:
     dati_atto:
       title: 'Deceased''s identification data'
@@ -2159,14 +1954,6 @@ steps:
       nome_soggetto_certificato: "Name of the person to whom the document refers"
       cognome_soggetto_certificato: "Surname of the person to whom the deed refers"
       data_morte_soggetto_certificato: "Date of death"
-  atto_morte:
-    dati_atto:
-      title: "Complete details of the person to whom the document refers"
-      label: 'Deceased''s data'
-      guida_alla_compilazione: "Indicate the complete details of the deceased"
-      nome_soggetto_certificato: "Name of the person to whom the document refers"
-      cognome_soggetto_certificato: "Surname of the person to whom the deed refers"
-      cf_soggetto_certificato: "Tax Code of the person to whom the deed refers"
   certificato_matrimonio:
     dati_atto:
       title: "Identification data of the groom or bride"
@@ -2186,6 +1973,7 @@ steps:
     fiscalcode_violation_message: "The fiscal code entered does not coincide with the one returned by the authentication system"
     name_violation_message: "The name does not coincide with the one returned by the authentication system"
     surname_violation_message: "The surname does not coincide with the one returned by the authentication system"
+    empty_data_violation_message: ""
 protocollo:
   recipientIDArray: 'Document recipients (recipientIDArray)'
   recipientTypeIDArray: 'Type of document recipients (recipientTypeIDArray)'
@@ -2366,6 +2154,8 @@ calendars:
   print: 'Print'
   info: 'Created by %owner% on %createdDate%, last modified on %updatedDate% at %updatedTime%'
   update_calendar: 'Edit calendar'
+  update_meeting: ''
+  go_calendar: ''
 meetings:
   error:
     slot_unavailable: "The selected range is not available"
@@ -2505,6 +2295,7 @@ meetings:
     cancelled: 'Cancelled'
     draft: 'Draft'
     concluded: 'Concluded'
+    completed: ''
   every_meetings: 'Each meeting has a duration of'
   one_person: "It is also possible to receive one person at a time"
   one_person_max: "It is also possible to receive up to a maximum of"
@@ -2562,6 +2353,7 @@ backoffice:
       delete_service_group_success: "Service group successfully deleted"
       delete_service_group_error: "Unable to delete the group, there are services connected."
       create_service_group_success: "Successfully created service group"
+      welcome: ''
     subscription_service:
       payment:
         due_date: "Payment due date"
@@ -2644,6 +2436,12 @@ backoffice:
     activation_point: 'Activation point'
     action_execute: 'Action to be performed'
     no_integration: 'No integration expected'
+    enable_integration_with: ""
+    with_appio: ""
+    enable_integration_access: ''
+  gateway:
+    enable: ''
+    payment_gateway: ''
 login_type:
   none: 'None'
   login_pat: 'Spid PAT'
@@ -2691,6 +2489,8 @@ ente:
     label: 'Type of navigation'
     services: 'Services'
     categories: 'Categories'
+  nome: ''
+  meta: ''
 buttons:
   draft: 'Save draft'
   last_save: 'Last saved:'
@@ -2722,6 +2522,11 @@ general:
   approval: 'approval'
   forwarding: 'forwarding'
   postponement: 'postponement'
+  follow_social: ''
+  retry: 'Retry'
+  import: 'Import'
+  import_url: 'Import URL'
+  enabled: ''
 avanti: 'next'
 categories:
   title: 'title'
@@ -2864,7 +2669,10 @@ payment:
   error_amount: 'You must enter a cost greater than zero'
   error_select_type: 'You must choose at least one payment method'
   type_payment: 'Type of Payment'
-  no_config_tenant_payment: "No payment configuration found"
+  payment_started: ""
+  error_too_many_gateways: ''
+  no_selected_gateways: ''
+  no_config_tenant_payment: ""
 calendar_formio:
   at_hours: "at"
   draft_expiration_text: "A draft reservation has been reserved for you at the time indicated above, valid until the day"
@@ -2902,7 +2710,7 @@ time:
   month: 'month'
   week: 'week'
   day: 'day'
-  hour: 'hour'
+  hour: 'Now'
   minute: 'minute'
   weeks: 'weeks'
   days: 'days'
@@ -2941,6 +2749,7 @@ time:
   two_weeks_before: "Two weeks before"
   three_weeks_before: "Three weeks before"
   one_month_before: "One month before (30 days)"
+  now: ''
 characters: 'characters'
 integrations: 'Integrations'
 event: 'Event'
@@ -2999,3 +2808,32 @@ scheduled_actions:
   "application_webhook'": 'Webhook'
   "application_payment_reminder'": 'Payment reminder'
   "produce_message'": 'Kafka message'
+login_callout_texts:
+  cta_button: ''
+  cas:
+    title: 'Do you use SPID?'
+    text: ""
+  login_pat:
+    title: 'Do you use SPID or CPS?'
+    text: ""
+  openlogin:
+    title: 'Do you use SPID?'
+    text: ""
+aggiorna: ''
+security:
+  password: ''
+  current_password: ''
+  change_password: ''
+  invalid_password: ''
+  non_matching_password: ''
+  new_password: ''
+  repeat_password: ''
+  password_required: ''
+  password_min_length: ''
+  password_number_check: ''
+  password_special_check: ''
+  password_upper_check: ''
+  changed_password: ''
+  remember_me: ''
+  login: ''
+  password_reset: ''
