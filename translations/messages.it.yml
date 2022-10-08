@@ -248,7 +248,7 @@ servizio:
   livello_accesso: "Accesso"
   suggerisci_login: "Suggerisci il Login per l 'autocompletamento?"
   consenti_riapertura: "Consenti agli operatori di cambiare manualmente lo stato di una pratica"
-  consenti_ritiro: "Consenti al cittadino di annullare la presentazione della pratica"
+  consenti_ritiro: "Consenti al cittadino di ritirare una pratica dopo che questa è già stata presentata"
   consenti_richiesta_integrazione: "Consenti agli operatori di richiedere integrazioni per le pratiche di questo servizio"
   flusso: "Flusso di lavoro"
   max_response_time: "Tempo massimo di erogazione del servizio (in giorni)"
