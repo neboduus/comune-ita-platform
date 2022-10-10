@@ -25,6 +25,7 @@ use App\Form\Admin\Servizio\PaymentDataType;
 use App\Form\Admin\Servizio\ProtocolDataType;
 use App\FormIO\SchemaFactoryInterface;
 use App\Model\FlowStep;
+use App\Model\ServiceSource;
 use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
 use App\Services\MailerService;
@@ -553,6 +554,8 @@ class AdminController extends AbstractController
 
         $serviceDto = new Service();
         $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
+        $serviceId = $responseBody['id'];
+        $md5Response = md5(json_encode($responseBody));
         unset($responseBody['id'], $responseBody['slug']);
 
         $data = Service::normalizeData($responseBody);
@@ -562,6 +565,10 @@ class AdminController extends AbstractController
           $this->addFlash('error', $this->translator->trans('servizio.error_import'));
           return $this->redirectToRoute('admin_servizio_index');
         }
+
+        $updatedAt = isset($responseBody['updated_at']) ? $responseBody['updated_at'] : date('c');
+        $serviceSource = new ServiceSource($serviceId, $remoteUrl, $updatedAt, $md5Response, '1');
+        $serviceDto = $serviceDto->setSource($serviceSource);
 
         $category = $em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
         if ($category instanceof Categoria) {
@@ -586,8 +593,7 @@ class AdminController extends AbstractController
         $service->activateForErogatore($erogatore);
 
         // todo: verificare se è possibile eliminare
-        $this->serviceManager->save($service);
-
+       $this->serviceManager->save($service);
 
         if (!empty($service->getFormIoId())) {
           $response = $this->formServer->cloneFormFromRemote($service, $remoteUrl . '/form');

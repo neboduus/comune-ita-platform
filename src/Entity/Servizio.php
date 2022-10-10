@@ -9,9 +9,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Model\PaymentParameters;
 use App\Model\FlowStep;
+use App\Model\ServiceSource;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use JMS\Serializer\Annotation as Serializer;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
@@ -49,6 +51,12 @@ class Servizio implements Translatable
   const WORKFLOW_FORWARD = 1;
 
   const FORMIO_SERVICE_CLASS = '\App\Entity\FormIO';
+
+  /**
+   * Hook timestampable behavior
+   * updates createdAt, updatedAt fields
+   */
+  use TimestampableEntity;
 
   /**
    * @ORM\Column(type="guid")
@@ -462,6 +470,13 @@ class Servizio implements Translatable
   private $locale;
 
   /**
+   * @var ServiceSource
+   * @ORM\Column(type="json", nullable=true)
+   * @OA\Property(property="source", description="Source of the service if imported", type="object", ref=@Model(type=ServiceSource::class))
+   */
+  private $source;
+
+  /**
    * Servizio constructor.
    */
   public function __construct()
@@ -484,6 +499,7 @@ class Servizio implements Translatable
     $this->setAllowWithdraw(true);
     $this->setAllowIntegrationRequest(true);
     $this->setFinalIndications('La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.');
+    $this->setSource(null);
   }
 
   /**
@@ -1687,6 +1703,24 @@ class Servizio implements Translatable
   {
     $this->costs = $costs;
 
+    return $this;
+  }
+
+  /**
+   * @return ServiceSource|null
+   */
+  public function getSource()
+  {
+    return $this->source;
+  }
+
+  /**
+   * @param ServiceSource|null $source
+   * @return $this
+   */
+  public function setSource(?ServiceSource $source)
+  {
+    $this->source = $source;
     return $this;
   }
 }

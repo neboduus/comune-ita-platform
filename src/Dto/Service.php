@@ -10,6 +10,7 @@ use App\Entity\Servizio;
 use App\Model\PaymentParameters;
 use App\Model\FlowStep;
 use App\Model\IOServiceParameters;
+use App\Model\ServiceSource;
 use App\Services\Manager\BackofficeManager;
 use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation as Serializer;
@@ -392,6 +393,13 @@ class Service
    */
   private $maxResponseTime;
 
+  /**
+   * @var ServiceSource
+   * @Serializer\Type("array")
+   * @OA\Property(property="source", description="Source of the service if imported", type="object", ref=@Model(type=ServiceSource::class))
+   * @Groups({"read"})
+   */
+  private $source;
 
   /**
    * @return mixed
@@ -1189,6 +1197,25 @@ class Service
     return $this;
   }
 
+  /**
+   * @return ServiceSource|null
+   */
+  public function getSource()
+  {
+    return $this->source;
+  }
+
+  /**
+   * @param ServiceSource|null $source
+   *
+   * @return self
+   */
+  public function setSource(?ServiceSource $source)
+  {
+    $this->source = $source;
+    return $this;
+  }
+
 
   /**
    * @param Servizio $servizio
@@ -1261,6 +1288,8 @@ class Service
       }
     }
 
+    $dto->source = $servizio->getSource();
+
     return $dto;
   }
 
@@ -1324,6 +1353,7 @@ class Service
 
     $entity->setRecipients(new ArrayCollection($this->recipientsId));
     $entity->setGeographicAreas(new ArrayCollection($this->geographicAreasId));
+    $entity->setSource($this->source);
 
     return $entity;
   }
