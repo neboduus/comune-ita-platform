@@ -810,7 +810,9 @@ class AdminController extends AbstractController
     $servizio = new Servizio();
     $ente = $this->instanceService->getCurrentInstance();
 
-    $servizio->setName('Nuovo Servizio ' . time());
+    $name = 'Nuovo Servizio ' . time();
+    $servizio->setName($name);
+    $servizio->setShortDescription($name);
     $servizio->setPraticaFCQN('\App\Entity\FormIO');
     $servizio->setPraticaFlowServiceName('ocsdc.form.flow.formio');
     $servizio->setEnte($ente);

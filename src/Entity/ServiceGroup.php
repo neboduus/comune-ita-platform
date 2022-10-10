@@ -66,6 +66,17 @@ class ServiceGroup implements Translatable
   /**
    * @var string
    * @Gedmo\Translatable
+   * @ORM\Column(type="string", nullable=true)
+   * @OA\Property(description="Services group subtitle")
+   * @Groups({"read", "write"})
+   * @Assert\Length(max="160")
+   * @Assert\NotBlank(message="service.short_description.not_blank")
+   */
+  private $shortDescription;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
    * @OA\Property(description="Compilation guide, accepts html tags")
    * @Groups({"read", "write"})
@@ -274,6 +285,23 @@ class ServiceGroup implements Translatable
   public function setDescription(string $description)
   {
     $this->description = $description;
+  }
+
+
+  /**
+   * @return string
+   */
+  public function getShortDescription(): ?string
+  {
+    return $this->shortDescription;
+  }
+
+  /**
+   * @param string $shortDescription
+   */
+  public function setShortDescription(string $shortDescription): void
+  {
+    $this->shortDescription = $shortDescription;
   }
 
   /**

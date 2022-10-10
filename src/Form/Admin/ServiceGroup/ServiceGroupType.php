@@ -57,6 +57,11 @@ class ServiceGroupType extends AbstractI18nType
       ->add("name", I18nTextType::class, [
         "label" => 'gruppo_di_servizi.nome'
       ])
+      ->add("shortDescription", I18nTextareaType::class, [
+        "label" => 'servizio.short_description',
+        'required' => true,
+        'purify_html' => true,
+      ])
       ->add("description", I18nTextareaType::class, [
         "label" => 'gruppo_di_servizi.descrizione',
         'required' => false,

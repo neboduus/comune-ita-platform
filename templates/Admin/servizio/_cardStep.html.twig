@@ -10,6 +10,11 @@
         {{ servizio.serviceGroup.description|cleanMarkup|raw|nl2br }}
       </div>
 
+      <p class="text-primary mb-2"><strong>{{ 'servizio.short_description'|trans }}</strong></p>
+      <div class="p-2 bg-100 mb-3">
+        {{ servizio.serviceGroup.shortDescription|cleanMarkup|raw|nl2br }}
+      </div>
+
       <p class="text-primary mb-2"><strong>{{ 'servizio.a_chi_si_rivolge'|trans }}</strong></p>
       <div class="p-2 bg-100 mb-3">
         {{ servizio.serviceGroup.who|cleanMarkup|raw|nl2br }}

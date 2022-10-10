@@ -64,6 +64,7 @@ class ServizioFormType extends AbstractType
       ])
       ->add('topics')
       ->add('description')
+      ->add('short_description')
       ->add('howto')
       ->add('how_to_do')
       ->add('what_you_need')

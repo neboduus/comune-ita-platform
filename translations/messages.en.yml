@@ -121,6 +121,8 @@ servizio:
   nome: "Service name"
   categoria: "Catergory"
   cos_e: "What's it?"
+  short_description: "Short description"
+  change_short_description: "The short description field still has the default value, please change it before saving."
   descrizione: "Description"
   a_chi_si_rivolge: "Who is it for?"
   copertura: "Geographic coverage"

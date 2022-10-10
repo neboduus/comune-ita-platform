@@ -6,30 +6,47 @@ namespace App\Form\Admin\Servizio;
 
 use App\Entity\Servizio;
 use App\Form\I18n\AbstractI18nType;
+use App\Form\I18n\I18nDataMapperInterface;
 use App\Form\I18n\I18nTextareaType;
-use App\Form\I18n\I18nTextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CardDataType extends AbstractI18nType
 {
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+  /**
+   * @param I18nDataMapperInterface $dataMapper
+   * @param $locale
+   * @param $locales
+   * @param TranslatorInterface $translator
+   */
+  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, TranslatorInterface $translator)
+  {
+    parent::__construct($dataMapper, $locale, $locales);
+    $this->translator = $translator;
+  }
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     /** @var Servizio $servizio */
     $servizio = $builder->getData();
 
-
     // you can add the translatable fields
     $this->createTranslatableMapper($builder, $options)
+      ->add("shortDescription", I18nTextareaType::class, [
+        "label" => 'servizio.short_description',
+        'required' => true,
+        'purify_html' => true,
+      ])
       ->add("description", I18nTextareaType::class, [
         "label" => 'servizio.cos_e',
         'purify_html' => true,
@@ -117,6 +134,7 @@ class CardDataType extends AbstractI18nType
         ]
       )
       ;
+    $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
 
   public function configureOptions(OptionsResolver $resolver)
@@ -131,5 +149,15 @@ class CardDataType extends AbstractI18nType
   public function getBlockPrefix()
   {
     return 'card_data';
+  }
+
+  public function onPreSubmit(FormEvent $event)
+  {
+    $service = $event->getForm()->getData();
+    $data = $event->getData();
+    if ($data['shortDescription'][$this->getLocale()] === $service->getName())
+    {
+      $event->getForm()->addError(new FormError($this->translator->trans("servizio.change_short_description")));
+    }
   }
 }

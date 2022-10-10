@@ -61,6 +61,7 @@ class EntitiesHelper
     $servizio->setProtocolRequired(false);
 
     $servizio->setDescription('Service lorem ipsum');
+    $servizio->setShortDescription('Service lorem ipsum');
     $servizio->setHowto('Service lorem ipsum');
     $servizio->setWho('Service lorem ipsum');
     $servizio->setSpecialCases('Service lorem ipsum');

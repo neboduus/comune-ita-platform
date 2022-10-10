@@ -135,6 +135,8 @@ servizio:
   nome: "Name des Dienstes"
   categoria: "Kategorie"
   cos_e: "Worum handelt es sich?"
+  short_description: ""
+  change_short_description: ""
   descrizione: "Beschreibung"
   a_chi_si_rivolge: "Wer kann die angebotenen Dienste nutzen?"
   copertura: "Landesgerichtssprengel"

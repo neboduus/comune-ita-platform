@@ -143,9 +143,9 @@ services:
 
   App\Form\Admin\Servizio\CardDataType:
     arguments:
-      - '@App\Form\I18n\I18nDataMapper'
-      - "%locale%"
-      - "%app_locales%"
+      $dataMapper: '@App\Form\I18n\I18nDataMapper'
+      $locale: "%locale%"
+      $locales: "%app_locales%"
     tags:
       - { name: form.type }
 
