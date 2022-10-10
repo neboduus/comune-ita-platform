@@ -5,6 +5,7 @@ import Base from 'formiojs/components/_classes/component/Component';
 import editForm from './DynamicCalendar/DynamicCalendar.form'
 import moment from 'moment'
 import {i18nDatepicker} from "./translations/i18n-datepicker";
+import {CountDownTimer} from "./components/Countdown";
 
 export default class FormioCalendar extends Base {
   constructor(component, options, data) {
@@ -23,6 +24,7 @@ export default class FormioCalendar extends Base {
     this.first_available_end_time = null;
     this.first_availability_updated_at = null;
     this.$language = document.documentElement.lang.toString();
+    this.countdown = false
     this.loaderTpl = `<div id="loader" class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">${Translator.trans('loading', {}, 'messages', this.$language)}</span></div>`;
   }
 
@@ -80,7 +82,10 @@ export default class FormioCalendar extends Base {
         <div id="range-picker" class="my-5"></div>
         ${content}
         <div id="date-picker-print" class="mt-3 d-print-block d-preview-calendar"></div>
-        <div id="draft-expiration" class="mt-3 d-print-none d-preview-none"></div>
+        <div class="mt-3 d-print-none d-preview-none" id="draft-expiration-dynamic-container">
+        <div id="draft-expiration-dynamic" class="d-print-none d-preview-none"></div>
+        <span id="draft-expiration-dynamic-countdown" class="font-weight-bolder"></span>
+        </div>
         `);
   }
 
@@ -148,7 +153,9 @@ export default class FormioCalendar extends Base {
 
                 if (self.meeting_expiration_time) {
                   let expiration = `${self.meeting_expiration_time.format("DD/MM/YYYY")} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.meeting_expiration_time.format("HH:mm")}`;
-                  $('#draft-expiration').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${expiration}. ${Translator.trans('calendar_formio.draft_expiration_text_end', {}, 'messages', self.$language)}</i>`)
+                  $('#draft-expiration-dynamic').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${self.meeting_expiration_time.format("HH:mm")}</i>`)
+                  $('#draft-expiration-dynamic-container').addClass('alert alert-info')
+                  CountDownTimer(self.meeting_expiration_time, 'draft-expiration-dynamic-countdown')
                 }
 
               },
@@ -181,7 +188,7 @@ export default class FormioCalendar extends Base {
             }
             if (self.meeting_expiration_time) {
               let expiration = `${self.meeting_expiration_time.format("DD/MM/YYYY")} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.meeting_expiration_time.format("HH:mm")}`;
-              $('#draft-expiration').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${expiration}. ${Translator.trans('calendar_formio.draft_expiration_text_end', {}, 'messages', self.$language)}</i>`)
+              $('#draft-expiration-dynamic').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${expiration}. ${Translator.trans('calendar_formio.draft_expiration_text_end', {}, 'messages', self.$language)}</i>`)
             }
           }
         });
@@ -231,7 +238,8 @@ export default class FormioCalendar extends Base {
     }
     if (self.meeting_expiration_time) {
       let expiration = `${self.meeting_expiration_time.format("DD/MM/YYYY")} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.meeting_expiration_time.format("HH:mm")}`;
-      $('#draft-expiration').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${expiration}. ${Translator.trans('calendar_formio.draft_expiration_text_end', {}, 'messages', self.$language)}</i>`)
+      $('#draft-expiration-dynamic').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)}</i>`)
+      $('#draft-expiration-dynamic-container').addClass('alert alert-info')
     }
   }
 
@@ -491,7 +499,12 @@ export default class FormioCalendar extends Base {
           $('#date-picker-print').html(`<b>${Translator.trans('calendar_formio.day_selected', {}, 'messages', self.$language)}: </b> ${self.date} ${slotText}`);
           if (self.meeting_expiration_time) {
             let expiration = `${self.meeting_expiration_time.format("DD/MM/YYYY")} ${Translator.trans('calendar_formio.at_hours', {}, 'messages', self.$language)} ${self.meeting_expiration_time.format("HH:mm")}`;
-            $('#draft-expiration').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)} ${expiration}. ${Translator.trans('calendar_formio.draft_expiration_text_end', {}, 'messages', self.$language)}</i>`)
+            $('#draft-expiration-dynamic').html(`<i>${Translator.trans('calendar_formio.draft_expiration_text', {}, 'messages', self.$language)}</i>`)
+            $('#draft-expiration-dynamic-container').addClass('alert alert-info')
+            if (!self.countdown) {
+              self.countdown = true;
+              CountDownTimer(self.meeting_expiration_time, 'draft-expiration-dynamic-countdown')
+            }
           }
         }
       });

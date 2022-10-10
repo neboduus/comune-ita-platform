@@ -2749,8 +2749,8 @@ payment:
   no_config_tenant_payment: "Nessuna configurazione di pagamento trovata"
 calendar_formio:
   at_hours: "alle ore"
-  draft_expiration_text: "Ti è stata riservata una prenotazione in bozza all'orario sopra indicato valido fino al giorno"
-  draft_expiration_text_end: "Procedi con l'invio della domanda prima della scadenza per confermare la prenotazione e non perdere la priorità per il giorno e l'orario selezionati"
+  draft_expiration_text: "Per confermare la prenotazione che ti abbiamo riservato procedi con l’invio di questa pratica e con il pagamento (se richiesto) di quanto previsto entro:"
+  draft_expiration_text_end: "La prenotazione verrà confermata solo quando invierai questa pratica e pagherai la relativa tassa nei casi in cui è prevista, hai tempo per confermare fino alle ore"
   availability_error: "Si è verificato un errore nel recupero delle disponibilità, si prega di riprovare"
   no_availability_error: "Non è possibile prenotare in questa giornata, tutte le fasce orarie a disposizione sono già prenotate"
   day_selected: "Giorno selezionato per la prenotazione"
@@ -2761,6 +2761,7 @@ calendar_formio:
   from_range_error_value: "Il valore"
   from_range_error_not_valid: "non è valido"
   unavailable: "Non disponibile"
+  time_expired: "Tempo prenotazione scaduto"
 time:
   now: 'Ora'
   year: 'anno'
