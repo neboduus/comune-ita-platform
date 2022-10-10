@@ -104,6 +104,13 @@ Encore
     threshold: 10240,
     minRatio: 0.8,
   }))
+  .addPlugin( new CompressionPlugin({
+    filename: "[path][base].gz",
+    algorithm: "gzip",
+    test: /\.(js|css|html|svg)$/,
+    threshold: 10240,
+    minRatio: 0.8,
+  }))
 ;
 
 module.exports = Encore.getWebpackConfig();
