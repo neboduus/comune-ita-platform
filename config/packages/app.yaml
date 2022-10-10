@@ -1,5 +1,5 @@
 parameters:
-  version: 2.1.3
+  version: 2.2.0-rc.0
   locale: it
   app_locales: it
   database_driver: '%env(DB_DRIVER)%'
@@ -171,9 +171,9 @@ parameters:
   env(EZ_PASSWORD): ez
   env(PITRE_ADAPTER_URL): http://localhost:8080/
   env(HEADER_TOP_TITLE): Provincia autonoma di Trento
-  env(HEADER_TOP_LINK): http://www.provincia.tn.it/
-    La <strong>Stanza del cittadino</strong> è una iniziativa progettuale del
-    Consorzio dei Comuni Trentini
+  env(HEADER_TOP_LINK): >-
+    http://www.provincia.tn.it/ La <strong>Stanza del cittadino</strong> è una
+    iniziativa progettuale del Consorzio dei Comuni Trentini
   env(OCSDC_SCHEME): http
   env(OCSDC_HOST): stanzadelcittadino.localtest.me
   env(GISCOM_PASSWORD): giscom
