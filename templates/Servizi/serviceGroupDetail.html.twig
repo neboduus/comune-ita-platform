@@ -281,12 +281,8 @@
         {% endif %}
         <div class="row d-flex flex-wrap">
           {% for sharedService in servizio.getSharedServices %}
-            {% set serviceUrl = path('pratiche_anonime_new', {'servizio': sharedService.slug}) %}
-            {% if sharedService.accessLevel > 0 or sharedService.accessLevel is null %}
-              {% set serviceUrl = path('pratiche_new', {'servizio': sharedService.slug}) %}
-            {% endif %}
             <div class="col-12 col-md-6 mb-2">
-              <a href="{{ serviceUrl }}"
+              <a href="{{ path('service_access', {'servizio': sharedService.slug}) }}"
                  class="btn btn-success btn-lg d-flex flex-column justify-content-center h-100 service-access-button">
                 {{ sharedService.name }}
               </a>

@@ -24,10 +24,6 @@
           </div>
         {% else %}
           <div>
-            {% set serviceUrl = path('pratiche_anonime_new', {'servizio': servizio.slug}) %}
-            {% if servizio.accessLevel > 0 or servizio.accessLevel is null %}
-              {% set serviceUrl = path('pratiche_new', {'servizio': servizio.slug}) %}
-            {% endif %}
             {% if servizio.enti|length > 1 %}
               <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}
                   :</strong>
@@ -367,7 +363,7 @@
         {% if can_access %}
           <div class="mt-5">
             <p>
-              <a href="{{ serviceUrl }}" class="btn btn-success btn-lg">
+              <a href="{{ path('service_access', {'servizio': servizio.slug}) }}" class="btn btn-success btn-lg">
                 <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
               </a>
             </p>

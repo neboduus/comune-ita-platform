@@ -79,9 +79,9 @@ class DefaultHandler extends AbstractServizioHandler
 
   }
 
-  public function canAccess(Servizio $servizio, Ente $ente)
+  public function canAccess(Servizio $servizio)
   {
-    parent::canAccess($servizio, $ente);
+    parent::canAccess($servizio);
 
     // Check Browser
     if ($this->browserRestrictions != null) {
@@ -95,11 +95,10 @@ class DefaultHandler extends AbstractServizioHandler
 
   /**
    * @param Servizio $servizio
-   * @param Ente $ente
    * @return Response
    * @throws \Exception
    */
-  public function execute(Servizio $servizio, Ente $ente)
+  public function execute(Servizio $servizio)
   {
     if ($this->getUser() instanceof CPSUser) {
 
@@ -114,7 +113,7 @@ class DefaultHandler extends AbstractServizioHandler
         $this->formServerPublicUrl,
         $this->userSessionService,
         $this->browserRestrictions
-      ))->execute($servizio, $ente);
+      ))->execute($servizio);
 
     } else {
 
@@ -137,7 +136,7 @@ class DefaultHandler extends AbstractServizioHandler
         $this->formServerPublicUrl,
         $this->userSessionService,
         $this->browserRestrictions
-      ))->execute($servizio, $ente);
+      ))->execute($servizio);
     }
   }
 

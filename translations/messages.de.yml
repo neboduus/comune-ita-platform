@@ -1217,6 +1217,7 @@ email:
     link_txt: 'Nähere Details finden Sie unter folgendem Link: '
     link_download_txt: 'Nähere Details finden Sie unter folgendem Link: '
     no_info: '<i>Information nicht verfügbar</i>'
+    motivation: 'Mit folgendem Beweggrund:'
     user:
       status:
         pre.submit: "wir teilen Ihnen mit, dass Ihr Antrag betreffend <strong>%servizio%</strong> erfolgreich gesendet worden ist. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an."

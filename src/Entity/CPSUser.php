@@ -1359,15 +1359,24 @@ class CPSUser extends User
 
   /**
    * Checks whether user is verified by an identity provider
-   * @return int|null
+   * @return string
    */
   public function getIdp() {
+    //Todo: questa funzione deve essere migliorata, la deduzione potrebbe creare problematiche
     if ( $this->getSpidCode() )
       return CPSUser::IDP_SPID;
     else if ($this->getShibSessionId() && $this->getShibAuthenticationIstant())
       return CPSUser::IDP_CPS_OR_CNS;
     else
       return CPSUser::IDP_NONE;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isAnonymous(): bool
+  {
+    return $this->getIdp() === CPSUser::IDP_NONE;
   }
 
   public static function getProvinces()

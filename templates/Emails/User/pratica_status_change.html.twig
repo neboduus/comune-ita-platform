@@ -19,7 +19,7 @@
 
         {% if not pratica.getMotivazioneEsito() is empty and not pratica.getEsito() is null %}
           <p>
-            Con la seguente motivazione:<br>
+            {{ 'email.pratica.motivation'|trans({}, null, locale) }}<br>
             {{ pratica.getMotivazioneEsito()|raw }}
           </p>
         {% endif %}

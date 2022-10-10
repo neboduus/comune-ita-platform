@@ -35,7 +35,7 @@ use ReflectionException;
 use Twig\Environment;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use TheCodingMachine\Gotenberg\Client;
 
 use TheCodingMachine\Gotenberg\ClientException;

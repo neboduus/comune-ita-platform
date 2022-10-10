@@ -26,7 +26,7 @@ use Swift_Mailer;
 use Doctrine\Persistence\ManagerRegistry;
 use Twig\Environment;
 use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class MailerService
 {
@@ -263,16 +263,12 @@ class MailerService
     $toEmail = $pratica->getUser()->getEmailContatto();
     $toName = $pratica->getUser()->getFullName();
 
-    // Todo: get from default locale
     $locale = $pratica->getLocale() ?? 'it';
 
     $ente = $pratica->getEnte();
     $ente->setTranslatableLocale($locale);
 
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
-
-    // Todo: get from default locale
-    $locale = $pratica->getLocale() ?? 'it';
     $service = $pratica->getServizio();
     $service->setTranslatableLocale($locale);
     $this->doctrine->getManager()->refresh($service);
@@ -306,8 +302,10 @@ class MailerService
         'pratica' => $pratica,
         'placeholder' => $placeholders,
         'text' => strtr($feedbackMessage['message'], $placeholders),
+        'locale' => $locale,
       )
     );
+
     $textPlain = strip_tags($textHtml);
 
     $message = (new \Swift_Message())
@@ -354,7 +352,7 @@ class MailerService
 
     if ($textOnly) {
       return $this->templating->render(
-        'Emails/Userpratica_status_change.txt.twig',
+        'Emails/User/pratica_status_change.txt.twig',
         $placeholders
       );
     }

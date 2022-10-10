@@ -25,7 +25,6 @@ parameters:
   pitre_adapter_url: '%env(PITRE_ADAPTER_URL)%'
   header_top_title: '%env(HEADER_TOP_TITLE)%'
   header_top_link: '%env(HEADER_TOP_LINK)%'
-  footer_credits: '%env(FOOTER_CREDITS)%'
   ocsdc_iter_duration_start_status: 3
   ocsdc_iter_duration_end_statuses:
     - 10
@@ -173,7 +172,6 @@ parameters:
   env(PITRE_ADAPTER_URL): http://localhost:8080/
   env(HEADER_TOP_TITLE): Provincia autonoma di Trento
   env(HEADER_TOP_LINK): http://www.provincia.tn.it/
-  env(FOOTER_CREDITS): >-
     La <strong>Stanza del cittadino</strong> è una iniziativa progettuale del
     Consorzio dei Comuni Trentini
   env(OCSDC_SCHEME): http

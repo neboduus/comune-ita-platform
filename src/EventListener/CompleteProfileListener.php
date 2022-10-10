@@ -73,7 +73,7 @@ class CompleteProfileListener
             }
         } elseif ($user instanceof OperatoreUser) {
 
-            // Redirect al fos_user_change_password se lastChangePassword è più vecchio della data odierna - $passwordLifeTime
+            // Redirect al security_change_password se lastChangePassword è più vecchio della data odierna - $passwordLifeTime
             $currentRoute = $event->getRequest()->get('_route');
             $currentRouteParams = $event->getRequest()->get('_route_params');
             $currentRouteQuery = $event->getRequest()->query->all();

@@ -11,7 +11,7 @@ use App\Entity\Pratica;
 use App\Services\MeetingService;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CalendarsBackOffice implements BackOfficeInterface
 {

@@ -110,10 +110,6 @@ services:
     arguments:
       $rootDir: '%kernel.root_dir%'
 
-  App\Controller\Ui\Frontend\PraticheAnonimeController:
-    arguments:
-      $hashValidity: '%hash_validity%'
-
   GuzzleHttp\Client: '@eight_points_guzzle.client.mypay'
 
 
@@ -297,6 +293,12 @@ services:
       - "%cas_login_url%"
       - "%cas_validation_url%"
       - "@logger"
+
+  ocsdc.token.authenticator:
+    class: App\Security\TokenAuthenticator
+    arguments:
+      $loginRoute: "%login_route%"
+      $userMetrics: '@App\Services\Metrics\UserMetrics'
 
   App\Security\DedaLogin\DedaLoginClient:
     public: true

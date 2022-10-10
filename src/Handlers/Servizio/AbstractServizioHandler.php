@@ -87,10 +87,9 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
 
   /**
    * @param Servizio $servizio
-   * @param Ente $ente
    * @throws ForbiddenAccessException
    */
-  public function canAccess(Servizio $servizio, Ente $ente)
+  public function canAccess(Servizio $servizio)
   {
     if ($servizio->getStatus() === Servizio::STATUS_CANCELLED){
       throw new ForbiddenAccessException('servizio.cancellato');

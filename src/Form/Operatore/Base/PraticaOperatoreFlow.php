@@ -6,7 +6,7 @@ use App\Entity\Pratica;
 use App\Logging\LogConstants;
 use Craue\FormFlowBundle\Form\FormFlow;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 abstract class PraticaOperatoreFlow extends FormFlow

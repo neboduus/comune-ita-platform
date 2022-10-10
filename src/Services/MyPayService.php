@@ -131,16 +131,9 @@ class MyPayService
    */
   public function renderCallbackUrlForPayment(Pratica $pratica, $anonymous = false): string
   {
-    if ($anonymous) {
-      return $this->router->generate('pratiche_anonime_payment_callback', [
-        'pratica' => $pratica->getId(),
-        'hash' => $pratica->getHash()
-      ], RouterInterface::ABSOLUTE_URL);
-    } else {
-      return $this->router->generate('pratiche_payment_callback', [
-        'pratica' => $pratica->getId()
-      ], RouterInterface::ABSOLUTE_URL);
-    }
+    return $this->router->generate('pratiche_payment_callback', [
+      'pratica' => $pratica->getId()
+    ], RouterInterface::ABSOLUTE_URL);
   }
 
   /**

@@ -35,59 +35,54 @@
       {{ include('Pratiche/summary/parts/moduli_compilati_protocollati.html.twig', {'pratica':pratica, 'user': user}) }}
     </div>
   {% else %}
-  <div class="col-12 my-2">
-    {# In attesa di generazione del pdf #}
-    {% if pratica.status == 1900 %}
-      {% if pratica.servizio.isProtocolRequired %}
-        {%  set fcqn_parts = pratica.servizio.praticaFCQN | split('\\') %}
-        {% set class_name = fcqn_parts|last %}
-        <p class="text-center m-0 {{ 'd-none-'~ class_name }}">
-          {{ 'operatori.attesa_modulo_compilato_info'|trans|raw }}
-        </p>
-      {% else %}
-        <p class="my-2">
-          {{ 'operatori.attesa_ricevuta_info'|trans|raw }}
-          {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}
-            <br>{{ 'operatori.controlla_ricevuta_loggato'|trans|raw }}
-          {% else %}
-            <br>{{ 'operatori.controlla_ricevuta_anonimo'|trans|raw }}
-          {% endif %}
-        </p>
-      {% endif %}
-    {# Pratica inviata #}
-    {% elseif pratica.status == 2000  %}
+    <div class="col-12 my-2">
+      {# In attesa di generazione del pdf #}
+      {% if pratica.status == 1900 %}
+        {% if pratica.servizio.isProtocolRequired %}
+          {% set fcqn_parts = pratica.servizio.praticaFCQN | split('\\') %}
+          {% set class_name = fcqn_parts|last %}
+          <p class="text-center m-0 {{ 'd-none-'~ class_name }}">
+            {{ 'operatori.attesa_modulo_compilato_info'|trans|raw }}
+          </p>
+        {% else %}
+          <p class="my-2">
+            {{ 'operatori.attesa_ricevuta_info'|trans|raw }}
+            {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}
+              <br>{{ 'operatori.controlla_ricevuta_loggato'|trans|raw }}
+            {% else %}
+              <br>{{ 'operatori.controlla_ricevuta_anonimo'|trans|raw }}
+            {% endif %}
+          </p>
+        {% endif %}
+        {# Pratica inviata #}
+      {% elseif pratica.status == 2000 %}
 
-      {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
-        <p class="my-2">
-          {{ 'operatori.attesa_protocollo_info'|trans|raw }}
-          {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}
-            <br>{{ 'operatori.controlla_richiesta_protocollata_loggato'|trans|raw }}
-          {% else %}
-            <br>{{ 'operatori.controlla_richiesta_protocollata_anonimo'|trans|raw }}
-          {% endif %}
-        </p>
-      {% endif %}
+        {% if pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo %}
+          <p class="my-2">
+            {{ 'operatori.attesa_protocollo_info'|trans|raw }}
+            {% if is_granted('ROLE_USER') and not is_granted('ROLE_OPERATORE') %}
+              <br>{{ 'operatori.controlla_richiesta_protocollata_loggato'|trans|raw }}
+            {% else %}
+              <br>{{ 'operatori.controlla_richiesta_protocollata_anonimo'|trans|raw }}
+            {% endif %}
+          </p>
+        {% endif %}
 
-    {% endif %}
-  </div>
+      {% endif %}
+    </div>
   {% endif %}
 
   {% if pratica.status >= 1900 and user == pratica.user %}
     <div class="col-12">
       <p class="text-center m-2">{{ 'pratica.dettaglio.or' | trans }}</p>
     </div>
-  <div class="col-12">
-    <p class="text-center m-2">
-    <a class="btn btn-primary mb-4"
-      {% if pratica.servizio.accessLevel > 0 or pratica.servizio.accessLevel is null %}
-      href="{{ path('pratiche_new', {'servizio': pratica.servizio.slug}) }}"
-    {% else %}
-      href="{{ path('pratiche_anonime_new', {'servizio': pratica.servizio.slug}) }}"
-      {% endif %}>
-      <i class="fa fa-plus mr-2"></i>{{ 'pratica.crea_nuova_pratica'|trans }}
-    </a>
-    </p>
-  </div>
+    <div class="col-12">
+      <p class="text-center m-2">
+        <a class="btn btn-primary mb-4" href="{{ path('service_access', {'servizio': pratica.servizio.slug}) }}">
+          <i class="fa fa-plus mr-2"></i>{{ 'pratica.crea_nuova_pratica'|trans }}
+        </a>
+      </p>
+    </div>
   {% endif %}
 
 </div>

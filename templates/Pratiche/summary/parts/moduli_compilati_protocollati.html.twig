@@ -4,21 +4,15 @@
   {% else %}
     {% set button_text = 'operatori.scarica_ricevuta'|trans %}
   {% endif %}
-  {% if user is defined and not user is null %}
-    {% set attachment = pratica.moduliCompilati|first %}
-    {% if pratica.numeroProtocollo %}
-      <a href="{{ path('pratiche_show_pdf', {'pratica': pratica}) }}" class="btn btn-primary" download>
-        <i class="fa fa-download"></i>
-        {{ button_text }}
-      </a>
-    {% else %}
-      <a href="{{ path('allegati_download', {'allegato': attachment.id}) }}" class="btn btn-primary" download>
-        <i class="fa fa-download"></i>
-        {{ button_text }}
-      </a>
-    {% endif %}
+
+  {% set attachment = pratica.moduliCompilati|first %}
+  {% if pratica.numeroProtocollo %}
+    <a href="{{ path('pratiche_show_pdf', {'pratica': pratica}) }}" class="btn btn-primary" download>
+      <i class="fa fa-download"></i>
+      {{ button_text }}
+    </a>
   {% else %}
-    <a href="{{ path('pratiche_anonime_show_pdf', {'pratica': pratica.id, 'hash': pratica.hash}) }}" class="btn btn-primary">
+    <a href="{{ path('allegati_download', {'allegato': attachment.id}) }}" class="btn btn-primary" download>
       <i class="fa fa-download"></i>
       {{ button_text }}
     </a>
