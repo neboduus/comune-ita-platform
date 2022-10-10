@@ -534,7 +534,7 @@ pratica:
     oggetto: 'Nuovo messaggio richiesta numero %pratica%'
     messaggio: '%message% <img src="%link%">'
   payment_reminder:
-    message: "Gentile <b>%user_name%</b><br/> la richiesta numero <b>%id%</b> per <b>%service_fullname%</b> è in attesa di un pagamento, ti invitiamo ad usare i link che seguono per pagare quanto dovuto"
+    message: "Gentile <b>%user_name%</b><br/> la richiesta numero <b>%id%</b> per <b>%service_fullname%</b> è in attesa di un pagamento, ti invitiamo ad usare i link che seguono per pagare quanto dovuto."
     subject: "Promemoria pagamento richiesta numero %pratica%"
   modulo:
     descrizione: 'Modulo nomeservizio compilato il datacompilazione'

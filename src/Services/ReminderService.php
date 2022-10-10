@@ -13,6 +13,8 @@ use App\Services\Manager\MessageManager;
 use App\Services\Manager\PraticaManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 
@@ -46,6 +48,10 @@ class ReminderService implements ScheduledActionHandlerInterface
    * @var MessageManager
    */
   private $messageManager;
+  /**
+   * @var RouterInterface
+   */
+  private $router;
 
   /**
    * ReminderService constructor.
@@ -58,6 +64,7 @@ class ReminderService implements ScheduledActionHandlerInterface
     TranslatorInterface $translator,
     MessageManager $messageManager,
     PraticaManager $praticaManager,
+    RouterInterface $router,
     PraticaPlaceholderService $praticaPlaceholderService
   )
   {
@@ -67,6 +74,7 @@ class ReminderService implements ScheduledActionHandlerInterface
     $this->messageManager = $messageManager;
     $this->praticaManager = $praticaManager;
     $this->praticaPlaceholderService = $praticaPlaceholderService;
+    $this->router = $router;
   }
 
 
@@ -118,8 +126,8 @@ class ReminderService implements ScheduledActionHandlerInterface
   public function sendPaymentReminder(Pratica $pratica)
   {
     $callToActions = [];
-
     $paymentData = $pratica->getPaymentData();
+
     if ($pratica->getPaymentType() == 'mypay') {
       if (isset($paymentData["response"]["url"])) {
         $callToActions[] = [
@@ -134,19 +142,14 @@ class ReminderService implements ScheduledActionHandlerInterface
         ];
       }
     } else {
-      if (isset($paymentData["response"]["online_url"])) {
-        $callToActions[] = [
-          'label'=>'gateway.mypay.redirect_button',
-          'link'=>$paymentData["response"]["online_url"]
-        ];
-      }
-
-      if (isset($paymentData["response"]["file_url"])) {
-        $callToActions[] = [
-          'label'=>'gateway.mypay.download_button',
-          'link'=>$paymentData["response"]["file_url"]
-        ];
-      }
+      $callToActions[] = [
+        'label'=>'pratica.vai_alla_pratica',
+        'link'=>$this->router->generate(
+          'pratica_show_detail',
+          ['pratica' => $pratica, 'tab' => 'pagamento'],
+          UrlGeneratorInterface::ABSOLUTE_URL
+        )
+      ];
     }
 
     $placeholders = $this->praticaPlaceholderService->getPlaceholders($pratica);
@@ -154,7 +157,7 @@ class ReminderService implements ScheduledActionHandlerInterface
     $message = $this->praticaManager->generateStatusMessage(
       $pratica,
       $this->translator->trans('pratica.payment_reminder.message', $placeholders),
-     $this->translator->trans('pratica.payment_reminder.subject', $placeholders),
+      $this->translator->trans('pratica.payment_reminder.subject', $placeholders),
       $callToActions
     );
 
