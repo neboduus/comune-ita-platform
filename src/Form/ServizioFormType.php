@@ -151,11 +151,9 @@ class ServizioFormType extends AbstractType
     /** @var Service $service */
     $service = $event->getForm()->getData();
     $data = $event->getData();
-
     if (isset($data['integrations']['trigger']) && $data['integrations']['trigger']) {
       $service->setIntegrations($data['integrations']);
       $event->getForm()->setData($service);
-
     } else {
       // No integration needed
       $service->setIntegrations(null);

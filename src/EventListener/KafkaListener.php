@@ -23,8 +23,14 @@ class KafkaListener
     $this->kafkaService = $kafkaService;
   }
 
+  /**
+   * @param KafkaEvent $event
+   * @return void
+   * @throws \GuzzleHttp\Exception\GuzzleException
+   */
   public function produce(KafkaEvent $event)
   {
+    // Todo: è necessario un try catch?
     $item = $event->getItem();
     $this->kafkaService->produceMessage($item);
   }
