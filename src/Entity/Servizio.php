@@ -112,6 +112,18 @@ class Servizio implements Translatable
    */
   private $description;
 
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="string", nullable=true)
+   * @OA\Property(description="Service's subtitle")
+   * @Assert\Length(max="160")
+   * @Assert\NotBlank(message="service.short_description.not_blank")
+   */
+  private $shortDescription;
+
+
   /**
    * @var string
    * @Gedmo\Translatable
@@ -614,6 +626,29 @@ class Servizio implements Translatable
   {
     $this->description = $description;
 
+    return $this;
+  }
+
+
+  /**
+   * @return string
+   */
+  public function getShortDescription(): ?string
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getShortDescription();
+    }
+    return $this->shortDescription;
+  }
+
+  /**
+   * @param string $shortDescription
+   *
+   * @return $this
+   */
+  public function setShortDescription(string $shortDescription): Servizio
+  {
+    $this->shortDescription = $shortDescription;
     return $this;
   }
 

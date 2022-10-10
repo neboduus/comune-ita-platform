@@ -112,7 +112,7 @@ class ServiziController extends AbstractController
         $response = $this->render('Servizi/servizi.html.twig', [
           'sticky_services' => $services['sticky'],
           'servizi' => $services['default'],
-          'user' => $this->getUser()
+          'user' => $this->getUser(),
         ]);
         break;
     }
@@ -333,7 +333,7 @@ class ServiziController extends AbstractController
       'user' => $user,
       'recipient' => $recipient,
       'recipients' => $recipients,
-      'services' => $services
+      'services' => $services,
     ]);
 
     return $response;

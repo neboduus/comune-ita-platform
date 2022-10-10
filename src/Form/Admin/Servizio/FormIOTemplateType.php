@@ -18,7 +18,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormError;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 
 class FormIOTemplateType extends AbstractType
@@ -144,6 +143,7 @@ class FormIOTemplateType extends AbstractType
 
     $service->setName($ServiceToClone->getName() . " (copia)");
     $service->setDescription($ServiceToClone->getDescription() ?? '');
+    $service->setShortDescription($ServiceToClone->getShortDescription() ?? $ServiceToClone->getName());
     $service->setHowto($ServiceToClone->getHowto() ?? '');
     $service->setHowToDo($ServiceToClone->getHowToDo() ?? '');
     $service->setWhatYouNeed($ServiceToClone->getWhatYouNeed() ?? '');

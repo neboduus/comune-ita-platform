@@ -85,6 +85,15 @@ class Service
   /**
    * @var string
    * @Serializer\Type("string")
+   * @OA\Property(description="Service's summary")
+   * @Groups({"read", "write"})
+   * @Assert\Length(max="160")
+   */
+  private $shortDescription;
+
+  /**
+   * @var string
+   * @Serializer\Type("string")
    * @OA\Property(description="Compilation guide, accepts html tags")
    * @Groups({"read", "write"})
    */
@@ -494,6 +503,22 @@ class Service
   public function setDescription(string $description)
   {
     $this->description = $description;
+  }
+
+  /**
+   * @return string
+   */
+  public function getShortDescription(): ?string
+  {
+    return $this->shortDescription;
+  }
+
+  /**
+   * @param string $shortDescription
+   */
+  public function setShortDescription(string $shortDescription): void
+  {
+    $this->shortDescription = $shortDescription;
   }
 
   /**
@@ -1181,6 +1206,7 @@ class Service
     $dto->topics_id = $servizio->getTopics() ? $servizio->getTopics()->getId() : null;
 
     $dto->description = $servizio->getDescription() ?? '';
+    $dto->shortDescription = $servizio->getShortDescription() ?? '';
     $dto->howto = $servizio->getHowto();
     $dto->who = $servizio->getWho() ?? '';
     $dto->specialCases = $servizio->getSpecialCases() ?? '';
@@ -1257,6 +1283,7 @@ class Service
     }
 
     $entity->setDescription($this->description ?? '');
+    $entity->setShortDescription($this->shortDescription ?? '');
     $entity->setHowto($this->howto);
     $entity->setWho($this->who ?? '');
     $entity->setSpecialCases($this->specialCases ?? '');

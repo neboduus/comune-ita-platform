@@ -57,6 +57,11 @@ abstract class AbstractI18nType extends AbstractType
     $this->locales = $locales;
   }
 
+  public function getLocale()
+  {
+    return $this->locale;
+  }
+
 
   /**
    * @param FormBuilderInterface $builderInterface
@@ -85,5 +90,7 @@ abstract class AbstractI18nType extends AbstractType
     ];
     $resolver->setDefaults($data);
   }
+
+
 
 }

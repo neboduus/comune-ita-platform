@@ -7,7 +7,9 @@
     <div class="flag-icon"></div>
     <div class="card-body">
       <h5 class="card-title">{{ servizio.name }}</h5>
-      <p class="card-text">{{ servizio.description|abstract }}</p>
+      {% if not servizio.shortDescription is same as(servizio.name) %}
+        <p class="card-text">{{ servizio.shortDescription|abstract }}</p>
+      {% endif %}
       <a class="read-more stretched-link" href="{{ path('service_group_show', {'slug': servizio.slug}) }}">
         <span class="text">{{ 'read_more' | trans }}</span>
         <svg class="icon">

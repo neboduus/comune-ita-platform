@@ -5,6 +5,8 @@ namespace App\Utils;
 class StringUtils
 {
 
+  const ABSTRACT_LENGTH = 160;
+
   /**
    * @param string $string
    * @return string|string[]|null
@@ -85,6 +87,47 @@ class StringUtils
     $dataString = str_replace("\\u0000", "",  json_encode($data));
     $dataString = str_replace("\\x00", "",  $dataString);
     return (array)json_decode($dataString, true);
+  }
+
+  // Todo: Trovare un nome migliore se possibile
+  public static function abstract(?string $string)
+  {
+    $abstract = '';
+    if ($string === null) {
+      return $abstract;
+    }
+
+    $string = strip_tags($string, '<p>');
+    $string = preg_replace("/<([a-z][a-z0-9]*)[^>]*?(\/?)>/si",'<$1$2>', $string);
+    $string = html_entity_decode($string);
+
+    if (preg_match('/<p>(.*?)<\/p>/i', $string, $paragraphs)) {
+      $abstract = $paragraphs[1];
+    } else {
+      $abstract = $string;
+    }
+
+    if (strlen($abstract) > self::ABSTRACT_LENGTH) {
+      $abstract = \mb_substr($abstract, 0, self::ABSTRACT_LENGTH);
+      $abstractParts = explode(' ', $abstract);
+      array_pop($abstractParts);
+      $abstract = implode(' ', $abstractParts) . '...';
+    }
+
+    return $abstract;
+  }
+
+  public static function shortenDescription(?string $string): ?string
+  {
+    $abstract = '';
+    if ($string === null) {
+      return $abstract;
+    }
+    $abstract = strip_tags($string);
+    if (strlen($abstract) > self::ABSTRACT_LENGTH) {
+      $abstract = \mb_substr($abstract, 0, self::ABSTRACT_LENGTH);
+    }
+    return $abstract;
   }
 
 }

@@ -1,0 +1,3 @@
+service:
+  short_description:
+    not_blank: "The filed short description can't be empty"

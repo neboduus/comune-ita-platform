@@ -1,0 +1,3 @@
+service:
+  short_description:
+    not_blank: "Il campo descrizione breve non può essere vuoto"

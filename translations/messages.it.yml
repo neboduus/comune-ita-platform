@@ -230,6 +230,8 @@ servizio:
   destinatari: "Destinatari"
   aree_geografiche: "Aree geografiche"
   cos_e: "Cos'è"
+  short_description: "Descrizione breve"
+  change_short_description: "Il campo descrizione breve è quello di default, è necessario modificarlo prima di salvare."
   descrizione: "Descrizione"
   a_chi_si_rivolge: "A chi si rivolge"
   copertura: "Copertura geografica"

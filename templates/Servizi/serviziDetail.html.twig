@@ -14,7 +14,9 @@
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
         <h1>{{ servizio.name }}</h1>
-        <p>{{ servizio.description | abstract }}</p>
+        {% if not servizio.shortDescription is same as(servizio.name) %}
+          <p>{{ servizio.shortDescription | abstract }}</p>
+        {% endif %}
         {# todo: usare constant() #}
         {% if not can_access %}
           <div class="alert alert-danger" role="alert">
