@@ -413,7 +413,7 @@ pratica:
   crea_nuova_pratica: 'Create new practice'
   vai_al_pagamento: 'Go to payment'
   payment_reminder:
-    message: "Dear <b>%user_name%</b><br/> the request number <b>%id%</b> for <b>%service_fullname%</b> is awaiting a payment, please use the following links to pay the amount due"
+    message: "Dear <b>%user_name%</b><br/> the request number <b>%id%</b> for <b>%service_fullname%</b> is awaiting a payment, please use the following links to pay the amount due."
     subject: "Payment reminder required number %pratica%"
   vedi_tutte: 'View all'
   pratiche_in_evidenzia: 'Pinned forms'
