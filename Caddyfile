@@ -23,4 +23,6 @@ php_fastcgi * php:9000 {
   root /var/www/html/public
   trusted_proxies private_ranges
 }
+
+encode gzip zstd
 file_server
