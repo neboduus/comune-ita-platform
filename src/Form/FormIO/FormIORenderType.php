@@ -148,7 +148,10 @@ class FormIORenderType extends AbstractType
     $formID = $pratica->getServizio()->getFormIoId();
 
     $result = $this->formServerService->getFormSchema($pratica->getServizio()->getFormIoId());
-    if ($result['status'] == 'success') {
+    if ($result['status'] == 'success')
+    {
+      //TODO: portare l'intera logica all'interno del praticaManager
+      $this->praticaManager->setSchema($result['schema']);
       $this->schema = $result['schema'];
     }
 
