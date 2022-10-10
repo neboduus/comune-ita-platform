@@ -20,13 +20,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Entity\Repository\CategoryRepository;
 use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 
@@ -37,6 +39,9 @@ use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
  */
 class ServiziController extends AbstractController
 {
+
+  use TargetPathTrait;
+
   /** @var InstanceService */
   private $instanceService;
 
@@ -170,7 +175,7 @@ class ServiziController extends AbstractController
     $canAccess = true;
     $denyAccessMessage = false;
     try {
-      $handler->canAccess($servizio, $ente);
+      $handler->canAccess($servizio);
     } catch (ForbiddenAccessException $e) {
       $canAccess = false;
       $denyAccessMessage = $this->translator->trans($e->getMessage(), $e->getParameters());
@@ -188,6 +193,48 @@ class ServiziController extends AbstractController
 
     return $response;
 
+  }
+
+  /**
+   * @Route("/{servizio}/access", name="service_access")
+   * @ParamConverter("servizio", class="App\Entity\Servizio", options={"mapping": {"servizio": "slug"}})
+   *
+   * @param Request $request
+   * @param Servizio $servizio
+   *
+   * @return Response
+   */
+  public function accessAction(Request $request, Servizio $servizio)
+  {
+    $handler = $this->servizioHandlerRegistry->getByName($servizio->getHandler());
+
+    try {
+      $handler->canAccess($servizio);
+    } catch (ForbiddenAccessException $e) {
+      $this->addFlash('warning', $this->translator->trans($e->getMessage(), $e->getParameters()));
+      return $this->redirectToRoute('servizi_list');
+    }
+
+    try {
+      return $handler->execute($servizio);
+    } catch (ForbiddenAccessException $e) {
+
+      $this->saveTargetPath($request->getSession(), 'open_login', $this->generateUrl('service_access', ['servizio' => $servizio->getSlug()]));
+      return $this->redirectToRoute('login', [], Response::HTTP_FOUND);
+
+    } catch (\Exception $e) {
+
+      $this->logger->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
+      return $this->render(
+        'Servizi/serviziFeedback.html.twig',
+        array(
+          'servizio' => $servizio,
+          'status' => 'danger',
+          'message' => $handler->getErrorMessage(),
+          'message_detail' => $e->getMessage(),
+        )
+      );
+    }
   }
 
   /**

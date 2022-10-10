@@ -110,6 +110,7 @@ security:
           - ocsdc.openlogin.authenticator
           - ocsdc.dedalogin.authenticator
           - ocsdc.cas.authenticator
+          - ocsdc.token.authenticator
         entry_point: ocsdc.pat.authenticator
 
     main:

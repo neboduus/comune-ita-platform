@@ -10,10 +10,9 @@ interface ServizioHandlerInterface
 {
   /**
    * @param Servizio $servizio
-   * @param Ente $ente
    * @throws ForbiddenAccessException
    */
-  public function canAccess(Servizio $servizio, Ente $ente);
+  public function canAccess(Servizio $servizio);
 
   /**
    * @param Servizio $servizio
@@ -21,7 +20,7 @@ interface ServizioHandlerInterface
    * @return Response
    * @throws \Exception
    */
-  public function execute(Servizio $servizio, Ente $ente);
+  public function execute(Servizio $servizio);
 
   public function getCallToActionText();
 

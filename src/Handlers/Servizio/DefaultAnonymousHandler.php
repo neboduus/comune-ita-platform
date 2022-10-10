@@ -2,98 +2,50 @@
 
 namespace App\Handlers\Servizio;
 
-use App\Entity\Ente;
+use App\Entity\CPSUser;
 use App\Entity\Pratica;
 use App\Entity\Servizio;
 use App\Logging\LogConstants;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 class DefaultAnonymousHandler extends DefaultHandler
 {
+
+  use TargetPathTrait;
+
   /**
    * @param Servizio $servizio
-   * @param Ente $ente
    * @return Response
    * @throws \Exception
    */
-  public function execute(Servizio $servizio, Ente $ente)
+  public function execute(Servizio $servizio)
   {
-    $pratica = $this->createNewPratica($servizio);
-    $pratica->setEnte($ente);
 
-    foreach ($servizio->getErogatori() as $erogatore) {
-      if ($erogatore->getEnti()->contains($ente)) {
-        $pratica->setErogatore($erogatore);
-      }
-    }
+    $user = $this->createAnonymousUser();
+    $pratica = $this->createNewPratica($servizio, $user);
+    $this->em->flush();
 
     if (!$this->session->isStarted()) {
       $this->session->start();
     }
 
-    $praticaFlowService = $this->flowRegistry->getByName($servizio->getPraticaFlowServiceName());
-    $praticaFlowService->setInstanceKey($this->session->getId());
-    $praticaFlowService->bind($pratica);
+    // Loggo l'utente appena creato
+    $this->saveTargetPath($this->session, 'open_login', $this->router->generate('pratiche_compila', ['pratica' => $pratica->getId()]));
 
-    if ($pratica->getInstanceId() == null) {
-      $pratica->setInstanceId($praticaFlowService->getInstanceId());
-    }
-    $form = $praticaFlowService->createForm();
-
-    if ($praticaFlowService->isValid($form)) {
-      $currentStep = $praticaFlowService->getCurrentStepNumber();
-      $praticaFlowService->saveCurrentStepData($form);
-      $pratica->setLastCompiledStep($currentStep);
-
-      if ($praticaFlowService->nextStep()) {
-        $form = $praticaFlowService->createForm();
-
-      } else {
-        $this->em->persist($pratica);
-        $this->em->flush();
-        $praticaFlowService->onFlowCompleted($pratica);
-
-        $this->logger->info(
-          LogConstants::PRATICA_UPDATED,
-          ['id' => $pratica->getId(), 'pratica' => $pratica]
-        );
-
-        $praticaFlowService->getDataManager()->drop($praticaFlowService);
-        $praticaFlowService->reset();
-
-        return new RedirectResponse(
-          $this->router->generate(
-            'pratiche_anonime_show',
-            [
-              'pratica' => $pratica->getId(),
-              'hash' => $pratica->getHash(),
-            ]
-          )
-        );
-      }
-    }
-
-    return (new Response())->setContent(
-      $this->templating->render(
-        'PraticheAnonime/new.html.twig',
-        [
-          'form' => $form->createView(),
-          'pratica' => $praticaFlowService->getFormData(),
-          'flow' => $praticaFlowService,
-          'formserver_url' => $this->formServerPublicUrl,
-        ]
-      )
+    return new RedirectResponse(
+      $this->router->generate('login_token', ['token' => $user->getConfirmationToken()]),
+      302
     );
   }
 
   /**
    * @param Servizio $servizio
-   *
+   * @param CPSUser $user
    * @return Pratica
-   * @throws \Exception
    */
-  private function createNewPratica(Servizio $servizio)
+  private function createNewPratica(Servizio $servizio, CPSUser $user): Pratica
   {
     $praticaClassName = $servizio->getPraticaFCQN();
     $pratica = new $praticaClassName();
@@ -102,8 +54,21 @@ class DefaultAnonymousHandler extends DefaultHandler
     }
     $pratica
       ->setServizio($servizio)
+      ->setUser($user)
+      ->setAuthenticationData($this->userSessionService->getCurrentUserAuthenticationData($user))
+      ->setSessionData($this->userSessionService->getCurrentUserSessionData($user))
       ->setStatus(Pratica::STATUS_DRAFT)
       ->setHash(hash('sha256', $pratica->getId()).'-'.(new \DateTime())->getTimestamp());
+
+    $ente = $servizio->getEnte();
+    $pratica->setEnte($ente);
+    foreach ($servizio->getErogatori() as $erogatore) {
+      if ($erogatore->getEnti()->contains($ente)) {
+        $pratica->setErogatore($erogatore);
+      }
+    }
+
+    $this->em->persist($pratica);
 
     $this->logger->info(
       LogConstants::PRATICA_CREATED,
@@ -112,4 +77,33 @@ class DefaultAnonymousHandler extends DefaultHandler
 
     return $pratica;
   }
+
+  /**
+   * @return CPSUser
+   */
+  private function createAnonymousUser(): CPSUser
+  {
+    $sessionString = md5($this->session->getId()) . '-' . time();
+    $user = new CPSUser();
+    $email = $user->getId()->toString() . '@' . CPSUser::ANONYMOUS_FAKE_EMAIL_DOMAIN;
+    $user
+      ->setUsername($user->getId()->toString())
+      ->setNome('Anonymous')
+      ->setCognome('User')
+      ->setCodiceFiscale($user->getId()->toString())
+      ->setDataNascita(new \DateTime())
+      ->setLuogoNascita('-')
+      ->setEmail($email)
+      ->setEmailContatto($email)
+      ->setConfirmationToken(hash('sha256', $sessionString));
+
+    $user->addRole('ROLE_USER')
+      ->addRole('ROLE_CPS_USER')
+      ->setEnabled(true)
+      ->setPassword('');
+
+    $this->em->persist($user);
+    return $user;
+  }
+
 }

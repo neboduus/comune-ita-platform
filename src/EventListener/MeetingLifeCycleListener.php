@@ -9,7 +9,7 @@ use App\Services\MeetingService;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use \DateTime;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 
 class MeetingLifeCycleListener

@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class DefaultLoggedInHandler extends DefaultHandler
 {
-  public function execute(Servizio $servizio, Ente $ente)
+  public function execute(Servizio $servizio)
   {
     $user = $this->getUser();
 
@@ -38,6 +38,7 @@ class DefaultLoggedInHandler extends DefaultHandler
     }
 
     $pratica = $this->createNewPratica($servizio, $user);
+    $ente = $servizio->getEnte();
     $pratica->setEnte($ente);
     foreach ($servizio->getErogatori() as $erogatore) {
       if ($erogatore->getEnti()->contains($ente)) {

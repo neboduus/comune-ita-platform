@@ -392,23 +392,12 @@ class CPSUserProvider implements UserProviderInterface
 
     //Regex per controllo fake email utente
     $regex = "/[^@]*(".$user::FAKE_EMAIL_DOMAIN.")/";
-    $result =  $user->getNome() !== null
-      && $user->getCognome() !== null
-      && $user->getCodiceFiscale() !== null
-      && $user->getDataNascita() !== null
-      && $user->getDataNascita() !== ''
-      && $user->getLuogoNascita() !== null
-      && $user->getLuogoNascita() !== ''
-      && $user->getSesso() !== null
-      && $user->getDataNascita() !== null
-      /*&& $user->getIndirizzoResidenza() !== null
-      && $user->getCapResidenza() !== null
-      && $user->getCittaResidenza() !== null
-      && $user->getProvinciaResidenza() !== null
-      && $user->getProvinciaResidenza() !== ''
-      && in_array($user->getProvinciaResidenza(), CPSUser::getProvinces())*/
-      && $user->getCellulare() !== null
-      && $user->getEmail() !== null
+    $result =  !empty($user->getNome())
+      && !empty($user->getCognome())
+      && !empty($user->getCodiceFiscale())
+      && !empty($user->getDataNascita())
+      && !empty($user->getLuogoNascita())
+      && !empty($user->getEmail())
       && !in_array($user->getEmail(), self::EMAIL_BLACKLIST)
       && !preg_match($regex, $user->getEmail())
       && $this->isEmailValid($user->getEmail());

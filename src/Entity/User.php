@@ -39,6 +39,7 @@ abstract class User implements UserInterface
   const USER_TYPE_ADMIN = 'admin';
 
   const FAKE_EMAIL_DOMAIN = 'cps.didnt.have.my.email.tld';
+  const ANONYMOUS_FAKE_EMAIL_DOMAIN = 'anonymous.fake.email.tld';
 
   /**
    * @ORM\Column(type="guid")

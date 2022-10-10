@@ -16,10 +16,7 @@ use Craue\FormFlowBundle\Form\FormFlowInterface;
 class FormIOFlow extends PraticaFlow
 {
 
-
-  const STEP_SELEZIONA_ENTE = 1;
-
-  const STEP_MODULO_FORMIO = 2;
+  const STEP_MODULO_FORMIO = 1;
 
   protected $allowDynamicStepNavigation = true;
 
@@ -60,15 +57,6 @@ class FormIOFlow extends PraticaFlow
         },
       ),
     );
-
-    // Mostro lo step del'ente solo se è necesario
-    if ($pratica->getEnte() == null && $this->prefix == null) {
-      $steps [self::STEP_SELEZIONA_ENTE] = array(
-        'label' => 'steps.common.seleziona_ente.label',
-        'form_type' => SelezionaEnteType::class,
-      );
-    }
-    ksort($steps);
 
     // Attivo gli step di pagamento solo se è richiesto nel servizio
     if ($pratica->getServizio()->isPaymentRequired() || ($pratica->getServizio()->isPaymentDeferred() && $pratica->getEsito() )) {

@@ -1291,6 +1291,7 @@ email:
     link_txt: 'Per ulteriori dettagli visiti il seguente link: '
     link_download_txt: 'Per ulteriori dettagli visiti il seguente link: '
     no_info: '<i>informazione non disponibile</i>'
+    motivation: 'Con la seguente motivazione:'
     user:
       status:
         pre.submit: "le comunichiamo che la sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente inviata. Il numero di richiesta è <strong>%pratica_id%</strong>; faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla sua richiesta."

@@ -184,7 +184,7 @@
           {{ email_footer|raw }}
         {% else %}
           <p style="font-family:'Lucida Grande', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #30373d;background: #F0F0F0; padding: 20px; font-size: 15px !important; border-top: 1px solid #2b649e;">
-            {{ 'messages.receives_why' | trans}} {{ instance_url }}, {{ 'messages.receives_why_description' | trans}}
+            {{ 'messages.receives_why'|trans({}, null, locale)}} {{ instance_url }}, {{ 'messages.receives_why_description'|trans({}, null, locale)}}
           </p>
         {% endif %}
       {% endif %}

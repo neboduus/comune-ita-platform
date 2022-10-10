@@ -21,6 +21,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -156,6 +157,7 @@ class FormIORenderType extends AbstractType
     $helper = $options["helper"];
     $helper->setStepTitle('steps.scia.modulo_default.label', true);
 
+    // Serve per precompilo i dati dell'applicant
     $data = $this->setupHelperData($pratica);
 
     $notEmptyConstraint = new NotEqualTo([
@@ -247,8 +249,8 @@ class FormIORenderType extends AbstractType
       $event->getForm()->addError(new FormError($this->translator->trans('steps.formio.generic_violation_message')));
     }
 
-    // Check su conformità utente
-    if ($pratica->getUser() instanceof CPSUser) {
+    // Check su conformità utente se non è Anonimo
+    if ($pratica->getUser() instanceof CPSUser && !$pratica->getUser()->isAnonymous()) {
       try {
         $this->praticaManager->validateUserData($flattenedData, $pratica->getUser(), $pratica->getId());
       } catch (\Exception $e) {
@@ -312,10 +314,14 @@ class FormIORenderType extends AbstractType
   {
     /** @var Pratica|DematerializedFormPratica $pratica */
     $pratica = $event->getForm()->getData();
-
     $user = $pratica->getUser();
 
-    if (!$user instanceof CPSUser) {
+    if ($user->isAnonymous()) {
+      $this->updateUser($pratica->getDematerializedForms(), $user);
+    }
+
+    // Non serve più, l'utente è sempre presente
+    /*if (!$user instanceof CPSUser) {
       $user = $this->checkUser($pratica->getDematerializedForms());
       $pratica->setUser($user)
         ->setAuthenticationData($this->userSessionService->getCurrentUserAuthenticationData($user))
@@ -324,7 +330,6 @@ class FormIORenderType extends AbstractType
 
       $attachments = $pratica->getAllegati();
       if (!empty($attachments)) {
-        /** @var Allegato $a */
         foreach ($attachments as $a) {
           $a->setOwner($user);
           $a->setHash($pratica->getHash());
@@ -332,48 +337,44 @@ class FormIORenderType extends AbstractType
         }
       }
       $this->em->flush();
-    }
+    }*/
   }
 
   /**
    * @param array $data
-   * @return CPSUser
-   * @throws ORMException
+   * @param CPSUser $user
+   * @throws \Doctrine\ORM\Exception\ORMException
    */
-  private function checkUser(array $data): CPSUser
+  private function updateUser(array $data, CPSUser $user)
   {
-    $cf = isset($data['flattened']['applicant.data.fiscal_code.data.fiscal_code']) ? $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] : false;
 
+    //$cf = $data['flattened']['applicant.data.fiscal_code.data.fiscal_code'] ?? false;
     $birthDay = null;
     if (isset($data['flattened']['applicant.data.Born.data.natoAIl']) && !empty($data['flattened']['applicant.data.Born.data.natoAIl'])) {
       $birthDay = DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
     }
     $sessionString = md5($this->session->getId()) . '-' . time();
-    $user = new CPSUser();
+    $email = $user->getId() . '@' . CPSUser::ANONYMOUS_FAKE_EMAIL_DOMAIN;
     $user
-      ->setUsername($sessionString)
-      ->setCodiceFiscale($cf . '-' . $sessionString)
-      ->setSessoAsString(isset($data['flattened']['applicant.gender.gender']) ? $data['flattened']['applicant.gender.gender'] : '')
-      ->setCellulareContatto(isset($data['flattened']['applicant.data.cell_number']) ? $data['flattened']['applicant.data.cell_number'] : '')
-      ->setCpsTelefono(isset($data['flattened']['applicant.data.phone_number']) ? $data['flattened']['applicant.data.phone_number'] : '')
-      ->setEmail(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
-      ->setEmailContatto(isset($data['flattened']['applicant.data.email_address']) ? $data['flattened']['applicant.data.email_address'] : $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
-      ->setNome(isset($data['flattened']['applicant.data.completename.data.name']) ? $data['flattened']['applicant.data.completename.data.name'] : '')
-      ->setCognome(isset($data['flattened']['applicant.data.completename.data.surname']) ? $data['flattened']['applicant.data.completename.data.surname'] : '')
+      //->setUsername($sessionString)
+      //->setCodiceFiscale($cf . '-' . $sessionString)
+      ->setSessoAsString($data['flattened']['applicant.gender.gender'] ?? '')
+      ->setCellulareContatto($data['flattened']['applicant.data.cell_number'] ?? '')
+      ->setCpsTelefono($data['flattened']['applicant.data.phone_number'] ?? '')
+      ->setEmail($data['flattened']['applicant.data.email_address'] ?? $email)
+      ->setEmailContatto($data['flattened']['applicant.data.email_address'] ?? $email)
+      ->setNome($data['flattened']['applicant.data.completename.data.name'] ?? '')
+      ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ?? '')
       ->setDataNascita($birthDay)
       ->setLuogoNascita(isset($data['flattened']['applicant.data.Born.data.place_of_birth']) && !empty($data['flattened']['applicant.data.Born.data.place_of_birth']) ? $data['flattened']['applicant.data.Born.data.place_of_birth'] : '')
       ->setSdcIndirizzoResidenza(isset($data['flattened']['applicant.data.address.data.address']) && !empty($data['flattened']['applicant.data.address.data.address']) ? $data['flattened']['applicant.data.address.data.address'] : '')
       ->setSdcCittaResidenza(isset($data['flattened']['applicant.data.address.data.municipality']) && !empty($data['flattened']['applicant.data.address.data.municipality']) ? $data['flattened']['applicant.data.address.data.municipality'] : '')
       ->setSdcCapResidenza(isset($data['flattened']['applicant.data.address.data.postal_code']) && !empty($data['flattened']['applicant.data.address.data.postal_code']) ? $data['flattened']['applicant.data.address.data.postal_code'] : '')
-      ->setSdcProvinciaResidenza(isset($data['flattened']['applicant.data.address.data.county']) && !empty($data['flattened']['applicant.data.address.data.county']) ? $data['flattened']['applicant.data.address.data.county'] : '');
-
-    $user->addRole('ROLE_USER')
-      ->addRole('ROLE_CPS_USER')
-      ->setEnabled(true)
-      ->setPassword('');
+      ->setSdcProvinciaResidenza(isset($data['flattened']['applicant.data.address.data.county']) && !empty($data['flattened']['applicant.data.address.data.county']) ? $data['flattened']['applicant.data.address.data.county'] : '')
+      ->setConfirmationToken(hash('sha256', $sessionString));
 
     $this->em->persist($user);
-    return $user;
+    $this->em->flush();
   }
 
   /**
@@ -388,7 +389,7 @@ class FormIORenderType extends AbstractType
     $user = $pratica->getUser();
 
     // Precompilo i campi dell'applicant solo se user è un CPSUser
-    if (empty($data) && $user instanceof CPSUser) {
+    if (empty($data) && $user instanceof CPSUser && !$user->isAnonymous()) {
       $schema = $this->schemaFactory->createFromFormId($pratica->getServizio()->getFormIoId());
       $cpsUserData = ['data' => $this->getMappedFormDataWithUserData($schema, $user)];
       return json_encode($cpsUserData);

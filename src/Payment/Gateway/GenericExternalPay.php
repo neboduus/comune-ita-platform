@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 
@@ -298,17 +298,9 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
    */
   public function generateCallbackUrl(Pratica $pratica): string
   {
-    $cf = $pratica->getUser()->getCodiceFiscale();
-    if ($this->isPayerAnonymous($cf)) {
-      return $this->router->generate('pratiche_anonime_payment_callback', [
-        'pratica' => $pratica->getId(),
-        'hash' => $pratica->getHash()
-      ], RouterInterface::ABSOLUTE_URL);
-    } else {
-      return $this->router->generate('pratiche_payment_callback', [
-        'pratica' => $pratica->getId()
-      ], RouterInterface::ABSOLUTE_URL);
-    }
+    return $this->router->generate('pratiche_payment_callback', [
+      'pratica' => $pratica->getId()
+    ], RouterInterface::ABSOLUTE_URL);
   }
 
   /**
@@ -323,19 +315,6 @@ class GenericExternalPay extends AbstractPaymentData implements EventSubscriberI
       $cf = $cfParts[0];
     }
     return $cf;
-  }
-
-  /**
-   * @param $cf
-   * @return bool
-   */
-  private function isPayerAnonymous($cf)
-  {
-    $cfParts = explode('-', $cf);
-    if ( count($cfParts) > 1) {
-      return true;
-    }
-    return false;
   }
 
   /**

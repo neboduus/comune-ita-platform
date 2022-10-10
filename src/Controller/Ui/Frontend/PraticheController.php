@@ -43,7 +43,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
 
 /**
@@ -276,52 +276,6 @@ class PraticheController extends AbstractController
   }
 
   /**
-   * @Route("/{servizio}/new", name="pratiche_new")
-   * @ParamConverter("servizio", class="App\Entity\Servizio", options={"mapping": {"servizio": "slug"}})
-   *
-   * @param Request $request
-   * @param Servizio $servizio
-   *
-   * @return Response
-   */
-  public function newAction(Request $request, Servizio $servizio)
-  {
-    $handler = $this->servizioHandlerRegistry->getByName($servizio->getHandler());
-
-    $ente = $this->instanceService->getCurrentInstance();
-
-    if (!$ente instanceof Ente) {
-      $this->logger->info(LogConstants::PRATICA_WRONG_ENTE_REQUESTED, ['headers' => $request->headers]);
-      throw new \InvalidArgumentException(LogConstants::PRATICA_WRONG_ENTE_REQUESTED);
-    }
-
-    try {
-      $handler->canAccess($servizio, $ente);
-    } catch (ForbiddenAccessException $e) {
-      $this->addFlash('warning', $this->translator->trans($e->getMessage(), $e->getParameters()));
-
-      return $this->redirectToRoute('servizi_list');
-    }
-
-    try {
-
-      return $handler->execute($servizio, $ente);
-    } catch (\Exception $e) {
-      $this->logger->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
-
-      return $this->render(
-        'Servizi/serviziFeedback.html.twig',
-        array(
-          'servizio' => $servizio,
-          'status' => 'danger',
-          'message' => $handler->getErrorMessage(),
-          'message_detail' => $e->getMessage(),
-        )
-      );
-    }
-  }
-
-  /**
    * @Route("/{servizio}/draft", name="pratiche_list_draft")
    * @ParamConverter("servizio", class="App\Entity\Servizio", options={"mapping": {"servizio": "slug"}})
    * @param Servizio $servizio
@@ -377,7 +331,7 @@ class PraticheController extends AbstractController
 
     $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
     try {
-      $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
+      $handler->canAccess($pratica->getServizio());
     } catch (ForbiddenAccessException $e) {
       $this->addFlash('warning', $this->translator->trans($e->getMessage(), $e->getParameters()));
 
@@ -420,9 +374,6 @@ class PraticheController extends AbstractController
         $this->entityManager->flush();
         $form = $praticaFlowService->createForm();
 
-        $resumeURI = $praticaFlowService->getResumeUrl($request);
-        //$thread = $this->createThreadElementsForUserAndPratica($pratica, $user, $resumeURI);
-
       } else {
 
         $pratica->setLocale($request->getLocale());
@@ -434,8 +385,6 @@ class PraticheController extends AbstractController
           LogConstants::PRATICA_UPDATED,
           ['id' => $pratica->getId(), 'pratica' => $pratica]
         );
-
-        // $this->addFlash('feedback', $this->get('translator')->trans('pratica_ricevuta'));
 
         $praticaFlowService->getDataManager()->drop($praticaFlowService);
         $praticaFlowService->reset();

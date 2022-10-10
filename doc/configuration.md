@@ -66,7 +66,6 @@
 |------------------------------|----------|-----------------|-------------|
 | HEADER_TOP_TITLE             | No       | Provincia autonoma di Trento | FixMe |
 | HEADER_TOP_LINK              | No       | http://www.provincia.tn.it/ | FixMe |
-| FOOTER_CREDITS               | No       | La <strong>Stanza del cittadino</strong> è una iniziativa progettuale del Consorzio dei Comuni Trentini | | Fixme: togliere riferimento al trentino |
 
 ## Integrazioni terze parti
 

@@ -12,7 +12,6 @@ twig:
     header_top:
       title: "%header_top_title%"
       link: "%header_top_link%"
-    footer_credits: "%footer_credits%"
     ocsdc_iter_duration_start_status: "%ocsdc_iter_duration_start_status%"
     ocsdc_iter_duration_end_statuses: "%ocsdc_iter_duration_end_statuses%"
     ocsdc_default_date_format: "%ocsdc_default_date_format%"

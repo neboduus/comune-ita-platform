@@ -55,6 +55,7 @@ class SecurityController extends AbstractController
    * @Route("/auth/spid/metadata", name="metadata")
    * @param Request $request
    * @return Response
+   * @throws Exception
    */
   public function metadataAction(Request $request)
   {
@@ -69,8 +70,9 @@ class SecurityController extends AbstractController
    * @Route("/auth/spid/acs", name="acs")
    * @param Request $request
    * @return Response
+   * @throws Exception
    */
-  public function acsAction(Request $request)
+  public function acsAction(Request $request): Response
   {
     if ($this->getParameter('login_route') === DedaLoginAuthenticator::LOGIN_ROUTE) {
       if ($samlResponse = $request->get('SAMLResponse')) {
@@ -109,6 +111,7 @@ class SecurityController extends AbstractController
    * @Route("/auth/login-deda", name="login_deda")
    * @param Request $request
    * @return Response
+   * @throws Exception
    */
   public function loginDedaAction(Request $request)
   {
@@ -131,6 +134,16 @@ class SecurityController extends AbstractController
       throw new UnauthorizedHttpException("Something went wrong in authenticator");
     }
     return new RedirectResponse($this->getParameter('cas_login_url').'?service='.urlencode($request->getUri()));
+  }
+
+  /**
+   * @Route("/auth/login-token", name="login_token")
+   * @param Request $request
+   * @return RedirectResponse
+   */
+  public function loginTokenAction(Request $request)
+  {
+    throw new UnauthorizedHttpException("Something went wrong in authenticator");
   }
 
   /**

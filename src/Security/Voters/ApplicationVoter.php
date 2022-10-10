@@ -193,7 +193,7 @@ class ApplicationVoter extends Voter
     if (in_array($pratica->getStatus(), [Pratica::STATUS_DRAFT, Pratica::STATUS_DRAFT_FOR_INTEGRATION]) || $pratica->needsPaymentCreation() && $pratica->getUser()->getId() == $user->getId()) {
       $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
       try {
-        $handler->canAccess($pratica->getServizio(), $pratica->getEnte());
+        $handler->canAccess($pratica->getServizio());
         $canCompile = true;
       } catch (ForbiddenAccessException $e) {
         $canCompile = false;
