@@ -2,7 +2,6 @@
 
 namespace App\Controller\Ui\Frontend;
 
-use App\Dto\Application;
 use App\Dto\ApplicationDto;
 use App\Entity\CPSUser;
 use App\Entity\FormIO;
@@ -13,11 +12,8 @@ use App\Form\IdCardType;
 use App\FormIO\SchemaFactoryInterface;
 use App\Helpers\MunicipalityConverter;
 use App\Logging\LogConstants;
-use App\Security\CPSAuthenticator;
 use App\Services\BreadcrumbsService;
-use App\Services\CPSUserProvider;
 use App\Services\RemoteContentProviderServiceInterface;
-use DateTime;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

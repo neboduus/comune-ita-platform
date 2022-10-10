@@ -8,10 +8,10 @@ use App\Entity\Document;
 use App\Entity\OperatoreUser;
 use App\Security\Voters\DocumentVoter;
 use App\Services\InstanceService;
-use App\Services\Manager\DocumentManager;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\EntityManager;
+use App\Services\FileService\DocumentFileService;
+use App\Utils\FormUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
@@ -24,8 +24,6 @@ use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -50,15 +48,19 @@ class DocumentsAPIController extends AbstractFOSRestController
 
   /** @var LoggerInterface */
   private $logger;
+  /**
+   * @var DocumentFileService
+   */
+  private $fileService;
 
-  public function __construct(TranslatorInterface $translator, $rootDir, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger, DocumentManager $documentManager)
+  public function __construct(TranslatorInterface $translator, $rootDir, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger, DocumentFileService $fileService)
   {
     $this->translator = $translator;
     $this->rootDir = $rootDir;
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
-    $this->documentManager = $documentManager;
+    $this->fileService = $fileService;
   }
 
   /**
@@ -118,7 +120,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function getDocumentsAction(Request $request)
+  public function getDocumentsAction(Request $request): View
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
 
@@ -184,7 +186,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    * @param $id
    * @return View
    */
-  public function getDocumentAction($id)
+  public function getDocumentAction($id): View
   {
     try {
       $repository = $this->getDoctrine()->getRepository('App\Entity\Document');
@@ -196,7 +198,7 @@ class DocumentsAPIController extends AbstractFOSRestController
       $this->denyAccessUnlessGranted(DocumentVoter::VIEW, $document);
 
       return $this->view($document, Response::HTTP_OK);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
@@ -239,9 +241,9 @@ class DocumentsAPIController extends AbstractFOSRestController
    *
    * @param Request $request
    * @return View
-   * @throws \Exception
+   * @throws Exception
    */
-  public function postDocumentAction(Request $request)
+  public function postDocumentAction(Request $request): View
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
 
@@ -261,7 +263,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $form = $this->createForm('App\Form\DocumentAPIType', $document);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
 
       $data = [
         'type' => 'validation_error',
@@ -275,9 +277,7 @@ class DocumentsAPIController extends AbstractFOSRestController
       $this->em->persist($document);
       $this->em->flush();
 
-    } catch (UniqueConstraintViolationException $e) {
-      return $this->view(["Il file " .  $document->getTitle() . " already exists"], Response::HTTP_BAD_REQUEST);
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -335,7 +335,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function putDocumentAction($id, Request $request)
+  public function putDocumentAction($id, Request $request): View
   {
     $document = $this->em->getRepository('App\Entity\Document')->find($id);
 
@@ -349,7 +349,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
         'title' => 'There was a validation error',
@@ -363,8 +363,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     try {
       $em->persist($document);
       $em->flush();
-    } catch (\Exception $e) {
-
+    } catch (Exception $e) {
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -423,7 +422,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function patchDocumentAction($id, Request $request)
+  public function patchDocumentAction($id, Request $request): View
   {
 
     $document = $this->em->getRepository('App\Entity\Document')->find($id);
@@ -437,7 +436,7 @@ class DocumentsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -450,8 +449,7 @@ class DocumentsAPIController extends AbstractFOSRestController
       $em = $this->getDoctrine()->getManager();
       $em->persist($document);
       $em->flush();
-    } catch (\Exception $e) {
-
+    } catch (Exception $e) {
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -489,7 +487,7 @@ class DocumentsAPIController extends AbstractFOSRestController
    * @param $id
    * @return View
    */
-  public function deleteDocumentAction($id)
+  public function deleteDocumentAction($id): View
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
 
@@ -543,8 +541,8 @@ class DocumentsAPIController extends AbstractFOSRestController
     }
 
     try {
-      return $this->documentManager->download($document);
-    } catch (\Exception $exception) {
+      return $this->fileService->download($document);
+    } catch (Exception $exception) {
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -565,25 +563,5 @@ class DocumentsAPIController extends AbstractFOSRestController
 
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
-  }
-
-  /**
-   * @param FormInterface $form
-   * @return array
-   */
-  private function getErrorsFromForm(FormInterface $form)
-  {
-    $errors = array();
-    foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
-        }
-      }
-    }
-    return $errors;
   }
 }

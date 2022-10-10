@@ -57,7 +57,17 @@ services:
 
   #App\Services\FileSystemService: "@ocsdc.filesystem"
 
-  App\Services\FileService:
+  App\Services\FileService\AllegatoFileService:
+    arguments:
+      $s3Bucket: '%s3_bucket%'
+      $uploadDestination: '%upload_destination%'
+
+  App\Services\FileService\DocumentFileService:
+    arguments:
+      $s3Bucket: '%s3_bucket%'
+      $uploadDestination: '%upload_destination%'
+
+  App\Services\FileService\ServiceAttachmentsFileService:
     arguments:
       $s3Bucket: '%s3_bucket%'
       $uploadDestination: '%upload_destination%'
@@ -115,33 +125,30 @@ services:
 
   App\Form\Admin\RecipientType:
     arguments:
-      - '@App\Form\I18n\I18nDataMapper'
-      - "%locale%"
-      - "%app_locales%"
+      $locale: "%locale%"
+      $locales: "%app_locales%"
     tags:
       - { name: form.type }
 
   App\Form\Admin\GeographicAreaType:
     arguments:
-      - '@App\Form\I18n\I18nDataMapper'
-      - "%locale%"
-      - "%app_locales%"
+      $locale: "%locale%"
+      $locales: "%app_locales%"
     tags:
       - { name: form.type }
 
   App\Form\Admin\Servizio\GeneralDataType:
     arguments:
-      - '@App\Form\I18n\I18nDataMapper'
-      - "%locale%"
-      - "%app_locales%"
+      $locale: "%locale%"
+      $locales: "%app_locales%"
     tags:
       - { name: form.type }
 
   App\Form\Admin\Servizio\CardDataType:
     arguments:
-      $dataMapper: '@App\Form\I18n\I18nDataMapper'
       $locale: "%locale%"
       $locales: "%app_locales%"
+      $allowedExtensions: "%allowed_extensions%"
     tags:
       - { name: form.type }
 
@@ -163,6 +170,7 @@ services:
     arguments:
       $locale: "%locale%"
       $locales: "%app_locales%"
+      $allowedExtensions: "%allowed_extensions%"
     tags:
       - { name: form.type }
 

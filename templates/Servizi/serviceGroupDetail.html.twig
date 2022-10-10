@@ -2,94 +2,125 @@
 {% block title %}{{ servizio.name }} - Stanza del cittadino{% endblock %}
 
 {% block main_content %}
-  <section class="container">
-    <div class="row">
-      <div class="col-lg-8 px-lg-4 py-lg-2">
-        <h1>{{ servizio.name }}</h1>
-        <p>{{ servizio.shortDescription | abstract }}</p>
-      </div>
-      <div class="col-lg-3 offset-lg-1">
-        <div class="dropdown d-inline">
-          <button class="btn btn-dropdown dropdown-toggle" type="button" id="shareActions" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-            <svg class="icon">
-              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-share"></use>
-            </svg>
-            <small>{{ 'servizio.condividi' | trans }}</small>
-          </button>
-          <div class="dropdown-menu shadow-lg" aria-labelledby="shareActions">
-            <div class="link-list-wrapper">
-              <ul class="link-list">
-                <li>
-                  <a class="list-item"
-                     href="https://facebook.com/sharer/sharer.php?u={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
-                     target="_blank" rel="noopener" aria-label="Share on Facebook">
-                    <svg class="icon">
-                      <use
-                        xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-facebook"></use>
-                    </svg>
-                    <span>Facebook</span>
-                  </a>
-                </li>
-                <li>
-                  <a class="list-item"
-                     href="https://twitter.com/intent/tweet/?text={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
-                     target="_blank" rel="noopener" aria-label="Share on Twitter">
-                    <svg class="icon">
-                      <use
-                        xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-twitter"></use>
-                    </svg>
-                    <span>Twitter</span>
-                  </a>
-                </li>
-                <li>
-                  <a class="list-item"
-                     href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
-                     target="_blank" rel="noopener">
-                    <svg class="icon">
-                      <use
-                        xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-linkedin"></use>
-                    </svg>
-                    <span>Linkedin</span>
-                  </a>
-                </li>
-                <li>
-                  <a class="list-item"
-                     href="whatsapp://send?text={{app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode}}"
-                     target="_blank" rel="noopener" aria-label="Share on Whatsapp">
-                    <svg class="icon">
-                      <use
-                        xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-whatsapp"></use>
-                    </svg>
-                    <span>Whatsapp</span>
-                  </a>
-                </li>
-              </ul>
+  <div class="container">
+    <div class="row justify-content-center mb-5">
+      <div class="col-12 col-lg-10 pb-2">
+        <div class="row pb-3 pb-lg-4">
+          <div class="col-lg-8">
+            <h1 data-element="service-title">{{ servizio.name }}</h1>
+            <p class="small mb-3" data-element="service-description">
+              {% if not servizio.shortDescription is same as(servizio.name) %}
+                {{ servizio.shortDescription | abstract }}
+              {% else %}
+                {{ servizio.description | abstract }}
+              {% endif %}
+            </p>
+            <div class="mt-3">
+              {% for sharedService in servizio.getSharedServices %}
+                <a href="{{ path('service_access', {'servizio': sharedService.slug}) }}"
+                   class="btn btn-primary mt-2 font-weight-bold">{{ sharedService.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-lg-3 offset-lg-1 mt-5 mt-lg-0">
+            <div class="dropdown d-inline">
+              <button
+                class="btn btn-dropdown dropdown-toggle text-decoration-underline d-inline-flex align-items-center"
+                type="button" id="shareActions" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-share"></use>
+                </svg>
+                <small>{{ 'servizio.condividi' | trans }}</small>
+              </button>
+              <div class="dropdown-menu shadow-lg" aria-labelledby="shareActions">
+                <div class="link-list-wrapper">
+                  <ul class="link-list" role="menu" data-element="page-index">
+                    <li role="none">
+                      <a class="list-item" role="menuitem"
+                         href="https://facebook.com/sharer/sharer.php?u={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
+                         target="_blank" rel="noopener" aria-label="Share on Facebook">
+                        <svg class="icon">
+                          <use
+                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-facebook"></use>
+                        </svg>
+                        <span>Facebook</span>
+                      </a>
+                    </li>
+                    <li role="none">
+                      <a class="list-item" role="menuitem"
+                         href="https://twitter.com/intent/tweet/?text={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
+                         target="_blank" rel="noopener" aria-label="Share on Twitter">
+                        <svg class="icon">
+                          <use
+                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-twitter"></use>
+                        </svg>
+                        <span>Twitter</span>
+                      </a>
+                    </li>
+                    <li role="none">
+                      <a class="list-item" role="menuitem"
+                         href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
+                         target="_blank" rel="noopener">
+                        <svg class="icon">
+                          <use
+                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-linkedin"></use>
+                        </svg>
+                        <span>Linkedin</span>
+                      </a>
+                    </li>
+                    <li role="none">
+                      <a class="list-item" role="menuitem"
+                         href="whatsapp://send?text={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
+                         target="_blank" rel="noopener" aria-label="Share on Whatsapp">
+                        <svg class="icon">
+                          <use
+                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-whatsapp"></use>
+                        </svg>
+                        <span>Whatsapp</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown d-inline">
+              <button
+                class="btn btn-dropdown dropdown-toggle text-decoration-underline d-inline-flex align-items-center"
+                type="button" id="viewActions" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <svg class="icon">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-items"></use>
+                </svg>
+                <small>{{ 'servizio.azioni' | trans }}</small>
+              </button>
+              <div class="dropdown-menu shadow-lg" aria-labelledby="viewActions">
+                <div class="link-list-wrapper">
+                  <ul class="link-list" role="menu">
+                    <li role="none">
+                      <a class="list-item" role="menuitem"
+                         href="{{ absolute_url(path('service_group_api_get', { 'id': servizio.id })) }}"
+                         target="_blank" rel="noopener" aria-label="{{ 'servizio.machine_readable'|trans }}">
+                        <svg class="icon">
+                          <use
+                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-code-circle"></use>
+                        </svg>
+                        {{ 'servizio.machine_readable'|trans }}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="mt-4 mb-4">
-          <h6><small>{{ 'search.topics' | trans }}</small></h6>
-          {% if servizio.topics.name is defined %}
-          <div class="chip chip-primary chip-simple mr-2">
-            <span class="chip-label">{{ servizio.topics.name }}</span>
-          </div>
-          {% endif %}
-          {% if servizio.recipients %}
-            {% if servizio.recipients|length > 0 %}
-              {% for r in servizio.recipients %}
-                <div class="chip chip-primary chip-simple mr-2">
-                  <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span
-                      class="chip-label">{{ r.name }}</span></a>
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endif %}
-        </div>
       </div>
+      <hr class="col-12 d-none d-lg-block mb-0">
     </div>
-    <div class="row border-top row-column-border row-column-menu-left pb-5">
-      <aside class="col-lg-4" style="position: relative;">
+  </div>
+  <div class="container">
+    <div class="row row-column-menu-left pb-4">
+      <aside class="col-12 col-lg-3 mb-4 border-right" style="position: relative;">
         <div class="sticky-wrapper navbar-wrapper">
           <nav class="navbar it-navscroll-wrapper it-top-navscroll navbar-expand-lg">
             <button class="custom-navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false"
@@ -103,7 +134,8 @@
               </div>
               <a class="it-back-button" href="#">
                 <svg class="icon icon-sm icon-primary align-top">
-                  <use href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left" xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
+                  <use href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"
+                       xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
                 </svg>
                 <span>{{ 'servizio.torna_indietro' | trans }}</span>
               </a>
@@ -111,37 +143,16 @@
                 <div class="link-list-wrapper menu-link-list">
                   <h3 class="no_toc">{{ 'servizio.indice' | trans }}</h3>
                   <ul class="link-list">
-                    {% if servizio.description|striptags|trim != '' %}
-                      <li class="nav-item">
-                        <a class="nav-link active" data-focus-mouse="false"
-                           href="#description"><span>
-                          {{ 'gruppo_di_servizi.cos_e' | trans }}
-                        </span>
-                        </a>
-                      </li>
-                    {% endif %}
                     {% if servizio.who|striptags|trim != '' %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
-                           href="#who"><span>{{ 'gruppo_di_servizi.a_chi_si_rivolge' | trans }}</span></a>
+                           href="#who"><span>{{ 'servizio.a_chi_si_rivolge' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.specialCases|striptags|trim != '' %}
+                    {% if servizio.description|striptags|trim != '' %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
-                           href="#special-cases"><span>{{ 'gruppo_di_servizi.casi_particolari' | trans }}</span></a>
-                      </li>
-                    {% endif %}
-                    {% if servizio.moreInfo|striptags|trim != '' %}
-                      <li class="nav-item">
-                        <a class="nav-link" data-focus-mouse="false"
-                           href="#more-info"><span>{{ 'gruppo_di_servizi.maggiori_info' | trans }}</span></a>
-                      </li>
-                    {% endif %}
-                    {% if servizio.howto|striptags|trim != '' %}
-                      <li class="nav-item">
-                        <a class="nav-link" data-focus-mouse="false"
-                           href="#howto"><span>{{ 'gruppo_di_servizi.accedere' | trans }}</span></a>
+                           href="#description"><span>{{ 'servizio.descrizione' | trans }}</span></a>
                       </li>
                     {% endif %}
                     {% if servizio.howToDo|striptags|trim != '' %}
@@ -162,22 +173,40 @@
                            href="#what-you-get"><span>{{ 'servizio.what_you_get' | trans }}</span></a>
                       </li>
                     {% endif %}
+                    {% if servizio.timesAndDeadlines or (servizio.getSharedServices|length > 0 and (hasServicesWithMaxResponseTime or hasScheduledServices)) %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#times_and_deadlines"><span>{{ 'servizio.times_and_deadlines' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                     {% if servizio.costs|striptags|trim != '' %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#costs"><span>{{ 'servizio.costs' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.getSharedServices|length > 0 and hasServicesWithMaxResponseTime %}
+                    {% if servizio.howto|striptags|trim != '' %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
-                           href="#max-response-time-section"><span>{{ 'gruppo_di_servizi.max_response_time_list' | trans }}</span></a>
+                           href="#howto"><span>{{ 'servizio.accedere' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.moreInfo|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#more_info"><span>{{ 'servizio.maggiori_info' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.conditions|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#conditions"><span>{{ 'servizio.conditions' | trans }}</span></a>
                       </li>
                     {% endif %}
                     {% if servizio.getNotStickyServices.count > 0 %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
-                           href="#related-service"><span>{{ 'documenti.servizi_correlati' | trans }}</span></a>
+                           href="#related-services"><span>{{ 'gruppo_di_servizi.servizi_correlati' | trans }}</span></a>
                       </li>
                     {% endif %}
                   </ul>
@@ -187,121 +216,152 @@
           </nav>
         </div>
       </aside>
-      <section class="col-lg-8 it-page-sections-container">
-        {% if servizio.description|striptags|trim != '' %}
-          <article id="description">
-            <h4 class="it-page-section">{{ 'servizio.cos_e' | trans }}</h4>
-            <span class="text-serif">{{ servizio.description|cleanMarkup|raw|nl2br }}</span>
-          </article>
-        {% endif %}
-        {% if servizio.who|striptags|trim != '' %}
-          <article id="who">
-            <h4 class="it-page-section">{{ 'servizio.a_chi_si_rivolge' | trans }}</h4>
-            <span class="text-serif">{{ servizio.who|cleanMarkup|raw|nl2br }}</span>
-            {% if servizio.coverage %}
-              {% if servizio.coverage|length > 0 %}
-                <article class="mb-4">
-                  <h5>{{ 'servizio.copertura' | trans }}</h5>
-                  {% for c in servizio.coverage %}
-                    <div class="chip chip-secondary chip-simple chip-lg mr-2">
-                      <span class="chip-label">{{ c }}</span>
-                    </div>
-                  {% endfor %}
-                </article>
-              {% endif %}
-            {% endif %}
-            {% if servizio.recipients %}
-              {% if servizio.recipients|length > 0 %}
-                <article class="mb-4">
-                  <h5>{{ 'recipients.title' | trans }}</h5>
-                  {% for r in servizio.recipients %}
-                    <div class="chip chip-secondary chip-simple chip-lg mr-2">
-                      <a href="{{ path('recipient_show', {'slug': r.slug}) }}" class="text-white"><span
-                          class="chip-label">{{ r.name }}</span></a>
-                    </div>
-                  {% endfor %}
-                </article>
-              {% endif %}
-            {% endif %}
-          </article>
-        {% endif %}
-        {% if servizio.specialCases|striptags|trim != '' %}
-          <article id="special-cases">
-            <h4 class="it-page-section">{{ 'servizio.casi_particolari' | trans }}</h4>
-            <span class="text-serif">{{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
-          </article>
-        {% endif %}
-        {% if servizio.moreInfo|striptags|trim != '' %}
-          <article id="more-info">
-            <h4 class="it-page-section">{{ 'servizio.maggiori_info' | trans }}</h4>
-            <span class="text-serif">{{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
-          </article>
-        {% endif %}
-        {% if servizio.howto|striptags|trim != '' %}
-          <article id="howto">
-            <h4 class="it-page-section">{{ 'servizio.accedere' | trans }}</h4>
-            <span class="text-serif">{{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
-          </article>
-        {% endif %}
-        {% if servizio.howToDo|striptags|trim != '' %}
-          <article id="how-to-do">
-            <h4 class="it-page-section">{{ 'servizio.how_to_do' | trans }}</h4>
-            <span class="text-serif">{{ servizio.howToDo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
-          </article>
-        {% endif %}
-        {% if servizio.whatYouNeed|striptags|trim != '' %}
-          <article id="what-you-need">
-            <h4 class="it-page-section">{{ 'servizio.what_you_need' | trans }}</h4>
-            <span class="text-serif">{{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
-          </article>
-        {% endif %}
-        {% if servizio.whatYouGet|striptags|trim != '' %}
-          <article id="what-you-get">
-            <h4 class="it-page-section">{{ 'servizio.what_you_get' | trans }}</h4>
-            <span class="text-serif">{{ servizio.whatYouGet|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
-          </article>
-        {% endif %}
-        {% if servizio.costs|striptags|trim != '' %}
-          <article id="costs">
-            <h4 class="it-page-section">{{ 'servizio.costs' | trans }}</h4>
-            <span class="text-serif">{{ servizio.costs|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}</span>
-          </article>
-        {% endif %}
-        {% if servizio.getSharedServices|length > 0 and hasServicesWithMaxResponseTime %}
-          <div id="max-response-time-section">
-            <h4 class="it-page-section">{{ 'servizio.max_response_time_list' | trans }}</h4>
-            <ul>
-              {% for sharedService in servizio.getSharedServices %}
-                {% if sharedService.maxResponseTime %}
-                  <li class="text-serif">{{ sharedService.name }}: {{ sharedService.maxResponseTime }} {{ 'days' | trans }}</li>
-                {% endif %}
-              {% endfor %}
-            </ul>
-          </div>
-        {% endif %}
-        <div class="row d-flex flex-wrap">
-          {% for sharedService in servizio.getSharedServices %}
-            <div class="col-12 col-md-6 mb-2">
-              <a href="{{ path('service_access', {'servizio': sharedService.slug}) }}"
-                 class="btn btn-success btn-lg d-flex flex-column justify-content-center h-100 service-access-button">
-                {{ sharedService.name }}
-              </a>
+      <div class="col-12 col-lg-8 offset-lg-1">
+        <div class="it-page-sections-container">
+          {% if servizio.who|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="who">
+              <h2 class="title mb-3">{{ 'servizio.a_chi_si_rivolge' | trans }}</h2>
+              <div class="rich-text text-serif">{{ servizio.who|cleanMarkup|raw|nl2br }}</div>
+            </section>
+          {% endif %}
+          {% if servizio.description|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="description">
+              <h2 class="title mb-3">{{ 'servizio.descrizione' | trans }}</h2>
+              <div class="rich-text text-serif">{{ servizio.description|cleanMarkup|raw|nl2br }}</div>
+            </section>
+          {% endif %}
+          {% if servizio.howToDo|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="how-to-do">
+              <h2 class="title mb-3">{{ 'servizio.how_to_do' | trans }}</h2>
+              <div
+                class="rich-text text-serif">{{ servizio.howToDo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
             </div>
-          {% endfor %}
+            </section>
+          {% endif %}
+          {% if servizio.whatYouNeed|striptags|trim != '' %}
+            <section class="it-page-section mb-4 bg-light p-3" id="what-you-need">
+              <h2 class="title mb-3">{{ 'servizio.what_you_need' | trans }}</h2>
+              <div class="rich-text text-serif">
+              {{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            </div>
+            </section>
+          {% endif %}
+          {% if servizio.whatYouGet|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="what-you-get">
+              <h2 class="title mb-3">{{ 'servizio.what_you_get' | trans }}</h2>
+              <div class="rich-text text-serif">
+              {{ servizio.whatYouGet|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            </div>
+            </section>
+          {% endif %}
+          {% if servizio.timesAndDeadlines %}
+            <section class="it-page-section mb-4" id="times_and_deadlines">
+              <h2 class="title mb-3">{{ 'servizio.times_and_deadlines' | trans }}</h2>
+              <div class="rich-text text-serif">
+                {{ servizio.timesAndDeadlines|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              </div>
+              {% if servizio.sharedServices|length > 0 and hasServicesWithMaxResponseTime %}
+                {% set serviceDates = [] %}
+                {% for sharedService in servizio.sharedServices %}
+                  {% if sharedService.maxResponseTime and sharedService.isSharedWithGroup %}
+                    {% set serviceDates = serviceDates|merge({
+                      ('servizio.esito_richiesta_per_servizio'|trans({ '%servizio%': sharedService.name })): ('+' ~ sharedService.maxResponseTime ~ 'days')|date('Y-m-d')
+                    }) %}
+                  {% endif %}
+                  {% if sharedService.status == constant('App\\Entity\\Servizio::STATUS_SCHEDULED') and sharedService.isSharedWithGroup %}
+                    {% set serviceDates = serviceDates|merge({
+                      ('servizio.apertura_servizio'|trans({ '%servizio%': sharedService.name })): sharedService.scheduledFrom|date('Y-m-d'),
+                      ('servizio.termine_presentazione_domande_per_servizio'|trans({ '%servizio%': sharedService.name })): sharedService.scheduledTo|date('Y-m-d')
+                    }) %}
+                  {% endif %}
+                {% endfor %}
+                {{ include('Servizi/parts/panel/times_and_deadlines.html.twig', {'serviceDates': serviceDates}) }}
+              {% endif %}
+            </section>
+          {% endif %}
+          {% if servizio.costs|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="costs">
+              <h2 class="title mb-3">{{ 'servizio.costs' | trans }}</h2>
+              <div class="rich-text text-serif">
+              {{ servizio.costs|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              </div>
+              <div>
+                {% for attachment in servizio.costsAttachments %}
+                  {{ include('Servizi/parts/panel/service_attachment.html.twig', {
+                    'download_url': path('service_group_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}),
+                    'attachment': attachment
+                  }) }}
+                {% endfor %}
+              </div>
+            </section>
+          {% endif %}
+          <section class="it-page-section mb-4 bg-light p-4" id="howto">
+            <h2 class="title mb-3">{{ 'servizio.accedere' | trans }}</h2>
+            {% if servizio.howto|striptags|trim != '' %}
+              <div class="rich-text text-serif">
+              {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            </div>
+            {% endif %}
+            <div class="mt-3">
+              {% for sharedService in servizio.getSharedServices %}
+                <a href="{{ path('service_access', {'servizio': sharedService.slug}) }}"
+                   class="btn btn-primary mt-2 font-weight-bold">{{ sharedService.name }}</a>
+              {% endfor %}
+            </div>
+          </section>
+          {% if servizio.moreInfo|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="more_info">
+              <h2 class="title mb-3">{{ 'servizio.maggiori_info' | trans }}</h2>
+              <div class="rich-text text-serif">
+              {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+            </div>
+            </section>
+          {% endif %}
+          {% if servizio.conditions|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="conditions">
+              <h2 class="title mb-3">{{ 'servizio.conditions' | trans }}</h2>
+              <div class="rich-text text-serif">
+              {{ servizio.conditions|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              </div>
+              <div>
+                {% for attachment in servizio.conditionsAttachments %}
+                  {{ include('Servizi/parts/panel/service_attachment.html.twig', {
+                    'download_url': path('service_group_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}),
+                    'attachment': attachment
+                  }) }}
+                {% endfor %}
+              </div>
+            </section>
+            <section class="it-page-section mb-4" id="contacts">
+              <div class="col-12 mb-3">
+                <span class="text-paragraph-small">{{ 'search.topics' | trans }}:</span>
+                {% if servizio.topics.name is defined %}
+                  <div class="d-flex flex-wrap mt-2 mb-4">
+                    <div>
+                      <a class="chip chip-simple chip-primary bg-tag text-decoration-none" href="#"
+                         data-element="service-topic">
+                        <span class="chip-label">{{ servizio.topics.name }}</span> </a>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+              <p class="small mb-0">{{ 'servizio.page_updated_at' | trans({'%updatedAt%': servizio.updatedAt | date('d/m/Y') }) }}</p>
+            </section>
+          {% endif %}
+          {% if servizio.getNotStickyServices.count > 0 %}
+            <section class="it-page-section mb-4" id="related-services">
+              <h2 class="title mb-3">{{ 'gruppo_di_servizi.servizi_correlati' | trans }}</h2>
+              <div class="row flex-column pt-3 ml-2 ml-lg-0">
+                {% for item in servizio.getNotStickyServices %}
+                  {{ include('Servizi/parts/panel/service-related.html.twig', {'servizio':item}) }}
+                {% endfor %}
+              </div>
+            </section>
+          {% endif %}
         </div>
-      </section>
-      <section class="col offset-lg-4">
-        {% if servizio.getNotStickyServices.count > 0 %}
-          <div class="row flex-column py-5 ml-2 ml-lg-0">
-            <h2 class="mb-2 mb-lg-4 mb-3" id="related-service">{{ 'documenti.servizi_correlati' | trans }}</h2>
-            {% for item in servizio.getNotStickyServices %}
-              {{ include('Servizi/parts/panel/service-related.html.twig', {'servizio':item}) }}
-            {% endfor %}
-          </div>
-        {% endif %}
-      </section>
+      </div>
     </div>
-  </section>
+  </div>
   {% if servizio.getStickyServices.count > 0 %}
     <section class="container-fluid py-5 bg-light">
       <div class="container">
@@ -315,7 +375,10 @@
       </div>
     </section>
   {% endif %}
-  <a href="#" aria-hidden="true" data-attribute="back-to-top" class="back-to-top shadow back-to-top-show" aria-label="torna all'inizio del contenuto">
-    <svg class="icon icon-light"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use></svg>
+  <a href="#" aria-hidden="true" data-attribute="back-to-top" class="back-to-top shadow back-to-top-show"
+     aria-label="{{ 'back_to_top' | trans }}">
+    <svg class="icon icon-light">
+      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use>
+    </svg>
   </a>
 {% endblock %}

@@ -24,7 +24,7 @@ class StringUtils
    */
   public static function cleanMarkup($string)
   {
-    $allowedMarkup = '<br><p><a><strong><ul><ol><i><b><u><li>';
+    $allowedMarkup = '<br><p><a><strong><ul><ol><i><b><u><li><h3><h4><h5><h6>';
     $string = strip_tags($string, $allowedMarkup);
 
     $string = preg_replace('/(<[^>]+) style=".*?"/i', '$1', $string);
@@ -89,6 +89,10 @@ class StringUtils
     return (array)json_decode($dataString, true);
   }
 
+  /**
+   * @param string|null $string
+   * @return mixed|string
+   */
   // Todo: Trovare un nome migliore se possibile
   public static function abstract(?string $string)
   {
@@ -129,5 +133,46 @@ class StringUtils
     }
     return $abstract;
   }
+  /**
+   * @param int $bytes
+   * @return string
+   */
+  public static function getHumanReadableFilesize(int $bytes): string
+  {
+    $bytes = floatval($bytes);
 
+    $arBytes = array(
+      0 => array(
+        "UNIT" => "TB",
+        "VALUE" => pow(1024, 4),
+      ),
+      1 => array(
+        "UNIT" => "GB",
+        "VALUE" => pow(1024, 3),
+      ),
+      2 => array(
+        "UNIT" => "MB",
+        "VALUE" => pow(1024, 2),
+      ),
+      3 => array(
+        "UNIT" => "KB",
+        "VALUE" => 1024,
+      ),
+      4 => array(
+        "UNIT" => "B",
+        "VALUE" => 1,
+      ),
+    );
+
+    $result = '';
+    foreach ($arBytes as $arItem) {
+      if ($bytes >= $arItem["VALUE"]) {
+        $result = $bytes / $arItem["VALUE"];
+        $result = str_replace(".", ",", strval(round($result, 2)))." ".$arItem["UNIT"];
+        break;
+      }
+    }
+
+    return $result;
+  }
 }

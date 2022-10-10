@@ -8,13 +8,12 @@ use App\Entity\IscrizioneRegistroAssociazioni;
 use App\Entity\OccupazioneSuoloPubblico;
 use App\Entity\Pratica;
 use App\Model\DefaultProtocolSettings;
-use App\Services\FileService;
+use App\Services\FileService\AllegatoFileService;
 use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
+use League\Flysystem\FileNotFoundException;
 use Psr\Log\LoggerInterface;
 use SimpleXMLElement;
-use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
-use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 /**
  * Class InforProtocolloHandler
@@ -70,16 +69,16 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
   private $tempPemFile = false;
   private $tempKeyFile = false;
   /**
-   * @var FileService
+   * @var AllegatoFileService
    */
   private $fileService;
 
   /**
    * @param EntityManagerInterface $em
    * @param LoggerInterface $logger
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    */
-  public function __construct(EntityManagerInterface $em, LoggerInterface $logger, FileService $fileService)
+  public function __construct(EntityManagerInterface $em, LoggerInterface $logger, AllegatoFileService $fileService)
   {
     $this->em = $em;
     $this->logger = $logger;
@@ -420,10 +419,11 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
   }
 
   /**
-   * @param Pratica $pratica
+   * @param $numeroDiProtocollo
    * @param AllegatoInterface $allegato
    * @param array $parameters
    * @return string
+   * @throws FileNotFoundException
    */
   protected function createSendAllegatoRequestBody($numeroDiProtocollo, AllegatoInterface $allegato, array $parameters): ?string
   {
@@ -445,7 +445,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $riferimento->addChild('web:anno', $anno, 'web');
     $riferimento->addChild('web:numero', $numero, 'web');
 
-    if ($this->fileService->fileExist($allegato)) {
+    if ($this->fileService->fileExists($allegato)) {
       $documento = $richiesta->addChild('web:documento', null, 'web');
       $documento->addChild('web:titolo', substr($allegato->getDescription(), 0, 99), 'web');
       $documento->addChild('web:nomeFile', $allegato->getFilename(), 'web');

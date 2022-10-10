@@ -5,20 +5,17 @@ namespace App\Protocollo;
 
 
 use App\Entity\AllegatoInterface;
-use App\Entity\Ente;
 use App\Entity\ModuloCompilato;
 use App\Entity\Pratica;
 use App\Entity\RispostaOperatore;
-use App\Services\FileService;
-use App\Services\MailerService;
-use Hoa\Event\Exception;
+use App\Services\FileService\AllegatoFileService;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
-use Symfony\Bridge\Doctrine\RegistryInterface;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Swift_Message;
 use Twig\Environment;
-use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Error\Error;
 
 class PecProtocolloHandler implements ProtocolloHandlerInterface
 {
@@ -64,7 +61,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    */
   private $mailer = null;
   /**
-   * @var FileService
+   * @var AllegatoFileService
    */
   private $fileService;
 
@@ -76,11 +73,11 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    * @param string|null $password
    * @param string|null $sender
    * @param TranslatorInterface $translator
-   * @param EngineInterface $templating
+   * @param Environment $templating
    * @param LoggerInterface $logger
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    */
-  public function __construct(?string $host, ?string $port, ?string  $user, ?string  $password, ?string $sender, TranslatorInterface $translator, Environment $templating, LoggerInterface $logger, FileService $fileService)
+  public function __construct(?string $host, ?string $port, ?string  $user, ?string  $password, ?string $sender, TranslatorInterface $translator, Environment $templating, LoggerInterface $logger, AllegatoFileService $fileService)
   {
     $this->host = $host;
     $this->port = $port;
@@ -131,7 +128,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
 
   /**
    * @param Pratica $pratica
-   * @throws \Exception
+   * @throws Exception
    */
   public function sendPraticaToProtocollo(Pratica $pratica)
   {
@@ -148,7 +145,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $result = $this->mailer->send($message);
 
     if (!$result) {
-      throw new \Exception("Error sendPraticaToProtocollo application: " . $pratica->getId());
+      throw new Exception("Error sendPraticaToProtocollo application: " . $pratica->getId());
     }
     // Todo: Se eseguito da cronjob la parte di diminio dell'id è swift.generated
     $pratica->setNumeroProtocollo($message->getId());
@@ -158,6 +155,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
+   * @throws Exception
    */
   public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
@@ -167,6 +165,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
+   * @throws Exception
    */
   public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
@@ -177,7 +176,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    * @param Pratica $pratica
    * @param AllegatoInterface $rispostaIntegrazione
    * @param AllegatoInterface $allegato
-   * @throws \Twig\Error\Error
+   * @throws Exception
    */
   public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $allegato)
   {
@@ -190,13 +189,13 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $result = $this->mailer->send($message);
 
     if (!$result) {
-      throw new \Exception("Error sendIntegrazioneToProtocollo application: " . $pratica->getId() );
+      throw new Exception("Error sendIntegrazioneToProtocollo application: " . $pratica->getId() );
     }
   }
 
   /**
    * @param Pratica $pratica
-   * @throws \Twig\Error\Error
+   * @throws Exception
    */
   public function sendRispostaToProtocollo(Pratica $pratica)
   {
@@ -212,7 +211,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $result = $this->mailer->send($message);
 
     if (!$result) {
-      throw new \Exception("Error sendRispostaToProtocollo application: " . $pratica->getId());
+      throw new Exception("Error sendRispostaToProtocollo application: " . $pratica->getId());
     }
 
     if ($risposta instanceof RispostaOperatore) {
@@ -224,6 +223,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
+   * @throws Exception
    */
   public function sendAllegatoToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
@@ -248,7 +248,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $result = $this->mailer->send($message);
 
     if (!$result) {
-      throw new \Exception("Error sendAllegatoToProtocollo application: " . $pratica->getId() . " attachment: " . $allegato->getId());
+      throw new Exception("Error sendAllegatoToProtocollo application: " . $pratica->getId() . " attachment: " . $allegato->getId());
     }
 
     $allegato->setNumeroProtocollo($message->getId());
@@ -281,8 +281,8 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
    * @param $sender
    * @param $receiver
    * @param $type
-   * @return \Swift_Message
-   * @throws \Twig\Error\Error
+   * @return Swift_Message
+   * @throws Error
    */
   private function setupMessage(Pratica $pratica, $sender, $receiver, $type)
   {
@@ -295,8 +295,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
       $subject .= ' - allegato';
     }
 
-
-    $message = (new \Swift_Message())
+    return (new Swift_Message())
       ->setSubject($subject)
       ->setFrom($sender, 'Stanza del Cittadino')
       ->setTo($receiver, $ente->getName())
@@ -320,18 +319,16 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
         ),
         'text/plain'
       );
-
-    return $message;
   }
 
   /**
    * @param $parameters
-   * @throws \Exception
+   * @throws Exception
    */
   private function checkParameters($parameters)
   {
     if ( !isset($parameters['receiver'])) {
-      throw new \Exception("Missing required field: receiver");
+      throw new Exception("Missing required field: receiver");
     }
   }
 }

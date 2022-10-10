@@ -3,21 +3,15 @@
 namespace App\Protocollo;
 
 use App\Entity\AllegatoInterface;
-use App\Entity\Ente;
-use App\Entity\IscrizioneRegistroAssociazioni;
 use App\Entity\ModuloCompilato;
-use App\Entity\OccupazioneSuoloPubblico;
 use App\Entity\Pratica;
-use App\Model\DefaultProtocolSettings;
-use App\Services\FileService;
-use Doctrine\ORM\EntityManagerInterface;
-use DOMDocument;
+use App\Services\FileService\AllegatoFileService;
+use Exception;
+use League\Flysystem\FileNotFoundException;
 use Psr\Log\LoggerInterface;
 use SimpleXMLElement;
 use SoapClient;
 use SoapVar;
-use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
-use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 /**
  * Class SipalProtocolloHandler
@@ -37,15 +31,15 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
 
   /**
    * @param LoggerInterface $logger
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    */
-  public function __construct(LoggerInterface $logger, FileService $fileService)
+  public function __construct(LoggerInterface $logger, AllegatoFileService $fileService)
   {
     $this->logger = $logger;
     $this->fileService = $fileService;
   }
 
-  public function getName()
+  public function getName(): string
   {
     return 'Sipal';
   }
@@ -55,7 +49,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
     return self::PROTOCOL_EXECUTION_TYPE_INTERNAL;
   }
 
-  public function getConfigParameters()
+  public function getConfigParameters(): array
   {
     return array(
       'sipal_wsUrl',
@@ -89,7 +83,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    *
-   * @throws \Exception
+   * @throws Exception
    */
   public function sendPraticaToProtocollo(Pratica $pratica)
   {
@@ -127,21 +121,22 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
 
     $soap = simplexml_load_string($result->return);
     if (!$soap) {
-      throw new \Exception('Errore protocollo Sipal - addAllegato Pratica: '  . $pratica->getId() . ', messaggio: la risposta soap non è un xml pasrsabile. ' . $result->return);
+      throw new Exception('Errore protocollo Sipal - addAllegato Pratica: '  . $pratica->getId() . ', messaggio: la risposta soap non è un xml pasrsabile. ' . $result->return);
     }
 
     if ($soap->esito == '0') {
       $datiOut = $soap->datiout;
       $pratica->setNumeroProtocollo((string) $datiOut->numeroprotocollo . '/' . (string) $datiOut->anno);
     } else {
-      throw new \Exception('Errore protocollo Sipal - addAllegato Pratica: '  . $pratica->getId() . ', messaggio: ' . (string) $soap->esitomsg);
+      throw new Exception('Errore protocollo Sipal - addAllegato Pratica: '  . $pratica->getId() . ', messaggio: ' . (string) $soap->esitomsg);
     }
   }
 
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
-   * @throws \Exception
+   * @throws FileNotFoundException
+   * @throws Exception
    */
   public function sendAllegatoToProtocollo(Pratica $pratica, AllegatoInterface $allegato): void
   {
@@ -150,7 +145,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
     $protocol = $pratica->getNumeroProtocollo();
     $protocolParts = explode('/', $protocol);
     if (count($protocolParts) < 1) {
-      throw new \Exception('Errore protocollo Sipal - addAllegato Pratica: '  . $pratica->getId() . ', allegato:' . $allegato->getId() . ', messaggio: protocollo pratica malformato');
+      throw new Exception('Errore protocollo Sipal - addAllegato Pratica: '  . $pratica->getId() . ', allegato:' . $allegato->getId() . ', messaggio: protocollo pratica malformato');
     }
 
     $attachmentType = 'N';
@@ -186,7 +181,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
 
     $soap = simplexml_load_string($result->return);
     if (!$soap) {
-      throw new \Exception('Errore protocollo Sipal - addAllegato Pratica: '  . $pratica->getId() . ', allegato:' . $allegato->getId() . ', messaggio: la risposta soap non è un xml pasrsabile. ' . $result->return);
+      throw new Exception('Errore protocollo Sipal - addAllegato Pratica: '  . $pratica->getId() . ', allegato:' . $allegato->getId() . ', messaggio: la risposta soap non è un xml pasrsabile. ' . $result->return);
     }
 
     if ($soap->esito == '0') {
@@ -195,7 +190,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
         'protocollo' => (string) $soap->esitomsg,
       ]);
     } else {
-      throw new \Exception( 'Errore protocollo Sipal - addAllegato - Pratica: '  . $pratica->getId() . ', allegato:' . $allegato->getId() . ', messaggio: ' . (string) $soap->esitomsg);
+      throw new Exception( 'Errore protocollo Sipal - addAllegato - Pratica: '  . $pratica->getId() . ', allegato:' . $allegato->getId() . ', messaggio: ' . (string) $soap->esitomsg);
     }
   }
 
@@ -203,7 +198,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
-   * @throws \Exception
+   * @throws Exception
    */
   public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
@@ -215,7 +210,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
    * @param Pratica $pratica
    * @param AllegatoInterface $rispostaIntegrazione
    * @param AllegatoInterface $allegato
-   * @throws \Exception
+   * @throws Exception
    */
   public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $allegato)
   {
@@ -224,7 +219,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
 
   /**
    * @param Pratica $pratica
-   * @throws \Exception
+   * @throws Exception
    */
   public function sendRispostaToProtocollo(Pratica $pratica)
   {
@@ -234,7 +229,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
 
   /**
    * @param Pratica $pratica
-   * @throws \Exception
+   * @throws Exception
    */
   public function sendRitiroToProtocollo(Pratica $pratica)
   {
@@ -245,7 +240,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
-   * @throws \Exception
+   * @throws Exception
    */
   public function sendAllegatoRispostaToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
@@ -255,7 +250,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
-   * @throws \Exception
+   * @throws Exception
    */
   public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
@@ -287,7 +282,7 @@ class SipalProtocolloHandler implements ProtocolloHandlerInterface
   }
 
   /**
-   * @param $pratica
+   * @param $parameters
    * @return SoapClient
    * @throws \SoapFault
    */

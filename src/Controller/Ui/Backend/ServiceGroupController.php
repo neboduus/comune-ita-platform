@@ -4,10 +4,18 @@ namespace App\Controller\Ui\Backend;
 
 use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
+use App\Model\PublicFile;
+use App\Services\FileService\ServiceAttachmentsFileService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FileNotFoundException;
+use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,11 +32,25 @@ class ServiceGroupController extends AbstractController
   private $translator;
 
   /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
+
+  /**
+   * @var LoggerInterface
+   */
+  private $logger;
+
+  /**
    * ServiceGroupController constructor.
+   * @param EntityManagerInterface $entityManager
+   * @param LoggerInterface $logger
    * @param TranslatorInterface $translator
    */
-  public function __construct(TranslatorInterface $translator)
+  public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger,TranslatorInterface $translator)
   {
+    $this->entityManager = $entityManager;
+    $this->logger = $logger;
     $this->translator = $translator;
   }
 
@@ -140,5 +162,52 @@ class ServiceGroupController extends AbstractController
       $this->addFlash('warning', $this->translator->trans('gruppo_di_servizi.errore_rimozione'));
       return $this->redirectToRoute('admin_service_group_edit', array('id' => $serviceGroup->getId()));
     }
+  }
+
+  /**
+   * @Route("/{id}/attachments/{attachmentType}/{filename}", name="admin_delete_group_attachment", methods={"DELETE"})
+   * @ParamConverter("serviceGroup", class="App\Entity\ServiceGroup")
+   * @param Request $request
+   * @param ServiceGroup $serviceGroup
+   * @param string $attachmentType
+   * @param string $filename
+   * @param ServiceAttachmentsFileService $fileService
+   * @return JsonResponse
+   */
+  public function deletePublicAttachmentAction(Request $request, ServiceGroup $serviceGroup, string $attachmentType, string $filename, ServiceAttachmentsFileService $fileService): JsonResponse
+  {
+    if (!in_array($attachmentType, [PublicFile::CONDITIONS_TYPE, PublicFile::COSTS_TYPE])) {
+      $this->logger->error("Invalid type $attachmentType");
+      return new JsonResponse(["Invalid type: $attachmentType is not supported"], Response::HTTP_BAD_REQUEST);
+    }
+
+    if ($attachmentType === PublicFile::CONDITIONS_TYPE) {
+      $attachment = $serviceGroup->getConditionAttachmentByName($filename);
+    } elseif ($attachmentType === PublicFile::COSTS_TYPE) {
+      $attachment = $serviceGroup->getCostAttachmentByName($filename);
+    } else {
+      $attachment = null;
+    }
+
+    if (!$attachment) {
+      return new JsonResponse(["Attachment $filename does not exists"], Response::HTTP_NOT_FOUND);
+    }
+
+    try {
+      $fileService->deleteFilename($attachment->getName(), $serviceGroup, $attachment->getType());
+    } catch (FileNotFoundException $e) {
+      $this->logger->error("Unable to delete $filename: file not found");
+    }
+
+    if ($attachmentType === PublicFile::CONDITIONS_TYPE) {
+      $serviceGroup->removeConditionsAttachment($attachment);
+    } elseif ($attachmentType === PublicFile::COSTS_TYPE) {
+      $serviceGroup->removeCostsAttachment($attachment);
+    }
+
+    $this->entityManager->persist($serviceGroup);
+    $this->entityManager->flush();
+
+    return new JsonResponse(["$filename deleted successfully"], Response::HTTP_OK);
   }
 }

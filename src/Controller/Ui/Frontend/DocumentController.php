@@ -6,18 +6,15 @@ namespace App\Controller\Ui\Frontend;
 
 use App\Logging\LogConstants;
 use App\Services\BreadcrumbsService;
-use App\Services\InstanceService;
-use App\Services\Manager\DocumentManager;
-use Doctrine\DBAL\DBALException;
+use App\Services\FileService\DocumentFileService;
 use Doctrine\DBAL\Driver\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMException;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
@@ -46,9 +43,9 @@ class DocumentController extends AbstractController
    */
   private $breadcrumbsService;
   /**
-   * @var DocumentManager
+   * @var DocumentFileService
    */
-  private $documentManager;
+  private $fileService;
 
   /**
    * DocumentController constructor.
@@ -56,15 +53,15 @@ class DocumentController extends AbstractController
    * @param EntityManagerInterface $em
    * @param LoggerInterface $logger
    * @param BreadcrumbsService $breadcrumbsService
-   * @param DocumentManager $documentManager
+   * @param DocumentFileService $fileService
    */
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, LoggerInterface $logger, BreadcrumbsService $breadcrumbsService, DocumentManager $documentManager)
+  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, LoggerInterface $logger, BreadcrumbsService $breadcrumbsService, DocumentFileService $fileService)
   {
     $this->translator = $translator;
     $this->em = $em;
     $this->logger = $logger;
     $this->breadcrumbsService = $breadcrumbsService;
-    $this->documentManager = $documentManager;
+    $this->fileService = $fileService;
 
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.documenti'), 'folders_list_cpsuser');
 
@@ -72,7 +69,7 @@ class DocumentController extends AbstractController
 
   /**
    * @Route("/", name="folders_list_cpsuser")
-   * @throws \Doctrine\DBAL\Driver\Exception
+   * @throws Exception|\Doctrine\DBAL\Exception
    */
   public function cpsUserListFoldersAction()
   {
@@ -101,9 +98,10 @@ class DocumentController extends AbstractController
    * @Route("/{folderId}", name="documenti_list_cpsuser")
    * @param Request $request
    * @param string $folderId
-   * @return array|Response
+   * @return Response|RedirectResponse
+   * @throws \Doctrine\DBAL\Exception
    */
-  public function cpsUserListDocumentsAction(Request $request, $folderId)
+  public function cpsUserListDocumentsAction(Request $request, string $folderId)
   {
     $user = $this->getUser();
     $folder = $this->em->getRepository('App\Entity\Folder')->find($folderId);
@@ -144,9 +142,9 @@ class DocumentController extends AbstractController
    * @param Request $request
    * @param string $folderId
    * @param string $documentId
-   * @return array|Response
+   * @return RedirectResponse|Response
    */
-  public function cpsUserShowDocumentoAction(Request $request, $folderId, $documentId)
+  public function cpsUserShowDocumentoAction(Request $request, string $folderId, string $documentId)
   {
     $user = $this->getUser();
     $folder = $this->em->getRepository('App\Entity\Folder')->find($folderId);
@@ -183,7 +181,7 @@ class DocumentController extends AbstractController
    * @return Response
    * @throws \Exception
    */
-  public function downloadDocumentAction(Request $request, $folderId, $documentId)
+  public function downloadDocumentAction(Request $request, string $folderId, string $documentId): Response
   {
     $user = $this->getUser();
     $folder = $this->em->getRepository('App\Entity\Folder')->find($folderId);
@@ -193,7 +191,7 @@ class DocumentController extends AbstractController
       return new Response(null, Response::HTTP_UNAUTHORIZED);
     }
 
-    $response = $this->documentManager->download($document);
+    $response = $this->fileService->download($document);
     try {
       $document->setLastReadAt(new \DateTime());
       $document->setDownloadsCounter($document->getDownloadsCounter() + 1);

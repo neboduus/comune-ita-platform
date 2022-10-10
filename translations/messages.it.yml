@@ -114,6 +114,7 @@ go_to_page: 'Vai alla pagina'
 read_faq: 'Leggi le FAQ'
 booking_appointment: 'Prenotazione appuntamento'
 request_assistance: "Richiesta d'assistenza"
+back_to_top: "Torna all'inizio del contenuto"
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'
@@ -135,7 +136,7 @@ nav:
     protocollo: 'Configurazione di Protocollo'
     usage: 'Statistiche'
   admin:
-    create_new_operator : 'Crea nuovo operatore'
+    create_new_operator: 'Crea nuovo operatore'
     impostazioni_istanza: 'Impostazioni'
     impostazioni_istanza_descrizione: "Configurazioni generali dell'ente"
     ente: 'Ente'
@@ -200,6 +201,7 @@ general:
     created: 'Oggetto creato correttamente'
     updated: 'Oggetto aggiornato correttamente'
   search: 'Cerca'
+  download: 'Scarica'
 servizio:
   copy_url: 'Copia URL'
   url_copied: 'URL copiato'
@@ -211,6 +213,8 @@ servizio:
   success_import_service: 'Servizio importato correttamente'
   error_create_form: 'Si è verificato un problema in fase creazione del form.'
   error_import: 'Si è verificato un problema in fase di importazione.'
+  error_missing_filename: "Il file che si tenta di eliminare non esiste"
+  delete_filename: "Elimina file caricato %filename%"
   error_from_save: 'Si è verificato un errore durante il salvataggio.'
   draft_message: "La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l'accesso diretto alla compilazione del servizio."
   placeholders_available: 'Placeholders disponibili'
@@ -238,18 +242,40 @@ servizio:
   short_description: "Descrizione breve"
   change_short_description: "Il campo descrizione breve è quello di default, è necessario modificarlo prima di salvare."
   descrizione: "Descrizione"
-  a_chi_si_rivolge: "A chi si rivolge"
+  a_chi_si_rivolge: "A chi è rivolto"
   copertura: "Copertura geografica"
   copertura_helper: "Copertura geografica - (se più di uno inserire i valori separati da virgola)"
-  accedere: "Accedere al servizio"
+  life_events: 'Eventi della vita delle Persone'
+  business_events: "Eventi della vita di un'impresa"
+  constraints: 'Vincoli'
+  conditions: 'Condizioni di servizio'
+  conditions_attachments: 'Allegati alle condizioni di servizio'
+  costs_attachments: 'Allegati ai costi del servizio'
+  attachments_helper: 'Attenzione: il nome del File caricato verrà visualizzato nella scheda del servizio'
+  file_already_exists: 'Il documento %filename% è già stato caricato'
+  invalid_file_type: 'Il file caricato non è valido'
+  no_attachments_uploaded: "Non sono presenti allegati"
+  accedere: "Accedi al servizio"
+  page_updated_at: "Pagina aggiornata il %updatedAt%"
+  booking_call_to_action: 'Link per la prenotazione di un appuntamento'
+  booking_cta_help: "Utilizza questo campo per visualizzare nella scheda del servizio un pulsante per la prenotazione di un appuntamento tramite sistemi esterni"
+  book_appointment_description: 'Oppure, puoi prenotare un appuntamento e presentarti presso gli uffici.'
+  book_appointment_action: 'Prenota appuntamento'
   casi_particolari: "Casi particolari"
-  maggiori_info: "Maggiori informazioni"
+  maggiori_info: "Ulteriori informazioni"
+  times_and_deadlines: "Tempi e scadenze"
   in_evidenza: "In evidenza?"
   info_compilazione: "Informazioni visualizzate durante la compilazione del servizio"
   indicazioni_finali: "Indicazioni mostrate al termine della compilazione del servizio"
   stato: "Stato"
   data_attivazione: "Data di attivazione del servizio"
   data_cessazione: "Data di cessazione del servizio"
+  apertura: 'Apertura'
+  apertura_servizio: 'Apertura %servizio%'
+  termine_presentazione_domande: 'Termine presentazione domande'
+  esito_richiesta: "Data ultima per ricevere l'Esito della domanda"
+  termine_presentazione_domande_per_servizio: 'Termine presentazione domande per %servizio%'
+  esito_richiesta_per_servizio: "Data ultima per ricevere l'Esito della domanda per %servizio%"
   gruppo: "Gruppo"
   condiviso_con_gruppo: "Condividi scheda del servizio con il gruppo"
   livello_accesso: "Accesso"
@@ -259,7 +285,7 @@ servizio:
   consenti_richiesta_integrazione: "Consenti agli operatori di richiedere integrazioni per le pratiche di questo servizio"
   flusso: "Flusso di lavoro"
   max_response_time: "Tempo massimo di erogazione del servizio (in giorni)"
-  stages_and_deadlines: "Fasi e scadenze"
+  stages_and_deadlines: "Tempi e scadenze"
   max_response_time_text: "Una volta presentata una pratica, verrà fornita una risposta entro %time% giorni"
   max_response_time_list: "Tempo massimo di risposta"
   active_from_date_to_date: "Il servizio sarà attivo dal %from% al %to%"
@@ -284,6 +310,8 @@ servizio:
   nome_utente: "Nome utente"
   indirizzo_utente: "Indirizzo utente"
   enti_coinvolti: 'Servizio disponibile per'
+  attivo: 'Servizio attivo'
+  non_attivo: 'Servizio sospeso'
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Al momento il servizio non è attivo'
   schedulato: 'Il servizio è attivo dal %from% al %to%'
@@ -298,6 +326,7 @@ servizio:
   no_topics: 'Non è stata specificata una categoria'
   no_recipients: 'Non è stato specificato nessun destinatario'
   no_geographic_areas: 'Non è stata specificata nessuna area geografica'
+  no_life_or_business_events: 'Non è stato specificato nessun evento'
   shared_with_group_message: 'Questo servizio condivide la scheda con il gruppo di servizi, di seguito sono mostrati i contenuti del gruppo di servizi associato.'
   shared_with_group_action: 'Modifica il gruppo di servizi'
   machine_readable: 'JSON Object'
@@ -328,13 +357,16 @@ gruppo_di_servizi:
   nome: 'Nome'
   descrizione: 'Descrizione'
   cos_e: "Cos'è"
-  max_response_time_list: "Tempo massimo di risposta"
-  a_chi_si_rivolge: "A chi si rivolge"
+  times_and_deadlines: "Tempi e scadenze"
+  a_chi_si_rivolge: "A chi è rivolto"
+  how_to_do: "Come fare"
+  conditions: 'Condizioni di servizio'
   copertura: "Copertura geografica"
   copertura_helper: "Copertura geografica - (se più di uno inserire i valori separati da virgola)"
   accedere: "Accedere al servizio"
   casi_particolari: "Casi particolari"
-  maggiori_info: "Maggiori informazioni"
+  maggiori_info: "Ulteriori informazioni"
+  servizi_correlati: "Servizi correlati"
   in_evidenza: "In evidenza?"
   protocolla_in_fascicolo: "Protocollare all'interno dello stesso fascicolo?"
   url: 'Url'
@@ -1235,7 +1267,7 @@ operatori:
     ente: 'Ente'
     ambito: 'Ambito'
     salva_modifiche: 'Salva modifiche'
-    errore_dati : "<strong>Attenzione:</strong> alcuni campi inseriti non sono validi"
+    errore_dati: "<strong>Attenzione:</strong> alcuni campi inseriti non sono validi"
   usage:
     title: 'Metriche di utilizzo'
     service_title: 'Servizi attivi'
@@ -2210,9 +2242,9 @@ gateway:
     download_receipt_button: "Scarica ricevuta di pagamento"
     download_text: "Usa il pulsante che segue per scaricare il documento PDF (Avviso di Pagamento) che potrai pagare presso un ufficio postale, un ATM Bancario, ricevitoria Sisal, l'App IO o Satispay."
     ipa_code: 'Codice Ipa ente'
-    password : 'Password ente'
-    data : 'Dati specifici per la riscossione'
-    id_type : 'Identificativo tipo dovuto'
+    password: 'Password ente'
+    data: 'Dati specifici per la riscossione'
+    id_type: 'Identificativo tipo dovuto'
   efil:
     name: 'Efil'
 calendars:
@@ -2818,18 +2850,18 @@ time:
   three_weeks_before: "Tre settimane prima"
   one_month_before: "Un mese prima (30 giorni)"
 scheduled_actions:
-  create_pdf' : 'Creazione pdf'
-  protocollo_send_pratice' : 'Protocolla pratica'
-  protocollo_send_attach' : 'Protocolla allegati integrazione'
-  protocollo_send_withdraw' : 'Protocolla ritiro'
-  protocollo_send_integrations' : 'Protocolla richiesta integrazione'
-  protocollo_refresh_pratice' : 'Protocolla esito'
-  protocollo_upload_file' : 'Protocolla allegati'
-  giscom_send_pratice' : 'Invio pratica Giscomn'
-  giscom_askCFs' : 'Richiesta codici fiscali Giscom'
-  application_webhook' : 'Webhook'
-  application_payment_reminder' : 'Promemoria pagamento'
-  produce_message' : 'Messaggio Kafka'
+  create_pdf': 'Creazione pdf'
+  protocollo_send_pratice': 'Protocolla pratica'
+  protocollo_send_attach': 'Protocolla allegati integrazione'
+  protocollo_send_withdraw': 'Protocolla ritiro'
+  protocollo_send_integrations': 'Protocolla richiesta integrazione'
+  protocollo_refresh_pratice': 'Protocolla esito'
+  protocollo_upload_file': 'Protocolla allegati'
+  giscom_send_pratice': 'Invio pratica Giscomn'
+  giscom_askCFs': 'Richiesta codici fiscali Giscom'
+  application_webhook': 'Webhook'
+  application_payment_reminder': 'Promemoria pagamento'
+  produce_message': 'Messaggio Kafka'
 login_callout_texts:
   cta_button: 'Entra'
   cas:
@@ -2867,3 +2899,40 @@ contacts:
   meetings_reservation_url_label: "Prenota appuntamento"
   public_relations_office: 'Ufficio Relazioni con il Pubblico'
   toll_free_number: 'Numero verde'
+taxonomies:
+  life_events:
+    enrolling_in_school_university_and_or_applying_for_a_study_grant: 'Iscrizione Scuola/Università e/o richiesta borsa di studio'
+    disability: 'Invalidità'
+    looking_for_a_job_starting_a_new_job_becoming_unemployed: 'Ricerca di lavoro, avvio nuovo lavoro, disoccupazione'
+    retirement: 'Pensionamento'
+    applying_to_a_drivers_licence_or_renewing_an_existing_one: 'Richiesta o rinnovo patente'
+    registering_owning_a_vehicle: 'Registrazione o possesso veicolo'
+    access_to_public_transportation: 'Accesso al trasporto pubblico'
+    buying_renting_a_house_building_land_building_renovating_a_house_building: 'Compravendita/affitto casa/edifici/terreni, costruzione o ristrutturazione casa/edificio'
+    moving_and_changing_address_within_one_country: 'Cambio di residenza o domicilio'
+    moving_or_preparing_to_move_to_another_country_eg_to_study_work_retire: 'Espatrio per lavoro, studio o pensionamento'
+    needing_a_passport_visa_or_assistance_to_travel_to_another_country: 'Richiesta passaporto, visto e assistenza viaggi internazionali'
+    declaring_the_birth_of_a_child_and_or_applying_for_a_birth_grand: 'Nascita di un bambino, richiesta adozioni'
+    marrying_and_or_changing_marital_status: 'Matrimonio e/o cambio stato civile'
+    death_of_a_close_relative_and_or_starting_an_inheritance_procedure: 'Morte ed eredità'
+    making_cancelling_a_doctors_appointment: 'Prenotazione e disdetta visite/esami'
+    reporting_a_crime: 'Denuncia crimini'
+    declaring_income_taxes_paying_contributions: 'Dichiarazione dei redditi, versamento e riscossione tributi/imposte e contributi'
+    access_to_public_cultural_sites: 'Accesso ai luoghi della cultura'
+    owning_taking_care_losing_pets: 'Possesso, cura, smarrimento animale da compagnia'
+  business_events:
+    starting_a_company: 'Avvio impresa'
+    starting_a_new_activity: 'Avvio nuova attività professionale'
+    applying_for_licenses_permits_and_certificates: 'Richiesta licenze, permessi e certificati'
+    registering_a_cross_border_business: 'Registrazione impresa transfrontaliera'
+    starting_registering_a_branch: 'Avviso e registrazione filiale'
+    financing_a_company: 'Finanziamento impresa'
+    staffing: 'Gestione personale'
+    paying_taxes_vat_and_customs: 'Pagamento iva, tasse e dogane'
+    reporting_and_notifying_authorities: 'Notifiche autorità'
+    closing_a_company_a_professional_activity: 'Chiusura impresa e attività professionale'
+    closing_a_branch: 'Chiusura filiale'
+    restructuring_company: 'Ristrutturazione impresa'
+    selling_company: 'Vendita impresa'
+    bankruptcy: 'Bancarotta'
+    participating_in_public_procurement_national_and_cross_border: 'Partecipazione ad appalti pubblici nazionali e transfrontalieri'

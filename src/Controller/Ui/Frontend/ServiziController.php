@@ -21,7 +21,6 @@ use Doctrine\ORM\EntityRepository;
 use Entity\Repository\CategoryRepository;
 use Psr\Log\LoggerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +28,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use WhiteOctober\BreadcrumbsBundle\Model\Breadcrumbs;
 
 
 /**
@@ -79,9 +77,17 @@ class ServiziController extends AbstractController
    * @param LoggerInterface $logger
    * @param CategoryManager $categoryManager
    * @param BreadcrumbsService $breadcrumbsService
+   * @param ServizioHandlerRegistry $servizioHandlerRegistry
    */
-  public function __construct(InstanceService $instanceService, TranslatorInterface $translator, EntityManagerInterface $entityManager, LoggerInterface $logger, CategoryManager $categoryManager, BreadcrumbsService $breadcrumbsService,
-                              ServizioHandlerRegistry $servizioHandlerRegistry)
+  public function __construct(
+    InstanceService $instanceService,
+    TranslatorInterface $translator,
+    EntityManagerInterface $entityManager,
+    LoggerInterface $logger,
+    CategoryManager $categoryManager,
+    BreadcrumbsService $breadcrumbsService,
+    ServizioHandlerRegistry $servizioHandlerRegistry
+  )
   {
     $this->instanceService = $instanceService;
     $this->translator = $translator;
@@ -258,11 +264,13 @@ class ServiziController extends AbstractController
     $this->breadcrumbsService->generateServiceGroupBreadcrumbs($serviceGroup);
 
     $hasServicesWithMaxResponseTime = $serviceGroupRepository->hasServicesWithMaxResponseTime($serviceGroup->getId());
+    $hasScheduledServices = $serviceGroupRepository->hasScheduledServices($serviceGroup->getId());
 
     $response = $this->render('Servizi/serviceGroupDetail.html.twig', [
       'user' => $user,
       'servizio' => $serviceGroup,
-      'hasServicesWithMaxResponseTime' => $hasServicesWithMaxResponseTime
+      'hasServicesWithMaxResponseTime' => $hasServicesWithMaxResponseTime,
+      'hasScheduledServices' => $hasScheduledServices
     ]);
 
     return $response;

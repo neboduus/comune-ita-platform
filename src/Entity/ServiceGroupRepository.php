@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use App\Model\Service;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 
 class ServiceGroupRepository extends EntityRepository
 {
@@ -83,7 +86,30 @@ class ServiceGroupRepository extends EntityRepository
         $qb->expr()->andX(
           $qb->expr()->eq("s.serviceGroup", ":groupId"),
           $qb->expr()->eq("s.sharedWithGroup", "true"),
-          $qb->expr()->eq("s.workflow", 0)
+          $qb->expr()->eq("s.workflow", Servizio::WORKFLOW_APPROVAL)
+        )
+      )
+      ->setParameter('groupId', $groupId);
+    $qbResult = $qb->getQuery()->getSingleScalarResult();
+    return $qbResult > 0;
+  }
+
+  /**
+   * @param $groupId
+   * @return bool
+   * @throws NoResultException
+   * @throws NonUniqueResultException
+   */
+  public function hasScheduledServices($groupId): bool
+  {
+    $qb = $this->getEntityManager()->createQueryBuilder();
+    $qb
+      ->select($qb->expr()->count("s.id"))
+      ->from("App:Servizio", "s")
+      ->where(
+        $qb->expr()->andX(
+          $qb->expr()->eq("s.serviceGroup", ":groupId"),
+          $qb->expr()->eq("s.status", Servizio::STATUS_SCHEDULED),
         )
       )
       ->setParameter('groupId', $groupId);

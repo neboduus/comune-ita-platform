@@ -23,6 +23,23 @@ const $language = document.documentElement.lang.toString();
 
 $(document).ready(function () {
 
+
+  $('.attachment-delete').on('click', function () {
+    let btn = $(this);
+    let deleteUrl = $(this).data("delete-url");
+
+    $.ajax(deleteUrl,
+      {
+        method: 'DELETE',
+        success: function () {   // success callback function
+          btn.closest('li').remove();
+        },
+        error: function () { // error callback
+          alert(`${Translator.trans('servizio.error_missing_filename', {}, 'messages', $language)}`)
+        }
+      });
+  });
+
   let integrationTrigger = $('#integrations_data_trigger');
   let integrationAction = $('#integrations_data_action');
 

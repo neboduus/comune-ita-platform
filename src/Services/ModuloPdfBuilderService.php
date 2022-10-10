@@ -3,17 +3,16 @@
 namespace App\Services;
 
 
-use App\Dto\Application;
 use App\Entity\Allegato;
 use App\Entity\GiscomPratica;
 use App\Entity\Integrazione;
 use App\Entity\IntegrazioneRepository;
 use App\Entity\Message;
+use App\Entity\ModuloCompilato;
+use App\Entity\Pratica;
 use App\Entity\RichiestaIntegrazione;
 use App\Entity\RichiestaIntegrazioneDTO;
 use App\Entity\RichiestaIntegrazioneRequestInterface;
-use App\Entity\ModuloCompilato;
-use App\Entity\Pratica;
 use App\Entity\RispostaIntegrazione;
 use App\Entity\RispostaOperatore;
 use App\Entity\RispostaOperatoreDTO;
@@ -24,27 +23,23 @@ use App\Entity\SubscriptionPayment;
 use App\Model\FeedbackMessage;
 use App\ScheduledAction\Exception\AlreadyScheduledException;
 use App\ScheduledAction\ScheduledActionHandlerInterface;
-use App\Services\Manager\PraticaManager;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
-use Twig\Environment;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use TheCodingMachine\Gotenberg\Client;
-
 use TheCodingMachine\Gotenberg\ClientException;
 use TheCodingMachine\Gotenberg\DocumentFactory;
 use TheCodingMachine\Gotenberg\HTMLRequest;
 use TheCodingMachine\Gotenberg\Request as GotembergRequest;
 use TheCodingMachine\Gotenberg\RequestException;
 use TheCodingMachine\Gotenberg\URLRequest;
-use Vich\UploaderBundle\Mapping\PropertyMapping;
+use Twig\Environment;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 

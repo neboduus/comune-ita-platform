@@ -4,11 +4,9 @@
 namespace App\Services;
 
 
-use App\Dto\Application;
 use App\Entity\AllegatoOperatore;
 use App\Entity\CPSUser;
 use App\Entity\Ente;
-use App\Entity\GiscomPratica;
 use App\Entity\ModuloCompilato;
 use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
@@ -20,20 +18,25 @@ use App\Model\FeedbackMessagesSettings;
 use App\Model\Mailer;
 use App\Model\SubscriberMessage;
 use App\Model\Transition;
+use App\Services\FileService\AllegatoFileService;
 use Doctrine\ORM\EntityManagerInterface;
+use League\Flysystem\FileNotFoundException;
 use Psr\Log\LoggerInterface;
 use Swift_Mailer;
 use Doctrine\Persistence\ManagerRegistry;
+use Swift_Message;
 use Twig\Environment;
-use Symfony\Component\Form\Extension\Templating\TemplatingExtension;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class MailerService
 {
   const SES_CONFIGURATION_SET = 'SesDeliveryLogsToSNS';
 
   /**
-   * @var \Swift_Mailer $mailer
+   * @var Swift_Mailer $mailer
    */
   private $mailer;
 
@@ -87,23 +90,31 @@ class MailerService
    */
   private $entityManager;
   /**
-   * @var FileService
+   * @var AllegatoFileService
    */
   private $fileService;
 
   /**
    * MailerService constructor.
-   * @param \Swift_Mailer $mailer
+   * @param Swift_Mailer $mailer
    * @param TranslatorInterface $translator
    * @param Environment $templating
    * @param ManagerRegistry $doctrine
    * @param LoggerInterface $logger
    * @param IOService $ioService
    * @param PraticaPlaceholderService $praticaPlaceholderService
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    */
-  public function __construct(\Swift_Mailer $mailer, TranslatorInterface $translator, Environment $templating, ManagerRegistry $doctrine, LoggerInterface $logger, IOService $ioService, PraticaPlaceholderService $praticaPlaceholderService, FileService $fileService)
-  {
+  public function __construct(
+    Swift_Mailer $mailer,
+    TranslatorInterface $translator,
+    Environment $templating,
+    ManagerRegistry $doctrine,
+    LoggerInterface $logger,
+    IOService $ioService,
+    PraticaPlaceholderService $praticaPlaceholderService,
+    AllegatoFileService $fileService
+  ){
     $this->mailer = $mailer;
     $this->translator = $translator;
     $this->templating = $templating;
@@ -166,7 +177,7 @@ class MailerService
     }
 
     // Invio via pec
-    if ($CPSUsermessage instanceof \Swift_Message) {
+    if ($CPSUsermessage instanceof Swift_Message) {
       $this->dispatchPecEmail($pratica, $CPSUsermessage);
     }
 
@@ -254,7 +265,7 @@ class MailerService
   /**
    * @param Pratica $pratica
    * @param $fromAddress
-   * @return string|\Swift_Message
+   * @return string|Swift_Message
    * @throws MessageDisabledException
    * @throws \Twig\Error\Error
    */
@@ -308,7 +319,7 @@ class MailerService
 
     $textPlain = strip_tags($textHtml);
 
-    $message = (new \Swift_Message())
+    $message = (new Swift_Message())
       ->setSubject($subject)
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
@@ -325,8 +336,13 @@ class MailerService
   /**
    * @param Pratica $pratica
    * @param $fromAddress
-   * @return \Swift_Message
-   * @throws \Twig\Error\Error
+   * @param bool $textOnly
+   * @param $locale
+   * @return Swift_Message
+   * @throws FileNotFoundException
+   * @throws LoaderError
+   * @throws RuntimeError
+   * @throws SyntaxError
    */
   private function setupCPSUserMessageFallback(Pratica $pratica, $fromAddress, $textOnly = false, $locale)
   {
@@ -357,7 +373,7 @@ class MailerService
       );
     }
 
-    $message = (new \Swift_Message())
+    $message = (new Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()], null, $locale))
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
@@ -388,7 +404,7 @@ class MailerService
    * @param Pratica $pratica
    * @param $fromAddress
    * @param OperatoreUser|null $operatore
-   * @return \Swift_Message
+   * @return Swift_Message
    * @throws \Twig\Error\Error
    */
   private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress, OperatoreUser $operatore = null)
@@ -403,7 +419,7 @@ class MailerService
     $ente = $pratica->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
-    $message = (new \Swift_Message())
+    $message = (new Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
@@ -459,7 +475,7 @@ class MailerService
 
     if ($this->isValidEmail($toAddress)) {
       try {
-        $emailMessage = (new \Swift_Message())
+        $emailMessage = (new Swift_Message())
           ->setSubject($subject)
           ->setFrom($fromAddress, $fromName)
           ->setTo($toAddress, $toName)
@@ -498,9 +514,9 @@ class MailerService
 
   /**
    * @param Pratica $pratica
-   * @param \Swift_Message $message
+   * @param Swift_Message $message
    */
-  public function dispatchPecEmail(Pratica $pratica, \Swift_Message $message)
+  public function dispatchPecEmail(Pratica $pratica, Swift_Message $message)
   {
     /** @var FeedbackMessagesSettings $feedbackMessageSettings */
     $feedbackMessageSettings = $pratica->getServizio()->getFeedbackMessagesSettings();
@@ -592,7 +608,7 @@ class MailerService
    * @param SubscriberMessage $subscriberMessage
    * @param $fromAddress
    * @param OperatoreUser $operatoreUser
-   * @return \Swift_Message
+   * @return Swift_Message
    * @throws \Twig\Error\Error
    */
   private function setupSubscriberMessage(SubscriberMessage $subscriberMessage, $fromAddress, User $operatoreUser)
@@ -603,7 +619,7 @@ class MailerService
     $ente = $operatoreUser->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
 
-    $emailMessage = (new \Swift_Message())
+    $emailMessage = (new Swift_Message())
       ->setSubject($subscriberMessage->getSubject())
       ->setFrom($fromAddress, $fromName)
       ->setTo($toEmail, $toName)
@@ -637,9 +653,9 @@ class MailerService
 
 
   /**
-   * @param \Swift_Message $message
+   * @param Swift_Message $message
    */
-  private function addCustomHeadersToMessage(\Swift_Message $message)
+  private function addCustomHeadersToMessage(Swift_Message $message)
   {
     $message
       ->getHeaders()
@@ -648,17 +664,21 @@ class MailerService
 
   /**
    * @param Pratica $pratica
-   * @param \Swift_Message $message
+   * @param Swift_Message $message
    * @throws \League\Flysystem\FileNotFoundException
    */
-  private function addAttachments(Pratica $pratica, \Swift_Message $message) {
+  private function addAttachments(Pratica $pratica, Swift_Message $message) {
     // Send attachment to user if status is submitted
     if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED) {
       if ($pratica->getModuliCompilati()->count() > 0) {
         /** @var ModuloCompilato $moduloCompilato */
         $moduloCompilato = $pratica->getModuliCompilati()->first();
-        if ($this->fileService->fileExist($moduloCompilato)) {
-          $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFile()->getFilename(), $this->fileService->getMimeType($moduloCompilato));
+        if ($this->fileService->fileExists($moduloCompilato)) {
+          $attachment = new \Swift_Attachment(
+            $this->fileService->getAttachmentContent($moduloCompilato),
+            $moduloCompilato->getFile()->getFilename(),
+            $this->fileService->getMimeType($moduloCompilato)
+          );
           $message->attach($attachment);
         }
       }
@@ -669,8 +689,12 @@ class MailerService
       if ($pratica->getAllegatiOperatore()->count() > 0) {
         /** @var AllegatoOperatore $allegato */
         foreach ($pratica->getAllegatiOperatore() as $allegato) {
-          if ($this->fileService->fileExist($allegato)) {
-            $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFile()->getFilename(), $this->fileService->getMimeType($allegato));
+          if ($this->fileService->fileExists($allegato)) {
+            $attachment = new \Swift_Attachment(
+              $this->fileService->getAttachmentContent($allegato),
+              $allegato->getFile()->getFilename(),
+              $this->fileService->getMimeType($allegato)
+            );
             $message->attach($attachment);
           }
         }

@@ -3,31 +3,24 @@
 namespace App\Controller\Rest;
 
 
-use App\Dto\Application;
 use App\Dto\ApplicationDto;
-use App\Entity\AllegatoMessaggio;
-use App\Entity\Message as MessageEntity;
-use App\Entity\AdminUser;
-use App\Entity\Allegato;
 use App\Entity\AllegatoOperatore;
 use App\Entity\CPSUser;
 use App\Entity\FormIO;
+use App\Entity\Message as MessageEntity;
 use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
 use App\Entity\RispostaOperatore;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
-use App\Entity\User;
-use App\Event\PraticaOnChangeStatusEvent;
-use App\Form\Base\AllegatoType;
-use App\Model\PaymentOutcome;
-use App\Model\MetaPagedList;
-use App\Model\LinksPagedList;
-use App\Model\Transition;
+use App\Model\Application;
 use App\Model\File as FileModel;
-use App\PraticaEvents;
+use App\Model\LinksPagedList;
+use App\Model\MetaPagedList;
+use App\Model\PaymentOutcome;
+use App\Model\Transition;
 use App\Security\Voters\ApplicationVoter;
-use App\Services\FileService;
+use App\Services\FileService\AllegatoFileService;
 use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
 use App\Services\Manager\PraticaManager;
@@ -38,44 +31,31 @@ use App\Utils\FormUtils;
 use App\Utils\StringUtils;
 use App\Utils\UploadedBase64File;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Exception\DriverException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\QueryBuilder;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use JMS\Serializer\SerializerBuilder;
 use League\Csv\Exception;
-use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormInterface;
+use League\Flysystem\FileNotFoundException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SC;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use JMS\Serializer\SerializerBuilder;
+use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Exception\ValidatorException;
@@ -166,7 +146,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
   private $formServerService;
 
   /**
-   * @var FileService
+   * @var AllegatoFileService
    */
   private $fileService;
 
@@ -190,7 +170,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param LoggerInterface $logger
    * @param PraticaManager $praticaManager
    * @param FormServerApiAdapterService $formServerService
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    * @param ApplicationDto $applicationDto
    * @param PaymentService $paymentService
    */
@@ -203,7 +183,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     LoggerInterface $logger,
     PraticaManager $praticaManager,
     FormServerApiAdapterService $formServerService,
-    FileService $fileService,
+    AllegatoFileService $fileService,
     ApplicationDto $applicationDto,
     PaymentService $paymentService
   ) {
@@ -970,7 +950,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function getApplicationHistoryAction($id, Request $request)
+  public function getApplicationHistoryAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -1032,7 +1012,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $filename
       );
     } else {
-      $fileContent = $this->fileService->getAttachmentContent($result);
+      try {
+        $fileContent = $this->fileService->getAttachmentContent($result);
+      } catch (FileNotFoundException $e) {
+        return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
+      }
       $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
       $response = new Response($fileContent);
       $disposition = $response->headers->makeDisposition(
@@ -1080,7 +1064,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function getApplicationPaymentAction($id, Request $request)
+  public function getApplicationPaymentAction($id, Request $request): View
   {
 
     try {
@@ -1156,7 +1140,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postApplicationPaymentAction($id, Request $request)
+  public function postApplicationPaymentAction($id, Request $request): View
   {
     $repository = $this->em->getRepository('App\Entity\Pratica');
     /** @var Pratica $application */
@@ -1279,7 +1263,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function patchApplicationAction($id, Request $request)
+  public function patchApplicationAction($id, Request $request): View
   {
 
     $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -1400,7 +1384,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionSubmitAction($id, Request $request)
+  public function applicationTransitionSubmitAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -1466,7 +1450,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionRegisterAction($id, Request $request)
+  public function applicationTransitionRegisterAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -1589,7 +1573,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionRegisterOutcomeAction($id, Request $request)
+  public function applicationTransitionRegisterOutcomeAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -1705,7 +1689,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionAssignAction($id, Request $request)
+  public function applicationTransitionAssignAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -1772,7 +1756,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionOutcomeAction($id, Request $request)
+  public function applicationTransitionOutcomeAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -1872,7 +1856,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionRequestIntegrationAction($id, Request $request)
+  public function applicationTransitionRequestIntegrationAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -1954,7 +1938,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionAcceptIntegrationAction($id, Request $request)
+  public function applicationTransitionAcceptIntegrationAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -2031,7 +2015,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionCancelIntegrationAction($id, Request $request)
+  public function applicationTransitionCancelIntegrationAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -2088,7 +2072,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionWithDrawAction($id, Request $request)
+  public function applicationTransitionWithDrawAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -2179,7 +2163,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionRegisterIntegrationRequestAction($id, Request $request)
+  public function applicationTransitionRegisterIntegrationRequestAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -2290,7 +2274,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionRegisterIntegrationAnswerAction($id, Request $request)
+  public function applicationTransitionRegisterIntegrationAnswerAction($id, Request $request): View
   {
     try {
       $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -2401,7 +2385,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function applicationTransitionPaymentCompletedAction($id, Request $request)
+  public function applicationTransitionPaymentCompletedAction($id, Request $request): View
   {
     $user = $this->getUser();
     try {

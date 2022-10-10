@@ -1,0 +1,11 @@
+<a class="list-item icon-left d-block my-2"
+   href="{{ download_url }}"
+   aria-label="{{ 'general.download' | trans }} {{ attachment.decoratedName }}"
+   title="{{ 'general.download' | trans }} {{ attachment.decoratedName }}" download>
+  <span class="list-item-title-icon-wrapper">
+    <svg class="icon icon-primary icon-sm me-1" aria-hidden="true">
+      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-clip"></use>
+    </svg>
+    <span class="list-item">{{ attachment.decoratedName }}</span>
+  </span>
+</a>
