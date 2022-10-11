@@ -207,9 +207,10 @@ $(document).ready(function () {
 
   $('#modal_select_service').on('change', function () {
     $('#modal_copy').attr('disabled', true);
-    let select = $('.select-wrapper.select-payment-wrapper');
+    let selectContainer = $('.select-wrapper.select-payment-wrapper');
+    let select = $('#modal_select_payment');
     select.options = [];
-    select.hide();
+    selectContainer.hide();
     if (!this.value) {
       return
     }
@@ -229,8 +230,10 @@ $(document).ready(function () {
                 value: item.payment_identifier
               });
             })
-            select.setOptionsToSelect(options);
-            select.show();
+            options.forEach(function(el) {
+              select.append("<option value=" + el.value + ">" + el.text + "</option>");
+            });
+            selectContainer.show();
           } else {
             $('#modal-service-error').show();
           }
