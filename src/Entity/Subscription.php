@@ -163,7 +163,7 @@ class Subscription
 
   public function getRelatedCFs()
   {
-    return $this->parseRelatedCfs($this->$relatedCFs);
+    return $this->parseRelatedCfs($this->relatedCFs);
   }
 
   public function removeRelatedCf($fiscalCode)
