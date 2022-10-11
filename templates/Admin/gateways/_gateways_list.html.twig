@@ -10,7 +10,10 @@
             <svg class="icon icon-50">
               <use href="/bootstrap-italia/dist/svg/sprite.svg#it-fullscreen"></use>
             </svg>
-          {% elseif identifier in gateway.vars.value or identifier == 'mypay20' %}
+          {% elseif identifier == 'mypay' or identifier == 'mypay20' %}
+            <img class="icon w-auto" src="https://download.stanzadelcittadino.it/assets/img/gateways/mypay.png"
+                 alt="{{ gateway.vars.value }}"/>
+          {% elseif identifier in gateway.vars.value %}
             <img class="icon w-auto" src="https://download.stanzadelcittadino.it/assets/img/gateways/{{ gateway.vars.value }}.png"
                  alt="{{ gateway.vars.value }}"/>
           {% else %}
