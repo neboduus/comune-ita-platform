@@ -39,7 +39,7 @@ class DefaultHandler extends AbstractServizioHandler
   /** @var UserSessionService */
   protected $userSessionService;
 
-  /** @var  */
+  /** @var */
   protected $browserRestrictions;
 
   /**
@@ -100,7 +100,14 @@ class DefaultHandler extends AbstractServizioHandler
    */
   public function execute(Servizio $servizio)
   {
-    if ($this->getUser() instanceof CPSUser) {
+    $user = $this->getUser();
+    if (!$user instanceof CPSUser) {
+      $error = 'La compilazione completamente anonima non è più supportata.';
+      $this->errorMessage = $error;
+      throw new ForbiddenAccessException($error);
+    }
+
+    if (!$user->isAnonymous()) {
 
       return (new DefaultLoggedInHandler(
         $this->tokenStorage,
@@ -117,8 +124,7 @@ class DefaultHandler extends AbstractServizioHandler
 
     } else {
 
-      if (!$this->getUser() instanceof CPSUser
-        && ($servizio->getAccessLevel() > 0 || $servizio->getAccessLevel() === null)) {
+      if ($servizio->getAccessLevel() > 0 || $servizio->getAccessLevel() === null) {
 
         $error = 'Il servizio '.$servizio->getName().' è disponibile solo per gli utenti autenticati.';
         $this->errorMessage = $error;
@@ -138,6 +144,7 @@ class DefaultHandler extends AbstractServizioHandler
         $this->browserRestrictions
       ))->execute($servizio);
     }
+
   }
 
   public function getCallToActionText()

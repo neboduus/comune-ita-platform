@@ -118,13 +118,5 @@ abstract class AbstractServizioHandler implements ServizioHandlerInterface
       }
     }
 
-
-    // il servizio ha un servizio parent? controlla le pratiche di $this->getUser() per $servizio->getParent() (o getParents()??)
-
-    // il servizio ha una constraint specifica? user.getEta > 18 && user.getIsee <= 40000
-    // foreach(servizio->getConstrints() as $label => $expression){
-    // throw new ForbiddenAccessException('Il servizio ' . $servizio->getName() . ' non è accessibile per ' . $label);
-    // }
-
   }
 }
