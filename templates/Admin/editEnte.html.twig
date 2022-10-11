@@ -135,6 +135,10 @@
             {{ include('Admin/gateways/_gateways_list.html.twig') }}
           </div>
         </div>
+        <div class="form-group" id="ente_save_container">
+          <button type="submit" id="ente_save" class="btn-primary btn">{{ 'salva'|trans }}</button>
+          <a href="{{ path('admin_servizio_index') }}" class="btn btn-secondary">{{ 'annulla'|trans }}</a>
+        </div>
         {{ form_end(form) }}
       </div>
     </div>

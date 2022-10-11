@@ -1,6 +1,3 @@
-<div class="alert alert-warning position-fixed bg-white right-fix save-alert d-none" role="alert">
-  {{ 'save_changed' | trans | raw }}
-</div>
 <div class="form-check-group form-check row-payments">
   {{ form_label(form.gateways) }}
   {% set identifier = '' %}
@@ -13,7 +10,7 @@
             <svg class="icon icon-50">
               <use href="/bootstrap-italia/dist/svg/sprite.svg#it-fullscreen"></use>
             </svg>
-          {% elseif identifier in gateway.vars.value %}
+          {% elseif identifier in gateway.vars.value or identifier == 'mypay20' %}
             <img class="icon w-auto" src="https://download.stanzadelcittadino.it/assets/img/gateways/{{ gateway.vars.value }}.png"
                  alt="{{ gateway.vars.value }}"/>
           {% else %}
@@ -42,7 +39,7 @@
         </h4>
       </div>
       {% if identifier != 'bollo' %}
-      <div class="collapse-header"  id="heading-{{ identifier }}">
+      <div class="collapse-header" id="heading-{{ identifier }}">
         <button type="button" data-toggle="collapse" data-target="#collapse-{{ identifier }}" aria-expanded="false" aria-controls="collapse-{{ identifier }}">
           Mostra parametri
         </button>
