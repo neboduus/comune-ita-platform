@@ -981,10 +981,15 @@
   resolved "https://registry.yarnpkg.com/@formio/semantic/-/semantic-2.6.0.tgz#b506de32b6d8ec3fecb3ce6c59eca846c99ea858"
   integrity sha512-RwMEVXkyz+B6RivflrrKIqvvnGR/eZDLQs74u67StcrzO6n3/5D2J8XqTQRSUzQzr5QV6Wq0eZ51z/+mGm6THw==
 
-"@formio/vanilla-text-mask@^5.1.1":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@formio/vanilla-text-mask/-/vanilla-text-mask-5.1.1.tgz#2bd690a34b0e191b7f23a589ff1c2497564307de"
-  integrity sha512-7MhrbMypySPi7RLchg0ys7HnS3Wqddbq/btAijKB1nA94TE7AOOLhpZJWcNm3kOlX0Y3nHfoavj/HP7vsvF34Q==
+"@formio/text-mask-addons@^3.8.0-formio.2":
+  version "3.8.0-formio.2"
+  resolved "https://registry.yarnpkg.com/@formio/text-mask-addons/-/text-mask-addons-3.8.0-formio.2.tgz#b9489e68911c70a31997b97dd846d8a7cca6abdb"
+  integrity sha512-H4Sm+1Sx59jbrlKxtKbzethhp5OIcP8Oi4JBpsvH/SB8P/KCRmtjKbN5ACqURnXmYtBHLJC6Yr9KZibOVRGxpA==
+
+"@formio/vanilla-text-mask@^5.1.1-formio.1":
+  version "5.1.1-formio.1"
+  resolved "https://registry.yarnpkg.com/@formio/vanilla-text-mask/-/vanilla-text-mask-5.1.1-formio.1.tgz#f53fc7f4cb37c6ae38f2857488055e781e5adba9"
+  integrity sha512-rYBlvIPMNUd6sAaduOaiIwI4vfTAjHDRonko2qJn2RP1O//TQ7rcFIPYVYePJZ4OtOpwHiHAvAIh79McphZotQ==
 
 "@fullcalendar/bootstrap@4.2.0":
   version "4.2.0"
@@ -3598,15 +3603,16 @@ form-data@4.0.0:
     combined-stream "^1.0.8"
     mime-types "^2.1.12"
 
-formiojs@4.14.8-rc.5:
-  version "4.14.8-rc.5"
-  resolved "https://registry.yarnpkg.com/formiojs/-/formiojs-4.14.8-rc.5.tgz#7ca0bd1217899d5e9bc45e1220fdb5f9f7348bba"
-  integrity sha512-dy1PQaWWLtFKfp9lD8+xXJIHgjfh0Kdi2hNx6dmzRnD1VkObV2iFfy1/G3c4kzfMmg2MYnStJ/mZXJjSRo57Zg==
+formiojs@4.14.9:
+  version "4.14.9"
+  resolved "https://registry.yarnpkg.com/formiojs/-/formiojs-4.14.9.tgz#cfc519a96436d1051face2ce7e930ae895b0e8e0"
+  integrity sha512-Cn+l1Y/vpDkJGcH79c3FVClZ7xIynf1Fa0zYW4Z5ahdd8vlN8rnGhbJ53woX9oWwpaO+vISKicWGxG5tM0K8Yw==
   dependencies:
     "@formio/bootstrap3" "^2.12.2"
     "@formio/choices.js" "^9.0.1"
     "@formio/semantic" "^2.6.0"
-    "@formio/vanilla-text-mask" "^5.1.1"
+    "@formio/text-mask-addons" "^3.8.0-formio.2"
+    "@formio/vanilla-text-mask" "^5.1.1-formio.1"
     autocompleter "^6.1.2"
     browser-cookies "^1.2.0"
     browser-md5-file "^1.1.1"
@@ -3635,7 +3641,6 @@ formiojs@4.14.8-rc.5:
     resize-observer-polyfill "^1.5.1"
     signature_pad "^4.0.4"
     string-hash "^1.1.3"
-    text-mask-addons "^3.8.0"
     tippy.js "^6.3.7"
     uuid "^8.3.2"
     vanilla-picker "^2.12.1"
@@ -6853,11 +6858,6 @@ terser@^5.7.2:
     commander "^2.20.0"
     source-map "~0.8.0-beta.0"
     source-map-support "~0.5.20"
-
-text-mask-addons@^3.8.0:
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/text-mask-addons/-/text-mask-addons-3.8.0.tgz#17b61ef665a4f36811f2ea1f01a223b4be61ab26"
-  integrity sha1-F7Ye9mWk82gR8uofAaIjtL5hqyY=
 
 throttle-debounce@^1.0.1:
   version "1.1.0"

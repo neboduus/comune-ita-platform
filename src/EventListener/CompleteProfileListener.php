@@ -50,7 +50,7 @@ class CompleteProfileListener
     public function onKernelRequest(GetResponseEvent $event)
     {
         $user = $this->getUser();
-        if ($user instanceof CPSUser) {
+        if ($user instanceof CPSUser && !$user->isAnonymous()) {
             $currentRoute = $event->getRequest()->get('_route');
             $currentRouteParams = $event->getRequest()->get('_route_params');
             $currentRouteQuery = $event->getRequest()->query->all();
