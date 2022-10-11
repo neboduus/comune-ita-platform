@@ -52,11 +52,11 @@ class Gateways {
     const myPayElement = $('input[type="checkbox"][value="mypay"]')
 
     if(myPayElement.is(':checked')){
-        $('#ente_' + myPayElement.val()).removeClass('d-none');
-        $('#heading-' + myPayElement.val()).removeClass('d-none');
+        $(`[id$="_${myPayElement.val()}"]`).removeClass('d-none');
+        $(`[id$="heading-${myPayElement.val()}"]`).removeClass('d-none');
       } else {
-        $('#ente_' + myPayElement.val()).addClass('d-none');
-        $('#heading-' + myPayElement.val()).addClass('d-none');
+      $(`[id$="_${myPayElement.val()}"]`).addClass('d-none');
+      $(`[id$="heading-${myPayElement.val()}"]`).addClass('d-none');
       }
   }
 
@@ -64,19 +64,19 @@ class Gateways {
   // Enable or Disable hidden checkbox gateways on click Enable/Disable button
   static handleActionButton(){
 
-    $('button[data-parent*="ente_gateways_"]').click(function (e) {
-
+    $('button[data-parent*="gateways_"]').click(function (e) {
       const parentId = $(this).data('parent');
-      let input = $(`input#${parentId}`)
+      let input = $(`input[id$="${parentId}"]`)
       const checked = !input.is(':checked')
       input.prop( "checked", checked );
       input.attr('checked', checked);
 
       if(input.val() === 'mypay'){
+        console.log($(`[id$="_${input.val()}"]`))
         if (checked) {
-          $('#ente_' + $(this).val()).removeClass('d-none');
+          $(`[id$="_${input.val()}"]`).removeClass('d-none');
         } else {
-          $('#ente_' + $(this).val()).addClass('d-none');
+          $(`[id$="_${input.val()}"]`).addClass('d-none');
         }
       }
     })
