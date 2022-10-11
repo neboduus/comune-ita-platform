@@ -156,11 +156,12 @@ class UserController extends AbstractController
       $this->storeSdcUserData($user, $data, $this->logger);
 
       $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'user_profile';
-      $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
-      $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
-      $this->addFlash(
-        'success',$this->translator->trans('aggiorna_profilo'));
-      return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
+      $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : [];
+      $redirectRouteQuery = $request->query->has('q') ? unserialize($request->query->get('q')) : [];
+
+      $params = array_merge($redirectRouteParams, $redirectRouteQuery) ?? [];
+      $this->addFlash('success',$this->translator->trans('aggiorna_profilo'));
+      return $this->redirectToRoute($redirectRoute, $params);
     } else {
       if ($request->query->has('r')) {
         $this->addFlash(

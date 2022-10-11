@@ -1262,11 +1262,12 @@ class CPSUser extends User
   public function getIdCard()
   {
     $tmp = new IdCard();
-    $tmp->setNumero($this->idCard['numero']);
-    $tmp->setComuneRilascio($this->idCard['comune_rilascio']);
-    $tmp->setDataRilascio(\DateTime::createFromFormat('d/m/Y', $this->idCard['data_rilascio']));
-    $tmp->setDataScadenza(\DateTime::createFromFormat('d/m/Y', $this->idCard['data_scadenza']));
-
+    if (!empty($this->idCard)) {
+      $tmp->setNumero($this->idCard['numero'] ?? '');
+      $tmp->setComuneRilascio($this->idCard['comune_rilascio']);
+      $tmp->setDataRilascio(\DateTime::createFromFormat('d/m/Y', $this->idCard['data_rilascio']));
+      $tmp->setDataScadenza(\DateTime::createFromFormat('d/m/Y', $this->idCard['data_scadenza']));
+    }
     return $tmp;
   }
 
