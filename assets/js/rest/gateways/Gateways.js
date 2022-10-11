@@ -2,7 +2,6 @@ import Auth from "../auth/Auth";
 import axios from "axios";
 import 'formiojs/dist/formio.form.min.css';
 import {Formio} from "formiojs";
-import CompareEveryItemArray from "../../utils/CompareEveryItemArray";
 
 class Gateways {
 
@@ -27,68 +26,59 @@ class Gateways {
       Gateways.$token = data.token;
     })
 
-   // Gateways.detectChangeValueFormGateway()
+    Gateways.hideSubmitTabPayments()
     Gateways.createPopulateExternalPayChoice()
-    // Mypay Payment gateways
+    // Mypay Payment gateways show form
     Gateways.detectChangeLegacyGateway();
-
     Gateways.handleActionButton()
 
   }
+
+  static hideSubmitTabPayments() {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+      if(e.target.id === 'payments-tab'){
+        $('#ente_save_container').hide()
+      }else{
+        $('#ente_save_container').show()
+      }
+    })
+  }
+
+
 
   //MyPay
   static detectChangeLegacyGateway(){
 
     const myPayElement = $('input[type="checkbox"][value="mypay"]')
+
     if(myPayElement.is(':checked')){
         $('#ente_' + myPayElement.val()).removeClass('d-none');
+        $('#heading-' + myPayElement.val()).removeClass('d-none');
       } else {
         $('#ente_' + myPayElement.val()).addClass('d-none');
+        $('#heading-' + myPayElement.val()).addClass('d-none');
       }
-
-    myPayElement.change(function () {
-      if (this.checked) {
-        $('#ente_' + $(this).val()).removeClass('d-none');
-      } else {
-        $('#ente_' + $(this).val()).addClass('d-none');
-      }
-    })
   }
 
-
-  static detectChangeValueFormGateway(){
-
-    // Init variables
-    let initGatewayValue = [] // Value on load page
-    let currentGatewayValue = [] // Value on change
-
-    $('.row-payments').find('input[type="checkbox"]').each(function(){
-      if(this.checked){
-        initGatewayValue.push($(this).val());
-        currentGatewayValue = initGatewayValue
-      }
-    })
-    // On change
-    $('.row-payments').find('input[type="checkbox"]').change(function () {
-      if (this.checked) {
-        currentGatewayValue.push(this.value)
-      } else {
-        currentGatewayValue = currentGatewayValue.filter(item => !this.value.includes(item))
-      }
-      if(!CompareEveryItemArray(currentGatewayValue,initGatewayValue)){
-        Gateways.$alertError.removeClass('d-none').addClass('d-block')
-      }else{
-        Gateways.$alertError.removeClass('d-block').addClass('d-none')
-      }
-    })
-  }
 
   // Enable or Disable hidden checkbox gateways on click Enable/Disable button
   static handleActionButton(){
+
     $('button[data-parent*="ente_gateways_"]').click(function (e) {
+
       const parentId = $(this).data('parent');
-      const newCheckboxValue = !$(`#${parentId}`).is('checked')
-      $(`#${parentId}`).prop( "checked", newCheckboxValue );
+      let input = $(`input#${parentId}`)
+      const checked = !input.is(':checked')
+      input.prop( "checked", checked );
+      input.attr('checked', checked);
+
+      if(input.val() === 'mypay'){
+        if (checked) {
+          $('#ente_' + $(this).val()).removeClass('d-none');
+        } else {
+          $('#ente_' + $(this).val()).addClass('d-none');
+        }
+      }
     })
   }
 
@@ -106,21 +96,9 @@ class Gateways {
   }
 
   static handleCreateExternalPayChoice(identifier){
-    const newCheckboxValue = !$(`input[data-identifier="${identifier}"]`).is('checked')
+    const newCheckboxValue = !$(`input[data-identifier="${identifier}"]`).is(':checked')
     $(`input[data-identifier="${identifier}"]`).prop( "checked", newCheckboxValue );
         $("form").first().trigger("submit");
-  }
-
-  static detectChangeFormIO(initForm, data) {
-    const objectsEqual =
-       Object.keys(initForm).length === Object.keys(data).length
-      && Object.keys(initForm).every(p => initForm[p] === data[p]);
-
-    if (!objectsEqual) {
-      Gateways.$alertError.removeClass('d-none').addClass('d-block')
-    } else {
-      Gateways.$alertError.removeClass('d-block').addClass('d-none')
-    }
   }
 
   static createPopulateExternalPayChoice() {
@@ -158,15 +136,8 @@ class Gateways {
                 data: settings
               };
 
-              //detect change in form
               let initForm
               let isReady = false
-              form.on('change', function (event) {
-
-                if(initForm && isReady){
-                  Gateways.detectChangeFormIO(initForm,event.data)
-                }
-              })
 
               form.nosubmit = true;
               form.on('submit', function (submission) {
