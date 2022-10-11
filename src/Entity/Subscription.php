@@ -11,6 +11,7 @@ use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use OpenApi\Annotations as OA;
+use Exception;
 
 /**
  * @ORM\Entity
