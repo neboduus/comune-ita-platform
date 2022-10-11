@@ -9,6 +9,15 @@ metrics /metrics
 @assets {
     path "*.js"
     path "*.css"
+    path "*.svg"
+    path "*.jpg"
+    path "*.png"
+    path "*.gif"
+    path "*.pdf"
+    path "*.woff"
+    path "*.woff2"
+    path "*.ttf"
+    path "*.json"
 }
 
 header @assets {
