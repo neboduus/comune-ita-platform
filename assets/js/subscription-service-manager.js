@@ -208,7 +208,7 @@ $(document).ready(function () {
   $('#modal_select_service').on('change', function () {
     $('#modal_copy').attr('disabled', true);
     let select = $('.select-wrapper.select-payment-wrapper');
-    select.setOptionsToSelect([]);
+    select.options = [];
     select.hide();
     if (!this.value) {
       return

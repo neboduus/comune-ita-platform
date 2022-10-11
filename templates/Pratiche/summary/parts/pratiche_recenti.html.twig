@@ -2,10 +2,10 @@
   <ul class="link-list">
     {% for pratica_recente  in pratiche_recenti %}
       <li>
-        <a class="list-item large medium left-icon icon-left pr-0"
+        <a class="list-item large medium icon-left pr-0"
            href="{{ path('pratica_show_detail', {'pratica': pratica_recente }) }}">
           <span style="line-height: 1.5">{{ pratica_recente.servizio.name }}</span>
-          <svg class="icon icon-primary icon-left mt-2 pr-1">
+          <svg class="icon icon-primary left mt-2 pr-1">
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
           </svg>
           <p class="m-0">

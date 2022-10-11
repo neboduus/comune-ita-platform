@@ -20,8 +20,9 @@
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
             </svg>
           </div>
-          <div class="col-10">
-            <select id="modalNewOpeningHour" class="selectpicker">
+          <div class="col-10 select-wrapper">
+            <label for="modalNewOpeningHour">{{ 'meetings.labels.opening_hour' | trans }}</label>
+            <select id="modalNewOpeningHour">
               {% for opening_hour in calendar.openingHours %}
                 <option value="{{opening_hour.id}}">{{opening_hour.name}}</option>
               {% endfor %}

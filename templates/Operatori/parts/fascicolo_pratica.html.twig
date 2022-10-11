@@ -1,8 +1,8 @@
-<a class="list-item large medium left-icon icon-left pr-0{% if pratica.id == reference.id %} pb-2 bg-100{% endif %}"
+<a class="list-item large medium icon-left pr-0{% if pratica.id == reference.id %} pb-2 bg-100{% endif %}"
    {% if pratica.servizio.id in user.serviziAbilitati %}href="{{ path('operatori_show_pratica', {'pratica': pratica }) }}"{% else %}href="#" style="cursor: not-allowed" title="Non hai i permessi per visualizzare questa pratica" {% endif %}>
 
   <span style="line-height: 1.5">{{ pratica.servizio.name }}</span>
-  <svg class="icon icon-primary icon-left mt-2 pr-1">
+  <svg class="icon icon-primary left mt-2 pr-1">
     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{% if pratica.id == reference.id %}arrow-right{% else %}file{% endif %}"></use>
   </svg>
   <p class="m-0">
