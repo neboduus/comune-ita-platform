@@ -1,7 +1,7 @@
 {
   "name": "stanzadelcittadino",
   "author": "Opencontent S.c.a.r.l",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "license": "GPL-3.0-only",
   "devDependencies": {
     "@babel/core": "7.12.16",
@@ -14,8 +14,8 @@
     "compression-webpack-plugin": "^10.0.0",
     "copy-webpack-plugin": "7.0.0",
     "file-loader": "6.2.0",
-    "sass": "^1.32.6",
     "release-it": "14.11.5",
+    "sass": "^1.32.6",
     "sass-loader": "^11.1.1",
     "webpack-notifier": "1.13.0"
   },

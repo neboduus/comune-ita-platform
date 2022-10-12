@@ -11,8 +11,10 @@ use App\Entity\Pratica;
 use App\Entity\RichiestaIntegrazione;
 use App\Entity\RispostaIntegrazione;
 use App\Entity\RispostaIntegrazioneRepository;
+use App\Event\ProtocollaAllegatiIntegrazioneSuccessEvent;
 use App\Event\ProtocollaAllegatiOperatoreSuccessEvent;
 use App\Event\ProtocollaPraticaSuccessEvent;
+use App\Event\ProtocollaRichiesteIntegrazioneSuccessEvent;
 use App\Protocollo\Exception\AlreadySentException;
 use App\Protocollo\Exception\AlreadyUploadException;
 use App\Protocollo\Exception\IncompleteExecutionException;
@@ -186,7 +188,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       $this->entityManager->flush();
     }
     // Nb: I subscriber sono registrati sulla classe quindi non va passato il secondo parametro Name
-    $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica));
+    $this->dispatcher->dispatch(new ProtocollaRichiesteIntegrazioneSuccessEvent($pratica));
   }
 
   /**
@@ -328,7 +330,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       $this->entityManager->flush();
 
       // Nb: I subscriber sono registrati sulla classe quindi non va passato il secondo parametro Name
-      $this->dispatcher->dispatch(new ProtocollaPraticaSuccessEvent($pratica));
+      $this->dispatcher->dispatch(new ProtocollaAllegatiIntegrazioneSuccessEvent($pratica));
     } else {
       throw new IncompleteExecutionException();
     }

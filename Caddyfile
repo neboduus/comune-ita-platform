@@ -3,7 +3,6 @@
 respond /health status 200
 root * /srv
 
-file_server browse
 metrics /metrics
 
 @assets {
