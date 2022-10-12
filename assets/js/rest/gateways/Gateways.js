@@ -70,13 +70,17 @@ class Gateways {
       const checked = !input.is(':checked')
       input.prop( "checked", checked );
       input.attr('checked', checked);
-
       if(input.val() === 'mypay'){
-        console.log($(`[id$="_${input.val()}"]`))
         if (checked) {
           $(`[id$="_${input.val()}"]`).removeClass('d-none');
         } else {
           $(`[id$="_${input.val()}"]`).addClass('d-none');
+        }
+      }
+
+      if(input.val() !== 'mypay' && input.val() !== 'bollo'){
+        if (checked) {
+          $( "form" ).first().trigger( "submit" );
         }
       }
     })
@@ -87,7 +91,7 @@ class Gateways {
     $(`button[data-identifier="ente_gateways_${identifier}"]`).click(function () {
       const parentId = $(this).data('parent');
       const id = $(this).data('identifier');
-      if(id && !document.getElementById(parentId).checked){
+      if(id){
         Gateways.deleteTenantId(url).then(() => {
           $( "form" ).first().trigger( "submit" );
         })
@@ -95,9 +99,7 @@ class Gateways {
     })
   }
 
-  static handleCreateExternalPayChoice(identifier){
-    const newCheckboxValue = !$(`input[data-identifier="${identifier}"]`).is(':checked')
-    $(`input[data-identifier="${identifier}"]`).prop( "checked", newCheckboxValue );
+  static handleCreateExternalPayChoice(){
         $("form").first().trigger("submit");
   }
 
@@ -147,6 +149,8 @@ class Gateways {
                       form.emit('submitDone', submission)
                       if(isFirstConf || !submission.data.active){
                         Gateways.handleCreateExternalPayChoice(sanitizeIdentifier)
+                      }else{
+                        $(`button[data-identifier="ente_gateways_${sanitizeIdentifier}"]`).removeAttr("type").attr("type", "button");
                       }
                     }).catch((error) => {
                     form.emit('submitError')
@@ -169,7 +173,7 @@ class Gateways {
                   isReady = true
                   if(error.status === 404){
                     isFirstConf = true;
-                    $(`button[data-identifier="submit_${sanitizeIdentifier}"]`).after(`<h5 class="align-self-end">${Translator.trans('iscrizioni.no_payments_config', {}, 'messages', this.$language)}</h5>`)
+                    $(`button[data-identifier="ente_gateways_${sanitizeIdentifier}"]`).removeAttr("type").attr("type", "submit");
                   }
                 });
               });

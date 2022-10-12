@@ -31,10 +31,10 @@
                   {{ gateway.vars.checked ? 'not_enable' | trans  : 'enable' | trans  }} </button>
             {% else %}
             <button type="submit" class="d-none" data-identifier="submit_{{ identifier }}" data-parent="gateways_{{key}}">
-              {% if gateway.vars.data %}
+
             <button type="button" class="btn {{ gateway.vars.checked ? 'btn-danger' : 'btn-primary' }} float-right" data-parent="gateways_{{key}}"  data-identifier="ente_gateways_{{ identifier }}">
               {{ gateway.vars.checked ? 'not_enable' | trans  : 'enable' | trans  }} </button>
-              {% endif %}
+
               {% endif %}
             {{ form_label(gateway) }}
             {{ form_errors(gateway) }}
