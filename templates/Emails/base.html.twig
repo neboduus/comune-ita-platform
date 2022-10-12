@@ -3,6 +3,7 @@
 {% set host_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' %}
 {% set email_footer = ente.getMetaAsArray('email_footer') %}
 {% set logo = ente.getMetaAsArray('logo') is defined and ente.getMetaAsArray('logo') is not empty ? ente.getMetaAsArray('logo') : host_url ~ 'bundles/app/images/logo-default.png' %}
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -163,9 +164,9 @@
     <td
       style="color: white; text-align: left; border-bottom: 1px solid #ccc; padding: 20px;">
       <span>
-        <img  src="{{ logo }}" alt="logo" style="width: 70px;display:inline-block;vertical-align:middle;"/>
-      {% if pratica.ente != null %}
-        <h2 style='display:inline-block;color: white !important;'>{{ pratica.ente.nameForEmail }}</h2>
+        <img src="{{ logo }}" alt="logo" style="width: 70px;display:inline-block;vertical-align:middle;"/>
+      {% if ente %}
+        <h2 style='display:inline-block;color: white !important;'>{{ ente.name }}</h2>
       {% else %}
         <h2 style='display:inline-block;color: white !important;'>{{ 'title'|trans }}</h2>
       {% endif %}
@@ -180,11 +181,13 @@
   <tr>
     <td>
       {% if ente %}
-      {% if email_footer is defined and email_footer is not empty %}
+        {% if email_footer is defined and email_footer is not empty %}
           {{ email_footer|raw }}
         {% else %}
-          <p style="font-family:'Lucida Grande', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #30373d;background: #F0F0F0; padding: 20px; font-size: 15px !important; border-top: 1px solid #2b649e;">
-            {{ 'messages.receives_why'|trans({}, null, locale)}} {{ instance_url }}, {{ 'messages.receives_why_description'|trans({}, null, locale)}}
+          <p
+            style="font-family:'Lucida Grande', 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #30373d;background: #F0F0F0; padding: 20px; font-size: 15px !important; border-top: 1px solid #2b649e;">
+            {{ 'messages.receives_why'|trans({}, null, locale) }} {{ instance_url }}
+            , {{ 'messages.receives_why_description'|trans({}, null, locale) }}
           </p>
         {% endif %}
       {% endif %}

@@ -236,7 +236,7 @@ class AdminController extends AbstractController
    * @Route("/operatore/new", name="admin_operatore_new")
    * @Method({"GET", "POST"})
    * @param Request $request
-   * @param PasswordEncoderInterface $passwordEncoder
+   * @param UserPasswordEncoderInterface $passwordEncoder
    * @return Response
    */
   public function newOperatoreAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
@@ -264,9 +264,6 @@ class AdminController extends AbstractController
       $this->userManager->resetPassword($operatoreUser);
       $em->persist($operatoreUser);
       $em->flush();
-
-      // Todo: sostituire funzionalità fos user
-      //$this->mailer->sendResettingEmailMessage($operatoreUser);
 
       $this->addFlash('feedback', $this->translator->trans('admin.create_operator_notify'));
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
