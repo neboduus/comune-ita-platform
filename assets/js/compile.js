@@ -3,18 +3,9 @@ import Form from './Formio/Form';
 import Payment from "./rest/payment/Payment";
 
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
-require("../css/app.scss");
 const $language = document.documentElement.lang.toString();
 
 $(document).ready(function () {
-  $('.summernote').summernote({
-    toolbar: [
-      ['style', ['bold', 'italic', 'underline', 'clear']],
-      ['para', ['ul', 'ol']],
-      ['insert', ['link']],
-    ]
-  });
-
 
   if ($('#pratica_summary_flow_formIO_step').length) {
     $('button.craue_formflow_button_class_next').on('click', function (e) {
