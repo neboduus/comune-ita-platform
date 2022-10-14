@@ -495,7 +495,7 @@ class Servizio implements Translatable
     $this->accessLevel = self::ACCESS_LEVEL_SPID_L2;
     $this->setLoginSuggested(false);
     //$this->setProtocolRequired(true);
-    $this->setAllowReopening(true);
+    $this->setAllowReopening(false);
     $this->setAllowWithdraw(true);
     $this->setAllowIntegrationRequest(true);
     $this->setFinalIndications('La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.');
