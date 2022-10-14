@@ -2734,7 +2734,7 @@ payment:
   other_details: "Dettaglio operazione"
   paid_at: "Pagato il"
   download_pdf: "Scarica ricevuta pagamento"
-  creation_pending: "Creazione del pagamento in corso"
+  creation_pending: "Elaborazione del pagamento in corso"
   payment_started: "Pagamento in elaborazione, in attesa dell'esito"
   creation_failed_text: "La creazione del pagamento non è andata a buon fine riprova più tardi oppure contatta l'ufficio amministrativo."
   not_found: "La pratica non è ancora pervenuta riprova più tardi!"
