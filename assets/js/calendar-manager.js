@@ -1,6 +1,6 @@
-require("summernote");
-require("summernote/dist/summernote-bs4.css");
-
+import 'summernote';
+import 'summernote/dist/summernote-bs4.css';
+import './utils/TextEditor';
 
 $(document).ready(function () {
 

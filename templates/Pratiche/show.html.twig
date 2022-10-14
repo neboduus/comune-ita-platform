@@ -1,20 +1,13 @@
 {% extends 'Default/index.html.twig' %}
 {% block title %}{{pratica.servizio.name}} - Stanza del cittadino{% endblock %}
 {% block stylesheets %}
+  {{ parent() }}
   {{ encore_entry_link_tags('compile') }}
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('compile') }}
-  {# % if pratica.status == 1900 or (pratica.status == 2000 and pratica.servizio.isProtocolRequired) %}
-    <script>
-      (function() {
-        setInterval(function() {
-          window.location.reload();
-        }, 15000);
-      })();
-    </script>
-  {% endif % #}
 {% endblock %}
 
 {% block main_content %}

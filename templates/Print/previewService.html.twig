@@ -5,11 +5,12 @@
 {% set enteName = customName != '' ? customName :  ente.name %}
 
 {% block stylesheets %}
+  {{ parent() }}
   {{ encore_entry_link_tags('compile') }}
-
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('compile') }}
 {% endblock %}
 

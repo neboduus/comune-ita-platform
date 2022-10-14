@@ -3,11 +3,13 @@
 
 {% block title %}{{ pratica.servizio.name }} - Stanza del cittadino{% endblock %}
 {% block stylesheets %}
+  {{ parent() }}
   {{ encore_entry_link_tags('user-show-application') }}
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/element-ui/1.4.13/theme-default/index.css" integrity="sha512-698XkMvQis2vuqDf9fvwdvAjVWsAEwb/2yUWZZyzEEd/z3M++P03dmS/oxSIUGe7hg2aaS+MXUKQqMKi2iolxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('user-show-application') }}
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js" integrity="sha512-yNMXFsZbP+Hii2fM4n1EvhKbBCZ2NAfW1FvlN6yB1ZanH+1sEcNV2rPEg6qCMRT/4dY01ELCdD75WflfTHdKJg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
