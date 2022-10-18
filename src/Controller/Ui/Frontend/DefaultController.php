@@ -209,6 +209,7 @@ class DefaultController extends AbstractController
       $logger->error($e->getMessage());
     }
 
-    return $this->redirectToRoute($redirectRoute, array_merge($redirectRouteParams, $redirectRouteQuery));
+    $params = array_merge($redirectRouteParams, $redirectRouteQuery) ?? [];
+    return $this->redirectToRoute($redirectRoute, $params);
   }
 }
