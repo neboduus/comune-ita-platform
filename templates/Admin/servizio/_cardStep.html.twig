@@ -77,8 +77,8 @@
 
       <p class="text-primary mb-2"><strong>{{ 'servizio.aree_geografiche'|trans }}</strong></p>
       <ul>
-        {% if servizio.serviceGroup.recipients %}
-          {% for r in servizio.serviceGroup.recipients %}
+        {% if servizio.serviceGroup.geographicAreas %}
+          {% for r in servizio.serviceGroup.geographicAreas %}
             <li>{{ r.name }}</li>
           {% endfor %}
         {% else %}
