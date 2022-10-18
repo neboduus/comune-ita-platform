@@ -35,7 +35,6 @@ operatore: "Operator"
 credits: "The Stanza del cittadino is an experimental project initiative of %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Update your e-mail to continue'
-save_changed: 'There are some changes to <b>save</b>.'
 nav:
   home: 'Homepage'
   dashboard: 'My room'
@@ -121,8 +120,6 @@ servizio:
   nome: "Service name"
   categoria: "Catergory"
   cos_e: "What's it?"
-  short_description: "Short description"
-  change_short_description: "The short description field still has the default value, please change it before saving."
   descrizione: "Description"
   a_chi_si_rivolge: "Who is it for?"
   copertura: "Geographic coverage"
@@ -216,6 +213,8 @@ servizio:
   blank_template: 'Blank template'
   templates_based_existing_services: 'Templates based on existing services'
   id_service: ''
+  short_description: "Short description"
+  change_short_description: "The short description field still has the default value, please change it before saving."
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
@@ -416,7 +415,7 @@ pratica:
   crea_nuova_pratica: 'Create new practice'
   vai_al_pagamento: 'Go to payment'
   payment_reminder:
-    message: "Dear <b>%user_name%</b><br/> the request number <b>%id%</b> for <b>%service_fullname%</b> is awaiting a payment, please use the following links to pay the amount due."
+    message: "Dear <b>%user_name%</b><br/> the request number <b>%id%</b> for <b>%service_fullname%</b> is awaiting a payment, please use the following links to pay the amount due"
     subject: "Payment reminder required number %pratica%"
   vedi_tutte: 'View all'
   pratiche_in_evidenzia: 'Pinned forms'
@@ -1168,7 +1167,6 @@ email:
     link_txt: 'For more details visit the following link: '
     link_download_txt: 'for more details visit the following link: '
     no_info: '<i>information not available</i>'
-    motivation: 'With the following motivation:'
     user:
       status:
         pre.submit: "we inform you that your request for the <strong>%servizio%</strong> service has been correctly sent, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications related to your request."
@@ -1209,6 +1207,7 @@ email:
         withdraw: "user <strong>%user_pratica%</strong> request for service <strong>%servizio%</strong> has been withdrawn."
         revoked: "user <strong>%user_pratica% </strong> request for service <strong>%servizio% </strong> has been canceled."
         draft.for.integration: "you have requested intergations for the practice of the user <strong>%user_pratica%</strong> for the service <strong>%service%</strong>."
+    motivation: 'With the following motivation:'
 messages:
   pratica:
     status:
@@ -1797,7 +1796,7 @@ steps:
       guida_alla_compilazione: "Measures (listed in Annex C of the S.C.I.A. application) to be attached if necessary"
       files:
         PROV_PC-PAE:
-          title: "a) authorization for landscape protection pursuant to l.p. 1/2008\\"
+          title: "a) authorization for landscape protection pursuant to l.p. 1/2008\\\\"
           description: "description"
         PROV_PC-CUL:
           title: "b) authorizations relating to cultural heritage referred to in Articles 21 and 22 of Legislative Decree 42/2004"
@@ -2691,6 +2690,7 @@ calendar_formio:
   from_range_error_value: "The value"
   from_range_error_not_valid: "it's not valid"
   unavailable: "Unavailable"
+  time_expired: ""
 sum: 'Sum'
 average: 'Average'
 counts: 'Count'
@@ -2824,6 +2824,7 @@ login_callout_texts:
     title: 'Do you use SPID?'
     text: ""
 aggiorna: ''
+save_changed: 'There are some changes to <b>save</b>.'
 security:
   password: ''
   current_password: ''
