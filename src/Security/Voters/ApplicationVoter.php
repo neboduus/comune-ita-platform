@@ -190,7 +190,7 @@ class ApplicationVoter extends Voter
   {
     $canCompile = false;
     // se la pratica è in bozza oppure in attesa di creazione del pagamento
-    if (in_array($pratica->getStatus(), [Pratica::STATUS_DRAFT, Pratica::STATUS_DRAFT_FOR_INTEGRATION]) || $pratica->needsPaymentCreation() && $pratica->getUser()->getId() == $user->getId()) {
+    if (in_array($pratica->getStatus(), [Pratica::STATUS_DRAFT, Pratica::STATUS_DRAFT_FOR_INTEGRATION]) || $pratica->needsPayment() && $pratica->getUser()->getId() == $user->getId()) {
       $handler = $this->servizioHandlerRegistry->getByName($pratica->getServizio()->getHandler());
       try {
         $handler->canAccess($pratica->getServizio());

@@ -139,7 +139,7 @@ parameters:
       enabled: true
     efil:
       name: Efil
-      url: efil.gateway.opencontent.io
+      url: http://efil.localtest.me
       handler: generic-external
       enabled: true
     mypay:
