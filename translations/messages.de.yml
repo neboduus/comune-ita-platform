@@ -39,7 +39,6 @@ operatore: "Sachbearbeiter/-in"
 credits: "Die Einführung des Bürgerservicekontos erfolgt im Rahmen eines Versuchsprojekts der %ente_name%"
 powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl</a>'
 fake_email_message: 'Sie müssen Ihre E-Mail aktualisieren, um fortzufahren'
-save_changed: 'Es gibt einige Änderungen beim <b>Speichern</b>.'
 nav:
   home: 'Startseite'
   dashboard: 'Mein Konto'
@@ -135,12 +134,10 @@ servizio:
   nome: "Name des Dienstes"
   categoria: "Kategorie"
   cos_e: "Worum handelt es sich?"
-  short_description: ""
-  change_short_description: ""
   descrizione: "Beschreibung"
   a_chi_si_rivolge: "Wer kann die angebotenen Dienste nutzen?"
-  copertura: "Landesgerichtssprengel"
-  copertura_helper: "Landesgerichtssprengel"
+  copertura: "Geografische Abdeckung"
+  copertura_helper: "Geografische Abdeckung"
   accedere: "Hier geht's zum Online-Dienst"
   casi_particolari: "Sonderfälle"
   maggiori_info: "Nähere Informationen"
@@ -239,6 +236,8 @@ servizio:
   blank_template: 'Template leer'
   templates_based_existing_services: 'Auf bereits vorhandenen Diensten basierende Vorlagen'
   id_service: 'ID Dienst'
+  short_description: ""
+  change_short_description: ""
 gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppe von Diensten'
   nome: 'Name'
@@ -260,8 +259,8 @@ gruppo_di_servizi:
   cos_e: "Worum handelt es sich?"
   # qual il soggetto sottinteso?
   a_chi_si_rivolge: "Wer kann die angebotenen Dienste nutzen?"
-  copertura: "Landesgerichtssprengel"
-  copertura_helper: "Landesgerichtssprengel"
+  copertura: "Geografische Abdeckung"
+  copertura_helper: "Geografische Abdeckung"
   accedere: "Hier geht's zum Online-Dienst"
   casi_particolari: "Sonderfälle"
   maggiori_info: "Nähere Informationen"
@@ -1217,7 +1216,6 @@ email:
     link_txt: 'Nähere Details finden Sie unter folgendem Link: '
     link_download_txt: 'Nähere Details finden Sie unter folgendem Link: '
     no_info: '<i>Information nicht verfügbar</i>'
-    motivation: 'Mit folgendem Beweggrund:'
     user:
       status:
         pre.submit: "wir teilen Ihnen mit, dass Ihr Antrag betreffend <strong>%servizio%</strong> erfolgreich gesendet worden ist. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an."
@@ -1258,6 +1256,7 @@ email:
         withdraw: "BACKOFFICE"
         revoked: "BACKOFFICE"
         draft.for.integration: "draft.for.integration"
+    motivation: 'Mit folgendem Beweggrund:'
 messages:
   pratica:
     status:
@@ -2033,6 +2032,7 @@ steps:
     name_violation_message: "DA NON TRADURRE"
     surname_violation_message: "DA NON TRADURRE"
     empty_data_violation_message: ""
+    duplicated_unique_id: ''
 protocollo:
   recipientIDArray: 'Dokumentempfänger/-innen (recipientIDArray)'
   recipientTypeIDArray: 'Nutzerkategorie (recipientTypeIDArray)'
@@ -2760,6 +2760,7 @@ calendar_formio:
   from_range_error_value: "Wert"
   from_range_error_not_valid: "nicht gültig"
   unavailable: "Nicht verfügbar"
+  time_expired: ""
 sum: 'Summe'
 average: 'Durchschnitt'
 counts: 'Zählung'
@@ -2893,6 +2894,7 @@ login_callout_texts:
     title: 'Verwenden Sie SPID?'
     text: "Sie können sich mit SPID authentifizieren, um die Felder automatisch auszufüllen und den Vorgang in Ihrem Profil zu speichern.  <br />(Empfohlener Browser Firefox oder Chrome)"
 aggiorna: ''
+save_changed: 'Es gibt einige Änderungen beim <b>Speichern</b>.'
 security:
   password: ''
   current_password: ''
@@ -2910,3 +2912,7 @@ security:
   remember_me: ''
   login: ''
   password_reset: ''
+enable: ''
+not_enable: ''
+help_link: ''
+no_value: ''
