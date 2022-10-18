@@ -37,7 +37,8 @@ class ServizioRepository extends EntityRepository
   {
     $qb = $this->createQueryBuilder('s')
     ->where('s.sharedWithGroup = :sharedWithGroup')
-    ->setParameter('sharedWithGroup', false);
+    ->setParameter('sharedWithGroup', false)
+    ->orWhere('s.sharedWithGroup IS NULL');
 
     // Search text
     if (isset($criteria['q'])) {
