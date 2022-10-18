@@ -1,6 +1,10 @@
 version: "3.8"
 
 services:
+  php:
+    environment:
+      KSQLDB_URL: "http://ksqldb-server:8088"
+
   payments-check:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
     command: ./bin/payments-checks.sh
@@ -10,7 +14,7 @@ services:
       VERBOSE: 1
 
   efil-proxy:
-    image: registry.gitlab.com/opencontent/stanza-del-cittadino/efil-payment-proxy:1.0.2
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/efil-payment-proxy:1.1.0
     environment:
       KAFKA_TOPIC_NAME: "payments"
       KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
@@ -67,7 +71,7 @@ services:
       "
 
   payment-dispatcher:
-    image: registry.gitlab.com/opencontent/stanza-del-cittadino/payment-dispatcher:1.1.2
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/payment-dispatcher:1.1.3
     environment:
       KAFKA_TOPIC_APPLICATIONS: applications
       KAFKA_TOPIC_PAYMENTS: payments

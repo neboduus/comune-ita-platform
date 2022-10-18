@@ -2090,9 +2090,9 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $this->locale = $locale;
   }
 
-  public function needsPaymentCreation(): bool
+  public function needsPayment(): bool
   {
-    if ($this->getStatus() == Pratica::STATUS_PAYMENT_PENDING && !$this->getPaymentData()) {
+    if ($this->getStatus() == Pratica::STATUS_PAYMENT_PENDING) {
       return true;
     }
     return false;
