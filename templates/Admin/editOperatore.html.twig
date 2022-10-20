@@ -25,11 +25,8 @@
                 <ul>
                   {% for child,choiceView in children %}
                     <li class="d-block">
-                      <label class="checkbox">
-                        {{ form_widget(form.services[child],{
-                          'attr':{
-                            'value': choiceView.data
-                          }}) }}
+                      <label class="checkbox"> <!-- Secondo livello (servizi in gruppo) -->
+                        {{ form_widget(form.services[child]) }}
                       </label>
                     </li>
                   {% endfor %}
@@ -39,7 +36,7 @@
                   </li>
                 {% endif %}
                 <li>
-                <label class="checkbox">
+                <label class="checkbox"> <!-- Primo livello (servizi senza gruppo e gruppi) -->
                   {{ form_widget(form.services.offsetGet(choiceOrOptionGroup),{
                     'attr':{
                       'value': children.data,
