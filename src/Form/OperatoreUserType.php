@@ -51,22 +51,23 @@ class OperatoreUserType extends AbstractType
     foreach($erogatori as $erogatore) {
       $serviziErogati = $erogatore->getServizi()->toArray();
       $servizi = array_merge($servizi, $serviziErogati);
-
     }
 
     $serviceChoices = [];
+    $serviceNames = [];
     foreach ($servizi as $s) {
+      $serviceNames[$s->getId()] = $s->getName();
       if($s->getServiceGroup()){
         if (array_key_exists($s->getServiceGroup()->getName(),$serviceChoices)){
-          $serviceChoices[$s->getServiceGroup()->getName().'services'][$s->getName()] = $s->getId();
+          $serviceChoices[$s->getServiceGroup()->getName().'services'][$s->getId()] = $s->getId();
         }else{
           $serviceChoices[$s->getServiceGroup()->getName()] = 'group';
           $serviceChoices[$s->getServiceGroup()->getName().'services'] = array(
-           $s->getName() => $s->getId()
+           $s->getId() => $s->getId()
           );
         }
       }else{
-        $serviceChoices[$s->getName()] = $s->getId();
+        $serviceChoices[$s->getId()] = $s->getId();
       }
     }
 
@@ -91,6 +92,12 @@ class OperatoreUserType extends AbstractType
         'label' => 'operatori.servizi_abilitati',
         'data' => $serviziAbilitati,
         'choices' => $serviceChoices,
+        'choice_label' => function ($choice, $key, $value) use ($serviceNames) {
+          if ($choice === 'group') {
+            return $key;
+          }
+          return $serviceNames[$choice];
+        },
         'mapped' => false,
         'expanded' => true,
         'multiple' => true,
@@ -106,7 +113,6 @@ class OperatoreUserType extends AbstractType
     $operatore = $event->getForm()->getData();
     $serviziAbilitati = new ArrayCollection();
     $data = $event->getData();
-
     if (isset($data['services']) && !empty($data['services'])) {
       foreach ($data['services'] as $k => $s) {
         if($s != 'group'){
@@ -115,7 +121,7 @@ class OperatoreUserType extends AbstractType
           unset($data['services'][$k]);
         }
       }
-      $data['services'] = $operatore->parseServizi($serviziAbilitati);
+      $operatore->parseServizi();
       $event->setData($data);
     }
     $operatore->setServiziAbilitati($serviziAbilitati);
