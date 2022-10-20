@@ -13,8 +13,6 @@
         <div class="font-italic text-center">{{ 'operatori.pagamento_esentato'|trans }}</div>
       {% elseif pratica.servizio.isPaymentDeferred %}
         {{ include('Operatori/parts/payment_deferred.html.twig', {'pratica': pratica}) }}
-      {% else %}
-        <div class="font-italic text-center">{{ 'operatori.pagamento_non_previsto'|trans }}</div>
       {% endif %}
     {% endif %}
   </div>

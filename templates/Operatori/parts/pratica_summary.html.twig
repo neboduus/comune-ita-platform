@@ -18,7 +18,7 @@
       {{ 'operatori.messaggi.titolo' | trans }}
       <span class="badge badge-light ml-1">{{ pratica.messages | length }}</span>
     </a>
-    {% if pratica.servizio.paymentRequired %}
+    {% if pratica.paymentData or pratica.isPaymentExempt or pratica.servizio.isPaymentDeferred %}
       <a class="nav-item nav-link {% if tab == 'pagamento' %} active {% endif %}" id="pagamento-tab" data-toggle="tab"
          href="#pagamento" role="tab"
          aria-controls="pagamento" aria-selected="{{ tab and tab == 'pagamento' }}">
@@ -60,7 +60,7 @@
   <div class="tab-pane py-4 fade {% if tab == 'note' %} show active {% endif %}" id="messaggi" role="tabpanel" aria-labelledby="messaggi-tab">
     {{ include('Operatori/parts/messaggi.html.twig', {'pratica':pratica}) }}
   </div>
-  {% if pratica.servizio.paymentRequired %}
+  {% if pratica.paymentData or pratica.isPaymentExempt or pratica.servizio.isPaymentDeferred %}
     <div class="tab-pane py-4 fade {% if tab == 'pagamento' %} show active {% endif %}" id="pagamento" role="tabpanel"
          aria-labelledby="pagamento-tab">
       {{ include('Operatori/parts/dati_pagamento.html.twig', {'pratica':pratica}) }}
