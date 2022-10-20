@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -659,6 +660,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         return $name;
       }
     }
+
     return '';
   }
 
@@ -672,6 +674,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         return $code;
       }
     }
+
     return '';
   }
 
@@ -688,6 +691,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         ];
       }
     }
+
     return $statuses;
   }
 
@@ -825,6 +829,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setId(Uuid $id)
   {
     $this->id = $id;
+
     return $this;
   }
 
@@ -949,8 +954,9 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $allegati = [];
     /** @var Allegato $a */
     foreach ($this->allegati as $a) {
-      $allegati[$a->getId()]= $a;
+      $allegati[$a->getId()] = $a;
     }
+
     return $allegati;
   }
 
@@ -980,6 +986,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
       $this->allegati->removeElement($allegato);
       $allegato->removePratica($this);
     }
+
     return $this;
   }
 
@@ -1008,6 +1015,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
       $files[$item->getCreatedAt()->format('U')] = $item;
     }
     krsort($files, SORT_NUMERIC);
+
     return new ArrayCollection($files);
   }
 
@@ -1081,6 +1089,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         $publicMessages[] = $message;
       }
     }
+
     return $publicMessages;
   }
 
@@ -1100,6 +1109,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setOggetto(string $oggetto)
   {
     $this->oggetto = $oggetto;
+
     return $this;
   }
 
@@ -1162,7 +1172,20 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function serializeStatuses()
   {
     if ($this->storicoStati instanceof Collection) {
-      $this->storicoStati = serialize($this->storicoStati->toArray());
+      $storicoStati = $this->storicoStati->toArray();
+      // Con il passaggio alla 4.4 alcuni uuid vengono serializzati non come stringa ma come byte, questo crea un problema di salvataggio su charset utf8 del database
+      // Il codice seguente bonifica il salvataggio forzando la serializzazioen della stringa
+      // Todo: rivedere completamente in futuro lo storico degli stati
+      foreach ($storicoStati as $timestampKey => $timestampValue) {
+        foreach ($timestampValue as $key => $value) {
+          foreach ($value as $k => $v) {
+            if (isset($v['message_id']) && !empty($v['message_id']) && $v['message_id'] instanceof UuidInterface) {
+              $storicoStati[$timestampKey][$key][$k]['message_id'] = $v['message_id']->toString();
+            }
+          }
+        }
+      }
+      $this->storicoStati = serialize($storicoStati);
     }
   }
 
@@ -1239,6 +1262,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setSubmissionTime($submissionTime)
   {
     $this->submissionTime = $submissionTime;
+
     return $this;
   }
 
@@ -1330,6 +1354,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setRichiedenteCodiceFiscale(string $richiedenteCodiceFiscale)
   {
     $this->richiedenteCodiceFiscale = $richiedenteCodiceFiscale;
+
     return $this;
   }
 
@@ -1509,6 +1534,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setLastCompiledStep($lastCompiledStep)
   {
     $this->lastCompiledStep = $lastCompiledStep;
+
     return $this;
   }
 
@@ -1528,6 +1554,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setInstanceId($instanceId)
   {
     $this->instanceId = $instanceId;
+
     return $this;
   }
 
@@ -1667,6 +1694,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         return $richiestaIntegrazione;
       }
     }
+
     return null;
   }
 
@@ -1720,6 +1748,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     if (is_array($this->getDelegaData())) {
       return $this->getDelegaData();
     }
+
     return \json_decode($this->getDelegaData(), true);
   }
 
@@ -1735,6 +1764,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         }
       }
     }
+
     return $this->tipiDelega;
   }
 
@@ -1770,6 +1800,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setPaymentType($paymentType)
   {
     $this->paymentType = $paymentType;
+
     return $this;
   }
 
@@ -1799,6 +1830,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     } elseif (is_array($this->getPaymentData())) {
       return $this->getPaymentData();
     }
+
     return [];
   }
 
@@ -1817,6 +1849,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setHash(string $hash)
   {
     $this->hash = $hash;
+
     return $this;
   }
 
@@ -1825,7 +1858,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     if ($hash && $hash == $this->getHash()) {
       $timestamp = explode('-', $hash);
       $timestamp = end($timestamp);
-      $maxVisibilityDate = (new \DateTime())->setTimestamp($timestamp)->modify('+ ' . $hashValidity . ' days');
+      $maxVisibilityDate = (new \DateTime())->setTimestamp($timestamp)->modify('+ '.$hashValidity.' days');
 
       return $maxVisibilityDate >= new \DateTime('now');
     }
@@ -1869,6 +1902,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
           $hasParent = false;
         }
       }
+
       return $parent;
     }
   }
@@ -1945,6 +1979,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         return $item;
       }
     }
+
     return null;
   }
 
@@ -1978,6 +2013,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     if (($key = array_search($this->getStatus(), $states)) !== false) {
       unset($states[$key]);
     }
+
     return $states;
   }
 
@@ -1998,6 +2034,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         $answers->add($a);
       }
     }
+
     return $answers;
   }
 
@@ -2025,6 +2062,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         $history[] = $transition;
       }
     }
+
     return $history;
   }
 
@@ -2095,36 +2133,43 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     if ($this->getStatus() == Pratica::STATUS_PAYMENT_PENDING) {
       return true;
     }
+
     return false;
   }
 
   public function getFlowChangedAt(): ?\DateTime
   {
-     switch ($this->getStatus()){
-       case Pratica::STATUS_DRAFT:
-         return $this->createdAt;
+    switch ($this->getStatus()) {
+      case Pratica::STATUS_DRAFT:
+        return $this->createdAt;
 
-       case Pratica::STATUS_PRE_SUBMIT:
-       case Pratica::STATUS_SUBMITTED:
-       $date = new \DateTime();
-       try {
-         $date->setTimestamp($this->getSubmissionTime());
-       } catch (\Exception $e) {}
-       return $date;
+      case Pratica::STATUS_PRE_SUBMIT:
+      case Pratica::STATUS_SUBMITTED:
+        $date = new \DateTime();
+        try {
+          $date->setTimestamp($this->getSubmissionTime());
+        } catch (\Exception $e) {
+        }
 
-       case Pratica::STATUS_REGISTERED:
-         $date = new \DateTime();
-         try {
-           $date->setTimestamp($this->getProtocolTime());
+        return $date;
 
-         } catch (\Exception $e) {}
-         return $date;
-       default:
-         $date = new \DateTime();
-         try {
-           $date->setTimestamp($this->getLatestStatusChangeTimestamp());
-         } catch (\Exception $e) {}
-         return $date;
-     }
+      case Pratica::STATUS_REGISTERED:
+        $date = new \DateTime();
+        try {
+          $date->setTimestamp($this->getProtocolTime());
+
+        } catch (\Exception $e) {
+        }
+
+        return $date;
+      default:
+        $date = new \DateTime();
+        try {
+          $date->setTimestamp($this->getLatestStatusChangeTimestamp());
+        } catch (\Exception $e) {
+        }
+
+        return $date;
+    }
   }
 }

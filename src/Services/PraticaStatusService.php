@@ -195,7 +195,6 @@ class PraticaStatusService
 
       try {
         $pratica->setStatus($afterStatus, $statusChange);
-
         $this->entityManager->persist($pratica);
         $this->entityManager->flush();
         $this->entityManager->refresh($pratica);
