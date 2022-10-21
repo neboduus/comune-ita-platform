@@ -109,6 +109,11 @@ every: 'Ogni'
 save_changed: 'Ci sono delle modifiche da <b>salvare</b>.'
 help_link: 'Link utili'
 no_value: 'Nessun valore'
+link_to: 'Link a'
+go_to_page: 'Vai alla pagina'
+read_faq: 'Leggi le FAQ'
+booking_appointment: 'Prenotazione appuntamento'
+request_assistance: "Richiesta d'assistenza"
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'
@@ -2853,3 +2858,12 @@ security:
   remember_me: 'Ricordami'
   login: 'Login'
   password_reset: 'Password reset'
+contacts:
+  title: "Contatta il comune"
+  faq_url_label: "Leggi le domande frequenti"
+  support_url_label: "Richiedi assistenza"
+  phone_label: "Chiama il numero"
+  phone_toll_free_number: "Chiama il numero verde"
+  meetings_reservation_url_label: "Prenota appuntamento"
+  public_relations_office: 'Ufficio Relazioni con il Pubblico'
+  toll_free_number: 'Numero verde'

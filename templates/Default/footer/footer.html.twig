@@ -9,204 +9,177 @@
 {% set customName = ente.getMetaAsArray('name') %}
 {% set enteName = customName != '' ? customName :  ente.name %}
 
-<footer class="it-footer mt-3">
+<footer class="it-footer">
   <div class="it-footer-main">
     <div class="container">
-      <section>
-        <div class="row clearfix">
-          <div class="col-sm-12">
-            <div class="it-brand-wrapper">
-              <a href="{{ ente.siteUrl }}">
-                {% if logo is defined and logo is not empty %}
-                  <img class="icon" src="{{ logo }}" alt="{{ enteName }}"/>
-                {% else %}
-                  <img class="icon" src="{{ asset('bundles/app/images/logo-default.png') }}" alt="{{ enteName }}"/>
-                {% endif %}
-                <div class="it-brand-text">
-                  {% if ente %}
-                    <h2 class="no_toc">{{ enteName }}</h2>
-                    {#<h3 class="no_toc d-none d-md-block">
-                        Servizi online per i cittadini
-                    </h3>#}
-                  {% endif %}
-                </div>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section>
-        <div class="row">
-
-          {% if main %}
-            {% for item in main %}
-              <div class="col-lg-3 col-md-3 col-sm-6 pb-2">
-                <h4>
-                  <a href="{{ item.url }}"
-                     title="Vai alla pagina: {{ item.text }}">{{ item.text }}</a>
-                </h4>
-                {% if item.children is defined %}
-                  <div class="link-list-wrapper">
-                    <ul class="footer-list link-list clearfix">
-                      {% for subitem in item.children %}
-                        <li>
-                          <a class="list-item" href="{{ subitem.url }}"
-                             title="Vai alla pagina: {{ subitem.text }}">{{ subitem.text }}</a>
-                        </li>
-                      {% endfor %}
-                      <li class="list-item">
-                        <a href="{{ item.url }}"><em>{{ 'show_all' | trans }}</em></a>
-                      </li>
-                    </ul>
-                  </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="it-brand-wrapper">
+            <a href="{{ ente.siteUrl }}">
+              {% if logo is defined and logo is not empty %}
+                <img class="icon" src="{{ logo }}" alt="{{ enteName }}"/>
+              {% else %}
+                <img class="icon" src="{{ asset('bundles/app/images/logo-default.png') }}" alt="{{ enteName }}"/>
+              {% endif %}
+              <div class="it-brand-text">
+                {% if ente %}
+                  <h2 class="no_toc">{{ enteName }}</h2>
                 {% endif %}
               </div>
-            {% endfor %}
-          {% endif %}
-
+            </a>
+          </div>
         </div>
-      </section>
-      <section class="py-4 border-white border-top">
-        <div class="row">
+      </div>
 
-          {% if info %}
-            <div class="col pb-2">
-              <h4><span>{{ 'info' | trans }}</span></h4>
-              {{ info|raw }}
-            </div>
-          {% endif %}
 
-          {% if contacts %}
-            <div class="col pb-2">
-              <h4><span>{{ 'steps.common.org_richiedente.contatti' | trans }}</span></h4>
-              <div class="link-list-wrapper">
-                <ul class="footer-list link-list clearfix">
+      <div class="row">
+        {% if main %}
+          {% set calcCol = (main | length) <= 4 ? (12 / (main | length)) : '4' %}
+          {% for item in main %}
+            {% if item.url is not empty and item.text is not empty %}
+              <div class="col-12 col-md-{{ calcCol }} footer-items-wrapper">
+                <h4 class="footer-heading-title"><span>
+                    <a href="{{ item.url }}" title="{{ 'go_to_page' | trans }}: {{ item.text }}">{{ item.text }}</a>
+                  </span>
+                </h4>
+                {% if item.children is defined %}
+                  <ul class="footer-list p-0">
+                    {% for subitem in item.children %}
+                      <li>
+                        <a href="{{ subitem.url }}"
+                           title="{{ 'go_to_page' | trans }}: {{ subitem.text }}">{{ subitem.text }}</a>
+                      </li>
+                    {% endfor %}
+                    <li>
+                      <a href="{{ item.url }}"><em>{{ 'show_all' | trans }}</em></a>
+                    </li>
+                  </ul>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="row">
+        {% set calcCol = social is defined and social | length > 0 ? '9': '12' %}
+        {% if contacts %}
+          <div class="col-md-{{ calcCol }} mt-md-4 footer-items-wrapper">
+            <h4 class="footer-heading-title"><span>{{ 'steps.common.org_richiedente.contatti' | trans }}</span></h4>
+            <div class="row">
+              <div class="col-md-4">
+                <p class="footer-info">
+                  {{ enteName }}<br>
                   {% if contacts.address is defined %}
-                    <li>
-                      <a class="list-item"
-                         href="http://maps.google.com/maps?q={{ contacts.address }}">
-                        <svg class="icon icon-sm icon-white">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pa"></use>
-                        </svg>
-                        {{ contacts.address }}
-                      </a>
-                    </li>
+                    <a class="list-item"
+                       href="https://maps.google.com/maps?q={{ contacts.address }}">
+                      {{ contacts.address }}<br>
+                    </a>
                   {% endif %}
+                  {% if contacts.piva is defined or contacts.cf is defined %}
+                    {{ 'user.profile.codice_fiscale' | trans }} / {{ 'steps.common.org_richiedente.piva' | trans }}: {{ contacts.piva ? contacts.piva :  contacts.cf }}
+                  {% endif %}
+                  <br><br>
+                  <span>{{ 'contacts.public_relations_office' | trans }}</span><br>
                   {% if contacts.phone is defined %}
-                    <li>
-                      <a class="list-item" href="tel:{{ contacts.phone }}">
-                        <svg class="icon icon-sm icon-white">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-telephone"></use>
-                        </svg>
-                        {{ contacts.phone }}
-                      </a>
-                    </li>
+                    {{ 'steps.common.dati_richiedente.richiedente_telefono' | trans }}:
+                    <a class="list-item"
+                       href="tel:{{ contacts.phone }}">
+                      {{ contacts.phone }}
+                    </a><br>
                   {% endif %}
+                  {% if contacts.toll_free_number is defined %}
+                    {{ 'contacts.toll_free_number' | trans }}:
+                    <a class="list-item"
+                       href="tel:{{ contacts.phone }}">
+                      {{ contacts.toll_free_number }}
+                    </a><br>
+                  {% endif %}
+
                   {% if contacts.fax is defined %}
-                    <li>
-                      <a class="list-item" href="tel:{{ contacts.fax }}">
-                        <svg class="icon icon-sm icon-white">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-file"></use>
-                        </svg>
-                        {{ contacts.fax }}
-                      </a>
-                    </li>
+                    Fax:
+                    <a class="list-item" href="tel:{{ contacts.fax }}">
+                      {{ contacts.fax }}</a><br>
                   {% endif %}
                   {% if contacts.email is defined %}
-                    <li>
-                      <a class="list-item" href="mailto: {{ contacts.email }}">
-                        <svg class="icon icon-sm icon-white">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
-                        </svg>
-                        {{ contacts.email }}
-                      </a>
-                    </li>
+                    Email:
+                    <a class="list-item" href="mailto: {{ contacts.email }}">
+                      {{ contacts.email }}
+                    </a><br>
                   {% endif %}
                   {% if contacts.legal_email is defined %}
+                    PEC:
+                    <a class="list-item" href="mailto: {{ contacts.legal_email }}">
+                      {{ contacts.legal_email }}
+                    </a>
+                  {% endif %}
+                </p>
+              </div>
+              <div class="col-md-4">
+                <ul class="footer-list p-0">
+                  {% if contacts.faq_url is defined %}
                     <li>
-                      <a class="list-item" href="mailto: {{ contacts.legal_email }}">
-                        <svg class="icon icon-sm icon-warning">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
-                        </svg>
-                        {{ contacts.legal_email }}
-                      </a>
+                      <a href="{{ contacts.faq_url }}"
+                         data-element="faq" data-focus-mouse="false">{{ 'read_faq' | trans }}</a>
                     </li>
                   {% endif %}
-                  {% if contacts.piva is defined %}
-                    <li>
-                      <a class="list-item" href="#">
-                        <svg class="icon icon-sm icon-white">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use>
-                        </svg>
-                        P.IVA {{ contacts.piva }}
-                      </a>
-                    </li>
-                  {% endif %}
-                  {% if contacts.cf is defined %}
-                    <li>
-                      <a class="list-item" href="#">
-                        <svg class="icon icon-sm icon-white">
-                          <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-card"></use>
-                        </svg>
-                        C.F. {{ contacts.cf }}
-                      </a>
-                    </li>
-                  {% endif %}
+                  <li>
+                    {% if contacts.meetings_reservation_url is defined %}
+                      <a href="{{ contacts.meetings_reservation_url }}">{{ 'booking_appointment' | trans }}</a>
+                    {% endif %}
+                  </li>
+                  <li>
+                    {% if contacts.support_url is defined %}
+                      <a href="{{ contacts.support_url }}">{{ 'request_assistance' | trans }}</a>
+                    {% endif %}
+                  </li>
                 </ul>
               </div>
             </div>
-          {% endif %}
+          </div>
+        {% endif %}
 
-          {% if social %}
-            <div class="col pb-2">
-              <h4><span>{{ 'general.follow_social' | trans }}</span></h4>
-              <ul class="list-inline text-left contacts">
-                {% for key,value in social %}
-                  <li class="list-inline-item">
-                    <a class="p-2 text-white" href="{{ value }}"
-                       aria-label="{{ key }}" target="_blank">
-                      <svg class="icon icon-sm icon-white align-top">
-                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{{ key }}"></use>
-                      </svg>
-                    </a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
-        </div>
-      </section>
-    </div>
-  </div>
-  <div class="it-footer-small-prints clearfix">
-    <div class="container">
-      <div class="row">
-        <div class="col-10">
-          <a class="sr-only sr-only-focusable" href="#">{{ 'help_link' | trans }}</a>
-          <ul class="it-footer-small-prints-list list-inline mb-0 d-flex flex-column flex-md-row">
-            {% if utils %}
-              {% for item in utils %}
+        {% if social %}
+          <div class="col-md-3 mt-md-4 footer-items-wrapper">
+            <h4 class="footer-heading-title"><span>{{ 'general.follow_social' | trans }}</span></h4>
+            <ul class="list-inline text-start social">
+              {% for key,value in social %}
                 <li class="list-inline-item">
-                  <a class="nav-link " href="{{ item.url }}" title="Link a {{ item.text }}">{{ item.text }}</a>
+                  <a class="p-1 text-white" href="{{ value }}"
+                     aria-label="{{ key }}" target="_blank">
+                    <svg class="icon icon-sm icon-white align-top">
+                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{{ key }}"></use>
+                    </svg>
+                    <span class="sr-only">{{ key }}</span></a>
                 </li>
               {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="row">
+        <div class="col-12 footer-items-wrapper">
+          <div class="footer-bottom">
+            <span class="sr-only sr-only-focusable">{{ 'help_link' | trans }}</span>
+            {% if utils %}
+              {% for item in utils %}
+                <a href="{{ item.url }}" title="{{ 'link_to' | trans }} {{ item.text }}">{{ item.text }}</a>
+              {% endfor %}
             {% endif %}
-            <li class="list-inline-item">
-              <a class="nav-link" href="{{ path('app.swagger_ui') }}">Api</a>
-            </li>
-          </ul>
-        </div>
-        <div class="col-2">
-          <ul class="it-footer-small-prints-list list-inline mb-0 d-flex flex-column flex-md-row text-right">
-            <li class="list-inline-item float-right text-right">
-              <a href="{{ path('operatori_index') }}">{{ 'nav.operatori.accesso_operatori'|trans() }}</a>
-            </li>
-          </ul>
+            <a href="{{ path('app.swagger_ui') }}">Api</a>
+            <a class="float-md-right text-right"
+               href="{{ path('operatori_index') }}">{{ 'nav.operatori.accesso_operatori'|trans() }}</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
   <div class="container text-secondary x-small mt-1 mb-1 text-right">
-    © {{ 'now' | date('Y') }} {{ enteName }} {{ 'digital_services' | trans}} <a target="_blank" href="https://opencityitalia.it/" title="OpenCity Italia">OpenCity Italia</a><a target="_blank" href="https://gitlab.com/opencontent/stanza-del-cittadino/core" title="{{ version }}"> {{ version }}</a>
+    © {{ 'now' | date('Y') }} {{ enteName }} {{ 'digital_services' | trans }} <a target="_blank"
+                                                                                 href="https://opencityitalia.it/"
+                                                                                 title="OpenCity Italia">OpenCity
+      Italia</a><a target="_blank" href="https://gitlab.com/opencontent/stanza-del-cittadino/core"
+                   title="{{ version }}"> {{ version }}</a>
   </div>
 </footer>

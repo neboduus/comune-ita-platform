@@ -76,8 +76,9 @@ $primary-b: 74;
       border: $timeline-pin-circle-border;
       margin-right: $v-gap * 2;
       background: #fff;
-      &.in-progress{
-        background:#efefef !important;
+
+      &.in-progress {
+        background: #efefef !important;
       }
     }
 
@@ -168,10 +169,12 @@ $primary-b: 74;
     margin-left: 4px;
     text-decoration: none;
     cursor: pointer;
+
     &.disabled {
       color: #ccc;
       cursor: auto;
     }
+
     &.current {
       color: $white;
       background-color: $primary;
@@ -180,32 +183,35 @@ $primary-b: 74;
 }
 
 
-  @media screen {
-    #pratica-summary, .formio-read-only{
-    .d-preview-calendar{
+@media screen {
+  #pratica-summary, .formio-read-only {
+    .d-preview-calendar {
       display: block;
     }
-      .d-preview-calendar-none{
-        display: none;
-      }
-  }
-    .d-preview-calendar{
+
+    .d-preview-calendar-none {
       display: none;
     }
-    .d-preview-calendar-none{
-      display: block;
-    }
+  }
+  .d-preview-calendar {
+    display: none;
+  }
+  .d-preview-calendar-none {
+    display: block;
+  }
 }
 
-.d-none{
-  &-FormIO{
-display: none;
+.d-none {
+  &-FormIO {
+    display: none;
   }
-  &-SciaPraticaEdilizia{
+
+  &-SciaPraticaEdilizia {
     display: none;
 
   }
 }
+
 //Fix resize label in tabs
 .tab-content .form-group label {
   width: auto !important;
@@ -213,7 +219,8 @@ display: none;
 
 .truncate-wrapper {
   max-width: 75%;
-  .chip-label{
+
+  .chip-label {
     height: auto !important;
     transform: none !important;
   }
@@ -229,44 +236,52 @@ display: none;
   z-index: 10;
 }
 
-.flex-1{
-  flex:1
+.flex-1 {
+  flex: 1
 }
 
-.text-forward{
+.text-forward {
   color: $black;
   text-decoration: none;
-  :focus{
+
+  :focus {
     text-decoration: none;
   }
 }
-.h{
-  &-80{
-  height: 80px;
-}
-  &-70{
+
+.h {
+  &-80 {
+    height: 80px;
+  }
+
+  &-70 {
     height: 70px;
   }
-  &-60{
+
+  &-60 {
     height: 60px;
   }
-  &-50{
+
+  &-50 {
     height: 50px;
   }
-  &-40{
+
+  &-40 {
     height: 40px;
   }
 }
-.tooltip-inner{
+
+.tooltip-inner {
   font-size: 12px;
 }
 
-.icon{
-  &-50{
-  height: 50px;
-  width: 50px;
-}
-  &-70{
+.icon {
+  &-50 {
+    height: 50px;
+    width: 50px;
+  }
+
+  &-70 {
     height: 70px;
     width: 70px;
   }
@@ -286,5 +301,60 @@ a.list-item.left-icon {
 
   .collapse-header *[data-toggle='collapse'] {
     border-top: 0
+  }
+}
+
+.p-contacts {
+  padding: 2.5rem 1.5rem;
+}
+
+.bg-grey-card {
+  background: #ebeef0;
+}
+
+.shadow-contacts {
+  box-shadow: inset 0 10px 14px -12px rgb(0 0 0 / 34%);
+}
+
+
+/*************************/
+
+
+.bg-grey-card {
+  background: #ebeef0
+}
+
+.cmp-contacts{
+  ul{
+    list-style: none;
+    margin:0;
+  }
+  .contact-list li {
+    line-height: 1.5;
+    margin: 0.889rem 0;
+    font-weight: 400;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    & span {
+      margin-left: 10px;
+    }
+  }
+
+  .card:after {
+    content: none;
+  }
+
+  .title-medium-2-semi-bold {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.2;
+
+    @media(min-width: 576px) {
+      font-size: 1.3333333333rem
+    }
+    @media(min-width: 768px) {
+      line-height: 1.2
+    }
   }
 }
