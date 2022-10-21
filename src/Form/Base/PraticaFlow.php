@@ -47,9 +47,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
    */
   protected $dematerializer;
 
-  /**
-   * @var bool
-   */
+  /** @var bool */
   protected $revalidatePreviousSteps = false;
 
   protected $handleFileUploads = false;
@@ -63,6 +61,7 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
   protected $em;
 
   protected $userSessionService;
+
   private $locale;
 
   /**
@@ -146,7 +145,8 @@ abstract class PraticaFlow extends FormFlow implements PraticaFlowInterface
     $pratica->setAuthenticationData($this->userSessionService->getCurrentUserAuthenticationData($pratica->getUser()))
       ->setSessionData($this->userSessionService->getCurrentUserSessionData($pratica->getUser()));
 
-    // Per non sovrascrivere comportamento in formio flow
+    // Se la folderId non è stata già impostata dal FormioFlow (non è presente nella submissione un campo valorizzato related_applications)
+    // Todo: bisogna controllare che il serviceGroup oltre ad essere presente il campo registerInFolder sia true???
     if ($pratica->getFolderId() == null) {
       $pratica->setServiceGroup($pratica->getServizio()->getServiceGroup());
       $pratica->setFolderId($repo->getFolderForApplication($pratica));
