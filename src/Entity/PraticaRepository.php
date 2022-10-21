@@ -565,11 +565,20 @@ class PraticaRepository extends EntityRepository
   private function getApplicationsCollectionsId($filterService)
   {
     $data = [];
-    if (empty($filterService)) {
-      $dql = 'SELECT json_agg(id) as ids, folder_id FROM pratica GROUP BY folder_id';
-    } else {
-      $dql = "SELECT json_agg(id) as ids, folder_id FROM pratica WHERE servizio_id = '$filterService' GROUP BY folder_id";
+    /*
+      SELECT json_agg(id) as ids, folder_id
+      FROM pratica
+      WHERE status != 1000 AND folder_id IS NOT null
+      GROUP BY folder_id, created_at
+      order by created_at asc
+      limit 1
+    */
+    // Per migliorare le performance mostriamo solo la prima delle pratiche che hanno stesso folder_id
+    $dql = 'SELECT json_agg(id) as ids, folder_id FROM pratica WHERE status != 1000 AND folder_id IS NOT null';
+    if (!empty($filterService)) {
+      $dql .= " AND servizio_id = '$filterService'";
     }
+    $dql .= ' GROUP BY folder_id, created_at ORDER BY created_at ASC LIMIT 1';
 
     $stmt = $this->getEntityManager()->getConnection()->prepare($dql);
     $result = $stmt->executeQuery()->fetchAllAssociative();
@@ -579,16 +588,15 @@ class PraticaRepository extends EntityRepository
       $data[] = $temp[0];
     }
 
-    $dql = 'SELECT id FROM pratica WHERE folder_id IS NULL';
+    // Elimino perchè la singola pratica non deve costituire un fascicolo, da verificare
+    /*$dql = 'SELECT id FROM pratica WHERE folder_id IS NULL';
     $stmt = $this->getEntityManager()->getConnection()->prepare($dql);
     $result = $stmt->executeQuery()->fetchAllAssociative();
-
     foreach ($result as $r) {
       if (!in_array($r['id'], $data)) {
         $data[] = $r['id'];
       }
-
-    }
+    }*/
     return $data;
   }
 
