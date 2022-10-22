@@ -196,6 +196,18 @@
             "config/routes/nelmio_api_doc.yaml"
         ]
     },
+    "oat-sa/bundle-health-check": {
+        "version": "2.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "003ae282d7649c68a650298f21f410067f131d08"
+        },
+        "files": [
+            "config/routes/health_check.yaml"
+        ]
+    },
     "omines/datatables-bundle": {
         "version": "0.2",
         "recipe": {
