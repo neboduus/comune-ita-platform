@@ -238,12 +238,14 @@ class PraticaManager
     $statusChange = new StatusChange();
     $statusChange->setEvento('Presa in carico');
     $statusChange->setOperatore($user->getFullName());
-    $this->praticaStatusService->setNewStatus(
-      $pratica,
-      Pratica::STATUS_PENDING,
-      $statusChange
-    );
-
+    
+    try {
+      $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_PENDING);
+      $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_PENDING, $statusChange);
+    } catch (\Exception $e) {
+      $this->praticaStatusService->setNewStatus($pratica, $pratica->getStatus(), $statusChange);
+    }
+    
     $this->logger->info(
       LogConstants::PRATICA_ASSIGNED,
       [
