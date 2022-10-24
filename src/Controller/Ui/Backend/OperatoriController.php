@@ -2,7 +2,6 @@
 
 namespace App\Controller\Ui\Backend;
 
-use App\Dto\Application;
 use App\Dto\ApplicationDto;
 use App\Dto\ApplicationOutcome;
 use App\Entity\Allegato;
@@ -18,7 +17,6 @@ use App\Entity\Servizio;
 use App\Entity\StatusChange;
 use App\Form\Extension\TestiAccompagnatoriProcedura;
 use App\Form\Operatore\Base\ApplicationOutcomeType;
-use App\Form\Operatore\Base\PraticaOperatoreFlow;
 use App\FormIO\Schema;
 use App\FormIO\SchemaFactoryInterface;
 use App\Logging\LogConstants;
@@ -40,15 +38,9 @@ use Ramsey\Uuid\Uuid;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -60,8 +52,6 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
  * Class OperatoriController

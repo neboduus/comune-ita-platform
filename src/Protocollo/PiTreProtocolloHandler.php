@@ -10,15 +10,11 @@ use App\Entity\Pratica;
 use App\Entity\RispostaIntegrazione;
 use App\Entity\Servizio;
 use App\Protocollo\Exception\ResponseErrorException;
-use App\Services\FileService;
+use App\Services\FileService\AllegatoFileService;
 use App\Utils\StringUtils;
+use Exception;
 use GuzzleHttp\Client;
-use League\Flysystem\FilesystemInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Constraints\All;
+use League\Flysystem\FileNotFoundException;
 
 /**
  * @property $instance string
@@ -32,7 +28,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
 
   private $instance;
   /**
-   * @var FileService
+   * @var AllegatoFileService
    */
   private $fileService;
 
@@ -40,16 +36,16 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
   /**
    * @param Client $client
    * @param $instance
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    */
-  public function __construct(Client $client, $instance, FileService $fileService)
+  public function __construct(Client $client, $instance, AllegatoFileService $fileService)
   {
     $this->client = $client;
     $this->instance = $instance;
     $this->fileService = $fileService;
   }
 
-  public function getName()
+  public function getName(): string
   {
     return 'PiTre';
   }
@@ -95,6 +91,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     }
   }
 
+  /**
+   * @throws ResponseErrorException
+   * @throws Exception
+   */
   public function protocolPredisposed(Pratica $pratica)
   {
     $parameters = $this->getParameters($pratica);
@@ -111,6 +111,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
   }
 
 
+  /**
+   * @throws ResponseErrorException
+   * @throws Exception
+   */
   public function protocolPredisposedAttachment(Pratica $pratica, AllegatoInterface $attachment)
   {
     $parameters = $this->getParameters($pratica);
@@ -135,6 +139,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param AllegatoInterface $allegato
    *
    * @throws ResponseErrorException
+   * @throws Exception
    */
   public function sendAllegatoToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
@@ -161,6 +166,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param AllegatoInterface $richiesta
    *
    * @throws ResponseErrorException
+   * @throws Exception
    */
   public function sendRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiesta)
   {
@@ -183,6 +189,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param AllegatoInterface $risposta
    *
    * @throws ResponseErrorException
+   * @throws Exception
    */
   public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $risposta)
   {
@@ -209,6 +216,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param AllegatoInterface $integrazione
    *
    * @throws ResponseErrorException
+   * @throws Exception
    */
   public function sendIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $rispostaIntegrazione, AllegatoInterface $integrazione)
   {
@@ -259,6 +267,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param Pratica $pratica
    *
    * @throws ResponseErrorException
+   * @throws Exception
    */
   public function sendRitiroToProtocollo(Pratica $pratica)
   {
@@ -306,9 +315,9 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param Pratica $pratica
    * @param AllegatoInterface|null $allegato
    * @return PiTreProtocolloParameters
-   * @throws \Exception
+   * @throws FileNotFoundException
    */
-  private function getParameters(Pratica $pratica, AllegatoInterface $allegato = null)
+  private function getParameters(Pratica $pratica, AllegatoInterface $allegato = null): PiTreProtocolloParameters
   {
     $ente = $pratica->getEnte();
     $servizio = $pratica->getServizio();
@@ -365,7 +374,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     return $parameters;
   }
 
-  private function getRispostaParameters(Pratica $pratica, AllegatoInterface $allegato = null)
+  /**
+   * @throws FileNotFoundException
+   */
+  private function getRispostaParameters(Pratica $pratica, AllegatoInterface $allegato = null): PiTreProtocolloParameters
   {
     $risposta = $pratica->getRispostaOperatore();
     $ente = $pratica->getEnte();
@@ -425,9 +437,9 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
   /**
    * @param Pratica $pratica
    * @return PiTreProtocolloParameters
-   * @throws \Exception
+   * @throws FileNotFoundException
    */
-  private function getRititroParameters(Pratica $pratica)
+  private function getRititroParameters(Pratica $pratica): PiTreProtocolloParameters
   {
 
     $ritiro = $pratica->getWithdrawAttachment();
@@ -475,11 +487,10 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param Pratica $pratica
    * @param AllegatoInterface $richiesta
    * @return PiTreProtocolloParameters
-   * @throws \Exception
+   * @throws FileNotFoundException
    */
-  private function getRichiestaIntegrazioneParameters(Pratica $pratica, AllegatoInterface $richiesta)
+  private function getRichiestaIntegrazioneParameters(Pratica $pratica, AllegatoInterface $richiesta): PiTreProtocolloParameters
   {
-
     $this->checkFileSize($pratica, $richiesta);
 
     $ente = $pratica->getEnte();
@@ -523,7 +534,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
    * @return PiTreProtocolloParameters
-   * @throws \Exception
+   * @throws FileNotFoundException
    */
   private function getRispostaIntegrazioneParameters(Pratica $pratica, AllegatoInterface $allegato)
   {
@@ -572,7 +583,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param RispostaIntegrazione $rispostaIntegrazione
    * @param AllegatoInterface $integrazione
    * @return PiTreProtocolloParameters
-   * @throws \Exception
+   * @throws FileNotFoundException
    */
   private function getIntegrazioneParameters(Pratica $pratica, RispostaIntegrazione $rispostaIntegrazione,  AllegatoInterface $integrazione)
   {
@@ -606,7 +617,7 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
    * @param Ente $ente
    * @return array
    */
-  private function getServizioParameters(Servizio $servizio, Ente $ente)
+  private function getServizioParameters(Servizio $servizio, Ente $ente): array
   {
     if (!empty($servizio->getProtocolloParameters())) {
       return (array)$servizio->getProtocolloParameters();
@@ -618,13 +629,14 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
   /**
    * @param Pratica $pratica
    * @param AllegatoInterface $allegato
-   * @throws \Exception
+   * @throws FileNotFoundException
+   * @throws Exception
    */
   private function checkFileSize(Pratica $pratica, AllegatoInterface $allegato)
   {
     $data = $this->fileService->getAttachmentData($allegato);
     if ($data['size'] <= 0) {
-      throw new \Exception('File size error - application: ' .  $pratica->getId() . ' - attachment: ' . $allegato->getId());
+      throw new Exception('File size error - application: ' .  $pratica->getId() . ' - attachment: ' . $allegato->getId());
     }
   }
 

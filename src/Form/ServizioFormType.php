@@ -2,10 +2,9 @@
 
 namespace App\Form;
 
-use App\Dto\Service;
+use App\Model\Service;
 use App\Services\FormServerApiAdapterService;
 use App\Services\Manager\BackofficeManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Symfony\Component\Form\AbstractType;
@@ -14,9 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -73,6 +70,8 @@ class ServizioFormType extends AbstractType
       ->add('who')
       ->add('special_cases')
       ->add('more_info')
+      ->add('constraints')
+      ->add('conditions')
       ->add('compilation_info')
       ->add('final_indications', TextareaType::class, [
         "label" => false,
@@ -141,6 +140,8 @@ class ServizioFormType extends AbstractType
         'prototype' => true,
         "label" => false
       ])
+      ->add('allow_withdraw')
+      ->add('external_card_url')
     ;
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));

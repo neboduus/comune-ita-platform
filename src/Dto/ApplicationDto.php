@@ -9,6 +9,7 @@ use App\Entity\RichiestaIntegrazione;
 use App\Entity\RispostaIntegrazione;
 use App\Entity\RispostaIntegrazioneRepository;
 use App\Entity\UserSession;
+use App\Model\Application;
 use App\Payment\GatewayCollection;
 use App\Services\PraticaStatusService;
 use Doctrine\ORM\EntityManagerInterface;

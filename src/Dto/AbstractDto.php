@@ -3,6 +3,7 @@
 namespace App\Dto;
 
 use App\Entity\Allegato;
+use App\Model\PublicFile;
 use App\Utils\StringUtils;
 use \DateTime;
 
@@ -115,5 +116,19 @@ abstract class AbstractDto
     } catch (\Exception $e) {
       return '';
     }
+  }
+
+  public function preparePublicFiles($files, string $baseUrl = '', int $version = 1): array
+  {
+    $result = [];
+    foreach ($files as $f) {
+      /** @var PublicFile $f */
+      $temp['name'] = $f->getName();
+      $temp['url'] = $baseUrl . '/attachments/'. $f->getType() . '/' . $f->getName() . '?version=' . $version;
+      $temp['original_name'] = $f->getOriginalName();
+      $temp['created_at'] = $f->getCreatedAt();
+      $result[] = $temp;
+    }
+    return $result;
   }
 }

@@ -9,6 +9,7 @@ use App\Model\SubscriptionPayment;
 use App\Security\Voters\BackofficeVoter;
 use App\Security\Voters\SubscriptionVoter;
 use App\Services\InstanceService;
+use App\Utils\FormUtils;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -350,7 +351,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -393,7 +394,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *             type="object",
    *             ref=@Model(type=SubscriptionService::class)
    *         )
-   *     ) 
+   *     )
    * )
    *
    * @OA\Response(
@@ -441,7 +442,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
         'title' => 'There was a validation error',
@@ -528,7 +529,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -616,27 +617,6 @@ class SubscriptionServicesAPIController extends AbstractApiController
 
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
-  }
-
-  /**
-   * @param FormInterface $form
-   * @return array
-   */
-  private function getErrorsFromForm(FormInterface $form)
-  {
-
-    $errors = array();
-    foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
-        }
-      }
-    }
-    return $errors;
   }
 
 
@@ -913,7 +893,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -1028,7 +1008,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
         'title' => 'There was a validation error',
@@ -1144,7 +1124,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',

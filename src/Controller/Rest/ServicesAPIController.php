@@ -2,49 +2,38 @@
 
 namespace App\Controller\Rest;
 
+use App\Dto\ServiceDto;
 use App\Entity\Categoria;
-use App\Entity\Ente;
 use App\Entity\Erogatore;
 use App\Entity\GeographicArea;
-use App\Entity\OperatoreUser;
-use App\Entity\Pratica;
-use App\Entity\PraticaRepository;
 use App\Entity\Recipient;
 use App\Entity\ServiceGroup;
-use App\Logging\LogConstants;
-use App\Model\PaymentParameters;
-use App\Model\FlowStep;
-use App\Model\AdditionalData;
 use App\Entity\Servizio;
-use App\Dto\Service;
+use App\Model\PublicFile;
+use App\Model\Service;
 use App\Protocollo\ProtocolloHandlerRegistry;
+use App\Services\FileService\ServiceAttachmentsFileService;
 use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
 use App\Services\Manager\ServiceManager;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Utils\FormUtils;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
-use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Form\FormInterface;
+use League\Flysystem\FileNotFoundException;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SC;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use function Aws\boolean_value;
+use Psr\Log\LoggerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class ServicesAPIController
@@ -81,6 +70,12 @@ class ServicesAPIController extends AbstractFOSRestController
   private $serviceManager;
 
   /**
+   * @var ServiceDto
+   */
+  private $serviceDto;
+
+
+  /**
    * ServicesAPIController constructor.
    * @param EntityManagerInterface $em
    * @param InstanceService $is
@@ -88,21 +83,25 @@ class ServicesAPIController extends AbstractFOSRestController
    * @param FormServerApiAdapterService $formServerApiAdapterService
    * @param ProtocolloHandlerRegistry $handlerRegistry
    * @param ServiceManager $serviceManager
+   * @param ServiceDto $serviceDto
    */
   public function __construct(
-    EntityManagerInterface $em,
-    InstanceService $is,
-    LoggerInterface $logger,
+    EntityManagerInterface      $em,
+    InstanceService             $is,
+    LoggerInterface             $logger,
     FormServerApiAdapterService $formServerApiAdapterService,
-    ProtocolloHandlerRegistry $handlerRegistry,
-    ServiceManager $serviceManager
-  ) {
+    ProtocolloHandlerRegistry   $handlerRegistry,
+    ServiceManager              $serviceManager,
+    ServiceDto                  $serviceDto
+  )
+  {
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
     $this->formServerApiAdapterService = $formServerApiAdapterService;
     $this->handlerRegistry = $handlerRegistry;
     $this->serviceManager = $serviceManager;
+    $this->serviceDto = $serviceDto;
 
     foreach ($this->handlerRegistry->getAvailableHandlers() as $alias => $handler) {
       $this->handlerList[] = $alias;
@@ -202,7 +201,7 @@ class ServicesAPIController extends AbstractFOSRestController
       $services = $this->serviceManager->getServices($request);
 
       foreach ($services as $s) {
-        $result [] = Service::fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
+        $result [] = $this->serviceDto->fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
       }
 
       return $this->view($result, Response::HTTP_OK);
@@ -274,7 +273,7 @@ class ServicesAPIController extends AbstractFOSRestController
       }
 
       return $this->view(
-        Service::fromEntity($result, $this->formServerApiAdapterService->getFormServerPublicUrl()),
+        $this->serviceDto->fromEntity($result, $this->formServerApiAdapterService->getFormServerPublicUrl()),
         Response::HTTP_OK
       );
     } catch (\Exception $e) {
@@ -367,7 +366,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
     if (!$this->checkProtocolHandler($request)) {
       return $this->view(
-        ["Unknown protocol handler, allowed handlers are: ".implode(', ', $this->handlerList)],
+        ["Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList)],
         Response::HTTP_BAD_REQUEST
       );
     }
@@ -377,7 +376,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -401,7 +400,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
       // Erogatore
       $erogatore = new Erogatore();
-      $erogatore->setName('Erogatore di '.$service->getName().' per '.$ente->getName());
+      $erogatore->setName('Erogatore di ' . $service->getName() . ' per ' . $ente->getName());
       $erogatore->addEnte($ente);
       $this->em->persist($erogatore);
       $service->activateForErogatore($erogatore);
@@ -434,7 +433,7 @@ class ServicesAPIController extends AbstractFOSRestController
     }
 
     return $this->view(
-      Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl()),
+      $this->serviceDto->fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl()),
       Response::HTTP_CREATED
     );
 
@@ -491,7 +490,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
       if (!$this->checkProtocolHandler($request)) {
         return $this->view(
-          ["Unknown protocol handler, allowed handlers are: ".implode(', ', $this->handlerList)],
+          ["Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList)],
           Response::HTTP_BAD_REQUEST
         );
       }
@@ -502,13 +501,13 @@ class ServicesAPIController extends AbstractFOSRestController
       if (!$service) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
-      //$serviceDto = Service::fromEntity($service);
+      //$serviceDto = $this->serviceDto->fromEntity($service);
       $serviceDto = new Service();
       $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
       $this->processForm($request, $form);
 
       if ($form->isSubmitted() && !$form->isValid()) {
-        $errors = $this->getErrorsFromForm($form);
+        $errors = FormUtils::getErrorsFromForm($form);
         $data = [
           'type' => 'put_validation_error',
           'title' => 'There was a validation error',
@@ -592,7 +591,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
       if (!$this->checkProtocolHandler($request)) {
         return $this->view(
-          ["Unknown protocol handler, allowed handlers are: ".implode(', ', $this->handlerList)],
+          ["Unknown protocol handler, allowed handlers are: " . implode(', ', $this->handlerList)],
           Response::HTTP_BAD_REQUEST
         );
       }
@@ -605,13 +604,13 @@ class ServicesAPIController extends AbstractFOSRestController
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
-      $serviceDto = Service::fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl());
+      $serviceDto = $this->serviceDto->fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl());
 
       $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
       $this->processForm($request, $form);
 
       if ($form->isSubmitted() && !$form->isValid()) {
-        $errors = $this->getErrorsFromForm($form);
+        $errors = FormUtils::getErrorsFromForm($form);
         $data = [
           'type' => 'validation_error',
           'title' => 'There was a validation error',
@@ -679,30 +678,9 @@ class ServicesAPIController extends AbstractFOSRestController
    */
   private function processForm(Request $request, FormInterface $form)
   {
-    $data = Service::normalizeData(json_decode($request->getContent(), true));
+    $data = ServiceDto::normalizeData(json_decode($request->getContent(), true));
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
-  }
-
-  /**
-   * @param FormInterface $form
-   * @return array
-   */
-  private function getErrorsFromForm(FormInterface $form)
-  {
-    $errors = array();
-    foreach ($form->getErrors() as $error) {
-      $errors[] = $error;
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
-        }
-      }
-    }
-
-    return $errors;
   }
 
   private function checkProtocolHandler(Request $request)
@@ -740,7 +718,7 @@ class ServicesAPIController extends AbstractFOSRestController
     foreach ($serviceDto->getRecipientsId() as $r) {
       $recipient = $this->em->getRepository('App\Entity\Recipient')->find($r);
       if ($recipient instanceof Recipient) {
-        $recipients []= $recipient;
+        $recipients [] = $recipient;
       }
     }
     $serviceDto->setRecipientsId($recipients);
@@ -749,10 +727,66 @@ class ServicesAPIController extends AbstractFOSRestController
     foreach ($serviceDto->getGeographicAreasId() as $g) {
       $geographicArea = $this->em->getRepository('App\Entity\GeographicArea')->find($g);
       if ($geographicArea instanceof GeographicArea) {
-        $geographicAreas []= $geographicArea;
+        $geographicAreas [] = $geographicArea;
       }
     }
     $serviceDto->setGeographicAreasId($geographicAreas);
+  }
+
+  /**
+   * Retrieve a Service public attachment
+   * @Rest\Get("/{id}/attachments/{attachmentType}/{filename}", name="service_api_attachment_get")
+   *
+   * @OA\Response(
+   *     response=200,
+   *     description="Retrieve attachment file",
+   * )
+   *
+   * @OA\Response(
+   *     response=404,
+   *     description="Attachment not found"
+   * )
+   * @OA\Tag(name="services")
+   *
+   * @param $id
+   * @param $attachmentType
+   * @param $filename
+   * @param ServiceAttachmentsFileService $fileService
+   * @return View|Response
+   */
+  public function attachmentAction($id, $attachmentType, $filename, ServiceAttachmentsFileService $fileService)
+  {
+    $repository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
+    /** @var Servizio $service */
+    $service = $repository->find($id);
+
+    if (!$service) {
+      return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
+    }
+
+    if (!in_array($attachmentType, [PublicFile::CONDITIONS_TYPE, PublicFile::COSTS_TYPE])) {
+      $this->logger->error("Invalid type $attachmentType");
+      return $this->view(["Invalid type: $attachmentType is not supported"], Response::HTTP_BAD_REQUEST);
+    }
+
+    if ($attachmentType === PublicFile::CONDITIONS_TYPE) {
+      $attachment = $service->getConditionAttachmentByName($filename);
+    } elseif ($attachmentType === PublicFile::COSTS_TYPE) {
+      $attachment = $service->getCostAttachmentByName($filename);
+    } else {
+      $attachment = null;
+    }
+
+    if (!$attachment) {
+      return $this->view(["$filename not found"], Response::HTTP_NOT_FOUND);
+    }
+
+    try {
+      return $fileService->download($attachment->getOriginalName(), $service, $attachmentType);
+    } catch (FileNotFoundException $e) {
+      $this->logger->error("Attachment $filename not found for type $attachmentType");
+      return $this->view(["$filename not found"], Response::HTTP_NOT_FOUND);
+    }
   }
 
 }

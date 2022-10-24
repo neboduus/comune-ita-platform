@@ -18,45 +18,29 @@ use App\Form\Base\AllegatoType;
 use App\Form\Extension\TestiAccompagnatoriProcedura;
 use App\Logging\LogConstants;
 use App\Security\Voters\AttachmentVoter;
-use App\Services\FileService;
-use App\Services\ModuloPdfBuilderService;
+use App\Services\FileService\AbstractFileService;
+use App\Services\FileService\AllegatoFileService;
 use App\Validator\Constraints\ValidMimeType;
-use Aws\S3\S3Client;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use League\Flysystem\FileNotFoundException;
-use League\Flysystem\FilesystemInterface;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Form;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Vich\UploaderBundle\Mapping\PropertyMapping;
-use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
-use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
 
 /**
  * Class AllegatoController
@@ -76,10 +60,7 @@ class AllegatoController extends AbstractController
   /** @var LoggerInterface */
   private $logger;
 
-  /** @var ValidatorInterface */
-  private $validator;
-
-  /** @var FileService */
+  /** @var AllegatoFileService */
   private $fileService;
 
   /** @var EntityManagerInterface */
@@ -97,8 +78,7 @@ class AllegatoController extends AbstractController
    * @param TranslatorInterface $translator
    * @param RouterInterface $router
    * @param LoggerInterface $logger
-   * @param ValidatorInterface $validator
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    * @param EntityManagerInterface $entityManager
    * @param SessionInterface $session
    * @param $allowedExtensions
@@ -107,8 +87,7 @@ class AllegatoController extends AbstractController
     TranslatorInterface $translator,
     RouterInterface $router,
     LoggerInterface $logger,
-    ValidatorInterface $validator,
-    FileService $fileService,
+    AllegatoFileService $fileService,
     EntityManagerInterface $entityManager,
     SessionInterface $session,
     $allowedExtensions
@@ -117,7 +96,6 @@ class AllegatoController extends AbstractController
     $this->translator = $translator;
     $this->router = $router;
     $this->logger = $logger;
-    $this->validator = $validator;
     $this->fileService = $fileService;
     $this->entityManager = $entityManager;
     $this->session = $session;
@@ -179,7 +157,7 @@ class AllegatoController extends AbstractController
       $allegato->setOriginalFilename($fileName);
       $allegato->setDescription($description);
       $allegato->setMimeType($mimeType);
-      $expireDate = new DateTime(FileService::PRESIGNED_PUT_EXPIRE_STRING);
+      $expireDate = new DateTime(AbstractFileService::PRESIGNED_PUT_EXPIRE_STRING);
       $allegato->setExpireDate($expireDate);
       $allegato->setProtocolRequired($protocolRequired);
 
@@ -193,7 +171,7 @@ class AllegatoController extends AbstractController
       $this->entityManager->persist($allegato);
       $this->entityManager->flush();
 
-      $uri = $this->fileService->createPresignedPostRequest($allegato);
+      $uri = $this->fileService->getPresignedPostRequestUri($allegato);
       $data = [
         'id' => $allegato->getId(),
         'uri' => $uri,
@@ -257,12 +235,16 @@ class AllegatoController extends AbstractController
         $allegato = $this->entityManager->getRepository('App\Entity\Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($allegato instanceof Allegato) {
           if ($allegato->getHash() == hash('sha256', $session->getId())){
-            return $this->fileService->download($allegato);
+            try {
+              return $this->fileService->download($allegato);
+            } catch (FileNotFoundException $e) {
+              return new Response(["Attachment not found"], Response::HTTP_NOT_FOUND);
+            }
           }else{
             return $this->redirectToRoute('allegati_download_cpsuser', ['allegato' => $allegato]);
           }
         } else {
-          return new Response('', Response::HTTP_NOT_FOUND);
+          return new Response(["Attachment not found"], Response::HTTP_NOT_FOUND);
         }
         break;
 
@@ -553,10 +535,14 @@ class AllegatoController extends AbstractController
    * @Route("/operatori/risposta/{allegato}", name="risposta_download_operatore", methods={"GET"})
    * @return Response
    */
-  public function allegatoDownloadAction(Allegato $allegato)
+  public function allegatoDownloadAction(Allegato $allegato): Response
   {
     $this->denyAccessUnlessGranted(AttachmentVoter::DOWNLOAD, $allegato);
-    return $this->fileService->download($allegato);
+    try {
+      return $this->fileService->download($allegato);
+    } catch (FileNotFoundException $e) {
+      return new Response(["Attachment not found"], Response::HTTP_NOT_FOUND);
+    }
   }
 
   /**

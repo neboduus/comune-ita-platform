@@ -13,7 +13,89 @@
 
       <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
         {{ form_start(form) }}
-        {{ form_widget(form) }}
+
+        {{ form_row(form.name) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.shortDescription) }}
+        {{ form_row(form.who) }}
+        {{ form_row(form.howto) }}
+        {{ form_row(form.howToDo) }}
+        {{ form_row(form.whatYouNeed) }}
+        {{ form_row(form.whatYouGet) }}
+        {{ form_row(form.costs) }}
+        <div>
+          {{ form_row(form.costs_attachments) }}
+          {% if item.costsAttachments %}
+            <ul class="upload-file-list">
+              {% for attachment in item.costsAttachments %}
+                <li class="upload-file success">
+                  <svg class="icon icon-sm" aria-hidden="true">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-files"></use>
+                  </svg>
+                  <a
+                    href="{{ path('service_group_api_attachment_get', {'id': item.id, 'attachmentType': attachment.type, 'filename': attachment.name}) }}"
+                    download>{{ attachment.decoratedName }}</a>
+                  <button class="attachment-delete" type="button"
+                          data-delete-url="{{ path('admin_delete_group_attachment', {
+                            'id': item.id,
+                            'filename': attachment.name,
+                            'attachmentType': attachment.type
+                          }) }}">
+                  <span
+                    class="sr-only">{{ 'servizio.delete_filename' | trans({'%filename%': attachment.originalName }) }}</span>
+                    <svg class="icon icon-danger" aria-hidden="true">
+                      <use href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                    </svg>
+                  </button>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>{{ 'servizio.no_attachments_uploaded' | trans }}</p>
+          {% endif %}
+        </div>
+        {{ form_row(form.specialCases) }}
+        {{ form_row(form.moreInfo) }}
+        {{ form_row(form.constraints) }}
+        {{ form_row(form.timesAndDeadlines) }}
+        {{ form_row(form.conditions) }}
+        <div>
+          {{ form_row(form.conditions_attachments) }}
+          {% if item.conditionsAttachments %}
+            <ul class="upload-file-list">
+              {% for attachment in item.conditionsAttachments %}
+                <li class="upload-file success">
+                  <svg class="icon icon-sm" aria-hidden="true">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-files"></use>
+                  </svg>
+                  <a
+                    href="{{ path('service_group_api_attachment_get', {'id': item.id, 'attachmentType': attachment.type, 'filename': attachment.name}) }}"
+                    download>{{ attachment.decoratedName }}</a>
+                  <button class="attachment-delete" type="button"
+                          data-delete-url="{{ path('admin_delete_group_attachment', {
+                            'id': item.id,
+                            'filename': attachment.name,
+                            'attachmentType': attachment.type
+                          }) }}">
+                  <span
+                    class="sr-only">{{ 'servizio.delete_filename' | trans({'%filename%': attachment.originalName }) }}</span>
+                    <svg class="icon icon-danger" aria-hidden="true">
+                      <use href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                    </svg>
+                  </button>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>{{ 'servizio.no_attachments_uploaded' | trans }}</p>
+          {% endif %}
+        </div>
+        {{ form_row(form.sticky) }}
+        {{ form_row(form.topics) }}
+        {{ form_row(form.recipients) }}
+        {{ form_row(form.geographic_areas) }}
+        {{ form_row(form.coverage) }}
+        {{ form_row(form.register_in_folder) }}
       </div>
 
       <div class="col-lg-12 px-lg-4 py-lg-2">
@@ -48,6 +130,25 @@
           {% else %}
             <em>{{ 'gruppo_di_servizi.nessun_servizio' | trans() }}</em>
           {% endif %}
+        </div>
+
+        <div id="life-business-events" class="collapse-div my-4">
+          <div class="collapse-header" id="heading-life-events">
+            <a class="btn" data-toggle="collapse" href="#life-events" role="button" aria-expanded="false" aria-controls="life-events">
+              {{ 'servizio.life_events' | trans }}
+            </a>
+          </div>
+          <div id="life-events" class="collapse mt-3" role="region" aria-labelledby="heading-life-events">
+            <div class="collapse-body">{{ form_row(form.life_events) }}</div>
+          </div>
+          <div class="collapse-header" id="heading-business-events">
+            <a class="btn" data-toggle="collapse" href="#business-events" aria-expanded="false" aria-controls="business-events">
+              {{ 'servizio.business_events' | trans }}
+            </a>
+          </div>
+          <div id="business-events" class="collapse mt-3" role="region" aria-labelledby="heading-business-events">
+            <div class="collapse-body">{{ form_row(form.business_events) }}</div>
+          </div>
         </div>
 
         <input class="btn btn-primary mr-1" type="submit" value="{{ 'salva' | trans }}" style="float: left"/>

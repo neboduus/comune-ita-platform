@@ -1,15 +1,11 @@
 <?php
 
 
-namespace App\Dto;
+namespace App\Model;
 
 use App\Entity\Allegato;
 use App\Entity\Meeting;
 use App\Entity\ModuloCompilato;
-use App\Entity\Pratica;
-use App\Entity\UserSession;
-use App\Payment\PaymentDataInterface;
-use App\Services\PraticaStatusService;
 use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;

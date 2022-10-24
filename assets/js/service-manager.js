@@ -23,17 +23,113 @@ const $language = document.documentElement.lang.toString();
 
 $(document).ready(function () {
 
-  let integrationTrigger = $('#integrations_data_trigger');
-  let integrationAction = $('#integrations_data_action');
+  $('.attachment-delete').on('click', function () {
+    let btn = $(this);
+    let deleteUrl = $(this).data("delete-url");
 
-  function disableIntegration() {
+    $.ajax(deleteUrl,
+      {
+        method: 'DELETE',
+        success: function () {   // success callback function
+          btn.closest('li').remove();
+        },
+        error: function () { // error callback
+          alert(`${Translator.trans('servizio.error_missing_filename', {}, 'messages', $language)}`)
+        }
+      });
+  });
+
+  // Show/Hide scheduler
+  const serviceStatus = $('#general_data_status');
+  const scheduledFrom = $('#general_data_scheduled_from').parent();
+  const scheduledTo = $('#general_data_scheduled_to').parent();
+  const hideScheduler = function () {
+    if (serviceStatus.val() === '4') {
+      scheduledFrom.show();
+      scheduledTo.show();
+    } else {
+      scheduledFrom.hide();
+      scheduledTo.hide();
+    }
+  }
+  hideScheduler();
+  serviceStatus.change(function () {
+    hideScheduler()
+  })
+
+  // Show/Hide shared checkbox
+  const serviceGroup = $('#general_data_service_group');
+  const sharedCheckbox = $('#general_data_shared_with_group');
+  const hideSharedCheckbox = function () {
+    if (serviceGroup.val()) {
+      sharedCheckbox.closest('div.form-group').show();
+    } else {
+      sharedCheckbox.prop('checked', false);
+      sharedCheckbox.closest('div.form-group').hide();
+    }
+  }
+  hideSharedCheckbox();
+  serviceGroup.change(function () {
+    hideSharedCheckbox()
+  })
+
+  // Show/Hide login checkbox
+  const $accessLevel = $('#general_data_access_level');
+  const $loginCheckbox = $('#general_data_login_suggested');
+  const hideLoginCheckbox = function () {
+    if ($accessLevel.val() === '0') {
+      $loginCheckbox.closest('div').show();
+    } else {
+      $loginCheckbox.prop('checked', false);
+      $loginCheckbox.closest('div').hide();
+    }
+  }
+  $accessLevel.change(function () {
+    hideLoginCheckbox();
+  })
+
+  // Show/Hide max response time
+  const workflow = $('#general_data_workflow');
+  const maxResponseTime = $('#general_data_max_response_time');
+  const hideMaxResponseTime = function (){
+    if(workflow.val() === '0'){
+      maxResponseTime.closest('div').show();
+    } else {
+      maxResponseTime.removeAttr('value');
+      maxResponseTime.closest('div').hide();
+    }
+  };
+  hideMaxResponseTime();
+  workflow.change(function () {
+    hideMaxResponseTime()
+  });
+
+  // Show/Hide external card url
+  const $externalCardUrlCheckbox = $('#general_data_enable_external_card_url');
+  const $externalCardUrl = $('#general_data_external_card_url');
+  const hideExternalCardUrl = function () {
+    if($externalCardUrlCheckbox.is(":checked")){
+      $externalCardUrl.closest('div').show();
+    } else {
+      $externalCardUrl.val('');
+      $externalCardUrl.closest('div').hide();
+    }
+  };
+  hideExternalCardUrl()
+  $externalCardUrlCheckbox.click(function () {
+    hideExternalCardUrl()
+  });
+
+  // Disable integrations
+  const integrationTrigger = $('#integrations_data_trigger');
+  const integrationAction = $('#integrations_data_action');
+  const disableIntegration = function () {
     if (integrationTrigger.val() === "0") {
       integrationAction.attr('disabled', true);
     } else {
       integrationAction.attr('disabled', false);
     }
   }
-
   disableIntegration();
   integrationTrigger.on("change", function () {
     disableIntegration();
@@ -50,75 +146,7 @@ $(document).ready(function () {
     draftMessage.closest('div').append(`<p id="draft_helper" class="small text-info mb-0">${Translator.trans('servizio.communication_citizen', {}, 'messages', $language)}</p>`)
   }
 
-  const serviceStatus = $('#general_data_status');
-  const scheduledFrom = $('#general_data_scheduled_from').parent();
-  const scheduledTo = $('#general_data_scheduled_to').parent();
-  const hideScheduler = function () {
 
-    if (serviceStatus.val() === '4') {
-      scheduledFrom.show();
-      scheduledTo.show();
-    } else {
-      scheduledFrom.hide();
-      scheduledTo.hide();
-    }
-  }
-  // Show/Hide scheduler on init
-  hideScheduler();
-
-  // Show/Hide scheduler on access level change
-  serviceStatus.change(function () {
-    hideScheduler()
-  })
-
-
-  const workflow = $('#general_data_workflow');
-  const maxResponseTime = $('#general_data_max_response_time');
-  const hideMaxResponseTime = function (){
-    if(workflow.val() === '0'){
-      maxResponseTime.closest('div').show();
-    } else {
-      maxResponseTime.removeAttr('value');
-      maxResponseTime.closest('div').hide();
-    }
-  };
-  hideMaxResponseTime();
-  workflow.change(function () { hideMaxResponseTime() });
-
-  let serviceGroup = $('#general_data_service_group');
-  let sharedCheckbox = $('#general_data_shared_with_group');
-  if (serviceGroup.val()) {
-    sharedCheckbox.closest('div').show();
-  } else {
-    sharedCheckbox.closest('div').hide();
-  }
-
-  // Show/Hide login checkbox
-  serviceGroup.change(function () {
-    if (this.value) {
-      sharedCheckbox.closest('div').show();
-    } else {
-      sharedCheckbox.prop('checked', false);
-      sharedCheckbox.closest('div').hide();
-    }
-  })
-
-  let loginCheckbox = $('#general_data_login_suggested');
-  if ($('#general_data_access_level').val() === '0') {
-    loginCheckbox.closest('div').show();
-  } else {
-    loginCheckbox.closest('div').hide();
-  }
-
-  // Show/Hide login checkbox
-  $('#general_data_access_level').change(function () {
-    if (this.value === '0') {
-      loginCheckbox.closest('div').show();
-    } else {
-      loginCheckbox.prop('checked', false);
-      loginCheckbox.closest('div').hide();
-    }
-  })
 
   // Step Template form
   if ($("#form-step-template").length) {

@@ -9,11 +9,10 @@ use App\Entity\RichiestaIntegrazioneDTO;
 use App\Entity\RispostaOperatoreDTO;
 use App\Entity\SciaPraticaEdilizia;
 use App\Entity\Servizio;
-use App\Entity\StatusChange;
 use App\Logging\LogConstants;
 use App\Mapper\Giscom\GiscomStatusMapper;
 use App\Services\DelayedGiscomAPIAdapterService;
-use App\Services\FileService;
+use App\Services\FileService\AllegatoFileService;
 use App\Services\GiscomAPIAdapterService;
 use App\Services\GiscomAPIMapperService;
 use App\Services\PraticaIntegrationService;
@@ -21,10 +20,10 @@ use App\Services\PraticaStatusService;
 use App\Services\UserSessionService;
 use App\Utils\StringUtils;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use League\Flysystem\FileNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +33,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\VarDumper\VarDumper;
 
 /**
  * Class APIController
@@ -78,7 +76,7 @@ class GiscomAPIController extends AbstractController
   /** @var UserSessionService  */
   private $userSessionService;
   /**
-   * @var FileService
+   * @var AllegatoFileService
    */
   private $fileService;
 
@@ -92,7 +90,7 @@ class GiscomAPIController extends AbstractController
    * @param GiscomAPIAdapterService $giscomAPIAdapterService
    * @param DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService
    * @param UserSessionService $userSessionService
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    */
   public function __construct(
     LoggerInterface $logger,
@@ -103,7 +101,7 @@ class GiscomAPIController extends AbstractController
     GiscomAPIAdapterService $giscomAPIAdapterService,
     DelayedGiscomAPIAdapterService $delayedGiscomAPIAdapterService,
     UserSessionService $userSessionService,
-    FileService $fileService
+    AllegatoFileService $fileService
   ) {
     $this->logger = $logger;
     $this->statusService = $statusService;
@@ -149,11 +147,17 @@ class GiscomAPIController extends AbstractController
    * @Route("/giscom/pratica/attachment/{attachment}", name="giscom_api_attachment")
    * @Method({"GET"})
    * @Security("has_role('ROLE_GISCOM')")
+   * @param Request $request
+   * @param Allegato $attachment
    * @return Response
    */
-  public function attachmentAction(Request $request, Allegato $attachment)
+  public function attachmentAction(Request $request, Allegato $attachment): Response
   {
-    $fileContent = $this->fileService->getAttachmentContent($attachment);
+    try {
+      $fileContent = $this->fileService->getAttachmentContent($attachment);
+    } catch (FileNotFoundException $e) {
+      return new Response(["Attachment not found"], Response::HTTP_NOT_FOUND);
+    }
     // Provide a name for your file with extension
     //$filename = mb_convert_encoding($attachment->getOriginalFilename(), "ASCII", "auto");
     $filename = StringUtils::sanitizeFileName($attachment->getOriginalFilename());
