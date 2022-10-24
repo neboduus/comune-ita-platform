@@ -331,6 +331,8 @@ servizio:
   no_life_or_business_events: 'Non è stato specificato nessun evento'
   shared_with_group_message: 'Questo servizio condivide la scheda con il gruppo di servizi, di seguito sono mostrati i contenuti del gruppo di servizi associato.'
   shared_with_group_action: 'Modifica il gruppo di servizi'
+  external_card_url_message: 'La scheda di questo servizio è esterna alla piattaforma.'
+  external_card_url_action: 'Vai alla scheda del servizio esterna'
   machine_readable: 'JSON Object'
   indice: "Indice della pagina"
   azioni: "Vedi azioni"

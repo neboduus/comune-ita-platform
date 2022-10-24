@@ -84,6 +84,7 @@ class ServiceGroupType extends AbstractI18nType
       ->add("shortDescription", I18nTextareaType::class, [
         "label" => 'servizio.short_description',
         'required' => true,
+        'attr' => ['class' => 'simple'],
         'purify_html' => true,
       ])
       ->add("description", I18nTextareaType::class, [
@@ -328,6 +329,6 @@ class ServiceGroupType extends AbstractI18nType
 
   public function getBlockPrefix()
   {
-    return 'app_bundle_service_group_type';
+    return 'service_group';
   }
 }

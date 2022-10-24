@@ -155,7 +155,6 @@ class ServiziController extends AbstractController
       return $this->redirect($servizio->getExternalCardUrl());
     }
 
-
     $this->breadcrumbsService->generateServiceBreadcrumbs($servizio);
 
     $serviziArea = $serviziRepository->createQueryBuilder('servizio')
@@ -264,6 +263,10 @@ class ServiziController extends AbstractController
     $serviceGroup = $serviceGroupRepository->findOneBySlug($slug);
     if (!$serviceGroup instanceof ServiceGroup) {
       throw new NotFoundHttpException("ServiceGroup $slug not found");
+    }
+
+    if ($serviceGroup->getExternalCardUrl()) {
+      return $this->redirect($serviceGroup->getExternalCardUrl());
     }
 
     $this->breadcrumbsService->generateServiceGroupBreadcrumbs($serviceGroup);

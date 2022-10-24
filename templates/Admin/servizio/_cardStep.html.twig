@@ -1,53 +1,58 @@
 <div class="row">
   {% if servizio.isSharedWithGroup and servizio.serviceGroup %}
     <div class="col-lg-12 px-lg-4">
-      <div class="alert alert-info">
-        <p>{{ 'servizio.shared_with_group_message'|trans }} <a class="d-block"
-                                                               href="{{ path('admin_service_group_edit', {'id': servizio.serviceGroup.id}) }}"><i
-              class="fa fa-pencil"></i> {{ 'servizio.shared_with_group_action'|trans }}</a></p>
-      </div>
+      {% if servizio.ExternalCardUrl %}
+      {{ include('Admin/servizio/parts/_externalCardUrlEnabled.html.twig') }}
+      {% else %}
+        <div class="alert alert-info">
+          <p>{{ 'servizio.shared_with_group_message'|trans }}
+            <a class="d-block" href="{{ path('admin_service_group_edit', {'id': servizio.serviceGroup.id}) }}">
+              <i class="fa fa-pencil"></i> {{ 'servizio.shared_with_group_action'|trans }}
+            </a>
+          </p>
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.cos_e'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.description|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.short_description'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.shortDescription|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.short_description'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.shortDescription|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.cos_e'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.description|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.a_chi_si_rivolge'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.who|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.a_chi_si_rivolge'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.who|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.accedere'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.howto|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.accedere'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.howto|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.how_to_do'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.howToDo|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.how_to_do'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.howToDo|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.what_you_need'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.whatYouNeed|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.what_you_need'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.whatYouNeed|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.what_you_get'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.whatYouGet|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.what_you_get'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.whatYouGet|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.costs'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.costs|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.costs'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.costs|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.costs_attachments'|trans }}</strong></p>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.costs_attachments'|trans }}</strong></p>
         {% if servizio.serviceGroup.costsAttachments and (servizio.serviceGroup.costsAttachments | length > 0) %}
           {% for a in servizio.serviceGroup.costsAttachments %}
             {{ include('Servizi/parts/panel/service_attachment.html.twig', {
@@ -61,32 +66,32 @@
           </div>
         {% endif %}
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.casi_particolari'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.specialCases|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.casi_particolari'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.specialCases|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.maggiori_info'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.moreInfo|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.maggiori_info'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.moreInfo|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.constraints'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.constraints|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.constraints'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.constraints|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.times_and_deadlines'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.timesAndDeadlines|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.times_and_deadlines'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.timesAndDeadlines|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.conditions'|trans }}</strong></p>
-      <div class="p-2 bg-100 mb-3">
-        {{ servizio.serviceGroup.conditions|cleanMarkup|raw|nl2br }}
-      </div>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.conditions'|trans }}</strong></p>
+        <div class="p-2 bg-100 mb-3">
+          {{ servizio.serviceGroup.conditions|cleanMarkup|raw|nl2br }}
+        </div>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.conditions_attachments'|trans }}</strong></p>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.conditions_attachments'|trans }}</strong></p>
         {% if servizio.serviceGroup.conditionsAttachments and (servizio.serviceGroup.conditionsAttachments | length > 0) %}
           {% for a in servizio.serviceGroup.conditionsAttachments %}
             {{ include('Servizi/parts/panel/service_attachment.html.twig', {
@@ -100,194 +105,199 @@
           </div>
         {% endif %}
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.categoria'|trans }}</strong></p>
-      <ul>
-        {% if servizio.serviceGroup.topics %}
-          <li>{{ servizio.serviceGroup.topics.name }}</li>
-        {% else %}
-          <li>{{ 'servizio.no_topics'|trans }}</li>
-        {% endif %}
-      </ul>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.categoria'|trans }}</strong></p>
+        <ul>
+          {% if servizio.serviceGroup.topics %}
+            <li>{{ servizio.serviceGroup.topics.name }}</li>
+          {% else %}
+            <li>{{ 'servizio.no_topics'|trans }}</li>
+          {% endif %}
+        </ul>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.destinatari'|trans }}</strong></p>
-      <ul>
-        {% if servizio.serviceGroup.recipients %}
-          {% for r in servizio.serviceGroup.recipients %}
-            <li>{{ r.name }}</li>
-          {% endfor %}
-        {% else %}
-          <li>{{ 'servizio.no_recipients'|trans }}</li>
-        {% endif %}
-      </ul>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.destinatari'|trans }}</strong></p>
+        <ul>
+          {% if servizio.serviceGroup.recipients %}
+            {% for r in servizio.serviceGroup.recipients %}
+              <li>{{ r.name }}</li>
+            {% endfor %}
+          {% else %}
+            <li>{{ 'servizio.no_recipients'|trans }}</li>
+          {% endif %}
+        </ul>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.aree_geografiche'|trans }}</strong></p>
-      <ul>
-        {% if servizio.serviceGroup.geographicAreas %}
-          {% for r in servizio.serviceGroup.geographicAreas %}
-            <li>{{ r.name }}</li>
-          {% endfor %}
-        {% else %}
-          <li>{{ 'servizio.no_geographic_areas'|trans }}</li>
-        {% endif %}
-      </ul>
+        <p class="text-primary mb-2"><strong>{{ 'servizio.aree_geografiche'|trans }}</strong></p>
+        <ul>
+          {% if servizio.serviceGroup.geographicAreas %}
+            {% for r in servizio.serviceGroup.geographicAreas %}
+              <li>{{ r.name }}</li>
+            {% endfor %}
+          {% else %}
+            <li>{{ 'servizio.no_geographic_areas'|trans }}</li>
+          {% endif %}
+        </ul>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.life_events'|trans }}</strong></p>
-      <ul>
-        {% if servizio.serviceGroup.lifeEvents %}
-          {% set flipped_life_events = [] %}
-          {% for key, value in  constant('App\\Helpers\\EventTaxonomy::LIFE_EVENTS') %}
-            {% set flipped_life_events = flipped_life_events|merge({ (value): key }) %}
-          {% endfor %}
+        <p class="text-primary mb-2"><strong>{{ 'servizio.life_events'|trans }}</strong></p>
+        <ul>
+          {% if servizio.serviceGroup.lifeEvents %}
+            {% set flipped_life_events = [] %}
+            {% for key, value in  constant('App\\Helpers\\EventTaxonomy::LIFE_EVENTS') %}
+              {% set flipped_life_events = flipped_life_events|merge({ (value): key }) %}
+            {% endfor %}
 
-          {% for le in servizio.serviceGroup.lifeEvents %}
-            {% if flipped_life_events[le] is defined %}
-              <li>{{ flipped_life_events[le] | trans }}</li>{% endif %}
-          {% endfor %}
-        {% else %}
-          <li>{{ 'servizio.no_life_or_business_events'|trans }}</li>
-        {% endif %}
-      </ul>
+            {% for le in servizio.serviceGroup.lifeEvents %}
+              {% if flipped_life_events[le] is defined %}
+                <li>{{ flipped_life_events[le] | trans }}</li>{% endif %}
+            {% endfor %}
+          {% else %}
+            <li>{{ 'servizio.no_life_or_business_events'|trans }}</li>
+          {% endif %}
+        </ul>
 
-      <p class="text-primary mb-2"><strong>{{ 'servizio.business_events'|trans }}</strong></p>
-      <ul>
-        {% if servizio.serviceGroup.businessEvents %}
-          {% set flipped_business_events = [] %}
-          {% for key, value in  constant('App\\Helpers\\EventTaxonomy::BUSINESS_EVENTS') %}
-            {% set flipped_business_events = flipped_business_events|merge({ (value): key }) %}
-          {% endfor %}
+        <p class="text-primary mb-2"><strong>{{ 'servizio.business_events'|trans }}</strong></p>
+        <ul>
+          {% if servizio.serviceGroup.businessEvents %}
+            {% set flipped_business_events = [] %}
+            {% for key, value in  constant('App\\Helpers\\EventTaxonomy::BUSINESS_EVENTS') %}
+              {% set flipped_business_events = flipped_business_events|merge({ (value): key }) %}
+            {% endfor %}
 
-          {% for be in servizio.serviceGroup.businessEvents %}
-            {% if flipped_business_events[be] is defined %}
-              <li>{{ flipped_business_events[be] | trans }}</li>{% endif %}
-          {% endfor %}
-        {% else %}
-          <li>{{ 'servizio.no_life_or_business_events'|trans }}</li>
-        {% endif %}
-      </ul>
+            {% for be in servizio.serviceGroup.businessEvents %}
+              {% if flipped_business_events[be] is defined %}
+                <li>{{ flipped_business_events[be] | trans }}</li>{% endif %}
+            {% endfor %}
+          {% else %}
+            <li>{{ 'servizio.no_life_or_business_events'|trans }}</li>
+          {% endif %}
+        </ul>
 
-      <div class="mt-3 text-right">
-        <a href="{{ path('admin_servizio_index') }}" class="btn btn-outline-secondary">{{ 'annulla'|trans }}</a>
-        <a href="{{ path('admin_servizio_edit', {'id': servizio.id, 'step': 'formio'}) }}"
-           class="btn btn-secondary">{{ 'avanti'|trans }}</a>
-      </div>
+        <div class="mt-3 text-right">
+          <a href="{{ path('admin_servizio_index') }}" class="btn btn-outline-secondary">{{ 'annulla'|trans }}</a>
+          <a href="{{ path('admin_servizio_edit', {'id': servizio.id, 'step': 'formio'}) }}"
+             class="btn btn-secondary">{{ 'avanti'|trans }}</a>
+        </div>
+      {% endif %}
     </div>
   {% else %}
     <div class="col-lg-12 px-lg-4">
-      {{ form_start(form) }}
-      {{ form_errors(form) }}
-      {% if form.vars.helper.descriptionText|length > 0 %}
-        <blockquote>
-          {{ form.vars.helper.descriptionText|cleanMarkup|raw|nl2br }}
-        </blockquote>
+      {% if servizio.ExternalCardUrl %}
+        {{ include('Admin/servizio/parts/_externalCardUrlEnabled.html.twig') }}
+      {% else %}
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {% if form.vars.helper.descriptionText|length > 0 %}
+          <blockquote>
+            {{ form.vars.helper.descriptionText|cleanMarkup|raw|nl2br }}
+          </blockquote>
+        {% endif %}
+
+        {{ form_row(form.shortDescription) }}
+        {{ form_row(form.description) }}
+        {{ form_row(form.who) }}
+        {{ form_row(form.howto) }}
+        {{ form_row(form.howToDo) }}
+        {{ form_row(form.whatYouNeed) }}
+        {{ form_row(form.whatYouGet) }}
+        {{ form_row(form.costs) }}
+        <div class="form-group">
+          {{ form_row(form.costsAttachments) }}
+          {% if servizio.costsAttachments %}
+            <ul class="upload-file-list">
+              {% for attachment in servizio.costsAttachments %}
+                <li class="upload-file success">
+                  <svg class="icon icon-sm" aria-hidden="true">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-files"></use>
+                  </svg>
+                  <a
+                    href="{{ path('service_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}) }}"
+                    download>{{ attachment.decoratedName }}</a>
+                  <button class="attachment-delete" type="button"
+                          data-delete-url="{{ path('admin_delete_service_attachment', {
+                            'servizio': servizio.id,
+                            'filename': attachment.name,
+                            'attachmentType': attachment.type
+                          }) }}">
+                  <span
+                    class="sr-only">{{ 'servizio.delete_filename' | trans({'%filename%': attachment.originalName }) }}</span>
+                    <svg class="icon icon-danger" aria-hidden="true">
+                      <use href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                    </svg>
+                  </button>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>{{ 'servizio.no_attachments_uploaded' | trans }}</p>
+          {% endif %}
+        </div>
+        {{ form_row(form.specialCases) }}
+        {{ form_row(form.moreInfo) }}
+        {{ form_row(form.constraints) }}
+        {{ form_row(form.timesAndDeadlines) }}
+        {{ form_row(form.bookingCallToAction) }}
+        {{ form_row(form.conditions) }}
+        <div class="form-group">
+          {{ form_row(form.conditionsAttachments) }}
+          {% if servizio.conditionsAttachments %}
+            <ul class="upload-file-list">
+              {% for attachment in servizio.conditionsAttachments %}
+                <li class="upload-file success">
+                  <svg class="icon icon-sm" aria-hidden="true">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-files"></use>
+                  </svg>
+                  <a
+                    href="{{ path('service_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}) }}"
+                    download>{{ attachment.decoratedName }}</a>
+                  <button class="attachment-delete" type="button"
+                          data-delete-url="{{ path('admin_delete_service_attachment', {
+                            'servizio': servizio.id,
+                            'filename': attachment.name,
+                            'attachmentType': attachment.type
+                          }) }}">
+                  <span
+                    class="sr-only">{{ 'servizio.delete_filename' | trans({'%filename%': attachment.originalName }) }}</span>
+                    <svg class="icon icon-danger" aria-hidden="true">
+                      <use href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+                    </svg>
+                  </button>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>{{ 'servizio.no_attachments_uploaded' | trans }}</p>
+          {% endif %}
+        </div>
+
+        {{ form_row(form.topics) }}
+        {{ form_row(form.recipients) }}
+        {{ form_row(form.geographicAreas) }}
+        {{ form_row(form.coverage) }}
+
+        <div id="life-business-events" class="collapse-div my-4">
+          <div class="collapse-header" id="heading-life-events">
+            <a class="btn" data-toggle="collapse" href="#life-events" role="button" aria-expanded="false"
+               aria-controls="life-events">
+              {{ 'servizio.life_events' | trans }}
+            </a>
+          </div>
+          <div id="life-events" class="collapse mt-3" role="region" aria-labelledby="heading-life-events">
+            <div class="collapse-body">{{ form_row(form.life_events) }}</div>
+          </div>
+          <div class="collapse-header" id="heading-business-events">
+            <a class="btn" data-toggle="collapse" href="#business-events" aria-expanded="false"
+               aria-controls="business-events">
+              {{ 'servizio.business_events' | trans }}
+            </a>
+          </div>
+          <div id="business-events" class="collapse mt-3" role="region" aria-labelledby="heading-business-events">
+            <div class="collapse-body">{{ form_row(form.business_events) }}</div>
+          </div>
+        </div>
+
+        {{ form_rest(form) }}
+
+        {{ include('Admin/servizio/_saveButtons.html.twig') }}
+        {{ form_end(form) }}
       {% endif %}
-
-      {{ form_row(form.description) }}
-      {{ form_row(form.shortDescription) }}
-      {{ form_row(form.who) }}
-      {{ form_row(form.howto) }}
-      {{ form_row(form.howToDo) }}
-      {{ form_row(form.whatYouNeed) }}
-      {{ form_row(form.whatYouGet) }}
-      {{ form_row(form.costs) }}
-      <div>
-        {{ form_row(form.costsAttachments) }}
-        {% if servizio.costsAttachments %}
-          <ul class="upload-file-list">
-            {% for attachment in servizio.costsAttachments %}
-              <li class="upload-file success">
-                <svg class="icon icon-sm" aria-hidden="true">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-files"></use>
-                </svg>
-                <a
-                  href="{{ path('service_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}) }}"
-                  download>{{ attachment.decoratedName }}</a>
-                <button class="attachment-delete" type="button"
-                        data-delete-url="{{ path('admin_delete_service_attachment', {
-                          'servizio': servizio.id,
-                          'filename': attachment.name,
-                          'attachmentType': attachment.type
-                        }) }}">
-                  <span
-                    class="sr-only">{{ 'servizio.delete_filename' | trans({'%filename%': attachment.originalName }) }}</span>
-                  <svg class="icon icon-danger" aria-hidden="true">
-                    <use href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
-                  </svg>
-                </button>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p>{{ 'servizio.no_attachments_uploaded' | trans }}</p>
-        {% endif %}
-      </div>
-      {{ form_row(form.specialCases) }}
-      {{ form_row(form.moreInfo) }}
-      {{ form_row(form.constraints) }}
-      {{ form_row(form.timesAndDeadlines) }}
-      {{ form_row(form.bookingCallToAction) }}
-      {{ form_row(form.conditions) }}
-      <div>
-        {{ form_row(form.conditionsAttachments) }}
-        {% if servizio.conditionsAttachments %}
-          <ul class="upload-file-list">
-            {% for attachment in servizio.conditionsAttachments %}
-              <li class="upload-file success">
-                <svg class="icon icon-sm" aria-hidden="true">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-files"></use>
-                </svg>
-                <a
-                  href="{{ path('service_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}) }}"
-                  download>{{ attachment.decoratedName }}</a>
-                <button class="attachment-delete" type="button"
-                        data-delete-url="{{ path('admin_delete_service_attachment', {
-                          'servizio': servizio.id,
-                          'filename': attachment.name,
-                          'attachmentType': attachment.type
-                        }) }}">
-                  <span
-                    class="sr-only">{{ 'servizio.delete_filename' | trans({'%filename%': attachment.originalName }) }}</span>
-                  <svg class="icon icon-danger" aria-hidden="true">
-                    <use href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
-                  </svg>
-                </button>
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p>{{ 'servizio.no_attachments_uploaded' | trans }}</p>
-        {% endif %}
-      </div>
-
-      {{ form_row(form.topics) }}
-      {{ form_row(form.recipients) }}
-      {{ form_row(form.geographicAreas) }}
-      {{ form_row(form.coverage) }}
-
-      <div id="life-business-events" class="collapse-div my-4">
-        <div class="collapse-header" id="heading-life-events">
-          <a class="btn" data-toggle="collapse" href="#life-events" role="button" aria-expanded="false"
-             aria-controls="life-events">
-            {{ 'servizio.life_events' | trans }}
-          </a>
-        </div>
-        <div id="life-events" class="collapse mt-3" role="region" aria-labelledby="heading-life-events">
-          <div class="collapse-body">{{ form_row(form.life_events) }}</div>
-        </div>
-        <div class="collapse-header" id="heading-business-events">
-          <a class="btn" data-toggle="collapse" href="#business-events" aria-expanded="false"
-             aria-controls="business-events">
-            {{ 'servizio.business_events' | trans }}
-          </a>
-        </div>
-        <div id="business-events" class="collapse mt-3" role="region" aria-labelledby="heading-business-events">
-          <div class="collapse-body">{{ form_row(form.business_events) }}</div>
-        </div>
-      </div>
-
-      {{ form_rest(form) }}
-
-      {{ include('Admin/servizio/_saveButtons.html.twig') }}
-      {{ form_end(form) }}
     </div>
   {% endif %}
 </div>
