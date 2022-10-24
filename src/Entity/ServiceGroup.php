@@ -3,11 +3,14 @@
 
 namespace App\Entity;
 
+use App\Model\PublicFile;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OrderBy;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use JMS\Serializer\Annotation\Groups;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Ramsey\Uuid\Uuid;
 use OpenApi\Annotations as OA;
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -20,10 +23,16 @@ use Gedmo\Translatable\Translatable;
  *
  * @ORM\Entity(repositoryClass="App\Entity\ServiceGroupRepository")
  * @ORM\Table(name="service_group",)
+ * @ORM\HasLifecycleCallbacks
  *
  */
 class ServiceGroup implements Translatable
 {
+  /**
+   * Hook timestampable behavior
+   * updates createdAt, updatedAt fields
+   */
+  use TimestampableEntity;
 
   /**
    * @ORM\Column(type="guid")
@@ -120,6 +129,15 @@ class ServiceGroup implements Translatable
   private $costs;
 
   /**
+   * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @var PublicFile[]
+   * @OA\Property(
+   *   description="Costs' attachments, list of filenames", type="array", @OA\Items(ref=@Model(type="object")))
+   * @Groups({"read"})
+   */
+  private $costsAttachments;
+
+  /**
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="text", nullable=true)
@@ -145,6 +163,42 @@ class ServiceGroup implements Translatable
    * @Groups({"read", "write"})
    */
   private $moreInfo;
+
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @OA\Property(description="Any restrictions on access to the service, accepts html tags")
+   * @Groups({"read", "write"})
+   */
+  private $constraints;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @OA\Property(description="Service times and deadlines, accepts html tags")
+   */
+  private $timesAndDeadlines;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @OA\Property(description="Service group conditions, accepts html tags")
+   * @Groups({"read", "write"})
+   */
+  private $conditions;
+
+  /**
+   * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @var PublicFile[]
+   * @OA\Property(
+   *   description="Conditions' attachments, list of filenames", type="array", @OA\Items(ref=@Model(type="object")))
+   * @Groups({"read"})
+   */
+  private $conditionsAttachments;
 
   /**
    * @var string[]
@@ -204,6 +258,32 @@ class ServiceGroup implements Translatable
   private $geographicAreas;
 
   /**
+   * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @var array
+   * @OA\Property(
+   *   description="Linked life events from https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/life-event",
+   *   type="array", @OA\Items(type="string", example="https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/life-event/1"))
+   * @Groups({"read", "write"})
+   */
+  private $lifeEvents;
+
+  /**
+   * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @var array
+   * @OA\Property(description="Linked business events from https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/business-event",
+   *   type="array", @OA\Items(type="string", example="https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/business-event/1"))
+   * @Groups({"read", "write"})
+   */
+  private $businessEvents;
+
+  /**
+   * @ORM\Column(type="string", length=255, nullable=true)
+   * @Assert\Url
+   * @OA\Property(description="External service card url")
+   */
+  private $externalCardUrl;
+
+  /**
    * @Gedmo\Locale
    * Used locale to override Translation listener`s locale
    * this is not a mapped field of entity metadata, just a simple property
@@ -221,6 +301,12 @@ class ServiceGroup implements Translatable
     $this->services = new ArrayCollection();
     $this->recipients = new ArrayCollection();
     $this->geographicAreas = new ArrayCollection();
+
+    $this->lifeEvents = new ArrayCollection();
+    $this->businessEvents = new ArrayCollection();
+
+    $this->conditionsAttachments = new ArrayCollection();
+    $this->costsAttachments = new ArrayCollection();
   }
 
   /**
@@ -370,6 +456,117 @@ class ServiceGroup implements Translatable
   public function setMoreInfo($moreInfo)
   {
     $this->moreInfo = $moreInfo;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getConstraints(): ?string
+  {
+    return $this->constraints;
+  }
+
+  /**
+   * @param string|null $constraints
+   */
+  public function setConstraints(?string $constraints)
+  {
+    $this->constraints = $constraints;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getTimesAndDeadlines(): ?string
+  {
+    return $this->timesAndDeadlines;
+  }
+
+  /**
+   * @param string|null $timesAndDeadlines
+   */
+  public function setTimesAndDeadlines(?string $timesAndDeadlines)
+  {
+    $this->timesAndDeadlines = $timesAndDeadlines;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getConditions(): ?string
+  {
+    return $this->conditions;
+  }
+
+  /**
+   * @param string|null $conditions
+   */
+  public function setConditions(?string $conditions)
+  {
+    $this->conditions = $conditions;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getConditionsAttachments(): ArrayCollection
+  {
+    if (!$this->conditionsAttachments instanceof ArrayCollection) {
+      $this->conditionsAttachments = new ArrayCollection($this->conditionsAttachments);
+    }
+    return $this->conditionsAttachments;
+  }
+
+  /**
+   * @param string $name
+   * @return PublicFile|null
+   */
+  public function getConditionAttachmentByName(string $name): ?PublicFile
+  {
+    foreach ($this->getConditionsAttachments() as $attachment) {
+      if ($attachment->getName() === $name) {
+        return $attachment;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @param ArrayCollection $conditionsAttachments
+   * @return $this
+   */
+  public function setConditionsAttachments(ArrayCollection $conditionsAttachments): ServiceGroup
+  {
+    $this->conditionsAttachments = $conditionsAttachments;
+    return $this;
+  }
+
+  /**
+   * @param PublicFile $attachment
+   *
+   * @return $this
+   */
+  public function addConditionsAttachment(PublicFile $attachment): ServiceGroup
+  {
+    if (!$this->conditionsAttachments->contains($attachment)) {
+      $this->conditionsAttachments->add($attachment);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param PublicFile $attachment
+   *
+   * @return $this
+   */
+  public function removeConditionsAttachment(PublicFile $attachment): ServiceGroup
+  {
+    if ($this->conditionsAttachments->contains($attachment)) {
+      $this->conditionsAttachments->removeElement($attachment);
+    }
+
+    return $this;
   }
 
   /**
@@ -835,5 +1032,166 @@ class ServiceGroup implements Translatable
     $this->costs = $costs;
 
     return $this;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getCostsAttachments(): ArrayCollection
+  {
+    if (!$this->costsAttachments instanceof ArrayCollection) {
+      $this->costsAttachments = new ArrayCollection($this->costsAttachments);
+    }
+    return $this->costsAttachments;
+  }
+
+  /**
+   * @param string $name
+   * @return PublicFile|null
+   */
+  public function getCostAttachmentByName(string $name): ?PublicFile
+  {
+    foreach ($this->getCostsAttachments() as $attachment) {
+      if ($attachment->getName() === $name) {
+        return $attachment;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @param ArrayCollection $costsAttachments
+   * @return $this
+   */
+  public function setCostsAttachments(ArrayCollection $costsAttachments): ServiceGroup
+  {
+    $this->costsAttachments = $costsAttachments;
+    return $this;
+  }
+
+  /**
+   * @param PublicFile $attachment
+   *
+   * @return $this
+   */
+  public function addCostsAttachment(PublicFile $attachment): ServiceGroup
+  {
+    if (!$this->costsAttachments->contains($attachment)) {
+      $this->costsAttachments->add($attachment);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param PublicFile $attachment
+   *
+   * @return $this
+   */
+  public function removeCostsAttachment(PublicFile $attachment): ServiceGroup
+  {
+    if ($this->costsAttachments->contains($attachment)) {
+      $this->costsAttachments->removeElement($attachment);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @return array
+   */
+  public function getLifeEvents()
+  {
+    return [];
+    return $this->lifeEvents ?? [];
+  }
+
+  /**
+   * @param array $lifeEvents
+   * @return $this
+   */
+  public function setLifeEvents(array $lifeEvents = []): ServiceGroup
+  {
+    $this->lifeEvents = $lifeEvents;
+    return $this;
+  }
+
+  /**
+   * @return array
+   */
+  public function getBusinessEvents()
+  {
+    return [];
+    return $this->businessEvents ?? [];
+  }
+
+  /**
+   * @param array $businessEvents
+   * @return $this
+   */
+  public function setBusinessEvents(array $businessEvents = []): ServiceGroup
+  {
+    $this->businessEvents = $businessEvents;
+    return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getExternalCardUrl()
+  {
+    return $this->externalCardUrl;
+  }
+
+  /**
+   * @param mixed $externalCardUrl
+   */
+  public function setExternalCardUrl($externalCardUrl): void
+  {
+    $this->externalCardUrl = $externalCardUrl;
+  }
+
+  /**
+   * @ORM\PreFlush()
+   */
+  public function toArray()
+  {
+    $this->conditionsAttachments = $this->getConditionsAttachments()->toArray();
+    $this->costsAttachments = $this->getCostsAttachments()->toArray();
+  }
+
+  /**
+   * @ORM\PostLoad()
+   * @ORM\PostUpdate()
+   */
+  public function toArrayCollection()
+  {
+    $conditionsAttachments = new ArrayCollection();
+    $costsAttachments = new ArrayCollection();
+
+    $attachments = array_merge($this->conditionsAttachments ?? [], $this->costsAttachments ?? []);
+    if ($attachments) {
+      foreach ($attachments as $attachment) {
+        if (!$attachment instanceof PublicFile) {
+          $publicAttachment = new PublicFile();
+          $publicAttachment->setName($attachment['name']);
+          $publicAttachment->setOriginalName($attachment['original_name']);
+          $publicAttachment->setMimeType($attachment['mime_type']);
+          $publicAttachment->setSize($attachment['size']);
+          $publicAttachment->setType($attachment['type']);
+        } else {
+          $publicAttachment = $attachment;
+        }
+
+        if ($publicAttachment->getType() === PublicFile::CONDITIONS_TYPE) {
+          $conditionsAttachments->add($publicAttachment);
+        } elseif ($publicAttachment->getType() === PublicFile::COSTS_TYPE) {
+          $costsAttachments->add($publicAttachment);
+        }
+      }
+    }
+
+    $this->conditionsAttachments = $conditionsAttachments;
+    $this->costsAttachments = $costsAttachments;
   }
 }

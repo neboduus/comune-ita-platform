@@ -9,6 +9,7 @@ use App\Security\Voters\BackofficeVoter;
 use App\Security\Voters\CalendarVoter;
 use App\Services\InstanceService;
 use App\Services\MeetingService;
+use App\Utils\FormUtils;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -431,7 +432,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $form = $this->createForm('App\Form\CalendarType', $calendar);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -523,7 +524,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
         'title' => 'There was a validation error',
@@ -615,7 +616,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -698,26 +699,6 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
-  }
-
-  /**
-   * @param FormInterface $form
-   * @return array
-   */
-  private function getErrorsFromForm(FormInterface $form)
-  {
-    $errors = array();
-    foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
-        }
-      }
-    }
-    return $errors;
   }
 
 
@@ -914,7 +895,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -1007,7 +988,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
         'title' => 'There was a validation error',
@@ -1104,7 +1085,7 @@ class CalendarsAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',

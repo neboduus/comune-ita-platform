@@ -5,22 +5,15 @@ namespace App\Controller\Ui\Frontend;
 use App\Entity\Allegato;
 use App\Entity\Pratica;
 use App\Entity\Servizio;
-use App\Logging\LogConstants;
-use App\Services\FileService;
+use App\Services\FileService\AllegatoFileService;
 use App\Services\ModuloPdfBuilderService;
+use League\Flysystem\FileNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
-use TheCodingMachine\Gotenberg\Client;
-use TheCodingMachine\Gotenberg\URLRequest;
-use TheCodingMachine\Gotenberg\Request as GotembergRequest;
 
 
 /**
@@ -38,16 +31,16 @@ class PrintController extends AbstractController
   private $moduloPdfBuilderService;
 
   /**
-   * @var FileService
+   * @var AllegatoFileService
    */
   private $fileService;
 
   /**
    * PrintController constructor.
    * @param ModuloPdfBuilderService $moduloPdfBuilderService
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    */
-  public function __construct(ModuloPdfBuilderService $moduloPdfBuilderService, FileService $fileService)
+  public function __construct(ModuloPdfBuilderService $moduloPdfBuilderService, AllegatoFileService $fileService)
   {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
     $this->fileService = $fileService;
@@ -57,11 +50,12 @@ class PrintController extends AbstractController
   /**
    * @Route("/pratica/{pratica}", name="print_pratiche")
    * @ParamConverter("pratica", class="App\Entity\Pratica")
+   * @param Request $request
    * @param Pratica $pratica
    *
    * @return Response
    */
-  public function printPraticaAction(Request $request, Pratica $pratica)
+  public function printPraticaAction(Request $request, Pratica $pratica): Response
   {
 
     $showProtocolNumber = $request->get('protocol', false);
@@ -81,7 +75,11 @@ class PrintController extends AbstractController
         $temp['local_name'] = $a->getFilename();
 
         $temp['original_filename'] = $a->getOriginalFilename();
-        $temp['hash'] = $this->fileService->getHash($a);
+        try {
+          $temp['hash'] = $this->fileService->getHash($a);
+        } catch (FileNotFoundException $e) {
+          return new Response(["Attachment not found"], Response::HTTP_NOT_FOUND);
+        }
         if ($protocolRequired) {
           $preparedAttachments[]=$temp;
         } else {

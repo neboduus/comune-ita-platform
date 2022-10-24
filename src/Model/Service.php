@@ -1,24 +1,15 @@
 <?php
 
 
-namespace App\Dto;
+namespace App\Model;
 
-use App\Entity\Categoria;
-use App\Entity\Recipient;
-use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
-use App\Model\PaymentParameters;
-use App\Model\FlowStep;
-use App\Model\IOServiceParameters;
-use App\Model\ServiceSource;
-use App\Services\Manager\BackofficeManager;
-use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
-use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class Service
 {
@@ -133,6 +124,14 @@ class Service
   private $costs;
 
   /**
+   * @var PublicFile[]
+   * @OA\Property(property="costs_attachments", description="Costs attachments list", type="array", @OA\Items(type="object"))
+   * @Serializer\Type("array")
+   * @Groups({"read"})
+   */
+  private $costsAttachments;
+
+  /**
    * @var string
    * @Serializer\Type("string")
    * @OA\Property(description="Textual description of whom the service is addressed, accepts html tags")
@@ -155,6 +154,46 @@ class Service
    * @Groups({"read", "write"})
    */
   private $moreInfo;
+
+  /**
+   * @var string
+   * @Serializer\Type("string")
+   * @OA\Property(description="Any restrictions on access to the service, accepts html tags")
+   * @Groups({"read", "write"})
+   */
+  private $constraints;
+
+  /**
+   * @var string
+   * @Serializer\Type("string")
+   * @OA\Property(description="Service times and deadlines, accepts html tags")
+   * @Groups({"read", "write"})
+   */
+  private $timesAndDeadlines;
+
+  /**
+   * @var string
+   * @Serializer\Type("string")
+   * @OA\Property(description="Call to action for booking an appointment", type="string", example="https://www.example.com/booking")
+   * @Groups({"read", "write"})
+   */
+  private $bookingCallToAction;
+
+  /**
+   * @var string
+   * @Serializer\Type("string")
+   * @OA\Property(description="Service conditions, accepts html tags")
+   * @Groups({"read", "write"})
+   */
+  private $conditions;
+
+  /**
+   * @var PublicFile[]
+   * @OA\Property(property="conditions_attachments", description="Conditions attachments list", type="array", @OA\Items(type="object"))
+   * @Serializer\Type("array")
+   * @Groups({"read"})
+   */
+  private $conditionsAttachments;
 
   /**
    * @var string
@@ -402,6 +441,33 @@ class Service
   private $source;
 
   /**
+   * @var array
+   * @Serializer\Type("array<string>")
+   * @OA\Property(
+   *   description="Linked life events from https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/life-event",
+   *   type="array", @OA\Items(type="string", example="https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/life-event/1"))
+   * @Groups({"read", "write"})
+   */
+  private $lifeEvents;
+
+  /**
+   * @var array
+   * @Serializer\Type("array<string>")
+   * @OA\Property(description="Linked business events from https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/business-event",
+   *   type="array", @OA\Items(type="string", example="https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/business-event/1"))
+   * @Groups({"read", "write"})
+   */
+  private $businessEvents;
+
+  /**
+   * @Serializer\Type("string")
+   * @OA\Property(description="External service card url")
+   * @Groups({"read", "write"})
+   */
+  private $externalCardUrl;
+
+
+  /**
    * @return mixed
    */
   public function getId()
@@ -538,9 +604,9 @@ class Service
   }
 
   /**
-   * @param string $howto
+   * @param string|null $howto
    */
-  public function setHowto(string $howto)
+  public function setHowto(?string $howto)
   {
     $this->howto = $howto;
   }
@@ -591,6 +657,87 @@ class Service
   public function setMoreInfo($moreInfo)
   {
     $this->moreInfo = $moreInfo;
+  }
+
+
+  /**
+   * @return string|null
+   */
+  public function getConstraints(): ?string
+  {
+    return $this->constraints;
+  }
+
+  /**
+   * @param string|null $constraints
+   */
+  public function setConstraints(?string $constraints)
+  {
+    $this->constraints = $constraints;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getTimesAndDeadlines(): ?string
+  {
+    return $this->timesAndDeadlines;
+  }
+
+  /**
+   * @param string|null $timesAndDeadlines
+   */
+  public function setTimesAndDeadlines(?string $timesAndDeadlines)
+  {
+    $this->timesAndDeadlines = $timesAndDeadlines;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getBookingCallToAction(): ?string
+  {
+    return $this->bookingCallToAction;
+  }
+
+  /**
+   * @param string|null $bookingCallToAction
+   */
+  public function setBookingCallToAction(?string $bookingCallToAction)
+  {
+    $this->bookingCallToAction = $bookingCallToAction;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getConditions(): ?string
+  {
+    return $this->conditions;
+  }
+
+  /**
+   * @param string|null $conditions
+   */
+  public function setConditions(?string $conditions)
+  {
+    $this->conditions = $conditions;
+  }
+
+  /**
+   * @param PublicFile[] $conditionsAttachments
+   */
+  public function setConditionsAttachments(array $conditionsAttachments)
+  {
+    $this->conditionsAttachments = $conditionsAttachments;
+  }
+
+  /**
+   * @return PublicFile[]
+   */
+  public function getConditionsAttachments(): array
+  {
+    return $this->conditionsAttachments;
   }
 
   /**
@@ -841,7 +988,7 @@ class Service
    * @param bool $loginSuggested
    * @return $this
    */
-  public function setLoginSuggested( $loginSuggested )
+  public function setLoginSuggested($loginSuggested)
   {
     $this->loginSuggested = $loginSuggested;
     return $this;
@@ -926,7 +1073,7 @@ class Service
    * @param bool $sticky
    * @return $this
    */
-  public function setSharedWithGroup( $shared )
+  public function setSharedWithGroup($shared)
   {
     $this->sharedWithGroup = $shared;
     return $this;
@@ -1090,7 +1237,7 @@ class Service
   /**
    * Set the value of maxResponseTime
    *
-   * @param  integer  $maxResponseTime
+   * @param integer $maxResponseTime
    *
    * @return  self
    */
@@ -1216,212 +1363,72 @@ class Service
     return $this;
   }
 
-
   /**
-   * @param Servizio $servizio
-   * @return Service
+   * @param PublicFile[] $costsAttachments
    */
-  public static function fromEntity(Servizio $servizio, $formServerUrl)
+  public function setCostsAttachments(array $costsAttachments)
   {
-    $dto = new self();
-    $dto->id = $servizio->getId();
-    $dto->name = $servizio->getName();
-    $dto->slug = $servizio->getSlug();
-    $dto->tenant = $servizio->getEnteId();
-
-    $dto->topics = $servizio->getTopics() ? $servizio->getTopics()->getSlug() : null;
-    $dto->topics_id = $servizio->getTopics() ? $servizio->getTopics()->getId() : null;
-
-    $dto->description = $servizio->getDescription() ?? '';
-    $dto->shortDescription = $servizio->getShortDescription() ?? '';
-    $dto->howto = $servizio->getHowto();
-    $dto->who = $servizio->getWho() ?? '';
-    $dto->specialCases = $servizio->getSpecialCases() ?? '';
-    $dto->moreInfo = $servizio->getMoreInfo() ?? '';
-    $dto->coverage = $servizio->getCoverage();
-
-    $dto->compilationInfo = $servizio->getCompilationInfo() ?? '';
-    $dto->finalIndications = $servizio->getFinalIndications() ?? '';
-    $dto->flowSteps = self::prepareFlowSteps($servizio->getFlowSteps(), $formServerUrl);
-    $dto->setProtocolRequired($servizio->isProtocolRequired());
-    $dto->protocolloParameters = [];
-    $dto->paymentRequired = $servizio->getPaymentRequired();
-    $dto->protocolHandler = $servizio->getProtocolHandler();
-    $dto->paymentParameters = [];
-    $dto->integrations = self::decorateIntegrationsData($servizio->getIntegrations());
-    $dto->sticky = $servizio->isSticky();
-    $dto->status = $servizio->getStatus();
-    $dto->accessLevel = $servizio->getAccessLevel();
-    $dto->loginSuggested = $servizio->isLoginSuggested() || false;
-    $dto->scheduledFrom = $servizio->getScheduledFrom();
-    $dto->scheduledTo = $servizio->getScheduledTo();
-    $dto->serviceGroupId = $servizio->getServiceGroup() ? $servizio->getServiceGroup()->getId() : null;
-    $dto->serviceGroup = $servizio->getServiceGroup() ? $servizio->getServiceGroup()->getSlug() : null;
-    $dto->sharedWithGroup = $servizio->isSharedWithGroup();
-    $dto->allowReopening = $servizio->isAllowReopening();
-    $dto->allowWithdraw = $servizio->isAllowWithdraw();
-    $dto->allowIntegrationRequest = $servizio->isAllowIntegrationRequest();
-    $dto->workflow = $servizio->getWorkflow();
-    $dto->maxResponseTime = $servizio->getMaxResponseTime();
-    $dto->howToDo = $servizio->getHowToDo();
-    $dto->whatYouNeed = $servizio->getWhatYouNeed();
-    $dto->whatYouGet = $servizio->getWhatYouGet();
-    $dto->costs = $servizio->getCosts();
-
-    $dto->recipients = [];
-    $dto->recipientsId = [];
-
-    if ($servizio->getRecipients()) {
-      foreach ($servizio->getRecipients() as $r) {
-        $dto->recipients[]= $r->getName();
-        $dto->recipientsId[]= $r->getId();
-      }
-    }
-
-    $dto->geographicAreas = [];
-    $dto->geographicAreasId = [];
-
-    if ($servizio->getGeographicAreas()) {
-      foreach ($servizio->getGeographicAreas() as $g) {
-        $dto->geographicAreas[]= $g->getName();
-        $dto->geographicAreasId[]= $g->getId();
-      }
-    }
-
-    $dto->source = $servizio->getSource();
-
-    return $dto;
+    $this->costsAttachments = $costsAttachments;
   }
 
   /**
-   * @param Servizio|null $entity
-   * @return Servizio
+   * @return PublicFile[]
    */
-  public function toEntity(Servizio $entity = null)
+  public function getCostsAttachments(): array
   {
-    if (!$entity) {
-      $entity = new Servizio();
-    }
-
-    $entity->setName($this->name);
-    $entity->setSlug($this->slug);
-
-    // Avoid validation error on patch
-    if ($this->topics instanceof Categoria) {
-      $entity->setTopics($this->topics);
-    }
-
-    $entity->setDescription($this->description ?? '');
-    $entity->setShortDescription($this->shortDescription ?? '');
-    $entity->setHowto($this->howto);
-    $entity->setWho($this->who ?? '');
-    $entity->setSpecialCases($this->specialCases ?? '');
-    $entity->setMoreInfo($this->moreInfo ?? '');
-    $entity->setCompilationInfo($this->compilationInfo ?? '');
-    $entity->setFinalIndications($this->finalIndications ?? '');
-    $entity->setCoverage(implode(',', (array)$this->coverage)); //@TODO
-    $entity->setFlowSteps($this->flowSteps);
-    $entity->setProtocolRequired($this->isProtocolRequired());
-    $entity->setProtocolHandler($this->getProtocolHandler());
-    $entity->setProtocolloParameters($this->protocolloParameters);
-    $entity->setPaymentRequired($this->paymentRequired);
-    $entity->setPaymentParameters($this->paymentParameters);
-    $entity->setIntegrations(self::normalizeIntegrationsData($this->integrations));
-    $entity->setSticky($this->sticky);
-    $entity->setStatus($this->status);
-    $entity->setAccessLevel($this->getAccessLevel());
-    $entity->setLoginSuggested($this->loginSuggested);
-    $entity->setScheduledFrom($this->scheduledFrom);
-    $entity->setScheduledTo($this->scheduledTo);
-    $entity->setIOServiceParameters($this->ioParameters);
-
-    // Avoid validation error on patch
-    if ($this->serviceGroup instanceof ServiceGroup) {
-      $entity->setServiceGroup($this->serviceGroup);
-    }
-    $entity->setSharedWithGroup($this->sharedWithGroup);
-
-    $entity->setAllowReopening($this->allowReopening);
-    $entity->setAllowWithdraw($this->allowWithdraw);
-    $entity->setAllowIntegrationRequest($this->allowIntegrationRequest);
-    $entity->setWorkflow($this->workflow);
-    $entity->setMaxResponseTime($this->maxResponseTime);
-    $entity->setHowToDo($this->howToDo);
-    $entity->setWhatYouNeed($this->whatYouNeed);
-    $entity->setWhatYouGet($this->whatYouGet);
-    $entity->setCosts($this->costs);
-
-    $entity->setRecipients(new ArrayCollection($this->recipientsId));
-    $entity->setGeographicAreas(new ArrayCollection($this->geographicAreasId));
-    $entity->setSource($this->source);
-
-    return $entity;
+    return $this->costsAttachments;
   }
 
   /**
-   * @param $data
+   * @return array
+   */
+  public function getLifeEvents(): array
+  {
+    return $this->lifeEvents;
+  }
+
+  /**
+   * @param array $lifeEvents
+   * @return $this
+   */
+  public function setLifeEvents(array $lifeEvents): Service
+  {
+    $this->lifeEvents = $lifeEvents;
+    return $this;
+  }
+
+  /**
+   * @return array
+   */
+  public function getBusinessEvents(): array
+  {
+    return $this->businessEvents;
+  }
+
+  /**
+   * @param array $businessEvents
+   * @return $this
+   */
+  public function setBusinessEvents(array $businessEvents): Service
+  {
+    $this->businessEvents = $businessEvents;
+    return $this;
+  }
+
+  /**
    * @return mixed
    */
-  public static function normalizeData($data)
+  public function getExternalCardUrl()
   {
-    // Todo: find better way
-    if (isset($data['flow_steps']) && count($data['flow_steps']) > 0) {
-      $temp = [];
-      foreach ($data['flow_steps'] as $f) {
-        $f['parameters'] = \json_encode($f['parameters']);
-        $temp[]= $f;
-      }
-      $data['flow_steps'] = $temp;
-    }
-
-    // Todo: find better way
-    if ( isset($data['payment_parameters']['gateways']) && count($data['payment_parameters']['gateways']) > 0 ) {
-      $sanitizedGateways = [];
-      foreach ($data['payment_parameters']['gateways'] as $gateway) {
-        $parameters = \json_encode($gateway['parameters']);
-        $gateway['parameters'] = $parameters;
-        $sanitizedGateways [$gateway['identifier']]= $gateway;
-      }
-      $data['payment_parameters']['gateways'] = $sanitizedGateways;
-    }
-
-    // Todo: find better way
-    if (isset($data['protocollo_parameters'])) {
-      $data['protocollo_parameters'] = \json_encode($data['protocollo_parameters']);
-    }
-    return $data;
+    return $this->externalCardUrl;
   }
 
-
-  public static function prepareFlowSteps( $flowSteps, $formServerUrl ) {
-    if (empty($flowSteps)) {
-      return $flowSteps;
-    }
-    foreach ($flowSteps as $flowStep) {
-      $flowStep->addParameter("url", $formServerUrl . '/form/');
-    }
-    return $flowSteps;
-  }
-
-  public static function decorateIntegrationsData($integrations) {
-    $data = [];
-    if (empty($integrations)) {
-      return $data;
-    }
-
-    foreach ($integrations as $status => $className) {
-      $data["trigger"] = $status;
-      $data["action"] = (new \ReflectionClass($className))->getConstant("IDENTIFIER");
-    }
-    return $data;
-  }
-
-  public static function normalizeIntegrationsData($integrations) {
-    if (isset($integrations['trigger']) && $integrations['trigger']) {
-      return [$integrations['trigger'] => BackofficeManager::getBackofficeClassByIdentifier($integrations['action'])];
-    } else {
-      return null;
-    }
+  /**
+   * @param mixed $externalCardUrl
+   */
+  public function setExternalCardUrl($externalCardUrl): void
+  {
+    $this->externalCardUrl = $externalCardUrl;
   }
 
 }

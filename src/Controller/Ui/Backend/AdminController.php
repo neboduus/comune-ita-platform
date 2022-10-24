@@ -2,9 +2,9 @@
 
 namespace App\Controller\Ui\Backend;
 
-use App\DataTable\Traits\FiltersTrait;
 use App\DataTable\ScheduledActionTableType;
-use App\Dto\Service;
+use App\DataTable\Traits\FiltersTrait;
+use App\Dto\ServiceDto;
 use App\Entity\AuditLog;
 use App\Entity\Categoria;
 use App\Entity\Erogatore;
@@ -25,20 +25,21 @@ use App\Form\Admin\Servizio\PaymentDataType;
 use App\Form\Admin\Servizio\ProtocolDataType;
 use App\FormIO\SchemaFactoryInterface;
 use App\Model\FlowStep;
+use App\Model\PublicFile;
+use App\Model\Service;
 use App\Model\ServiceSource;
+use App\Services\FileService\ServiceAttachmentsFileService;
 use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
+use App\Services\IOService;
 use App\Services\MailerService;
 use App\Services\Manager\ServiceManager;
 use App\Services\Manager\UserManager;
 use App\Utils\StringUtils;
-use Doctrine\DBAL\DBALException;
-use App\Services\IOService;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
-use Doctrine\DBAL\FetchMode;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
+use League\Flysystem\FileNotFoundException;
 use Omines\DataTablesBundle\Adapter\Doctrine\ORMAdapter;
 use Omines\DataTablesBundle\Column\DateTimeColumn;
 use Omines\DataTablesBundle\Column\TextColumn;
@@ -56,9 +57,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 
@@ -118,6 +117,11 @@ class AdminController extends AbstractController
   private $userManager;
 
   /**
+   * @var ServiceAttachmentsFileService
+   */
+  private $fileService;
+
+  /**
    * @param InstanceService $instanceService
    * @param FormServerApiAdapterService $formServer
    * @param TranslatorInterface $translator
@@ -129,23 +133,25 @@ class AdminController extends AbstractController
    * @param ServiceManager $serviceManager
    * @param UserManager $userManager
    * @param MailerService $mailer
+   * @param ServiceAttachmentsFileService $fileService
    * @param EntityManagerInterface $entityManager
    * @param $locales
    */
   public function __construct(
     InstanceService             $instanceService,
     FormServerApiAdapterService $formServer,
-    TranslatorInterface         $translator,
-    SchemaFactoryInterface      $schemaFactory,
-    IOService                   $ioService,
-    RouterInterface             $router,
-    DataTableFactory            $dataTableFactory,
-    LoggerInterface             $logger,
-    ServiceManager              $serviceManager,
-    UserManager                 $userManager,
-    MailerService               $mailer,
-    EntityManagerInterface      $entityManager,
-                                $locales
+    TranslatorInterface           $translator,
+    SchemaFactoryInterface        $schemaFactory,
+    IOService                     $ioService,
+    RouterInterface               $router,
+    DataTableFactory              $dataTableFactory,
+    LoggerInterface               $logger,
+    ServiceManager                $serviceManager,
+    UserManager                   $userManager,
+    MailerService                 $mailer,
+    EntityManagerInterface        $entityManager,
+    ServiceAttachmentsFileService $fileService,
+                                  $locales
   )
   {
     $this->instanceService = $instanceService;
@@ -161,6 +167,7 @@ class AdminController extends AbstractController
     $this->locales = explode('|', $locales);
     $this->mailer = $mailer;
     $this->entityManager = $entityManager;
+    $this->fileService = $fileService;
   }
 
 
@@ -555,7 +562,7 @@ class AdminController extends AbstractController
         $md5Response = md5(json_encode($responseBody));
         unset($responseBody['id'], $responseBody['slug']);
 
-        $data = Service::normalizeData($responseBody);
+        $data = ServiceDto::normalizeData($responseBody);
         $form->submit($data, true);
 
         if ($form->isSubmitted() && !$form->isValid()) {
@@ -647,6 +654,7 @@ class AdminController extends AbstractController
       'general' => [
         'label' => $this->translator->trans('operatori.dati_generali'),
         'class' => GeneralDataType::class,
+        'template' => 'Admin/servizio/_generalStep.html.twig',
         'icon' => 'fa-file-o',
       ],
       'card' => [
@@ -917,6 +925,52 @@ class AdminController extends AbstractController
     }
   }
 
+  /**
+   * @Route("/servizio/{servizio}/attachments/{attachmentType}/{filename}", name="admin_delete_service_attachment", methods={"DELETE"})
+   * @ParamConverter("servizio", class="App\Entity\Servizio")
+   * @param Request $request
+   * @param Servizio $servizio
+   * @param string $attachmentType
+   * @param string $filename
+   * @return JsonResponse
+   */
+  public function deletePublicAttachmentAction(Request $request, Servizio $servizio, string $attachmentType, string $filename): JsonResponse
+  {
+    if (!in_array($attachmentType, [PublicFile::CONDITIONS_TYPE, PublicFile::COSTS_TYPE])) {
+      $this->logger->error("Invalid type $attachmentType");
+      return new JsonResponse(["Invalid type: $attachmentType is not supported"], Response::HTTP_BAD_REQUEST);
+    }
+
+    if ($attachmentType === PublicFile::CONDITIONS_TYPE) {
+      $attachment = $servizio->getConditionAttachmentByName($filename);
+    } elseif ($attachmentType === PublicFile::COSTS_TYPE) {
+      $attachment = $servizio->getCostAttachmentByName($filename);
+    } else {
+      $attachment = null;
+    }
+
+    if (!$attachment) {
+      return new JsonResponse(["Attachment $filename does not exists"], Response::HTTP_NOT_FOUND);
+    }
+
+    try {
+      $this->fileService->deleteFilename($attachment->getName(), $servizio, $attachment->getType());
+    } catch (FileNotFoundException $e) {
+      $this->logger->error("Unable to delete $filename: file not found");
+    }
+
+    if ($attachmentType === PublicFile::CONDITIONS_TYPE) {
+      $servizio->removeConditionsAttachment($attachment);
+    } elseif ($attachmentType === PublicFile::COSTS_TYPE) {
+      $servizio->removeCostsAttachment($attachment);
+    }
+
+    $this->entityManager->persist($servizio);
+
+    $this->entityManager->flush();
+
+    return new JsonResponse(["$filename deleted successfully"], Response::HTTP_OK);
+  }
 }
 
 

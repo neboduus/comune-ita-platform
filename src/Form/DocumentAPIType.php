@@ -3,7 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Document;
-use App\Services\Manager\DocumentManager;
+use App\Services\FileService\DocumentFileService;
 use League\Flysystem\FileExistsException;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -28,14 +28,14 @@ class DocumentAPIType extends AbstractType
    */
   private $translator;
   /**
-   * @var DocumentManager
+   * @var DocumentFileService
    */
-  private $documentManager;
+  private $fileService;
 
-  public function __construct($allowedExtensions, TranslatorInterface $translator, DocumentManager $documentManager)
+  public function __construct($allowedExtensions, TranslatorInterface $translator, DocumentFileService $fileService)
   {
     $this->translator = $translator;
-    $this->documentManager = $documentManager;
+    $this->fileService = $fileService;
     $this->allowedExtensions = array_merge(...$allowedExtensions);
   }
 
@@ -184,7 +184,7 @@ class DocumentAPIType extends AbstractType
 
     if ($document->isStore()) {
       try {
-        $this->documentManager->save($document, $content);
+        $this->fileService->save($document, $content);
       } catch (FileExistsException $e) {
         return $event->getForm()->addError(new FormError($this->translator->trans('documenti.documento.duplicated_file')));
       }

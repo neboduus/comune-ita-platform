@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-lg-12 px-lg-4">
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+
+    {{ form_row(form.name) }}
+    {{ form_row(form.sticky) }}
+    {{ form_row(form.status) }}
+    {{ form_row(form.scheduled_from) }}
+    {{ form_row(form.scheduled_to) }}
+    {{ form_row(form.service_group) }}
+    {{ form_row(form.shared_with_group) }}
+    {{ form_row(form.access_level) }}
+    {{ form_row(form.login_suggested) }}
+    {{ form_row(form.allow_reopening) }}
+    {{ form_row(form.allow_withdraw) }}
+    {{ form_row(form.allow_integration_request) }}
+    {{ form_row(form.workflow) }}
+    {{ form_row(form.max_response_time) }}
+    {{ form_row(form.enable_external_card_url) }}
+    {{ form_row(form.external_card_url) }}
+    {{ form_row(form.compilationInfo) }}
+    {{ form_row(form.finalIndications) }}
+
+    {{ form_rest(form) }}
+    {{ include('Admin/servizio/_saveButtons.html.twig') }}
+    {{ form_end(form) }}
+  </div>
+</div>

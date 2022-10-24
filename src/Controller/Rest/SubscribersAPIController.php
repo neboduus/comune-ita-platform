@@ -11,6 +11,7 @@ use App\Entity\Subscription;
 use App\Security\Voters\BackofficeVoter;
 use App\Security\Voters\SubscriberVoter;
 use App\Services\InstanceService;
+use App\Utils\FormUtils;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -295,7 +296,7 @@ class SubscribersAPIController extends AbstractApiController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -348,27 +349,6 @@ class SubscribersAPIController extends AbstractApiController
 
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
-  }
-
-  /**
-   * @param FormInterface $form
-   * @return array
-   */
-  private function getErrorsFromForm(FormInterface $form): array
-  {
-
-    $errors = array();
-    foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
-        }
-      }
-    }
-    return $errors;
   }
 
   /**
@@ -529,7 +509,7 @@ class SubscribersAPIController extends AbstractApiController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'put_validation_error',
         'title' => 'There was a validation error',
@@ -634,7 +614,7 @@ class SubscribersAPIController extends AbstractApiController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',

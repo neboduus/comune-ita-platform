@@ -11,10 +11,10 @@ use App\Entity\Pratica;
 use App\Entity\Message as MessageEntity;
 use App\Security\Voters\ApplicationVoter;
 use App\Security\Voters\MessageVoter;
-use App\Services\FileService;
+use App\Services\FileService\AllegatoFileService;
 use App\Services\InstanceService;
 use App\Services\Manager\MessageManager;
-use App\Services\PraticaStatusService;
+use App\Utils\FormUtils;
 use App\Utils\UploadedBase64File;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Model\MetaPagedList;
@@ -25,29 +25,18 @@ use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\QueryBuilder;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
-use League\Csv\Exception;
+use League\Flysystem\FileNotFoundException;
 use Psr\Log\LoggerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SC;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use JMS\Serializer\SerializerBuilder;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class MessagesAPIController
@@ -70,7 +59,7 @@ class MessagesAPIController extends AbstractFOSRestController
   /** @var LoggerInterface */
   protected $logger;
 
-  /** @var FileService */
+  /** @var AllegatoFileService */
   private $fileService;
   /**
    * @var MessageManager
@@ -82,14 +71,14 @@ class MessagesAPIController extends AbstractFOSRestController
    * @param EntityManagerInterface $em
    * @param UrlGeneratorInterface $router
    * @param LoggerInterface $logger
-   * @param FileService $fileService
+   * @param AllegatoFileService $fileService
    * @param MessageManager $messageManager
    */
   public function __construct(
     EntityManagerInterface $em,
     UrlGeneratorInterface $router,
     LoggerInterface $logger,
-    FileService $fileService,
+    AllegatoFileService $fileService,
     MessageManager $messageManager
   ) {
     $this->em = $em;
@@ -415,7 +404,7 @@ class MessagesAPIController extends AbstractFOSRestController
     $form = $this->createForm('App\Form\Rest\MessageFormType', $message);
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -550,7 +539,7 @@ class MessagesAPIController extends AbstractFOSRestController
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = $this->getErrorsFromForm($form);
+      $errors = FormUtils::getErrorsFromForm($form);
       $data = [
         'type' => 'validation_error',
         'title' => 'There was a validation error',
@@ -618,7 +607,11 @@ class MessagesAPIController extends AbstractFOSRestController
     }
 
     /** @var File $file */
-    $fileContent = $this->fileService->getAttachmentContent($result);
+    try {
+      $fileContent = $this->fileService->getAttachmentContent($result);
+    } catch (FileNotFoundException $e) {
+      return $this->view(["Attachment not found"], Response::HTTP_NOT_FOUND);
+    }
     $filename = mb_convert_encoding($result->getFilename(), "ASCII", "auto");
     $response = new Response($fileContent);
     $disposition = $response->headers->makeDisposition(
@@ -648,26 +641,5 @@ class MessagesAPIController extends AbstractFOSRestController
 
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
-  }
-
-  /**
-   * @param FormInterface $form
-   * @return array
-   */
-  private function getErrorsFromForm(FormInterface $form)
-  {
-    $errors = array();
-    foreach ($form->getErrors() as $error) {
-      $errors[] = $error->getMessage();
-    }
-    foreach ($form->all() as $childForm) {
-      if ($childForm instanceof FormInterface) {
-        if ($childErrors = $this->getErrorsFromForm($childForm)) {
-          $errors[] = $childErrors;
-        }
-      }
-    }
-
-    return $errors;
   }
 }

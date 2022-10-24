@@ -3,6 +3,22 @@ import './utils/TextEditor';
 import {TextEditor} from "./utils/TextEditor";
 
 $(document).ready(function () {
+    $('.attachment-delete').on('click', function () {
+      let btn = $(this);
+      let deleteUrl = $(this).data("delete-url");
+
+      $.ajax(deleteUrl,
+        {
+          method: 'DELETE',
+          success: function () {   // success callback function
+            btn.closest('li').remove();
+          },
+          error: function () { // error callback
+            alert(`${Translator.trans('servizio.error_missing_filename', {}, 'messages', $language)}`)
+          }
+        });
+    });
+
     const limitChars = 2000;
     TextEditor.init({
         onInit: function () {

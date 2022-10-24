@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -204,6 +206,24 @@ class GeneralDataType extends AbstractI18nType
           'label' => 'servizio.max_response_time',
           'required' => false,
           'attr' => array('min' => 1, 'max' => 999)
+        ]
+      )
+      ->add(
+        'enable_external_card_url',
+        CheckboxType::class,
+        [
+          'label' => 'servizio.enable_external_card_url',
+          'required' => false,
+          'mapped' => false,
+          'data' => !empty($servizio->getExternalCardUrl()),
+        ]
+      )
+      ->add(
+        'external_card_url',
+        TextType::class,
+        [
+          'label' => 'servizio.external_card_url',
+          'required' => false,
         ]
       )
       ;

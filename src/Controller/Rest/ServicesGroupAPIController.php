@@ -2,17 +2,19 @@
 
 namespace App\Controller\Rest;
 
+use App\Dto\ServiceGroupDto;
 use App\Entity\Categoria;
 use App\Entity\GeographicArea;
 use App\Entity\Recipient;
 use App\Entity\ServiceGroup;
-use App\Services\InstanceService;
+use App\Model\PublicFile;
+use App\Services\FileService\ServiceAttachmentsFileService;
 use App\Utils\FormUtils;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use League\Flysystem\FileNotFoundException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +31,6 @@ use function Aws\boolean_value;
 /**
  * Class ServicesAPIController
  * @property EntityManagerInterface em
- * @property InstanceService is
  * @package App\Controller
  * @Route("/services-groups")
  */
@@ -39,18 +40,25 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   /** @var EntityManagerInterface  */
   private $em;
 
-  /** @var InstanceService  */
-  private $is;
   /**
    * @var LoggerInterface
    */
   private $logger;
+  /**
+   * @var ServiceGroupDto
+   */
+  private $serviceGroupDto;
 
-  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
+  /**
+   * @param EntityManagerInterface $em
+   * @param LoggerInterface $logger
+   * @param ServiceGroupDto $serviceGroupDto
+   */
+  public function __construct(EntityManagerInterface $em, LoggerInterface $logger, ServiceGroupDto $serviceGroupDto)
   {
     $this->em = $em;
-    $this->is = $is;
     $this->logger = $logger;
+    $this->serviceGroupDto = $serviceGroupDto;
   }
 
 
@@ -152,7 +160,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
       if ($notEmpty && $s->getServicesCount() === 0) {
         continue;
       }
-      $result []= $s;
+      $result []= $this->serviceGroupDto->fromEntity($s);
     }
     try {
       return $this->view($result, Response::HTTP_OK);
@@ -204,7 +212,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
-      return $this->view($result, Response::HTTP_OK);
+      return $this->view($this->serviceGroupDto->fromEntity($result), Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
@@ -270,7 +278,7 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     try {
       $this->em->persist($serviceGroup);
       $this->em->flush();
-      return $this->view($serviceGroup, Response::HTTP_CREATED);
+      return $this->view($this->serviceGroupDto->fromEntity($serviceGroup), Response::HTTP_CREATED);
 
     } catch (UniqueConstraintViolationException $e) {
       $data = [
@@ -511,5 +519,61 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $data = json_decode($request->getContent(), true);
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
+  }
+
+  /**
+   * Retrieve a ServiceGroup public attachment
+   * @Rest\Get("/{id}/attachments/{attachmentType}/{filename}", name="service_group_api_attachment_get")
+   *
+   * @OA\Response(
+   *     response=200,
+   *     description="Retrieve attachment file",
+   * )
+   *
+   * @OA\Response(
+   *     response=404,
+   *     description="Attachment not found"
+   * )
+   * @OA\Tag(name="services")
+   *
+   * @param $id
+   * @param $attachmentType
+   * @param $filename
+   * @param ServiceAttachmentsFileService $fileService
+   * @return View|Response
+   */
+  public function attachmentAction($id, $attachmentType, $filename, ServiceAttachmentsFileService $fileService)
+  {
+    $repository = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup');
+    /** @var ServiceGroup $serviceGroup */
+    $serviceGroup = $repository->find($id);
+
+    if (!$serviceGroup) {
+      return $this->view(["Service group not found"], Response::HTTP_NOT_FOUND);
+    }
+
+    if (!in_array($attachmentType, [PublicFile::CONDITIONS_TYPE, PublicFile::COSTS_TYPE])) {
+      $this->logger->error("Invalid type $attachmentType");
+      return $this->view(["Invalid type: $attachmentType is not supported"], Response::HTTP_BAD_REQUEST);
+    }
+
+    if ($attachmentType === PublicFile::CONDITIONS_TYPE) {
+      $attachment = $serviceGroup->getConditionAttachmentByName($filename);
+    } elseif ($attachmentType === PublicFile::COSTS_TYPE) {
+      $attachment = $serviceGroup->getCostAttachmentByName($filename);
+    } else {
+      $attachment = null;
+    }
+
+    if (!$attachment) {
+      return $this->view(["$filename not found"], Response::HTTP_NOT_FOUND);
+    }
+
+    try {
+      return $fileService->download($attachment->getOriginalName(), $serviceGroup, $attachmentType);
+    } catch (FileNotFoundException $e) {
+      $this->logger->error("Attachment $filename not found for type $attachmentType");
+      return $this->view(["$filename not found"], Response::HTTP_NOT_FOUND);
+    }
   }
 }

@@ -5,9 +5,9 @@ namespace App\Services;
 
 
 use App\Dto\ApplicationDto;
-use App\Entity\Meeting;
+use App\Dto\ServiceDto;
 use App\Entity\Calendar;
-use App\Dto\Service;
+use App\Entity\Meeting;
 use App\Entity\Pratica;
 use App\Entity\ScheduledAction;
 use App\Entity\Servizio;
@@ -23,7 +23,6 @@ use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 
@@ -68,6 +67,10 @@ class KafkaService implements ScheduledActionHandlerInterface
    */
   private $applicationDto;
   /**
+   * @var ServiceDto
+   */
+  private $serviceDto;
+  /**
    * @var InstanceService
    */
   private $instanceService;
@@ -83,6 +86,7 @@ class KafkaService implements ScheduledActionHandlerInterface
    * @param LoggerInterface $logger
    * @param FormServerApiAdapterService $formServerApiAdapterService
    * @param ApplicationDto $applicationDto
+   * @param ServiceDto $serviceDto
    * @param InstanceService $instanceService
    * @param $kafkaUrl
    * @param $kafkaEventVersion
@@ -97,6 +101,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     LoggerInterface $logger,
     FormServerApiAdapterService $formServerApiAdapterService,
     ApplicationDto $applicationDto,
+    ServiceDto $serviceDto,
     InstanceService $instanceService,
     $kafkaUrl,
     $kafkaEventVersion,
@@ -114,6 +119,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     $this->topics = $topics;
     $this->formServerApiAdapterService = $formServerApiAdapterService;
     $this->applicationDto = $applicationDto;
+    $this->serviceDto = $serviceDto;
     $this->instanceService = $instanceService;
     $this->kafkaRequestTimeout = $kafkaRequestTimeout;
   }
@@ -150,7 +156,7 @@ class KafkaService implements ScheduledActionHandlerInterface
 
   /**
    * @param $item
-   * @throws GuzzleException
+   * @throws GuzzleException|\ReflectionException
    */
   public function produceMessage($item)
   {
@@ -166,7 +172,7 @@ class KafkaService implements ScheduledActionHandlerInterface
       $content = $this->applicationDto->fromEntity($item, $this->kafkaEventVersion);
       $topic = $this->topics['applications'];
     } elseif ($item instanceof Servizio) {
-      $content = Service::fromEntity($item, $this->formServerApiAdapterService->getFormServerPublicUrl());
+      $content = $this->serviceDto->fromEntity($item, $this->formServerApiAdapterService->getFormServerPublicUrl());
       $topic = $this->topics['services'];
     } elseif ($item instanceof Meeting) {
       $context->setGroups('kafka');

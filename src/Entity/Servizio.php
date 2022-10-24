@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Model\FeedbackMessage;
 use App\Model\FeedbackMessagesSettings;
 use App\Model\IOServiceParameters;
+use App\Model\PublicFile;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use App\Model\PaymentParameters;
@@ -176,6 +177,14 @@ class Servizio implements Translatable
    */
   private $costs;
 
+  /**
+   * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @var PublicFile[]
+   * @OA\Property(
+   *   description="Costs' attachments, list of filenames", type="array", @OA\Items(ref=@Model(type=PublicFile::class)))
+   */
+  private $costsAttachments;
+
 
   /**
    * @var string
@@ -200,6 +209,45 @@ class Servizio implements Translatable
    * @OA\Property(description="Other info, accepts html tags")
    */
   private $moreInfo;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @OA\Property(description="Any restrictions on access to the service, accepts html tags")
+   */
+  private $constraints;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @OA\Property(description="Service times and deadlines, accepts html tags")
+   */
+  private $timesAndDeadlines;
+
+  /**
+   * @var string
+   * @ORM\Column(type="string", length=255, nullable=true)
+   * @OA\Property(description="Call to action for booking an appointment", type="string", example="https://www.example.com/booking")
+   */
+  private $bookingCallToAction;
+
+  /**
+   * @var string
+   * @Gedmo\Translatable
+   * @ORM\Column(type="text", nullable=true)
+   * @OA\Property(description="Service conditions, accepts html tags")
+   */
+  private $conditions;
+
+  /**
+   * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @var PublicFile[]
+   * @OA\Property(
+   *   description="Conditions' attachments, list of filenames", type="array", @OA\Items(ref=@Model(type=PublicFile::class)))
+   */
+  private $conditionsAttachments;
 
   /**
    * @var string
@@ -452,9 +500,6 @@ class Servizio implements Translatable
    */
   private $geographicAreas;
 
-
-
-
   /**
    * @var integer
    * @ORM\Column(type="integer", nullable=true)
@@ -463,11 +508,21 @@ class Servizio implements Translatable
   private $maxResponseTime;
 
   /**
-   * @Gedmo\Locale
-   * Used locale to override Translation listener`s locale
-   * this is not a mapped field of entity metadata, just a simple property
+   * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @var array
+   * @OA\Property(
+   *   description="Linked life events from https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/life-event",
+   *   type="array", @OA\Items(type="string", example="https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/life-event/1"))
    */
-  private $locale;
+  private $lifeEvents;
+
+  /**
+   * @ORM\Column(type="json", options={"jsonb":true}, nullable=true)
+   * @var array
+   * @OA\Property(description="Linked business events from https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/business-event",
+   *   type="array", @OA\Items(type="string", example="https://ontopia-lodview.agid.gov.it/controlled-vocabulary/classifications-for-public-services/life-business-event/business-event/1"))
+   */
+  private $businessEvents;
 
   /**
    * @var ServiceSource
@@ -475,6 +530,20 @@ class Servizio implements Translatable
    * @OA\Property(property="source", description="Source of the service if imported", type="object", ref=@Model(type=ServiceSource::class))
    */
   private $source;
+
+  /**
+   * @ORM\Column(type="string", length=255, nullable=true)
+   * @Assert\Url
+   * @OA\Property(description="External service card url")
+   */
+  private $externalCardUrl;
+
+  /**
+   * @Gedmo\Locale
+   * Used locale to override Translation listener`s locale
+   * this is not a mapped field of entity metadata, just a simple property
+   */
+  private $locale;
 
   /**
    * Servizio constructor.
@@ -500,6 +569,12 @@ class Servizio implements Translatable
     $this->setAllowIntegrationRequest(true);
     $this->setFinalIndications('La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.');
     $this->setSource(null);
+
+    $this->lifeEvents = new ArrayCollection();
+    $this->businessEvents = new ArrayCollection();
+
+    $this->conditionsAttachments = new ArrayCollection();
+    $this->costsAttachments = new ArrayCollection();
   }
 
   /**
@@ -1018,6 +1093,145 @@ class Servizio implements Translatable
   }
 
   /**
+   * @return string|null
+   */
+  public function getConstraints(): ?string
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getConstraints();
+    }
+    return $this->constraints;
+  }
+
+  /**
+   * @param string|null $constraints
+   */
+  public function setConstraints(?string $constraints)
+  {
+    $this->constraints = $constraints;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getTimesAndDeadlines(): ?string
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getTimesAndDeadlines();
+    }
+    return $this->timesAndDeadlines;
+  }
+
+  /**
+   * @param string|null $timesAndDeadlines
+   */
+  public function setTimesAndDeadlines(?string $timesAndDeadlines)
+  {
+    $this->timesAndDeadlines = $timesAndDeadlines;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getBookingCallToAction(): ?string
+  {
+    return $this->bookingCallToAction;
+  }
+
+  /**
+   * @param string|null $bookingCallToAction
+   */
+  public function setBookingCallToAction(?string $bookingCallToAction)
+  {
+    $this->bookingCallToAction = $bookingCallToAction;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getConditions(): ?string
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getConditions();
+    }
+    return $this->conditions;
+  }
+
+  /**
+   * @param string|null $conditions
+   */
+  public function setConditions(?string $conditions)
+  {
+    $this->conditions = $conditions;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getConditionsAttachments(): ArrayCollection
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getConditionsAttachments();
+    }
+    if (!$this->conditionsAttachments instanceof ArrayCollection) {
+      $this->conditionsAttachments = new ArrayCollection($this->conditionsAttachments);
+    }
+    return $this->conditionsAttachments;
+  }
+
+  /**
+   * @param string $name
+   * @return PublicFile|null
+   */
+  public function getConditionAttachmentByName(string $name): ?PublicFile
+  {
+    foreach ($this->getConditionsAttachments() as $attachment) {
+      if ($attachment->getName() === $name) {
+        return $attachment;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @param ArrayCollection $conditionsAttachments
+   * @return $this
+   */
+  public function setConditionsAttachments(ArrayCollection $conditionsAttachments): Servizio
+  {
+    $this->conditionsAttachments = $conditionsAttachments;
+    return $this;
+  }
+
+  /**
+   * @param PublicFile $attachment
+   *
+   * @return $this
+   */
+  public function addConditionsAttachment(PublicFile $attachment): Servizio
+  {
+    if (!$this->conditionsAttachments->contains($attachment)) {
+      $this->conditionsAttachments->add($attachment);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param PublicFile $attachment
+   *
+   * @return $this
+   */
+  public function removeConditionsAttachment(PublicFile $attachment): Servizio
+  {
+    if ($this->conditionsAttachments->contains($attachment)) {
+      $this->conditionsAttachments->removeElement($attachment);
+    }
+
+    return $this;
+  }
+
+  /**
    * @return string
    */
   public function getCompilationInfo()
@@ -1051,7 +1265,7 @@ class Servizio implements Translatable
   }
 
   /**
-   * @return string
+   * @return false|string[]
    */
   public function getCoverage()
   {
@@ -1709,7 +1923,7 @@ class Servizio implements Translatable
   /**
    * @return ServiceSource|null
    */
-  public function getSource()
+  public function getSource(): ?ServiceSource
   {
     return $this->source;
   }
@@ -1718,9 +1932,184 @@ class Servizio implements Translatable
    * @param ServiceSource|null $source
    * @return $this
    */
-  public function setSource(?ServiceSource $source)
+  public function setSource(?ServiceSource $source): Servizio
   {
     $this->source = $source;
     return $this;
   }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getCostsAttachments(): ArrayCollection
+  {
+    if ($this->serviceGroup != null && $this->sharedWithGroup) {
+      return $this->serviceGroup->getCostsAttachments();
+    }
+    if (!$this->costsAttachments instanceof ArrayCollection) {
+      $this->costsAttachments = new ArrayCollection($this->costsAttachments);
+    }
+    return $this->costsAttachments;
+  }
+
+  /**
+   * @param string $name
+   * @return PublicFile|null
+   */
+  public function getCostAttachmentByName(string $name): ?PublicFile
+  {
+    foreach ($this->getCostsAttachments() as $attachment) {
+      if ($attachment->getName() === $name) {
+        return $attachment;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * @param ArrayCollection $costsAttachments
+   * @return $this
+   */
+  public function setCostsAttachments(ArrayCollection $costsAttachments): Servizio
+  {
+    $this->costsAttachments = $costsAttachments;
+    return $this;
+  }
+
+  /**
+   * @param PublicFile $attachment
+   *
+   * @return $this
+   */
+  public function addCostsAttachment(PublicFile $attachment): Servizio
+  {
+    if (!$this->costsAttachments->contains($attachment)) {
+      $this->costsAttachments->add($attachment);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param PublicFile $attachment
+   *
+   * @return $this
+   */
+  public function removeCostsAttachment(PublicFile $attachment): Servizio
+  {
+    if ($this->costsAttachments->contains($attachment)) {
+      $this->costsAttachments->removeElement($attachment);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @return array
+   */
+  public function getLifeEvents()
+  {
+    return $this->lifeEvents ?? [];
+  }
+
+  /**
+   * @param array $lifeEvents
+   * @return $this
+   */
+  public function setLifeEvents(array $lifeEvents = []): Servizio
+  {
+    $this->lifeEvents = $lifeEvents;
+    return $this;
+  }
+
+  /**
+   * @return array
+   */
+  public function getBusinessEvents()
+  {
+    return $this->businessEvents ?? [];
+  }
+
+  /**
+   * @param array $businessEvents
+   * @return $this
+   */
+  public function setBusinessEvents(array $businessEvents = []): Servizio
+  {
+    $this->businessEvents = $businessEvents;
+    return $this;
+  }
+
+  public function isActive(): bool
+  {
+    if (!in_array($this->status, [self::STATUS_AVAILABLE, self::STATUS_PRIVATE, self::STATUS_SCHEDULED])) {
+      return false;
+    }
+    $now = new \DateTime();
+    if ($this->status === self::STATUS_SCHEDULED && ($now < $this->scheduledFrom || $now > $this->scheduledTo)) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * @ORM\PreFlush()
+   */
+  public function toArray()
+  {
+    $this->conditionsAttachments = $this->getConditionsAttachments()->toArray();
+    $this->costsAttachments = $this->getCostsAttachments()->toArray();
+  }
+
+  /**
+   * @ORM\PostLoad()
+   * @ORM\PostUpdate()
+   */
+  public function toArrayCollection()
+  {
+    $conditionsAttachments = new ArrayCollection();
+    $costsAttachments = new ArrayCollection();
+
+    $attachments = array_merge($this->conditionsAttachments ?? [], $this->costsAttachments ?? []);
+    if ($attachments) {
+      foreach ($attachments as $attachment) {
+        if (!$attachment instanceof PublicFile) {
+          $publicAttachment = new PublicFile();
+          $publicAttachment->setName($attachment['name']);
+          $publicAttachment->setOriginalName($attachment['original_name']);
+          $publicAttachment->setMimeType($attachment['mime_type']);
+          $publicAttachment->setSize($attachment['size']);
+          $publicAttachment->setType($attachment['type']);
+        } else {
+          $publicAttachment = $attachment;
+        }
+
+        if ($publicAttachment->getType() === PublicFile::CONDITIONS_TYPE) {
+          $conditionsAttachments->add($publicAttachment);
+        } elseif ($publicAttachment->getType() === PublicFile::COSTS_TYPE) {
+          $costsAttachments->add($publicAttachment);
+        }
+      }
+    }
+
+    $this->conditionsAttachments = $conditionsAttachments;
+    $this->costsAttachments = $costsAttachments;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getExternalCardUrl()
+  {
+    return $this->externalCardUrl;
+  }
+
+  /**
+   * @param mixed $externalCardUrl
+   */
+  public function setExternalCardUrl($externalCardUrl): void
+  {
+    $this->externalCardUrl = $externalCardUrl;
+  }
+
 }

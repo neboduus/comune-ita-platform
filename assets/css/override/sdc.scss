@@ -414,3 +414,9 @@ svg{
   z-index: 2147483001; // greater than announcekit-widget
   top: 16px;
 }
+
+div.rich-text {
+  h3, h4, h5, h6 {
+    font-family: "Titillium Web", Geneva, Tahoma, sans-serif !important;
+  }
+}
