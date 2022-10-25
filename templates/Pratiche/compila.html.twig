@@ -154,7 +154,7 @@
         </button>
       </div>
       {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType == 'bollo') and (pratica.statusName != 'STATUS_PAYMENT_PENDING' or pratica.servizio.isPaymentDeferred) %}
-        <div class="mt-5">
+        <div class="my-5">
           {% include '@CraueFormFlow/FormFlow/buttons.html.twig' %}
         </div>
       {% endif %}
