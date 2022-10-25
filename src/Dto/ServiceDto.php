@@ -4,11 +4,14 @@
 namespace App\Dto;
 
 use App\Entity\Categoria;
+use App\Entity\GeographicArea;
+use App\Entity\Recipient;
 use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
 use App\Model\Service;
 use App\Services\Manager\BackofficeManager;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -23,13 +26,19 @@ class ServiceDto extends AbstractDto
   private $baseUrl;
 
   private $version;
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
 
   /**
    * @param RouterInterface $router
+   * @param EntityManagerInterface $entityManager
    */
-  public function __construct(RouterInterface $router)
+  public function __construct(RouterInterface $router, EntityManagerInterface $entityManager)
   {
     $this->router = $router;
+    $this->entityManager = $entityManager;
   }
 
 
@@ -108,6 +117,7 @@ class ServiceDto extends AbstractDto
     $service->setShortDescription($servizio->getShortDescription() ?? '');
     $service->setDescription($servizio->getDescription() ?? '');
     $service->setHowto($servizio->getHowto());
+    $service->setHowToDo($servizio->getHowToDo());
     $service->setWho($servizio->getWho() ?? '');
     $service->setSpecialCases($servizio->getSpecialCases() ?? '');
     $service->setMoreInfo($servizio->getMoreInfo() ?? '');
@@ -212,7 +222,9 @@ class ServiceDto extends AbstractDto
     }
 
     $entity->setDescription($service->getDescription() ?? '');
+    $entity->setShortDescription($service->getShortDescription() ?? '');
     $entity->setHowto($service->getHowto());
+    $entity->setHowToDo($service->getHowToDo());
     $entity->setWho($service->getWho() ?? '');
     $entity->setSpecialCases($service->getSpecialCases() ?? '');
     $entity->setMoreInfo($service->getMoreInfo() ?? '');
@@ -230,7 +242,7 @@ class ServiceDto extends AbstractDto
     $entity->setPaymentRequired($service->getPaymentRequired());
     $entity->setPaymentParameters($service->getPaymentParameters());
     $entity->setIntegrations($this->normalizeIntegrationsData($service->getIntegrations()));
-    $entity->setSticky($service->isSticky());
+    $entity->setSticky($service->isSticky() ?? false);
     $entity->setStatus($service->getStatus());
     $entity->setAccessLevel($service->getAccessLevel());
     $entity->setLoginSuggested($service->isLoginSuggested());
@@ -253,9 +265,6 @@ class ServiceDto extends AbstractDto
     $entity->setWhatYouNeed($service->getWhatYouNeed());
     $entity->setWhatYouGet($service->getWhatYouGet());
     $entity->setCosts($service->getCosts());
-
-    $entity->setRecipients(new ArrayCollection($service->getRecipientsId()));
-    $entity->setGeographicAreas(new ArrayCollection($service->getGeographicAreasId()));
 
     $entity->setLifeEvents($service->getLifeEvents());
     $entity->setBusinessEvents($service->getBusinessEvents());

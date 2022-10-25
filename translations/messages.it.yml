@@ -259,7 +259,7 @@ servizio:
   page_updated_at: "Pagina aggiornata il %updatedAt%"
   booking_call_to_action: 'Link per la prenotazione di un appuntamento'
   booking_cta_help: "Utilizza questo campo per visualizzare nella scheda del servizio un pulsante per la prenotazione di un appuntamento tramite sistemi esterni"
-  book_appointment_description: 'Oppure, puoi prenotare un appuntamento e presentarti presso gli uffici.'
+  book_appointment_description: "Oppure, prenota un appuntamento presso l'ufficio competente."
   book_appointment_action: 'Prenota appuntamento'
   casi_particolari: "Casi particolari"
   maggiori_info: "Ulteriori informazioni"
@@ -279,7 +279,7 @@ servizio:
   gruppo: "Gruppo"
   condiviso_con_gruppo: "Condividi scheda del servizio con il gruppo"
   livello_accesso: "Accesso"
-  suggerisci_login: "Suggerisci il Login per l 'autocompletamento?"
+  suggerisci_login: "Suggerisci il Login per l'autocompletamento?"
   consenti_riapertura: "Consenti agli operatori di cambiare manualmente lo stato di una pratica"
   consenti_ritiro: "Consenti al cittadino di ritirare una pratica dopo che questa è già stata presentata"
   consenti_richiesta_integrazione: "Consenti agli operatori di richiedere integrazioni per le pratiche di questo servizio"
@@ -319,7 +319,7 @@ servizio:
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Al momento il servizio non è attivo'
   schedulato: 'Il servizio è attivo dal %from% al %to%'
-  accedi_al_servizio: 'Accedi al servizio %name%'
+  accedi_al_servizio: 'Accedi al servizio online %name%'
   browser_restricted: "Il sistema ha rilevato l'utilizzo di un browser non supportato o datato. La preghiamo di riprovare ad accedere con un browser aggiornato."
   attivo_per: "Servizio attivo per:"
   servizi_area_title: '%area%'
@@ -332,7 +332,7 @@ servizio:
   no_geographic_areas: 'Non è stata specificata nessuna area geografica'
   no_life_or_business_events: 'Non è stato specificato nessun evento'
   shared_with_group_message: 'Questo servizio condivide la scheda con il gruppo di servizi, di seguito sono mostrati i contenuti del gruppo di servizi associato.'
-  shared_with_group_action: 'Modifica il gruppo di servizi'
+  shared_with_group_action: 'Modifica la scheda del gruppo di servizi'
   external_card_url_message: 'La scheda di questo servizio è esterna alla piattaforma.'
   external_card_url_action: 'Vai alla scheda del servizio esterna'
   machine_readable: 'JSON Object'

@@ -152,6 +152,12 @@ class FormIOTemplateType extends AbstractType
     $service->setWho($ServiceToClone->getWho() ?? '');
     $service->setSpecialCases($ServiceToClone->getSpecialCases() ?? '');
     $service->setMoreInfo($ServiceToClone->getMoreInfo() ?? '');
+    $service->setConstraints($ServiceToClone->getConstraints());
+    $service->setConditions($ServiceToClone->getConditions());
+    $service->setTimesAndDeadlines($ServiceToClone->getTimesAndDeadlines());
+    $service->setLifeEvents($ServiceToClone->getLifeEvents());
+    $service->setBusinessEvents($ServiceToClone->getBusinessEvents());
+    $service->setBookingCallToAction($ServiceToClone->getBookingCallToAction());
     $service->setCompilationInfo($ServiceToClone->getCompilationInfo() ?? '');
     $service->setFinalIndications($ServiceToClone->getFinalIndications() ?? '');
     $service->setCoverage($ServiceToClone->getCoverage() ?? '');
@@ -165,6 +171,9 @@ class FormIOTemplateType extends AbstractType
     $service->setPaymentRequired($ServiceToClone->isPaymentRequired() ?? false);
     $service->setPaymentParameters($ServiceToClone->getPaymentParameters() ?? []);
     $service->setIntegrations($ServiceToClone->getIntegrations() ?? []);
+    $service->setTopics($ServiceToClone->getTopics());
+    $service->setRecipients($ServiceToClone->getRecipients());
+    $service->setGeographicAreas($ServiceToClone->getGeographicAreas());
     // If the category is not valid, the standard category is already set
     if ($ServiceToClone->getTopics() && $ServiceToClone->getTopics() instanceof Categoria)
     {

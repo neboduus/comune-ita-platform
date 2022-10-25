@@ -562,6 +562,8 @@ class Servizio implements Translatable
     //$this->paymentParameters = new ArrayCollection();
     $this->status = self::STATUS_AVAILABLE;
     $this->accessLevel = self::ACCESS_LEVEL_SPID_L2;
+    $this->setSticky(false);
+    $this->setWorkflow(self::WORKFLOW_APPROVAL);
     $this->setLoginSuggested(false);
     //$this->setProtocolRequired(true);
     $this->setAllowReopening(false);
@@ -570,8 +572,8 @@ class Servizio implements Translatable
     $this->setFinalIndications('La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.');
     $this->setSource(null);
 
-    $this->lifeEvents = new ArrayCollection();
-    $this->businessEvents = new ArrayCollection();
+    $this->lifeEvents = array();
+    $this->businessEvents = array();
 
     $this->conditionsAttachments = new ArrayCollection();
     $this->costsAttachments = new ArrayCollection();
@@ -918,7 +920,7 @@ class Servizio implements Translatable
   /**
    * @return bool
    */
-  public function isSticky()
+  public function isSticky(): bool
   {
     return $this->sticky;
   }
@@ -1626,7 +1628,7 @@ class Servizio implements Translatable
   /**
    * @return int
    */
-  public function getWorkflow()
+  public function getWorkflow(): int
   {
     return $this->workflow;
   }
@@ -1691,7 +1693,7 @@ class Servizio implements Translatable
   }
 
   /**
-   * @param Collection $recipients
+   * @param Collection|null $recipients
    */
   public function setRecipients(?Collection $recipients): void
   {

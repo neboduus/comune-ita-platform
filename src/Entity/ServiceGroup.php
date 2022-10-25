@@ -302,8 +302,8 @@ class ServiceGroup implements Translatable
     $this->recipients = new ArrayCollection();
     $this->geographicAreas = new ArrayCollection();
 
-    $this->lifeEvents = new ArrayCollection();
-    $this->businessEvents = new ArrayCollection();
+    $this->lifeEvents = array();
+    $this->businessEvents = array();
 
     $this->conditionsAttachments = new ArrayCollection();
     $this->costsAttachments = new ArrayCollection();
