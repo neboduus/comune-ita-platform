@@ -1102,7 +1102,6 @@ class ServiceGroup implements Translatable
    */
   public function getLifeEvents()
   {
-    return [];
     return $this->lifeEvents ?? [];
   }
 
@@ -1121,7 +1120,6 @@ class ServiceGroup implements Translatable
    */
   public function getBusinessEvents()
   {
-    return [];
     return $this->businessEvents ?? [];
   }
 
