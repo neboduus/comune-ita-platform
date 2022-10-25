@@ -8,6 +8,7 @@ use App\Entity\Recipient;
 use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
 use App\Event\KafkaEvent;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -300,6 +301,41 @@ class ServiceManager
         ];
       }
     }
+  }
+
+  /**
+   * @param array $recipientIds
+   * @return ArrayCollection
+   */
+  public function getRecipientsByIds(array $recipientIds): ArrayCollection
+  {
+    $recipients = new ArrayCollection();
+    $repository = $this->entityManager->getRepository(Recipient::class);
+    foreach ($recipientIds as $recipientId) {
+      $recipient = $repository->find($recipientId);
+      if ($recipient) {
+        $recipients->add($recipient);
+      }
+    }
+    return $recipients;
+  }
+
+
+  /**
+   * @param array $geographicAreasIds
+   * @return ArrayCollection
+   */
+  public function getGeographicAreasByIds(array $geographicAreasIds): ArrayCollection
+  {
+    $areas = new ArrayCollection();
+    $repository = $this->entityManager->getRepository(GeographicArea::class);
+    foreach ($geographicAreasIds as $geographicAreasId) {
+      $area = $repository->find($geographicAreasId);
+      if ($area) {
+        $areas->add($area);
+      }
+    }
+    return $areas;
   }
 
 }

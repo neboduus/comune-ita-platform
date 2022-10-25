@@ -255,6 +255,18 @@
                            href="#conditions"><span>{{ 'servizio.conditions' | trans }}</span></a>
                       </li>
                     {% endif %}
+                    {% if servizio.constraints|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#constraints"><span>{{ 'servizio.constraints' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.specialCases|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#special_cases"><span>{{ 'servizio.casi_particolari' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                   </ul>
                 </div>
               </div>
@@ -381,6 +393,22 @@
                     'attachment': attachment
                   }) }}
                 {% endfor %}
+              </div>
+            </section>
+          {% endif %}
+          {% if servizio.constraints|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="constraints">
+              <h2 class="title mb-3">{{ 'servizio.constraints' | trans }}</h2>
+              <div class="rich-text text-serif">
+                {{ servizio.constraints|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              </div>
+            </section>
+          {% endif %}
+          {% if servizio.specialCases|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="special_cases">
+              <h2 class="title mb-3">{{ 'servizio.casi_particolari' | trans }}</h2>
+              <div class="rich-text text-serif">
+                {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
               </div>
             </section>
           {% endif %}

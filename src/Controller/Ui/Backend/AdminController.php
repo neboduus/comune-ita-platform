@@ -534,9 +534,10 @@ class AdminController extends AbstractController
   /**
    * @Route("/servizio/import", name="admin_servizio_import")
    * @param Request $request
-   * @return array|RedirectResponse
+   * @param ServiceDto $serviceDto
+   * @return RedirectResponse
    */
-  public function importServizioAction(Request $request)
+  public function importServizioAction(Request $request, ServiceDto $serviceDto): RedirectResponse
   {
     $em = $this->getDoctrine()->getManager();
     $ente = $this->instanceService->getCurrentInstance();
@@ -556,8 +557,8 @@ class AdminController extends AbstractController
         $responseBody = json_decode($response->getBody(), true);
         $responseBody['tenant'] = $ente->getId();
 
-        $serviceDto = new Service();
-        $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
+        $dto = new Service();
+        $form = $this->createForm('App\Form\ServizioFormType', $dto);
         $serviceId = $responseBody['id'];
         $md5Response = md5(json_encode($responseBody));
         unset($responseBody['id'], $responseBody['slug']);
@@ -572,19 +573,19 @@ class AdminController extends AbstractController
 
         $updatedAt = isset($responseBody['updated_at']) ? $responseBody['updated_at'] : date('c');
         $serviceSource = new ServiceSource($serviceId, $remoteUrl, $updatedAt, $md5Response, '1');
-        $serviceDto = $serviceDto->setSource($serviceSource);
+        $dto = $dto->setSource($serviceSource);
 
-        $category = $em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+        $category = $em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $dto->getTopics()]);
         if ($category instanceof Categoria) {
-          $serviceDto->setTopics($category);
+          $dto->setTopics($category);
         } else {
           $category = $em->getRepository(Categoria::class)->findOneBy([], ['name' => 'ASC']);
           if ($category instanceof Categoria) {
-            $serviceDto->setTopics($category);
+            $dto->setTopics($category);
           }
         }
 
-        $service = $serviceDto->toEntity();
+        $service = $serviceDto->toEntity($dto);
         $service->setName($service->getName() . ' (' . $this->translator->trans('imported') . ' ' . date('d/m/Y H:i:s') . ')');
         $service->setPraticaFCQN('\App\Entity\FormIO');
         $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
@@ -595,6 +596,9 @@ class AdminController extends AbstractController
         $erogatore->addEnte($ente);
         $em->persist($erogatore);
         $service->activateForErogatore($erogatore);
+
+        $service->setRecipients($this->serviceManager->getRecipientsByIds($dto->getRecipientsId()));
+        $service->setGeographicAreas($this->serviceManager->getGeographicAreasByIds($dto->getGeographicAreasId()));
 
         // todo: verificare se è possibile eliminare
        $this->serviceManager->save($service);

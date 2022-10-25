@@ -1384,7 +1384,7 @@ class Service
    */
   public function getLifeEvents(): array
   {
-    return $this->lifeEvents;
+    return $this->lifeEvents ?? [];
   }
 
   /**
@@ -1402,7 +1402,7 @@ class Service
    */
   public function getBusinessEvents(): array
   {
-    return $this->businessEvents;
+    return $this->businessEvents ?? [];
   }
 
   /**

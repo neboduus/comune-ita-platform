@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Helpers\EventTaxonomy;
 use App\Model\Service;
 use App\Services\FormServerApiAdapterService;
 use App\Services\Manager\BackofficeManager;
@@ -9,6 +10,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -72,7 +74,19 @@ class ServizioFormType extends AbstractType
       ->add('more_info')
       ->add('constraints')
       ->add('conditions')
+      ->add('times_and_deadlines')
+      ->add('booking_call_to_action')
       ->add('compilation_info')
+      ->add('life_events', ChoiceType::class, [
+        'choices' => EventTaxonomy::LIFE_EVENTS,
+        'multiple' => true,
+        'required' => false,
+      ])
+      ->add('business_events', ChoiceType::class, [
+        'choices' => EventTaxonomy::BUSINESS_EVENTS,
+        'multiple' => true,
+        'required' => false,
+      ])
       ->add('final_indications', TextareaType::class, [
         "label" => false,
         'empty_data' => 'La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.',
@@ -168,7 +182,7 @@ class ServizioFormType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'App\Dto\Service',
+      'data_class' => 'App\Model\Service',
       'allow_extra_fields' => true,
       'csrf_protection' => false
     ));

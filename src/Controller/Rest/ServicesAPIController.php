@@ -390,7 +390,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
       $this->checkServiceRelations($serviceDto);
 
-      $service = $serviceDto->toEntity();
+      $service = $this->serviceDto->toEntity($serviceDto);
       $service->setPraticaFCQN('\App\Entity\FormIO');
       $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
 
@@ -518,7 +518,7 @@ class ServicesAPIController extends AbstractFOSRestController
       }
 
       $this->checkServiceRelations($serviceDto);
-      $service = $serviceDto->toEntity($service);
+      $service = $this->serviceDto->toEntity($serviceDto, $service);
 
       $this->serviceManager->save($service);
     } catch (\Exception $e) {
@@ -621,7 +621,7 @@ class ServicesAPIController extends AbstractFOSRestController
       }
 
       $this->checkServiceRelations($serviceDto);
-      $service = $serviceDto->toEntity($service);
+      $service = $this->serviceDto->toEntity($serviceDto, $service);
 
       $this->serviceManager->save($service);
     } catch (\Exception $e) {

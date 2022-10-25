@@ -203,6 +203,18 @@
                            href="#conditions"><span>{{ 'servizio.conditions' | trans }}</span></a>
                       </li>
                     {% endif %}
+                    {% if servizio.constraints|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#constraints"><span>{{ 'servizio.constraints' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.specialCases|striptags|trim != '' %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                           href="#special_cases"><span>{{ 'servizio.casi_particolari' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                     {% if servizio.getNotStickyServices.count > 0 %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
@@ -235,23 +247,23 @@
               <h2 class="title mb-3">{{ 'servizio.how_to_do' | trans }}</h2>
               <div
                 class="rich-text text-serif">{{ servizio.howToDo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-            </div>
+              </div>
             </section>
           {% endif %}
           {% if servizio.whatYouNeed|striptags|trim != '' %}
             <section class="it-page-section mb-4 bg-light p-3" id="what-you-need">
               <h2 class="title mb-3">{{ 'servizio.what_you_need' | trans }}</h2>
               <div class="rich-text text-serif">
-              {{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-            </div>
+                {{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              </div>
             </section>
           {% endif %}
           {% if servizio.whatYouGet|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="what-you-get">
               <h2 class="title mb-3">{{ 'servizio.what_you_get' | trans }}</h2>
               <div class="rich-text text-serif">
-              {{ servizio.whatYouGet|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-            </div>
+                {{ servizio.whatYouGet|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              </div>
             </section>
           {% endif %}
           {% if servizio.timesAndDeadlines %}
@@ -283,7 +295,7 @@
             <section class="it-page-section mb-4" id="costs">
               <h2 class="title mb-3">{{ 'servizio.costs' | trans }}</h2>
               <div class="rich-text text-serif">
-              {{ servizio.costs|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+                {{ servizio.costs|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
               </div>
               <div>
                 {% for attachment in servizio.costsAttachments %}
@@ -299,8 +311,8 @@
             <h2 class="title mb-3">{{ 'servizio.accedere' | trans }}</h2>
             {% if servizio.howto|striptags|trim != '' %}
               <div class="rich-text text-serif">
-              {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-            </div>
+                {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              </div>
             {% endif %}
             <div class="mt-3">
               {% for sharedService in servizio.getSharedServices %}
@@ -313,15 +325,15 @@
             <section class="it-page-section mb-4" id="more_info">
               <h2 class="title mb-3">{{ 'servizio.maggiori_info' | trans }}</h2>
               <div class="rich-text text-serif">
-              {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-            </div>
+                {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              </div>
             </section>
           {% endif %}
           {% if servizio.conditions|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="conditions">
               <h2 class="title mb-3">{{ 'servizio.conditions' | trans }}</h2>
               <div class="rich-text text-serif">
-              {{ servizio.conditions|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+                {{ servizio.conditions|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
               </div>
               <div>
                 {% for attachment in servizio.conditionsAttachments %}
@@ -332,22 +344,39 @@
                 {% endfor %}
               </div>
             </section>
-            <section class="it-page-section mb-4" id="contacts">
-              <div class="col-12 mb-3">
-                <span class="text-paragraph-small">{{ 'search.topics' | trans }}:</span>
-                {% if servizio.topics.name is defined %}
-                  <div class="d-flex flex-wrap mt-2 mb-4">
-                    <div>
-                      <a class="chip chip-simple chip-primary bg-tag text-decoration-none" href="#"
-                         data-element="service-topic">
-                        <span class="chip-label">{{ servizio.topics.name }}</span> </a>
-                    </div>
-                  </div>
-                {% endif %}
+          {% endif %}
+          {% if servizio.constraints|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="constraints">
+              <h2 class="title mb-3">{{ 'servizio.constraints' | trans }}</h2>
+              <div class="rich-text text-serif">
+                {{ servizio.constraints|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
               </div>
-              <p class="small mb-0">{{ 'servizio.page_updated_at' | trans({'%updatedAt%': servizio.updatedAt | date('d/m/Y') }) }}</p>
             </section>
           {% endif %}
+          {% if servizio.specialCases|striptags|trim != '' %}
+            <section class="it-page-section mb-4" id="special_cases">
+              <h2 class="title mb-3">{{ 'servizio.casi_particolari' | trans }}</h2>
+              <div class="rich-text text-serif">
+                {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              </div>
+            </section>
+          {% endif %}
+          <section class="it-page-section mb-4" id="contacts">
+            <div class="col-12 mb-3">
+              <span class="text-paragraph-small">{{ 'search.topics' | trans }}:</span>
+              {% if servizio.topics.name is defined %}
+                <div class="d-flex flex-wrap mt-2 mb-4">
+                  <div>
+                    <a class="chip chip-simple chip-primary bg-tag text-decoration-none" href="#"
+                       data-element="service-topic">
+                      <span class="chip-label">{{ servizio.topics.name }}</span> </a>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+            <p
+              class="small mb-0">{{ 'servizio.page_updated_at' | trans({'%updatedAt%': servizio.updatedAt | date('d/m/Y') }) }}</p>
+          </section>
           {% if servizio.getNotStickyServices.count > 0 %}
             <section class="it-page-section mb-4" id="related-services">
               <h2 class="title mb-3">{{ 'gruppo_di_servizi.servizi_correlati' | trans }}</h2>
