@@ -213,6 +213,7 @@ class GeneralDataType extends AbstractI18nType
         CheckboxType::class,
         [
           'label' => 'servizio.enable_external_card_url',
+          'help' => 'servizio.enable_external_card_url_help',
           'required' => false,
           'mapped' => false,
           'data' => !empty($servizio->getExternalCardUrl()),
@@ -223,6 +224,7 @@ class GeneralDataType extends AbstractI18nType
         TextType::class,
         [
           'label' => 'servizio.external_card_url',
+          'help' => 'servizio.external_card_url_help',
           'required' => false,
         ]
       )
