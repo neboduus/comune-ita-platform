@@ -939,7 +939,7 @@ class Service
   /**
    * @param bool $sticky
    */
-  public function setSticky(bool $sticky)
+  public function setSticky(?bool $sticky)
   {
     $this->sticky = $sticky;
   }
@@ -1090,7 +1090,7 @@ class Service
   /**
    * @param bool $allowReopening
    */
-  public function setAllowReopening(bool $allowReopening)
+  public function setAllowReopening(?bool $allowReopening)
   {
     $this->allowReopening = $allowReopening;
   }
@@ -1139,7 +1139,7 @@ class Service
   /**
    * @param int $workflow
    */
-  public function setWorkflow(int $workflow)
+  public function setWorkflow(?int $workflow)
   {
     $this->workflow = $workflow;
   }

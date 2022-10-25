@@ -920,7 +920,7 @@ class Servizio implements Translatable
   /**
    * @return bool
    */
-  public function isSticky(): bool
+  public function isSticky(): ?bool
   {
     return $this->sticky;
   }
@@ -1628,7 +1628,7 @@ class Servizio implements Translatable
   /**
    * @return int
    */
-  public function getWorkflow(): int
+  public function getWorkflow(): ?int
   {
     return $this->workflow;
   }
@@ -1636,7 +1636,7 @@ class Servizio implements Translatable
   /**
    * @param int $workflow
    */
-  public function setWorkflow(int $workflow)
+  public function setWorkflow(?int $workflow)
   {
     $this->workflow = $workflow;
   }
