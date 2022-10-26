@@ -76,9 +76,10 @@ class PrintController extends AbstractController
 
         $temp['original_filename'] = $a->getOriginalFilename();
         try {
-          $temp['hash'] = $this->fileService->getHash($a);
+          // Todo: riguardare tutto il sistema dei filesystem
+          $temp['hash'] = $this->fileService->getHash($this->fileService->getFilenameWithPath($a));
         } catch (FileNotFoundException $e) {
-          return new Response(["Attachment not found"], Response::HTTP_NOT_FOUND);
+          return new Response("Attachment not found", Response::HTTP_NOT_FOUND);
         }
         if ($protocolRequired) {
           $preparedAttachments[]=$temp;
