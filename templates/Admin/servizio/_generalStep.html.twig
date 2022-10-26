@@ -4,10 +4,19 @@
     {{ form_errors(form) }}
 
     {{ form_row(form.name) }}
+    {{ form_row(form.shortDescription) }}
     {{ form_row(form.sticky) }}
     {{ form_row(form.status) }}
-    {{ form_row(form.scheduled_from) }}
-    {{ form_row(form.scheduled_to) }}
+    <div class="form-group">
+      <div class="row">
+        <div class="col-6">
+          {{ form_widget(form.scheduled_from) }}
+        </div>
+        <div class="col-6">
+          {{ form_widget(form.scheduled_to) }}
+        </div>
+      </div>
+    </div>
     {{ form_row(form.service_group) }}
     {{ form_row(form.shared_with_group) }}
     {{ form_row(form.access_level) }}

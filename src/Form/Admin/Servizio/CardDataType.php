@@ -72,12 +72,6 @@ class CardDataType extends AbstractI18nType
 
     // you can add the translatable fields
     $this->createTranslatableMapper($builder, $options)
-      ->add("shortDescription", I18nTextareaType::class, [
-        "label" => 'servizio.short_description',
-        'required' => true,
-        'attr' => ['class' => 'simple'],
-        'purify_html' => true,
-      ])
       ->add("description", I18nTextareaType::class, [
         "label" => 'servizio.cos_e',
         'purify_html' => true,

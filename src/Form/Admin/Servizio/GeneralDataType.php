@@ -62,6 +62,12 @@ class GeneralDataType extends AbstractI18nType
           'maxlength' => 255
         ]
       ])
+      ->add("shortDescription", I18nTextareaType::class, [
+        "label" => 'servizio.short_description',
+        'required' => true,
+        'attr' => ['class' => 'simple'],
+        'purify_html' => true,
+      ])
       ->add("compilationInfo", I18nTextareaType::class, [
         "label" => 'servizio.info_compilazione',
         'purify_html' => true,
@@ -114,6 +120,7 @@ class GeneralDataType extends AbstractI18nType
           'label' => 'servizio.data_cessazione',
           'required' => false,
           'empty_data' => null,
+          'attr' => ['class' => 'float-right'],
           'placeholder' => [
             'year' => 'time.year',
             'month' => 'time.month',

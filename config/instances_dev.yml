@@ -4,3 +4,9 @@ instances:
     identifier: comune-di-bugliano
     login_route: login_pat
     protocollo: dummy
+  servizi.comune.tornimparte.aq.it/a:
+    codice_meccanografico: c_cbug
+    identifier: a
+    database_name: sdc_tornimparte
+    login_route: login_pat
+    protocollo: dummy

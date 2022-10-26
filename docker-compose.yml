@@ -174,7 +174,7 @@ services:
       traefik.http.services.caddy.loadbalancer.server.port: 80
 
       traefik.http.routers.sdc-http.entrypoints: web
-      traefik.http.routers.sdc-http.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+      traefik.http.routers.sdc-http.rule: 'Host(`stanzadelcittadino.localtest.me`, `servizi.comune.tornimparte.aq.it`)'
 
       # Per provare https eliminare il commento al blocco successivo
       #traefik.http.routers.sdc-https.entrypoints: websecure
