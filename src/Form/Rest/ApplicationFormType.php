@@ -54,7 +54,7 @@ class ApplicationFormType extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'App\Dto\Application',
+      'data_class' => 'App\Model\Application',
       'allow_extra_fields' => true,
       'csrf_protection' => false
     ));
