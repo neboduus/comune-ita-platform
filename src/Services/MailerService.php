@@ -678,7 +678,7 @@ class MailerService
           $attachment = new \Swift_Attachment(
             $this->fileService->getAttachmentContent($moduloCompilato),
             $moduloCompilato->getFile()->getFilename(),
-            $this->fileService->getMimeType($moduloCompilato)
+            $this->fileService->getMimeType($this->fileService->getFilenameWithPath($moduloCompilato))
           );
           $message->attach($attachment);
         }
@@ -695,7 +695,7 @@ class MailerService
             $attachment = new \Swift_Attachment(
               $this->fileService->getAttachmentContent($allegato),
               $allegato->getFile()->getFilename(),
-              $this->fileService->getMimeType($allegato)
+              $this->fileService->getMimeType($this->fileService->getFilenameWithPath($moduloCompilato))
             );
             $message->attach($attachment);
           }
