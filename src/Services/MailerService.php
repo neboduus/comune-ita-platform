@@ -673,7 +673,8 @@ class MailerService
       if ($pratica->getModuliCompilati()->count() > 0) {
         /** @var ModuloCompilato $moduloCompilato */
         $moduloCompilato = $pratica->getModuliCompilati()->first();
-        if ($this->fileService->fileExists($moduloCompilato)) {
+        // Fixme: creare un file exist nell'allegato file service
+        if ($this->fileService->fileExists($this->fileService->getFilenameWithPath($moduloCompilato))) {
           $attachment = new \Swift_Attachment(
             $this->fileService->getAttachmentContent($moduloCompilato),
             $moduloCompilato->getFile()->getFilename(),
@@ -689,7 +690,8 @@ class MailerService
       if ($pratica->getAllegatiOperatore()->count() > 0) {
         /** @var AllegatoOperatore $allegato */
         foreach ($pratica->getAllegatiOperatore() as $allegato) {
-          if ($this->fileService->fileExists($allegato)) {
+          // Fixme: creare un file exist nell'allegato file service
+          if ($this->fileService->fileExists($this->fileService->getFilenameWithPath($moduloCompilato))) {
             $attachment = new \Swift_Attachment(
               $this->fileService->getAttachmentContent($allegato),
               $allegato->getFile()->getFilename(),

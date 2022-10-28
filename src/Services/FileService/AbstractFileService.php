@@ -105,6 +105,7 @@ abstract class AbstractFileService
   {
     return $this->fileSystem->has($path);
   }
+
   /**
    * @return bool
    */
