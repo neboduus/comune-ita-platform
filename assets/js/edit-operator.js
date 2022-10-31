@@ -31,10 +31,8 @@ $(document).ready(function () {
           }
         });
         if (countChecked === $(children).length){
-          debugger
           $(el).prop('checked',true);
         }else{
-          debugger
           $(el).prop('checked',false);
         }
       }
