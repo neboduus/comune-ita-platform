@@ -53,6 +53,8 @@ class OperatoreUserType extends AbstractType
       $servizi = array_merge($servizi, $serviziErogati);
     }
 
+
+
     $serviceChoices = [];
     $serviceNames = [];
     foreach ($servizi as $s) {
@@ -70,6 +72,7 @@ class OperatoreUserType extends AbstractType
         $serviceChoices[$s->getId()] = $s->getId();
       }
     }
+
 
     $builder
       ->add('nome', TextType::class, [
@@ -113,15 +116,14 @@ class OperatoreUserType extends AbstractType
     $operatore = $event->getForm()->getData();
     $serviziAbilitati = new ArrayCollection();
     $data = $event->getData();
+
     if (isset($data['services']) && !empty($data['services'])) {
       foreach ($data['services'] as $k => $s) {
         if($s != 'group'){
           $serviziAbilitati->add($s);
-        }else{
-          unset($data['services'][$k]);
         }
       }
-      $operatore->parseServizi();
+      unset($data['services']);
       $event->setData($data);
     }
     $operatore->setServiziAbilitati($serviziAbilitati);

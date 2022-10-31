@@ -26,7 +26,10 @@
                   {% for child,choiceView in children %}
                     <li class="d-block">
                       <label class="checkbox"> <!-- Secondo livello (servizi in gruppo) -->
-                        {{ form_widget(form.services[child]) }}
+                        {{ form_widget(form.services[child],{
+                          'attr':{
+                            'value': choiceView.data
+                          }}) }}
                       </label>
                     </li>
                   {% endfor %}
