@@ -17,8 +17,8 @@ import 'summernote/dist/summernote-bs4.css';
 }(function ($) {
 
   $.extend($.summernote.options, {
-    stripTags: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:'],
-    stripAttributes: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:'],
+    stripTags: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:','h1','h2'],
+    stripAttributes: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:','h1','h2'],
     onAfterStripTags: function ($html) {
       return $html;
     }
@@ -29,7 +29,6 @@ import 'summernote/dist/summernote-bs4.css';
       let $note = context.layoutInfo.note;
       let $options = context.options;
       $note.on('summernote.paste', function (e, evt) {
-        debugger
         evt.preventDefault();
         let text = evt.originalEvent.clipboardData.getData('text/plain') || evt.originalEvent.clipboardData.getData('text/html') || e.currentTarget.innerHTML
         if (text) {
@@ -59,8 +58,8 @@ export class TextEditor {
       ],
       fontNames: ['Titillium Web','sans-serif'],
       callbacks: callback,
-      stripTags: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:'],
-      stripAttributes: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:'],
+      stripTags: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:','h1','h2'],
+      stripAttributes: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:','h1','h2'],
       striptags: {
         onAfterStripTags: function ($html) {
           $html.find('table').addClass('table');

@@ -15,9 +15,12 @@
           </button>
           <div class="navbar-collapsable" id="nav10">
             <div class="overlay"></div>
-            <div class="close-div sr-only">
-              <button class="btn close-menu" type="button">
-                <span class="it-close"></span>close
+            <div class="close-div">
+              <button class="btn close-menu" type="button" data-focus-mouse="false">
+                <span class="it-close sr-only">close</span>
+                <svg class="icon">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close-big"></use>
+                </svg>
               </button>
             </div>
             <div class="menu-wrapper">
@@ -39,7 +42,7 @@
                           <span class="font-weight-bold">{{ item.text }}</span>
                         </a>
                       {% else %}
-                        <a class="nav-link " href="{{ item.url }}">{{ item.text }}</a>
+                        <a class="nav-link" href="{{ item.url }}">{{ item.text }}</a>
                       {% endif %}
                     </li>
                   {% endfor %}
