@@ -42,11 +42,10 @@ export function getStatus(status) {
  */
 export function deleteDraftModal(info) {
   $('#modalDraftId').html(info.event.id);
+  let draftExpireTime = new Date(info.event.extendedProps.draftExpireTime)
 
-  let date = new Date(info.event.extendedProps.draftExpireTime).toISOString().slice(0, 10);
-  let time = new Date(info.event.extendedProps.draftExpireTime).toISOString().slice(11, 16);
-  $('#modalDraftExpireTime').html(date);
-  $('#modalDraftExpireDate').html(time);
+  let date = draftExpireTime.toLocaleDateString();
+  let time = draftExpireTime.getHours()+":"+draftExpireTime.getMinutes();
 
   let description = $('#modalDraftDescription').html()
   description = description.replace("%expire_time%", time).replace("%expire_date%", date)
