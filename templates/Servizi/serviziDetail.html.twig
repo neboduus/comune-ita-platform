@@ -279,19 +279,19 @@
           {% if servizio.who|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="who">
               <h2 class="title mb-3">{{ 'servizio.a_chi_si_rivolge' | trans }}</h2>
-              <div class="rich-text text-serif">{{ servizio.who|cleanMarkup|raw|nl2br }}</div>
+              <div class="rich-text text-serif text-paragraph">{{ servizio.who|cleanMarkup|raw|nl2br }}</div>
             </section>
           {% endif %}
           {% if servizio.description|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="description">
               <h2 class="title mb-3">{{ 'servizio.descrizione' | trans }}</h2>
-              <div class="rich-text text-serif">{{ servizio.description|cleanMarkup|raw|nl2br }}</div>
+              <div class="rich-text text-serif text-paragraph">{{ servizio.description|cleanMarkup|raw|nl2br }}</div>
             </section>
           {% endif %}
           {% if servizio.howToDo|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="how-to-do">
               <h2 class="title mb-3">{{ 'servizio.how_to_do' | trans }}</h2>
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
               {{ servizio.howToDo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
             </div>
             </section>
@@ -299,7 +299,7 @@
           {% if servizio.whatYouNeed|striptags|trim != '' %}
             <section class="it-page-section mb-4 bg-light p-3" id="what-you-need">
               <h2 class="title mb-3">{{ 'servizio.what_you_need' | trans }}</h2>
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
               {{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
             </div>
             </section>
@@ -307,7 +307,7 @@
           {% if servizio.whatYouGet|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="what-you-get">
               <h2 class="title mb-3">{{ 'servizio.what_you_get' | trans }}</h2>
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
               {{ servizio.whatYouGet|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
             </div>
             </section>
@@ -315,7 +315,7 @@
           {% if servizio.maxResponseTime or servizio.status == constant('App\\Entity\\Servizio::STATUS_SCHEDULED') %}
             <section class="it-page-section mb-4" id="times_and_deadlines">
               <h2 class="title mb-3">{{ 'servizio.times_and_deadlines' | trans }}</h2>
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
                 {{ servizio.timesAndDeadlines|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
               </div>
               {% set serviceDates = [] %}
@@ -336,7 +336,7 @@
           {% if servizio.costs|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="costs">
               <h2 class="title mb-3">{{ 'servizio.costs' | trans }}</h2>
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
               {{ servizio.costs|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
             </div>
               <div>
@@ -352,7 +352,7 @@
           <section class="it-page-section mb-4 bg-light p-4" id="howto">
             <h2 class="title mb-3">{{ 'servizio.accedere' | trans }}</h2>
             {% if servizio.howto|striptags|trim != '' %}
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
               {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
             </div>
             {% endif %}
@@ -375,7 +375,7 @@
           {% if servizio.moreInfo|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="more_info">
               <h2 class="title mb-3">{{ 'servizio.maggiori_info' | trans }}</h2>
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
               {{ servizio.moreInfo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
             </div>
             </section>
@@ -383,7 +383,7 @@
           {% if servizio.conditions|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="conditions">
               <h2 class="title mb-3">{{ 'servizio.conditions' | trans }}</h2>
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
               {{ servizio.conditions|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
               </div>
               <div>
@@ -399,7 +399,7 @@
           {% if servizio.constraints|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="constraints">
               <h2 class="title mb-3">{{ 'servizio.constraints' | trans }}</h2>
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
                 {{ servizio.constraints|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
               </div>
             </section>
@@ -407,7 +407,7 @@
           {% if servizio.specialCases|striptags|trim != '' %}
             <section class="it-page-section mb-4" id="special_cases">
               <h2 class="title mb-3">{{ 'servizio.casi_particolari' | trans }}</h2>
-              <div class="rich-text text-serif">
+              <div class="rich-text text-serif text-paragraph">
                 {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
               </div>
             </section>
