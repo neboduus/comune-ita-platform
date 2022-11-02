@@ -9,8 +9,9 @@ Per i test che seguono fare riferimento al documento dei [Test Manuali](https://
 - [ ] Test prenotazione in [calendario a intervalli fissi](https://devsdc.opencontent.it/comune-di-bugliano/it/servizi/prenotazione-calendario-intervalli-fissi)
 - [ ] Test prenotazione in [calendario intervalli liberi](https://devsdc.opencontent.it/comune-di-bugliano/it/servizi/prenotazione-calendario-intervalli-liberi)
 - [ ] Test invio messaggi a Kafka:
-    - testare che le pratiche create nei test precedenti siano state correttamente inviate a kafka  
+    - testare che le pratiche create nei test precedenti siano state correttamente inviate a kafka
     - testare che in caso di errore di invio a kafka diretto, venga creata la scheduled action necessaria per l'invio successivo.
+- [ ] Test importazione di un servizio dalla versione precedente
 
 ## Test su nuovi sviluppi
 
