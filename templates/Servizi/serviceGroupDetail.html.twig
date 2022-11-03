@@ -404,10 +404,15 @@
       </div>
     </section>
   {% endif %}
+
+  {{ include('Servizi/parts/_feedback.html.twig', {'type': 'group'})}}
+
   <a href="#" aria-hidden="true" data-attribute="back-to-top" class="back-to-top shadow back-to-top-show"
      aria-label="{{ 'back_to_top' | trans }}">
     <svg class="icon icon-light">
       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-up"></use>
     </svg>
   </a>
+
+  {{ include('Servizi/parts/_contacts.html.twig')}}
 {% endblock %}
