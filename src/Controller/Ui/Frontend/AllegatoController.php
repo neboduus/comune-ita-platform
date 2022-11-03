@@ -466,9 +466,6 @@ class AllegatoController extends AbstractController
    */
   public function allegatoMessaggioUploadAction(Request $request, Pratica $pratica)
   {
-    if (!in_array($pratica->getStatus(), [Pratica::STATUS_PENDING, Pratica::STATUS_DRAFT_FOR_INTEGRATION, Pratica::STATUS_PENDING_AFTER_INTEGRATION])){
-      return new JsonResponse($this->translator->trans('operatori.messaggi.pratica_id'). ' '.$pratica->getId(). ' ' .$this->translator->trans('operatori.messaggi.errore_carica_allegato'), Response::HTTP_BAD_REQUEST);
-    }
 
     /** @var User $user */
     $user = $this->getUser();
@@ -477,10 +474,28 @@ class AllegatoController extends AbstractController
       if ($pratica->getUser()->getId() !== $user->getId()) {
         return new JsonResponse("User can not access pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
       }
+      if ($pratica->getStatus() != Pratica::STATUS_DRAFT_FOR_INTEGRATION){
+        $responseMessage = $this->translator->trans('operatori.messaggi.pratica_id').
+          ' '.$pratica->getId().' ' .$this->translator->trans('operatori.messaggi.errore_carica_allegato');
+        return new JsonResponse($responseMessage, Response::HTTP_BAD_REQUEST);
+      }
     } else if ($user instanceof OperatoreUser) {
       $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
-      if (!$isEnabled) {
+      $hasControl = $pratica->getOperatore()->getId() === $user->getId();
+      if (!$isEnabled or !$hasControl) {
         return new JsonResponse("User can not read pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
+      }
+      $allowedStatus = [
+        Pratica::STATUS_PENDING, Pratica::STATUS_REQUEST_INTEGRATION, Pratica::STATUS_DRAFT_FOR_INTEGRATION,
+        Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION, Pratica::STATUS_REGISTERED_AFTER_INTEGRATION,
+        Pratica::STATUS_PENDING_AFTER_INTEGRATION, Pratica::STATUS_PROCESSING, Pratica::STATUS_COMPLETE,
+        Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE, Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
+        Pratica::STATUS_CANCELLED, Pratica::STATUS_WITHDRAW, Pratica::STATUS_REVOKED
+      ];
+      if (!in_array($pratica->getStatus(), $allowedStatus)){
+        $responseMessage = $this->translator->trans('operatori.messaggi.pratica_id').
+          ' '.$pratica->getId().' ' .$this->translator->trans('operatori.messaggi.errore_carica_allegato');
+        return new JsonResponse($responseMessage, Response::HTTP_BAD_REQUEST);
       }
     } else {
       return new JsonResponse("User can not read pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
