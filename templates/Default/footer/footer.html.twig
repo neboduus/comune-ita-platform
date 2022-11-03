@@ -6,6 +6,7 @@
 {% set social = ente.getMetaAsArray('social') %}
 {% set utils = ente.getMetaAsArray('utils') %}
 {% set logo = ente.getMetaAsArray('logo') %}
+{% set legals = ente.getMetaAsArray('legals') %}
 {% set customName = ente.getMetaAsArray('name') %}
 {% set enteName = customName != '' ? customName :  ente.name %}
 
@@ -165,6 +166,11 @@
             {% if utils %}
               {% for item in utils %}
                 <a href="{{ item.url }}" title="{{ 'link_to' | trans }} {{ item.text }}">{{ item.text }}</a>
+              {% endfor %}
+            {% endif %}
+            {% if legals %}
+              {% for key, value in legals %}
+                <a href="{{ value }}" title="{{ 'link_to' | trans }} {{ key | trans }}">{{ key | trans }}</a>
               {% endfor %}
             {% endif %}
             <a href="{{ path('app.swagger_ui') }}">Api</a>
