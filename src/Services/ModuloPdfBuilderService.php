@@ -266,9 +266,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $content = base64_decode($payload['FileRichiesta']);
       unset($payload['FileRichiesta']);
       $fileName = uniqid() . '.pdf.p7m';
+      $integration->setMimeType('application/pkcs7-mime');
     } else {
       $content = $this->renderForPraticaIntegrationRequest($pratica, $integrationRequest);
       $fileName = uniqid() . '.pdf';
+      $integration->setMimeType('application/pdf');
     }
 
     $integration->setPayload($payload);
@@ -291,7 +293,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param Pratica $pratica
-   * @param array $messages
+   * @param array|null $messages
+   * @param bool $cancel
    * @return RispostaIntegrazione
    * @throws \League\Flysystem\FileExistsException
    */

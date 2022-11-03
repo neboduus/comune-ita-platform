@@ -238,14 +238,14 @@ class PraticaManager
     $statusChange = new StatusChange();
     $statusChange->setEvento('Presa in carico');
     $statusChange->setOperatore($user->getFullName());
-    
+
     try {
       $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_PENDING);
       $this->praticaStatusService->setNewStatus($pratica, Pratica::STATUS_PENDING, $statusChange);
     } catch (\Exception $e) {
       $this->praticaStatusService->setNewStatus($pratica, $pratica->getStatus(), $statusChange);
     }
-    
+
     $this->logger->info(
       LogConstants::PRATICA_ASSIGNED,
       [
@@ -421,7 +421,7 @@ class PraticaManager
 
     foreach ($data['attachments'] as $attachment) {
       $base64Content = $attachment->getFile();
-      $file = new UploadedBase64File($base64Content, $attachment->getMimeType());
+      $file = new UploadedBase64File($base64Content, $attachment->getMimeType(), $attachment->getName());
       $allegato = new AllegatoMessaggio();
       $allegato->setFile($file);
       $allegato->setOwner($pratica->getUser());
