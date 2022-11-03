@@ -21,14 +21,17 @@
         {{ form_start(messageForm) }}
         {{ form_errors(messageForm) }}
         {{ form_row(messageForm.message, {'attr': {'class': 'summernote'}}) }}
-        <div class="form-group pb-0 mb-0">
-          <label>{{ 'operatori.messaggi.allega_label' | trans }}</label>
-          {{ form_row(messageForm.attachments) }}
-        </div>
-        <div id="vueApp" class="px-2">
-          <message_attachments id="upload_message_attachment"></message_attachments>
-          <small class="form-text text-muted">{{ 'operatori.messaggi.allega_help' | trans }}</small>
-        </div>
+
+        {% if pratica.status == constant('STATUS_DRAFT_FOR_INTEGRATION', pratica) %}
+          <div class="form-group pb-0 mb-0">
+            <label>{{ 'operatori.messaggi.allega_label' | trans }}</label>
+            {{ form_row(messageForm.attachments) }}
+          </div>
+          <div id="vueApp" class="px-2">
+            <message_attachments id="upload_message_attachment"></message_attachments>
+            <small class="form-text text-muted">{{ 'operatori.messaggi.allega_help' | trans }}</small>
+          </div>
+        {% endif %}
 
         <div class="d-flex justify-content-end mt-5">
           {% if not pratica.operatore %}
