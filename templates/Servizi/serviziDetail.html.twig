@@ -195,31 +195,31 @@
                 <div class="link-list-wrapper menu-link-list">
                   <h3 class="no_toc">{{ 'servizio.indice' | trans }}</h3>
                   <ul class="link-list" data-element="page-index">
-                    {% if servizio.who|striptags|trim != '' %}
+                    {% if not servizio.who|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#who"><span>{{ 'servizio.a_chi_si_rivolge' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.description|striptags|trim != '' %}
+                    {% if not servizio.description|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#description"><span>{{ 'servizio.descrizione' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.howToDo|striptags|trim != '' %}
+                    {% if not servizio.howToDo|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#how-to-do"><span>{{ 'servizio.how_to_do' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.whatYouNeed|striptags|trim != '' %}
+                    {% if not servizio.whatYouNeed|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#what-you-need"><span>{{ 'servizio.what_you_need' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.whatYouGet|striptags|trim != '' %}
+                    {% if not servizio.whatYouGet|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#what-you-get"><span>{{ 'servizio.what_you_get' | trans }}</span></a>
@@ -231,7 +231,7 @@
                            href="#times_and_deadlines"><span>{{ 'servizio.times_and_deadlines' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.costs|striptags|trim != '' %}
+                    {% if not servizio.costs|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#costs"><span>{{ 'servizio.costs' | trans }}</span></a>
@@ -243,25 +243,25 @@
                            href="#howto"><span>{{ 'servizio.accedere' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.moreInfo|striptags|trim != '' %}
+                    {% if not servizio.moreInfo|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#more_info"><span>{{ 'servizio.maggiori_info' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.conditions|striptags|trim != '' %}
+                    {% if not servizio.conditions|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#conditions"><span>{{ 'servizio.conditions' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.constraints|striptags|trim != '' %}
+                    {% if not servizio.constraints|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#constraints"><span>{{ 'servizio.constraints' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.specialCases|striptags|trim != '' %}
+                    {% if not servizio.specialCases|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                            href="#special_cases"><span>{{ 'servizio.casi_particolari' | trans }}</span></a>
@@ -276,19 +276,19 @@
       </aside>
       <div class="col-12 col-lg-8 offset-lg-1">
         <div class="it-page-sections-container">
-          {% if servizio.who|striptags|trim != '' %}
+          {% if not servizio.who|isEmpty %}
             <section class="it-page-section mb-4" id="who">
               <h2 class="title mb-3">{{ 'servizio.a_chi_si_rivolge' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">{{ servizio.who|cleanMarkup|raw|nl2br }}</div>
             </section>
           {% endif %}
-          {% if servizio.description|striptags|trim != '' %}
+          {% if not servizio.description|isEmpty %}
             <section class="it-page-section mb-4" id="description">
               <h2 class="title mb-3">{{ 'servizio.descrizione' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">{{ servizio.description|cleanMarkup|raw|nl2br }}</div>
             </section>
           {% endif %}
-          {% if servizio.howToDo|striptags|trim != '' %}
+          {% if not servizio.howToDo|isEmpty %}
             <section class="it-page-section mb-4" id="how-to-do">
               <h2 class="title mb-3">{{ 'servizio.how_to_do' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
@@ -296,7 +296,7 @@
             </div>
             </section>
           {% endif %}
-          {% if servizio.whatYouNeed|striptags|trim != '' %}
+          {% if not servizio.whatYouNeed|isEmpty %}
             <section class="it-page-section mb-4 bg-light p-3" id="what-you-need">
               <h2 class="title mb-3">{{ 'servizio.what_you_need' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
@@ -304,7 +304,7 @@
             </div>
             </section>
           {% endif %}
-          {% if servizio.whatYouGet|striptags|trim != '' %}
+          {% if not servizio.whatYouGet|isEmpty %}
             <section class="it-page-section mb-4" id="what-you-get">
               <h2 class="title mb-3">{{ 'servizio.what_you_get' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
@@ -333,7 +333,7 @@
               {{ include('Servizi/parts/panel/times_and_deadlines.html.twig', {'serviceDates': serviceDates}) }}
             </section>
           {% endif %}
-          {% if servizio.costs|striptags|trim != '' %}
+          {% if not servizio.costs|isEmpty %}
             <section class="it-page-section mb-4" id="costs">
               <h2 class="title mb-3">{{ 'servizio.costs' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
@@ -351,7 +351,7 @@
           {% endif %}
           <section class="it-page-section mb-4 bg-light p-4" id="howto">
             <h2 class="title mb-3">{{ 'servizio.accedere' | trans }}</h2>
-            {% if servizio.howto|striptags|trim != '' %}
+            {% if not servizio.howto|isEmpty %}
               <div class="rich-text text-serif text-paragraph">
               {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
             </div>
@@ -372,7 +372,7 @@
               </div>
             {% endif %}
           </section>
-          {% if servizio.moreInfo|striptags|trim != '' %}
+          {% if not servizio.moreInfo|isEmpty %}
             <section class="it-page-section mb-4" id="more_info">
               <h2 class="title mb-3">{{ 'servizio.maggiori_info' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
@@ -380,7 +380,7 @@
             </div>
             </section>
           {% endif %}
-          {% if servizio.conditions|striptags|trim != '' %}
+          {% if not servizio.conditions|isEmpty %}
             <section class="it-page-section mb-4" id="conditions">
               <h2 class="title mb-3">{{ 'servizio.conditions' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
@@ -396,7 +396,7 @@
               </div>
             </section>
           {% endif %}
-          {% if servizio.constraints|striptags|trim != '' %}
+          {% if not servizio.constraints|isEmpty %}
             <section class="it-page-section mb-4" id="constraints">
               <h2 class="title mb-3">{{ 'servizio.constraints' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
@@ -404,7 +404,7 @@
               </div>
             </section>
           {% endif %}
-          {% if servizio.specialCases|striptags|trim != '' %}
+          {% if not servizio.specialCases|isEmpty %}
             <section class="it-page-section mb-4" id="special_cases">
               <h2 class="title mb-3">{{ 'servizio.casi_particolari' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">

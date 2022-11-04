@@ -26,6 +26,7 @@ class AppExtension  extends AbstractExtension
     return [
       new TwigFilter('cleanMarkup', [$this, 'cleanMarkup']),
       new TwigFilter('abstract', [$this, 'abstract']),
+      new TwigFilter('isEmpty', [$this, 'isEmpty']),
     ];
   }
 
@@ -51,6 +52,17 @@ class AppExtension  extends AbstractExtension
   public function abstract(?string $string): ?string
   {
     return StringUtils::abstract($string);
+  }
+
+  /**
+   * Check if summernote field is empty after cleaning
+   *
+   * @param string $string
+   * @return boolean
+   */
+  public function isEmpty($string)
+  {
+    return strlen(strip_tags(trim($string))) == 0;
   }
 
   /**

@@ -269,7 +269,7 @@ class ServiceDto extends AbstractDto
     $entity->setLifeEvents($service->getLifeEvents());
     $entity->setBusinessEvents($service->getBusinessEvents());
     $entity->setExternalCardUrl($service->getExternalCardUrl());
-
+    
     return $entity;
   }
 
