@@ -1272,11 +1272,11 @@ messages:
       6000: '6000'
       # A cosa si riferisce "Con il seguente messaggio:" ?
       # Potrei avere un esempio?
-      7000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihrem Antrag betreffend <strong>%servizio%</strong> wurde stattgegeben. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br />Benachrichtigung:<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
+      7000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihrem Antrag betreffend <strong>%servizio%</strong> wurde stattgegeben. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
       8000: '8000'
       # A cosa si riferisce "Con il seguente messaggio:" ?
       # Potrei avere un esempio?
-      9000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde abgelehnt. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br />Benachrichtigung:<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
+      9000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde abgelehnt. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
       20000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde erfolgreich zurückgezogen. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
       1000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass unter Ihrem Namen ein Vorgangsentwurf betreffend  <strong>%servizio%</strong> erstellt worden ist. Steigen Sie in Ihr Bürgerservicekonto ein und schauen Sie unter  <i>Meine Vorgänge</i> nach, wenn Sie die Anfrage senden wollen.<br />Wir danken für die Zusammenarbeit."
       50000: "Sehr geehrte/-r Frau/Herr<strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde annulliert. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."

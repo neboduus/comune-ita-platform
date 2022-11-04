@@ -74,8 +74,7 @@ class PraticaPlaceholderService
       '%gruppo%' => $pratica->getServizio()->getServiceGroup() ? $pratica->getServizio()->getServiceGroup()->getName() : "",
       '%categoria%' => $pratica->getServizio()->getTopics() ? $pratica->getServizio()->getTopics()->getName() : "",
       '%protocollo%' => $pratica->getNumeroProtocollo() ? $pratica->getNumeroProtocollo() : "",
-      '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito(
-      ) : $this->translator->trans('messages.pratica.no_reason'),
+      '%messaggio_personale%' => !empty(trim($pratica->getMotivazioneEsito())) ? $pratica->getMotivazioneEsito() : '',
       '%user_name%' => $pratica->getUser()->getFullName(),
       '%indirizzo%' => $this->router->generate('home', [], UrlGeneratorInterface::ABSOLUTE_URL),
       '%data_corrente%' => (new \DateTime())->format('d/m/Y'),
@@ -83,6 +82,7 @@ class PraticaPlaceholderService
       '%ora_acquisizione%' => $submissionTime ? $submissionTime->format('H:i:s') : "",
       '%data_protocollo%' => $protocolTime ? $protocolTime->format('d/m/Y') : "",
       '%ora_protocollo%' => $protocolTime ? $protocolTime->format('H:i:s') : "",
+      '%max_response_time%' => $pratica->getServizio()->getMaxResponseTime()? : "",
     ];
 
     $dataPlaceholders = [];
