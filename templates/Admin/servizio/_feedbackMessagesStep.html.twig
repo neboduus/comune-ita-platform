@@ -76,9 +76,15 @@
                 <td>%user_name%</td>
               </tr>
               <tr>
-                <td class="font-weight-semibold text-secondary w-50">{{ 'servizio.indirizzo_utente' | trans }}e:</td>
+                <td class="font-weight-semibold text-secondary w-50">{{ 'servizio.indirizzo_utente' | trans }}:</td>
                 <td>%indirizzo%</td>
               </tr>
+              {% if servizio.maxResponseTime %}
+              <tr>
+                <td class="font-weight-semibold text-secondary w-50">{{ 'servizio.max_response_time_list' | trans }}:</td>
+                <td>%max_response_time%</td>
+              </tr>
+              {% endif %}
               </tbody>
             </table>
             {% if schema.components %}
