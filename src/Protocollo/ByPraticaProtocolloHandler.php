@@ -88,6 +88,11 @@ class ByPraticaProtocolloHandler implements ProtocolloHandlerInterface, Predispo
     return $this->getHandler($pratica)->sendRichiestaIntegrazioneToProtocollo($pratica, $allegato);
   }
 
+  public function sendAllegatoRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiestaIntegrazione, AllegatoInterface $allegato)
+  {
+    return $this->getHandler($pratica)->sendAllegatoRichiestaIntegrazioneToProtocollo($pratica, $richiestaIntegrazione, $allegato);
+  }
+
   public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
     return $this->getHandler($pratica)->sendRispostaIntegrazioneToProtocollo($pratica, $allegato);

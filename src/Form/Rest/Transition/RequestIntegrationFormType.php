@@ -50,27 +50,29 @@ class RequestIntegrationFormType extends AbstractType
   public function onPreSubmit(FormEvent $event)
   {
     $data = $event->getData();
-    foreach ($data['attachments'] as $attachment) {
-      if (!in_array($attachment['mime_type'], $this->allowedExtensions)) {
-        return $event->getForm()->addError(
-          new FormError('Mime type non valido')
-        );
-      }
-
-      $extension = explode('.', $attachment['name']);
-      if (count($extension) < 2) {
-        return $event->getForm()->addError(
-          new FormError('E\'obbligatorio specificare l\'estensione del file le campo name')
-        );
-
-      } else {
-        if (!array_key_exists(end($extension), $this->allowedExtensions)) {
-          return $event->getForm()->addError(new FormError('Estensione non valida'));
+    if (isset($data['attachments']) && !empty($data['attachments'])) {
+      foreach ($data['attachments'] as $attachment) {
+        if (!in_array($attachment['mime_type'], $this->allowedExtensions)) {
+          return $event->getForm()->addError(
+            new FormError('Mime type non valido')
+          );
         }
-      }
 
-      if (empty($attachment['file'])) {
-        return $event->getForm()->addError(new FormError('Il campo file è obbligatorio'));
+        $extension = explode('.', $attachment['name']);
+        if (count($extension) < 2) {
+          return $event->getForm()->addError(
+            new FormError('E\'obbligatorio specificare l\'estensione del file le campo name')
+          );
+
+        } else {
+          if (!array_key_exists(end($extension), $this->allowedExtensions)) {
+            return $event->getForm()->addError(new FormError('Estensione non valida'));
+          }
+        }
+
+        if (empty($attachment['file'])) {
+          return $event->getForm()->addError(new FormError('Il campo file è obbligatorio'));
+        }
       }
     }
   }

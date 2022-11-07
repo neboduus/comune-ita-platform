@@ -1,10 +1,43 @@
-<html>
-<head>
-    {{ include('Pratiche/pdf/parts/style.html.twig', {'pratica':pratica, 'user': user}) }}
-</head>
-<body>
-    <p>
-        {{ richiesta_integrazione.message|raw }}
-    </p>
-</body>
-</html>
+{% extends 'Pratiche/pdf/parts/base_logo.twig' %}
+
+{% block pdf_content %}
+  <h1>Richiesta di integrazione</h1>
+
+  <p>
+    <strong>Servizio</strong>:{{ pratica.servizio.fullName }}<br>
+    <strong>Richiedente</strong>: {{ pratica.user.fullName }}<br>
+    <strong>Numero pratica</strong>: {{ pratica.id }}<br>
+    {% if pratica.numeroProtocollo %}
+      <strong>Numero protocollo</strong>: {{ pratica.numeroProtocollo }}
+    {% endif %}
+  </p>
+
+  {# Richiesta integrazione #}
+  {% if richiesta_integrazione.message %}
+    <h3>Note di richiesta</h3>
+    {{ richiesta_integrazione.message|raw }}
+  {% endif %}
+
+  {# Allegati #}
+  <h3>Allegati</h3>
+  {% if attachments|length > 0 %}
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Nome del file</th>
+        <th>Hash del file</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for a in attachments %}
+        <tr>
+          <td>{{ a.originalFilename }}</td>
+          <td>{{ a.hash }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p><em>{{ 'pratica.nessun_allegato'|trans }}</em></p>
+  {% endif %}
+{% endblock %}

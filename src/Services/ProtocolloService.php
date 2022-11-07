@@ -53,10 +53,11 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
   public function __construct(
     ProtocolloHandlerInterface $handler,
-    EntityManagerInterface $entityManager,
-    LoggerInterface $logger,
-    EventDispatcherInterface $dispatcher
-  ) {
+    EntityManagerInterface     $entityManager,
+    LoggerInterface            $logger,
+    EventDispatcherInterface   $dispatcher
+  )
+  {
     $this->handler = $handler;
     $this->entityManager = $entityManager;
     $this->logger = $logger;
@@ -78,7 +79,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
     $this->validatePratica($pratica);
 
     if ($pratica->getNumeroProtocollo() === null) {
-      $this->logger->debug(__METHOD__.' send pratica', ['pratica' => $pratica->getId()]);
+      $this->logger->debug(__METHOD__ . ' send pratica', ['pratica' => $pratica->getId()]);
       $this->handler->sendPraticaToProtocollo($pratica);
       $this->entityManager->persist($pratica);
       $this->entityManager->flush();
@@ -92,7 +93,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       try {
         $this->validateUploadFile($pratica, $allegato);
         $this->logger->debug(
-          __METHOD__.': send allegato',
+          __METHOD__ . ': send allegato',
           ['allegato' => $allegato->getId(), 'pratica' => $pratica->getId()]
         );
         $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
@@ -117,7 +118,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       try {
         $this->validateUploadFile($pratica, $allegato);
         $this->logger->debug(
-          __METHOD__.' send moduloCompilato',
+          __METHOD__ . ' send moduloCompilato',
           ['allegato' => $allegato->getId(), 'pratica' => $pratica->getId()]
         );
         $this->handler->sendAllegatoToProtocollo($pratica, $allegato);
@@ -163,32 +164,95 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
    * @param Pratica $pratica
    * @throws ParentNotRegisteredException
    * @throws ORMException
-   * @throws OptimisticLockException
+   * @throws OptimisticLockException|IncompleteExecutionException
    */
   public function protocollaRichiesteIntegrazione(Pratica $pratica)
   {
     $this->validatePraticaForUploadFile($pratica);
-    $allegati = $pratica->getRichiesteIntegrazione();
+    $request = $pratica->getRichiestaDiIntegrazioneAttiva();
 
-    if (!empty($allegati)) {
-      /** @var Allegato $allegato */
-      foreach ($allegati as $allegato) {
-        if ($allegato->getType() === RichiestaIntegrazione::TYPE_DEFAULT) {
+    if (!$request instanceof RichiestaIntegrazione) {
+      $this->logger->error("Non ci sono richieste di integrazioni attive", ['pratica' => $pratica->getId()]);
+      return false;
+    }
+
+    $dispatchSuccess = true;
+
+    /** @var Allegato $allegato */
+    try {
+      $this->validateRichiestaIntegrazione($pratica, $request);
+      $this->logger->debug(__METHOD__ . ' send richiesta integrazione', ['richiesta_integrazione' => $request->getId(), 'pratica' => $pratica->getId()]);
+      $this->handler->sendRichiestaIntegrazioneToProtocollo($pratica, $request);
+      $this->entityManager->persist($request);
+      $this->entityManager->flush();
+    } catch (AlreadySentException $e) {
+      // Non interrompo, continuo con la protocollazione degli allegati
+      $this->logger->debug(
+        "La richiesta integrazione già inviata al protocollo",
+        ['richiesta_integrazione' => $request->getId(), 'pratica' => $pratica->getId()]
+      );
+    } catch (GuzzleException $e) {
+      $this->logger->error(
+        "Errore inviando la richiesta integrazione al protocollo",
+        ['risposta_integrazione' => $request->getId(), 'pratica' => $pratica->getId()]
+      );
+      $dispatchSuccess = false;
+    }
+
+    if (!empty($request->getAttachments())) {
+
+      $allegatoMessaggioRepo = $this->entityManager->getRepository('App\Entity\AllegatoMessaggio');
+
+      foreach ($request->getAttachments() as $allegatoId) {
+        $allegato = $allegatoMessaggioRepo->find($allegatoId);
+        if ($allegato instanceof AllegatoMessaggio) {
           try {
-            $this->validateRichiestaIntegrazione($pratica, $allegato);
-            $this->logger->debug(__METHOD__, ['allegato' => $allegato->getId(), 'pratica' => $pratica->getId()]);
-            $this->handler->sendRichiestaIntegrazioneToProtocollo($pratica, $allegato);
+            $this->validateRichiestaIntegrazioneUploadFile($request, $allegato);
+            $this->logger->debug(
+              __METHOD__ . ': send allegato_messaggio',
+              ['allegato_messaggio' => $allegato->getId(), 'pratica' => $pratica->getId(), 'richiesta_integrazione' => $request->getId()]
+            );
+            $this->handler->sendAllegatoRichiestaIntegrazioneToProtocollo($pratica, $request, $allegato);
             $this->entityManager->persist($allegato);
+            $this->entityManager->persist($request);
             $this->entityManager->flush();
-          } catch (AlreadySentException $e) {
+
+          } catch (AlreadyUploadException $e) {
+            $this->logger->debug(
+              "Allegato messaggio già inviat0 al protocollo",
+              ['allegato_messaggio' => $allegato->getId(), 'pratica' => $pratica->getId(), 'richiesta_integrazione' => $request->getId()]
+            );
+          } catch (GuzzleException $e) {
+            $this->logger->error(
+              "Errore inviando l'allegato dell'integrazione al protocollo",
+              ['allegato_messaggio' => $allegato->getId(), 'pratica' => $pratica->getId(), 'richiesta_integrazione' => $request->getId()]
+            );
+            $dispatchSuccess = false;
           }
         }
       }
-      $this->entityManager->persist($pratica);
-      $this->entityManager->flush();
     }
-    // Nb: I subscriber sono registrati sulla classe quindi non va passato il secondo parametro Name
-    $this->dispatcher->dispatch(new ProtocollaRichiesteIntegrazioneSuccessEvent($pratica));
+
+    // Predispose document
+    if ($this->handler instanceof PredisposedProtocolHandlerInterface && $request->getNumeroProtocollo() === null) {
+      try {
+        $this->handler->protocolPredisposedAttachment($pratica, $request);
+        $this->entityManager->persist($request);
+        $this->entityManager->persist($pratica);
+        $this->entityManager->flush();
+      } catch (\Exception $e) {
+        $this->logger->error("Errore nella predisposizione della richiesta di integrazione", ['pratica' => $pratica->getId()]);
+        $dispatchSuccess = false;
+      }
+    }
+
+    if ($dispatchSuccess) {
+      // Nb: I subscriber sono registrati sulla classe quindi non va passato il secondo parametro Name
+      $this->dispatcher->dispatch(new ProtocollaRichiesteIntegrazioneSuccessEvent($pratica));
+    } else {
+      throw new IncompleteExecutionException();
+    }
+
   }
 
   /**
@@ -222,7 +286,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
     try {
       $this->validateRispostaIntegrazione($integrationAnswer);
-      $this->logger->debug(__METHOD__.' send risposta', ['risposta_integrazione' => $pratica->getId()]);
+      $this->logger->debug(__METHOD__ . ' send risposta', ['risposta_integrazione' => $pratica->getId()]);
       $this->handler->sendRispostaIntegrazioneToProtocollo($pratica, $integrationAnswer);
       $this->entityManager->persist($integrationAnswer);
       $this->entityManager->flush();
@@ -230,12 +294,12 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
     } catch (AlreadySentException $e) {
       $this->logger->debug(
-        "Risposta la risposta integrazione già inviata al protocollo",
+        "La risposta integrazione già inviata al protocollo",
         ['risposta_integrazione' => $integrationAnswer->getId(), 'pratica' => $pratica->getId()]
       );
     } catch (GuzzleException $e) {
       $this->logger->error(
-        "Errore inviando la risposta integrazion al protocollo",
+        "Errore inviando la risposta integrazione al protocollo",
         ['risposta_integrazione' => $integrationAnswer->getId(), 'pratica' => $pratica->getId()]
       );
       $dispatchSuccess = false;
@@ -251,7 +315,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
       try {
         $this->validateUploadFile($pratica, $allegato);
         $this->logger->debug(
-          __METHOD__.': send integrazione',
+          __METHOD__ . ': send integrazione',
           ['integrazione' => $allegato->getId(), 'pratica' => $pratica->getId()]
         );
         $this->handler->sendIntegrazioneToProtocollo($pratica, $integrationAnswer, $allegato);
@@ -283,7 +347,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
           try {
             $this->validateUploadFile($pratica, $allegato);
             $this->logger->debug(
-              __METHOD__.': send allegato_messaggio',
+              __METHOD__ . ': send allegato_messaggio',
               ['allegato_messaggio' => $allegato->getId(), 'pratica' => $pratica->getId()]
             );
             $this->handler->sendIntegrazioneToProtocollo($pratica, $integrationAnswer, $allegato);
@@ -293,7 +357,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
           } catch (AlreadyUploadException $e) {
             $this->logger->debug(
-              "Allegato messaggio già inviata al protocollo",
+              "Allegato messaggio già inviato al protocollo",
               ['allegato_messaggio' => $allegato->getId(), 'pratica' => $pratica->getId()]
             );
           } catch (GuzzleException $e) {
@@ -338,6 +402,7 @@ class ProtocolloService extends AbstractProtocolloService implements ProtocolloS
 
   /**
    * @param Pratica $pratica
+   * @description Protocolla la risposta di un operatore sulla pratica
    * @throws AlreadySentException
    * @throws ORMException
    * @throws OptimisticLockException

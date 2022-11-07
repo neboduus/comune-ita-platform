@@ -4,6 +4,7 @@
 namespace App\Dto;
 
 use App\Entity\Allegato;
+use App\Entity\AllegatoMessaggio;
 use App\Entity\Pratica;
 use App\Entity\RichiestaIntegrazione;
 use App\Entity\RispostaIntegrazione;
@@ -280,17 +281,26 @@ class ApplicationDto extends AbstractDto
     /** @var RispostaIntegrazioneRepository $integrationAnswerRepo */
     $integrationAnswerRepo = $this->entityManager->getRepository('App\Entity\RispostaIntegrazione');
 
+    $messageAttachementRepo = $this->entityManager->getRepository('App\Entity\AllegatoMessaggio');
+
     $attachmentsRepo = $this->entityManager->getRepository('App\Entity\Allegato');
 
     /** @var RichiestaIntegrazione $integrationRequest */
     foreach ($pratica->getRichiesteIntegrazione() as $integrationRequest) {
+
       $temp = [];
       $temp['outbound'] = $this->prepareFile($integrationRequest, $this->baseUrl, $this->version);
-      $temp['outbound']['attachments'] = [];
+      if (!empty($integrationRequest->getAttachments())) {
+        $attachments = $messageAttachementRepo->findBy(['id' => $integrationRequest->getAttachments()]);
+        if (!empty($attachments)) {
+          $temp['outbound']['attachments'] = $this->prepareFileCollection($attachments, $this->baseUrl, $this->version);
+        }
+      } else {
+        $temp['outbound']['attachments'] = [];
+      }
+
       $temp['inbound'] = null;
-
       $integrationAnswerCollection = $integrationAnswerRepo->findByIntegrationRequest($integrationRequest->getId());
-
       if (!empty($integrationAnswerCollection)) {
         /** @var RispostaIntegrazione $answer */
         $answer = $integrationAnswerCollection[0];
@@ -305,12 +315,9 @@ class ApplicationDto extends AbstractDto
         }
       }
 
-      //$integrations[$integrationRequest->getCreatedAt()->format('U')]= $temp;
       $integrations[]= $temp;
     }
     return $integrations;
-    /*krsort($integrations, SORT_NUMERIC);
-    return array_values($integrations);*/
   }
 
   public function decorateDematerializedForms($data, $attachmentEndpointUrl = '', $version = 1)

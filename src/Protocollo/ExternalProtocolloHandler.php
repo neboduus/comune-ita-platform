@@ -54,6 +54,11 @@ class ExternalProtocolloHandler implements ProtocolloHandlerInterface
     // TODO: Implement sendRichiestaIntegrazioneToProtocollo() method.
   }
 
+  public function sendAllegatoRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiestaIntegrazione, AllegatoInterface $allegato)
+  {
+    // TODO: Implement sendAllegatoRichiestaIntegrazioneToProtocollo() method.
+  }
+
   public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
     // TODO: Implement sendRispostaIntegrazioneToProtocollo() method.

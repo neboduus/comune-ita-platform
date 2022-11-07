@@ -399,26 +399,15 @@ class PraticaManager
 
     $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
 
-    // todo: verificare se va creato solo il messaggio o anche la richiesta di integrazione, per ora creo entrambi
-    $richiestaIntegrazione = new RichiestaIntegrazioneDTO([], null, $data['message']);
-    $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
-    $integration = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRichiestaIntegrazione(
-      $pratica,
-      $richiestaIntegrazione
-    );
-    $pratica->addRichiestaIntegrazione($integration);
-
-
     $message = new Message();
     $message->setApplication($pratica);
     $message->setProtocolRequired(false);
     $message->setVisibility(Message::VISIBILITY_APPLICANT);
     $message->setMessage($data['message']);
-    $message->setSubject(
-      $this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()])
-    );
+    $message->setSubject($this->translator->trans('pratica.messaggi.oggetto', ['%pratica%' => $message->getApplication()]));
     $message->setAuthor($user);
 
+    $requestAttachmentsIds = $requestAttachments = [];
     foreach ($data['attachments'] as $attachment) {
       $base64Content = $attachment->getFile();
       $file = new UploadedBase64File($base64Content, $attachment->getMimeType(), $attachment->getName());
@@ -427,12 +416,29 @@ class PraticaManager
       $allegato->setOwner($pratica->getUser());
       $allegato->setDescription('Allegato richiesta integrazione');
       $allegato->setOriginalFilename($attachment->getName());
-      $allegato->setIdRichiestaIntegrazione($integration->getId());
+      //$allegato->setIdRichiestaIntegrazione($integration->getId());
       $this->entityManager->persist($allegato);
       $message->addAttachment($allegato);
+      $requestAttachments[]= $allegato;
+      $requestAttachmentsIds[]= $allegato->getId();
     }
-
     $this->messageManager->save($message);
+
+    // Creo il file di richiesta integrazione
+    $richiestaIntegrazione = new RichiestaIntegrazioneDTO([], null, $data['message']);
+    $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
+    $integration = $this->moduloPdfBuilderService->creaModuloProtocollabilePerRichiestaIntegrazione(
+      $pratica,
+      $richiestaIntegrazione,
+      $requestAttachments
+    );
+    if (!empty($requestAttachmentsIds)) {
+      $integration->setAttachments($requestAttachmentsIds);
+      $this->entityManager->persist($integration);
+    }
+    $pratica->addRichiestaIntegrazione($integration);
+
+
     $this->entityManager->persist($pratica);
     $this->entityManager->flush();
 

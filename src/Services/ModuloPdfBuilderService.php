@@ -254,10 +254,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @return RichiestaIntegrazione
    * @throws Exception
    */
-  public function creaModuloProtocollabilePerRichiestaIntegrazione(
-    Pratica $pratica,
-    RichiestaIntegrazioneDTO $integrationRequest
-  )
+  public function creaModuloProtocollabilePerRichiestaIntegrazione(Pratica $pratica, RichiestaIntegrazioneDTO $integrationRequest, $attachments = [])
   {
     $integration = new RichiestaIntegrazione();
     $payload = $integrationRequest->getPayload();
@@ -268,7 +265,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $fileName = uniqid() . '.pdf.p7m';
       $integration->setMimeType('application/pkcs7-mime');
     } else {
-      $content = $this->renderForPraticaIntegrationRequest($pratica, $integrationRequest);
+      $content = $this->renderForPraticaIntegrationRequest($pratica, $integrationRequest, $attachments);
       $fileName = uniqid() . '.pdf';
       $integration->setMimeType('application/pdf');
     }
@@ -304,7 +301,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
     $payload[RichiestaIntegrazione::TYPE_DEFAULT] = $integrationRequest->getId();
 
-    //Se messages è  null recupero i messaggi in automatico, per retrocompatibilità su prima versione
+    //Se messages è null recupero i messaggi in automatico, per retrocompatibilità su prima versione
     if ($messages === null) {
       $repo = $this->em->getRepository('App\Entity\Pratica');
       $filters['from_date'] = $integrationRequest->getCreatedAt();
@@ -391,12 +388,13 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param RichiestaIntegrazioneDTO $integrationRequest
    * @return string
    */
-  private function renderForPraticaIntegrationRequest(Pratica $pratica, RichiestaIntegrazioneDTO $integrationRequest)
+  private function renderForPraticaIntegrationRequest(Pratica $pratica, RichiestaIntegrazioneDTO $integrationRequest, $attachments = [])
   {
     $html = $this->templating->render('Pratiche/pdf/parts/integration.html.twig', [
       'pratica' => $pratica,
       'richiesta_integrazione' => $integrationRequest,
       'user' => $pratica->getUser(),
+      'attachments' => $attachments
     ]);
 
     return $this->generatePdf($html);
@@ -569,13 +567,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
 
     try {
-
       $index = DocumentFactory::makeFromString('index.html', $html);
-
       $request = new HTMLRequest($index);
       $request->setPaperSize(GotembergRequest::A4);
-      //$request->setMargins(GotembergRequest::NO_MARGINS);
-      $request->setMargins([1,0,0,0]);
+      $request->setMargins(GotembergRequest::NO_MARGINS);
+      //$request->setMargins([1,0,0,0]);
       $response =  $client->post($request);
       $fileStream = $response->getBody();
       return $fileStream->getContents();
