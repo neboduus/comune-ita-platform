@@ -205,7 +205,7 @@ services:
 
   App\Services\InstanceService:
     arguments:
-      $instance: '%prefix%'
+      $instance: '%instance%'
     public: true
 
   App\Payment\Gateway\Bollo:

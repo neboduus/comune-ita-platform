@@ -2,7 +2,7 @@
 <?php
 
 use App\Kernel;
-use App\InstanceKernel;
+use App\InstanceKernelFactory;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputOption;
@@ -29,8 +29,6 @@ $env = $input->getParameterOption(['--env', '-e'], getenv('APP_ENV') ?: 'dev');
 $instance = $input->getParameterOption(['--instance', '-i'], '');
 $debug = getenv('APP_DEBUG') !== '0' && !$input->hasParameterOption(['--no-debug', '']) && $env !== 'prod';
 
-
-
 require dirname(__DIR__).'/config/bootstrap.php';
 
 if ($debug) {
@@ -41,26 +39,10 @@ if ($debug) {
 }
 
 if (!empty($instance)) {
-  $instances = Yaml::parse(file_get_contents(__DIR__.'/../config/instances_'.$env.'.yml'));
-  $instanceParams = $instances['instances'];
-
-  $params = false;
-  foreach ($instanceParams as $k => $v) {
-    if ($v['identifier'] == $instance) {
-      $params = $v;
-    }
-  }
-
-  if (!$params) {
-    throw new Exception("Instance $instance not found");
-  }
-  $kernel = new InstanceKernel($env, $debug);
-  $kernel->setIdentifier($instance);
-  $kernel->setInstanceParameters($params);
+  $kernel = InstanceKernelFactory::instanceFromConsole($env, $instance, $debug);
 } else {
   $kernel = new Kernel($env, $debug);
 }
-
 
 $application = new Application($kernel);
 
