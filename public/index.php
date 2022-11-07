@@ -1,5 +1,6 @@
 <?php
 
+use App\InstanceKernelFactory;
 use App\InstanceKernel;
 use App\Kernel;
 use Symfony\Component\ErrorHandler\Debug;
@@ -7,7 +8,6 @@ use QueueIT\KnownUserV3\SDK\KnownUser;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Yaml\Yaml;
 
 require dirname(__DIR__).'/config/bootstrap.php';
 
@@ -83,27 +83,8 @@ if ($request->server->has('APP_ENV') && in_array($request->server->get('APP_ENV'
   }
 }
 
-$currentInstance = false;
-$instances = Yaml::parse(file_get_contents(__DIR__ . '/../config/instances_' . $env . '.yml'));
-$instanceParams = $instances['instances'];
-
-
-$host = $request->getHost();
-$pathInfoParts = explode('/', trim($request->getPathInfo(), '/'));
-$path = isset($pathInfoParts[0]) ? $pathInfoParts[0] : null;
-
-$instance = false;
-if (isset($instanceParams[$host . '/' . $path])) {
-  $instance = $instanceParams[$host . '/' . $path];
-}
-
-if ($instance) {
-  $instance['ocsdc_host'] = $host;
-  $instance['prefix'] = $path;
-  $kernel = new InstanceKernel($env, $debug);
-  $kernel->setIdentifier($instance['identifier']);
-  $kernel->setInstanceParameters($instance);
-} else {
+$kernel = InstanceKernelFactory::instanceFromRequest($env, $request, $debug);
+if (!$kernel instanceof InstanceKernel) {
   $kernel = new Kernel($env, $debug);
 }
 

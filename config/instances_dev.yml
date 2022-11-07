@@ -1,5 +1,5 @@
 instances:
-  stanzadelcittadino.localtest.me/comune-di-bugliano:
+  stanzadelcittadino.localtest.me/x:
     codice_meccanografico: c_cbug
     identifier: comune-di-bugliano
     login_route: login_pat
