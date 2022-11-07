@@ -233,7 +233,16 @@ class PraticheController extends AbstractController
       ['latestStatusChangeTimestamp' => 'DESC']
     );
 
-    $services = $applications = [];
+    $services = [];
+    $applications = [
+      'draft' => [],
+      'pending' => [],
+      'completed' => [],
+      'cancelled' => [],
+      'integration' => [],
+      'payment_pending' => [],
+      'withdrawn' => [],
+    ];
 
     /** @var Pratica $p */
     foreach ($pratiche as $p) {
@@ -264,6 +273,12 @@ class PraticheController extends AbstractController
     $praticheRelated = $repo->findRelatedPraticaForUser($user);
     if (count($praticheRelated) > 0) {
       $applications['related'] = $praticheRelated;
+    }
+
+    foreach ($applications as $k => $v) {
+      if (empty($v)) {
+        unset($applications[$k]);
+      }
     }
 
     return $this->render('Pratiche/list.html.twig', [
