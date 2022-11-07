@@ -79,6 +79,21 @@ class AbstractProtocolloService
     }
   }
 
+  protected function validateRichiestaIntegrazioneUploadFile(RichiestaIntegrazione $richiesta, AllegatoInterface $allegato)
+  {
+    $alreadySent = false;
+    foreach ($richiesta->getNumeriProtocollo() as $item) {
+      $item = (array)$item;
+      if ($item['id'] == $allegato->getId()) {
+        $alreadySent = true;
+      }
+    }
+
+    if ($alreadySent) {
+      throw new AlreadyUploadException();
+    }
+  }
+
   /**
    * @param RispostaIntegrazione $risposta
    * @throws AlreadySentException

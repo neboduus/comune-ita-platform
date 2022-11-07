@@ -59,6 +59,13 @@ interface ProtocolloHandlerInterface
 
   /**
    * @param Pratica $pratica
+   * @param AllegatoInterface $richiestaIntegrazione
+   * @param AllegatoInterface $allegato
+   */
+  public function sendAllegatoRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiestaIntegrazione, AllegatoInterface $allegato);
+
+  /**
+   * @param Pratica $pratica
    * @param AllegatoInterface $allegato
    */
   public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato);

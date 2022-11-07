@@ -1,13 +1,17 @@
 {% if pratica.canBeAssigned %}
-  <div class="row mb-5">
-    <div class="col d-flex justify-content-around">
-      {% if  pratica.status == constant('STATUS_REQUEST_INTEGRATION', pratica) %}
-        <p>{{ 'operatori.protocollazione_richiesta_integrazione' | trans }}</p>
-      {% elseif  pratica.status == constant('STATUS_SUBMITTED_AFTER_INTEGRATION', pratica) %}
-        <p>{{ 'operatori.protocollazione_risposta_integrazione' | trans }}</p>
-      {% elseif  pratica.status == constant('STATUS_DRAFT_FOR_INTEGRATION', pratica) %}
-
-        <button id="cancel-integration" class="btn btn-outline-secondary" data-url="{{ path('application_api_post_transition_cancel_integration', {'id': pratica}) }}">
+  <div class="row mb-3">
+    {% if  pratica.status == constant('STATUS_REQUEST_INTEGRATION', pratica) %}
+      <div class="col alert alert-info">
+        {{ 'operatori.protocollazione_richiesta_integrazione' | trans }}
+      </div>
+    {% elseif  pratica.status == constant('STATUS_SUBMITTED_AFTER_INTEGRATION', pratica) %}
+    <div class="col alert alert-info">
+      {{ 'operatori.protocollazione_risposta_integrazione' | trans }}
+    </div>
+    {% elseif  pratica.status == constant('STATUS_DRAFT_FOR_INTEGRATION', pratica) %}
+      <div class="col d-flex justify-content-around">
+        <button id="cancel-integration" class="btn btn-outline-secondary"
+                data-url="{{ path('application_api_post_transition_cancel_integration', {'id': pratica}) }}">
           <svg class="icon icon-danger">
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
           </svg>
@@ -15,24 +19,26 @@
         </button>
 
         {% if last_owner_message is null or (last_owner_message is not null and last_owner_message.createdAt < pratica.richiestaDiIntegrazioneAttiva.createdAt|date('U')) %}
-          <button class="btn btn-outline-primary disabled" data-toggle="tooltip" title="{{ 'operatori.tooltip_accetta_richiesta_disabilitato' | trans }}">
+          <button class="btn btn-outline-primary disabled" data-toggle="tooltip"
+                  title="{{ 'operatori.tooltip_accetta_richiesta_disabilitato' | trans }}">
             <svg class="icon icon-success">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
             </svg>
             {{ 'operatori.accetta_richiesta_integrazione' | trans }}
           </button>
         {% else %}
-          <button id="accept-integration" class="btn btn-outline-primary" data-url="{{ path('application_api_post_transition_accept_integration', {'id': pratica}) }}">
+          <button id="accept-integration" class="btn btn-outline-primary"
+                  data-url="{{ path('application_api_post_transition_accept_integration', {'id': pratica}) }}">
             <svg class="icon icon-success">
               <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
             </svg>
             {{ 'operatori.accetta_richiesta_integrazione' | trans }}
           </button>
         {% endif %}
-
-      {% elseif pratica.status == constant('STATUS_PENDING', pratica) %}
-        {{ include('Operatori/parts/change_status_modal.html.twig') }}
-
+      </div>
+    {% elseif pratica.status == constant('STATUS_PENDING', pratica) %}
+      {{ include('Operatori/parts/change_status_modal.html.twig') }}
+      <div class="col d-flex justify-content-around">
         <button class="btn btn-outline-secondary" id="modal_refuse" data-toggle="modal"
                 data-target=".bd-example-modal-lg">
           <svg class="icon icon-danger">
@@ -55,11 +61,12 @@
             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-check"></use>
           </svg>{{ 'operatori.approva' | trans }}
         </button>
-
-      {% elseif pratica.status == constant('STATUS_PAYMENT_PENDING', pratica) or pratica.status == constant('STATUS_PAYMENT_OUTCOME_PENDING', pratica) %}
+      </div>
+    {% elseif pratica.status == constant('STATUS_PAYMENT_PENDING', pratica) or pratica.status == constant('STATUS_PAYMENT_OUTCOME_PENDING', pratica) %}
+      <div class="col d-flex justify-content-around">
         {{ include('Operatori/parts/_change_status_paid.html.twig') }}
-      {% endif %}
-    </div>
+      </div>
+    {% endif %}
   </div>
 {% else %}
   <div class=" alert alert-info mb-4">

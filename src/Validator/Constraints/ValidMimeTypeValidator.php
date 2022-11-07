@@ -36,10 +36,9 @@ class ValidMimeTypeValidator extends ConstraintValidator
    */
   public function validate($value, Constraint $constraint)
   {
-    if ($value->getFile() == null || !in_array(
-        $value->getMimeType(),
-        $this->allowedExtensions
-      )) {
+    // Fixme: controllo anche l'estensione perchè per i p7m il mimetype è application/octet-stream e fallisce
+    if ($value->getFile() == null ||
+        (!in_array($value->getMimeType(), $this->allowedExtensions) && !in_array($value->getFile()->getExtension(), array_keys($this->allowedExtensions)))) {
       $translatedMessage = $this->translator->trans(ValidMimeType::TRANSLATION_ID);
       $this->context
         ->buildViolation($translatedMessage)

@@ -7,6 +7,7 @@ use App\Entity\CPSUser;
 use App\Entity\Ente;
 use App\Entity\ModuloCompilato;
 use App\Entity\Pratica;
+use App\Entity\RichiestaIntegrazione;
 use App\Entity\RispostaIntegrazione;
 use App\Entity\Servizio;
 use App\Protocollo\Exception\ResponseErrorException;
@@ -180,8 +181,36 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     } else {
       throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
     }
+  }
 
-    $this->protocolPredisposedAttachment($pratica, $richiesta);
+  /**
+   * @param Pratica $pratica
+   * @param AllegatoInterface $richiestaIntegrazione
+   * @param AllegatoInterface $allegato
+   *
+   * @throws ResponseErrorException
+   * @throws Exception
+   */
+  public function sendAllegatoRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiestaIntegrazione, AllegatoInterface $allegato)
+  {
+    $parameters = $this->getAllegatoRichiestaIntegrazioneParameters($pratica, $richiestaIntegrazione, $allegato);
+    $parameters->set('method', 'uploadFileToDocument');
+    // trasmissionIDArray va valorizzato solo per il metodo createDocumentAndAddInProject
+    $parameters->remove('trasmissionIDArray');
+    $response = $this->client->post('', ['form_params' => $parameters->all()]);
+    $responseData = new PiTreResponseData((array)json_decode((string)$response->getBody(), true));
+
+    if ($responseData->getStatus() == 'success') {
+      $allegato->setIdDocumentoProtocollo($responseData->getIdDoc());
+      // Aggiungo id allegato alla richiesta integrazione
+      $richiestaIntegrazione->addNumeroDiProtocollo([
+        'id' => $allegato->getId(),
+        'protocollo' => $responseData->getIdDoc(),
+      ]);
+
+    } else {
+      throw new ResponseErrorException($responseData . ' on query ' . $parameters->toString());
+    }
   }
 
   /**
@@ -526,6 +555,40 @@ class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedP
     $parameters->setSenderSurname($user->getCognome());
     $parameters->setSenderCf($user->getCodiceFiscale());
     $parameters->setSenderEmail($user->getEmail());
+
+    return $parameters;
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @param RichiestaIntegrazione $richiestaIntegrazione
+   * @param AllegatoInterface $allegato
+   * @return PiTreProtocolloParameters
+   * @throws FileNotFoundException
+   */
+  private function getAllegatoRichiestaIntegrazioneParameters(Pratica $pratica, RichiestaIntegrazione $richiestaIntegrazione,  AllegatoInterface $allegato)
+  {
+
+    $this->checkFileSize($pratica, $allegato);
+
+    $ente = $pratica->getEnte();
+    $servizio = $pratica->getServizio();
+    /** @var CPSUser $user */
+    $user = $pratica->getUser();
+
+    $parameters = $this->getServizioParameters($servizio, $ente);
+    $parameters = new PiTreProtocolloParameters($parameters);
+
+    if (!$parameters->getInstance()) {
+      $parameters->setInstance($this->instance);
+    }
+
+    $parameters->setDocumentId($richiestaIntegrazione->getIdDocumentoProtocollo());
+    $parameters->setFileName(StringUtils::sanitizeFileName($allegato->getOriginalFilename()));
+    $fileContent = base64_encode($this->fileService->getAttachmentContent($allegato));
+    $parameters->setFile($fileContent);
+    $parameters->setChecksum(md5($fileContent));
+    $parameters->setAttachmentDescription($allegato->getDescription() . ' ' . $user->getFullName() . ' ' . $user->getCodiceFiscale());
 
     return $parameters;
   }

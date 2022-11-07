@@ -75,6 +75,11 @@ class ConfigProtocolloHandler implements ProtocolloHandlerInterface
     return $this->getHandler()->sendRichiestaIntegrazioneToProtocollo($pratica, $allegato);
   }
 
+  public function sendAllegatoRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiestaIntegrazione, AllegatoInterface $allegato)
+  {
+    return $this->getHandler()->sendAllegatoRichiestaIntegrazioneToProtocollo($pratica, $richiestaIntegrazione, $allegato);
+  }
+
   public function sendRispostaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $allegato)
   {
     return $this->getHandler()->sendRispostaIntegrazioneToProtocollo($pratica, $allegato);

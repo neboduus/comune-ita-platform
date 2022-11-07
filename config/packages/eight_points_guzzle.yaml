@@ -17,11 +17,6 @@ eight_points_guzzle:
         timeout: 120
         headers:
           Accept: 'application/json'
-    comunweb:
-      options:
-        timeout: 3
-        headers:
-          Accept: 'application/json'
     mypay:
       base_url: '%env(MYPAY_ADAPTER_URL)%'
     giscom:

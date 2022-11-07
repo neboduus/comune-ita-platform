@@ -15,6 +15,7 @@ class RichiestaIntegrazione extends Allegato
   const STATUS_PENDING = 1000;
   const STATUS_DONE = 2000;
   const TYPE_DEFAULT = 'richiesta_integrazione';
+  const PAYLOAD_ATTACHMENTS = 'attachments';
 
   /**
    * @ORM\ManyToOne(targetEntity="App\Entity\Pratica", inversedBy="richiesteIntegrazione")
@@ -28,11 +29,19 @@ class RichiestaIntegrazione extends Allegato
    */
   private $status;
 
+  /**
+   * @ORM\Column(type="array", nullable=true)
+   * @var ArrayCollection
+   */
+  private $numeriProtocollo;
+
+
   public function __construct()
   {
     parent::__construct();
     $this->type = self::TYPE_DEFAULT;
     $this->status = self::STATUS_PENDING;
+    $this->numeriProtocollo = new ArrayCollection();
   }
 
   /**
@@ -53,6 +62,28 @@ class RichiestaIntegrazione extends Allegato
     $this->praticaPerCuiServeIntegrazione = $pratica;
 
     return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getAttachments()
+  {
+    if (isset($this->payload[self::PAYLOAD_ATTACHMENTS])) {
+      return $this->payload[self::PAYLOAD_ATTACHMENTS];
+    }
+    return [];
+  }
+
+  /**
+   * @param array $attachments
+   * @return void
+   */
+  public function setAttachments(array $attachments): void
+  {
+    $payload = $this->payload;
+    $payload[self::PAYLOAD_ATTACHMENTS] = $attachments;
+    $this->payload = $payload;
   }
 
   /**
@@ -89,5 +120,49 @@ class RichiestaIntegrazione extends Allegato
   public function getType(): string
   {
     return self::TYPE_DEFAULT;
+  }
+
+  /**
+   * @param array $numeroDiProtocollo
+   *
+   * @return RichiestaIntegrazione
+   */
+  public function addNumeroDiProtocollo($numeroDiProtocollo)
+  {
+    if (!$this->numeriProtocollo->contains($numeroDiProtocollo)) {
+      $this->numeriProtocollo->add($numeroDiProtocollo);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @ORM\PreFlush()
+   */
+  public function arrayToJson()
+  {
+    $this->numeriProtocollo = json_encode($this->getNumeriProtocollo()->toArray());
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getNumeriProtocollo()
+  {
+    $this->jsonToArray();
+    return $this->numeriProtocollo;
+  }
+
+  /**
+   * @ORM\PostLoad()
+   * @ORM\PostUpdate()
+   */
+  public function jsonToArray()
+  {
+    if ($this->numeriProtocollo == null) {
+      $this->numeriProtocollo = new ArrayCollection();
+    } elseif (!$this->numeriProtocollo instanceof ArrayCollection) {
+      $this->numeriProtocollo = new ArrayCollection(json_decode($this->numeriProtocollo));
+    }
   }
 }

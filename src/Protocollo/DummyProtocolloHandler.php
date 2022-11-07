@@ -80,6 +80,15 @@ class DummyProtocolloHandler implements ProtocolloHandlerInterface
     $allegato->setIdDocumentoProtocollo('int-' . $allegato->getId());
   }
 
+  public function sendAllegatoRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiestaIntegrazione, AllegatoInterface $allegato)
+  {
+    $richiestaIntegrazione->addNumeroDiProtocollo([
+      'id' => $allegato->getId(),
+      'protocollo' => 'int-' . $allegato->getId(),
+    ]);
+    $allegato->setIdDocumentoProtocollo('int-' . $allegato->getId());
+  }
+
 
   public function sendRispostaToProtocollo(Pratica $pratica)
   {

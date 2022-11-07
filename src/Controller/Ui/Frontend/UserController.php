@@ -13,7 +13,6 @@ use App\FormIO\SchemaFactoryInterface;
 use App\Helpers\MunicipalityConverter;
 use App\Logging\LogConstants;
 use App\Services\BreadcrumbsService;
-use App\Services\RemoteContentProviderServiceInterface;
 use JMS\Serializer\SerializerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,9 +40,6 @@ class UserController extends AbstractController
   /** @var TranslatorInterface */
   private $translator;
 
-  /** @var RemoteContentProviderServiceInterface */
-  private $remoteContentProviderService;
-
   /** @var SerializerInterface */
   private $serializer;
 
@@ -63,7 +59,6 @@ class UserController extends AbstractController
    * UserController constructor.
    * @param TranslatorInterface $translator
    * @param LoggerInterface $logger
-   * @param RemoteContentProviderServiceInterface $remoteContentProviderService
    * @param SerializerInterface $serializer
    * @param SchemaFactoryInterface $schemaFactory
    * @param BreadcrumbsService $breadcrumbsService
@@ -72,7 +67,6 @@ class UserController extends AbstractController
   public function __construct(
     TranslatorInterface $translator,
     LoggerInterface $logger,
-    RemoteContentProviderServiceInterface $remoteContentProviderService,
     SerializerInterface $serializer,
     SchemaFactoryInterface $schemaFactory,
     BreadcrumbsService $breadcrumbsService,
@@ -81,7 +75,6 @@ class UserController extends AbstractController
   {
     $this->logger = $logger;
     $this->translator = $translator;
-    $this->remoteContentProviderService = $remoteContentProviderService;
     $this->serializer = $serializer;
     $this->schemaFactory = $schemaFactory;
     $this->breadcrumbsService = $breadcrumbsService;
@@ -329,65 +322,6 @@ class UserController extends AbstractController
     $form = $formBuilder->getForm();
 
     return $form;
-  }
-
-  /**
-   * @Route("/latest_news", name="user_latest_news")
-   * @param Request $request
-   * @deprecated deprecated since version 1.6.5
-   * @return JsonResponse
-   */
-  public function latestNewsAction(Request $request)
-  {
-    $enti = $this->getEntiFromCurrentUser();
-    $data = $this->remoteContentProviderService->getLatestNews($enti);
-    $response = new JsonResponse($data);
-    $response->setMaxAge(3600);
-    $response->setSharedMaxAge(3600);
-    return $response;
-  }
-
-  /**
-   * @Route("/latest_deadlines", name="user_latest_deadlines")
-   * @deprecated deprecated since version 1.6.5
-   * @param Request $request
-   *
-   * @return JsonResponse
-   */
-  public function latestDeadlinesAction(Request $request)
-  {
-    $enti = $this->getEntiFromCurrentUser();
-    $data = $this->remoteContentProviderService->getLatestDeadlines($enti);
-    $response = new JsonResponse($data);
-    $response->setMaxAge(3600);
-    $response->setSharedMaxAge(3600);
-    return $response;
-  }
-
-  /**
-   * @return \App\Entity\Ente[]|array|object[]
-   * @deprecated deprecated since version 1.6.5
-   */
-  private function getEntiFromCurrentUser()
-  {
-    $entityManager = $this->getDoctrine()->getManager();
-    $entiPerUser = $entityManager->createQueryBuilder()
-      ->select('IDENTITY(p.ente)')->distinct()
-      ->from('App:Pratica', 'p')
-      ->where('p.user = :user')
-      ->setParameter('user', $this->getUser())
-      ->getQuery()
-      ->getResult();
-
-    $repository = $entityManager->getRepository('App\Entity\Ente');
-    if (count($entiPerUser) > 0) {
-      $entiPerUser = array_reduce($entiPerUser, 'array_merge', array());
-      $enti = $repository->findBy(['id' => $entiPerUser]);
-    } else {
-      $enti = $repository->findAll();
-    }
-
-    return $enti;
   }
 
   /**

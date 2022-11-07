@@ -500,4 +500,9 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $this->sendAllegatoToProtocollo($pratica, $allegato);
   }
 
+  public function sendAllegatoRichiestaIntegrazioneToProtocollo(Pratica $pratica, AllegatoInterface $richiestaIntegrazione, AllegatoInterface $allegato)
+  {
+    $this->sendAllegatoToProtocollo($pratica, $allegato);
+  }
+
 }
