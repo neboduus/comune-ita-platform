@@ -36,6 +36,7 @@ use App\Services\MailerService;
 use App\Services\Manager\ServiceManager;
 use App\Services\Manager\UserManager;
 use App\Utils\StringUtils;
+use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
@@ -571,8 +572,13 @@ class AdminController extends AbstractController
           return $this->redirectToRoute('admin_servizio_index');
         }
 
-        $updatedAt = isset($responseBody['updated_at']) ? $responseBody['updated_at'] : date('c');
-        $serviceSource = new ServiceSource($serviceId, $remoteUrl, $updatedAt, $md5Response, '1');
+        try {
+          $updatedAt = $responseBody['updated_at'] ? new DateTime($data['updated_at']) : null;
+        } catch (\Exception $e) {
+          $updatedAt = null;
+        }
+        $serviceSource = new ServiceSource();
+        $serviceSource->setId($serviceId)->setUrl($remoteUrl)->setUpdatedAt($updatedAt)->setMd5($md5Response)->setVersion('1');
         $dto = $dto->setSource($serviceSource);
 
         $category = $em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $dto->getTopics()]);

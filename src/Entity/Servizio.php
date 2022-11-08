@@ -570,7 +570,6 @@ class Servizio implements Translatable
     $this->setAllowWithdraw(true);
     $this->setAllowIntegrationRequest(true);
     $this->setFinalIndications('La domanda è stata correttamente registrata, non ti sono richieste altre operazioni. Grazie per la tua collaborazione.');
-    $this->setSource(null);
 
     $this->lifeEvents = array();
     $this->businessEvents = array();
@@ -1293,10 +1292,6 @@ class Servizio implements Translatable
   {
     $flowSteps = [];
     if ( count($this->flowSteps) > 0) {
-      /*return array_map(function ($flowSteps) {
-        $flowStep = json_decode($flowSteps);
-        return new FlowStep($flowStep->identifier, $flowStep->title, $flowStep->type, $flowStep->description, $flowStep->guide, $flowStep->parameters);
-      }, $this->flowSteps->toArray());*/
       foreach ($this->flowSteps as $v) {
         if (is_string($v) ) {
           $v = json_decode($v, true);
@@ -1485,7 +1480,7 @@ class Servizio implements Translatable
   }
 
   /**
-   * @param \DateTime $scheduledFrom
+   * @param \DateTime|null $scheduledFrom
    */
   public function setScheduledFrom(?\DateTime $scheduledFrom)
   {
@@ -2061,6 +2056,11 @@ class Servizio implements Translatable
   {
     $this->conditionsAttachments = $this->getConditionsAttachments()->toArray();
     $this->costsAttachments = $this->getCostsAttachments()->toArray();
+
+    if ($this->source instanceof ServiceSource) {
+      $this->source = $this->source->jsonSerialize();
+    }
+
   }
 
   /**
@@ -2096,6 +2096,8 @@ class Servizio implements Translatable
 
     $this->conditionsAttachments = $conditionsAttachments;
     $this->costsAttachments = $costsAttachments;
+
+    $this->source = $this->source ? new ServiceSource($this->source) : null;
   }
 
   /**
