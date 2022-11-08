@@ -434,8 +434,7 @@ class Service
 
   /**
    * @var ServiceSource
-   * @Serializer\Type("array")
-   * @OA\Property(property="source", description="Source of the service if imported", type="object", ref=@Model(type=ServiceSource::class))
+   * @OA\Property(property="source", description="Source of the service if imported", type="array", ref=@Model(type=ServiceSource::class))
    * @Groups({"read"})
    */
   private $source;
@@ -1353,11 +1352,11 @@ class Service
   }
 
   /**
-   * @param ServiceSource|null $source
+   * @param $source
    *
    * @return self
    */
-  public function setSource(?ServiceSource $source)
+  public function setSource($source)
   {
     $this->source = $source;
     return $this;
