@@ -62,6 +62,8 @@ final class InstanceKernelFactory
     if (!$params) {
       throw new Exception("Instance $instance not found");
     }
+
+    $params['prefix'] = $instance;
     $kernel = new InstanceKernel($env, $debug);
     $kernel->setIdentifier($instance);
     $kernel->setInstanceParameters($params);
