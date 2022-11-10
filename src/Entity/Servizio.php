@@ -1922,6 +1922,9 @@ class Servizio implements Translatable
    */
   public function getSource(): ?ServiceSource
   {
+    if (is_array($this->source)) {
+      return new ServiceSource($this->source);
+    }
     return $this->source;
   }
 
@@ -2096,8 +2099,6 @@ class Servizio implements Translatable
 
     $this->conditionsAttachments = $conditionsAttachments;
     $this->costsAttachments = $costsAttachments;
-
-    $this->source = $this->source ? new ServiceSource($this->source) : null;
   }
 
   /**
