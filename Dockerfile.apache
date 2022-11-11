@@ -29,7 +29,7 @@ COPY ./compose_conf/shibboleth/usr/local/bin/ /usr/local/bin/
 RUN chmod +x \
     /usr/local/bin/docker-bootstrap.sh
 
-COPY --from=php /var/www/html/public /var/www/html/public
+COPY ./public /var/www/html/public
 
 # run it
 EXPOSE 80 443
