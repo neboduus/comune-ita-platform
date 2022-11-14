@@ -39,7 +39,6 @@
   {% elseif pratica.status >= 1500 %}
     {{ include('Pratiche/summary/parts/protocollo.html.twig', {'pratica':pratica, 'user': user}) }}
   {% endif %}
-
   {% if (not pratica.servizio.isProtocolRequired and pratica.moduliCompilati|length == 0) or ( pratica.servizio.isProtocolRequired and not pratica.numeroProtocollo) %}
     {% if formserver_url is defined and pratica.status < 1900 and pratica.status != 1500 and pratica.status != 1510 %}
 
@@ -47,7 +46,10 @@
            data-locale="{{ app.request.locale }}"
            data-formserver_url="{{ formserver_url }}"
            data-form_id="{{ pratica.servizio.getFormIoId }}"
-           data-submission="{% if pratica.dematerializedForms.data is defined %}{{ pratica.dematerializedForms.data | json_encode }}{% else %}[]{% endif %}">
+           data-submission="{% if pratica.dematerializedForms.data is defined %}{{ pratica.dematerializedForms.data | json_encode }}{% else %}[]{% endif %}"
+           data-form_type="{{ currentStep.formType }}"
+           data-has_payment="{{ pratica.servizio.paymentRequired == 1 ? true : false}}"
+      >
       </div>
 
     {% endif %}

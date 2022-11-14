@@ -1,8 +1,6 @@
-{% if pratica.servizio.compilationInfo %}
-  <div class="callout">
-    <div class="callout-title"><svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-info-circle"></use></svg>info</div>
-    <div class="body">
-      {{ pratica.servizio.compilationInfo | raw }}
-    </div>
-  </div>
+{#Check if not has default summernote tag#}
+{% if not pratica.servizio.compilationInfo|isEmpty %}
+  <p class="subtitle-small">
+    {{ pratica.servizio.compilationInfo | raw }}
+  </p>
 {% endif %}

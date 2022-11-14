@@ -411,14 +411,19 @@ class PraticheController extends AbstractController
       }
     }
 
-    return $this->render('Pratiche/compila.html.twig', [
+    $template = 'Pratiche/compila.html.twig';
+    if ($pratica->getServizio()->isLegacy()) {
+      $template = 'Pratiche/compileLegacy.html.twig';
+    }
+
+    return $this->render($template, [
       'form' => $form->createView(),
       'pratica' => $praticaFlowService->getFormData(),
       'flow' => $praticaFlowService,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'user' => $user
-      //'threads' => $thread,
     ]);
+
   }
 
   /**

@@ -18,6 +18,9 @@
 
 <section id="intro" class="container px-4 my-4 {{ form.vars.id }}">
   <div class="row">
+    <div class="col-12">
+      <div id="header" class="mb-3"></div>
+    </div>
     <div class="col-lg-12 px-lg-4 py-lg-2">
       <h1>{{ 'pratica.nuova_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
     </div>
@@ -25,10 +28,15 @@
 
   <div class="row mt-2">
     <div class="col-lg-8 px-lg-4">
+      <div class="cmp-info-progress d-flex" id="wizardHeader"></div>
       {{ form_start(form) }}
       {{ form_errors(form) }}
       {{ form_rest(form) }}
-      <div id="formio" class="preview" data-locale="{{ app.request.locale }}" data-formserver_url="{{ formserver_url }}" data-form_id="{{ pratica.servizio.formIoId }}"></div>
+      <div id="formio" class="preview"
+           data-locale="{{ app.request.locale }}"
+           data-formserver_url="{{ formserver_url }}"
+           data-form_id="{{ pratica.servizio.formIoId }}">
+      </div>
       {{ form_end(form) }}
     </div>
   </div>

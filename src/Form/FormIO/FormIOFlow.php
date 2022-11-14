@@ -50,7 +50,7 @@ class FormIOFlow extends PraticaFlow
 
     $steps = array(
       self::STEP_MODULO_FORMIO => array(
-        'label' => 'steps.scia.modulo_default.label',
+        'label' => '',
         'form_type' => FormIORenderType::class,
         'skip' => function ($estimatedCurrentStepNumber, FormFlowInterface $flow) {
           return $flow->getFormData()->getStatus() != Pratica::STATUS_DRAFT;

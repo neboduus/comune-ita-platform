@@ -6,6 +6,7 @@ import SdcFile from "../SdcFile";
 import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
 import axios from "axios";
+
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
 Formio.registerComponent('pagebreak', PageBreak);
@@ -13,8 +14,35 @@ Formio.registerComponent('financial_report', FinancialReport);
 Formio.registerComponent('sdcfile', SdcFile);
 const language = document.documentElement.lang.toString();
 
+import wizardNav from "./templates/wizardNav/index.js";
+import wizardHeader from "./templates/wizardHeader/index.js";
+
+// Overwrite nav buttons formio
+Formio.Templates.current = {
+  wizardNav:{
+    form: (ctx) => wizardNav(ctx)
+  },
+  wizardHeader: {
+    form: (ctx) => wizardHeader(ctx)
+  }
+}
+
+
 class Form {
 
+  submissionForm = null
+
+  static createStepsMobile() {
+    $(".info-progress-wrapper[data-loop!='first']").each(function(idx) {
+      $( this ).attr('data-progress', idx+1);
+    });
+
+        const step = ($('.step-active').data('progress') ? $('.step-active').data('progress') : '1') + '/' + ($('.info-progress-wrapper').length - 1)
+        const stepLabel = $('.step-active span').text();
+
+        $('.step').html(step)
+        $('.step-label').html(stepLabel)
+  }
 
   static initEditableAnonymous(containerId) {
     const $container = $('#' + containerId);
@@ -34,6 +62,12 @@ class Form {
         buttonSettings: {showCancel: false},
         hooks: {
           beforeCancel: () => Form.handleBeforeSubmit(event)
+        },
+        sanitizeConfig: {
+          allowedAttrs: ['ref', 'src', 'url', 'data-oembed-url'],
+          allowedTags: ['oembed','svg','use'],
+          addTags: ['oembed','svg','use'],
+          addAttr: ['url', 'data-oembed-url']
         }
       })
         .then(function (form) {
@@ -41,6 +75,9 @@ class Form {
           form.formReady.then(() => {
             setTimeout(Form.disableBreadcrumbButton, 500);
             setTimeout(Form.checkWizardNavCancelButton, 500);
+            Form.createStepsMobile();
+            Form.submissionForm = form
+            Form.initDraftButton()
           })
 
           if (form.hasOwnProperty('wizard')) {
@@ -59,11 +96,16 @@ class Form {
             document.getElementById("formio").scrollIntoView();
             setTimeout(Form.disableBreadcrumbButton, 500);
             setTimeout(Form.checkWizardNavCancelButton, 500);
+            Form.createStepsMobile();
+            Form.saveDraft(form)
+            Form.initDraftButton()
           });
 
           form.on('prevPage', function () {
             setTimeout(Form.disableBreadcrumbButton, 500);
             setTimeout(Form.checkWizardNavCancelButton, 500);
+            Form.createStepsMobile();
+            Form.initDraftButton()
           });
 
           $('.btn-wizard-nav-cancel').on('click', function (e) {
@@ -77,7 +119,7 @@ class Form {
           form.on('submit', function (submission) {
             let submitButton = $('#formio button');
             submitButton.hide();
-            $('<a href="#" id="loading-button" class="btn btn-secondary"><i class="fa fa-refresh fa-spin"></i> Attendere...</a>').insertAfter(submitButton.last());
+            $(`<a href="#" id="loading-button" class="btn btn-secondary"><i class="fa fa-refresh fa-spin"></i>${Translator.trans('waiting', {}, 'messages', language)}...</a>`).insertAfter(submitButton.last());
             customErrorContainer.empty().hide();
             axios.post($container.data('form_validate'), JSON.stringify(submission.data))
               .then(function (reponse) {
@@ -121,35 +163,21 @@ class Form {
         buttonSettings: {showCancel: false},
         hooks: {
           beforeCancel: () => Form.handleBeforeSubmit(event)
+        },
+        sanitizeConfig: {
+          allowedAttrs: ['ref', 'src', 'url', 'data-oembed-url'],
+          allowedTags: ['oembed','svg','use'],
+          addTags: ['oembed','svg','use'],
+          addAttr: ['url', 'data-oembed-url']
         }
       }).then(function (form) {
 
         form.formReady.then(() => {
           setTimeout(disableApplicant, 1000);
           setTimeout(Form.disableBreadcrumbButton, 500);
-          const draftButton = $('#save-draft');
-          const draftInfo = $('.save-draft-info');
-          const draftTextInfo = draftInfo.find('span');
-          if (draftButton.length) {
-            draftButton.parent().removeClass('d-none');
-            draftButton.on('click', function (e) {
-              e.preventDefault();
-              let text = draftButton.html();
-              draftButton.html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Salvataggio in corso...')
-              axios.post(draftButton.data('save-draft-url'), form.submission.data)
-                .then(function (response) {
-                  draftInfo.removeClass('d-none');
-                  draftTextInfo.text('pochi secondi fa')
-                })
-                .catch(function (error) {
-                  draftInfo.removeClass('d-none');
-                  draftTextInfo.text('si è verificato un errore durante il salvataggio')
-                })
-                .finally(function () {
-                  draftButton.html(text)
-                });
-            });
-          }
+          Form.createStepsMobile();
+          Form.submissionForm = form
+          Form.initDraftButton()
         });
 
         if (form.hasOwnProperty('wizard')) {
@@ -164,18 +192,24 @@ class Form {
           };
         }
 
-        form.on('nextPage', function () {
+
+
+        form.on('nextPage', function (e) {
           setTimeout(disableApplicant, 1000);
           setTimeout(Form.disableBreadcrumbButton, 500);
           setTimeout(Form.checkWizardNavCancelButton, 500);
           document.getElementById("formio").scrollIntoView();
-          $('#save-draft').trigger('click');
+          Form.createStepsMobile()
+          Form.saveDraft()
+          Form.initDraftButton()
         });
 
         form.on('prevPage', function () {
           setTimeout(disableApplicant, 1000);
           setTimeout(Form.disableBreadcrumbButton, 500);
           setTimeout(Form.checkWizardNavCancelButton, 500);
+          Form.createStepsMobile()
+          Form.initDraftButton()
         });
 
         let realSubmitButton = $('.craue_formflow_button_class_next');
@@ -268,6 +302,7 @@ class Form {
   }
 
   static initPreview(containerId) {
+
     const $container = $('#' + containerId);
     const formUrl = $container.data('formserver_url') + '/form/' + $container.data('form_id');
     $.getJSON(formUrl + '/i18n?lang=' + $container.data('locale'), function (data) {
@@ -295,22 +330,35 @@ class Form {
     const $container = $('#' + containerId);
     const formUrl = $container.data('formserver_url') + '/form/' + $container.data('form_id');
     const printableFormUrl = $container.data('formserver_url') + '/printable/' + $container.data('form_id');
+
     $.getJSON(formUrl + '/i18n?lang=' + $container.data('locale'), function (data) {
       Formio.icons = 'fontawesome';
       Formio.createForm(document.getElementById(containerId), printableFormUrl, {
         readOnly: true,
         noAlerts: true,
         language: $container.data('locale'),
-        i18n: data
+        i18n: data,
+        sanitizeConfig: {
+          allowedAttrs: ['ref', 'src', 'url', 'data-oembed-url','svg'],
+          allowedTags: [ 'oembed','svg'],
+          addTags: ['oembed','svg'],
+          addAttr: ['url', 'data-oembed-url']
+        }
       }).then(function (form) {
         form.submission = {
           data: $container.data('submission')
         };
+        form.formReady.then(() => {
+          Form.getStoredSteps()
+          Form.createStepsMobile()
+        })
       });
     });
   }
 
+
   static init(containerId) {
+
     // Init form editable anonymous
     if ($('#' + containerId + '.editable-anonymous').length > 0) {
       this.initEditableAnonymous(containerId);
@@ -360,6 +408,42 @@ class Form {
       document.location.reload()
     }
   }
+
+  static saveDraft(){
+    const draftButton = $('#save-draft');
+    const draftInfo = $('.save-draft-info');
+    const draftTextInfo = draftInfo.find('span');
+        let text = draftButton.html();
+        draftButton.html(`<i class="fa fa-circle-o-notch fa-spin fa-fw"></i>${Translator.trans('save_processing', {}, 'messages', language)}`)
+          axios.post($('#formio').data('save-draft-url'), Form.submissionForm.data)
+          .then(function (response) {
+            draftTextInfo.html(`<i class="fa fa-clock-o" aria-hidden="true"></i> ${Translator.trans('buttons.last_save', {}, 'messages', language)} ${Translator.trans('time.few_seconds_ago', {}, 'messages', language)}`)
+          })
+          .catch(function (error) {
+            draftTextInfo.text(`${Translator.trans('servizio.error_from_save', {}, 'messages', language)}`)
+          })
+          .finally(function () {
+            draftButton.html(text)
+          });
+  }
+
+  static initDraftButton(){
+    $('#save-draft').on('click', function (e) {
+      e.preventDefault();
+      Form.saveDraft()
+    })
+  }
+
+  static getStoredSteps(){
+    let parent = $('#wizardHeader')
+    const steps = JSON.parse(localStorage.getItem("steps")) || null
+    if(parent && steps){
+      parent.prepend(steps.map(function(x){return x.replace(/step-active/g, '');}))
+    }
+  }
+
+
+
 }
 
 export default Form;
