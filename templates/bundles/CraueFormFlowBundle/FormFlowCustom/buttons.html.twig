@@ -1,0 +1,73 @@
+{% set renderBackButton = flow.getFirstStepNumber() < flow.getLastStepNumber() and flow.getCurrentStepNumber() in (flow.getFirstStepNumber() + 1) .. flow.getLastStepNumber() %}
+{% set renderResetButton = flow.getCurrentStepNumber() > 1 %}
+<div class="cmp-nav-steps">
+  <nav
+    class="steppers-nav formio-wizard-nav-container craue_formflow_buttons craue_formflow_button_count_{% if renderBackButton %}3{% else %}2{% endif %}">
+    {%- set isLastStep = flow.getCurrentStepNumber() == flow.getLastStepNumber() -%}
+    {%- set craue_formflow_button_class_last = craue_formflow_button_class_last | default('craue_formflow_button_last') -%}
+    {%- set craue_formflow_button_class_last = isLastStep ? craue_formflow_button_class_finish | default(craue_formflow_button_class_last) : craue_formflow_button_class_next | default('craue_formflow_button_class_next') -%}
+    {%- set craue_buttons = [
+      {
+        label: craue_formflow_button_label_back | default('button.back'),
+        render: renderBackButton,
+        attr: {
+        class: 'btn btn-sm steppers-btn-prev p-0 '~craue_formflow_button_class_back | default(''),
+        i_class: '',
+        name: flow.getFormTransitionKey(),
+        value: 'back',
+        formnovalidate: 'formnovalidate',
+      },
+      },
+      {
+        label: craue_formflow_button_label_reset | default('button.reset'),
+        render: renderResetButton,
+        attr: {
+        class: 'btn btn-outline-primary bg-white btn-sm '~craue_formflow_button_class_reset | default('craue_formflow_button_first'),
+        i_class: '',
+        name: flow.getFormTransitionKey(),
+        value: 'reset',
+        formnovalidate: 'formnovalidate',
+      },
+      },
+      {
+        label: craue_formflow_button_label_last | default(isLastStep ? craue_formflow_button_label_finish | default('button.finish') : craue_formflow_button_label_next | default('button.next')),
+        render: true,
+        attr: {
+        class: 'btn btn-primary btn-sm steppers-btn-confirm '~craue_formflow_button_class_last,
+        i_class: '',
+      },
+      },
+    ] -%}
+
+    {% for button in craue_buttons %}
+      {% if pratica
+        and flow.getCurrentStepLabel() is same as(constant('\\App\\Payment\\Gateway\\MyPay::PAYMENT_STEP_LABEL'))
+        and pratica.paymentData is defined
+        and pratica.paymentData.overall_outcome is defined
+        and pratica.paymentData.overall_outcome is same as(constant('\\App\\Payment\\Gateway\\MyPay::ESITO_PENDING'))
+        and button.label is same as('button.next') %}
+        {% set disabled='disabled="disabled"' %}
+      {% else %}
+        {% set disabled='' %}
+      {% endif %}
+
+      <button type="submit"{% for key, value in button.attr %} {{ key }}="{{ value }}"{% endfor %} {{ disabled }}>
+
+      {% if button.label == 'button.back' %}
+        <svg class="icon icon-primary icon-sm" aria-hidden="true">
+          <use href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use>
+        </svg>
+      {% endif %}
+
+      <span class="text-button-sm">{{- button.label | trans({}, 'CraueFormFlowBundle') -}}</span>
+
+      {% if button.label == 'button.next' or button.label == 'button.finish' %}
+        <svg class="icon icon-white icon-sm" aria-hidden="true">
+          <use href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
+        </svg>
+      {% endif %}
+
+      </button>
+    {% endfor %}
+  </nav>
+</div>

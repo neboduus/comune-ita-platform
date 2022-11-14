@@ -8,11 +8,13 @@
 {% set logo = logoMeta  ? logoMeta :  host_url ~ 'bundles/app/images/logo-default.png' %}
 
 {% block stylesheets %}
+  {{ parent() }}
   {{ encore_entry_link_tags('compile') }}
   {{ include('Print/parts/style.html.twig') }}
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('compile') }}
 {% endblock %}
 

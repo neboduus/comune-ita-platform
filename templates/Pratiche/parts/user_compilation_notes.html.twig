@@ -1,11 +1,26 @@
-<div id="compilationNotes" class="callout my-5">
-  <div class="callout-title">
-    <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-note"></use></svg>
-    {{ 'pratica.appunti_compilazione.titolo'|trans }}
-  </div>
-  <div class="body">
-    <el-input type="textarea" :rows="2" v-model="compilationNotes" @blur="onSave" placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></el-input>
-    <p class="mt-4">{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</p>
-  </div>
-
+<div class="modal" tabindex="-1" role="dialog" id="modalNote" aria-labelledby="modalNoteTitle"
+       data-endpoint-url="{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/api/v1.0/user/{{ form.vars.data.id }}/notes">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalNoteTitle"> {{ 'pratica.appunti_compilazione.titolo'|trans }}</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <svg class="icon">
+              <use href="/bootstrap-italia/dist/svg/sprite.svg#it-close"></use>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="textareaDescription" class="sr-only">{{ 'pratica.appunti_compilazione.placeholder'|trans }}</label>
+            <textarea id="textareaDescription" rows="3" placeholder="{{ 'pratica.appunti_compilazione.placeholder'|trans }}"></textarea>
+            <p>{{ 'pratica.appunti_compilazione.sottotitolo'|trans }}</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-primary btn-sm" type="button" data-dismiss="modal">{{ 'close'|trans }}</button>
+          <button class="btn btn-primary btn-sm" type="button" id="textareaSaveButton" disabled="">{{ 'salva'|trans }}</button>
+        </div>
+      </div>
+    </div>
 </div>

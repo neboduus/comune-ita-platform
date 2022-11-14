@@ -5,6 +5,8 @@ intro: '<p><span>Attraverso "La Stanza del Cittadino" potrai accedere con pochi 
 salva: 'Salva'
 aggiorna: 'Aggiorna'
 avanti: 'Avanti'
+back: 'Indietro'
+reset: 'Ricomincia'
 aggiungi: 'Aggiungi'
 annulla: 'Annulla'
 modifica: 'Modifica'
@@ -19,6 +21,7 @@ counts: 'Conta'
 read_more: 'Leggi di più'
 load_more: 'Altro...'
 processing: 'In elaborazione...'
+save_processing: 'Salvataggio...'
 close: 'Chiudi'
 lista: 'Lista'
 tutti: 'Tutti'
@@ -109,6 +112,7 @@ every: 'Ogni'
 save_changed: 'Ci sono delle modifiche da <b>salvare</b>.'
 help_link: 'Link utili'
 no_value: 'Nessun valore'
+add_note: 'Aggiungi nota'
 link_to: 'Link a'
 go_to_page: 'Vai alla pagina'
 read_faq: 'Leggi le FAQ'
@@ -341,6 +345,8 @@ servizio:
   altri_servizi_disponibili: "Altri servizi disponibili in"
   preview: 'Anteprima'
   print: 'Stampa'
+  preferences: 'Preferenze'
+  summary: 'Riepilogo'
   name_service_warning: "Attenzione, i titoli troppo lunghi rendono più difficile la navigazione, si raccomanda l'uso di titoli semplici, senza riferimenti normativi (per i quali si può usare il campo Maggiori informazioni nella scheda del servizio)."
   i18n:
     default_language_module_alert: 'La lingua di base del Modulo è <strong>%default_language%</strong>, puoi aggiungere una traduzione da <a href="%module_translation_url%">Traduzioni modulo</a>'
@@ -1448,8 +1454,8 @@ steps:
       richiedente_telefono: 'Telefono'
       richiedente_email: 'Email'
     conferma:
-      label: 'Controllo e conferma'
-      title: 'Controllo e conferma'
+      label: 'Riepilogo'
+      title: 'Riepilogo'
       sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
       si: 'Sì, sono sicuro'
       no: 'No'
@@ -1501,8 +1507,8 @@ steps:
       intestatario: 'Intestatario conto'
       guida_alla_compilazione: 'Inserisci i dati del conto corrente'
     select_payment_gateway:
-      label: 'Seleziona metodo di pagamento'
-      title: 'Seleziona metodo di pagamento'
+      label: 'Preferenze'
+      title: 'Preferenze'
       guida_alla_compilazione: 'Utilizza il menù a tendina per selezionare il metodo di pagamento desiderato'
     payment_gateway:
       label: 'Pagamento'
@@ -2705,6 +2711,7 @@ ente:
 buttons:
   draft: 'Salva bozza'
   last_save: 'Ultimo salvataggio:'
+  save_pratice: 'Salva richiesta'
 breadcrumbs:
   list: 'Lista'
   compile: 'Compila'

@@ -180,7 +180,7 @@ class ServizioCreateCommand extends Command
         ->setStatus($status)
         ->setEnte($ente);
 
-      $area = $categoryRepo->findOneBySlug('edilizia-e-urbanistica');
+      $area = $categoryRepo->findOneBySlug('agricoltura');
       if ($area instanceof Categoria) {
         $servizio->setTopics($area);
       }
