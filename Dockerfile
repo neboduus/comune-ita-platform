@@ -1,5 +1,5 @@
 # prepare assets for symfony
-FROM node:14.20.0-slim as assets
+FROM node:14.21.1-slim as assets
 
 RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
