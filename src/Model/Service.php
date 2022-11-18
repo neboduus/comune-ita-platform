@@ -295,8 +295,8 @@ class Service
   private $sticky;
 
   /**
-   * @Assert\NotBlank(message="This field is mandatory: name")
-   * @Assert\NotNull(message="This field is mandatory: name")
+   * @Assert\NotBlank(message="This field is mandatory: status")
+   * @Assert\NotNull(message="This field is mandatory: status")
    * @Serializer\Type("integer")
    * @OA\Property(description="Accepts values: 0 - Hidden, 1 - Pubblished, 2 - Suspended, 3 - private, 4 - scheduled")
    * @Groups({"read", "write"})
@@ -434,7 +434,7 @@ class Service
 
   /**
    * @var ServiceSource
-   * @OA\Property(property="source", description="Source of the service if imported", type="array", ref=@Model(type=ServiceSource::class))
+   * @OA\Property(property="source", description="Source of the service if imported", type="object", ref=@Model(type=ServiceSource::class))
    * @Groups({"read"})
    */
   private $source;
