@@ -1,3 +1,6 @@
 service:
   short_description:
     not_blank: "The filed short description can't be empty"
+user_group:
+  name:
+    not_blank: "The name field can't be empty"

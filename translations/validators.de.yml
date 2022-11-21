@@ -1,3 +1,6 @@
 service:
   short_description:
-    not_blank: ""
+    not_blank: "Das Feld Kurzbeschreibung darf nicht leer sein"
+user_group:
+  name:
+    not_blank: "Der Name darf nicht leer sein"

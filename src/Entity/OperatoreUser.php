@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Class OperatoreUser
@@ -35,6 +36,19 @@ class OperatoreUser extends User
    */
   private $serviziAbilitati;
 
+  /**
+   * @ORM\OneToMany(targetEntity="App\Entity\UserGroup", mappedBy="manager")
+   * @var ArrayCollection
+   * @Serializer\Exclude()
+   */
+  private $userGroupsManager;
+
+  /**
+   * @ORM\ManyToMany(targetEntity="App\Entity\UserGroup", mappedBy="users")
+   * @var ArrayCollection
+   * @Serializer\Exclude()
+   */
+  private $userGroups;
 
   /**
    * OperatoreUser constructor.
@@ -45,6 +59,7 @@ class OperatoreUser extends User
     $this->type = self::USER_TYPE_OPERATORE;
     $this->addRole(User::ROLE_OPERATORE);
     $this->serviziAbilitati = new ArrayCollection();
+    $this->userGroups = new ArrayCollection();
   }
 
   /**
@@ -80,6 +95,22 @@ class OperatoreUser extends User
   public function setAmbito($ambito)
   {
     $this->ambito = $ambito;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getUserGroupsManager(): ArrayCollection
+  {
+    return $this->userGroupsManager;
+  }
+
+  /**
+   * @param ArrayCollection $userGroupsManager
+   */
+  public function setUserGroupsManager(ArrayCollection $userGroupsManager): void
+  {
+    $this->userGroupsManager = $userGroupsManager;
   }
 
   /**
@@ -124,6 +155,33 @@ class OperatoreUser extends User
     if ($this->serviziAbilitati instanceof Collection) {
       $this->serviziAbilitati = json_encode($this->getServiziAbilitati()->toArray());
     }
+  }
+
+  /**
+   * @return Collection<int, UserGroup>
+   */
+  public function getUserGroups(): Collection
+  {
+    return $this->userGroups;
+  }
+
+  public function addUserGroup(UserGroup $userGroup): self
+  {
+    if (!$this->userGroups->contains($userGroup)) {
+      $this->userGroups[] = $userGroup;
+      $userGroup->addUser($this);
+    }
+
+    return $this;
+  }
+
+  public function removeUserGroup(UserGroup $userGroup): self
+  {
+    if ($this->userGroups->removeElement($userGroup)) {
+      $userGroup->removeUser($this);
+    }
+
+    return $this;
   }
 
 }
