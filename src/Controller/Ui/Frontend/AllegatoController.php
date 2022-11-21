@@ -67,9 +67,8 @@ class AllegatoController extends AbstractController
   private $entityManager;
 
   private $allowedExtensions;
-  /**
-   * @var SessionInterface
-   */
+
+  /** @var SessionInterface */
   private $session;
 
 
@@ -191,21 +190,24 @@ class AllegatoController extends AbstractController
    */
   public function uploadAttachmentFinalizeAction(Request $request, Allegato $allegato)
   {
-    // Todo: Come garantisco in sicurezza per gli anonimi?
-    //$this->denyAccessUnlessGranted(AttachmentVoter::EDIT, $allegato);
+
 
     try {
-
       $session = $this->session;
       if (!$session->isStarted()){
         $session->start();
       }
 
       $fileHash = $request->request->get('file_hash');
+      $checkSignature = $request->request->get('check_signature', false);
       $allegato->setFileHash($fileHash);
       $allegato->setExpireDate(null);
       $this->entityManager->persist($allegato);
       $this->entityManager->flush();
+
+      if ($checkSignature) {
+        return new JsonResponse(['url' => $this->fileService->getPresignedGetRequest($allegato)], Response::HTTP_OK);
+      }
 
       return new JsonResponse([], Response::HTTP_NO_CONTENT);
     } catch (\Exception $e) {
@@ -330,6 +332,8 @@ class AllegatoController extends AbstractController
 
     /** @var UploadedFile $uploadedFile */
     $uploadedFile = $request->files->get('file');
+
+    dd($uploadedFile);
     if (is_null($uploadedFile)) {
       $this->logger->error(LogConstants::ALLEGATO_UPLOAD_ERROR, $request->request->all());
       return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_UPLOAD_ERROR], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -394,15 +398,6 @@ class AllegatoController extends AbstractController
       'type' => $request->get('type') ?? null,
     ];
 
-    /*if ($this->getParameter('generate_p7m_thumbnail') == true) {
-      $p7mThumbnailService = $this->get('ocsdc.p7m_thumbnailer_service');
-      if ($p7mThumbnailService->createThumbnailForAllegato($allegato)) {
-        $data['url'] = $this->get('router')->generate('allegati_download_thumbnail_cpsuser',
-          ['allegato' => $allegato->getId()]);
-      }
-    }*/
-
-    //unlink($targetFile);
     return new JsonResponse($data);
   }
 

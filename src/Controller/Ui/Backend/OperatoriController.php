@@ -439,7 +439,7 @@ class OperatoriController extends AbstractController
   {
     $parameters = $this->getPraticheFilters($request);
     /** @var PraticaRepository $praticaRepository */
-    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+    $praticaRepository = $this->entityManager->getRepository(Pratica::class);
     /** @var OperatoreUser $user */
     $user = $this->getUser();
 
@@ -467,7 +467,7 @@ class OperatoriController extends AbstractController
     $result['meta']['schema'] = false;
     $servizioId = $parameters['servizio'];
     if ($servizioId && $count > 0) {
-      $servizio = $this->getDoctrine()->getManager()->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
+      $servizio = $this->entityManager->getRepository(Servizio::class)->findOneBy(['id' => $servizioId]);
       if ($servizio instanceof Servizio) {
         $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId());
         if ($schema->hasComponents()) {

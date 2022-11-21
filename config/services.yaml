@@ -791,14 +791,6 @@ services:
 
   ocsdc.p7m_signature_check: '@App\Services\P7MSignatureCheckService'
 
-  ocsdc.p7m_thumbnailer_service:
-    class: App\Services\P7MThumbnailerService
-    arguments:
-      - '@ocsdc.allegati.directory_namer'
-      - '@vich_uploader.property_mapping_factory'
-      - '@logger'
-      - '%gsbinary%'
-
   ocsdc.validator.scia.at_least_one_attachment:
     class: App\Validator\Constraints\AtLeastOneAttachmentConstraintValidator
     arguments:

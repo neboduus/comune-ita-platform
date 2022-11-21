@@ -106,7 +106,6 @@ class ServiziController extends AbstractController
    */
   public function serviziAction(Request $request)
   {
-
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.servizi', 'servizi_list');
 
     switch ($this->instanceService->getCurrentInstance()->getNavigationType()) {
