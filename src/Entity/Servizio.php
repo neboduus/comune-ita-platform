@@ -552,7 +552,7 @@ class Servizio implements Translatable
    * @OA\Property(description="Public service identifier")
    */
   private $identifier;
-  
+
   /**
    * @Gedmo\Locale
    * Used locale to override Translation listener`s locale

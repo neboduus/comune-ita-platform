@@ -18,25 +18,7 @@
   <section class="container {{ form.vars.id }}">
     <div class="row">
       <div class="col-md-12 px-lg-4 py-lg-2 cmp-heading">
-        {% if pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION' %}
-        <h1>{{ 'pratica.integrazione_pratica'|trans({'%name%':pratica.servizio.name}) }}</h1>
-        <small>{{ 'pratica.integrazione_pratica_description'|trans() }}</small>
-        {% if pratica.haUnaRichiestaDiIntegrazioneAttiva and pratica.getRichiestaDiIntegrazioneAttiva is not null %}
-          {% set download_allegato_path = user.id == pratica.user.id ? 'allegati_download_cpsuser' : 'allegati_download_operatore' %}
-          <div class="alert alert-warning">
-            {{ pratica.getRichiestaDiIntegrazioneAttiva.description }}
-            (
-            <small>
-              <a
-                href="{{ path( download_allegato_path, {'allegato': pratica.getRichiestaDiIntegrazioneAttiva.id}) }}">{{ 'allegato.scarica_allegato_richiesta_integrazione'|trans }}</a>
-            </small>
-            )
-          </div>
-        {% endif %}
-        {% else %}
         <h1>{{ pratica.servizio.name }}</h1>
-        {% endif %}
-        {# Info compilazione specificate nel servizio #}
         {{ include('Pratiche/parts/compilation_info.html.twig') }}
         <p>
           <a href="#" data-toggle="modal" data-target="#modalNote">
@@ -52,7 +34,6 @@
           {% include 'bundles/CraueFormFlowBundle/FormFlowCustom/stepList_content.html.twig' %}
       </div>
     </div>
-
 
     <div class="row mt-2">
       {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
@@ -88,6 +69,7 @@
              data-form_id="{{ pratica.servizio.formIoId }}"
              data-form_validate="{{ path( 'formio_validate', {'servizio': pratica.servizio.slug}) }}"
              data-save-draft-url="{{ path('pratiche_draft', {'pratica': pratica}) }}"
+             data-signature_check_ws_url="{{ signature_check_ws_url }}"
         >
         </div>
       {% endif %}

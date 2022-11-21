@@ -118,6 +118,23 @@ class AllegatoFileService extends AbstractFileService
     }
   }
 
+  // Todo: da riguardare il file service dopo che sono stati spezati
+  /**
+   * @throws FileNotFoundException
+   */
+  public function getPresignedGetRequest(Allegato $allegato): string
+  {
+    $filenameWithPath = $this->getFilenameWithPath($allegato);
+    $dispositionFilename =  $this->getDispositionFilename($allegato->getFilename(), $allegato->getOriginalFilename());
+
+    $request = $this->createPresignedGetRequest(
+      $this->getFilenameWithPath($allegato, true),
+      $filenameWithPath,
+      $dispositionFilename
+    );
+    return (string)$request->getUri();
+  }
+
   /**
    * @param Allegato $allegato
    * @return string

@@ -36,25 +36,31 @@ var _default = [{
     }
   }
 }, {
-  type: 'textfield',
-  input: true,
-  key: 'url',
-  label: 'Url',
-  weight: 10,
-  placeholder: 'Enter the url to post the files to',
-  hidden: true,
-  value: 'url'
-},
-  {
+    type: 'textfield',
+    input: true,
+    key: 'url',
+    label: 'Url',
+    weight: 0,
+    placeholder: 'Enter the url to post the files to',
+    hidden: true,
+    value: 'url'
+  }, {
     type: 'checkbox',
     input: true,
     defaultValue: true,
     key: 'protocol_required',
     label: 'Richiede protocollazione?',
     tooltip: '',
-    weight: 30
-  },
-  {
+    weight: 10
+  }, {
+    type: 'checkbox',
+    input: true,
+    defaultValue: false,
+    key: 'check_signature',
+    label: 'Effettuare il controllo della firma?',
+    tooltip: '',
+    weight: 15
+  }, {
     type: 'textfield',
     input: true,
     key: 'options.indexeddb',
@@ -68,8 +74,7 @@ var _default = [{
         }, ['indexeddb']]
       }
     }
-  },
-  {
+  }, {
     type: 'textfield',
     input: true,
     label: 'Table',
@@ -83,8 +88,7 @@ var _default = [{
         }, ['indexeddb']]
       }
     }
-  },
-  {
+  }, {
     type: 'textarea',
     key: 'options',
     label: 'Custom request options',
@@ -101,8 +105,7 @@ var _default = [{
         }, 'url']
       }
     }
-  },
-  {
+  }, {
     type: 'datagrid',
     input: true,
     label: 'File Types',

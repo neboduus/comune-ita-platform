@@ -38,8 +38,6 @@ parameters:
   giscom_adapter_url: '%env(GISCOM_ADAPTER_URL)%'
   giscom_adapter_username: '%env(GISCOM_ADAPTER_USERNAME)%'
   giscom_adapter_password: '%env(GISCOM_ADAPTER_PASSWORD)%'
-  generate_p7m_thumbnail: true
-  gsbinary: gs
   ocsdc_default_moment_datetime_format: DD-MM-YYYY HH:mm:ss
   mypay_adapter_url: '%env(MYPAY_ADAPTER_URL)%'
   ocsdc_slim_datetime_format: d/m/y H:i
@@ -152,6 +150,7 @@ parameters:
     plan: '%env(ANALYTICS_PLAN)%'
   google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
   google_tag_manager_key: '%env(GOOGLE_TAG_MANAGER_KEY)%'
+  signature_check_ws_url: '%env(SIGANTURE_CHECK_WS_URL)%'
   env(PREFIX): ''
   env(DB_DRIVER): pdo_pgsql
   env(DB_HOST): postgres
@@ -254,3 +253,4 @@ parameters:
   env(JWT_PASSPHRASE): stanzadelcittadino
   env(MAILER_URL): smtp://mailserver:1025
   env(GOOGLE_TAG_MANAGER_KEY): null
+  env(SIGANTURE_CHECK_WS_URL): null

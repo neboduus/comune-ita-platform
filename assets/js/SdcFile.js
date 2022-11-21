@@ -5,10 +5,16 @@ import axios from "axios";
 
 const endpoint = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] + "/it"
 const language = document.documentElement.lang.toString();
+const signatureCheckWsUrl = document.querySelector("#formio").dataset.signature_check_ws_url;
 
 export default class SdcFile extends File {
+
   constructor(component, options, data) {
     super(component, options, data);
+    if (this.component.check_signature) {
+      this.validators.push('custom');
+      component.validate.custom = "valid = instance.signatureValidation()"
+    }
   }
 
   static schema() {
@@ -26,6 +32,19 @@ export default class SdcFile extends File {
   }
 
   static editForm = editForm
+
+  signatureValidation(input) {
+    let valitationResult = true;
+    if (this.dataValue.length > 0) {
+      this.dataValue.forEach((item, index, arr) => {
+        if (item.signature_validation === 'none') {
+          //valitationResult = 'Il file ' + item.originalName +  ' non presenta una firma valida.'
+          valitationResult = Translator.trans('pratica.error_signature_validation', {"filename": item.originalName}, 'messages', language);
+        }
+      })
+    }
+    return valitationResult;
+  }
 
   /**
    * Render returns an html string of the fully rendered component.
@@ -115,7 +134,6 @@ export default class SdcFile extends File {
           this.statuses.splice(fileWithSameNameUploadedWithError, 1);
           this.redraw();
         }
-
 
         // Check file pattern
         if (this.component.filePattern && !this.validatePattern(file, this.component.filePattern)) {
@@ -244,15 +262,39 @@ export default class SdcFile extends File {
                 fileInfo.data.baseUrl = endpoint + "/allegati/"+ idUpload
                 fileInfo.storage = 'url'
                 fileInfo.protocol_required = fileUpload.protocol_required
+                fileInfo.signature_validation = null
+
                 if (!this.hasValue()) {
                   this.dataValue = [];
                 }
-                this.dataValue.push(fileInfo);
-                this.redraw();
-                this.triggerChange();
+                let  fileIndex = this.dataValue.push(fileInfo) -1;
+
                 axios.put(endpoint + '/upload/' + idUpload, {
-                  file_hash: etag
+                  file_hash: etag,
+                  check_signature: this.component.check_signature
                 }).then(resp => {
+                  this.redraw();
+                  this.triggerChange();
+                  console.log('add pades check here')
+                  if (this.component.check_signature && resp.data.url && signatureCheckWsUrl) {
+                    axios.post(signatureCheckWsUrl, {
+                      url: resp.data.url,
+                      content: null
+                    }, {
+                      headers: {
+                        'Content-Type': 'application/json'
+                      }
+                    }).then(resp => {
+                      console.log(resp)
+                      fileInfo.signature_validation = resp.data.sign;
+                      this.dataValue[fileIndex] = fileInfo
+                    }).catch(e => {
+                      fileInfo.signature_validation = 'File validation error: ' + e;
+                      this.dataValue[fileIndex] = fileInfo
+                    })
+                    this.redraw();
+                    this.triggerChange();
+                  }
                 }).catch(err => {
                   fileUpload.status = 'error';
                   fileUpload.message = Translator.trans('pratica.error_upload_file_sdc', {}, 'messages', language);;

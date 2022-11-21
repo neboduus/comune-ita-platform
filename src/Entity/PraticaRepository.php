@@ -479,8 +479,18 @@ class PraticaRepository extends EntityRepository
     }
 
     if (!empty($filters['gruppo'])) {
-      $qb->andWhere('pratica.serviceGroup = :group')
-        ->setParameter('group', $filters['gruppo']);
+      $groupRepository = $this->getEntityManager()->getRepository('App\Entity\ServiceGroup');
+      $serviceGroup = $groupRepository->find($filters['gruppo']);
+      if ($serviceGroup instanceof ServiceGroup && $serviceGroup->getServicesCount() > 0) {
+        $serviceIds = [];
+        /** @var Servizio $service */
+        foreach ($serviceGroup->getServices() as $service) {
+          $serviceIds[]= $service->getId();
+        }
+        $qb->andWhere('pratica.servizio IN (:group)')
+          ->setParameter('group', $serviceIds);
+      }
+
     }
 
 

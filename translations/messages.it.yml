@@ -455,6 +455,7 @@ pratica:
   file_name: 'Nome del file'
   hash: 'Hash del file'
   error_upload_file_sdc: "Errore durante il caricamento dei file, riprova più tardi oppure contatta l'amministratore"
+  error_signature_validation: "Il file %filename% non presenta una firma valida."
   already_processed: 'La pratica è già stata elaborata'
   already_assigned: 'La pratica è già assegnata a %operator_fullname%'
   no_protocol_number: 'La pratica non ha ancora un numero di protocollo'
@@ -2963,4 +2964,3 @@ user_group:
   users: 'Operatori del gruppo'
   services: 'Servizi del gruppo'
   manager_not_in_users: 'Il responsabile deve essere tra gli utenti del gruppo'
-

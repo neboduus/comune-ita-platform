@@ -30,3 +30,4 @@ twig:
     app_locales: "%app_locales%"
     prefix: "%prefix%"
     google_tag_manager_key: "%google_tag_manager_key%"
+    signature_check_ws_url: "%signature_check_ws_url%"
