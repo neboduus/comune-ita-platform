@@ -4,7 +4,7 @@
 namespace App\Model;
 
 use OpenApi\Annotations as OA;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ExternalCalendar implements \JsonSerializable
 {
@@ -14,6 +14,7 @@ class ExternalCalendar implements \JsonSerializable
   private $name;
 
   /**
+   * @Assert\Url(message="The url {{ value }} is not a valid url")
    * @OA\Property(description="External calendar's url", type="string")
    */
   private $url;
