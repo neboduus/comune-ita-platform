@@ -1907,13 +1907,13 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @Security(name="Bearer")
    *
    * @OA\RequestBody(
-   *     description="Array of message's uuid to include in integration request response",
+   *     description="Message's uuid to include in integration request response, accepted values: <ul><li>null - All messages added to applicaton from integration request will be added to the intergration request response</li><li>an empty array - No message will be added to the intergration request response</li><li>an array of message's uuid - Only messages with uuuid in array  will be added to the intergration request response</li></ul>",
    *     required=false,
    *     @OA\MediaType(
    *         mediaType="application/json",
    *         @OA\Schema(
    *             type="object",
-   *             @OA\Property(property="messages", type="array", @OA\Items(type="string"))
+   *             @OA\Property(property="messages", nullable=true, type="array", @OA\Items(type="string"))
    *         )
    *     )
    * )
