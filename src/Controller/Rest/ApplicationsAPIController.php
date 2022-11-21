@@ -229,6 +229,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * )
    *
    * @OA\Parameter(
+   *      name="service_identifier",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
+   *      required=false,
+   *      description="Public service identifier"
+   * )
+   *
+   * @OA\Parameter(
    *      name="order",
    *      in="query",
    *      @OA\Schema(
@@ -336,6 +346,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $version = intval($request->get('version', 1));
 
     $serviceParameter = $request->get('service', false);
+    $serviceIdentifierParameter = $request->get('service_identifier', false);
     $statusParameter = $request->get('status', false);
     $createdAtParameter = $request->get('createdAt', false);
     $updatedAtParameter = $request->get('updatedAt', false);
@@ -351,6 +362,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $queryParameters = ['offset' => $offset, 'limit' => $limit];
     if ($serviceParameter) {
       $queryParameters['service'] = $serviceParameter;
+    }
+    if ($serviceIdentifierParameter) {
+      $queryParameters['service_identifier'] = $serviceIdentifierParameter;
     }
     if ($statusParameter) {
       $queryParameters['status'] = $statusParameter;

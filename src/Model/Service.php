@@ -473,6 +473,12 @@ class Service
    */
   private $feedbackMessages;
 
+  /**
+   * @Serializer\Type("string")
+   * @OA\Property(description="Public service identifier")
+   * @Groups({"read"})
+   */
+  private $identifier;
 
   /**
    * @return mixed
@@ -1452,6 +1458,24 @@ class Service
   public function setFeedbackMessages(FeedbackMessages $feedbackMessages)
   {
     $this->feedbackMessages = $feedbackMessages;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getIdentifier(): ?string
+  {
+    return $this->identifier;
+  }
+
+  /**
+   * @param string|null $identifier
+   * @return Service
+   */
+  public function setIdentifier(?string $identifier): Service
+  {
+    $this->identifier = $identifier;
+    return $this;
   }
 
 }

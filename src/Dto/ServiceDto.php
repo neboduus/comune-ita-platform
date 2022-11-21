@@ -104,6 +104,7 @@ class ServiceDto extends AbstractDto
 
     $service = new Service();
     $service->setId($servizio->getId());
+    $service->setIdentifier($servizio->getIdentifier());
     $service->setName($servizio->getName());
     $service->setSlug($servizio->getSlug());
     $service->setTenant($servizio->getEnteId());
@@ -210,6 +211,7 @@ class ServiceDto extends AbstractDto
       $entity = new Servizio();
     }
 
+    $entity->setIdentifier($service->getIdentifier());
     $entity->setName($service->getName());
     $entity->setSlug($service->getSlug());
 

@@ -3,8 +3,10 @@ namespace App\Form\Admin\Servizio;
 
 use App\Entity\Servizio;
 use App\Form\I18n\AbstractI18nType;
+use App\Form\I18n\I18nDataMapperInterface;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
+use Flagception\Manager\FeatureManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -18,6 +20,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class GeneralDataType extends AbstractI18nType
 {
+
+  private $featureManager;
+
+  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, FeatureManagerInterface $featureManager)
+  {
+    parent::__construct($dataMapper, $locale, $locales);
+    $this->featureManager = $featureManager;
+  }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
@@ -229,6 +239,14 @@ class GeneralDataType extends AbstractI18nType
         ]
       )
       ;
+
+    if (!$this->featureManager->isActive('feature_service_identifier_readonly')) {
+      $builder->add('identifier', UrlType::class, [
+        'label' => 'servizio.public_service_identifier',
+        'required' => false,
+        'disabled' => $servizio->isIdentifierImported()
+      ]);
+    }
   }
 
   public function configureOptions(OptionsResolver $resolver)

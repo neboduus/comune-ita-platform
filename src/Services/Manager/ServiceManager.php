@@ -66,6 +66,7 @@ class ServiceManager
 
     $searchText = $request->get('q', false);
     $status = $request->get('status', false);
+    $identifier = $request->get('identifier', false);
     $serviceGroupId = $request->get('service_group_id', false);
     $categoryIds = $request->get('topics_id', false);
     $recipientIds = $request->get('recipient_id', false);
@@ -86,6 +87,10 @@ class ServiceManager
     $criteria['grouped'] = $grouped;
 
     $repoServices = $this->entityManager->getRepository(Servizio::class);
+
+    if ($identifier) {
+      $criteria['identifier'] = $identifier;
+    }
 
     if ($serviceGroupId) {
       $serviceGroupRepo = $this->entityManager->getRepository('App\Entity\ServiceGroup');

@@ -216,6 +216,7 @@ servizio:
   service_successfully_deleted: 'Servizio eliminato correttamente'
   success_import_service: 'Servizio importato correttamente'
   error_create_form: 'Si è verificato un problema in fase creazione del form.'
+  error_duplicated_identifier: "E' già presente un servizio con identificativo pubblico %identifier%"
   error_import: 'Si è verificato un problema in fase di importazione.'
   error_missing_filename: "Il file che si tenta di eliminare non esiste"
   delete_filename: "Elimina file caricato %filename%"
@@ -294,6 +295,7 @@ servizio:
   enable_external_card_url_help: "Abilita questa opzione se la scheda di questo servizio è già disponibile su un'altra pagina web"
   external_card_url: "Url scheda esterna"
   external_card_url_help: "Questo è l'indirizzo al quale verrà reindirizzato l'utente"
+  public_service_identifier: "Identificativo pubblico del servizio"
   stages_and_deadlines: "Tempi e scadenze"
   max_response_time_text: "Una volta presentata una pratica, verrà fornita una risposta entro %time% giorni"
   max_response_time_list: "Tempo massimo di risposta"

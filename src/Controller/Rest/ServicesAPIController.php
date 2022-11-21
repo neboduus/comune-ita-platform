@@ -135,6 +135,16 @@ class ServicesAPIController extends AbstractFOSRestController
    *  )
    *
    * @OA\Parameter(
+   *      name="identifier",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
+   *      required=false,
+   *      description="Public service identifier"
+   *  )
+   *
+   * @OA\Parameter(
    *      name="topics_id",
    *      in="query",
    *      @OA\Schema(

@@ -6,7 +6,7 @@ use DateTime;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use OpenApi\Annotations as OA;
-use Nelmio\ApiDocBundle\Annotation\Model;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ServiceSource implements \JsonSerializable
 {
@@ -45,6 +45,14 @@ class ServiceSource implements \JsonSerializable
    */
   private $version;
 
+  /**
+   * @Serializer\Type("string")
+   * @Assert\Url
+   * @OA\Property(description="Public service identifier")
+   * @Groups({"read"})
+   */
+  private $identifier;
+
 
   public function __construct($data = [])
   {
@@ -58,13 +66,14 @@ class ServiceSource implements \JsonSerializable
       }
       $this->md5 = $data['md5'] ?? null;
       $this->version = $data['version'] ?? null;
+      $this->identifier = $data['identifier'] ?? null;
     }
   }
 
   /**
-   * @return array|mixed
+   * @return array
    */
-  public function jsonSerialize()
+  public function jsonSerialize(): array
   {
     return get_object_vars($this);
   }
@@ -80,9 +89,10 @@ class ServiceSource implements \JsonSerializable
   /**
    * Set the value of id
    *
+   * @param $id
    * @return  self
    */
-  public function setId($id)
+  public function setId($id): ServiceSource
   {
     $this->id = $id;
 
@@ -100,9 +110,10 @@ class ServiceSource implements \JsonSerializable
   /**
    * Set the value of url
    *
+   * @param $url
    * @return  self
    */
-  public function setUrl($url)
+  public function setUrl($url): ServiceSource
   {
     $this->url = $url;
 
@@ -122,11 +133,11 @@ class ServiceSource implements \JsonSerializable
   /**
    * Set the value of updatedAt
    *
-   * @param DateTime $updatedAt
+   * @param DateTime|null $updatedAt
    *
    * @return  self
    */
-  public function setUpdatedAt(?DateTime $updatedAt)
+  public function setUpdatedAt(?DateTime $updatedAt): ServiceSource
   {
     $this->updatedAt = $updatedAt;
 
@@ -144,9 +155,10 @@ class ServiceSource implements \JsonSerializable
   /**
    * Set the value of md5
    *
+   * @param $md5
    * @return  self
    */
-  public function setMd5($md5)
+  public function setMd5($md5): ServiceSource
   {
     $this->md5 = $md5;
 
@@ -165,12 +177,31 @@ class ServiceSource implements \JsonSerializable
   /**
    * Set the value of version
    *
+   * @param $version
    * @return  self
    */
-  public function setVersion($version)
+  public function setVersion($version): ServiceSource
   {
     $this->version = $version;
 
+    return $this;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getIdentifier(): ?string
+  {
+    return $this->identifier;
+  }
+
+  /**
+   * @param string|null $identifier
+   * @return ServiceSource
+   */
+  public function setIdentifier(?string $identifier): ServiceSource
+  {
+    $this->identifier = $identifier;
     return $this;
   }
 }

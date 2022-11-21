@@ -614,6 +614,13 @@ class PraticaRepository extends EntityRepository
       $qb->andWhere('pratica.servizio IN (:services)')->setParameter('services', $parameters['service']);
     }
 
+    if (isset($parameters['service_identifier'])) {
+      $qb
+        ->leftJoin('pratica.servizio', 'service')
+        ->andWhere('service.identifier = :identifier')
+        ->setParameter('identifier', $parameters['service_identifier']);
+    }
+
     // after|before|strictly_after|strictly_before
     if (isset($parameters['createdAt'])) {
       if (isset($parameters['createdAt']['strictly_after'])) {

@@ -171,26 +171,6 @@ Per accedere come admin usare le seguenti credenziali
     user: admin
     password: changeme
 
-## Abilitazione features
-
-Mediante specifiche variabili d'ambiente è possibile abilitare o disabilitare features.
-
-    FEATURE_NOME=true
-
-Feature disponibili:
-   - Browser outdated, si abilita tramite la variabile d'ambiente `FEATURE_NEW_OUTDATED_BROWSER`:
-   sostituisce il vecchio plugin browser outdated per la verifica di browser obsoleti.
-   Migliora la scelta di browser compatibili tramite la versione minima configurata.
-   Supporta browser mobile con callback specifiche per Web - Android - IOS.
-
-
-   - Interfaccia di dettaglio pratica per il cittadino, si abilita tramite la variabile d'ambiente `FEATURE_APPLICATION_DETAIL`:
-   sostituisce l'interfaccia di dettaglio ad uso del cittadino, migliorandone la user experience.
-   Consente inoltre lo scambio di messaggi tra operatore e cittadino.
-
-   - Interfaccia per operatori e admin, si abilita tramite la variabile d'ambiente `FEATURE_ANALYTICS`:
-     abilita la pagina operatori/analytics mostrando dati statistici della stanza.
-
 ## Restrizioni di accesso ai servizi
 
 Mediante la variabile d'ambiente `BROWSERS_RESTRICTIONS` è possibile limitare l'accesso di una specifica versione di un browser ai servizi.
