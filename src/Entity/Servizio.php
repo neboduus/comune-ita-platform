@@ -546,6 +546,14 @@ class Servizio implements Translatable
   private $userGroups;
 
   /**
+   * @var string
+   * @ORM\Column(type="string", length=255, nullable=true, unique=true)
+   * @Assert\Url
+   * @OA\Property(description="Public service identifier")
+   */
+  private $identifier;
+  
+  /**
    * @Gedmo\Locale
    * Used locale to override Translation listener`s locale
    * this is not a mapped field of entity metadata, just a simple property
@@ -2094,7 +2102,7 @@ class Servizio implements Translatable
    * @ORM\PostLoad()
    * @ORM\PostUpdate()
    */
-  public function toArrayCollection()
+  public function fromArray()
   {
     $conditionsAttachments = new ArrayCollection();
     $costsAttachments = new ArrayCollection();
@@ -2123,6 +2131,18 @@ class Servizio implements Translatable
 
     $this->conditionsAttachments = $conditionsAttachments;
     $this->costsAttachments = $costsAttachments;
+
+    if ($this->source && !$this->source instanceof ServiceSource) {
+      $serviceSource = new ServiceSource();
+      $serviceSource->setId($this->source['id']);
+      $serviceSource->setUrl($this->source['url']);
+      $serviceSource->setMd5($this->source['md5']);
+      $serviceSource->setVersion($this->source['version']);
+      $serviceSource->setUpdatedAt(new \DateTime($this->source['updatedAt']));
+      $serviceSource->setIdentifier($this->source['version'] ?? null);
+
+      $this->source = $serviceSource;
+    }
   }
 
   /**
@@ -2139,6 +2159,32 @@ class Servizio implements Translatable
   public function setExternalCardUrl($externalCardUrl): void
   {
     $this->externalCardUrl = $externalCardUrl;
+  }
+
+  /**
+   * @return string|null
+   */
+  public function getIdentifier(): ?string
+  {
+    return $this->identifier;
+  }
+
+  /**
+   * @param string|null $identifier
+   * @return Servizio
+   */
+  public function setIdentifier(?string $identifier): Servizio
+  {
+    $this->identifier = $identifier;
+    return $this;
+  }
+
+  public function isIdentifierImported(): bool
+  {
+    if ($this->source && $this->source->getIdentifier()) {
+      return true;
+    }
+    return false;
   }
 
 }

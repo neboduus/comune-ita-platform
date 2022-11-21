@@ -54,6 +54,13 @@ class ServizioRepository extends EntityRepository
         ->setParameter('status', $criteria['status']);
     }
 
+    // identifier
+    if (isset($criteria['identifier'])) {
+      $qb
+        ->andWhere('s.identifier = :identifier')
+        ->setParameter('identifier', $criteria['identifier']);
+    }
+
     // grouped
     if (isset($criteria['grouped']) && !$criteria['grouped']) {
       $qb->andWhere('s.serviceGroup IS NULL');
@@ -123,6 +130,13 @@ class ServizioRepository extends EntityRepository
       $qb
         ->andWhere('s.status IN (:status)')
         ->setParameter('status', $criteria['status']);
+    }
+
+    // identifier
+    if (isset($criteria['identifier'])) {
+      $qb
+        ->andWhere('s.identifier = :identifier')
+        ->setParameter('identifier', $criteria['identifier']);
     }
 
     // serviceGroup

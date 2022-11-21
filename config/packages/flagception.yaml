@@ -16,3 +16,6 @@ flagception:
     feature_analytics:
       default: false
       env: FEATURE_ANALYTICS
+    feature_service_identifier_readonly:
+      default: true
+      env: FEATURE_SERVICE_IDENTIFIER_READONLY

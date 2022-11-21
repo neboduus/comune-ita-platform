@@ -102,3 +102,29 @@ E' possibile sovrascrivere il file dei tenant con alcune variabili d'ambiente:
 | INSTANCE_database: 	       | No       |                 | Nome del database dell'istanza, es: sdc_bugliano |
 | INSTANCE_codice_meccanografico | No     |                 | Codice meccanografico, es: c_cbug (puo' essere un codice di fantasia) |
 
+## Abilitazione features
+
+Mediante specifiche variabili d'ambiente è possibile abilitare o disabilitare features.
+
+    FEATURE_NOME=true
+
+Feature disponibili:
+- Browser outdated, si abilita tramite la variabile d'ambiente `FEATURE_NEW_OUTDATED_BROWSER`:
+  sostituisce il vecchio plugin browser outdated per la verifica di browser obsoleti.
+  Migliora la scelta di browser compatibili tramite la versione minima configurata.
+  Supporta browser mobile con callback specifiche per Web - Android - IOS.
+
+
+- Interfaccia di dettaglio pratica per il cittadino, si abilita tramite la variabile d'ambiente `FEATURE_APPLICATION_DETAIL`:
+  sostituisce l'interfaccia di dettaglio ad uso del cittadino, migliorandone la user experience.
+  Consente inoltre lo scambio di messaggi tra operatore e cittadino.
+
+- Calendari con appuntamenti a intervalli dinamici, si abilita tramite la variabile d'ambiente `FEATURE_CALENDAR_TYPE`:
+  aggiunge la possibilità di modificare la tipologia di appuntamenti di un calendario aggiungendo la possibilità
+  di gestire prenotazioni ad intervalli variabilo
+
+- Interfaccia per operatori e admin, si abilita tramite la variabile d'ambiente `FEATURE_ANALYTICS`:
+  abilita la pagina operatori/analytics mostrando dati statistici della stanza.
+
+- Identificativo univoco del servizio, si abilita/disabilita tramite la variabile d'ambiente `FEATURE_SERVICE_IDENTIFIER_READONLY`:
+  Consente all'amministratore di definire ed editare per ogni servizio un identificativo univoco.

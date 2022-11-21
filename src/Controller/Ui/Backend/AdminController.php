@@ -38,6 +38,7 @@ use App\Services\Manager\UserManager;
 use App\Utils\StringUtils;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
 use League\Flysystem\FileNotFoundException;
@@ -565,6 +566,7 @@ class AdminController extends AbstractController
         $form = $this->createForm('App\Form\ServizioFormType', $dto);
         $serviceId = $responseBody['id'];
         $md5Response = md5(json_encode($responseBody));
+        $identifier = $responseBody['identifier'] ?? null;
         unset($responseBody['id'], $responseBody['slug']);
         $data = ServiceDto::normalizeData($responseBody);
         $form->submit($data, true);
@@ -580,7 +582,13 @@ class AdminController extends AbstractController
           $updatedAt = null;
         }
         $serviceSource = new ServiceSource();
-        $serviceSource->setId($serviceId)->setUrl($remoteUrl)->setUpdatedAt($updatedAt)->setMd5($md5Response)->setVersion('1');
+        $serviceSource
+          ->setId($serviceId)
+          ->setUrl($remoteUrl)
+          ->setUpdatedAt($updatedAt)
+          ->setMd5($md5Response)
+          ->setVersion('1')
+          ->setIdentifier($identifier);
         $dto = $dto->setSource($serviceSource);
 
         $category = $em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $dto->getTopics()]);
@@ -594,6 +602,7 @@ class AdminController extends AbstractController
         }
 
         $service = $serviceDto->toEntity($dto);
+        $service->setIdentifier($serviceSource->getIdentifier());
         $service->setName($service->getName() . ' (' . $this->translator->trans('imported') . ' ' . date('d/m/Y H:i:s') . ')');
         $service->setPraticaFCQN('\App\Entity\FormIO');
         $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
@@ -639,6 +648,11 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_servizio_index');
 
       }
+    } catch (UniqueConstraintViolationException $e) {
+      $this->logger->error("Import error: duplicated identifier {$identifier}");
+      $this->addFlash('error', $this->translator->trans('servizio.error_duplicated_identifier',
+        ['%identifier%' => $identifier]
+      ));
     } catch (\Exception $e) {
       $this->addFlash('error', $e->getMessage());
       $this->addFlash('error', $this->translator->trans('servizio.error_create_form'));
