@@ -90,6 +90,12 @@ class Categoria implements Translatable
    */
   private $servicesGroup;
 
+  /**
+   * @ORM\OneToMany(targetEntity="App\Entity\UserGroup", mappedBy="topic")
+   * @var ArrayCollection
+   * @Serializer\Exclude()
+   */
+  private $userGroups;
 
   /**
    * Categoria constructor.
@@ -250,6 +256,23 @@ class Categoria implements Translatable
   {
     $this->servicesGroup = $servicesGroup;
   }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getUserGroups(): ArrayCollection
+  {
+    return $this->userGroups;
+  }
+
+  /**
+   * @param ArrayCollection $userGroups
+   */
+  public function setUserGroups(ArrayCollection $userGroups): void
+  {
+    $this->userGroups = $userGroups;
+  }
+
 
   public function getVisibleService()
   {

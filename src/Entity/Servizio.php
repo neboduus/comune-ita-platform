@@ -539,6 +539,13 @@ class Servizio implements Translatable
   private $externalCardUrl;
 
   /**
+   * @ORM\ManyToMany(targetEntity="App\Entity\UserGroup", mappedBy="services")
+   * @var ArrayCollection
+   * @Serializer\Exclude()
+   */
+  private $userGroups;
+
+  /**
    * @Gedmo\Locale
    * Used locale to override Translation listener`s locale
    * this is not a mapped field of entity metadata, just a simple property
@@ -576,6 +583,7 @@ class Servizio implements Translatable
 
     $this->conditionsAttachments = new ArrayCollection();
     $this->costsAttachments = new ArrayCollection();
+    $this->userGroups = new ArrayCollection();
   }
 
   /**
@@ -670,6 +678,22 @@ class Servizio implements Translatable
   {
     $this->ente = $ente;
     return $this;
+  }
+
+  /**
+   * @return ArrayCollection
+   */
+  public function getUserGroups(): ArrayCollection
+  {
+    return $this->userGroups;
+  }
+
+  /**
+   * @param ArrayCollection $userGroups
+   */
+  public function setUserGroups(ArrayCollection $userGroups): void
+  {
+    $this->userGroups = $userGroups;
   }
 
   /**

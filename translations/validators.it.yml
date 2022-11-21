@@ -1,3 +1,6 @@
 service:
   short_description:
     not_blank: "Il campo descrizione breve non può essere vuoto"
+user_group:
+  name:
+    not_blank: "Il nome non può essere vuoto"

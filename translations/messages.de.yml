@@ -2954,3 +2954,11 @@ taxonomies:
     bankruptcy: 'Bankrott'
     participating_in_public_procurement_national_and_cross_border: 'Teilnahme am öffentlichen Beschaffungswesen (national und grenzüberschreitend)'
 accessibility: 'Barrierefreiheit'
+user_group:
+  title: ''
+  main_function: ''
+  manager: ''
+  more_info: ''
+  users: ''
+  services: ''
+  manager_not_in_users: ''

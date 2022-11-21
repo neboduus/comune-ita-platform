@@ -26,8 +26,8 @@
           {{ form_row(form.whatYouNeed) }}
           {{ form_row(form.whatYouGet) }}
           {{ form_row(form.costs) }}
+          {{ form_row(form.costs_attachments) }}
           <div class="form-group">
-            {{ form_row(form.costs_attachments) }}
             {% if item.costsAttachments %}
               <ul class="upload-file-list">
                 {% for attachment in item.costsAttachments %}
