@@ -11,7 +11,9 @@ Per i test che seguono fare riferimento al documento dei [Test Manuali](https://
 - [ ] Test invio messaggi a Kafka:
     - testare che le pratiche create nei test precedenti siano state correttamente inviate a kafka
     - testare che in caso di errore di invio a kafka diretto, venga creata la scheduled action necessaria per l'invio successivo.
-- [ ] Test importazione di un servizio dalla versione precedente
+- [ ] Test importazione di un servizio DA una versione precedente
+- [ ] Test di importazione di un vervizio VERSO una versione precedente
+- [ ] Test compliancy PNRR con il tool [pa-website-validator](https://github.com/italia/pa-website-validator)
 
 ## Test su nuovi sviluppi
 
