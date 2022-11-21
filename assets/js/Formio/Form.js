@@ -37,6 +37,13 @@ class Form {
       $( this ).attr('data-progress', idx+1);
     });
 
+    // Hide craue element if formio steps are > 4
+    if($("[data-wizard*='header']").length > 4){
+      $("[data-item='craue']").each(function() {
+        $( this ).removeClass('d-lg-flex')
+      });
+    }
+
         const step = ($('.step-active').data('progress') ? $('.step-active').data('progress') : '1') + '/' + ($('.info-progress-wrapper').length - 1)
         const stepLabel = $('.step-active span').text();
 
