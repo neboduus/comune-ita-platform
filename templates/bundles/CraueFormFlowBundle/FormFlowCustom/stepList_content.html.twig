@@ -3,7 +3,7 @@
 {%- if flow.getStepLabels() is not empty -%}
     <div class="cmp-info-progress d-flex" id="wizardHeader">
         {% for stepLabel in flow.getStepLabels() %}
-            <div{{ block('craue_flow_stepList_class')}}  {% if (loop.index == 1) %} data-loop="first" style="display: none!important;" {% endif %} >
+            <div{{ block('craue_flow_stepList_class')}}  {% if (loop.index == 1) %} data-loop="first" style="display: none!important;" {% endif %} data-item="craue">
               {%- if craue_isStepLinkable(flow, loop.index) -%}
               <a class="text-decoration-none" href="{{ path(app.request.attributes.get('_route'), app.request.query.all
                 | merge(app.request.attributes.get('_route_params'))

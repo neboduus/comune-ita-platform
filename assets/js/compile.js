@@ -34,7 +34,15 @@ $(document).ready(function () {
   }
 
   if( $('form[name="pratica_payment_gateway"]').length > 0){
+    Form.getStoredSteps()
+    Form.createStepsMobile()
     Payment.init();
+  }
+
+  // Bollo e MyPay
+  if( $('form[name="pratica_select_payment_gateway"]').length > 0){
+    Form.getStoredSteps()
+    Form.createStepsMobile()
   }
 
   if($('#step-payments').length > 0){

@@ -4,7 +4,8 @@ export default function wizardHeader(ctx) {
   const numberComponentsMobileClass = ctx.panels.length > 4 ? 'd-flex' : 'd-lg-none'
 
   const options = ctx.panels.map((panel, index) => {
-    return `<div class="info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-300 ${numberComponentsClass} ${ctx.currentPage === index ? 'step-active' : ''}" data-wizard="header-${index}">
+    return `<div class="info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-300 ${numberComponentsClass} ${ctx.currentPage === index ? 'step-active' : ''}
+            ${!ctx.instance.components[index].invalid && ctx.currentPage >= index ? 'completed' : ''}" data-wizard="header-${index}">
      <div class="info-progress-body d-flex justify-content-between align-self-end align-items-end w-100 py-3" data-index="${index}" ref="${ctx.wizardKey}-link">
        <span class="d-block h-100 title-medium text-uppercase text-truncate" data-toggle="tooltip" title="${ctx.t(panel.title, {_userInput: true})}"> ${ctx.t(panel.title, {_userInput: true})}</span>
             ${!ctx.instance.components[index].invalid && ctx.currentPage >= index ?
@@ -17,7 +18,7 @@ export default function wizardHeader(ctx) {
   );
 
   options.push(`
-            <div class="iscrizioni-header ${numberComponentsMobileClass} w-100" data-wizard="header">
+            <div class="iscrizioni-header ${numberComponentsMobileClass} w-100" data-wizard="mobile">
             <!-- Mobile -->
               <h4 class="step-title d-flex align-items-center justify-content-between drop-shadow w-100">
                   <span class="d-block d-lg-inline step-label"></span>
