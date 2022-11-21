@@ -2,12 +2,13 @@
 
 namespace App\Form;
 
+use App\Dto\ServiceDto;
+use App\Entity\Pratica;
 use App\Helpers\EventTaxonomy;
+use App\Model\FeedbackMessage;
 use App\Model\Service;
-use App\Services\FormServerApiAdapterService;
-use App\Services\Manager\BackofficeManager;
+use App\Services\Manager\ServiceManager;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\DependencyInjection\ContainerInterface as Container;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -19,34 +20,21 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ServizioFormType extends AbstractType
 {
   /**
-   * @var FormServerApiAdapterService
+   * @var ServiceManager
    */
-  private $formServerService;
-  /**
-   * @var TranslatorInterface
-   */
-  private $translator;
-  /**
-   * @var BackofficeManager
-   */
-  private $backOfficeManager;
+  private $serviceManager;
 
-  /**
-   * @var Container
-   */
-  private $container;
+  private $defaultLocale;
 
-  public function __construct(Container $container, TranslatorInterface $translator, FormServerApiAdapterService $formServerService, BackofficeManager $backOfficeManager)
+
+  public function __construct(ServiceManager $serviceManager, $defaultLocale)
   {
-    $this->container = $container;
-    $this->formServerService = $formServerService;
-    $this->translator = $translator;
-    $this->backOfficeManager = $backOfficeManager;
+    $this->serviceManager = $serviceManager;
+    $this->defaultLocale = $defaultLocale;
   }
 
   /**
@@ -156,7 +144,7 @@ class ServizioFormType extends AbstractType
       ])
       ->add('allow_withdraw')
       ->add('external_card_url')
-    ;
+      ->add('feedback_messages', FeedbackMessagesFormType::class);
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
@@ -166,14 +154,31 @@ class ServizioFormType extends AbstractType
     /** @var Service $service */
     $service = $event->getForm()->getData();
     $data = $event->getData();
+    $locale = $event->getForm()->getConfig()->getOption('locale');
+
     if (isset($data['integrations']['trigger']) && $data['integrations']['trigger']) {
       $service->setIntegrations($data['integrations']);
-      $event->getForm()->setData($service);
     } else {
       // No integration needed
-      $service->setIntegrations(null);
-      $event->getForm()->setData($service);
+      $service->setIntegrations([]);
     }
+
+    // Set default feedback messages for current locale if service has no feedback messages
+    if (!$service->getFeedbackMessages()) {
+      $service->setFeedbackMessages(ServiceDto::decorateFeedbackMessages($this->serviceManager->getDefaultFeedbackMessages()[$locale]));
+    }
+
+    $feedbackMessagesStatuses = array_keys(FeedbackMessage::STATUS_NAMES);
+    foreach ($feedbackMessagesStatuses as $status) {
+      $statusName = strtolower(Pratica::getStatusNameByCode($status));
+      if (!isset($data['feedback_messages'][$statusName])) {
+        // Update missing feedback messages in form data
+        $data['feedback_messages'][$statusName] = $service->getFeedbackMessages()->getMessageByStatusCode($status)->jsonSerialize();
+      }
+    }
+
+    $event->getForm()->setData($service);
+    $event->setData($data);
   }
 
   /**
@@ -184,7 +189,8 @@ class ServizioFormType extends AbstractType
     $resolver->setDefaults(array(
       'data_class' => 'App\Model\Service',
       'allow_extra_fields' => true,
-      'csrf_protection' => false
+      'csrf_protection' => false,
+      'locale' => $this->defaultLocale
     ));
   }
 

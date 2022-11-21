@@ -221,6 +221,7 @@ servizio:
   delete_filename: "Elimina file caricato %filename%"
   error_from_save: 'Si è verificato un errore durante il salvataggio.'
   draft_message: "La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l'accesso diretto alla compilazione del servizio."
+  missing_feedback_message: "Il campo %status_name% è obbligatorio"
   placeholders_available: 'Placeholders disponibili'
   communication_citizen: "La comunicazione verrà inoltrata al cittadino solo qualora una pratica in bozza verrà creata per suo conto e non attraverso l'accesso diretto alla compilazione del servizio."
   create_new_form: 'Crea nuovo form'

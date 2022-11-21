@@ -4,16 +4,19 @@ namespace App\Services\Manager;
 
 use App\Entity\Categoria;
 use App\Entity\GeographicArea;
+use App\Entity\Pratica;
 use App\Entity\Recipient;
 use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
 use App\Event\KafkaEvent;
+use App\Model\FeedbackMessage;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use function Aws\boolean_value;
 
 class ServiceManager
@@ -30,14 +33,28 @@ class ServiceManager
   private $dispatcher;
 
   /**
+   * @var TranslatorInterface
+   */
+  private $translator;
+
+  /**
+   * @var false|string[]
+   */
+  private $locales;
+
+  /**
    * CategoryManager constructor.
    * @param EntityManagerInterface $entityManager
    * @param EventDispatcherInterface $dispatcher
+   * @param TranslatorInterface $translator
+   * @param $locales
    */
-  public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $dispatcher)
+  public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $dispatcher, TranslatorInterface $translator, $locales)
   {
     $this->entityManager = $entityManager;
     $this->dispatcher = $dispatcher;
+    $this->translator = $translator;
+    $this->locales = explode('|', $locales);
   }
 
   /**
@@ -336,6 +353,39 @@ class ServiceManager
       }
     }
     return $areas;
+  }
+
+  /**
+   * @return array
+   */
+  public function getDefaultFeedbackMessages(): array
+  {
+    $i18nMessages = [];
+    foreach ($this->locales as $locale) {
+      foreach (FeedbackMessage::STATUS_NAMES as $k => $v) {
+        $tempMessage = null;
+        $temp = new FeedbackMessage();
+        $temp->setName($v);
+        $temp->setTrigger($k);
+        $temp->setSubject(
+          $tempMessage['subject'] ?? $this->translator->trans('pratica.email.status_change.subject', [], null, $locale)
+        );
+        $temp->setMessage(
+          $tempMessage['message'] ?? $this->translator->trans('messages.pratica.status.' . $k, [], null, $locale)
+        );
+
+        $defaultIsActive = true;
+        if ($k == Pratica::STATUS_PENDING || $k == Pratica::STATUS_DRAFT) {
+          $defaultIsActive = false;
+        }
+        $temp->setIsActive(
+          $tempMessage['is_active'] ?? $defaultIsActive
+        );
+        $i18nMessages[$locale][$k] = $temp;
+      }
+    }
+
+    return $i18nMessages;
   }
 
 }

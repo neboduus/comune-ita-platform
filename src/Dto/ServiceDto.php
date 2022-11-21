@@ -4,17 +4,19 @@
 namespace App\Dto;
 
 use App\Entity\Categoria;
-use App\Entity\GeographicArea;
-use App\Entity\Recipient;
+use App\Entity\Pratica;
 use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
+use App\Model\FeedbackMessage;
+use App\Model\FeedbackMessages;
 use App\Model\Service;
 use App\Services\Manager\BackofficeManager;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Services\Manager\ServiceManager;
 use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
+
 
 class ServiceDto extends AbstractDto
 {
@@ -26,21 +28,15 @@ class ServiceDto extends AbstractDto
   private $baseUrl;
 
   private $version;
-  /**
-   * @var EntityManagerInterface
-   */
-  private $entityManager;
+
 
   /**
    * @param RouterInterface $router
-   * @param EntityManagerInterface $entityManager
    */
-  public function __construct(RouterInterface $router, EntityManagerInterface $entityManager)
+  public function __construct(RouterInterface $router)
   {
     $this->router = $router;
-    $this->entityManager = $entityManager;
   }
-
 
   /**
    * @return RouterInterface
@@ -189,6 +185,7 @@ class ServiceDto extends AbstractDto
     $service->setBusinessEvents($servizio->getBusinessEvents());
     $service->setExternalCardUrl($servizio->getExternalCardUrl());
 
+    $service->setFeedbackMessages($this->decorateFeedbackMessages($servizio->getFeedbackMessages()));
     return $service;
   }
 
@@ -271,6 +268,8 @@ class ServiceDto extends AbstractDto
     $entity->setExternalCardUrl($service->getExternalCardUrl());
     $entity->setSource($service->getSource());
 
+    $entity->setFeedbackMessages($this->normalizeFeedbackMessages($service->getFeedbackMessages()));
+
     return $entity;
   }
 
@@ -330,6 +329,56 @@ class ServiceDto extends AbstractDto
     // Todo: find better way
     if (isset($data['protocollo_parameters'])) {
       $data['protocollo_parameters'] = \json_encode($data['protocollo_parameters']);
+    }
+
+    if (isset($data['feedback_messages'])) {
+      foreach ($data['feedback_messages'] as $k => $v) {
+        $trigger = Pratica::getStatusCodeByName($k);
+        $data['feedback_messages'][$k]['trigger'] = $trigger;
+        $data['feedback_messages'][$k]['name'] = FeedbackMessage::STATUS_NAMES[$trigger];
+      }
+    }
+    return $data;
+  }
+
+  /**
+   * @param $feedbackMessages
+   * @return FeedbackMessages
+   */
+  public static function decorateFeedbackMessages($feedbackMessages): FeedbackMessages
+  {
+    // Conversione dei messages del servizio da un array di oggetti di tipo FeedbackMessage a un oggetto
+    // di tipo FeedbackMessages
+
+    $messages = new FeedbackMessages();
+
+    foreach ($feedbackMessages as $feedbackMessage) {
+      // Se è di tipo array converto in FeedbackMessage
+      if (!$feedbackMessage instanceof FeedbackMessage) {
+        $temp = new FeedbackMessage();
+        $temp->setName($feedbackMessage['name']);
+        $temp->setTrigger($feedbackMessage['trigger']);
+        $temp->setSubject($feedbackMessage['subject']);
+        $temp->setMessage($feedbackMessage['message']);
+        if (isset($feedbackMessage['isActive'])) {
+          $temp->setIsActive($feedbackMessage['isActive']);
+        } elseif (isset($feedbackMessage['is_active'])) {
+          $temp->setIsActive($feedbackMessage['is_active']);
+        }
+
+        $feedbackMessage = $temp;
+      }
+      $messages->setMessageByStatusCode($feedbackMessage->getTrigger(), $feedbackMessage);
+    }
+    return $messages;
+  }
+
+  public function normalizeFeedbackMessages(FeedbackMessages $feedbackMessages): array
+  {
+    $data = array();
+    $feedbackMessagesStatuses = array_keys(FeedbackMessage::STATUS_NAMES);
+    foreach ($feedbackMessagesStatuses as $status) {
+      $data[$status] = $feedbackMessages->getMessageByStatusCode($status);
     }
     return $data;
   }

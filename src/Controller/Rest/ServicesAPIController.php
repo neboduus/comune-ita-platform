@@ -28,6 +28,7 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 use Psr\Log\LoggerInterface;
+use ReflectionException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -193,7 +194,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * )
    * @OA\Tag(name="services")
    */
-  public function getServicesAction(Request $request)
+  public function getServicesAction(Request $request): View
   {
 
     try {
@@ -223,7 +224,7 @@ class ServicesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive service's facets
+   * Retrieve service's facets
    * @Rest\Get("/facets", name="service_api_facets")
    *
    * @OA\Response(
@@ -234,14 +235,14 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Tag(name="services")
    *
    */
-  public function facetsAction()
+  public function facetsAction(): View
   {
     $data = $this->serviceManager->getFacets();
     return $this->view($data, Response::HTTP_OK);
   }
 
   /**
-   * Retreive a Service
+   * Retrieve a Service
    * @Rest\Get("/{id}", name="service_api_get")
    *
    * @OA\Response(
@@ -257,9 +258,10 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Tag(name="services")
    *
    * @param $id
+   * @param Request $request
    * @return View
    */
-  public function getServiceAction($id)
+  public function getServiceAction($id, Request $request): View
   {
     try {
       $repository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
@@ -277,12 +279,16 @@ class ServicesAPIController extends AbstractFOSRestController
         Response::HTTP_OK
       );
     } catch (\Exception $e) {
+      $this->logger->error(
+        $e->getMessage(),
+        ['request' => $request]
+      );
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
   }
 
   /**
-   * Retreive form Service schema
+   * Retrieve form Service schema
    * @Rest\Get("/{id}/form", name="form_service_api_get")
    *
    * @OA\Response(
@@ -299,7 +305,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @param $id
    * @return View
    */
-  public function getFormServiceAction($id)
+  public function getFormServiceAction($id): View
   {
     try {
       $repository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
@@ -340,6 +346,16 @@ class ServicesAPIController extends AbstractFOSRestController
    *     )
    * )
    *
+   * @OA\Parameter(
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false  ,
+   *      @OA\Schema(
+   *           type="string"
+   *      )
+   *  )
+   *
    * @OA\Response(
    *     response=201,
    *     description="Create a Service"
@@ -359,8 +375,9 @@ class ServicesAPIController extends AbstractFOSRestController
    *
    * @param Request $request
    * @return View
+   * @throws ReflectionException
    */
-  public function postServiceAction(Request $request)
+  public function postServiceAction(Request $request): View
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
@@ -372,7 +389,8 @@ class ServicesAPIController extends AbstractFOSRestController
     }
 
     $serviceDto = new Service();
-    $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
+    $formOptions = ['locale' => $request->getLocale()];
+    $form = $this->createForm('App\Form\ServizioFormType', $serviceDto, $formOptions);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -457,6 +475,16 @@ class ServicesAPIController extends AbstractFOSRestController
    *     )
    * )
    *
+   * @OA\Parameter(
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false  ,
+   *      @OA\Schema(
+   *           type="string"
+   *      )
+   *  )
+   *
    * @OA\Response(
    *     response=200,
    *     description="Edit full Service"
@@ -482,7 +510,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function putServiceAction($id, Request $request)
+  public function putServiceAction($id, Request $request): View
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
@@ -503,7 +531,8 @@ class ServicesAPIController extends AbstractFOSRestController
       }
       //$serviceDto = $this->serviceDto->fromEntity($service);
       $serviceDto = new Service();
-      $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
+      $formOptions = ['locale' => $request->getLocale()];
+      $form = $this->createForm('App\Form\ServizioFormType', $serviceDto, $formOptions);
       $this->processForm($request, $form);
 
       if ($form->isSubmitted() && !$form->isValid()) {
@@ -522,7 +551,6 @@ class ServicesAPIController extends AbstractFOSRestController
 
       $this->serviceManager->save($service);
     } catch (\Exception $e) {
-
       $data = [
         'type' => 'error',
         'title' => 'There was an error during save process',
@@ -558,6 +586,16 @@ class ServicesAPIController extends AbstractFOSRestController
    *    )
    * )
    *
+   * @OA\Parameter(
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false  ,
+   *      @OA\Schema(
+   *           type="string"
+   *      )
+   *  )
+   *
    * @OA\Response(
    *     response=200,
    *     description="Patch a Service"
@@ -583,7 +621,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function patchServiceAction($id, Request $request)
+  public function patchServiceAction($id, Request $request): View
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
@@ -605,8 +643,8 @@ class ServicesAPIController extends AbstractFOSRestController
       }
 
       $serviceDto = $this->serviceDto->fromEntity($service, $this->formServerApiAdapterService->getFormServerPublicUrl());
-
-      $form = $this->createForm('App\Form\ServizioFormType', $serviceDto);
+      $formOptions = ['locale' => $request->getLocale()];
+      $form = $this->createForm('App\Form\ServizioFormType', $serviceDto, $formOptions);
       $this->processForm($request, $form);
 
       if ($form->isSubmitted() && !$form->isValid()) {
@@ -659,7 +697,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *
    * @Method("DELETE")
    */
-  public function deleteAction($id)
+  public function deleteAction($id): View
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
@@ -683,7 +721,7 @@ class ServicesAPIController extends AbstractFOSRestController
     $form->submit($data, $clearMissing);
   }
 
-  private function checkProtocolHandler(Request $request)
+  private function checkProtocolHandler(Request $request): bool
   {
     if ($request->get('protocol_handler') && !in_array($request->get('protocol_handler'), $this->handlerList)) {
       return false;
@@ -694,7 +732,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
 
   /**
-   * @param $serviceDto
+   * @param Service $serviceDto
    */
   private function checkServiceRelations(Service &$serviceDto)
   {

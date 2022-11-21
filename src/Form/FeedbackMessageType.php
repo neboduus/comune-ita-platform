@@ -23,9 +23,8 @@ class FeedbackMessageType extends AbstractType
         'attr' => ['readonly' => 'readonly'],
         'required' => false
       ])
-      ->add('isActive', CheckboxType::class, [
+      ->add('is_active', CheckboxType::class, [
         'label' => "messages.enable_sending_message",
-        'required' => false
       ])
       ->add('trigger', HiddenType::class)
       ->add('subject', TextType::class, [
@@ -33,7 +32,8 @@ class FeedbackMessageType extends AbstractType
         'label' => 'messages.subject_label'
       ])
       ->add('message', TextareaType::class, [
-        'label' => "messages.message_label"
+        'label' => "messages.message_label",
+        'required' => true
       ]);
   }
 
@@ -45,7 +45,7 @@ class FeedbackMessageType extends AbstractType
     ));
   }
 
-  public function getBlockPrefix()
+  public function getBlockPrefix(): string
   {
     return 'app_bundle_feedback_message_type';
   }

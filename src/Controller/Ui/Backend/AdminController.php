@@ -227,7 +227,7 @@ class AdminController extends AbstractController
    * @Route("/operatore", name="admin_operatore_index")
    * @Method("GET")
    */
-  public function indexOperatoreAction()
+  public function indexOperatoreAction(): Response
   {
     $em = $this->getDoctrine()->getManager();
 
@@ -247,7 +247,7 @@ class AdminController extends AbstractController
    * @param UserPasswordEncoderInterface $passwordEncoder
    * @return Response
    */
-  public function newOperatoreAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+  public function newOperatoreAction(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
   {
     $operatoreUser = new Operatoreuser();
     $form = $this->createForm('App\Form\OperatoreUserType', $operatoreUser);
@@ -289,7 +289,7 @@ class AdminController extends AbstractController
    * @Route("/operatore/{id}", name="admin_operatore_show")
    * @Method("GET")
    */
-  public function showOperatoreAction(OperatoreUser $operatoreUser)
+  public function showOperatoreAction(OperatoreUser $operatoreUser): Response
   {
     if ($operatoreUser->getServiziAbilitati()->count() > 0) {
       $serviziAbilitati = $this->getDoctrine()
@@ -334,7 +334,7 @@ class AdminController extends AbstractController
    * @Route("/operatore/{id}/resetpassword", name="admin_operatore_reset_password")
    * @Method({"GET", "POST"})
    */
-  public function resetPasswordOperatoreAction(Request $request, OperatoreUser $operatoreUser)
+  public function resetPasswordOperatoreAction(Request $request, OperatoreUser $operatoreUser): RedirectResponse
   {
     $em = $this->getDoctrine()->getManager();
     $this->userManager->resetPassword($operatoreUser);
@@ -349,7 +349,7 @@ class AdminController extends AbstractController
    * @Route("/operatore/{id}/delete", name="admin_operatore_delete")
    * @Method({"GET", "POST", "DELETE"})
    */
-  public function deleteOperatoreAction(Request $request, OperatoreUser $operatoreUser)
+  public function deleteOperatoreAction(Request $request, OperatoreUser $operatoreUser): RedirectResponse
   {
     try {
       $em = $this->getDoctrine()->getManager();
@@ -370,7 +370,7 @@ class AdminController extends AbstractController
    * @Route("/logs", name="admin_logs_index")
    * @Method({"GET", "POST"})
    */
-  public function indexLogsAction(Request $request)
+  public function indexLogsAction(Request $request): Response
   {
     $table = $this->dataTableFactory->create()
       ->add('type', TextColumn::class, ['label' => $this->translator->trans('event')])
@@ -398,7 +398,7 @@ class AdminController extends AbstractController
    * @Route("/scheduled-actions", name="admin_scheduled_actions_index")
    * @Method({"GET", "POST"})
    */
-  public function indexScheduledActionsAction(Request $request)
+  public function indexScheduledActionsAction(Request $request): Response
   {
 
     $statuses = [
@@ -475,7 +475,7 @@ class AdminController extends AbstractController
    * @Route("/servizio", name="admin_servizio_index")
    * @Method("GET")
    */
-  public function indexServizioAction()
+  public function indexServizioAction(): Response
   {
     $statuses = [
       Servizio::STATUS_CANCELLED => $this->translator->trans('servizio.statutes.bozza'),
@@ -509,7 +509,7 @@ class AdminController extends AbstractController
    * @Route("/servizio/list", name="admin_servizio_list")
    * @Method("GET")
    */
-  public function listServizioAction()
+  public function listServizioAction(): JsonResponse
   {
 
     $em = $this->getDoctrine()->getManager();
@@ -548,7 +548,10 @@ class AdminController extends AbstractController
     $request = new \GuzzleHttp\Psr7\Request(
       'GET',
       $remoteUrl,
-      ['Content-Type' => 'application/json']
+      [
+        'Content-Type' => 'application/json',
+        'x-locale' => $request->getLocale()
+      ]
     );
 
     try {
@@ -563,7 +566,6 @@ class AdminController extends AbstractController
         $serviceId = $responseBody['id'];
         $md5Response = md5(json_encode($responseBody));
         unset($responseBody['id'], $responseBody['slug']);
-
         $data = ServiceDto::normalizeData($responseBody);
         $form->submit($data, true);
 
@@ -651,7 +653,7 @@ class AdminController extends AbstractController
    * @param Request $request
    * @return Response
    */
-  public function editServizioAction(Servizio $servizio, Request $request)
+  public function editServizioAction(Servizio $servizio, Request $request): Response
   {
     $user = $this->getUser();
 
@@ -780,7 +782,7 @@ class AdminController extends AbstractController
    *
    * @return Response
    */
-  public function editCustomValidationServizioAction(Request $request, Servizio $servizio)
+  public function editCustomValidationServizioAction(Request $request, Servizio $servizio): Response
   {
     $user = $this->getUser();
 
@@ -826,7 +828,7 @@ class AdminController extends AbstractController
    * @param Request $request
    * @return RedirectResponse|Response|null
    */
-  public function newServiceAction(Request $request)
+  public function newServiceAction(Request $request, ServiceManager $serviceManager)
   {
     $servizio = new Servizio();
     $ente = $this->instanceService->getCurrentInstance();
@@ -842,6 +844,13 @@ class AdminController extends AbstractController
     $category = $this->entityManager->getRepository(Categoria::class)->findOneBy([], ['name' => 'ASC']);
     if ($category instanceof Categoria) {
       $servizio->setTopics($category);
+    }
+
+    $defaultFeedbackMessages = $serviceManager->getDefaultFeedbackMessages();
+    $translationsRepo = $this->entityManager->getRepository('Gedmo\Translatable\Entity\Translation');
+
+    foreach ($this->locales as $locale) {
+      $translationsRepo->translate($servizio, "feedbackMessages", $locale, $defaultFeedbackMessages[$locale]);
     }
 
     // Erogatore
@@ -862,7 +871,7 @@ class AdminController extends AbstractController
    * @Route("/servizio/{id}/delete", name="admin_servizio_delete")
    * @Method("GET")
    */
-  public function deleteServiceAction(Request $request, Servizio $servizio)
+  public function deleteServiceAction(Request $request, Servizio $servizio): RedirectResponse
   {
 
     try {
@@ -891,7 +900,7 @@ class AdminController extends AbstractController
    * @param Servizio $servizio
    * @return JsonResponse
    */
-  public function formioValidateAction(Request $request, Servizio $servizio)
+  public function formioValidateAction(Request $request, Servizio $servizio): JsonResponse
   {
 
     $data = $request->get('schema');
@@ -912,9 +921,9 @@ class AdminController extends AbstractController
    * @Method({"POST"})
    * @param Request $request
    *
-   * @return array|JsonResponse
+   * @return JsonResponse
    */
-  public function testIo(Request $request)
+  public function testIo(Request $request): JsonResponse
   {
     $serviceId = $request->get('service_id');
     $primaryKey = $request->get('primary_key');

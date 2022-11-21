@@ -179,6 +179,12 @@ services:
     tags:
       - { name: form.type }
 
+  App\Form\ServizioFormType:
+    arguments:
+      $defaultLocale: "%locale%"
+    tags:
+      - { name: form.type }
+
   App\Form\Rest\MessageFormType:
     arguments: [ "%kernel.root_dir%", '%allowed_extensions%' ]
     tags:
@@ -198,6 +204,11 @@ services:
     autowire: true
     arguments:
       $defaultSender: "%default_from_email_address%"
+
+  App\Services\Manager\ServiceManager:
+    autowire: true
+    arguments:
+      $locales: "%app_locales%"
 
   App\Services\PaymentService:
     arguments:
