@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use Symfony\Component\Form\FormInterface;
+use GuzzleHttp\Client;
 
 class FormUtils
 {
@@ -26,5 +27,20 @@ class FormUtils
       }
     }
     return $errors;
+  }
+
+  /**
+   * @param string $url
+   * @return boolean
+   */
+  public static function isUrlValid(?string $url) 
+  {
+    try {
+      $client = new Client();
+      $response = $client->request('GET', $url);
+      return $response->getStatusCode() == 200;
+    } catch (\Exception $e) {
+      return false;
+    }
   }
 }

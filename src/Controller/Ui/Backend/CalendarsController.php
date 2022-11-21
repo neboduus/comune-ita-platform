@@ -10,6 +10,7 @@ use App\Entity\User;
 use App\Security\Voters\CalendarVoter;
 use App\Services\InstanceService;
 use App\Services\MeetingService;
+use App\Utils\FormUtils;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
@@ -171,7 +172,6 @@ class CalendarsController extends AbstractController
       $em = $this->getDoctrine()->getManager();
 
       try {
-
         foreach ($calendar->getOpeningHours() as $openingHour) {
           $openingHour->setCalendar($calendar);
           $em->persist($openingHour);
