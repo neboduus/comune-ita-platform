@@ -465,6 +465,14 @@ class Service
    */
   private $externalCardUrl;
 
+  /**
+   * @var FeedbackMessages
+   * @Serializer\Type("App\Model\FeedbackMessages")
+   * @OA\Property(description="Service feedback messages", type="object", ref=@Model(type=FeedbackMessages::class))
+   * @Groups({"read", "write"})
+   */
+  private $feedbackMessages;
+
 
   /**
    * @return mixed
@@ -1428,6 +1436,22 @@ class Service
   public function setExternalCardUrl($externalCardUrl): void
   {
     $this->externalCardUrl = $externalCardUrl;
+  }
+
+  /**
+   * @return FeedbackMessages|null
+   */
+  public function getFeedbackMessages(): ?FeedbackMessages
+  {
+    return $this->feedbackMessages;
+  }
+
+  /**
+   * @param FeedbackMessages $feedbackMessages
+   */
+  public function setFeedbackMessages(FeedbackMessages $feedbackMessages)
+  {
+    $this->feedbackMessages = $feedbackMessages;
   }
 
 }

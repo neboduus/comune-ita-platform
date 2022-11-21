@@ -650,7 +650,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     return null;
   }
 
-  public function getStatusNameByCode($code)
+  public static function getStatusNameByCode($code)
   {
     $class = new \ReflectionClass(__CLASS__);
     $constants = $class->getConstants();

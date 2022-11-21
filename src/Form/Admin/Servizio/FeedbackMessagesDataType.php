@@ -4,36 +4,32 @@
 namespace App\Form\Admin\Servizio;
 
 
-use App\Entity\Ente;
-use App\Entity\Pratica;
 use App\Entity\Servizio;
 use App\Form\FeedbackMessageType;
-use App\FormIO\SchemaComponent;
 use App\FormIO\SchemaFactoryInterface;
 use App\Model\FeedbackMessage;
 use App\Model\FeedbackMessagesSettings;
 use App\Model\Mailer;
+use App\Services\Manager\ServiceManager;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FeedbackMessagesDataType extends AbstractType
 {
 
   /**
-   * @var TranslatorInterface $translator
+   * @var ServiceManager
    */
-  private $translator;
+  private $serviceManager;
 
   /**
    * @var EntityManager
@@ -48,15 +44,15 @@ class FeedbackMessagesDataType extends AbstractType
 
   /**
    * FeedbackMessagesDataType constructor.
-   * @param TranslatorInterface $translator
+   * @param ServiceManager $serviceManager
    * @param EntityManagerInterface $entityManager
    * @param SchemaFactoryInterface $schemaFactory
    * @param $locales
    * @param $defaultLocale
    */
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $entityManager, SchemaFactoryInterface $schemaFactory, $locales, $defaultLocale)
+  public function __construct(ServiceManager $serviceManager, EntityManagerInterface $entityManager, SchemaFactoryInterface $schemaFactory, $locales, $defaultLocale)
   {
-    $this->translator = $translator;
+    $this->serviceManager = $serviceManager;
     $this->entityManager = $entityManager;
     $this->schemaFactory = $schemaFactory;
     $this->locales = explode('|', $locales);
@@ -65,18 +61,6 @@ class FeedbackMessagesDataType extends AbstractType
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-
-    $status = [
-      Pratica::STATUS_PRE_SUBMIT => 'Inviata',
-      Pratica::STATUS_SUBMITTED => 'Acquisita',
-      Pratica::STATUS_REGISTERED => 'Protocollata',
-      Pratica::STATUS_PENDING => 'Presa in carico',
-      Pratica::STATUS_COMPLETE => 'Iter completato',
-      Pratica::STATUS_CANCELLED => 'Rifiutata',
-      Pratica::STATUS_WITHDRAW => 'Ritirata',
-      Pratica::STATUS_DRAFT => 'Bozza',
-    ];
-
     /** @var Servizio $service */
     $service = $builder->getData();
 
@@ -94,7 +78,6 @@ class FeedbackMessagesDataType extends AbstractType
       // Recupero lo schema del servizio
       $components = [];
       $schema = $this->schemaFactory->createFromFormId($service->getFormIoId());
-      /** @var SchemaComponent $component */
       foreach ($schema->getComponents() as $component) {
         if ($component->getType() == 'text' || $component->getType() == 'email') {
           $components[$component->getLabel()] = $component->getName();
@@ -111,31 +94,34 @@ class FeedbackMessagesDataType extends AbstractType
     }
 
     $i18nMessages = [];
-    foreach ($this->locales as $locale) {
+    $defaultMessages = $this->serviceManager->getDefaultFeedbackMessages();
 
+    foreach ($this->locales as $locale) {
       $savedFeedbackMessages = isset($translations[$locale]['feedbackMessages']) ? \json_decode($translations[$locale]['feedbackMessages'], 1) : [];
 
-      foreach ($status as $k => $v) {
-        $tempMessage = isset($savedFeedbackMessages[$k]) ? $savedFeedbackMessages[$k] : null;
-        $temp = new FeedbackMessage();
-        $temp->setName($v);
-        $temp->setTrigger($k);
-        $temp->setSubject(
-          $tempMessage['subject'] ?? $this->translator->trans('pratica.email.status_change.subject', [], null, $locale
-          )
-        );
-        $temp->setMessage(
-          $tempMessage['message'] ?? $this->translator->trans('messages.pratica.status.'.$k, [], null, $locale)
-        );
+      $feedbackMessagesStatuses = array_keys(FeedbackMessage::STATUS_NAMES);
+      foreach ($feedbackMessagesStatuses as $status) {
+        /** @var FeedbackMessage $feedbackMessage */
+        $feedbackMessage = $defaultMessages[$locale][$status];
+        $savedMessage = $savedFeedbackMessages[$status] ?? null;
 
-        $defaultIsActive = true;
-        if ($k == Pratica::STATUS_PENDING || $k == Pratica::STATUS_DRAFT) {
-          $defaultIsActive = false;
+        if ($savedMessage) {
+          // Overwrite default message with saved locale feedback message
+          if (isset($savedMessage['subject']) && $savedMessage['subject']) {
+            $feedbackMessage->setSubject($savedMessage['subject']);
+          }
+          if (isset($savedMessage['message']) && $savedMessage['message']) {
+            $feedbackMessage->setMessage($savedMessage['message']);
+          }
+          if (isset($savedMessage['is_active']) && $savedMessage['is_active']) {
+            $feedbackMessage->setIsActive($savedMessage['is_active']);
+          }
+          if (isset($savedMessage['isActive']) && $savedMessage['isActive']) {
+            $feedbackMessage->setIsActive($savedMessage['isActive']);
+          }
         }
-        $temp->setIsActive(
-          $tempMessage['isActive'] ?? $defaultIsActive
-        );
-        $i18nMessages[$locale][]= $temp;
+
+        $i18nMessages[$locale][]= $feedbackMessage;
       }
     }
 
@@ -146,7 +132,7 @@ class FeedbackMessagesDataType extends AbstractType
           'mapped' => false,
           'data' => $service->getFeedbackMessagesSettings(),
           'mailers' => $mailers,
-          'components' => $components,
+          'components' => $components ?? [],
         ]);
     }
 
@@ -184,6 +170,10 @@ class FeedbackMessagesDataType extends AbstractType
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
 
+  /**
+   * @throws OptimisticLockException
+   * @throws ORMException
+   */
   public function onPreSubmit(FormEvent $event)
   {
     /** @var Servizio $service */
@@ -200,7 +190,7 @@ class FeedbackMessagesDataType extends AbstractType
     foreach ($data['i18n'] as $k => $v) {
       $messages = [];
       foreach ($v['feedback_messages'] as $feedbackMessage) {
-        if (!isset($feedbackMessage['isActive'])) {
+        if (!isset($feedbackMessage['isActive'])&& !isset($feedbackMessage['is_active'])) {
           $feedbackMessage['isActive'] = '0';
         }
         $messages [$feedbackMessage['trigger']] = $feedbackMessage;

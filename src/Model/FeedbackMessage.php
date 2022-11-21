@@ -4,31 +4,61 @@
 namespace App\Model;
 
 
+use App\Entity\Pratica;
+use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
+use OpenApi\Annotations as OA;
+
 class FeedbackMessage implements \JsonSerializable
 {
+  const STATUS_NAMES = [
+    Pratica::STATUS_PRE_SUBMIT => 'Inviata',
+    Pratica::STATUS_SUBMITTED => 'Acquisita',
+    Pratica::STATUS_REGISTERED => 'Protocollata',
+    Pratica::STATUS_PENDING => 'Presa in carico',
+    Pratica::STATUS_COMPLETE => 'Iter completato',
+    Pratica::STATUS_CANCELLED => 'Rifiutata',
+    Pratica::STATUS_WITHDRAW => 'Ritirata',
+    Pratica::STATUS_DRAFT => 'Bozza',
+  ];
 
   /**
    * @var string
+   * @OA\Property(description="Feedback message status name", type="string")
+   * @Serializer\Type("string")
+   * @Serializer\Exclude()
    */
   private $name;
 
   /**
    * @var string
+   * @OA\Property(description="Status name trigger status", type="string")
+   * @Serializer\Type("int")
+   * @Serializer\Exclude()
    */
   private $trigger;
 
   /**
-   * @var
+   * @var string
+   * @OA\Property(description="Feedback message", type="string")
+   * @Serializer\Type("string")
+   * @Groups({"read", "write"})
    */
   private $message;
 
   /**
-   * @var
+   * @var string
+   * @OA\Property(description="Feedback subject", type="string")
+   * @Serializer\Type("string")
+   * @Groups({"read", "write"})
    */
   private $subject;
 
   /**
    * @var boolean
+   * @OA\Property(description="Is feedback message active?", type="boolean")
+   * @Serializer\Type("bool")
+   * @Groups({"read", "write"})
    */
   private $isActive;
 
@@ -41,7 +71,7 @@ class FeedbackMessage implements \JsonSerializable
   }
 
   /**
-   * @param string $name
+   * @param string|null $name
    */
   public function setName(?string $name)
   {
@@ -57,7 +87,7 @@ class FeedbackMessage implements \JsonSerializable
   }
 
   /**
-   * @param string $trigger
+   * @param string|null $trigger
    */
   public function setTrigger(?string $trigger)
   {
@@ -65,9 +95,9 @@ class FeedbackMessage implements \JsonSerializable
   }
 
   /**
-   * @return mixed
+   * @return string
    */
-  public function getMessage()
+  public function getMessage(): string
   {
     return $this->message;
   }
@@ -81,9 +111,9 @@ class FeedbackMessage implements \JsonSerializable
   }
 
   /**
-   * @return mixed
+   * @return string
    */
-  public function getSubject()
+  public function getSubject(): string
   {
     return $this->subject;
   }
@@ -112,9 +142,15 @@ class FeedbackMessage implements \JsonSerializable
     $this->isActive = $isActive;
   }
 
-  public function jsonSerialize()
+  public function jsonSerialize(): array
   {
-    return get_object_vars($this);
+    return [
+      'name' => $this->getName(),
+      'trigger' => $this->getTrigger(),
+      'subject' => $this->getSubject(),
+      'message' => $this->getMessage(),
+      'is_active' => $this->isActive()
+    ];
   }
 
 }
