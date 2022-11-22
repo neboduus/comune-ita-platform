@@ -5,7 +5,11 @@ import axios from "axios";
 
 const endpoint = window.location.protocol + "//" + window.location.host + "/" + window.location.pathname.split("/")[1] + "/it"
 const language = document.documentElement.lang.toString();
-const signatureCheckWsUrl = document.querySelector("#formio").dataset.signature_check_ws_url;
+let signatureCheckWsUrl = null;
+if (document.querySelector("#formio") !== null) {
+  signatureCheckWsUrl = document.querySelector("#formio").dataset.signature_check_ws_url;
+}
+
 
 export default class SdcFile extends File {
 
@@ -275,7 +279,6 @@ export default class SdcFile extends File {
                 }).then(resp => {
                   this.redraw();
                   this.triggerChange();
-                  console.log('add pades check here')
                   if (this.component.check_signature && resp.data.url && signatureCheckWsUrl) {
                     axios.post(signatureCheckWsUrl, {
                       url: resp.data.url,

@@ -4,4 +4,4 @@ instances:
     identifier: comune-di-bugliano
     login_route: login_pat
     protocollo: dummy
-    app_locales: "it|en"
+    database_name: sdc_bugliano_online
