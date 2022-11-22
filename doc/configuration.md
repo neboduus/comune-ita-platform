@@ -126,5 +126,5 @@ Feature disponibili:
 - Interfaccia per operatori e admin, si abilita tramite la variabile d'ambiente `FEATURE_ANALYTICS`:
   abilita la pagina operatori/analytics mostrando dati statistici della stanza.
 
-- Identificativo univoco del servizio, si abilita/disabilita tramite la variabile d'ambiente `FEATURE_SERVICE_IDENTIFIER_READONLY`:
+- Identificativo univoco del servizio, si abilita/disabilita tramite la variabile d'ambiente `FEATURE_SERVICE_IDENTIFIER`:
   Consente all'amministratore di definire ed editare per ogni servizio un identificativo univoco.

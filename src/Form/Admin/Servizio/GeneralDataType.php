@@ -240,7 +240,7 @@ class GeneralDataType extends AbstractI18nType
       )
       ;
 
-    if (!$this->featureManager->isActive('feature_service_identifier_readonly')) {
+    if ($this->featureManager->isActive('feature_service_identifier')) {
       $builder->add('identifier', UrlType::class, [
         'label' => 'servizio.public_service_identifier',
         'required' => false,

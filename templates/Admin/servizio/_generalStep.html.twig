@@ -4,7 +4,7 @@
     {{ form_errors(form) }}
 
     {{ form_row(form.name) }}
-    {% if not feature('feature_service_identifier_readonly') %}
+    {% if feature('feature_service_identifier') %}
       {{ form_row(form.identifier) }}
     {% endif %}
     {{ form_row(form.sticky) }}
