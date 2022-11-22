@@ -41,8 +41,8 @@ class UserGroupType extends AbstractI18nType
     $this->createTranslatableMapper($builder, $options)
       ->add('name', I18nTextType::class, [
         'label' => 'general.nome',
-        'required' => true,
         'purify_html' => true,
+        'help' => 'user_group.help_name'
       ])
       ->add('shortDescription', I18nTextareaType::class, [
         'label' => 'servizio.short_description',
@@ -72,13 +72,13 @@ class UserGroupType extends AbstractI18nType
       ->add('manager', EntityType::class, [
         'class' => 'App\Entity\OperatoreUser',
         'label' => 'user_group.manager',
-        'choice_label' => 'username',
+        'choice_label' => 'nome',
         'required' => false
       ])
       ->add('users', EntityType::class, [
         'class' => 'App\Entity\OperatoreUser',
         'label' => 'user_group.users',
-        'choice_label' => 'username',
+        'choice_label' => 'nome',
         'multiple' => true,
         'required' => false,
         'attr' => ['style' => 'columns: 3;'],

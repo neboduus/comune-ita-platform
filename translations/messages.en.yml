@@ -2885,10 +2885,12 @@ taxonomies:
     participating_in_public_procurement_national_and_cross_border: 'Participating in public procurement (national and cross-border)'
 accessibility: "Accessibility"
 user_group:
-  title: 'Users group'
+  title: 'Offices'
   main_function: 'Main function'
   manager: 'Manager'
   more_info: 'More info'
-  users: "Group operators"
-  services: "Group services"
-  manager_not_in_users: 'The manager must be in group users list'
+  users: "Operators"
+  services: "Services"
+  manager_not_in_users: 'The manager must be in office list'
+  create: 'Create new office'
+  help_name: ''
