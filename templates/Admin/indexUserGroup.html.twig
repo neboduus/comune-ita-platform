@@ -24,7 +24,7 @@
               <a href="{{ path('admin_user_group_edit', { 'id': item.id }) }}">{{ item.name }}</a>
             </td>
             <td>{{ (item.topic) ? item.topic.name : '' }}</td>
-            <td>{{ (item.manager) ? item.manager.username : '' }}</td>
+            <td>{{ (item.manager) ? item.manager.fullname : '' }}</td>
             <td data-title="Azioni" class="actions">
               <a class="btn btn-secondary btn-xs" href="{{ path('admin_user_group_edit', { 'id': item.id }) }}">
                 {{ 'gruppo_di_servizi.modifica' | trans() }}
