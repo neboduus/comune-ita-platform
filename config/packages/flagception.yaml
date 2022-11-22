@@ -5,6 +5,8 @@ flagception:
     # Feature name as key
     feature_new_outdatedbrowser:
       # Default flag if inactive or active (default: false)
+      # You can combine all parameter together. First the default value is checked. If the value is false, the value
+      # from env is checked. If this also returns false, the constraints are checked.
       default: true
       env: FEATURE_NEW_OUTDATED_BROWSER
     feature_application_detail:
@@ -16,6 +18,6 @@ flagception:
     feature_analytics:
       default: false
       env: FEATURE_ANALYTICS
-    feature_service_identifier_readonly:
-      default: true
-      env: FEATURE_SERVICE_IDENTIFIER_READONLY
+    feature_service_identifier:
+      default: false
+      env: FEATURE_SERVICE_IDENTIFIER
