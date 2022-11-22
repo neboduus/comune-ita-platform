@@ -2957,10 +2957,13 @@ taxonomies:
     participating_in_public_procurement_national_and_cross_border: 'Partecipazione ad appalti pubblici nazionali e transfrontalieri'
 accessibility: "Accessibilità"
 user_group:
-  title: 'Gruppo di utenti'
+  title: 'Uffici'
   main_function: 'Funzione principale'
   manager: 'Responsabile'
   more_info: 'Maggiori informazioni'
-  users: 'Operatori del gruppo'
-  services: 'Servizi del gruppo'
-  manager_not_in_users: 'Il responsabile deve essere tra gli utenti del gruppo'
+  users: "Operatori"
+  services: "Servizi"
+  manager_not_in_users: "Il responsabile deve essere tra gli utenti dell'ufficio"
+  create: 'Crea nuovo ufficio'
+  help_name: 'Si consiglia una descrizione del tipo "Ufficio Anagrafe", "Ufficio Scuola", "Direzione Ambiente" o simile'
+
