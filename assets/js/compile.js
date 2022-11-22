@@ -2,6 +2,7 @@ import Form from './Formio/Form';
 import Payment from "./rest/payment/Payment";
 import FormIoHelper from "./utils/FormIoHelper";
 import axios from "axios";
+import Applications from "./rest/applications/Applications";
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 const $language = document.documentElement.lang.toString();
 
@@ -91,4 +92,4 @@ $(document).ready(function () {
 
 });
 
-window.FormioHelper = FormIoHelper
+window.FormioHelper = new FormIoHelper()
