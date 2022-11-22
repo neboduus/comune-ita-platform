@@ -16,7 +16,12 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class AbstractFOSRestController
+ * @Route("/user-groups")
+ */
 class UserGroupsAPIController extends AbstractFOSRestController
 {
 
@@ -37,13 +42,107 @@ class UserGroupsAPIController extends AbstractFOSRestController
     $this->entityManager = $entityManager;
     $this->logger = $logger;
   }
+
+  /**
+   * List all user groups
+   * @Rest\Get("", name="user_group_api_list")
+   *
+   * @Security(name="Bearer")
+   *
+   * @OA\Parameter(
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false  ,
+   *      @OA\Schema(
+   *           type="string"
+   *      )
+   *  )
+   *
+   * @OA\Response(
+   *     response=200,
+   *     description="Retrieve list of user groups",
+   *     @OA\JsonContent(
+   *         type="array",
+   *         @OA\Items(ref=@Model(type=UserGroup::class, groups={"read"}))
+   *     )
+   * )
+   *
+   * @OA\Tag(name="user-groups")
+   * @param Request $request
+   * @return View
+   */
+  public function getUserGroupsAction(Request $request)
+  {
+    $result = $this->entityManager->getRepository('App\Entity\UserGroup')->findBy([], ['name' => 'asc']);
+    return $this->view($result, Response::HTTP_OK);
+  }
+
+
+  /**
+   * Retrieve a user group by id
+   * @Rest\Get("/{id}", name="user_group_api_get")
+   *
+   * @Security(name="Bearer")
+   *
+   * @OA\Parameter(
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false,
+   *      @OA\Schema(
+   *           type="string"
+   *      )
+   *  )
+   *
+   * @OA\Response(
+   *     response=200,
+   *     description="Retreive a UserGroup",
+   *     @Model(type=UserGroup::class, groups={"read"})
+   * )
+   *
+   * @OA\Response(
+   *     response=404,
+   *     description="UserGroup not found"
+   * )
+   * @OA\Tag(name="user-groups")
+   *
+   * @param Request $request
+   * @param string $id
+   * @return View
+   */
+  public function getUserGroupAction(Request $request, $id)
+  {
+    try {
+      $repository = $this->getDoctrine()->getRepository('App\Entity\UserGroup');
+      $result = $repository->find($id);
+    } catch (\Exception $e) {
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
+    }
+
+    if ($result === null) {
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
+    }
+
+    return $this->view($result, Response::HTTP_OK);
+  }
+
+
   /**
    * Create a UserGroup
    * @Rest\Post(name="user_group_api_post")
    *
    * @Security(name="Bearer")
    *
-   * x-locale??
+   * @OA\Parameter(
+   *      name="x-locale",
+   *      in="header",
+   *      description="Request locale",
+   *      required=false  ,
+   *      @OA\Schema(
+   *           type="string"
+   *      )
+   *  )
    *
    * @OA\RequestBody(
    *     description="The user group to create",
@@ -72,7 +171,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
    *     description="Access denied"
    * )
    *
-   * @OA\Tag(name="user-group")
+   * @OA\Tag(name="user-groups")
    *
    * @param Request $request
    * @return View
@@ -114,85 +213,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
     return $this->view($userGroup, Response::HTTP_CREATED);
   }
 
-  /**
-   * List all user group
-   * @Rest\Get("", name="user_group_api_list")
-   *
-   * @OA\Parameter(
-   *      name="x-locale",
-   *      in="header",
-   *      description="Request locale",
-   *      required=false  ,
-   *      @OA\Schema(
-   *           type="string"
-   *      )
-   *  )
-   *
-   * @OA\Response(
-   *     response=200,
-   *     description="Retrieve list of user groups",
-   *     @OA\JsonContent(
-   *         type="array",
-   *         @OA\Items(ref=@Model(type=UserGroup::class, groups={"read"}))
-   *     )
-   * )
-   *
-   * @OA\Tag(name="user-groups")
-   * @param Request $request
-   * @return View
-   */
-  public function getUserGroupsAction(Request $request)
-  {
-    $result = $this->entityManager->getRepository('App\Entity\UserGroup')->findBy([], ['name' => 'asc']);
-    return $this->view($result, Response::HTTP_OK);
-  }
 
-
-  /**
-   * Retrieve a user group by id
-   * @Rest\Get("/{id}", name="user_group_api_get")
-   *
-   * @OA\Parameter(
-   *      name="x-locale",
-   *      in="header",
-   *      description="Request locale",
-   *      required=false,
-   *      @OA\Schema(
-   *           type="string"
-   *      )
-   *  )
-   *
-   * @OA\Response(
-   *     response=200,
-   *     description="Retreive a UserGroup",
-   *     @Model(type=UserGroup::class, groups={"read"})
-   * )
-   *
-   * @OA\Response(
-   *     response=404,
-   *     description="UserGroup not found"
-   * )
-   * @OA\Tag(name="user-group")
-   *
-   * @param Request $request
-   * @param string $id
-   * @return View
-   */
-  public function getUserGroupAction(Request $request, $id)
-  {
-    try {
-      $repository = $this->getDoctrine()->getRepository('App\Entity\UserGroup');
-      $result = $repository->find($id);
-    } catch (\Exception $e) {
-      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
-    }
-
-    if ($result === null) {
-      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
-    }
-
-    return $this->view($result, Response::HTTP_OK);
-  }
 
 
   /**
@@ -242,7 +263,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
    *     response=404,
    *     description="Not found"
    * )
-   * @OA\Tag(name="user-group")
+   * @OA\Tag(name="user-groups")
    *
    * @param $id
    * @param Request $request
@@ -341,7 +362,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
    *     response=404,
    *     description="Not found"
    * )
-   * @OA\Tag(name="user-group")
+   * @OA\Tag(name="user-groups")
    *
    * @param $id
    * @param Request $request
@@ -407,7 +428,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
    *     description="Access denied"
    * )
    *
-   * @OA\Tag(name="user-group")
+   * @OA\Tag(name="user-groups")
    *
    * @Method("DELETE")
    * @param $id
