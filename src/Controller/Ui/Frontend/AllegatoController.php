@@ -333,7 +333,6 @@ class AllegatoController extends AbstractController
     /** @var UploadedFile $uploadedFile */
     $uploadedFile = $request->files->get('file');
 
-    dd($uploadedFile);
     if (is_null($uploadedFile)) {
       $this->logger->error(LogConstants::ALLEGATO_UPLOAD_ERROR, $request->request->all());
       return new JsonResponse(['status' => 'error', 'message' => LogConstants::ALLEGATO_UPLOAD_ERROR], Response::HTTP_INTERNAL_SERVER_ERROR);

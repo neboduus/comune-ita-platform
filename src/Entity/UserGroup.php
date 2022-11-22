@@ -16,7 +16,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity
  * @ORM\Table(name="user_group")
- * @ORM\HasLifecycleCallbacks
  */
 class UserGroup implements Translatable
 {

@@ -2138,7 +2138,9 @@ class Servizio implements Translatable
       $serviceSource->setUrl($this->source['url']);
       $serviceSource->setMd5($this->source['md5']);
       $serviceSource->setVersion($this->source['version']);
-      $serviceSource->setUpdatedAt(new \DateTime($this->source['updatedAt']));
+      if (isset($this->source['updatedAt'])) {
+        $serviceSource->setUpdatedAt(new \DateTime($this->source['updatedAt']));
+      }
       $serviceSource->setIdentifier($this->source['version'] ?? null);
 
       $this->source = $serviceSource;
