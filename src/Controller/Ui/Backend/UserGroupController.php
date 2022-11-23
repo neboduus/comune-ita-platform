@@ -41,15 +41,12 @@ class UserGroupController extends AbstractController
 
 
   /**
-   * @Route("/", name="admin_user_group_index")
-   * @Method("GET")
+   * @Route("/", name="admin_user_group_index", methods={"GET"})
    *
    */
   public function indexUserGroupsAction(): Response
   {
     $items = $this->entityManager->getRepository('App\Entity\UserGroup')->findBy([], ['name' => 'asc']);
-
-    // TODO: verifica variabili da passare al template
     return $this->render('Admin/indexUserGroup.html.twig', [
       'user'  => $this->getUser(),
       'items' => $items
@@ -58,8 +55,7 @@ class UserGroupController extends AbstractController
 
 
   /**
-   * @Route("/new", name="admin_user_group_new")
-   * @Method({"GET", "POST"})
+   * @Route("/new", name="admin_user_group_new", methods={"GET", "POST"})
    * @param Request $request
    * @return RedirectResponse|Response|null
    */
@@ -86,8 +82,7 @@ class UserGroupController extends AbstractController
 
 
   /**
-   * @Route("/{id}/edit", name="admin_user_group_edit")
-   * @Method({"GET", "POST"})
+   * @Route("/{id}/edit", name="admin_user_group_edit", methods={"GET", "POST"})
    * @param Request $request
    * @param UserGroup $item
    * @return Response|null
@@ -112,46 +107,21 @@ class UserGroupController extends AbstractController
 
 
   /**
-   * @Route("/{id}/delete", name="admin_user_group_delete")
-   * @Method({"GET", "POST", "DELETE"})
+   * @Route("/{id}/delete", name="admin_user_group_delete", methods={"GET", "POST"})
    */
-  public function deletePaymentGatewayAction(Request $request, UserGroup $item): RedirectResponse
+  public function deleteUserGroupAction(Request $request, UserGroup $item): RedirectResponse
   {
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($item);
-      $em->flush();
-      $this->addFlash('feedback', $this->translator->trans('user_groups.delete_success'));
+      $this->entityManager->remove($item);
+      $this->entityManager->flush();
+      $this->addFlash('feedback', $this->translator->trans('user_group.delete_success'));
       return $this->redirectToRoute('admin_user_group_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', $this->translator->trans('user_groups.delete_error'));
+      $this->addFlash('warning', $this->translator->trans('user_group.delete_error'));
       return $this->redirectToRoute('admin_user_group_index');
     }
   }
 
-  /**
-   * Removes a Service from a User Group.
-   * @Route("/{id}/remove_service", name="admin_remove_service_group")
-   * @param Request $request
-   * @param Servizio $service
-   * @return RedirectResponse
-   */
-  public function removeServiceFromGroup(Request $request, Servizio $service): RedirectResponse
-  {
-    $userGroup = $service->getUserGroups();
-    try {
-      $em = $this->getDoctrine()->getManager();
-      $service->setServiceGroup(null);
-      $em->persist($service);
-      $em->flush();
-      $this->addFlash('feedback', $this->translator->trans('gruppo_di_servizi.servizio_rimosso'));
-      return $this->redirectToRoute('admin_user_group_edit', array('id' => $userGroup->getId()));
-
-    } catch (\Exception $exception) {
-      $this->addFlash('warning', $this->translator->trans('gruppo_di_servizi.errore_rimozione'));
-      return $this->redirectToRoute('admin_user_group_edit', array('id' => $userGroup->getId()));
-    }
-  }
 
 }

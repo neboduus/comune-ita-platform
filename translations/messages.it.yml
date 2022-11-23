@@ -2966,4 +2966,6 @@ user_group:
   manager_not_in_users: "Il responsabile deve essere tra gli utenti dell'ufficio"
   create: 'Crea nuovo ufficio'
   help_name: 'Si consiglia una descrizione del tipo "Ufficio Anagrafe", "Ufficio Scuola", "Direzione Ambiente" o simile'
-
+  delete_success: 'Ufficio eliminato correttamente'
+  delete_error: "Impossibile eliminare l'ufficio, ci sono servizi e operatori collegati"
+  delete_popup: "Sei sicuro di procedere? L'ufficio verrà eliminato definitivamente."
