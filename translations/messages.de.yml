@@ -2964,3 +2964,6 @@ user_group:
   manager_not_in_users: ''
   create: ''
   help_name: ''
+  delete_success: ''
+  delete_error: ''
+  delete_popup: 'Sind Sie sicher, dass Sie fortfahren möchten? Die Büro wird endgültig gelöscht.'

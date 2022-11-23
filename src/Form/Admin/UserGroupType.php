@@ -111,12 +111,11 @@ class UserGroupType extends AbstractI18nType
   public function onPreSubmit(FormEvent $event)
   {
     $data = $event->getData();
-    if (isset($data['manager']) and !in_array($data['manager'], $data['users']))
+    if (!empty($data['manager']) and (empty($data['users']) or !in_array($data['manager'], $data['users'])))
     {
       $event->getForm()->addError(
         new FormError($this->translator->trans('user_group.manager_not_in_users'))
       );
     }
-
   }
 }

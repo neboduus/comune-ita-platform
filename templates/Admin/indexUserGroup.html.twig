@@ -30,8 +30,8 @@
                 {{ 'gruppo_di_servizi.modifica' | trans() }}
               </a>
               <a class="btn btn-danger btn-xs"
-                 onclick="return confirm('{{ 'operatori.delete_service_group' | trans }}');"
-                 href="{{ path('admin_user_group_delete', { 'id': item.id }) }}">{{ 'elimina' | trans }}</a>
+                 onclick='return confirm("{{ 'user_group.delete_popup' | trans() }}");'
+                 href="{{ path('admin_user_group_delete', { 'id': item.id }) }}">{{ 'elimina' | trans() }}</a>
             </td>
 
             </tr>

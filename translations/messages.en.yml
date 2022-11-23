@@ -2894,3 +2894,6 @@ user_group:
   manager_not_in_users: 'The manager must be in office list'
   create: 'Create new office'
   help_name: ''
+  delete_success: 'Office successfully deleted'
+  delete_error: 'Unable to delete the office, there are services and operators connected'
+  delete_popup: "Are you sure to proceed? The office will be permanently deleted."
