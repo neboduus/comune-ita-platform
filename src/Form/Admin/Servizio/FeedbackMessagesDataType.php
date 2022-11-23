@@ -113,10 +113,10 @@ class FeedbackMessagesDataType extends AbstractType
           if (isset($savedMessage['message']) && $savedMessage['message']) {
             $feedbackMessage->setMessage($savedMessage['message']);
           }
-          if (isset($savedMessage['is_active']) && $savedMessage['is_active']) {
+          if (isset($savedMessage['is_active'])) {
             $feedbackMessage->setIsActive($savedMessage['is_active']);
           }
-          if (isset($savedMessage['isActive']) && $savedMessage['isActive']) {
+          if (isset($savedMessage['isActive'])) {
             $feedbackMessage->setIsActive($savedMessage['isActive']);
           }
         }
@@ -190,10 +190,10 @@ class FeedbackMessagesDataType extends AbstractType
     foreach ($data['i18n'] as $k => $v) {
       $messages = [];
       foreach ($v['feedback_messages'] as $feedbackMessage) {
-        if (!isset($feedbackMessage['isActive'])&& !isset($feedbackMessage['is_active'])) {
+        if (!isset($feedbackMessage['isActive']) && !isset($feedbackMessage['is_active'])) {
           $feedbackMessage['isActive'] = '0';
         }
-        $messages [$feedbackMessage['trigger']] = $feedbackMessage;
+        $messages[$feedbackMessage['trigger']] = $feedbackMessage;
       }
       $repository->translate($service, 'feedbackMessages', $k, $messages);
       $this->entityManager->persist($service);

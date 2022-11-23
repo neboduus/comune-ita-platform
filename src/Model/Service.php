@@ -4,6 +4,7 @@
 namespace App\Model;
 
 use App\Entity\Servizio;
+use DateTime;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
@@ -479,6 +480,22 @@ class Service
    * @Groups({"read"})
    */
   private $identifier;
+
+  /**
+   * @var DateTime
+   * @Serializer\Type("DateTime")
+   * @OA\Property(description="Creation date time", type="string", format="date-time")
+   * @Groups({"read"})
+   */
+  private $createdAt;
+
+  /**
+   * @var DateTime
+   * @Serializer\Type("DateTime")
+   * @OA\Property(description="Last update date time", type="string", format="date-time")
+   * @Groups({"read"})
+   */
+  private $updatedAt;
 
   /**
    * @return mixed
@@ -1475,6 +1492,42 @@ class Service
   public function setIdentifier(?string $identifier): Service
   {
     $this->identifier = $identifier;
+    return $this;
+  }
+
+  /**
+   * @return DateTime
+   */
+  public function getCreatedAt(): DateTime
+  {
+    return $this->createdAt;
+  }
+
+  /**
+   * @param DateTime $createdAt
+   * @return Service
+   */
+  public function setCreatedAt(DateTime $createdAt): Service
+  {
+    $this->createdAt = $createdAt;
+    return $this;
+  }
+
+  /**
+   * @return DateTime
+   */
+  public function getUpdatedAt(): DateTime
+  {
+    return $this->updatedAt;
+  }
+
+  /**
+   * @param DateTime $updatedAt
+   * @return Service
+   */
+  public function setUpdatedAt(DateTime $updatedAt): Service
+  {
+    $this->updatedAt = $updatedAt;
     return $this;
   }
 

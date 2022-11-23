@@ -27,7 +27,7 @@ class ServiceSource implements \JsonSerializable
   /**
    * @var DateTime
    * @Serializer\Type("DateTime")
-   * @OA\Property(description="Updated at date time")
+   * @OA\Property(description="Updated at date time", type="string", format="date-time")
    * @Groups({"read"})
    */
   private $updatedAt;
@@ -75,7 +75,11 @@ class ServiceSource implements \JsonSerializable
    */
   public function jsonSerialize(): array
   {
-    return get_object_vars($this);
+
+    $properties = get_object_vars($this);
+    $properties['updatedAt'] = $this->updatedAt->format('c');
+    return $properties;
+
   }
 
   /**

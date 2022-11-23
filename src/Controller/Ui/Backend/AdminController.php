@@ -122,6 +122,7 @@ class AdminController extends AbstractController
    * @var ServiceAttachmentsFileService
    */
   private $fileService;
+  private $defaultLocale;
 
   /**
    * @param InstanceService $instanceService
@@ -546,7 +547,7 @@ class AdminController extends AbstractController
 
     $remoteUrl = $request->get('url');
     $client = new Client();
-    $request = new \GuzzleHttp\Psr7\Request(
+    $serviceRequest = new \GuzzleHttp\Psr7\Request(
       'GET',
       $remoteUrl,
       [
@@ -556,7 +557,7 @@ class AdminController extends AbstractController
     );
 
     try {
-      $response = $client->send($request);
+      $response = $client->send($serviceRequest);
 
       if ($response->getStatusCode() == 200) {
         $responseBody = json_decode($response->getBody(), true);
@@ -569,6 +570,24 @@ class AdminController extends AbstractController
         $identifier = $responseBody['identifier'] ?? null;
         unset($responseBody['id'], $responseBody['slug']);
         $data = ServiceDto::normalizeData($responseBody);
+
+        // Populates default messages in the language provided in the request if not provided or incomplete
+        // Messages may not be valued because they were entered only when the service was first saved
+        $defaultFeedbackMessages = $this->serviceManager->getDefaultFeedbackMessages()[$request->getLocale()];
+        foreach ($data['feedback_messages'] as $statusName => $feedbackMessage) {
+          $status = Pratica::getStatusCodeByName($statusName);
+          if (!isset($feedbackMessage['subject']) || !$feedbackMessage['subject']) {
+            $feedbackMessage['subject'] = $defaultFeedbackMessages[$status]->getSubject();
+          }
+          if (!isset($feedbackMessage['message']) || !$feedbackMessage['message']) {
+            $feedbackMessage['message'] = $defaultFeedbackMessages[$status]->getMessage();
+          }
+          if (!isset($feedbackMessage['is_active'])) {
+            $feedbackMessage['is_active'] = $defaultFeedbackMessages[$status]->isActive();
+          }
+          $data['feedback_messages'][$statusName] = $feedbackMessage;
+        }
+
         $form->submit($data, true);
 
         if ($form->isSubmitted() && !$form->isValid()) {

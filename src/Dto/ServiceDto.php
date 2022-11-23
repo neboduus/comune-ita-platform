@@ -11,8 +11,6 @@ use App\Model\FeedbackMessage;
 use App\Model\FeedbackMessages;
 use App\Model\Service;
 use App\Services\Manager\BackofficeManager;
-use App\Services\Manager\ServiceManager;
-use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -187,6 +185,10 @@ class ServiceDto extends AbstractDto
     $service->setExternalCardUrl($servizio->getExternalCardUrl());
 
     $service->setFeedbackMessages($this->decorateFeedbackMessages($servizio->getFeedbackMessages()));
+
+    $service->setCreatedAt($servizio->getCreatedAt());
+    $service->setUpdatedAt($servizio->getUpdatedAt());
+
     return $service;
   }
 

@@ -2141,7 +2141,7 @@ class Servizio implements Translatable
       if (isset($this->source['updatedAt'])) {
         $serviceSource->setUpdatedAt(new \DateTime($this->source['updatedAt']));
       }
-      $serviceSource->setIdentifier($this->source['version'] ?? null);
+      $serviceSource->setIdentifier($this->source['identifier'] ?? null);
 
       $this->source = $serviceSource;
     }
