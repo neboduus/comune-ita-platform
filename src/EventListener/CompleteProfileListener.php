@@ -64,7 +64,7 @@ class CompleteProfileListener
                 if ($currentRouteParams) {
                     $redirectParameters['p'] = serialize($currentRouteParams);
                 }
-                if ($currentRouteParams) {
+                if ($currentRouteQuery) {
                     $redirectParameters['q'] = serialize($currentRouteQuery);
                 }
 

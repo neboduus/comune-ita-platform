@@ -33,7 +33,7 @@ class TermsAcceptListener
   /**
    * TermsAcceptListener constructor.
    * @param RouterInterface $router
-   * @param TokenStorage $tokenStorage
+   * @param TokenStorageInterface $tokenStorage
    */
   public function __construct(RouterInterface $router, TokenStorageInterface $tokenStorage, TermsAcceptanceCheckerService $termsAcceptanceChecker)
   {
@@ -62,7 +62,7 @@ class TermsAcceptListener
         if ($currentRouteParams) {
           $redirectParameters['p'] = serialize($currentRouteParams);
         }
-        if ($currentRouteParams) {
+        if ($currentRouteQuery) {
           $redirectParameters['q'] = serialize($currentRouteQuery);
         }
 

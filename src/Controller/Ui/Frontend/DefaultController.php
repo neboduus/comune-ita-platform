@@ -120,23 +120,14 @@ class DefaultController extends AbstractController
     $logger = $this->logger;
 
     $repo = $this->getDoctrine()->getRepository('App\Entity\TerminiUtilizzo');
-
-    /**
-     * FIXME: gestire termini multipli
-     * Il sistema è pronto per iniziare a gestire una accettazione di termini condizionale
-     * con alcuni obbligatori e altri opzionali, tutti versionati. Al momento marchiamo tutti come accettati
-     */
-
     $terms = $repo->findAll();
-
     $form = $this->setupTermsAcceptanceForm($terms)->handleRequest($request);
-
     $user = $this->getUser();
 
     if ($form->isSubmitted()) {
       $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'home';
       $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
-      $redirectRouteQuery = $request->query->has('p') ? unserialize($request->query->get('q')) : array();
+      $redirectRouteQuery = $request->query->has('q') ? unserialize($request->query->get('q')) : array();
 
       return $this->markTermsAcceptedForUser(
         $user,

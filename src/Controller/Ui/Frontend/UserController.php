@@ -147,7 +147,6 @@ class UserController extends AbstractController
       $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'user_profile';
       $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : [];
       $redirectRouteQuery = $request->query->has('q') ? unserialize($request->query->get('q')) : [];
-
       $params = array_merge($redirectRouteParams, $redirectRouteQuery) ?? [];
       $this->addFlash('success',$this->translator->trans('aggiorna_profilo'));
       return $this->redirectToRoute($redirectRoute, $params);
