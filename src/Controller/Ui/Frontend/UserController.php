@@ -149,7 +149,14 @@ class UserController extends AbstractController
       $redirectRouteQuery = $request->query->has('q') ? unserialize($request->query->get('q')) : [];
       $params = array_merge($redirectRouteParams, $redirectRouteQuery) ?? [];
       $this->addFlash('success',$this->translator->trans('aggiorna_profilo'));
-      return $this->redirectToRoute($redirectRoute, $params);
+
+      try {
+        $redirectUrl = $this->generateUrl($redirectRoute, $params);
+        return $this->redirect($redirectUrl);
+      } catch (\Exception $e) {
+        $this->logger->error('Error generating redirect url after profile update: ', ['redirect_route' => $redirectRoute, 'params' => $params]);
+      }
+      return $this->redirectToRoute('user_profile');
     } else {
       if ($request->query->has('r')) {
         $this->addFlash(

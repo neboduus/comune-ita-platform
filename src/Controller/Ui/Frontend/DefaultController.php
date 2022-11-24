@@ -201,6 +201,12 @@ class DefaultController extends AbstractController
     }
 
     $params = array_merge($redirectRouteParams, $redirectRouteQuery) ?? [];
-    return $this->redirectToRoute($redirectRoute, $params);
+    try {
+      $redirectUrl = $this->generateUrl($redirectRoute, $params);
+      return $this->redirect($redirectUrl);
+    } catch (\Exception $e) {
+      $this->logger->error('Error generating redirect url after terms accept: ', ['redirect_route' => $redirectRoute, 'params' => $params]);
+    }
+    return $this->redirectToRoute('terms_accept');
   }
 }
