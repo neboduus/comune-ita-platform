@@ -77,7 +77,10 @@ class ServiceSource implements \JsonSerializable
   {
 
     $properties = get_object_vars($this);
-    $properties['updatedAt'] = $this->updatedAt->format('c');
+    if ($this->updatedAt) {
+      // Convert updatedAt from Datetime object to iso string
+      $properties['updatedAt'] = $this->updatedAt->format('c');
+    }
     return $properties;
 
   }
