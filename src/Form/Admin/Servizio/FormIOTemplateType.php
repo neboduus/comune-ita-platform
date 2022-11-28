@@ -181,12 +181,19 @@ class FormIOTemplateType extends AbstractType
     }
 
     $feedbackMessages = [];
-    foreach ($ServiceToClone->getFeedbackMessages() as $item) {
+    $defaultFeedbackMessages = $service->getFeedbackMessages();
+    foreach ($ServiceToClone->getFeedbackMessages() as $status => $item) {
       $feedbackMessage = new FeedbackMessage();
       $feedbackMessage->setIsActive($item['isActive']);
       $feedbackMessage->setMessage($item['message']);
       $feedbackMessage->setName($item['name']);
-      $feedbackMessage->setTrigger($item['trigger']);
+
+      $defaultMessage = $defaultFeedbackMessages[$status];
+      // In precedenza la creazione di un servizio da template non copiava l'oggetto del messaggio quindi ci sono
+      // dei servizi che non lo hanno valorizzato. I messaggi di default vengono pre popolati alla creazione di un
+      // servizio quindi se il servizio che si cerca d'importare non ha un oggetto viene utilizzato il valore di default
+      $feedbackMessage->setSubject($item['subject'] ?? $defaultMessage['subject']);
+      $feedbackMessage->setTrigger($status);
       $feedbackMessages[] = $feedbackMessage;
     }
     $service->setFeedbackMessages($feedbackMessages);
