@@ -19,7 +19,7 @@ require('bootstrap-italia/src/js/plugins/ie');
 require('bootstrap-italia/src/js/plugins/autocomplete');
 require('bootstrap-italia/src/js/plugins/back-to-top');
 require('bootstrap-italia/src/js/plugins/componente-base');
-require('bootstrap-italia/src/js/plugins/cookiebar');
+// require('bootstrap-italia/src/js/plugins/cookiebar');
 require('bootstrap-italia/src/js/plugins/dropdown');
 //require('bootstrap-italia/src/js/plugins/forms');
 require('bootstrap-italia/src/js/plugins/track-focus');

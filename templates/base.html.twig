@@ -77,15 +77,6 @@
 
 {% block header %}{% endblock %}
 {% block content_container %}{% endblock %}
-<div class="cookiebar">
-  <p>Questo sito usa cookies tecnici e cookies di terze parti per la raccolta in forma aggregata e anonima di dati che aiutano a migliorare la fruibilità dei contenuti.
-    Proseguendo la navigazione del sito acconsenti all'uso dei cookie.</p>
-  <div class="cookiebar-buttons">
-    {#<a href="#" class="cookiebar-btn">Maggiori informazioni</a>#}
-    <button data-accept="cookiebar" class="cookiebar-btn cookiebar-confirm">Accetta</button>
-  </div>
-</div>
-
 {% block footer %}{% endblock %}
 
 {% if not feature('feature_new_outdatedbrowser') %}
