@@ -1,6 +1,9 @@
 import 'summernote';
 import 'summernote/dist/summernote-bs4.css';
 
+const stripTags =   ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:','h1','h2','div','span','meta','cite','svg','path'];
+const stripAttributes = ['font', 'style', 'embed', 'param', 'title','class','role','viewBox','d','ping','ata-ved'];
+
 // Add extension plugin summernote
 (function (factory) {
   /* global define */
@@ -17,8 +20,8 @@ import 'summernote/dist/summernote-bs4.css';
 }(function ($) {
 
   $.extend($.summernote.options, {
-    stripTags: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:','h1','h2'],
-    stripAttributes: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:','h1','h2'],
+    stripTags: stripTags,
+    stripAttributes: stripAttributes,
     onAfterStripTags: function ($html) {
       return $html;
     }
@@ -30,7 +33,9 @@ import 'summernote/dist/summernote-bs4.css';
       let $options = context.options;
       $note.on('summernote.paste', function (e, evt) {
         evt.preventDefault();
-        let text = evt.originalEvent.clipboardData.getData('text/plain') || evt.originalEvent.clipboardData.getData('text/html') || e.currentTarget.innerHTML
+        let text =  evt.originalEvent.clipboardData.getData('text/html') || e.currentTarget.innerHTML || evt.originalEvent.clipboardData.getData('text/plain')
+        // block default behavior
+        evt.preventDefault();
         if (text) {
           let tagStripper = new RegExp('<[ /]*(' + $options.stripTags.join('|') + ')[^>]*>', 'gi'), attributeStripper = new RegExp(' (' + $options.stripAttributes.join('|') + ')(="[^"]*"|=\'[^\']*\'|=[^ ]+)?', 'gi'), commentStripper = new RegExp('<!--(.*)-->', 'g');
           text = text.toString().replace(commentStripper, '').replace(tagStripper, '').replace(attributeStripper, ' ').replace(/( class=(")?Mso[a-zA-Z]+(")?)/g, ' ').replace(/[\t ]+\</g, "<").replace(/\>[\t ]+\</g, "><").replace(/\>[\t ]+$/g, ">").replace(/[\u2018\u2019\u201A]/g, "'").replace(/[\u201C\u201D\u201E]/g, '"').replace(/\u2026/g, '...').replace(/[\u2013\u2014]/g, '-');
@@ -58,8 +63,8 @@ export class TextEditor {
       ],
       fontNames: ['Titillium Web','sans-serif'],
       callbacks: callback,
-      stripTags: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:','h1','h2'],
-      stripAttributes: ['font', 'style', 'embed', 'param', 'script', 'html', 'body', 'head', 'meta', 'title', 'link', 'iframe', 'applet', 'noframes', 'noscript', 'form', 'input', 'select', 'option', 'colgroup', 'col', 'std', 'xml:', 'st1:', 'o:', 'w:', 'v:','h1','h2'],
+      stripTags: stripTags,
+      stripAttributes: stripAttributes,
       striptags: {
         onAfterStripTags: function ($html) {
           $html.find('table').addClass('table');
