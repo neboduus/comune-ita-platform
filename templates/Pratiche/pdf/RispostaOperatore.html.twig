@@ -6,18 +6,18 @@
 
 
 <div class="chiede center_title">
-    <span class="text-uppercase">Spettabile {{ pratica.richiedenteCognome }} {{ pratica.richiedenteNome }}</span>
+    <span class="text-uppercase">{{ 'pratica.pdf.spett_le' | trans }} {{ pratica.richiedenteCognome }} {{ pratica.richiedenteNome }}</span>
 </div>
 
 <div class="richiesta">
     <p>
-        La informiamo che la Sua richiesta è stata: <b>{% if pratica.esito %}accettata{% else %}rifiutata{% endif %}</b>
+        {{ 'pratica.pdf.operator.reply_application' | trans}}: <b>{% if pratica.esito %}{{ 'STATUS_COMPLETE' | trans }}{% else %}{{ 'STATUS_CANCELLED' | trans }}{% endif %}</b>
     </p>
     {% if pratica.motivazioneEsito is not empty %}
       {{ pratica.motivazioneEsito|raw }}
     {% endif %}
     {% if pratica.allegatiOperatore|length > 0 %}
-        <h2>Allegati alla risposta:</h2>
+        <h2>{{ 'pratica.reply_to_attachments' | trans }}:</h2>
         <ul>
         {% for allegato in pratica.allegatiOperatore %}
             <li>{{ allegato.filename }} &dash; {{ allegato.description }}</li>
