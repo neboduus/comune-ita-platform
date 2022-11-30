@@ -120,7 +120,7 @@ class StatusMessagePraticaListener
       $feedbackMessage = $feedbackMessages[$newStatus];
 
       // If feedbackmessage is set check if it's enabled
-      $generateMessage = $feedbackMessage["isActive"];
+      $generateMessage = $feedbackMessage["isActive"] ?? $feedbackMessage["is_active"];
       $message = isset($feedbackMessage["message"]) ? strtr($feedbackMessage["message"], $placeholders) : $defaultMessage;
       $subject = isset($feedbackMessage["subject"]) ? strtr($feedbackMessage["subject"], $placeholders) : $defaultSubject;
     }
