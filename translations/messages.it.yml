@@ -430,6 +430,7 @@ pratica:
   create_applications: 'Crea pratica'
   select_message: 'Seleziona messaggio'
   reply_attachments: 'Allegati risposta'
+  reply_to_attachments: 'Allegati alla risposta'
   applications: 'pratica'
   applications_statistics: 'Statistiche Pratiche'
   applications_number: 'N° pratiche'
@@ -495,6 +496,8 @@ pratica:
     dichiara: 'dichiara'
     allega: 'allega'
     dichiarazione_composizione_nucleo_familiare: 'che il proprio nucleo familiare &egrave; cos&igrave; composto:'
+    operator:
+      reply_application: 'La informiamo che la Sua richiesta è stata'
     composizione_nucleo_familiare:
       nome_e_cognome: 'Nome e cognome'
       rapporto_parentela: 'Rapporto di parentela'
