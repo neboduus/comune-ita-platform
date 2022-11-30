@@ -238,6 +238,44 @@ servizio:
   id_service: 'ID Dienst'
   short_description: ""
   change_short_description: ""
+  error_missing_filename: ""
+  delete_filename: ""
+  life_events: ''
+  business_events: ""
+  constraints: ''
+  conditions: ''
+  conditions_attachments: ''
+  costs_attachments: ''
+  attachments_helper: ''
+  file_already_exists: ''
+  invalid_file_type: ''
+  no_attachments_uploaded: ""
+  page_updated_at: ""
+  booking_call_to_action: ''
+  booking_cta_help: ""
+  book_appointment_description: ""
+  book_appointment_action: ''
+  times_and_deadlines: ""
+  apertura: ''
+  apertura_servizio: ''
+  termine_presentazione_domande: ''
+  esito_richiesta: ""
+  termine_presentazione_domande_per_servizio: ''
+  esito_richiesta_per_servizio: ""
+  enable_external_card_url: ""
+  enable_external_card_url_help: ""
+  external_card_url: ""
+  external_card_url_help: ""
+  attivo: ''
+  non_attivo: ''
+  no_life_or_business_events: ''
+  external_card_url_message: ''
+  external_card_url_action: ''
+  error_duplicated_identifier: ""
+  missing_feedback_message: ""
+  public_service_identifier: ""
+  preferences: ''
+  summary: ''
 gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppe von Diensten'
   nome: 'Name'
@@ -267,6 +305,10 @@ gruppo_di_servizi:
   in_evidenza: "Hervorheben?"
   protocolla_in_fascicolo: "BACKOFFICE"
   max_response_time_list: "maximale Antwortzeit"
+  times_and_deadlines: ""
+  how_to_do: ""
+  conditions: ''
+  servizi_correlati: ""
 webhook:
   nome: 'Name'
   # Endgerät?
@@ -522,6 +564,7 @@ pratica:
   already_processed: ''
   already_assigned: ''
   no_protocol_number: ''
+  error_signature_validation: ""
 STATUS_CANCELLED: 'Abgelehnt'
 STATUS_DRAFT: 'Entwurf'
 STATUS_PRE_SUBMIT: 'Gesendet'
@@ -1187,6 +1230,8 @@ operatori:
   delete_subscription_service_success: "Abo erfolgreich gelöscht."
   delete_subscription_service_error: "Abo kann nicht gelöscht werden."
   delete_operator: "Sind Sie sicher, dass Sie fortfahren möchten? Sachbearbeiter/-in wird endgültig gelöscht."
+  create_external_calendar_help: ""
+  create_calendar_error_url: ""
 allegato:
   nome_file: 'Dateiname'
   descrizione_file: 'Beschreibung der Datei'
@@ -1272,11 +1317,11 @@ messages:
       6000: '6000'
       # A cosa si riferisce "Con il seguente messaggio:" ?
       # Potrei avere un esempio?
-      7000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihrem Antrag betreffend <strong>%servizio%</strong> wurde stattgegeben. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
+      7000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihrem Antrag betreffend <strong>%servizio%</strong> wurde stattgegeben. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br />Benachrichtigung:<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
       8000: '8000'
       # A cosa si riferisce "Con il seguente messaggio:" ?
       # Potrei avere un esempio?
-      9000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde abgelehnt. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
+      9000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde abgelehnt. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>.<br />Benachrichtigung:<br /> %messaggio_personale%<br />Wir danken für die Zusammenarbeit."
       20000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde erfolgreich zurückgezogen. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
       1000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass unter Ihrem Namen ein Vorgangsentwurf betreffend  <strong>%servizio%</strong> erstellt worden ist. Steigen Sie in Ihr Bürgerservicekonto ein und schauen Sie unter  <i>Meine Vorgänge</i> nach, wenn Sie die Anfrage senden wollen.<br />Wir danken für die Zusammenarbeit."
       50000: "Sehr geehrte/-r Frau/Herr<strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde annulliert. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
@@ -2566,6 +2611,7 @@ ente:
 buttons:
   draft: 'Entwurf speichern'
   last_save: 'Zuletzt gespeichert:'
+  save_pratice: ''
 aggiungi: 'Hinzufügen'
 annulla: 'Rückgängig machen'
 modifica: 'Bearbeiten'
@@ -2600,6 +2646,7 @@ general:
   import: 'Importieren'
   import_url: 'import url'
   enabled: ''
+  download: ''
 avanti: 'Weiter'
 categories:
   title: 'Kategorien'
@@ -2916,6 +2963,21 @@ enable: ''
 not_enable: ''
 help_link: ''
 no_value: ''
+link_to: ''
+go_to_page: ''
+read_faq: ''
+booking_appointment: ''
+request_assistance: ""
+back_to_top: ""
+contacts:
+  title: ""
+  faq_url_label: ""
+  support_url_label: ""
+  phone_label: ""
+  phone_toll_free_number: ""
+  meetings_reservation_url_label: ""
+  public_relations_office: ''
+  toll_free_number: ''
 taxonomies:
   life_events:
     enrolling_in_school_university_and_or_applying_for_a_study_grant: 'Einschreibung in die Schule/Universität und/oder Bewerbung um ein Studienstipendium'
@@ -2954,6 +3016,10 @@ taxonomies:
     bankruptcy: 'Bankrott'
     participating_in_public_procurement_national_and_cross_border: 'Teilnahme am öffentlichen Beschaffungswesen (national und grenzüberschreitend)'
 accessibility: 'Barrierefreiheit'
+back: ''
+reset: ''
+save_processing: ''
+add_note: ''
 user_group:
   title: ''
   main_function: ''
