@@ -6,13 +6,13 @@ export default function wizardNav(ctx) {
 
     /*     if (button === 'cancel' && ctx.buttons.cancel) {
           return `
-            <button class="btn btn-outline-primary bg-white btn-sm steppers-btn-reset center" ref="${ctx.wizardKey}-cancel" aria-label="${ctx.t('cancelButtonAriaLabel')}">
-              <span class="text-button-sm t-primary">${ctx.t('cancel')}</span></button>
+            <button class="btn btn-outline-primary bg-white btn-sm steppers-btn-reset center" ref="${ctx.wizardKey}-cancel" aria-label="${Translator.trans('cancelButtonAriaLabel')}">
+              <span class="text-button-sm t-primary">${Translator.trans('cancel')}</span></button>
           `
            }*/
     if (button === 'previous') {
       return `
-        <button class="btn btn-sm steppers-btn-prev p-0 btn-wizard-nav-previous mt-0" ref="${ctx.wizardKey}-previous" aria-label="${ctx.t('previousButtonAriaLabel')}" ${ctx.currentPage === 0 ? 'disabled' : ''}>
+        <button class="btn btn-sm steppers-btn-prev p-0 btn-wizard-nav-previous mt-0" ref="${ctx.wizardKey}-previous" aria-label="previousButtonAriaLabel" ${ctx.currentPage === 0 ? 'disabled' : ''}>
         <svg class="icon icon-primary icon-sm" aria-hidden="true"><use href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-left"></use></svg><span class="text-button-sm t-primary">${Translator.trans('back', {}, 'messages', language)}</span></button>
       `
     }
@@ -24,7 +24,7 @@ export default function wizardNav(ctx) {
                 <span class="text-button-sm t-primary d-none d-lg-block">${Translator.trans('buttons.save_pratice', {}, 'messages', language)}</span>
                 <span class="text-button-sm t-primary d-block d-lg-none">${Translator.trans('salva', {}, 'messages', language)}</span>
               </button>
-        <button class="btn btn-primary btn-sm btn-wizard-nav-next steppers-btn-next mt-0" ref="${ctx.wizardKey}-next" aria-label="${ctx.t('nextButtonAriaLabel')}">
+        <button class="btn btn-primary btn-sm btn-wizard-nav-next steppers-btn-next mt-0" ref="${ctx.wizardKey}-next" aria-label="nextButtonAriaLabel">
    <span class="text-button-sm">${Translator.trans('avanti', {}, 'messages', language)}</span>
               <svg class="icon icon-white icon-sm" aria-hidden="true">
                 <use href="/bootstrap-italia/dist/svg/sprite.svg#it-chevron-right"></use>
@@ -37,9 +37,9 @@ export default function wizardNav(ctx) {
                 <span class="text-button-sm t-primary d-block d-lg-none">${Translator.trans('salva', {}, 'messages', language)}</span>
               </button>`;
       if (ctx.disableWizardSubmit) {
-        disableWizardSubmit += `<button disabled class="btn btn-primary btn-sm steppers-btn-next btn-wizard-nav-submit mt-0" ref="${ctx.wizardKey}-submit" aria-label="${ctx.t('submitButtonAriaLabel')}">${ctx.t('submit')}</button>`
+        disableWizardSubmit += `<button disabled class="btn btn-primary btn-sm steppers-btn-next btn-wizard-nav-submit mt-0" ref="${ctx.wizardKey}-submit" aria-label="submitButtonAriaLabel">${Translator.trans('buttons.submit')}</button>`
       } else {
-        disableWizardSubmit += `<button class="btn btn-primary btn-sm steppers-btn-next btn-wizard-nav-submit mt-0" ref="${ctx.wizardKey}-submit" aria-label="${ctx.t('submitButtonAriaLabel')}">${ctx.t('submit')}</button>`
+        disableWizardSubmit += `<button class="btn btn-primary btn-sm steppers-btn-next btn-wizard-nav-submit mt-0" ref="${ctx.wizardKey}-submit" aria-label="submitButtonAriaLabel">${Translator.trans('buttons.submit')}</button>`
       }
       return `${disableWizardSubmit}`
     }

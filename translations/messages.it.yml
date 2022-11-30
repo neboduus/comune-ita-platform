@@ -2718,6 +2718,7 @@ buttons:
   draft: 'Salva bozza'
   last_save: 'Ultimo salvataggio:'
   save_pratice: 'Salva richiesta'
+  submit: 'Invia'
 breadcrumbs:
   list: 'Lista'
   compile: 'Compila'
