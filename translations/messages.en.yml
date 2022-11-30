@@ -37,7 +37,7 @@ powered_by: '<a href="https://www.opencontent.it/">Powered by OpenContent Scarl<
 fake_email_message: 'Update your e-mail to continue'
 nav:
   home: 'Homepage'
-  dashboard: 'My room'
+  dashboard: 'Personal Area'
   servizi: 'All services'
   pratiche: 'My practices'
   profilo: 'My profile'
@@ -89,7 +89,7 @@ nav:
   header:
     profile: "Profile"
     logout: "Logout"
-    access_my_area: "Log in to your area"
+    access_my_area: "Personal Area"
 terms:
   title: 'Acceptance of terms of use'
 servizio:
@@ -118,7 +118,7 @@ servizio:
     sospeso: 'Pending'
     schedulato: 'Programmed'
   nome: "Service name"
-  categoria: "Catergory"
+  categoria: "Category"
   cos_e: "What's it?"
   descrizione: "Description"
   a_chi_si_rivolge: "Who is it for?"
@@ -212,9 +212,47 @@ servizio:
   select_template: 'Select a starting template for creating the form'
   blank_template: 'Blank template'
   templates_based_existing_services: 'Templates based on existing services'
-  id_service: ''
+  id_service: 'Service ID'
   short_description: "Short description"
   change_short_description: "The short description field still has the default value, please change it before saving."
+  error_missing_filename: "The file you are trying to delete does not exist"
+  delete_filename: "Delete uploaded file %filename%"
+  life_events: 'Events in people''s lives'
+  business_events: "Events in the life of a company"
+  constraints: 'Constraints'
+  conditions: 'Conditions'
+  conditions_attachments: 'Attachments to the terms of service'
+  costs_attachments: 'Attachments to the costs of the service'
+  attachments_helper: 'Attention: the name of the uploaded file will be displayed in the service tab'
+  file_already_exists: 'The %filename% document has already been uploaded'
+  invalid_file_type: 'The uploaded file is invalid'
+  no_attachments_uploaded: "There are no attachments"
+  page_updated_at: "Page updated on %updatedAt%"
+  booking_call_to_action: 'Link for booking an appointment'
+  booking_cta_help: "Use this field to display a button on the service card for booking an appointment through external systems"
+  book_appointment_description: "Or, book an appointment at the competent office."
+  book_appointment_action: 'Book an appointment'
+  times_and_deadlines: "Times and deadlines"
+  apertura: 'opening'
+  apertura_servizio: '%service% opening'
+  termine_presentazione_domande: 'Deadline for submitting applications'
+  esito_richiesta: "Deadline to receive the outcome of the application"
+  termine_presentazione_domande_per_servizio: 'Deadline for submitting applications for %service%'
+  esito_richiesta_per_servizio: "Deadline to receive the Outcome of the application for %service%"
+  enable_external_card_url: "Enable external card for the service"
+  enable_external_card_url_help: "Enable this option if the tab of this service is already available on another web page"
+  external_card_url: "External card url"
+  external_card_url_help: "This is the address to which the user will be redirected"
+  attivo: 'Active'
+  non_attivo: 'Suspended service'
+  no_life_or_business_events: 'No event was specified'
+  external_card_url_message: 'The tab of this service is external to the platform.'
+  external_card_url_action: 'Go to the external service tab'
+  error_duplicated_identifier: ""
+  missing_feedback_message: ""
+  public_service_identifier: ""
+  preferences: ''
+  summary: ''
 gruppo_di_servizi:
   gruppo_di_servizi: 'Group of services'
   nome: 'Name'
@@ -243,6 +281,10 @@ gruppo_di_servizi:
   in_evidenza: "In evidence?"
   protocolla_in_fascicolo: "Register within the same dossier?"
   max_response_time_list: "Maximum response time"
+  times_and_deadlines: "Times and deadlines"
+  how_to_do: "How to"
+  conditions: 'Conditions'
+  servizi_correlati: "Related services"
 webhook:
   nome: 'Name'
   endpoint: 'Endpoint'
@@ -480,9 +522,10 @@ pratica:
   failed: 'Failed'
   warning_long_text: "<small class='form-text text-muted' id='warning-text-length'>Beware, titles that are too long make navigation more difficult. We recommend the use of simple titles without normative references and the use of the <b>\"More information\"</b> field present in the service sheet.</small>"
   presentante: 'applicant'
-  already_processed: ''
-  already_assigned: ''
-  no_protocol_number: ''
+  already_processed: 'The practice has already been processed'
+  already_assigned: 'Practice is already assigned to%operator_fullname%'
+  no_protocol_number: 'The practice does not yet have a protocol number'
+  error_signature_validation: ""
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
@@ -677,15 +720,15 @@ documenti:
     validity_begin: "Validity start date"
     validity_end: "Validity end date"
     store: "Save the file?"
-    invalid_original_name: ''
-    invalid_folder: ""
-    invalid_owner: ""
-    invalid_mime_type: ""
-    missing_extension: ""
-    invalid_extension: ""
-    non_matching_md5: ""
-    non_matching_mime_type: ""
-    duplicated_file: ""
+    invalid_original_name: 'The value of the original_filename parameter is not a valid ASCII string'
+    invalid_folder: "The specified folder identifier is invalid"
+    invalid_owner: "The specified user does not appear to be the owner of the folder"
+    invalid_mime_type: "Mime type not allowed"
+    missing_extension: "It is mandatory to specify the file extension in the original_filename parameter"
+    invalid_extension: "Estersione not allowed"
+    non_matching_md5: "The MD5 of the file does not coincide with what is specified in the md5 parameter"
+    non_matching_mime_type: "The mime type of the file does not match what is specified in the mime_type parameter"
+    duplicated_file: "The file already exists"
   cartella:
     nome: "Folder's name"
     data_creazione: "Creation date"
@@ -826,7 +869,7 @@ errori:
     change_status_invalid: "Invalid status change request"
 user:
   dashboard:
-    title: 'My room'
+    title: 'Personal Area'
     pratiche_draft: 'In draft'
     pratiche_pending: 'Sent'
     pratiche_processing: 'Processing'
@@ -889,9 +932,9 @@ user:
   forgot_password: 'Did you forget your password?'
   forgot_password_description: 'If you have forgotten your password, please enter your username or email address.'
   reset_password:
-    subject: ''
-    message: ''
-    btn: ""
+    subject: 'Password recovery'
+    message: 'You receive this email because you have requested a password reset on the Citizen''s Room, click on the button below to continue.'
+    btn: "Go"
 admin:
   usage:
     user_title: 'User number'
@@ -905,12 +948,12 @@ admin:
   show_api_service: "Click to copy the service API URL"
   payment_amount_description: "(The form determines the amount via the value of the 'payment_amount' field)"
   custom_validation:
-    custom_validation_for: ''
-    id_service: ''
-    id_field: ''
-    status_code: ''
-    field_label: ''
-    status_name: ''
+    custom_validation_for: 'Custom validation for'
+    id_service: 'Service ID'
+    id_field: 'Field ID'
+    status_code: 'Status code'
+    field_label: 'Field label'
+    status_name: 'Status name'
 operatori:
   allega_risposta_firmata: 'Attach your signed response'
   vai_al_dettaglio: 'View detail'
@@ -992,7 +1035,7 @@ operatori:
   login: "Login"
   scarica: 'Request file'
   info: "Info"
-  iter_completato: "The request was <strong>%statusName%</strong> on %data% at %hours%"
+  iter_completato: "The request was <strong>%statusName%</strong> on %data% at %ore%"
   pratica_ritirata: "The practice was retired on %data% at %ore%"
   pratica_correlata: "Related practice"
   fascicolo: "Dossier number"
@@ -1138,6 +1181,8 @@ operatori:
   delete_subscription_service_success: "Subscription successfully deleted"
   delete_subscription_service_error: "Unable to delete subscription."
   delete_operator: "Are you sure to proceed? The operator will be permanently deleted."
+  create_external_calendar_help: ""
+  create_calendar_error_url: ""
 allegato:
   nome_file: 'File name'
   descrizione_file: 'File description'
@@ -1221,9 +1266,9 @@ messages:
       4000: 'Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been taken over by one of our operators. <br /> Thank you for your cooperation.'
       5000: '5000'
       6000: '6000'
-      7000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio% </strong> service has been approved, the request number is <strong>%pratica_id%</strong>. <br />%messaggio_personale%<br /> Thank you for your cooperation."
+      7000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio% </strong> service has been approved, the request number is <strong>%pratica_id%</strong>. <br /> With the following message: <br />%messaggio_personale%<br /> Thank you for your cooperation."
       8000: '8000'
-      9000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been refused, the request number is <strong>%pratica_id%</strong>. <br />%messaggio_personale%<br /> Thank you for your cooperation."
+      9000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been refused, the request number is <strong>%pratica_id%</strong>. <br /> With the following message: <br />%messaggio_personale%<br /> Thank you for your cooperation."
       20000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been successfully withdrawn, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications relating to your request. <br /> Thank you for your cooperation."
       1000: "Dear <strong>%user_name%</strong>, <br /> we inform you that a draft file has been created in your name for the service <strong>%servizio%</strong>, enter your Stanza del Cittadino and visit the section <i> My practices </i> to proceed with sending the application. <br /> Thank you for your cooperation."
       50000: "Dear <strong>%user_name%</strong>, <br/>we inform you that your request for the <strong>%servizio%</strong> service has been canceled, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications relating to your request."
@@ -1796,7 +1841,7 @@ steps:
       guida_alla_compilazione: "Measures (listed in Annex C of the S.C.I.A. application) to be attached if necessary"
       files:
         PROV_PC-PAE:
-          title: "a) authorization for landscape protection pursuant to l.p. 1/2008\\\\"
+          title: "a) authorization for landscape protection pursuant to l.p. 1/2008\\\\\\\\"
           description: "description"
         PROV_PC-CUL:
           title: "b) authorizations relating to cultural heritage referred to in Articles 21 and 22 of Legislative Decree 42/2004"
@@ -1975,8 +2020,8 @@ steps:
     fiscalcode_violation_message: "The fiscal code entered does not coincide with the one returned by the authentication system"
     name_violation_message: "The name does not coincide with the one returned by the authentication system"
     surname_violation_message: "The surname does not coincide with the one returned by the authentication system"
-    empty_data_violation_message: ""
-    duplicated_unique_id: ''
+    empty_data_violation_message: "The form still needs to be completed. Please try again or contact the technical support indicated in the service sheet."
+    duplicated_unique_id: 'It is not possible to send the practice: a request for this service has already been submitted'
 protocollo:
   recipientIDArray: 'Document recipients (recipientIDArray)'
   recipientTypeIDArray: 'Type of document recipients (recipientTypeIDArray)'
@@ -2157,8 +2202,8 @@ calendars:
   print: 'Print'
   info: 'Created by %owner% on %createdDate%, last modified on %updatedDate% at %updatedTime%'
   update_calendar: 'Edit calendar'
-  update_meeting: ''
-  go_calendar: ''
+  update_meeting: 'Change meeting'
+  go_calendar: 'Go to calendar'
 meetings:
   error:
     slot_unavailable: "The selected range is not available"
@@ -2298,7 +2343,7 @@ meetings:
     cancelled: 'Cancelled'
     draft: 'Draft'
     concluded: 'Concluded'
-    completed: ''
+    completed: 'Completed'
   every_meetings: 'Each meeting has a duration of'
   one_person: "It is also possible to receive one person at a time"
   one_person_max: "It is also possible to receive up to a maximum of"
@@ -2356,7 +2401,7 @@ backoffice:
       delete_service_group_success: "Service group successfully deleted"
       delete_service_group_error: "Unable to delete the group, there are services connected."
       create_service_group_success: "Successfully created service group"
-      welcome: ''
+      welcome: 'Welcome to the subscriber administration dashboard'
     subscription_service:
       payment:
         due_date: "Payment due date"
@@ -2439,12 +2484,12 @@ backoffice:
     activation_point: 'Activation point'
     action_execute: 'Action to be performed'
     no_integration: 'No integration expected'
-    enable_integration_with: ""
-    with_appio: ""
-    enable_integration_access: ''
+    enable_integration_with: "Enable integration with"
+    with_appio: "With App IO"
+    enable_integration_access: 'to access this section'
   gateway:
-    enable: ''
-    payment_gateway: ''
+    enable: 'Enable the'
+    payment_gateway: 'Payment gateway'
 login_type:
   none: 'None'
   login_pat: 'Spid PAT'
@@ -2492,11 +2537,12 @@ ente:
     label: 'Type of navigation'
     services: 'Services'
     categories: 'Categories'
-  nome: ''
-  meta: ''
+  nome: 'Name'
+  meta: 'Meta'
 buttons:
   draft: 'Save draft'
   last_save: 'Last saved:'
+  save_pratice: ''
 aggiungi: 'Add'
 annulla: 'cancel'
 modifica: 'edit'
@@ -2525,11 +2571,12 @@ general:
   approval: 'approval'
   forwarding: 'forwarding'
   postponement: 'postponement'
-  follow_social: ''
+  follow_social: 'Follow us'
   retry: 'Retry'
   import: 'Import'
   import_url: 'Import URL'
-  enabled: ''
+  enabled: 'Enabled'
+  download: 'Download'
 avanti: 'next'
 categories:
   title: 'title'
@@ -2672,10 +2719,10 @@ payment:
   error_amount: 'You must enter a cost greater than zero'
   error_select_type: 'You must choose at least one payment method'
   type_payment: 'Type of Payment'
-  payment_started: ""
-  error_too_many_gateways: ''
-  no_selected_gateways: ''
-  no_config_tenant_payment: ""
+  payment_started: "Payment being processed, pending outcome"
+  error_too_many_gateways: 'It is no longer possible to select more than one payment method'
+  no_selected_gateways: 'No payment method has been selected for this service'
+  no_config_tenant_payment: "No payment configuration found"
 calendar_formio:
   at_hours: "at"
   draft_expiration_text: "A draft reservation has been reserved for you at the time indicated above, valid until the day"
@@ -2690,7 +2737,7 @@ calendar_formio:
   from_range_error_value: "The value"
   from_range_error_not_valid: "it's not valid"
   unavailable: "Unavailable"
-  time_expired: ""
+  time_expired: "Reservation time expired"
 sum: 'Sum'
 average: 'Average'
 counts: 'Count'
@@ -2753,7 +2800,7 @@ time:
   two_weeks_before: "Two weeks before"
   three_weeks_before: "Three weeks before"
   one_month_before: "One month before (30 days)"
-  now: ''
+  now: 'Now'
 characters: 'characters'
 integrations: 'Integrations'
 event: 'Event'
@@ -2813,77 +2860,96 @@ scheduled_actions:
   "application_payment_reminder'": 'Payment reminder'
   "produce_message'": 'Kafka message'
 login_callout_texts:
-  cta_button: ''
+  cta_button: 'Login'
   cas:
     title: 'Do you use SPID?'
-    text: ""
+    text: "You can authenticate with SPID to automatically fill in the fields and save the practice in your profile. <br /> (We recommend using Firefox or Chrome)"
   login_pat:
     title: 'Do you use SPID or CPS?'
-    text: ""
+    text: "You can authenticate with SPID or Provincial Service Card to automatically compile the fields and save the file in your profile. <br /> (We recommend using Firefox or Chrome)"
   openlogin:
     title: 'Do you use SPID?'
-    text: ""
-aggiorna: ''
+    text: "You can authenticate with SPID to automatically fill in the fields and save the practice in your profile. <br /> (We recommend using Firefox or Chrome)"
+aggiorna: 'Update'
 save_changed: 'There are some changes to <b>save</b>.'
 security:
-  password: ''
-  current_password: ''
-  change_password: ''
-  invalid_password: ''
-  non_matching_password: ''
-  new_password: ''
-  repeat_password: ''
-  password_required: ''
-  password_min_length: ''
-  password_number_check: ''
-  password_special_check: ''
-  password_upper_check: ''
-  changed_password: ''
-  remember_me: ''
-  login: ''
-  password_reset: ''
-enable: ''
-not_enable: ''
-help_link: ''
-no_value: ''
+  password: 'Password'
+  current_password: 'Current password'
+  change_password: 'Change password'
+  invalid_password: 'Invalid password.'
+  non_matching_password: 'The two passwords do not match.'
+  new_password: 'New password'
+  repeat_password: 'Repeat password'
+  password_required: 'Required password'
+  password_min_length: 'Enter at least 8 characters'
+  password_number_check: 'Enter at least one number'
+  password_special_check: 'Enter at least a special character'
+  password_upper_check: 'Enter at least one upptercase character'
+  changed_password: 'The password has been changed'
+  remember_me: 'Remember me'
+  login: 'Login'
+  password_reset: 'Password reset'
+enable: 'Enable'
+not_enable: 'Disable'
+help_link: 'Helpful links'
+no_value: 'No value'
+link_to: 'Link to'
+go_to_page: 'Go to page'
+read_faq: 'Read FAQ'
+booking_appointment: 'Booking appointment'
+request_assistance: "Request for assistance"
+back_to_top: "Back to the beginning of the content"
+contacts:
+  title: "Title"
+  faq_url_label: "Read the frequently asked questions"
+  support_url_label: "Request assistence"
+  phone_label: "Call phone number"
+  phone_toll_free_number: "Call the toll-free number"
+  meetings_reservation_url_label: "Book an appointment"
+  public_relations_office: 'Public relations office'
+  toll_free_number: 'Toll-free number'
 taxonomies:
   life_events:
-    enrolling_in_school_university_and_or_applying_for_a_study_grant: 'Enrolling in school/university and/or applying for a study grant'
+    enrolling_in_school_university_and_or_applying_for_a_study_grant: 'School / University enrollment and / or scholarship request'
     disability: 'Disability'
-    looking_for_a_job_starting_a_new_job_becoming_unemployed: 'Looking for a job, starting a new job, becoming unemployed'
+    looking_for_a_job_starting_a_new_job_becoming_unemployed: 'Job search, starting a new job, unemployment'
     retirement: 'Retirement'
-    applying_to_a_drivers_licence_or_renewing_an_existing_one: "Applying to a driver's licence (or renewing an existing one)"
-    registering_owning_a_vehicle: 'Registering/owning a vehicle'
-    access_to_public_transportation: 'Access to public transportation'
-    buying_renting_a_house_building_land_building_renovating_a_house_building: 'Buying/renting a house/building/land, building, renovating a house/building'
-    moving_and_changing_address_within_one_country: 'Moving and changing address within one country'
-    moving_or_preparing_to_move_to_another_country_eg_to_study_work_retire: 'Moving or preparing to move to another country (e.g., to study, work, retire, ..)'
-    needing_a_passport_visa_or_assistance_to_travel_to_another_country: 'Needing a passport/visa or assistance to travel to another country'
-    declaring_the_birth_of_a_child_and_or_applying_for_a_birth_grand: 'Declaring the birth of a child and/or applying for a birth grand'
-    marrying_and_or_changing_marital_status: 'Marrying and/or changing marital status'
-    death_of_a_close_relative_and_or_starting_an_inheritance_procedure: 'Death of a close relative and/or starting an inheritance procedure'
-    making_cancelling_a_doctors_appointment: "Making/cancelling a doctor's appointment"
-    reporting_a_crime: 'Reporting a crime (smaller offences, e.g., theft, burglary, etc)'
-    declaring_income_taxes_paying_contributions: 'Declaring income taxes, paying contributions'
-    access_to_public_cultural_sites: 'Access to public cultural sites'
-    owning_taking_care_losing_pets: 'Owning, taking care, losing pets'
+    applying_to_a_drivers_licence_or_renewing_an_existing_one: 'License request or renewal'
+    registering_owning_a_vehicle: 'Vehicle registration or possession'
+    access_to_public_transportation: 'Access to public transport'
+    buying_renting_a_house_building_land_building_renovating_a_house_building: 'Buying/selling house/buildings/land, construction or renovation of house/building'
+    moving_and_changing_address_within_one_country: 'Change of residence or domicile'
+    moving_or_preparing_to_move_to_another_country_eg_to_study_work_retire: 'Expatriation for work, study or retirement'
+    needing_a_passport_visa_or_assistance_to_travel_to_another_country: 'Passport, visa and international travel assistance request'
+    declaring_the_birth_of_a_child_and_or_applying_for_a_birth_grand: 'Birth of a child, adoption request'
+    marrying_and_or_changing_marital_status: 'Marriage and/or change of marital status'
+    death_of_a_close_relative_and_or_starting_an_inheritance_procedure: 'Death and inheritance'
+    making_cancelling_a_doctors_appointment: 'Booking and cancellation of visits/exams'
+    reporting_a_crime: 'Report crimes'
+    declaring_income_taxes_paying_contributions: 'Income tax return, payment and collection of taxes / duties and contributions'
+    access_to_public_cultural_sites: 'Access to places of culture'
+    owning_taking_care_losing_pets: 'Possession, care, loss of pet'
   business_events:
-    starting_a_company: 'Starting a company '
-    starting_a_new_activity: 'Starting a new activity'
-    applying_for_licenses_permits_and_certificates: 'Applying for licenses, permits and certificates'
-    registering_a_cross_border_business: 'Registering a cross-border business'
-    starting_registering_a_branch: 'Starting/Registering a branch'
-    financing_a_company: 'Financing a company'
-    staffing: 'Staffing'
-    paying_taxes_vat_and_customs: 'Paying taxes (VAT and customs)'
-    reporting_and_notifying_authorities: 'Reporting and notifying authorities'
-    closing_a_company_a_professional_activity: 'Closing a company/a professional activity'
-    closing_a_branch: 'Closing a branch'
-    restructuring_company: 'Restructuring company'
-    selling_company: 'Selling company'
+    starting_a_company: 'Starting a company'
+    starting_a_new_activity: 'Starting a new professional activity'
+    applying_for_licenses_permits_and_certificates: 'Request licenses, permits and certificates'
+    registering_a_cross_border_business: 'Cross-border business registration'
+    starting_registering_a_branch: 'Branch notice and registration'
+    financing_a_company: 'Business financing'
+    staffing: 'Staff management'
+    paying_taxes_vat_and_customs: 'Payment of VAT, taxes and customs'
+    reporting_and_notifying_authorities: 'Notify the local authorities'
+    closing_a_company_a_professional_activity: 'Business closure and professional activity'
+    closing_a_branch: 'Branch closure'
+    restructuring_company: 'Business restructuring'
+    selling_company: 'Business for sale'
     bankruptcy: 'Bankruptcy'
-    participating_in_public_procurement_national_and_cross_border: 'Participating in public procurement (national and cross-border)'
+    participating_in_public_procurement_national_and_cross_border: 'Participation in national and cross-border public tenders'
 accessibility: "Accessibility"
+back: ''
+reset: ''
+save_processing: ''
+add_note: ''
 user_group:
   title: 'Offices'
   main_function: 'Main function'
