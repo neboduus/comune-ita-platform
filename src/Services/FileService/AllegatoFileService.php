@@ -158,4 +158,25 @@ class AllegatoFileService extends AbstractFileService
     $filenameWithPath = $this->getFilenameWithPath($allegato);
     return $this->getContent($filenameWithPath);
   }
+
+  /**
+   * @param Allegato $allegato
+   * @return bool
+   */
+  public function attachmentExists(Allegato $allegato): bool
+  {
+    $filenameWithPath = $this->getFilenameWithPath($allegato);
+    return $this->fileExists($filenameWithPath);
+  }
+
+  /**
+   * @param Allegato $allegato
+   * @return false|string
+   * @throws FileNotFoundException
+   */
+  public function getAttachmentMimeType(Allegato $allegato)
+  {
+    $filenameWithPath = $this->getFilenameWithPath($allegato);
+    return $this->getMimeType($filenameWithPath);
+  }
 }
