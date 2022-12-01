@@ -31,8 +31,9 @@ RUN apk add --no-cache jq httpie
 
 # allow php to terminate gracefully during deployments
 # https://www.goetas.com/blog/traps-on-the-way-of-blue-green-deployments/
+RUN sed -i 's/;error_log = log\/php-fpm.log/error_log = \/proc\/self\/fd\/2/' /usr/local/etc/php-fpm.conf
 RUN sed -i 's/;process_control_timeout = 0/process_control_timeout = 1m/' /usr/local/etc/php-fpm.conf
-RUN sed -i 's/^access.log =(.*)/access.log = \/dev\/null/' /usr/local/etc/php-fpm.d/docker.conf
+RUN sed -i 's/^access.log = \/proc\/self\/fd\/2/access.log = \/dev\/null/' /usr/local/etc/php-fpm.d/docker.conf
 
 # Add utility to check healthness of php-fpm
 ENV FCGI_STATUS_PATH=/php-status PHP_FPM_PM_STATUS_PATH=/php-status PHP_FPM_CLEAR_ENV=no
@@ -82,7 +83,7 @@ RUN php bin/console assets:install public --no-cleanup
 # di far partire PHP-FPM
 COPY compose_conf/php/init.d/*.sh /docker-entrypoint-init.d/
 
-ENV LOGS_PATH=php://stderr PHP_DATE_TIMEZONE=Europe/Rome
+ENV PHP_DATE_TIMEZONE=Europe/Rome
 
 # generate js transaltions file
 RUN php bin/console bazinga:js-translation:dump public --format=js --pattern=/translations/{domain}.{_format}

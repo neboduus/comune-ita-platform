@@ -29,7 +29,6 @@
 | EZ_PASSWORD                | No       | ez              |  |
 | PASSWORD_LIFE_TIME         | No       | 365             | Durata in giorni della password per amministratori e operatori: dopo questa data l'account resta attivo ma al primo login verra' richiesto il cambio password |
 | INACTIVE_USER_LIFE_TIME    | No       | 545             | Numero massimo di giorni dopo il quale in assenza di login l'account viene bloccato |
-| LOGS_PATH                  | No       | %kernel.logs_dir%/%kernel.environment%.log | |
 | FORMSERVER_PRIVATE_URL     | Yes      | http//formserver | URL of the formserver used by PHP Process to update forms |
 | FORMSERVER_PUBLIC_URL      | Yes      | http://formserver.localtest.me | URL of the formserver used by application users and operators to render forms
 | FORMSERVER_ADMIN_URL       | Yes      | http://formserver.localtest.me | URL of the formserver used by administrators to render forms
