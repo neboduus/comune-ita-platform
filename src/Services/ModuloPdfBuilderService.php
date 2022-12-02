@@ -270,9 +270,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $integration->setMimeType('application/pdf');
     }
 
+    $originalFileName = $this->generateFileName("Richiesta integrazione: {$integration->getId()}");
+
     $integration->setPayload($payload);
     $integration->setOwner($pratica->getUser());
-    $integration->setOriginalFilename($fileName);
+    $integration->setOriginalFilename($originalFileName);
     $integration->setDescription($integrationRequest->getMessage());
     $integration->setPratica($pratica);
 
@@ -327,12 +329,13 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $content = $this->renderForPraticaIntegrationAnswer($pratica, $integrationRequest, $messages, $cancel);
       $description = 'Risposta a richiesta integrazione: ' . $integrationRequest->getId();
     }
+    $description = $this->generateFileName($description);
 
     $fileName = uniqid() . '.pdf';
     $attachment = new RispostaIntegrazione();
     $attachment->setPayload($payload);
     $attachment->setOwner($pratica->getUser());
-    $attachment->setOriginalFilename($fileName);
+    $attachment->setOriginalFilename($description);
     $attachment->setDescription($description);
 
     $destinationDirectory = $this->getDestinationDirectoryFromContext($attachment);
