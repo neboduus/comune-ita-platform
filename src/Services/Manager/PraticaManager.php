@@ -43,6 +43,15 @@ use Symfony\Component\Validator\Exception\ValidatorException;
 class PraticaManager
 {
 
+  // Mappa una chiave "human redable" su quelle pessime usate da formio
+  const APPLICANT_KEYS = [
+    'name' => 'applicant.data.completename.data.name',
+    'surname' => 'applicant.data.completename.data.surname',
+    'email' => 'applicant.data.email_address',
+    'fiscal_code' => 'applicant.data.fiscal_code.data.fiscal_code'
+  ];
+
+  // Serve per mappare i dati dello schema con quelli dell'utente
   const APPLICATION_USER_MAP = [
     'applicant.completename.name' => 'getNome',
     'applicant.completename.surname' => 'getCognome',

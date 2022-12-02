@@ -12,6 +12,7 @@ use App\Entity\RispostaIntegrazioneRepository;
 use App\Entity\UserSession;
 use App\Model\Application;
 use App\Payment\GatewayCollection;
+use App\Services\Manager\PraticaManager;
 use App\Services\PraticaStatusService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -148,7 +149,7 @@ class ApplicationDto extends AbstractDto
         $application->setData($this->decorateDematerializedForms($pratica->getDematerializedForms(), $attachmentEndpointUrl, $version));
       }
     } else {
-      $application->setData(null);
+      $application->setData($this->decorateLegacyDematerializedForms($pratica));
     }
 
     // Backoffice form data
@@ -318,6 +319,21 @@ class ApplicationDto extends AbstractDto
       $integrations[]= $temp;
     }
     return $integrations;
+  }
+
+  /**
+   * @param Pratica $pratica
+   * @return array
+   */
+  private function decorateLegacyDematerializedForms(Pratica $pratica): array
+  {
+    $decoratedData = [
+      PraticaManager::APPLICANT_KEYS['name'] => $pratica->getRichiedenteNome(),
+      PraticaManager::APPLICANT_KEYS['surname'] => $pratica->getRichiedenteCognome(),
+      PraticaManager::APPLICANT_KEYS['email'] => $pratica->getRichiedenteEmail(),
+      PraticaManager::APPLICANT_KEYS['fiscal_code'] => $pratica->getRichiedenteCodiceFiscale(),
+    ];
+    return $decoratedData;
   }
 
   public function decorateDematerializedForms($data, $attachmentEndpointUrl = '', $version = 1)

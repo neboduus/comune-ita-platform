@@ -34,7 +34,7 @@
       el: "#compilationNotes",
       data: {
         compilationNotes: null,
-        endpointUrl: '{% if endpoint_prefix is defined %}/{{ endpoint_prefix }}{% endif %}/api/v1.0/user/{{ form.vars.data.id }}/notes'
+        endpointUrl: '/{{ prefix }}/api/v1.0/user/{{ form.vars.data.id }}/notes'
       },
       created: function () {
         var self = this;
