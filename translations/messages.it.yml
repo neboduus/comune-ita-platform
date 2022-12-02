@@ -547,8 +547,10 @@ pratica:
     integrazioni:
       alert: "È stata richiesta un'integrazione"
       button: 'Rispondi alla richiesta integrazione'
-    richiesta_integrazioni: 'Richiesta integrazioni'
-    risposte_integrazioni: 'Risposte integrazioni'
+    richiesta_integrazione: 'Richiesta di integrazione'
+    risposta_integrazione: 'Risposta a richiesta di integrazione'
+    integrazione_annullata: 'Richiesta di integrazione annullata'
+    integrazione_annullata_da: 'La richiesta di integrazioni è stata annullata da %operator_fullname%'
     allegato:
       file: 'Nome del file'
       descrizione: 'Descrizione'
@@ -1147,6 +1149,8 @@ operatori:
   esito: 'Esito'
   allegati: 'Allegati'
   note_interne: 'Note interne'
+  note_richiesta: 'Note di richiesta'
+  note_richiesta_del_giorno: 'Note di richiesta del %date%'
   importo: "Importo"
   pagamento: 'Pagamento'
   protocollo: 'Protocollo'
@@ -1325,6 +1329,7 @@ operatori:
 allegato:
   nome_file: 'Nome del file'
   descrizione_file: 'Descrizione del file'
+  hash_file: 'Hash del file'
   scarica_allegato: 'Scarica file'
   scarica_allegato_bozza: 'Scarica il file'
   scarica_allegato_in_attesa_di_protocollazione: 'Scarica file inviato alla protocollazione'

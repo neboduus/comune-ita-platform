@@ -1,31 +1,31 @@
 {% extends 'Pratiche/pdf/parts/base_logo.twig' %}
 
 {% block pdf_content %}
-  <h1>Richiesta di integrazione</h1>
+  <h1>{{ 'pratica.dettaglio.richiesta_integrazione'|trans }}</h1>
 
   <p>
-    <strong>Servizio</strong>:{{ pratica.servizio.fullName }}<br>
-    <strong>Richiedente</strong>: {{ pratica.user.fullName }}<br>
-    <strong>Numero pratica</strong>: {{ pratica.id }}<br>
+    <strong>{{ 'pratica.servizio'|trans }}</strong>:{{ pratica.servizio.fullName }}<br>
+    <strong>{{ 'pratica.dettaglio.richiedente' | trans }}</strong>: {{ pratica.user.fullName }}<br>
+    <strong>{{ 'pratica.numero' | trans }}</strong>: {{ pratica.id }}<br>
     {% if pratica.numeroProtocollo %}
-      <strong>Numero protocollo</strong>: {{ pratica.numeroProtocollo }}
+      <strong>{{ 'pratica.protocol_number' | trans }}</strong>: {{ pratica.numeroProtocollo }}
     {% endif %}
   </p>
 
   {# Richiesta integrazione #}
   {% if richiesta_integrazione.message %}
-    <h3>Note di richiesta</h3>
+    <h3>{{ 'operatori.note_richiesta' | trans }}</h3>
     {{ richiesta_integrazione.message|raw }}
   {% endif %}
 
   {# Allegati #}
-  <h3>Allegati</h3>
+  <h3>{{ 'operatori.allegati'|trans }}</h3>
   {% if attachments|length > 0 %}
     <table class="table">
       <thead>
       <tr>
-        <th>Nome del file</th>
-        <th>Hash del file</th>
+        <th>{{ 'allegato.nome_file' | trans }}</th>
+        <th>{{ 'allegato.hash_file' | trans }}</th>
       </tr>
       </thead>
       <tbody>
