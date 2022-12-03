@@ -67,6 +67,10 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         buttonSettings: {showCancel: false},
+        breadcrumbSettings: {
+          clickable: true
+        },
+        breadCrumb: {clickable: true},
         hooks: {
           beforeCancel: () => Form.handleBeforeSubmit(event)
         },
@@ -80,7 +84,7 @@ class Form {
         .then(function (form) {
 
           form.formReady.then(() => {
-            setTimeout(Form.disableBreadcrumbButton, 500);
+            Form.customBreadcrumbButton(form);
             setTimeout(Form.checkWizardNavCancelButton, 500);
             Form.createStepsMobile();
             Form.submissionForm = form
@@ -101,7 +105,7 @@ class Form {
 
           form.on('nextPage', function () {
             document.getElementById("formio").scrollIntoView();
-            setTimeout(Form.disableBreadcrumbButton, 500);
+            Form.customBreadcrumbButton(form)
             setTimeout(Form.checkWizardNavCancelButton, 500);
             Form.createStepsMobile();
             Form.saveDraft(form)
@@ -109,11 +113,15 @@ class Form {
           });
 
           form.on('prevPage', function () {
-            setTimeout(Form.disableBreadcrumbButton, 500);
+            Form.customBreadcrumbButton(form)
             setTimeout(Form.checkWizardNavCancelButton, 500);
             Form.createStepsMobile();
             Form.initDraftButton()
           });
+
+          form.on('pagesChanged', function () {
+            Form.customBreadcrumbButton(form)
+          })
 
           $('.btn-wizard-nav-cancel').on('click', function (e) {
             e.preventDefault()
@@ -168,6 +176,10 @@ class Form {
         language: $container.data('locale'),
         i18n: data,
         buttonSettings: {showCancel: false},
+        breadcrumbSettings: {
+          clickable: true
+        },
+        breadCrumb: {clickable: true},
         hooks: {
           beforeCancel: () => Form.handleBeforeSubmit(event)
         },
@@ -181,7 +193,6 @@ class Form {
 
         form.formReady.then(() => {
           setTimeout(disableApplicant, 1000);
-          setTimeout(Form.disableBreadcrumbButton, 500);
           Form.createStepsMobile();
           Form.submissionForm = form
           Form.initDraftButton()
@@ -200,10 +211,9 @@ class Form {
         }
 
 
-
         form.on('nextPage', function (e) {
           setTimeout(disableApplicant, 1000);
-          setTimeout(Form.disableBreadcrumbButton, 500);
+          Form.customBreadcrumbButton(form)
           setTimeout(Form.checkWizardNavCancelButton, 500);
           document.getElementById("formio").scrollIntoView();
           Form.createStepsMobile()
@@ -213,11 +223,15 @@ class Form {
 
         form.on('prevPage', function () {
           setTimeout(disableApplicant, 1000);
-          setTimeout(Form.disableBreadcrumbButton, 500);
+          Form.customBreadcrumbButton(form)
           setTimeout(Form.checkWizardNavCancelButton, 500);
           Form.createStepsMobile()
           Form.initDraftButton()
         });
+
+        form.on('pagesChanged', function () {
+          Form.customBreadcrumbButton(form)
+        })
 
         let realSubmitButton = $('.craue_formflow_button_class_next');
         form.nosubmit = true;
@@ -326,7 +340,7 @@ class Form {
         //renderMode: 'html'
       }).then(function (form) {
         form.formReady.then(() => {
-          setTimeout(Form.disableBreadcrumbButton, 500);
+          Form.customBreadcrumbButton(form);
           setTimeout(Form.checkWizardNavCancelButton, 500);
         });
       });
@@ -392,14 +406,17 @@ class Form {
     }
   }
 
-  //Funzione per disabilitare i pulsanti Breadcrumb per il form wizard
-  static disableBreadcrumbButton() {
-    const $breadcrumb = $('button.page-link');
-    if ($breadcrumb) {
-      $('.pagination li').css('cursor', 'default')
-      $breadcrumb.css('cursor', 'default')
-      $breadcrumb.attr('disabled', true)
-    }
+  static customBreadcrumbButton(form) {
+    // Handle click Breadcrumb Buttons
+    $('.info-progress-body.completed').on('click', function (event) {
+      event.preventDefault();
+      event.stopImmediatePropagation()
+      const indexPage = $( this ).data( "index" )
+      if(indexPage >= 0){
+        form.setPage(indexPage)
+        Form.customBreadcrumbButton(form)
+      }
+    })
   }
 
   //Funzione per aggiungere l'attributo type=button al pulsante "Annulla" se è visibile

@@ -5,8 +5,8 @@ export default function wizardHeader(ctx) {
 
   const options = ctx.panels.map((panel, index) => {
     return `<div class="info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-300 ${numberComponentsClass} ${ctx.currentPage === index ? 'step-active' : ''}
-            ${!ctx.instance.components[index].invalid && ctx.currentPage >= index ? 'completed' : ''}" data-wizard="header-${index}">
-     <div class="info-progress-body d-flex justify-content-between align-self-end align-items-end w-100 py-3" data-index="${index}" ref="${ctx.wizardKey}-link">
+            ${!ctx.instance.components[index].invalid && ctx.currentPage >= index ? 'completed cursor-pointer' : ''}" data-wizard="header-${index}">
+     <div class="info-progress-body d-flex justify-content-between align-self-end align-items-end w-100 py-3 ${!ctx.instance.components[index].invalid && ctx.currentPage >= index ? 'completed' : ''}" data-index="${index}" ref="${ctx.wizardKey}-link">
        <span class="d-block h-100 title-medium text-uppercase text-truncate" data-toggle="tooltip" title="${ctx.t(panel.title, {_userInput: true})}"> ${ctx.t(panel.title, {_userInput: true})}</span>
             ${!ctx.instance.components[index].invalid && ctx.currentPage >= index ?
       `<svg class="d-block icon icon-primary icon-sm" aria-hidden="true">
