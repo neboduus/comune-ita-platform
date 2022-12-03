@@ -1,5 +1,4 @@
-<div class="modal" tabindex="-1" role="dialog" id="modalNote" aria-labelledby="modalNoteTitle"
-       data-endpoint-url="/{{ prefix }}/api/v1.0/user/{{ form.vars.data.id }}/notes">
+<div class="modal" tabindex="-1" role="dialog" id="modalNote" aria-labelledby="modalNoteTitle" data-endpoint-url="{{ path('api_set_notes_for_pratica', {'pratica': pratica.id}) }}">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">

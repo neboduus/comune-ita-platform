@@ -148,7 +148,7 @@ parameters:
     plan: '%env(ANALYTICS_PLAN)%'
   google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
   google_tag_manager_key: '%env(GOOGLE_TAG_MANAGER_KEY)%'
-  signature_check_ws_url: '%env(SIGANTURE_CHECK_WS_URL)%'
+  signature_check_ws_url: '%env(SIGNATURE_CHECK_WS_URL)%'
   env(PREFIX): ''
   env(DB_DRIVER): pdo_pgsql
   env(DB_HOST): postgres
@@ -250,4 +250,4 @@ parameters:
   env(JWT_PASSPHRASE): stanzadelcittadino
   env(MAILER_URL): smtp://mailserver:1025
   env(GOOGLE_TAG_MANAGER_KEY): null
-  env(SIGANTURE_CHECK_WS_URL): null
+  env(SIGNATURE_CHECK_WS_URL): null

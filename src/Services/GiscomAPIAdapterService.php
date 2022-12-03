@@ -93,7 +93,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
     $giscomPratica = $this->mapper->map($pratica);
     $logContext = $this->mapper->map($pratica, false);
 
-    $this->logger->info("Updating (or Creating) pratica on Giscom side", $logContext);
+    $this->logger->info("Updating (or Creating) application on Giscom side: ", $logContext);
 
     $request = new Request(
       $method,
@@ -105,18 +105,16 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
     try {
       $response = $this->client->send($request);
 
-      $this->logger->debug('Giscom response: ', [$response->getBody()]);
+      $this->logger->info('Giscom response: ', [$response->getBody()]);
       $status = $response->getStatusCode();
 
       if ($status == 201 || $status == 204) {
         if ($status == 204) {
 
-
           if ($pratica->getStatus() !== Pratica::STATUS_COMPLETE && $pratica->getStatus() !== Pratica::STATUS_CANCELLED) {
             $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING_AFTER_INTEGRATION);
           }
-          $this->logger->debug('Correctly updated pratica on Giscom Side', $logContext);
-
+          $this->logger->info('Correctly updated pratica on Giscom Side', $pratica->getId());
 
         } else {
           $responseBody = json_decode($response->getBody(), true);
@@ -135,7 +133,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
 
           $this->statusService->setNewStatus($pratica, $mappedStatus, $statusChange);
 
-          $this->logger->debug('Correctly created pratica on Giscom Side', $logContext);
+          $this->logger->info('Correctly created pratica on Giscom Side', $pratica->getId());
 
           $this->askRelatedCFsForPraticaToGiscom($pratica);
         }
@@ -182,7 +180,6 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
   {
     $logContext = ['id' => $pratica->getId()];
 
-    $this->logger->debug('Asking related CFs for pratica on Giscom side', $logContext);
     $this->logger->info('Asking related CFs for pratica on Giscom side', $logContext);
 
     $request = new Request(
@@ -193,12 +190,10 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
     $response = $this->client->send($request);
 
     if ($response->getStatusCode() == 200) {
-      $this->logger->debug('Correctly retrieve cfs from Giscom Side', $logContext);
       $this->logger->info('Correctly retrieve cfs from Giscom Side', $logContext);
     } else {
       $this->logger->error('Error when retrieving cfs from Giscom Side, no action due manual cancellation by Giscom', $logContext);
       return;
-      //throw new \Exception("Error when retrieving cfs of pratica {$pratica->getId()} from Giscom Side");
     }
 
     $relatedCFs = json_decode($response->getBody());
