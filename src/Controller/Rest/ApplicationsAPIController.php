@@ -7,6 +7,7 @@ use App\Dto\ApplicationDto;
 use App\Entity\AllegatoOperatore;
 use App\Entity\CPSUser;
 use App\Entity\FormIO;
+use App\Entity\GiscomPratica;
 use App\Entity\Message as MessageEntity;
 use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
@@ -22,6 +23,7 @@ use App\Model\Transition;
 use App\Security\Voters\ApplicationVoter;
 use App\Services\FileService\AllegatoFileService;
 use App\Services\FormServerApiAdapterService;
+use App\Services\GiscomAPIAdapterServiceInterface;
 use App\Services\InstanceService;
 use App\Services\Manager\PraticaManager;
 use App\Services\ModuloPdfBuilderService;
@@ -31,7 +33,6 @@ use App\Utils\FormUtils;
 use App\Utils\StringUtils;
 use App\Utils\UploadedBase64File;
 use DateTime;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
@@ -159,6 +160,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @var PaymentService
    */
   private $paymentService;
+  /**
+   * @var GiscomAPIAdapterServiceInterface
+   */
+  private $giscomAPIAdapterService;
 
   /**
    * ApplicationsAPIController constructor.
@@ -173,6 +178,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param AllegatoFileService $fileService
    * @param ApplicationDto $applicationDto
    * @param PaymentService $paymentService
+   * @param GiscomAPIAdapterServiceInterface $giscomAPIAdapterService
    */
   public function __construct(
     EntityManagerInterface $em,
@@ -185,7 +191,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
     FormServerApiAdapterService $formServerService,
     AllegatoFileService $fileService,
     ApplicationDto $applicationDto,
-    PaymentService $paymentService
+    PaymentService $paymentService,
+    GiscomAPIAdapterServiceInterface $giscomAPIAdapterService
   ) {
     $this->em = $em;
     $this->is = $is;
@@ -199,6 +206,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->fileService = $fileService;
     $this->applicationDto = $applicationDto;
     $this->paymentService = $paymentService;
+    $this->giscomAPIAdapterService = $giscomAPIAdapterService;
   }
 
   /**
@@ -1277,7 +1285,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function patchApplicationAction($id, Request $request): View
+  public function patchApplicationAction($id, Request $request)
   {
 
     $repository = $this->em->getRepository('App\Entity\Pratica');
@@ -1299,11 +1307,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     // Todo: Passare alle transition prima possibile
     if ($application->getStatus() == Pratica::STATUS_REQUEST_INTEGRATION) {
-      $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationRequestAction', [
+      return $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationRequestAction', [
         'id' => $application->getId(),
       ]);
     } elseif ($application->getStatus() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
-      $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationAnswerAction', [
+      return $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationAnswerAction', [
         'id' => $application->getId(),
       ]);
     }
@@ -1353,6 +1361,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
       }
       if ($needChangeStateToCancelled) {
         $this->statusService->setNewStatus($application, Pratica::STATUS_CANCELLED);
+      }
+
+      // Invio a giscom delle pratiche legacy, serve per registry esterno. Può essere eliminata dopo aver eliminato le pratiche legacy
+      if ($application instanceof GiscomPratica) {
+        $this->giscomAPIAdapterService->sendPraticaToGiscom($application);
       }
 
     } catch (\Exception $e) {
@@ -1533,6 +1546,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $application->setNumeroProtocollo($data['protocol_number']);
       $application->setIdDocumentoProtocollo($data['protocol_document_id']);
       $this->statusService->setNewStatus($application, Pratica::STATUS_REGISTERED);
+
+      // Invio a giscom delle pratiche legacy, serve per registry esterno. Può essere eliminata dopo aver eliminato le pratiche legacy
+      if ($application instanceof GiscomPratica) {
+        $this->giscomAPIAdapterService->sendPraticaToGiscom($application);
+      }
 
     } catch (\Exception $e) {
       $data = [
@@ -1815,6 +1833,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $application->addAllegatoOperatore($allegato);
       }
       $this->praticaManager->finalize($application, $this->getUser());
+
+      // Invio a giscom delle pratiche legacy, serve per registry esterno. Può essere eliminata dopo aver eliminato le pratiche legacy
+      if ($application instanceof GiscomPratica) {
+        $this->giscomAPIAdapterService->sendPraticaToGiscom($application);
+      }
 
     } catch (\Exception $e) {
       $data = [
@@ -2227,7 +2250,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
           'title' => 'There was a validation error',
           'errors' => $errors,
         ];
-
         return $this->view($data, Response::HTTP_BAD_REQUEST);
       }
 
@@ -2241,7 +2263,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
         'description' => 'Contact technical support at support@opencontent.it',
       ];
       $this->logger->error($e->getMessage(), ['request' => $request]);
-
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
@@ -2344,6 +2365,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
       $data = $form->getData();
       $this->praticaManager->registerIntegrationAnswer($application, $this->getUser(), $data);
+
+      // Invio a giscom delle pratiche legacy, serve per registry esterno. Può essere eliminata dopo aver eliminato le pratiche legacy
+      if ($application instanceof GiscomPratica) {
+        $this->giscomAPIAdapterService->sendPraticaToGiscom($application);
+      }
 
     } catch (\Exception $e) {
       $data = [

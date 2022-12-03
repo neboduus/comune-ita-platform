@@ -34,7 +34,7 @@
       el: "#compilationNotes",
       data: {
         compilationNotes: null,
-        endpointUrl: '/{{ prefix }}/api/v1.0/user/{{ form.vars.data.id }}/notes'
+        endpointUrl: '{{ path('api_set_notes_for_pratica', {'pratica': pratica.id}) }}'
       },
       created: function () {
         var self = this;
@@ -118,11 +118,6 @@
           </div>
         </div>
 
-      {# Sezione pagamenti diveso da MyPay e Bollo #}
-      {% if pratica.paymentType is not null and pratica.paymentType != 'bollo' and pratica.paymentType != 'mypay' %}
-        {{ include('Pratiche/parts/_payment.twig') }}
-      {% endif %}
-
       {% if form.vars.id != 'pratica_payment_gateway' or pratica.servizio.isLegacy or (form.vars.id == 'pratica_payment_gateway' and form.vars.value.paymentType == 'bollo') and (pratica.statusName != 'STATUS_PAYMENT_PENDING' or pratica.servizio.isPaymentDeferred) %}
         <div class="mt-5">
           {% include '@CraueFormFlow/FormFlow/buttons.html.twig' %}
@@ -132,9 +127,7 @@
       {{ form_end(form) }}
     </div>
 
-    <div class="pt-5 pt-lg-2
-    {{ (currentStep.formType == "App\\Form\\Base\\SelectPaymentGatewayType" or
-      currentStep.formType == "App\\Form\\Base\\PaymentGatewayType") ? 'd-none' : 'col-lg-4' }}">
+    <div class="pt-5 pt-lg-2 col-lg-4">
       {% if form.vars.helper.guideText|length > 0 %}
         <div class="callout">
           <div class="callout-title">
@@ -149,26 +142,12 @@
         </div>
       {% endif %}
 
-      {% if is_granted('ROLE_USER') %}
-        <div class="d-none" id="save-draft-container">
-          <button id="save-draft" class="btn btn-outline-primary w-100"
-                  data-save-draft-url="{{ path('pratiche_draft', {'pratica': pratica}) }}">
-            <i class="fa fa-floppy-o" aria-hidden="true"></i> {{ 'buttons.draft'|trans }}
-          </button>
-          <small
-            class="save-draft-info w-100 mt-1 text-center text-info {% if pratica.dematerializedForms is not defined or pratica.dematerializedForms|length <= 0 %}d-none{% endif %}"><i
-              class="fa fa-clock-o" aria-hidden="true"></i> {{ 'buttons.last_save'|trans }}
-            <span>{{ pratica.updatedAt|date('U')|time_ago }}</span></small>
-        </div>
-      {% endif %}
-
       {# Info compilazione specificate nel servizio #}
       {{ include('Pratiche/parts/legacy/compilation_info_legacy.html.twig') }}
 
       {# Note compilazione per utente #}
       {{ include('Pratiche/parts/legacy/user_compilation_notes_legacy.html.twig') }}
 
-    </div>
     </div>
   </section>
 

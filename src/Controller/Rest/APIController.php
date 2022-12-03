@@ -90,8 +90,7 @@ class APIController extends AbstractFOSRestController
   }
 
   /**
-   * @Route("/user/{pratica}/notes",name="api_set_notes_for_pratica")
-   * @Method({"POST"})
+   * @Route("/user/{pratica}/notes",name="api_set_notes_for_pratica", methods={"POST"})
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -110,8 +109,7 @@ class APIController extends AbstractFOSRestController
   }
 
   /**
-   * @Route("/user/{pratica}/notes",name="api_get_notes_for_pratica")
-   * @Method({"GET"})
+   * @Route("/user/{pratica}/notes",name="api_get_notes_for_pratica", methods={"GET"})
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -120,61 +118,10 @@ class APIController extends AbstractFOSRestController
   {
     $user = $this->getUser();
     if ($pratica->getUser() !== $user) {
-      return new Response(null, Response::HTTP_NOT_FOUND);
+      return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
     return new Response($pratica->getUserCompilationNotes());
   }
 
-  /**
-   * @Route("/schedaInformativa/{servizio}/{ente}", name="ez_api_scheda_informativa_servizio_ente")
-   * @ParamConverter("servizio", options={"mapping": {"servizio": "slug"}})
-   * @ParamConverter("ente", options={"mapping": {"ente": "codiceMeccanografico"}})
-   *
-   * @param Request $request
-   * @param Servizio $servizio
-   * @param Ente $ente
-   *
-   * @return Response
-   */
-  public function putSchedaInformativaForServizioAndEnteAction(Request $request, Servizio $servizio, Ente $ente)
-  {
-    if (!$request->query->has(self::SCHEDA_INFORMATIVA_REMOTE_PARAMETER)) {
-      return new Response(null, Response::HTTP_BAD_REQUEST);
-    }
-
-    $schedaInformativa = json_decode(
-      file_get_contents($request->query->get(self::SCHEDA_INFORMATIVA_REMOTE_PARAMETER)),
-      true
-    );
-
-    if (!array_key_exists('data', $schedaInformativa) || !array_key_exists('metadata', $schedaInformativa)) {
-      return new Response(null, Response::HTTP_BAD_REQUEST);
-    }
-
-    $servizio->setSchedaInformativaPerEnte($schedaInformativa, $ente);
-    $this->getDoctrine()->getManager()->flush();
-
-    return new Response(null, Response::HTTP_NO_CONTENT);
-  }
-
-  /**
-   * @Route("/servizioTexts/{servizio}/{ente}/{step}", name="ez_api_testi_custom_servizio_ente")
-   * @ParamConverter("servizio", options={"mapping": {"servizio": "slug"}})
-   * @ParamConverter("ente", options={"mapping": {"ente": "codiceMeccanografico"}})
-   * @Method({"POST"})
-   * @param Request $request
-   * @param Servizio $servizio
-   * @param Ente $ente
-   *
-   * @return Response
-   */
-  public function putServizioSpecificTexts(Request $request, Servizio $servizio, Ente $ente, $step)
-  {
-    $content = $request->getContent();
-    $servizio->setCustomTextForServizioAndStep($step, $content);
-    $this->getDoctrine()->getManager()->flush();
-
-    return new Response(null, Response::HTTP_NO_CONTENT);
-  }
 }
