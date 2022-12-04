@@ -691,7 +691,7 @@ class Servizio implements Translatable
   /**
    * @return ArrayCollection
    */
-  public function getUserGroups(): ArrayCollection
+  public function getUserGroups(): Collection
   {
     return $this->userGroups;
   }

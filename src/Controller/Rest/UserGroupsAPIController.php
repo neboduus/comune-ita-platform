@@ -2,11 +2,14 @@
 
 namespace App\Controller\Rest;
 
+use App\Entity\Categoria;
+use App\Entity\OperatoreUser;
 use App\Entity\UserGroup;
 use App\Utils\FormUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
+use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -72,7 +75,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function getUserGroupsAction(Request $request)
+  public function getUserGroupsAction(Request $request): View
   {
     $result = $this->entityManager->getRepository('App\Entity\UserGroup')->findBy([], ['name' => 'asc']);
     return $this->view($result, Response::HTTP_OK);
@@ -111,7 +114,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
    * @param string $id
    * @return View
    */
-  public function getUserGroupAction(Request $request, $id)
+  public function getUserGroupAction(Request $request, $id): View
   {
     try {
       $repository = $this->getDoctrine()->getRepository('App\Entity\UserGroup');
@@ -176,14 +179,14 @@ class UserGroupsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postUserGroupAction(Request $request)
+  public function postUserGroupAction(Request $request): View
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
     $userGroup = new UserGroup();
-    $form = $this->createForm('App\Form\UserGroupType', $userGroup);
-    $this->processForm($request, $form);
+    $form = $this->createForm('App\Form\Api\UserGroupType', $userGroup);
 
+    $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
       $errors = FormUtils::getErrorsFromForm($form);
       $data = [
@@ -191,23 +194,15 @@ class UserGroupsAPIController extends AbstractFOSRestController
         'title' => 'There was a validation error',
         'errors' => $errors,
       ];
-
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
+
     try {
+      $this->checkRelations($userGroup, $request);
       $this->entityManager->persist($userGroup);
       $this->entityManager->flush();
-    } catch (\Exception $e){
-      $data = [
-        'type' => 'error',
-        'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
-      ];
-      $this->logger->error(
-        $e->getMessage(),
-        ['request' => $request]
-      );
-      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    } catch (\Exception $e) {
+      return $this->generateExceptionResponse($e, $request);
     }
 
     return $this->view($userGroup, Response::HTTP_CREATED);
@@ -269,7 +264,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function putUserGroupAction($id, Request $request)
+  public function putUserGroupAction($id, Request $request): View
   {
 
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
@@ -281,7 +276,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('App\Form\Api\UserGroupType', $userGroup);
+    $form = $this->createForm('App\Form\Admin\UserGroupType', $userGroup);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -295,23 +290,14 @@ class UserGroupsAPIController extends AbstractFOSRestController
     }
 
     try {
+      $this->checkRelations($userGroup, $request);
       $this->entityManager->persist($userGroup);
       $this->entityManager->flush();
     } catch (\Exception $e) {
-
-      $data = [
-        'type' => 'error',
-        'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
-      ];
-      $this->logger->error(
-        $e->getMessage(),
-        ['request' => $request]
-      );
-      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+      return $this->generateExceptionResponse($e, $request);
     }
 
-    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
+    return $this->view(["title" => "Object updated"], Response::HTTP_OK);
   }
 
 
@@ -374,13 +360,13 @@ class UserGroupsAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
 
     $repository = $this->getDoctrine()->getRepository('App\Entity\UserGroup');
-    $item = $repository->find($id);
+    $userGroup = $repository->find($id);
 
-    if (!$item) {
+    if (!$userGroup) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('App\Form\Api\UserGroupType', $item);
+    $form = $this->createForm('App\Form\Admin\UserGroupType', $userGroup);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -394,23 +380,14 @@ class UserGroupsAPIController extends AbstractFOSRestController
     }
 
     try {
-      $this->entityManager->persist($item);
+      $this->checkRelations($userGroup, $request);
+      $this->entityManager->persist($userGroup);
       $this->entityManager->flush();
     } catch (\Exception $e) {
-
-      $data = [
-        'type' => 'error',
-        'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it'
-      ];
-      $this->logger->error(
-        $e->getMessage(),
-        ['request' => $request]
-      );
-      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+      return $this->generateExceptionResponse($e, $request);
     }
 
-    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
+    return $this->view(["title" => "Object updated"], Response::HTTP_OK);
   }
 
 
@@ -430,11 +407,10 @@ class UserGroupsAPIController extends AbstractFOSRestController
    *
    * @OA\Tag(name="user-groups")
    *
-   * @Method("DELETE")
    * @param $id
    * @return View
    */
-  public function deleteUserGroupAction($id)
+  public function deleteUserGroupAction($id): View
   {
     $this->denyAccessUnlessGranted(['ROLE_ADMIN' ]);
     $item = $this->getDoctrine()->getRepository('App\Entity\UserGroup')->find($id);
@@ -442,18 +418,63 @@ class UserGroupsAPIController extends AbstractFOSRestController
       $this->entityManager->remove($item);
       $this->entityManager->flush();
     }
-    return $this->view(null, Response::HTTP_NO_CONTENT);
+    return $this->view(["title" => "Object deleted"], Response::HTTP_OK);
   }
 
   /**
    * @param Request $request
    * @param FormInterface $form
+   * @return void
    */
-  private function processForm(Request $request, FormInterface $form)
+  private function processForm(Request $request, FormInterface $form): void
   {
     $data = json_decode($request->getContent(), true);
 
     $clearMissing = $request->getMethod() != 'PATCH';
     $form->submit($data, $clearMissing);
   }
+
+  /**
+   * @param UserGroup $userGroup
+   * @param Request $request
+   * @return void
+   */
+  private function checkRelations(UserGroup &$userGroup, Request $request): void
+  {
+    if ($request->request->has('topic_id')) {
+      $category = $this->entityManager->getRepository('App\Entity\Categoria')->find($request->request->get('topic_id'));
+      if (!$category instanceof Categoria) {
+        throw new InvalidArgumentException("Category does not exist");
+      }
+      $userGroup->setTopic($category);
+    }
+
+    if ($request->request->has('manager_id')) {
+      $manager = $this->entityManager->getRepository('App\Entity\OperatoreUser')->find($request->request->get('manager_id'));
+      if (!$manager instanceof OperatoreUser) {
+        throw new InvalidArgumentException("Manager does not exist");
+      }
+      $userGroup->setManager($manager);
+    }
+  }
+
+  private function generateExceptionResponse(\Exception $e, Request $request): View
+  {
+    if  ( $e instanceof InvalidArgumentException ) {
+      $data = [
+        'type' => 'validation_error',
+        'title' => 'There was a validation error',
+        'errors' => $e->getMessage(),
+      ];
+    } else {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it'
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+    }
+    return $this->view($data, Response::HTTP_BAD_REQUEST);
+  }
+
 }

@@ -126,6 +126,7 @@ servizio:
   copertura_helper: "Geographical coverage - (if more than one enter the values ​​separated by commas)"
   accedere: "Service Login"
   casi_particolari: "Specific cases"
+  contatti: "Contacts"
   maggiori_info: "More info"
   in_evidenza: "In evidence?"
   info_compilazione: "Information displayed when filling out the service"
@@ -277,6 +278,7 @@ gruppo_di_servizi:
   copertura_helper: "Geographical coverage - (if more than one enter the values ​​separated by commas)"
   accedere: "Service Login"
   casi_particolari: "Specific cases"
+  contatti: "Contacts"
   maggiori_info: "More info"
   in_evidenza: "In evidence?"
   protocolla_in_fascicolo: "Register within the same dossier?"
@@ -2963,3 +2965,7 @@ user_group:
   delete_success: 'Office successfully deleted'
   delete_error: 'Unable to delete the office, there are services and operators connected'
   delete_popup: "Are you sure to proceed? The office will be permanently deleted."
+contact_point:
+  title: 'Contact Point'
+  contact_point_name: 'Name'
+  phone_number: 'Phone number'

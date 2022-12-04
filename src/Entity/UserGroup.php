@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\Translatable\Translatable;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
@@ -21,6 +22,12 @@ class UserGroup implements Translatable
 {
 
   /**
+   * Hook timestampable behavior
+   * updates createdAt, updatedAt fields
+   */
+  use TimestampableEntity;
+
+  /**
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @Serializer\Type("string")
@@ -35,7 +42,7 @@ class UserGroup implements Translatable
    * @ORM\Column(type="string", length=255)
    * @Serializer\Type("string")
    * @Assert\NotBlank(message="user_group.name.not_blank")
-   * @Assert\NotNull()
+   * @Assert\Length(max="255")
    * @OA\Property(description="UserGroup name")
    * @Groups({"read", "write"})
    */
@@ -51,6 +58,7 @@ class UserGroup implements Translatable
    * @var string
    * @Gedmo\Translatable
    * @ORM\Column(type="string", length=255, nullable=true)
+   * @Assert\Length(max="255")
    * @Serializer\Type("string")
    * @OA\Property(description="UserGroup short description")
    * @Groups({"read", "write"})
@@ -99,6 +107,14 @@ class UserGroup implements Translatable
    */
   private $users;
 
+  /**
+   * @var ContactPoint
+   * @ORM\ManyToOne(targetEntity=ContactPoint::class, cascade={"persist", "remove"})
+   * @OA\Property(property="core_contact_point", description="User Group's Core Contact Point")
+   * @Groups({"read", "write"})
+   */
+  private $coreContactPoint;
+
   public function __construct()
   {
     if (!$this->id) {
@@ -142,33 +158,49 @@ class UserGroup implements Translatable
   }
 
   /**
-   * @return mixed
+   * @return Categoria|null
    */
-  public function getTopic()
+  public function getTopic(): ?Categoria
   {
     return $this->topic;
   }
 
   /**
-   * @param mixed $topic
+   * @param Categoria|null $topic
+   * @return void
    */
-  public function setTopic($topic): void
+  public function setTopic(?Categoria $topic): void
   {
     $this->topic = $topic;
   }
 
   /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("topic_id")
+   * @OA\Property(description="UserGroup topic id (uuid)")
+   * @Groups({"read", "write"})
+   */
+  public function getTopicId()
+  {
+    if ($this->topic instanceof Categoria) {
+      return $this->topic->getId();
+    }
+    return null;
+  }
+
+  /**
    * @return string
    */
-  public function getShortDescription(): string
+  public function getShortDescription(): ?string
   {
     return $this->shortDescription;
   }
 
   /**
-   * @param string $shortDescription
+   * @param string|null $shortDescription
    */
-  public function setShortDescription(string $shortDescription): void
+  public function setShortDescription(?string $shortDescription): void
   {
     $this->shortDescription = $shortDescription;
   }
@@ -176,15 +208,15 @@ class UserGroup implements Translatable
   /**
    * @return string
    */
-  public function getMainFunction(): string
+  public function getMainFunction(): ?string
   {
     return $this->mainFunction;
   }
 
   /**
-   * @param string $mainFunction
+   * @param string|null $mainFunction
    */
-  public function setMainFunction(string $mainFunction): void
+  public function setMainFunction(?string $mainFunction): void
   {
     $this->mainFunction = $mainFunction;
   }
@@ -192,7 +224,7 @@ class UserGroup implements Translatable
   /**
    * @return mixed
    */
-  public function getManager()
+  public function getManager(): ?OperatoreUser
   {
     return $this->manager;
   }
@@ -200,23 +232,38 @@ class UserGroup implements Translatable
   /**
    * @param mixed $manager
    */
-  public function setManager($manager): void
+  public function setManager(?OperatoreUser $manager): void
   {
     $this->manager = $manager;
   }
 
   /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("manager_id")
+   * @OA\Property(description="UserGroup manager id (uuid)")
+   * @Groups({"read", "write"})
+   */
+  public function getManagerId()
+  {
+    if ($this->manager instanceof OperatoreUser) {
+      return $this->manager->getId();
+    }
+    return null;
+  }
+
+  /**
    * @return string
    */
-  public function getMoreInfo(): string
+  public function getMoreInfo(): ?string
   {
     return $this->moreInfo;
   }
 
   /**
-   * @param string $moreInfo
+   * @param string|null $moreInfo
    */
-  public function setMoreInfo(string $moreInfo): void
+  public function setMoreInfo(?string $moreInfo): void
   {
     $this->moreInfo = $moreInfo;
   }
@@ -235,6 +282,18 @@ class UserGroup implements Translatable
   public function setUsers(?Collection $users): void
   {
     $this->users = $users;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("integer")
+   * @Serializer\SerializedName("users_count")
+   * @OA\Property(description="Users count")
+   * @Groups({"read"})
+   */
+  public function getUsersCount(): int
+  {
+    return $this->users->count();
   }
 
   public function addUser(OperatoreUser $user): self
@@ -269,6 +328,18 @@ class UserGroup implements Translatable
     $this->services = $services;
   }
 
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("integer")
+   * @Serializer\SerializedName("services_count")
+   * @OA\Property(description="Services count")
+   * @Groups({"read"})
+   */
+  public function getServicesCount(): int
+  {
+    return $this->services->count();
+  }
+
   public function addService(Servizio $service): self
   {
     if (!$this->services->contains($service)) {
@@ -283,5 +354,17 @@ class UserGroup implements Translatable
     $this->services->removeElement($service);
 
     return $this;
+  }
+
+  public function getCoreContactPoint(): ?ContactPoint
+  {
+      return $this->coreContactPoint;
+  }
+
+  public function setCoreContactPoint(?ContactPoint $coreContactPoint): self
+  {
+      $this->coreContactPoint = $coreContactPoint;
+
+      return $this;
   }
 }

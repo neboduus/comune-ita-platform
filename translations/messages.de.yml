@@ -140,6 +140,7 @@ servizio:
   copertura_helper: "Geografische Abdeckung"
   accedere: "Hier geht's zum Online-Dienst"
   casi_particolari: "Sonderfälle"
+  contatti: ""
   maggiori_info: "Nähere Informationen"
   in_evidenza: "Hervorheben?"
   # "compilazione" nel senso di  ...."elaborazione" del servizio?
@@ -301,6 +302,7 @@ gruppo_di_servizi:
   copertura_helper: "Geografische Abdeckung"
   accedere: "Hier geht's zum Online-Dienst"
   casi_particolari: "Sonderfälle"
+  contatti: ""
   maggiori_info: "Nähere Informationen"
   in_evidenza: "Hervorheben?"
   protocolla_in_fascicolo: "BACKOFFICE"
@@ -3033,3 +3035,7 @@ user_group:
   delete_success: ''
   delete_error: ''
   delete_popup: 'Sind Sie sicher, dass Sie fortfahren möchten? Die Büro wird endgültig gelöscht.'
+contact_point:
+  title: 'Kontaktpunkt'
+  contact_point_name: 'Titel'
+  phone_number: 'Telefonnummer'

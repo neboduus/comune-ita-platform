@@ -268,6 +268,7 @@ servizio:
   book_appointment_description: "Oppure, prenota un appuntamento presso l'ufficio competente."
   book_appointment_action: 'Prenota appuntamento'
   casi_particolari: "Casi particolari"
+  contatti: "Contatti"
   maggiori_info: "Ulteriori informazioni"
   times_and_deadlines: "Tempi e scadenze"
   in_evidenza: "In evidenza?"
@@ -380,6 +381,7 @@ gruppo_di_servizi:
   copertura_helper: "Copertura geografica - (se più di uno inserire i valori separati da virgola)"
   accedere: "Accedere al servizio"
   casi_particolari: "Casi particolari"
+  contatti: "Contatti"
   maggiori_info: "Ulteriori informazioni"
   servizi_correlati: "Servizi correlati"
   in_evidenza: "In evidenza?"
@@ -2971,6 +2973,7 @@ user_group:
   manager: 'Responsabile'
   more_info: 'Maggiori informazioni'
   users: "Operatori"
+  core_contact_point: "Punto di contatto principale"
   services: "Servizi"
   manager_not_in_users: "Il responsabile deve essere tra gli utenti dell'ufficio"
   create: 'Crea nuovo ufficio'
@@ -2978,3 +2981,7 @@ user_group:
   delete_success: 'Ufficio eliminato correttamente'
   delete_error: "Impossibile eliminare l'ufficio, ci sono servizi e operatori collegati"
   delete_popup: "Sei sicuro di procedere? L'ufficio verrà eliminato definitivamente."
+contact_point:
+  title: 'Punti di Contatto'
+  contact_point_name: 'Nome'
+  phone_number: 'Numero di telefono'

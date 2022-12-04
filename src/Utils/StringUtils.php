@@ -175,4 +175,29 @@ class StringUtils
 
     return $result;
   }
+
+  public static function generateInitialsAvatar(string $string, string $size = 'xs', string $color = ''): string
+  {
+    $availableColors = ['', 'primary', 'secondary', 'green', 'orange', 'red'];
+
+    $words = \explode(' ', $string);
+    $words = array_filter($words, function($word) {
+      return $word!=='' && $word !== ',';
+    });
+
+    if(!$words) {
+      return '';
+    }
+
+    // get second letter
+    $secondLetter = isset($words[1]) ? mb_strtoupper(trim(mb_substr($words[1], 0, 1, 'UTF-8'))) : '';
+    // get first letter
+    $firstLetter = mb_strtoupper(trim(mb_substr($words[0], 0, 1, 'UTF-8')));
+
+    if (!in_array($color, $availableColors)) {
+      $color = $availableColors[array_rand($availableColors, 1)];
+    }
+
+    return '<div class="avatar avatar-'.$color.' size-'.$size.'"><p aria-hidden="true">'. $firstLetter . $secondLetter .'</p><span class="sr-only">'. $string .'</span></div>';
+  }
 }
