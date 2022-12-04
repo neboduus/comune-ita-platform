@@ -118,14 +118,8 @@ class RequestIntegration {
     });
 
     this.els.$triggerBtn.on('click', (e) => {
-      Swal.fire({
-        icon: 'success',
-        title: 'Richiesta integrazione annullata correttamente',
-        text: 'Attendere che la pagina venga ricaricata.',
-        //timer: 1500
-      })
-      /*e.preventDefault();
-      this.showDialog();*/
+      e.preventDefault();
+      this.showDialog();
     });
 
     this.els.$cancelBtn.on('click', (e) => {
