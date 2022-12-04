@@ -1964,11 +1964,6 @@
   resolved "https://registry.yarnpkg.com/@splidejs/splide/-/splide-3.6.12.tgz#9b6bede5c99140fd06754990c91e474374566c30"
   integrity sha512-ggOUAuSxjWuxxL0IQEZcux26KByfKWfYM2HYmvDBdxkXc5evVW+xuECO+3iuciyrJpgcbYTr4hn0cHfbNlYIeA==
 
-"@sweetalert2/theme-bootstrap-4@5.0.7":
-  version "5.0.7"
-  resolved "https://registry.yarnpkg.com/@sweetalert2/theme-bootstrap-4/-/theme-bootstrap-4-5.0.7.tgz#46a0dd4bd13fb2b9384daaf05dfb1c123a8cf5e6"
-  integrity sha512-Y20yvIl9lkcgEZgY7vUpyvd9rZDrxk+bP390v3ht/TQ0xTahzOySqkfutrtr8pAUFrunvFsxLW///Plr0xXuhA==
-
 "@symfony/webpack-encore@1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@symfony/webpack-encore/-/webpack-encore-1.2.0.tgz#72bc9e86e8601ee1381f8b8d4e6b66449f177e16"

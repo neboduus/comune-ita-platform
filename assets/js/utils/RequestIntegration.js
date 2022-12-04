@@ -63,6 +63,7 @@ class RequestIntegration {
 
   static submitIntegration() {
     const self = this;
+
     let data = this.getSelectedMessages();
     self.els.$submitBtn.html('<i class="fa fa-circle-o-notch fa-spin fa-fw"></i> Salvataggio...');
 
@@ -112,18 +113,29 @@ class RequestIntegration {
     }
 
     this.els.$triggerCancelBtn.on('click', (e) => {
+      e.preventDefault();
       this.cancelIntegration();
     });
 
     this.els.$triggerBtn.on('click', (e) => {
-      this.showDialog();
+      Swal.fire({
+        icon: 'success',
+        title: 'Richiesta integrazione annullata correttamente',
+        text: 'Attendere che la pagina venga ricaricata.',
+        //timer: 1500
+      })
+      /*e.preventDefault();
+      this.showDialog();*/
     });
 
     this.els.$cancelBtn.on('click', (e) => {
+      e.preventDefault();
       this.hideDialog();
     });
 
     this.els.$submitBtn.on('click', (e) => {
+      e.preventDefault();
+      $(e.currentTarget).prop('disabled', true);
       this.submitIntegration('hide');
     });
   }
