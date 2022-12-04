@@ -41,129 +41,17 @@
               <div>
                 <div class="mt-3">
                   <a href="{{ path('service_access', {'servizio': servizio.slug}) }}"
-                     class="btn btn-primary mt-2 font-weight-bold">
+                     class="btn btn-primary mt-2">
                     <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
                   </a>
                 </div>
-                {% if servizio.enti|length > 1 %}
-                  <div class="well well-sm text-left"><strong>{{ 'servizio.enti_coinvolti'|trans }}
-                      :</strong>
-                    <ul class="list-unstyled">
-                      {% for ente in servizio.enti %}
-                        <li>
-                          <a href="{{ ente.siteUrl }}">
-                            <small>{{ ente.name }}</small>
-                          </a>
-                        </li>
-                      {% endfor %}
-                    </ul>
-                  </div>
-                {% endif %}
-              </div>
-            {% endif %}
-            {% if servizio.additionalData and servizio.additionalData.urlModuloPrincipale is defined %}
-              <br/>
-              <div class="alert alert-info">
-                <p>
-                  {# <a href="{{ servizio.additionalData.urlModuloPrincipale }}" download><b>Scarica il modulo da
-                  compilare</b></a><br/> #}
-                  <a href="{{ servizio.additionalData.urlModuloPrincipale }}" download><b>Questo è il modulo
-                      principale del servizio</b></a> e andrà compilato e caricato quando il sistema lo
-                  chiederà.
-                </p>
               </div>
             {% endif %}
           </div>
+
           <div class="col-lg-3 offset-lg-1 mt-5 mt-lg-0">
-            <div class="dropdown d-inline">
-              <button
-                class="btn btn-dropdown dropdown-toggle text-decoration-underline d-inline-flex align-items-center"
-                type="button" id="shareActions" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <svg class="icon">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-share"></use>
-                </svg>
-                <small>{{ 'servizio.condividi' | trans }}</small>
-              </button>
-              <div class="dropdown-menu shadow-lg" aria-labelledby="shareActions">
-                <div class="link-list-wrapper">
-                  <ul class="link-list" role="menu" data-element="page-index">
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="https://facebook.com/sharer/sharer.php?u={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
-                         target="_blank" rel="noopener" aria-label="Share on Facebook">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-facebook"></use>
-                        </svg>
-                        <span>Facebook</span>
-                      </a>
-                    </li>
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="https://twitter.com/intent/tweet/?text={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
-                         target="_blank" rel="noopener" aria-label="Share on Twitter">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-twitter"></use>
-                        </svg>
-                        <span>Twitter</span>
-                      </a>
-                    </li>
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
-                         target="_blank" rel="noopener">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-linkedin"></use>
-                        </svg>
-                        <span>Linkedin</span>
-                      </a>
-                    </li>
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="whatsapp://send?text={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
-                         target="_blank" rel="noopener" aria-label="Share on Whatsapp">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-whatsapp"></use>
-                        </svg>
-                        <span>Whatsapp</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown d-inline">
-              <button
-                class="btn btn-dropdown dropdown-toggle text-decoration-underline d-inline-flex align-items-center"
-                type="button" id="viewActions" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <svg class="icon">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-items"></use>
-                </svg>
-                <small>{{ 'servizio.azioni' | trans }}</small>
-              </button>
-              <div class="dropdown-menu shadow-lg" aria-labelledby="viewActions">
-                <div class="link-list-wrapper">
-                  <ul class="link-list" role="menu">
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="{{ absolute_url(path('service_api_get', { 'id': servizio.id })) }}"
-                         target="_blank" rel="noopener" aria-label="{{ 'servizio.machine_readable'|trans }}">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-code-circle"></use>
-                        </svg>
-                        {{ 'servizio.machine_readable'|trans }}
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            {# Condividi #}
+            {{ include('Servizi/parts/_share.html.twig', {'item': servizio, 'api_route': 'service_api_get'})}}
           </div>
         </div>
       </div>
@@ -172,13 +60,14 @@
   </div>
   <div class="container">
     <div class="row row-column-menu-left pb-4">
-      <aside class="col-12 col-lg-3 mb-4 border-right" style="position: relative;">
+      <aside class="col-12 col-lg-3 mb-4 border-right">
         <div class="sticky-wrapper navbar-wrapper">
           <nav class="navbar it-navscroll-wrapper it-top-navscroll navbar-expand-lg">
             <button class="custom-navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false"
                     aria-label="Toggle navigation" data-target="#navbarNav">
               <span class="it-list"></span>{{ 'servizio.indice' | trans }}
             </button>
+
             <div class="navbar-collapsable" id="navbarNav">
               <div class="overlay"></div>
               <div class="close-div sr-only">
@@ -297,7 +186,7 @@
             </section>
           {% endif %}
           {% if not servizio.whatYouNeed|isEmpty %}
-            <section class="it-page-section mb-4 bg-light p-3" id="what-you-need">
+            <section class="it-page-section mb-4 bg-aliceblue p-3" id="what-you-need">
               <h2 class="title mb-3">{{ 'servizio.what_you_need' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
               {{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
@@ -349,7 +238,9 @@
               </div>
             </section>
           {% endif %}
-          <section class="it-page-section mb-4 bg-light p-4" id="howto">
+
+          {# Accedi al servizio #}
+          <section class="it-page-section mb-4 bg-aliceblue p-4" id="howto">
             <h2 class="title mb-3">{{ 'servizio.accedere' | trans }}</h2>
             {% if not servizio.howto|isEmpty %}
               <div class="rich-text text-serif text-paragraph">
@@ -358,7 +249,7 @@
             {% endif %}
             {% if can_access %}
               <div class="mt-3">
-                  <a href="{{ path('service_access', {'servizio': servizio.slug}) }}" class="btn btn-primary mt-2 font-weight-bold">
+                  <a href="{{ path('service_access', {'servizio': servizio.slug}) }}" class="btn btn-primary mt-2 ">
                     <span>{{ handler.callToActionText|trans({'%name%':null}) }}</span>
                   </a>
               </div>
@@ -372,6 +263,8 @@
               </div>
             {% endif %}
           </section>
+
+
           {% if not servizio.moreInfo|isEmpty %}
             <section class="it-page-section mb-4" id="more_info">
               <h2 class="title mb-3">{{ 'servizio.maggiori_info' | trans }}</h2>
@@ -412,9 +305,14 @@
               </div>
             </section>
           {% endif %}
+
+          {# Contatti #}
           <section class="it-page-section mb-4" id="contacts">
+
+            {{ include('Servizi/parts/_userGroupsContacts.html.twig', {'item': servizio})}}
+
             <div class="col-12 mb-3">
-              <span class="text-paragraph-small">{{ 'search.topics' | trans }}:</span>
+              <span class="text-paragraph-small small">{{ 'search.topics' | trans }}:</span>
               {% if servizio.topics.name is defined %}
                 <div class="d-flex flex-wrap mt-2 mb-4">
                   <div>

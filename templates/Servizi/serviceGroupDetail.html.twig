@@ -18,100 +18,13 @@
             <div class="mt-3">
               {% for sharedService in servizio.getSharedServices %}
                 <a href="{{ path('service_access', {'servizio': sharedService.slug}) }}"
-                   class="btn btn-primary mt-2 font-weight-bold">{{ sharedService.name }}</a>
+                   class="btn btn-primary mt-2">{{ sharedService.name }}</a>
               {% endfor %}
             </div>
           </div>
           <div class="col-lg-3 offset-lg-1 mt-5 mt-lg-0">
-            <div class="dropdown d-inline">
-              <button
-                class="btn btn-dropdown dropdown-toggle text-decoration-underline d-inline-flex align-items-center"
-                type="button" id="shareActions" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <svg class="icon" aria-hidden="true">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-share"></use>
-                </svg>
-                <small>{{ 'servizio.condividi' | trans }}</small>
-              </button>
-              <div class="dropdown-menu shadow-lg" aria-labelledby="shareActions">
-                <div class="link-list-wrapper">
-                  <ul class="link-list" role="menu" data-element="page-index">
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="https://facebook.com/sharer/sharer.php?u={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
-                         target="_blank" rel="noopener" aria-label="Share on Facebook">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-facebook"></use>
-                        </svg>
-                        <span>Facebook</span>
-                      </a>
-                    </li>
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="https://twitter.com/intent/tweet/?text={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
-                         target="_blank" rel="noopener" aria-label="Share on Twitter">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-twitter"></use>
-                        </svg>
-                        <span>Twitter</span>
-                      </a>
-                    </li>
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="https://www.linkedin.com/shareArticle?mini=true&amp;url={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
-                         target="_blank" rel="noopener">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-linkedin"></use>
-                        </svg>
-                        <span>Linkedin</span>
-                      </a>
-                    </li>
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="whatsapp://send?text={{ app.request.schemeAndHttpHost ~ app.request.pathInfo | url_encode }}"
-                         target="_blank" rel="noopener" aria-label="Share on Whatsapp">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-whatsapp"></use>
-                        </svg>
-                        <span>Whatsapp</span>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div class="dropdown d-inline">
-              <button
-                class="btn btn-dropdown dropdown-toggle text-decoration-underline d-inline-flex align-items-center"
-                type="button" id="viewActions" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                <svg class="icon">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-items"></use>
-                </svg>
-                <small>{{ 'servizio.azioni' | trans }}</small>
-              </button>
-              <div class="dropdown-menu shadow-lg" aria-labelledby="viewActions">
-                <div class="link-list-wrapper">
-                  <ul class="link-list" role="menu">
-                    <li role="none">
-                      <a class="list-item" role="menuitem"
-                         href="{{ absolute_url(path('service_group_api_get', { 'id': servizio.id })) }}"
-                         target="_blank" rel="noopener" aria-label="{{ 'servizio.machine_readable'|trans }}">
-                        <svg class="icon">
-                          <use
-                            xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-code-circle"></use>
-                        </svg>
-                        {{ 'servizio.machine_readable'|trans }}
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
+            {# Condividi #}
+            {{ include('Servizi/parts/_share.html.twig', {'item': servizio, 'api_route': 'service_group_api_get'})}}
           </div>
         </div>
       </div>
@@ -317,7 +230,7 @@
             <div class="mt-3">
               {% for sharedService in servizio.getSharedServices %}
                 <a href="{{ path('service_access', {'servizio': sharedService.slug}) }}"
-                   class="btn btn-primary mt-2 font-weight-bold">{{ sharedService.name }}</a>
+                   class="btn btn-primary mt-2">{{ sharedService.name }}</a>
               {% endfor %}
             </div>
           </section>

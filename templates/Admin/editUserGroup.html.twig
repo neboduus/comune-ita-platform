@@ -1,4 +1,5 @@
 {% extends 'Default/index.html.twig' %}
+
 {% block main_content %}
 <section id="intro" class="container px-4 my-4">
   <div class="row">
@@ -7,12 +8,15 @@
     </div>
 
     <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
-      {{ form_start(form) }}
+      {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
       {{ form_errors(form) }}
-      <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <ul class="nav nav-tabs" id="userGroupTab" role="tablist">
         <li class="nav-item"><a class="nav-link active" id="default-settings-tab" data-toggle="tab"
                                 href="#default-settings" role="tab" aria-controls="default-settings-tab"
                                 aria-selected="true">{{ 'user_group.title'|trans }}</a></li>
+        <li class="nav-item"><a class="nav-link" id="core-contact-point-tab" data-toggle="tab" href="#core-contact-point" role="tab"
+                                aria-controls="core-contact-point-tab"
+                                aria-selected="false">{{ 'contact_point.title'|trans }}</a></li>
         <li class="nav-item"><a class="nav-link" id="operator-tab" data-toggle="tab" href="#operator" role="tab"
                                 aria-controls="operator-tab"
                                 aria-selected="false">{{ 'user_group.users'|trans }}</a></li>
@@ -20,14 +24,38 @@
                                 aria-controls="service-tab"
                                 aria-selected="false">{{ 'user_group.services'|trans }}</a></li>
       </ul>
-      <div class="tab-content" id="myTabContent">
+      <div class="tab-content" id="userGroupTabContent">
         <div class="tab-pane p-3 fade show active" id="default-settings" role="tabpanel"
              aria-labelledby="default-settings-tab">
-          {{ form_row(form.name) }}
+          {{ form_widget(form.name) }}
           {{ form_row(form.shortDescription) }}
           {{ form_row(form.topic) }}
           {{ form_row(form.mainFunction) }}
           {{ form_row(form.moreInfo) }}
+        </div>
+
+        <div class="tab-pane p-3 fade" id="core-contact-point" role="tabpanel" aria-labelledby="core-contact-point-tab">
+
+          {#{ form_row(form.selectExistingContactPoint) }}
+          <div id="existing-core-contact-point">
+            {{ form_row(form.existingCoreContactPoint) }}
+          </div>#}
+          <fieldset>
+            {{ form_label(form.coreContactPoint) }}
+            {{ form_row(form.coreContactPoint.name) }}
+              <div class="row">
+                <div class="col-md-6">{{ form_row(form.coreContactPoint.email) }}</div>
+                <div class="col-md-6">{{ form_row(form.coreContactPoint.pec) }}</div>
+              </div>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-6">{{ form_row(form.coreContactPoint.phoneNumber) }}</div>
+                <div class="col-md-6">{{ form_row(form.coreContactPoint.url) }}</div>
+              </div>
+            </div>
+          </fieldset>
+
+
         </div>
 
         <div class="tab-pane p-3 fade" id="operator" role="tabpanel" aria-labelledby="operator-tab">

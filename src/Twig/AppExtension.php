@@ -15,6 +15,7 @@ class AppExtension  extends AbstractExtension
   {
     return [
       new TwigFunction('staticCall', [$this, 'staticCall']),
+      new TwigFunction('generateInitialsAvatar', [$this, 'generateInitialsAvatar']),
     ];
   }
 
@@ -63,6 +64,18 @@ class AppExtension  extends AbstractExtension
   public function isEmpty($string)
   {
     return strlen(strip_tags(trim($string))) == 0;
+  }
+
+  /**
+   * Generate an initials avatar from the string passed
+   * @param $string
+   * @param string $size
+   * @param string $color
+   * @return string
+   */
+  public function generateInitialsAvatar(string $string, string $size = 'xs', string $color = ''): string
+  {
+    return StringUtils::generateInitialsAvatar($string, $size, $color);
   }
 
   /**

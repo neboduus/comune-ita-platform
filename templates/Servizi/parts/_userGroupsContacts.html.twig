@@ -1,0 +1,39 @@
+{% if item.userGroups %}
+  <h2 class="title mb-3">{{ 'servizio.contatti' | trans }}</h2>
+
+  <div class="row mb-4">
+    {% for group in item.userGroups %}
+      <div class="col-12 col-md-8 col-lg-6 mb-30">
+        <div class="card-wrapper rounded h-auto mt-10">
+          <div class="card card-teaser card-teaser-100 rounded shadow-sm p-3">
+            <div class="card-body pe-3">
+              <p class="card-title text-paragraph-regular-medium-semi mb-3">
+                {# <a class="text-decoration-none" href="#" data-element="service-area">Ufficio Scuola</a> #}
+                <b>{{ group.name }}</b>
+              </p>
+              {% if group.coreContactPoint %}
+                <div class="card-text">
+                  {# todo: Da abilitare quando avremo i luoghi #}
+                  {#  <p class="u-main-black">Via Dei Transiti 21, 50302</p> #}
+                  {% if group.coreContactPoint.phoneNumber %}
+                    <p class="u-main-black"><a href="tel:{{ group.coreContactPoint.phoneNumber }}">{{ group.coreContactPoint.phoneNumber }}</a></p>
+                  {% endif %}
+                  {% if group.coreContactPoint.email %}
+                    <p class="u-main-black"><a href="mailto:{{ group.coreContactPoint.email }}">{{ group.coreContactPoint.email }}</a></p>
+                  {% endif %}
+                  {% if group.coreContactPoint.pec %}
+                    <p class="u-main-black"><a href="mailto:{{ group.coreContactPoint.pec }}">{{ group.coreContactPoint.pec }}</a></p>
+                  {% endif %}
+                  {% if group.coreContactPoint.url %}
+                    <p class="u-main-black"><a href="{{ group.coreContactPoint.url }}" target="_blank">{{ group.coreContactPoint.url }}</a></p>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+            {{ generateInitialsAvatar(group.name, 'xl', 'random')|raw }}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
