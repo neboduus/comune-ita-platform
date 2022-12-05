@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Controller\OperatoriController;
 use App\FormIO\SchemaComponent;
+use App\Model\Transition;
 use App\Services\JsonSelect;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\FetchMode;
@@ -991,6 +992,22 @@ class PraticaRepository extends EntityRepository
       ->orderBy('meeting.fromTime', 'asc');
 
     return $qb->getQuery()->getResult();
+  }
+
+  public function findStatusMessagesByStatus(Pratica $pratica, $status): array
+  {
+    $messages = [];
+    $messageRepo = $this->getEntityManager()->getRepository('App\Entity\Message');
+
+    foreach ($pratica->getHistory() as $transition) {
+      /** @var Transition $status */
+      if($transition->getStatusCode() === $status) {
+        $message = $messageRepo->find($transition->getMessageId());
+        $messages[] = $message;
+      }
+    }
+
+    return $messages;
   }
 
 }

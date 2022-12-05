@@ -144,7 +144,7 @@ services:
       $locales: "%app_locales%"
     tags:
       - { name: form.type }
-  
+
   App\Form\Admin\ContactPointType:
     arguments:
       $locale: "%locale%"

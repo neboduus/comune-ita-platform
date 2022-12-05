@@ -13,11 +13,11 @@
   </p>
 
   {# Richiesta integrazione #}
-  {% if richiesta_integrazione.description %}
+  {% if integration_request_message %}
     <h3>{{ 'operatori.note_richiesta_del_giorno' | trans({
         '%date%': richiesta_integrazione.createdAt | date('d/m/Y')
       })}}</h3>
-    {{ richiesta_integrazione.description|raw }}
+    {{ integration_request_message. message |raw }}
   {% endif %}
 
   <h4>{{ 'pratica.dettaglio.integrazione_annullata_da' | trans({'%operator_fullname%': pratica.operatore.fullName}) }}</h4>
