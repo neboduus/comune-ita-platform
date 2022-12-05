@@ -4,37 +4,16 @@ namespace App\Form\Admin;
 
 use App\Entity\UserGroup;
 use App\Form\I18n\AbstractI18nType;
-use App\Form\I18n\I18nDataMapperInterface;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserGroupType extends AbstractI18nType
 {
-  /**
-   * @var TranslatorInterface
-   */
-  private $translator;
-
-  /**
-   * @param I18nDataMapperInterface $dataMapper
-   * @param $locale
-   * @param $locales
-   * @param TranslatorInterface $translator
-   */
-  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, TranslatorInterface $translator)
-  {
-    parent::__construct($dataMapper, $locale, $locales);
-    $this->translator = $translator;
-  }
-
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
@@ -43,7 +22,6 @@ class UserGroupType extends AbstractI18nType
       ->add('name', I18nTextType::class, [
         'label' => 'general.nome',
         'required' => true,
-        'purify_html' => true
       ])
       ->add('shortDescription', I18nTextareaType::class, [
         'label' => 'servizio.short_description',
@@ -94,25 +72,18 @@ class UserGroupType extends AbstractI18nType
         'attr' => ['style' => 'columns: 2;'],
         'expanded' => true
       ])
-      /*->add('selectExistingContactPoint', CheckboxType::class, [
-        'label' => 'Seleziona punto di contatto esistente',
-        'mapped' => false
-      ])
-      ->add('existingCoreContactPoint', EntityType::class, [
-        'class' => 'App\Entity\ContactPoint',
-        'label' => 'contact_point.title',
-        'choice_label' => 'fullname',
-        'multiple' => true,
-        'required' => false,
-        'expanded' => true,
-        'mapped' => false
-      ])*/
       ->add('coreContactPoint', ContactPointType::class, [
         'required' => false,
         'label' => 'user_group.core_contact_point',
       ])
     ;
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+  }
+
+  public function onPreSubmit(FormEvent $event)
+  {
+    $data = $event->getData();
+    $data['coreContactPoint']['name'] = $data['name'];
   }
 
   /**
@@ -124,23 +95,5 @@ class UserGroupType extends AbstractI18nType
       'data_class' => UserGroup::class,
     ));
     $this->configureTranslationOptions($resolver);
-  }
-
-  public function onPreSubmit(FormEvent $event)
-  {
-    $data = $event->getData();
-    // Il managere deve essere per forza anche parte del gruppo
-    if (!empty($data['manager']) && (empty($data['users']) || !in_array($data['manager'], $data['users'])))
-    {
-      $event->getForm()->addError(
-        new FormError($this->translator->trans('user_group.manager_not_in_users'))
-      );
-    }
-
-    /*if (!empty($data['newCoreContactPoint'])) {
-      $data['coreContactPoint'] = $data['newCoreContactPoint'];
-    } else if (!empty($data['existingCoreContactPoint'])) {
-      $data['coreContactPoint'] = $data['existingCoreContactPoint'];
-    }*/
   }
 }

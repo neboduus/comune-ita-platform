@@ -1,27 +1,25 @@
 <?php
 
-namespace App\Form\Admin;
+namespace App\Form\Api;
 
 use App\Form\I18n\I18nTextType;
 use App\Form\I18n\AbstractI18nType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ContactPointType extends AbstractI18nType
+class ContactPointType extends AbstractType
 {
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $this->createTranslatableMapper($builder, $options)
-      ->add('name', I18nTextType::class, [
-        'label' => 'contact_point.contact_point_name',
-        'required' => true,
-      ]);
-
     $builder
+      ->add('name', TextType::class, [
+        'required' => true,
+      ])
       ->add('email', EmailType::class, [
         'label' => 'Email',
         'required' => false,
@@ -45,6 +43,5 @@ class ContactPointType extends AbstractI18nType
     $resolver->setDefaults(array(
       'data_class' => 'App\Entity\ContactPoint',
     ));
-    $this->configureTranslationOptions($resolver);
   }
 }
