@@ -176,6 +176,11 @@ class StringUtils
     return $result;
   }
 
+  public static function shortenString($string, $limit = 255) 
+  {
+    return strlen($string) > $limit ? substr($string, 0, $limit - 3) . '...' : $string;
+  }
+
   public static function generateInitialsAvatar(string $string, string $size = 'xs', string $color = ''): string
   {
     $availableColors = ['', 'primary', 'secondary', 'green', 'orange', 'red'];

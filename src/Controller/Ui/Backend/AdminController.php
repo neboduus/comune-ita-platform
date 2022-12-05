@@ -622,13 +622,18 @@ class AdminController extends AbstractController
 
         $service = $serviceDto->toEntity($dto);
         $service->setIdentifier($serviceSource->getIdentifier());
-        $service->setName($service->getName() . ' (' . $this->translator->trans('imported') . ' ' . date('d/m/Y H:i:s') . ')');
+        $importedAt = ' (' . $this->translator->trans('imported') . ' ' . date('d/m/Y H:i:s') . ')';
+        $shortenedImportedServiceName = StringUtils::shortenString($service->getName(),  255 - strlen($importedAt));
+        $service->setName($shortenedImportedServiceName . $importedAt);
         $service->setPraticaFCQN('\App\Entity\FormIO');
         $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
         $service->setEnte($ente);
         // Erogatore
         $erogatore = new Erogatore();
-        $erogatore->setName($this->translator->trans('provider_of') . ' ' . $service->getName() . ' ' . $this->translator->trans('for') . ' ' . $ente->getName());
+        $erogatoreName = $this->translator->trans('provider_of') . ' ' . $service->getName() . ' ' . $this->translator->trans('for') . ' ' . $ente->getName();
+        $limit = strlen($erogatoreName) < 255 ? 255 : 255 - (strlen($erogatoreName) - 255); // nuova lunghezza limite in base alla lunghezza in eccesso dell'erogatore
+        $shortenedImportedServiceName = StringUtils::shortenString($shortenedImportedServiceName, $limit - strlen($importedAt)) . $importedAt;
+        $erogatore->setName($this->translator->trans('provider_of') . ' ' . $shortenedImportedServiceName . ' ' . $this->translator->trans('for') . ' ' . $ente->getName());
         $erogatore->addEnte($ente);
         $em->persist($erogatore);
         $service->activateForErogatore($erogatore);
@@ -673,7 +678,7 @@ class AdminController extends AbstractController
         ['%identifier%' => $identifier]
       ));
     } catch (\Exception $e) {
-      $this->addFlash('error', $e->getMessage());
+      $this->logger->error("Import error: " . $e->getMessage());
       $this->addFlash('error', $this->translator->trans('servizio.error_create_form'));
     }
     return $this->redirectToRoute('admin_servizio_index');
