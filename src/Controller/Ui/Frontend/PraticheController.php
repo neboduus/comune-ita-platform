@@ -18,6 +18,7 @@ use App\FormIO\ExpressionValidator;
 use App\Handlers\Servizio\ForbiddenAccessException;
 use App\Handlers\Servizio\ServizioHandlerRegistry;
 use App\Logging\LogConstants;
+use App\Model\Transition;
 use App\Security\Voters\ApplicationVoter;
 use App\Services\BreadcrumbsService;
 use App\Services\FormServerApiAdapterService;
@@ -573,6 +574,11 @@ class PraticheController extends AbstractController
     $repository = $this->entityManager->getRepository('App\Entity\Pratica');
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $user, 5);
 
+    // Recupero l'id del messaggio associato all'ultimo cambio di stato di richiesta integrazione
+    $applicationRepo = $this->entityManager->getRepository('App\Entity\Pratica');
+    $messages = $applicationRepo->findStatusMessagesByStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
+    $lastIntegrationMessage = end($messages);
+
     $result = [
       'pratiche_recenti' => $praticheRecenti,
       'applications_in_folder' => $repository->getApplicationsInFolder($pratica),
@@ -587,7 +593,8 @@ class PraticheController extends AbstractController
       'can_withdraw' => $this->isGranted(ApplicationVoter::WITHDRAW, $pratica),
       'meetings' => $repository->findOrderedMeetings($pratica),
       'module_files' => $this->praticaManager->getGroupedModuleFiles($pratica),
-      'last_owner_message' => $repository->getLastMessageByApplicationOwner($pratica)
+      'last_owner_message' => $repository->getLastMessageByApplicationOwner($pratica),
+      'integration_request_message' => $lastIntegrationMessage
     ];
 
     if ($pratica instanceof GiscomPratica) {

@@ -21,8 +21,10 @@ use App\Entity\ScheduledAction;
 use App\Entity\Servizio;
 use App\Entity\SubscriptionPayment;
 use App\Model\FeedbackMessage;
+use App\Model\Transition;
 use App\ScheduledAction\Exception\AlreadyScheduledException;
 use App\ScheduledAction\ScheduledActionHandlerInterface;
+use App\Utils\StringUtils;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -180,9 +182,9 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $unsignedResponse = new RispostaOperatore();
     $this->createAllegatoInstance($pratica, $unsignedResponse);
 
-    $fileName = $this->generateFileName("Risposta {$pratica->getServizio()->getName()}");
-    $unsignedResponse->setOriginalFilename($fileName);
-    $unsignedResponse->setDescription($fileName);
+    $fileDescription = "Risposta {$pratica->getServizio()->getName()}";
+    $unsignedResponse->setOriginalFilename($this->generateFileName($fileDescription));
+    $unsignedResponse->setDescription($this->generateFileDescription($fileDescription));
 
     $this->em->persist($unsignedResponse);
     return $unsignedResponse;
@@ -200,9 +202,9 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $signedResponse = new RispostaOperatore();
     $this->createAllegatoInstance($pratica, $signedResponse);
 
-    $fileName = $this->generateFileName("Risposta {$pratica->getServizio()->getName()}");
-    $signedResponse->setOriginalFilename($fileName);
-    $signedResponse->setDescription($fileName);
+    $fileDescription = "Risposta {$pratica->getServizio()->getName()}";
+    $signedResponse->setOriginalFilename($this->generateFileName($fileDescription));
+    $signedResponse->setDescription($this->generateFileDescription($fileDescription));
 
     $this->em->persist($signedResponse);
     return $signedResponse;
@@ -219,9 +221,9 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $withdrawAttachment = new Ritiro();
     $this->createAllegatoInstance($pratica, $withdrawAttachment);
 
-    $fileName = $this->generateFileName("Ritiro pratica {$pratica->getServizio()->getName()}");
-    $withdrawAttachment->setOriginalFilename($fileName);
-    $withdrawAttachment->setDescription($fileName);
+    $fileDescription = "Ritiro pratica {$pratica->getServizio()->getName()}";
+    $withdrawAttachment->setOriginalFilename($this->generateFileName($fileDescription));
+    $withdrawAttachment->setDescription($this->generateFileDescription($fileDescription));
 
     $this->em->persist($withdrawAttachment);
     return $withdrawAttachment;
@@ -239,9 +241,9 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $moduloCompilato = new ModuloCompilato();
     $this->createAllegatoInstance($pratica, $moduloCompilato);
 
-    $fileName = $this->generateFileName("Modulo {$pratica->getServizio()->getName()}");
-    $moduloCompilato->setOriginalFilename($fileName);
-    $moduloCompilato->setDescription($fileName);
+    $fileDescription = "Modulo {$pratica->getServizio()->getName()}";
+    $moduloCompilato->setOriginalFilename($this->generateFileName($fileDescription));
+    $moduloCompilato->setDescription($this->generateFileDescription($fileDescription));
 
     $this->em->persist($moduloCompilato);
     return $moduloCompilato;
@@ -270,12 +272,12 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $integration->setMimeType('application/pdf');
     }
 
-    $originalFileName = $this->generateFileName("Richiesta integrazione: {$integration->getId()}");
+    $originalFileName = "Richiesta integrazione: {$integration->getId()}";
 
     $integration->setPayload($payload);
     $integration->setOwner($pratica->getUser());
-    $integration->setOriginalFilename($originalFileName);
-    $integration->setDescription($integrationRequest->getMessage());
+    $integration->setOriginalFilename($this->generateFileName($originalFileName));
+    $integration->setDescription($this->generateFileDescription($originalFileName));
     $integration->setPratica($pratica);
 
     $destinationDirectory = $this->getDestinationDirectoryFromContext($integration);
@@ -329,14 +331,13 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
       $content = $this->renderForPraticaIntegrationAnswer($pratica, $integrationRequest, $messages, $cancel);
       $description = 'Risposta a richiesta integrazione: ' . $integrationRequest->getId();
     }
-    $description = $this->generateFileName($description);
 
     $fileName = uniqid() . '.pdf';
     $attachment = new RispostaIntegrazione();
     $attachment->setPayload($payload);
     $attachment->setOwner($pratica->getUser());
-    $attachment->setOriginalFilename($description);
-    $attachment->setDescription($description);
+    $attachment->setOriginalFilename($this->generateFileName($description));
+    $attachment->setDescription($this->generateFileDescription($description));
 
     $destinationDirectory = $this->getDestinationDirectoryFromContext($attachment);
     $filePath = $destinationDirectory . DIRECTORY_SEPARATOR . $fileName;
@@ -393,9 +394,12 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function renderForPraticaIntegrationRequest(Pratica $pratica, RichiestaIntegrazioneDTO $integrationRequest, $attachments = [])
   {
+    /** @var Message $integrationMessage */
+    $integrationMessage = $pratica->getMessages()->last();
+
     $html = $this->templating->render('Pratiche/pdf/parts/integration.html.twig', [
       'pratica' => $pratica,
-      'richiesta_integrazione' => $integrationRequest,
+      'richiesta_integrazione' => $integrationMessage,
       'user' => $pratica->getUser(),
       'attachments' => $attachments
     ]);
@@ -418,16 +422,23 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     /** @var Integrazione[] $integrations */
     $integrations = $integrationRepo->findByIntegrationRequest($integrationRequest->getId());
 
+    // Recupero l'id del messaggio associato all'ultimo cambio di stato di richiesta integrazione
+    $applicationRepo = $this->em->getRepository('App\Entity\Pratica');
+    $messages = $applicationRepo->findStatusMessagesByStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
+    $lastIntegrationMessage = end($messages);
+
     if ($cancel) {
       $html = $this->templating->render('Pratiche/pdf/parts/cancel_integration.html.twig', [
         'pratica' => $pratica,
         'richiesta_integrazione' => $integrationRequest,
+        'integration_request_message' => $lastIntegrationMessage,
         'user' => $pratica->getUser(),
       ]);
     } else {
       $html = $this->templating->render('Pratiche/pdf/parts/answer_integration.html.twig', [
         'pratica' => $pratica,
         'richiesta_integrazione' => $integrationRequest,
+        'integration_request_message' => $lastIntegrationMessage,
         'integrazioni' => $integrations,
         'messages' => $messages ?? [],
         'user' => $pratica->getUser(),
@@ -603,10 +614,22 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $now->setTimestamp(time());
 
     $fileName = ("{$fileName} " . $now->format('Ymdhi'));
-    if (strlen($fileName) > 250) {
-      $fileName = substr($fileName, 0, 250);
-    }
+    $fileName = StringUtils::shortenString($fileName);
     return $fileName . '.pdf';
+  }
+
+  /**
+   * @param $description
+   * @return string
+   */
+  private function generateFileDescription($description): string
+  {
+    $now = new DateTime();
+    $now->setTimestamp(time());
+
+    $description = ("{$description} " . $now->format('Y-m-d h:i'));
+    $description = StringUtils::shortenString($description);
+    return $description;
   }
 
   /**

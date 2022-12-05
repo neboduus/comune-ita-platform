@@ -75,8 +75,6 @@ abstract class AbstractDto
     $description = $file->getDescription();
     if (empty($description) || $description === $filename) {
       $description =  Allegato::DEFAULT_DESCRIPTION . ' - ' . $filename;
-    } else {
-      $description .= ' - ' . $filename;
     }
 
     $temp['id'] = $file->getId();
