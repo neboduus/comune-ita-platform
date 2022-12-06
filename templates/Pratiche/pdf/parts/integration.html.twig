@@ -13,9 +13,9 @@
   </p>
 
   {# Richiesta integrazione #}
-  {% if richiesta_integrazione.message %}
+  {% if integration_request.message %}
     <h3>{{ 'operatori.note_richiesta' | trans }}</h3>
-    {{ richiesta_integrazione.message|raw }}
+    {{ integration_request.message|raw }}
   {% endif %}
 
   {# Allegati #}

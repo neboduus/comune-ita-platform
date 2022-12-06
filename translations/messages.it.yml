@@ -549,7 +549,9 @@ pratica:
     integrazioni:
       alert: "È stata richiesta un'integrazione"
       button: 'Rispondi alla richiesta integrazione'
+    richiesta_integrazioni: 'Richiesta integrazioni'
     richiesta_integrazione: 'Richiesta di integrazione'
+    risposte_integrazioni: 'Risposte integrazioni'
     risposta_integrazione: 'Risposta a richiesta di integrazione'
     integrazione_annullata: 'Richiesta di integrazione annullata'
     integrazione_annullata_da: 'La richiesta di integrazioni è stata annullata da %operator_fullname%'
@@ -1419,6 +1421,7 @@ messages:
       2000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata correttamente ricevuta. Il numero di richiesta è <strong>%pratica_id%</strong>. Faccia sempre riferimento a questo identificativo in caso di comunicazioni relative alla Sua richiesta. In allegato il modulo da Lei compilato.<br /><strong>Attenzione:</strong> questa è la ricevuta di presentazione della richiesta, NON è l'esito della domanda; Le trasmetteremo un messaggio di accettazione o di rifiuto in una comunicazione e-mail successiva.<br />La ringraziamo per la collaborazione."
       3000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata protocollata. Il numero di protocollo è <strong>%protocollo%</strong>.<br />Il prima possibile verrà presa in carico da un nostro operatore che provvederà al controllo e all'elaborazione della richiesta.<br />La ringraziamo per la collaborazione."
       4000: 'Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata presa in carico da un nostro operatore.<br />La ringraziamo per la collaborazione.'
+      4400: ''
       5000: ''
       6000: ''
       7000: "Gentile <strong>%user_name%</strong>,<br /> le comunichiamo che la Sua richiesta per il servizio <strong>%servizio%</strong> è stata approvata. Il numero di richiesta è <strong>%pratica_id%</strong>.<br />%messaggio_personale%<br />La ringraziamo per la collaborazione."

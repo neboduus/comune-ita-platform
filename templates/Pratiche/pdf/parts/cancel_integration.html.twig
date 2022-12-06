@@ -17,7 +17,7 @@
     <h3>{{ 'operatori.note_richiesta_del_giorno' | trans({
         '%date%': richiesta_integrazione.createdAt | date('d/m/Y')
       })}}</h3>
-    {{ integration_request_message. message |raw }}
+    {{ integration_request_message.message |raw }}
   {% endif %}
 
   <h4>{{ 'pratica.dettaglio.integrazione_annullata_da' | trans({'%operator_fullname%': pratica.operatore.fullName}) }}</h4>
