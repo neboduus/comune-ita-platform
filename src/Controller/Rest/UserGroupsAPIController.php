@@ -183,7 +183,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_ADMIN']);
 
     $userGroup = new UserGroup();
-    $form = $this->createForm('App\Form\Api\UserGroupType', $userGroup);
+    $form = $this->createForm('App\Form\Api\UserGroupApiType', $userGroup);
 
     $this->processForm($request, $form);
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -275,7 +275,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('App\Form\Api\UserGroupType', $userGroup);
+    $form = $this->createForm('App\Form\Api\UserGroupApiType', $userGroup);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -365,7 +365,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('App\Form\Api\UserGroupType', $userGroup);
+    $form = $this->createForm('App\Form\Api\UserGroupApiType', $userGroup);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
