@@ -6,31 +6,35 @@
       <div class="col-12 col-md-8 col-lg-6 mb-30">
         <div class="card-wrapper rounded h-auto mt-10">
           <div class="card card-teaser card-teaser-100 rounded shadow-sm p-3">
-            <div class="card-body pe-3">
-              <p class="card-title text-paragraph-regular-medium-semi mb-3">
-                {# <a class="text-decoration-none" href="#" data-element="service-area">Ufficio Scuola</a> #}
-                <b>{{ group.name }}</b>
-              </p>
-              {% if group.coreContactPoint %}
-                <div class="card-text">
-                  {# todo: Da abilitare quando avremo i luoghi #}
-                  {#  <p class="u-main-black">Via Dei Transiti 21, 50302</p> #}
-                  {% if group.coreContactPoint.phoneNumber %}
-                    <p class="u-main-black"><a href="tel:{{ group.coreContactPoint.phoneNumber }}">{{ group.coreContactPoint.phoneNumber }}</a></p>
-                  {% endif %}
-                  {% if group.coreContactPoint.email %}
-                    <p class="u-main-black"><a href="mailto:{{ group.coreContactPoint.email }}">{{ group.coreContactPoint.email }}</a></p>
-                  {% endif %}
-                  {% if group.coreContactPoint.pec %}
-                    <p class="u-main-black"><a href="mailto:{{ group.coreContactPoint.pec }}">{{ group.coreContactPoint.pec }}</a></p>
-                  {% endif %}
+            <div class="col-9">
+              <div class="card-body pe-3">
+                <p class="card-title text-paragraph-regular-medium-semi mb-3 font-weight-bold">
                   {% if group.coreContactPoint.url %}
-                    <p class="u-main-black"><a href="{{ group.coreContactPoint.url }}" target="_blank">{{ group.coreContactPoint.url }}</a></p>
+                    <a class="text-decoration-none" href="{{ group.coreContactPoint.url }}" target="_blank">{{ group.name }}</a>
+                  {% else %}
+                    <b>{{ group.name }}</b>
                   {% endif %}
-                </div>
-              {% endif %}
+                </p>
+                {% if group.coreContactPoint %}
+                  <div class="card-text">
+                    {# todo: Da abilitare quando avremo i luoghi #}
+                    {#  <p class="u-main-black">Via Dei Transiti 21, 50302</p> #}
+                    {% if group.coreContactPoint.phoneNumber %}
+                      <p class="u-main-black text-truncate"><a href="tel:{{ group.coreContactPoint.phoneNumber }}">{{ group.coreContactPoint.phoneNumber }}</a></p>
+                    {% endif %}
+                    {% if group.coreContactPoint.email %}
+                      <p class="u-main-black text-truncate"><a href="mailto:{{ group.coreContactPoint.email }}">{{ group.coreContactPoint.email }}</a></p>
+                    {% endif %}
+                    {% if group.coreContactPoint.pec %}
+                      <p class="u-main-black text-truncate"><a href="mailto:{{ group.coreContactPoint.pec }}">{{ group.coreContactPoint.pec }}</a></p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
             </div>
-            {{ generateInitialsAvatar(group.name, 'xl', 'random')|raw }}
+            <div class="col-3">
+              {{ generateInitialsAvatar(group.name, 'xl', 'random')|raw }}
+            </div>
           </div>
         </div>
       </div>
