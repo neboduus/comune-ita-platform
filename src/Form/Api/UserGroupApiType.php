@@ -21,15 +21,15 @@ class UserGroupApiType extends AbstractType
       ->add('name', TextType::class, [
         'required' => true,
       ])
-      ->add('shortDescription', TextareaType::class, [
+      ->add('short_description', TextareaType::class, [
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('mainFunction', TextareaType::class, [
+      ->add('main_function', TextareaType::class, [
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('moreInfo', TextareaType::class, [
+      ->add('more_info', TextareaType::class, [
         'label' => 'user_group.more_info',
         'required' => false,
         'purify_html' => true,
@@ -38,7 +38,8 @@ class UserGroupApiType extends AbstractType
         'class' => 'App\Entity\Categoria',
         'label' => 'servizio.categoria',
         'choice_label' => 'name',
-        'required' => false
+        'required' => false,
+        'mapped' => false
       ])
       ->add('manager', EntityType::class, [
         'class' => 'App\Entity\OperatoreUser',
@@ -46,7 +47,7 @@ class UserGroupApiType extends AbstractType
         'choice_label' => 'fullname',
         'required' => false
       ])
-      ->add('coreContactPoint', ContactPointType::class, [
+      ->add('core_contact_point', ContactPointType::class, [
         'required' => false,
         'label' => 'user_group.core_contact_point',
       ])

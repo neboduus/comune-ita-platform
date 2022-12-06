@@ -296,7 +296,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
       return $this->generateExceptionResponse($e, $request);
     }
 
-    return $this->view(["title" => "Object updated"], Response::HTTP_OK);
+    return $this->view(["Object Modified Successfully"], Response::HTTP_OK);
   }
 
 
@@ -386,7 +386,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
       return $this->generateExceptionResponse($e, $request);
     }
 
-    return $this->view(["title" => "Object updated"], Response::HTTP_OK);
+    return $this->view(["Object Patched Successfully"], Response::HTTP_OK);
   }
 
 
@@ -417,7 +417,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
       $this->entityManager->remove($item);
       $this->entityManager->flush();
     }
-    return $this->view(["title" => "Object deleted"], Response::HTTP_OK);
+    return $this->view(null, Response::HTTP_NO_CONTENT);
   }
 
   /**
@@ -440,6 +440,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
    */
   private function checkRelations(UserGroup &$userGroup, Request $request): void
   {
+
     if ($request->request->has('topic_id')) {
       $category = $this->entityManager->getRepository('App\Entity\Categoria')->find($request->request->get('topic_id'));
       if (!$category instanceof Categoria) {

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ContactPointRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use JMS\Serializer\Annotation as Serializer;
@@ -75,6 +76,22 @@ class ContactPoint
    * @Groups({"read", "write"})
    */
   private $pec;
+
+  /**
+   * @var DateTime
+   * @Gedmo\Timestampable(on="create")
+   * @ORM\Column(type="datetime")
+   * @Groups({"read"})
+   */
+  protected $createdAt;
+
+  /**
+   * @var DateTime
+   * @Gedmo\Timestampable(on="update")
+   * @ORM\Column(type="datetime")
+   * @Groups({"read"})
+   */
+  protected $updatedAt;
 
   public function __construct()
   {

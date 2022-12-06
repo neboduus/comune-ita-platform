@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -116,6 +117,23 @@ class UserGroup implements Translatable
   private $coreContactPoint;
 
   /**
+   * @var DateTime
+   * @Gedmo\Timestampable(on="create")
+   * @ORM\Column(type="datetime")
+   * @Groups({"read"})
+   */
+  protected $createdAt;
+
+  /**
+   * @var DateTime
+   * @Gedmo\Timestampable(on="update")
+   * @ORM\Column(type="datetime")
+   * @Groups({"read"})
+   */
+  protected $updatedAt;
+
+  /**
+   * @Serializer\Exclude()
    * @Gedmo\Locale
    * Used locale to override Translation listener`s locale
    * this is not a mapped field of entity metadata, just a simple property
