@@ -8,7 +8,6 @@ use App\Entity\StatusChange;
 use App\Event\KafkaEvent;
 use App\Event\PraticaOnChangeStatusEvent;
 use App\Logging\LogConstants;
-use App\PraticaEvents;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;

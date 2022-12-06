@@ -1001,7 +1001,7 @@ class PraticaRepository extends EntityRepository
 
     foreach ($pratica->getHistory() as $transition) {
       /** @var Transition $status */
-      if($transition->getStatusCode() === $status) {
+      if($transition->getStatusCode() === $status && $transition->getMessageId()) {
         $message = $messageRepo->find($transition->getMessageId());
         $messages[] = $message;
       }

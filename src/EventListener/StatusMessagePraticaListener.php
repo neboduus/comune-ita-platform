@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\Entity\Pratica;
 use App\Entity\StatusChange;
 use App\Event\PraticaOnChangeStatusEvent;
+use App\Model\FeedbackMessage;
 use App\Model\Transition;
 use App\Services\Manager\PraticaManager;
 use App\Services\PraticaPlaceholderService;
@@ -108,7 +109,7 @@ class StatusMessagePraticaListener
     $defaultSubject = $this->translator->trans('pratica.email.status_change.subject', $placeholders);
 
     if (!isset($feedbackMessages[$newStatus])) {
-      if ($newStatus == Pratica::STATUS_PENDING) {
+      if (in_array($newStatus, [Pratica::STATUS_PENDING, Pratica::STATUS_REGISTERED_AFTER_INTEGRATION])) {
         // Do not generate default pending message if not enabled
         return;
       }

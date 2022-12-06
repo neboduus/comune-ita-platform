@@ -412,14 +412,20 @@ class PraticheController extends AbstractController
       }
     }
 
+    $lastIntegrationMessage = null;
+
     $template = 'Pratiche/compila.html.twig';
     if ($pratica->getServizio()->isLegacy()) {
       $template = 'Pratiche/compileLegacy.html.twig';
+      $repo = $this->entityManager->getRepository('App\Entity\Pratica');
+      $requestIntegrationMessages = $repo->findStatusMessagesByStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
+      $lastIntegrationMessage = end($requestIntegrationMessages);
     }
 
     return $this->render($template, [
       'form' => $form->createView(),
       'pratica' => $praticaFlowService->getFormData(),
+      'integration_request_message' => $lastIntegrationMessage,
       'flow' => $praticaFlowService,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'user' => $user

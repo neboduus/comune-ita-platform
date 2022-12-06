@@ -23,12 +23,6 @@ class ByPraticaProtocolloHandler implements ProtocolloHandlerInterface, Predispo
    */
   public function getHandler(Pratica $pratica)
   {
-    // Per migrazione soft, rimuovere appena eseguiti script
-    if ($pratica instanceof GiscomPratica) {
-      $this->currentHandler = $this->registry->getByName('pitre');
-      return $this->currentHandler;
-    }
-
     $this->currentHandler = $this->registry->getByName($pratica->getServizio()->getProtocolHandler());
     return $this->currentHandler;
   }

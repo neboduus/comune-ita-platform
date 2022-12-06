@@ -305,6 +305,11 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
     $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
     $payload[RichiestaIntegrazione::TYPE_DEFAULT] = $integrationRequest->getId();
 
+    // Serve per non recuperare i messaggi nelle pratiche legacy
+    if ($pratica->getServizio()->isLegacy()) {
+      $messages = [];
+    }
+
     //Se messages è null recupero i messaggi in automatico, per retrocompatibilità su prima versione
     if ($messages === null) {
       $repo = $this->em->getRepository('App\Entity\Pratica');
@@ -394,12 +399,10 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function renderForPraticaIntegrationRequest(Pratica $pratica, RichiestaIntegrazioneDTO $integrationRequest, $attachments = [])
   {
-    /** @var Message $integrationMessage */
-    $integrationMessage = $pratica->getMessages()->last();
 
     $html = $this->templating->render('Pratiche/pdf/parts/integration.html.twig', [
       'pratica' => $pratica,
-      'richiesta_integrazione' => $integrationMessage,
+      'integration_request' => $integrationRequest,
       'user' => $pratica->getUser(),
       'attachments' => $attachments
     ]);
@@ -424,8 +427,8 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
     // Recupero l'id del messaggio associato all'ultimo cambio di stato di richiesta integrazione
     $applicationRepo = $this->em->getRepository('App\Entity\Pratica');
-    $messages = $applicationRepo->findStatusMessagesByStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
-    $lastIntegrationMessage = end($messages);
+    $integrationMessages = $applicationRepo->findStatusMessagesByStatus($pratica, Pratica::STATUS_REQUEST_INTEGRATION);
+    $lastIntegrationMessage = end($integrationMessages);
 
     if ($cancel) {
       $html = $this->templating->render('Pratiche/pdf/parts/cancel_integration.html.twig', [
