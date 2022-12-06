@@ -4,10 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ContactPointRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
-use Gedmo\Translatable\Translatable;
 use JMS\Serializer\Annotation as Serializer;
 use OpenApi\Annotations as OA;
 use JMS\Serializer\Annotation\Groups;
@@ -186,4 +183,5 @@ class ContactPoint
 
     return $this;
   }
+
 }

@@ -115,6 +115,13 @@ class UserGroup implements Translatable
    */
   private $coreContactPoint;
 
+  /**
+   * @Gedmo\Locale
+   * Used locale to override Translation listener`s locale
+   * this is not a mapped field of entity metadata, just a simple property
+   */
+  private $locale;
+
   public function __construct()
   {
     if (!$this->id) {
@@ -366,5 +373,10 @@ class UserGroup implements Translatable
       $this->coreContactPoint = $coreContactPoint;
 
       return $this;
+  }
+
+  public function setTranslatableLocale($locale)
+  {
+    $this->locale = $locale;
   }
 }

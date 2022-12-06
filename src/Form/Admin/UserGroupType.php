@@ -6,6 +6,7 @@ use App\Entity\UserGroup;
 use App\Form\I18n\AbstractI18nType;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
+use App\Form\Admin\ContactPointType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -83,7 +84,7 @@ class UserGroupType extends AbstractI18nType
   public function onPreSubmit(FormEvent $event)
   {
     $data = $event->getData();
-    $data['coreContactPoint']['name'] = $data['name'];
+    $data['coreContactPoint']['name'] = $data['name'][$this->getLocale()] ?? '';
   }
 
   /**

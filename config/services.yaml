@@ -145,13 +145,6 @@ services:
     tags:
       - { name: form.type }
 
-  App\Form\Admin\ContactPointType:
-    arguments:
-      $locale: "%locale%"
-      $locales: "%app_locales%"
-    tags:
-      - { name: form.type }
-
   App\Form\Admin\Servizio\GeneralDataType:
     arguments:
       $locale: "%locale%"

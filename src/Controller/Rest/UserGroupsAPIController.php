@@ -18,7 +18,6 @@ use FOS\RestBundle\Controller\Annotations as Rest;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -276,7 +275,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('App\Form\Admin\UserGroupType', $userGroup);
+    $form = $this->createForm('App\Form\Api\UserGroupType', $userGroup);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -366,7 +365,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    $form = $this->createForm('App\Form\Admin\UserGroupType', $userGroup);
+    $form = $this->createForm('App\Form\Api\UserGroupType', $userGroup);
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {

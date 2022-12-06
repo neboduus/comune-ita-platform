@@ -17,10 +17,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class GeographicAreaType  extends AbstractI18nType
 {
 
-
-  /**
-   * {@inheritdoc}
-   */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $this->createTranslatableMapper($builder, $options)
@@ -39,9 +35,6 @@ class GeographicAreaType  extends AbstractI18nType
       );
   }
 
-  /**
-   * {@inheritdoc}
-   */
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
