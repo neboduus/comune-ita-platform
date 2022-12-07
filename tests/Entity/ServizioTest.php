@@ -5,7 +5,7 @@ namespace Tests\Entity;
 use App\Entity\Servizio;
 use Doctrine\Common\Collections\Collection;
 use Ramsey\Uuid\Uuid;
-use Tests\App\Helpers\EntitiesHelper;
+use Tests\Helpers\EntitiesHelper;
 use Doctrine\Persistence\ObjectManager;
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +45,7 @@ class ServizioTest extends TestCase
     $this->assertEquals(Servizio::ACCESS_LEVEL_SPID_L2, $servizio->getAccessLevel());
     $this->assertFalse($servizio->isLoginSuggested());
     $this->assertFalse($servizio->isProtocolRequired());
-    $this->assertTrue($servizio->isAllowReopening());
+    $this->assertFalse($servizio->isAllowReopening());
     $this->assertTrue($servizio->isAllowWithdraw());
     $this->assertTrue($servizio->isAllowIntegrationRequest());
 

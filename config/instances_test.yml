@@ -1,7 +1,6 @@
 instances:
-  stanzadelcittadino.localtest.me/comune-di-test:
+  stanzadelcittadino.localtest.me/comune-di-bugliano:
     codice_meccanografico: test
-    database_name: sdc_test
     login_route: login_pat
     protocollo: dummy
-    identifier: comune-di-test
+    identifier: comune-di-bugliano
