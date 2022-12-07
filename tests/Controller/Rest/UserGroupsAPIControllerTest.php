@@ -4,8 +4,10 @@ namespace Tests\Controller\Rest;
 
 use App\Controller\Rest\UserGroupsAPIController;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserGroupsAPIControllerTest extends TestCase
 {
@@ -14,15 +16,16 @@ class UserGroupsAPIControllerTest extends TestCase
 
   protected $token = null;
 
-  protected $itemId = null;
+  protected function setUp()
+  {
+    $this->getJwtToken();
+    parent::setUp();
+  }
+
 
   // Todo: creare una classe di utility per metodi generali
   private function getJwtToken()
   {
-
-    if ($this->token) {
-      return $this->token;
-    }
 
     $client = new Client();
     $headers = ['Content-Type' => 'application/json'];
@@ -42,22 +45,31 @@ class UserGroupsAPIControllerTest extends TestCase
     $response = $client->send($request);
     $responseData = json_decode($response->getBody()->getContents(), true);
     $this->token = $responseData['token'];
-    return $responseData['token'];
   }
 
+  /**
+   * @return mixed
+   * @throws GuzzleException
+   */
   public function testPostUserGroupAction()
   {
-
-    $token = $this->getJwtToken();
     $client = new Client();
     $headers = [
-      'Authorization' => 'Bearer ' . $token,
+      'Authorization' => 'Bearer ' . $this->token,
       'Content-Type' => 'application/json'
     ];
 
-    $data = array(
-      'name' => 'test' . date('Y-m-d H:i:s')
-    );
+    $data = [
+      'name' => 'test' . date('Y-m-d H:i:s'),
+      'short_description' => 'short description',
+      'main_function' => 'main function',
+      'core_contact_point' => [
+        'name' => 'test',
+        'pec' => 'pec@sdc.it',
+        'email' => 'email@sdc.it',
+        'phone_number' => '33312312323',
+      ]
+    ];
 
     $request = new Request(
       'POST',
@@ -67,7 +79,7 @@ class UserGroupsAPIControllerTest extends TestCase
     );
 
     $response = $client->send($request);
-    $this->assertEquals(201, $response->getStatusCode());
+    $this->assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
     $responseData = json_decode($response->getBody()->getContents(), true);
     $this->assertArrayHasKey('id', $responseData);
 
@@ -77,23 +89,20 @@ class UserGroupsAPIControllerTest extends TestCase
   /**
    * @return void
    * @depends testPostUserGroupAction
-   * @throws \GuzzleHttp\Exception\GuzzleException
+   * @throws GuzzleException
    */
   public function testPutUserGroupAction($id)
   {
 
-    $token = $this->getJwtToken();
     $client = new Client();
     $headers = [
-      'Authorization' => 'Bearer ' . $token,
+      'Authorization' => 'Bearer ' . $this->token,
       'Content-Type' => 'application/json'
     ];
 
-    $name = 'test' . date('Y-m-d H:i:s');
-
-    $data = array(
-      'name' => $name
-    );
+    $data = [
+      'name' => 'test' . date('Y-m-d H:i:s')
+    ];
 
     $request = new Request(
       'PUT',
@@ -103,9 +112,107 @@ class UserGroupsAPIControllerTest extends TestCase
     );
 
     $response = $client->send($request);
-    $this->assertEquals(200, $response->getStatusCode());
+    $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+  }
+
+  /**
+   * @return void
+   * @depends testPostUserGroupAction
+   * @throws GuzzleException
+   */
+  public function testPatchUserGroupAction($id)
+  {
+    $client = new Client();
+    $headers = [
+      'Authorization' => 'Bearer ' . $this->token,
+      'Content-Type' => 'application/json'
+    ];
+
+    $data = [
+      'name' => 'test' . date('Y-m-d H:i:s')
+    ];
+
+    $request = new Request(
+      'PATCH',
+      self::API_BASE_URL . '/api/user-groups/' . $id,
+      $headers,
+      json_encode($data)
+    );
+
+    $response = $client->send($request);
+    $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+  }
+
+  /**
+   * @return void
+   * @throws GuzzleException
+   */
+  public function testGetUserGroupsAction()
+  {
+    $client = new Client();
+    $headers = [
+      'Authorization' => 'Bearer ' . $this->token,
+      'Content-Type' => 'application/json'
+    ];
+
+    $request = new Request(
+      'GET',
+      self::API_BASE_URL . '/api/user-groups',
+      $headers
+    );
+
+    $response = $client->send($request);
+    $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+  }
+
+  /**
+   * @param $id
+   * @depends testPostUserGroupAction
+   * @return void
+   * @throws GuzzleException
+   */
+  public function testGetUserGroupAction($id)
+  {
+    $client = new Client();
+    $headers = [
+      'Authorization' => 'Bearer ' . $this->token,
+      'Content-Type' => 'application/json'
+    ];
+
+    $request = new Request(
+      'GET',
+      self::API_BASE_URL . '/api/user-groups/' . $id,
+      $headers
+    );
+
+    $response = $client->send($request);
+    $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
     $responseData = json_decode($response->getBody()->getContents(), true);
-    $this->assertTrue($responseData['name'] === $name);
+    $this->assertEquals($id, $responseData['id']);
+  }
+
+  /**
+   * @param $id
+   * @depends testPostUserGroupAction
+   * @return void
+   * @throws GuzzleException
+   */
+  public function testDeleteUserGroupAction($id)
+  {
+    $client = new Client();
+    $headers = [
+      'Authorization' => 'Bearer ' . $this->token,
+      'Content-Type' => 'application/json'
+    ];
+
+    $request = new Request(
+      'DELETE',
+      self::API_BASE_URL . '/api/user-groups/' . $id,
+      $headers
+    );
+
+    $response = $client->send($request);
+    $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
   }
 
 }
