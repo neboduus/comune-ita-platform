@@ -1,34 +1,34 @@
 <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Service",
-        "@id": "{{ absolute_url( path('service_api_get', {'id': servizio.id})) }}",
-        "areaServed": {
-          "@type": "AdministrativeArea",
-          "name": "{{ servizio.coverage and servizio.coverage|length ? servizio.coverage[0] : servizio.ente.name }}"
-        },
-        "audience": {
-          "@type": "Audience",
-          "name": "{{ servizio.name }}"
-        },
-        "availableChannel": {
-          "@type": "ServiceChannel",
-          "availableLanguage": "it",
-          "serviceUrl": "{{ absolute_url( path('servizi_show', {'slug': servizio.slug})) }}"
-        },
-        {% if servizio.topics %}
-          "category": "{{ servizio.topics.name }}",
-        {% endif %}
-        "logo": "{{ logo }}",
-        "provider": {
-          "@type": "Organization",
-          "legalName": "{{ servizio.ente.name }}",
-          "address": "{{ metaContacts.address is defined ?  metaContacts.address  : ''}}",
-          "email": "{{ servizio.ente.email }}",
-          "phone": "{{ servizio.ente.contatti }}"
-        },
-        "description": "{{ servizio.description }}",
-        "name": "{{servizio.name}}",
-        "url": "{{ absolute_url( path('servizi_show', {'slug': servizio.slug})) }}"
-      }
-    </script>
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": "{{ absolute_url( path('service_api_get', {'id': servizio.id})) }}",
+    "areaServed": {
+      "@type": "AdministrativeArea",
+      "name": "{{ servizio.coverage and servizio.coverage|length ? servizio.coverage[0] : servizio.ente.name }}"
+    },
+    "audience": {
+      "@type": "Audience",
+      "name": "{{ servizio.name }}"
+    },
+    "availableChannel": {
+      "@type": "ServiceChannel",
+      "availableLanguage": "it",
+      "serviceUrl": "{{ absolute_url( path('servizi_show', {'slug': servizio.slug})) }}"
+    },
+    {% if servizio.topics %}
+      "category": "{{ servizio.topics.name }}",
+    {% endif %}
+    "logo": "{{ logo }}",
+    "provider": {
+      "@type": "Organization",
+      "legalName": "{{ servizio.ente.name }}",
+      "address": "{{ metaContacts.address is defined ?  metaContacts.address  : '' }}",
+      "email": "{{ servizio.ente.email }}",
+      "phone": "{{ servizio.ente.contatti }}"
+    },
+    "description": "{{ servizio.description }}",
+    "name": "{{ servizio.name }}",
+    "url": "{{ absolute_url( path('servizi_show', {'slug': servizio.slug})) }}"
+  }
+</script>

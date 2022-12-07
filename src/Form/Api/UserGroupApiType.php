@@ -3,7 +3,7 @@
 namespace App\Form\Api;
 
 use App\Entity\UserGroup;
-use App\Form\Admin\ContactPointType;
+use App\Form\Admin\ContactPointApiType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -13,7 +13,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserGroupApiType extends AbstractType
 {
-
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
@@ -47,7 +46,7 @@ class UserGroupApiType extends AbstractType
         'choice_label' => 'fullname',
         'required' => false
       ])
-      ->add('core_contact_point', ContactPointType::class, [
+      ->add('core_contact_point', ContactPointApiType::class, [
         'required' => false,
         'label' => 'user_group.core_contact_point',
       ])

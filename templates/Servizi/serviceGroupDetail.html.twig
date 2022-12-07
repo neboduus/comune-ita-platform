@@ -164,7 +164,7 @@
             </section>
           {% endif %}
           {% if servizio.whatYouNeed|striptags|trim != '' %}
-            <section class="it-page-section mb-4 bg-light p-3" id="what-you-need">
+            <section class="it-page-section mb-4 bg-aliceblue p-3" id="what-you-need">
               <h2 class="title mb-3">{{ 'servizio.what_you_need' | trans }}</h2>
               <div class="rich-text text-serif">
                 {{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
@@ -220,7 +220,7 @@
               </div>
             </section>
           {% endif %}
-          <section class="it-page-section mb-4 bg-light p-4" id="howto">
+          <section class="it-page-section mb-4 bg-aliceblue p-4" id="howto">
             <h2 class="title mb-3">{{ 'servizio.accedere' | trans }}</h2>
             {% if servizio.howto|striptags|trim != '' %}
               <div class="rich-text text-serif">
