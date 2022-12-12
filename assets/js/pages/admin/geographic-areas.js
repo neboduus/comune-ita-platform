@@ -1,7 +1,10 @@
 import '../../core';
+import '../../../styles/vendor/_leaflet.scss';
 import {TextEditor} from "../../utils/TextEditor";
 import Map from "../../utils/Map";
 import Swal from 'sweetalert2/src/sweetalert2.js';
+import "@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css";
+
 
 $(document).ready(function () {
   const limitChars = 2000;

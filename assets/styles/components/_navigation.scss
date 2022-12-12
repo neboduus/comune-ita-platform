@@ -68,15 +68,3 @@
 .theme-light .custom-navbar-toggler svg {
   fill: $color-primary;
 }
-
-.breadcrumb-container .breadcrumb {
-  padding: 24px 1px;
-  display: block;
-  .breadcrumb-item{
-    display: inline;
-  }
-  .breadcrumb-item + .breadcrumb-item::before{
-    display: inline-block !important;
-    padding: 0 0.1em;
-  }
-}

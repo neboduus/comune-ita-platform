@@ -1,4 +1,3 @@
-
 class FormIoI18n {
 
   static languages() {

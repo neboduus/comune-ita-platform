@@ -1,12 +1,11 @@
-import '../core';
-
 import Calendar from '../Calendar';
 import DynamicCalendar from '../DynamicCalendar';
 import PageBreak from '../PageBreak';
 import FinancialReport from "../FinancialReport";
 import SdcFile from "../SdcFile";
 import 'formiojs';
-import 'formiojs/dist/formio.form.min.css';
+import '../../styles/vendor/_formio.scss';
+import '../../styles/components/_messages.scss';
 import FormioI18n from "../utils/FormioI18n";
 import {TextEditor} from "../utils/TextEditor";
 import moment from "moment";

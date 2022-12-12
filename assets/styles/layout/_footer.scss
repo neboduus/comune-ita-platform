@@ -1,3 +1,8 @@
+// -----------------------------------------------------------------------------
+// This file contains all styles related to the footer of the site/application.
+// -----------------------------------------------------------------------------
+
+// footer
 $bg-footer: darken($primary, 20%) !default;
 
 .it-footer {
@@ -7,6 +12,17 @@ $bg-footer: darken($primary, 20%) !default;
     background-color: $bg-footer;
     color: $white;
     font-size: 16px;
+      a {
+        color: $white !important;
+      }
+      h4 {
+        span {
+          color: $white;
+          text-decoration: none;
+          text-transform: uppercase;
+          font-size: 16px;
+        }
+      }
 
     h4 a {
       color: $white;
@@ -170,3 +186,5 @@ $bg-footer: darken($primary, 20%) !default;
     }
   }
 }
+
+

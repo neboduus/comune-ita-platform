@@ -3,52 +3,12 @@
 
 {% block stylesheets %}
   {{ parent() }}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PT0RvABaDhDQugEbpNMwgYBCnGCiTZMh9yOzUsJHDgl/dMhD9yjHAwoumnUk3JydV3QTcIkNDuN40CJxik5+WQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  {{ encore_entry_link_tags('datatables') }}
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/dataTables.bootstrap4.min.js" integrity="sha512-OQlawZneA7zzfI6B1n1tjUuo3C5mtYuAWpQdg+iI9mkDoo7iFzTqnQHf+K5ThOWNJ9AbXL4+ZDwH7ykySPQc+A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-  <script>
-    const lang = document.documentElement.lang.toString();
-    //Default
-    let url_language = '/bundles/app/js/libs/datatables/it-IT.json';
-    if(lang === 'en'){
-      url_language = '/bundles/app/js/libs/datatables/en-GB.json';
-    }else if(lang === 'de'){
-      url_language = '/bundles/app/js/libs/datatables/de-DE.json';
-    }
-    // Datatable
-    $('#service-table').DataTable({
-      "order": [[ 0, "asc" ]],
-      columnDefs: [
-        { orderable: false, targets: 2 },
-        { orderable: false, targets: 3 },
-        { orderable: false, targets: 4 },
-        { orderable: false, targets: 5 }
-      ],
-      language: {
-        url: url_language
-      },
-      stateSave: true,
-      dom: "<'row'<'col-6 pt-2'l><'col-6'f>>" +
-        "<'row'<'col-12'tr>>" +
-        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 mt-2'p>>"
-    });
-
-    $('.clone').click(function (e) {
-      e.preventDefault()
-      let button = $(this)
-      let temp = $("<input>")
-      $("body").append(temp)
-      temp.val(button.data('url')).select()
-      document.execCommand("copy")
-      temp.remove();
-    })
-  </script>
+  {{ encore_entry_script_tags('datatables') }}
 {% endblock %}
 
 {% block main_content %}

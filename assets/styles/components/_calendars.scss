@@ -1,3 +1,4 @@
+// TODO moved class in correct files
 .js-opening_hour-item {
   .form-check {
     display: inline-block;
@@ -59,7 +60,7 @@
 .date-picker {
   td{
     & a.ui-state-active:focus,a.ui-state-default:focus  {
-      box-shadow: 0 0 0 2px $orange;
+      box-shadow: 0 0 0 2px #FFA500;
     }
 
     &.not-available {
@@ -110,7 +111,7 @@
   font-family: 'Titillium Web', serif;
 }
 
-@include media-breakpoint-down(xs){
+@media (max-width: 575px) {
   .fc-toolbar.fc-header-toolbar {
     display: block;
   }

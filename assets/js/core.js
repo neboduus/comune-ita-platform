@@ -1,10 +1,10 @@
+import '../styles/core.scss'
+
 require('jquery');
+// TODO remove summernote
 require("summernote");
 require("summernote/dist/summernote-bs4.css")
-require("ion-rangeslider");
-require("ion-rangeslider/css/ion.rangeSlider.css")
 require('bootstrap');
-//require('bootstrap-select');
 require('svgxuse');
 require('bootstrap-italia/src/js/plugins/polyfills/array.from');
 require('bootstrap-italia/src/js/plugins/circular-loader/CircularLoader-v1.3');
@@ -21,7 +21,7 @@ require('bootstrap-italia/src/js/plugins/back-to-top');
 require('bootstrap-italia/src/js/plugins/componente-base');
 // require('bootstrap-italia/src/js/plugins/cookiebar');
 require('bootstrap-italia/src/js/plugins/dropdown');
-//require('bootstrap-italia/src/js/plugins/forms');
+require('bootstrap-italia/src/js/plugins/forms');
 require('bootstrap-italia/src/js/plugins/track-focus');
 require('bootstrap-italia/src/js/plugins/forward');
 require('bootstrap-italia/src/js/plugins/navbar');
@@ -42,3 +42,20 @@ require('bootstrap-italia/src/js/plugins/rating');
 require('bootstrap-italia/src/js/plugins/dimmer');
 
 import './utils/Search';
+
+
+// On ready page
+$(function () {
+
+  $('.select_tabs').on('change', function (e) {
+    // With $(this).val(), you can **(and have to!)** specify the target in your <option> values.
+    //$('#the-tab li a').eq($(this).val()).tab('show');
+    // If you do not care about the sorting, you can work with $(this).index().
+    // $('#the-tab li a').eq($(this).index()).tab('show');
+    //$('.nav-tabs li a').eq($(this).val()).tab('show');
+    $('.nav-tabs li a[href="' + $(this).val() + '"]').tab('show');
+  });
+
+  $('[data-toggle="popover"]').popover();
+
+})

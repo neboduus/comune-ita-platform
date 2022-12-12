@@ -8,6 +8,7 @@ use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
 use App\Form\Admin\ContactPointType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;

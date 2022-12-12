@@ -5,6 +5,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import listPligin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import bootstrapPlugin from '@fullcalendar/bootstrap';
+import '../styles/components/_calendars.scss'
 import itLocale from '@fullcalendar/core/locales/it';
 import enLocale from '@fullcalendar/core/locales/en-gb';
 import deLocale from '@fullcalendar/core/locales/de';

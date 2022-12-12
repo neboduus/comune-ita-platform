@@ -1,9 +1,10 @@
+import "../styles/vendor/_formio.scss";
+import "../styles/components/cmp/all.scss";
 import Form from './Formio/Form';
 import Payment from "./rest/payment/Payment";
 import FormIoHelper from "./utils/FormIoHelper";
 import axios from "axios";
-import Applications from "./rest/applications/Applications";
-require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
+require("jsrender")(); // Load JsRender as jQuery plugin (jQuery instance as parameter)
 const $language = document.documentElement.lang.toString();
 
 $(document).ready(function () {

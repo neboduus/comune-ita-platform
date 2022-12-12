@@ -1,6 +1,11 @@
 {% extends 'Default/index.html.twig' %}
 {% block title %}{{ servizio.name }} - Stanza del cittadino{% endblock %}
 
+{% block stylesheets %}
+  {{ parent() }}
+  {{ encore_entry_link_tags('complie') }}
+{% endblock %}
+
 {% block main_content %}
   <div class="container">
     <div class="row justify-content-center mb-5">

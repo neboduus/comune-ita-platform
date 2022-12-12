@@ -1,0 +1,45 @@
+@import "~leaflet/dist/leaflet.css";
+@import "~leaflet-draw/dist/leaflet.draw";
+@import "~leaflet-easybutton/src/easy-button.css";
+
+
+/**
+ * Leaflet.BeautifyIcon, a plugin that adds colorful iconic markers for Leaflet
+ * by giving full control of style to end user.
+ * It has also ability to adjust fontawesome and glyphicon icons
+ *
+ * http://leafletjs.com
+*/
+
+.skewedshadow {
+  position: relative;
+}
+
+.beautify-marker {
+  text-align: center;
+  font-weight: 700;
+  font-family: monospace;
+  position: absolute;
+  box-sizing: border-box;
+
+  &.circle,
+  &.circle-dot,
+  &.doughnut {
+    border-radius: 100%;
+    filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, .1));
+  }
+
+  &.marker {
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50% 100%;
+    border-bottom-left-radius: 100% 50%;
+    border-bottom-right-radius: 0%;
+    transform: rotate(45deg);
+
+    > * {
+      transform: rotate(-45deg);
+    }
+
+    filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, .1));
+  }
+}

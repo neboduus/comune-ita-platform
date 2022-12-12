@@ -1,5 +1,6 @@
 {% extends 'Default/index.html.twig' %}
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('service-group-manager') }}
 {% endblock %}
 {% block main_content %}
