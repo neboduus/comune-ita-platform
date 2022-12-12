@@ -90,8 +90,7 @@ class APIController extends AbstractFOSRestController
   }
 
   /**
-   * @Route("/user/{pratica}/notes",name="api_set_notes_for_pratica")
-   * @Method({"POST"})
+   * @Route("/user/{pratica}/notes",name="api_set_notes_for_pratica", methods={"POST"})
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -110,8 +109,7 @@ class APIController extends AbstractFOSRestController
   }
 
   /**
-   * @Route("/user/{pratica}/notes",name="api_get_notes_for_pratica")
-   * @Method({"GET"})
+   * @Route("/user/{pratica}/notes",name="api_get_notes_for_pratica", methods={"GET"})
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
