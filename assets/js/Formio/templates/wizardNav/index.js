@@ -37,9 +37,11 @@ export default function wizardNav(ctx) {
                 <span class="text-button-sm t-primary d-block d-lg-none">${Translator.trans('salva', {}, 'messages', language)}</span>
               </button>`;
       if (ctx.disableWizardSubmit) {
-        disableWizardSubmit += `<button disabled class="btn btn-primary btn-sm steppers-btn-next btn-wizard-nav-submit mt-0" ref="${ctx.wizardKey}-submit" aria-label="submitButtonAriaLabel">${Translator.trans('buttons.submit')}</button>`
+        disableWizardSubmit += `<button disabled class="btn btn-primary btn-sm steppers-btn-next btn-wizard-nav-submit mt-0" ref="${ctx.wizardKey}-submit" aria-label="${ctx.t('submitButtonAriaLabel')}">
+        <span class="text-button-sm">${ctx.t('submit')}</span></button>`
       } else {
-        disableWizardSubmit += `<button class="btn btn-primary btn-sm steppers-btn-next btn-wizard-nav-submit mt-0" ref="${ctx.wizardKey}-submit" aria-label="submitButtonAriaLabel">${Translator.trans('buttons.submit')}</button>`
+        disableWizardSubmit += `<button class="btn btn-primary btn-sm steppers-btn-next btn-wizard-nav-submit mt-0" ref="${ctx.wizardKey}-submit" aria-label="${ctx.t('submitButtonAriaLabel')}">
+        <span class="text-button-sm">${ctx.t('submit')}</span></button>`
       }
       return `${disableWizardSubmit}`
     }

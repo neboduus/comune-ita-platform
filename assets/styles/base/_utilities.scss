@@ -1,25 +1,4 @@
-$primary: #3478bd;
-$primary-a6: $primary;
-$primary-a7: #2b649e;
-$bg-footer: #214c77;
-$primary-h: 210;
-$primary-s: 72;
-$primary-b: 74;
-
-@import "base";
-@import "header";
-@import "navigation";
-@import "progressbar";
-@import "override/forms";
-@import "override/sdc";
-@import "formio-components";
-@import "calendars";
-@import "components/messages";
-@import "~outdated-browser-rework/style";
-@import "plugins/_sweetalert2";
-
-@import "fonts";
-
+// TODO place these classes in the right section
 .iter-timeline-wrapper {
   .it-now-label {
     position: absolute;
@@ -34,7 +13,7 @@ $primary-b: 74;
   .row {
     position: relative;
     padding-top: $v-gap * 6;
-    //padding-bottom: $v-gap*6;
+    padding-bottom: $v-gap*6;
     &:after {
       content: '';
       width: $timeline-width;
@@ -159,27 +138,6 @@ $primary-b: 74;
   }
 }
 
-.dataTables_paginate {
-  a {
-    padding: 5px 10px;
-    background-color: #EFEFEF;
-    border: 1px solid #ccc;
-    margin-left: 4px;
-    text-decoration: none;
-    cursor: pointer;
-
-    &.disabled {
-      color: #ccc;
-      cursor: auto;
-    }
-
-    &.current {
-      color: $white;
-      background-color: $primary;
-    }
-  }
-}
-
 
 @media screen {
   #pratica-summary, .formio-read-only {
@@ -247,6 +205,7 @@ $primary-b: 74;
   }
 }
 
+// Heights
 .h {
   &-80 {
     height: 80px;
@@ -328,47 +287,11 @@ a.list-item.left-icon {
   background: #ebeef0
 }
 
-.cmp-contacts {
-  ul {
-    list-style: none;
-    margin: 0;
-  }
 
-  .contact-list li {
-    line-height: 1.5;
-    margin: 0.889rem 0;
-    font-weight: 400;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    & span {
-      margin-left: 10px;
-    }
-  }
-
-  .card:after {
-    content: none;
-  }
-
-  .title-medium-2-semi-bold {
-    font-size: 1.25rem;
-    font-weight: 600;
-    line-height: 1.2;
-
-    @media(min-width: 576px) {
-      font-size: 1.3333333333rem
-    }
-    @media(min-width: 768px) {
-      line-height: 1.2
-    }
-  }
-}
 
 .cmp-info-progress {
   margin-bottom: 1.5rem;
-  overflow-y: auto;
+
   .icon.icon-sm {
     width: 1.167rem;
     height: 1.167rem;
@@ -452,7 +375,7 @@ a.list-item.left-icon {
   }
 }
 
-.cmp-nav-steps {
+/*.cmp-nav-steps {
   box-shadow: 0 -0.6375rem 1.125rem -0.9rem rgb(0,0,0,0.1);
   margin-top: 3.875rem;
 
@@ -525,36 +448,22 @@ a.list-item.left-icon {
       min-width: 5.44rem;
     }
   }
+}*/
+
+.t-primary {
+  color: $primary;
 }
 
-  .t-primary {
-    color: $primary;
-  }
-
-  .text-button-sm {
-    font-size: 1rem;
-    line-height: 1.5;
-    @media (min-width: 576px) {
-      font-size: .8888888889rem;
-    }
-  }
-
-
-.cmp-heading {
-  .subtitle-small, p {
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    font-weight: 400;
-
-    @media (min-width: 576px) {
-        font-size: 1rem;
-    }
-    @media (min-width: 768px) {
-        margin-bottom: 0;
-    }
+.text-button-sm {
+  font-size: 1rem;
+  line-height: 1.5;
+  @media (min-width: 576px) {
+    font-size: .8888888889rem;
   }
 }
+
+
+
 
 .max-w{
   &-300{
@@ -565,6 +474,10 @@ a.list-item.left-icon {
 .formio-form nav {
   background-color: transparent;
 }
-.cursor-pointer {
-  cursor: pointer;
+
+
+
+.bg-light {
+  --bs-bg-opacity: 1;
+  background-color: rgba(var(--bs-light-rgb),var(--bs-bg-opacity))!important;
 }

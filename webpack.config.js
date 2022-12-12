@@ -1,7 +1,5 @@
 const Encore = require('@symfony/webpack-encore');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const package = require("./package.json");
-//const webpack = require('webpack');
 const CompressionPlugin = require("compression-webpack-plugin");
 const zlib = require("zlib");
 
@@ -22,7 +20,8 @@ Encore
    * Each entry will result in one JavaScript file (e.g. app.js)
    * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
    */
-  .addEntry('app', './assets/js/app.js')
+  .addEntry('core', './assets/js/core.js')
+  .addEntry('datatables', './assets/js/components/datatables.js')
   .addEntry('compile', './assets/js/compile.js')
   .addEntry('user', './assets/js/user.js')
   .addEntry('service-manager', './assets/js/service-manager.js')

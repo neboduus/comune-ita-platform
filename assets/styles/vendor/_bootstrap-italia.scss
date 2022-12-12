@@ -1,13 +1,14 @@
+//TODO standardize with just one bootstrap
 @import '~bootstrap-select/sass/bootstrap-select';
 
-@import '~owl.carousel/src/scss/core';
-@import '~owl.carousel/src/scss/animate';
-@import '~owl.carousel/src/scss/autoheight';
+// bootstrap italia version variable
+// useful to check for the current version
+@import '~bootstrap-italia/src/scss/custom/version';
 
 // funzioni e variabili colore
 @import '~bootstrap-italia/src/scss/functions';
 //@import '~bootstrap-italia/src/scss/utilities/colors_vars';
-@import "custom-colors_vars";
+@import "./assets/styles/abstracts/colors";
 
 //variables
 @import '~bootstrap-italia/src/scss/variables';
@@ -42,7 +43,7 @@
 @import '~bootstrap/scss/navbar';
 @import '~bootstrap/scss/card';
 //@import '~bootstrap/scss/breadcrumb';
-@import 'override/breadcrumb';
+@import './assets/styles/components/breadcrumb';
 @import '~bootstrap/scss/pagination';
 @import '~bootstrap/scss/badge';
 @import '~bootstrap/scss/progress';
@@ -141,7 +142,6 @@
 
 // footer
 //@import '~bootstrap-italia/src/scss/custom/footer';
-@import 'footer';
 
 //colors theme
 @import '~bootstrap-italia/src/scss/custom/navigationtheme';
@@ -149,8 +149,3 @@
 //gestione dei focus
 @import '~bootstrap-italia/src/scss/utilities/focus';
 @import '~bootstrap-italia/src/scss/utilities/icons';
-
-// Search
-@import "components/search";
-
-@import "plugins/leaflet";

@@ -1,4 +1,7 @@
 {% extends 'Default/index.html.twig' %}
+{% block stylesheets %}
+  {{ encore_entry_link_tags('geographic-areas') }}
+{% endblock %}
 {% block javascripts %}
   {{ encore_entry_script_tags('geographic-areas') }}
 {% endblock %}

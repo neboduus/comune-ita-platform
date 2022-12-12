@@ -1,0 +1,15 @@
+.cmp-heading {
+  .subtitle-small, p {
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    font-weight: 400;
+
+    @media (min-width: 576px) {
+      font-size: 1rem;
+    }
+    @media (min-width: 768px) {
+      margin-bottom: 0;
+    }
+  }
+}

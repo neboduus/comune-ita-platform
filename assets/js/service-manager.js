@@ -1,13 +1,11 @@
-import './core'
 import Calendar from './Calendar';
 import DynamicCalendar from './DynamicCalendar';
 import PageBreak from './PageBreak';
 import FinancialReport from "./FinancialReport";
 import SdcFile from "./SdcFile";
 import 'formiojs';
-import 'formiojs/dist/formio.form.min.css';
+import '../styles/vendor/_formio.scss';
 import FormioI18n from "./utils/FormioI18n";
-import axios from "axios";
 import {TextEditor} from "./utils/TextEditor";
 import Gateways from "./rest/gateways/Gateways";
 

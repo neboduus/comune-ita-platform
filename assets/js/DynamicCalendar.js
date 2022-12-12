@@ -1,6 +1,6 @@
 import "jquery-ui/ui/widgets/datepicker"
 import ionRangeSlider from "ion-rangeslider"
-
+import "ion-rangeslider/css/ion.rangeSlider.min.css"
 import Base from 'formiojs/components/_classes/component/Component';
 import editForm from './DynamicCalendar/DynamicCalendar.form'
 import moment from 'moment'

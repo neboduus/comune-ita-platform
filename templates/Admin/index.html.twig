@@ -3,15 +3,15 @@
 
 {% block stylesheets %}
   {{ parent() }}
+  {{ encore_entry_link_tags('datatables') }}
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
+  {{ encore_entry_script_tags('datatables') }}
 {% endblock %}
 
 {% block main_content %}
-
-
   <section id="intro" class="container px-4 my-4">
     <div class="row">
       <div class="col-lg-12 px-lg-4 py-lg-2 text-center">

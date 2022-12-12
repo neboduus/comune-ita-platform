@@ -1,0 +1,21 @@
+@import "../../styles/abstracts/colors";
+.dataTables_paginate {
+  a {
+    padding: 5px 10px;
+    background-color: #EFEFEF;
+    border: 1px solid #ccc;
+    margin-left: 4px;
+    text-decoration: none;
+    cursor: pointer;
+
+    &.disabled {
+      color: #ccc;
+      cursor: auto;
+    }
+
+    &.current {
+      color: $white;
+      background-color: $primary;
+    }
+  }
+}

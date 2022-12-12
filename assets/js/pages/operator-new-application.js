@@ -1,5 +1,3 @@
-import '../../css/app.scss';
-import '../core';
 import Calendar from '../Calendar';
 import DynamicCalendar from '../DynamicCalendar';
 import PageBreak from '../PageBreak';
@@ -8,6 +6,7 @@ import SdcFile from "../SdcFile";
 import 'formiojs';
 import 'formiojs/dist/formio.form.min.css';
 import Swal from 'sweetalert2/src/sweetalert2.js'
+import "@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css";
 import FormioI18n from "../utils/FormioI18n";
 import Users from "../rest/users/Users";
 import Applications from "../rest/applications/Applications";

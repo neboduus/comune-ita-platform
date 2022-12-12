@@ -9,6 +9,11 @@
   {{ include('Servizi/parts/_json-ld.html.twig', {'servizio':servizio}) }}
 {% endblock %}
 
+{% block stylesheets %}
+  {{ parent() }}
+  {{ encore_entry_link_tags('compile') }}
+{% endblock %}
+
 {% block main_content %}
   <div class="container">
     <div class="row justify-content-center mb-5">

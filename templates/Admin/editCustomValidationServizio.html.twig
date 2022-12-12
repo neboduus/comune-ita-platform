@@ -4,10 +4,11 @@
 
 {% block stylesheets %}
   {{ parent() }}
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  {{ encore_entry_link_tags('service-manager') }}
 {% endblock %}
 
 {% block javascripts %}
+  {{ parent() }}
   {{ encore_entry_script_tags('service-manager') }}
 {% endblock %}
 

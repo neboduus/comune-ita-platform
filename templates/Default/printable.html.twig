@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>{% block title %}{% endblock %}</title>
   {% block stylesheets %}
-    {{ encore_entry_link_tags('app') }}
+    {{ encore_entry_link_tags('core') }}
   {% endblock %}
   <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
   <script src="{{ asset('bundles/bazingajstranslation/js/translator.min.js') }}"></script>
@@ -18,7 +18,7 @@
     {% block main_content %}{% endblock %}
 {% endblock %}
 {% block footer_scripts %}
-  {{ encore_entry_script_tags('app') }}
+  {{ encore_entry_script_tags('core') }}
 {% endblock %}
 </body>
 </html>
