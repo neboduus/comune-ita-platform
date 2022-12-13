@@ -66,22 +66,8 @@ class PaymentService
       $paymentData['reason'] = $pratica->getId() . ' - ' . $pratica->getUser()->getCodiceFiscale();
     }
 
-    if (isset($data[PaymentDataType::PAYMENT_FINANCIAL_REPORT])) {
-      foreach ( $data[PaymentDataType::PAYMENT_FINANCIAL_REPORT] as $v ) {
-        $temp =[];
-        $temp['code'] = $v['codCapitolo'];
-        $temp['amount'] = $v['importo'];
-        $temp['meta']['codUfficio'] = $v['codUfficio'];
-
-        if (isset($v['codAccertamento']) && !empty($v['codAccertamento'])) {
-          $temp['meta']['codAccertamento'] = $v['codAccertamento'];
-        }
-        $paymentData['split'][]= $temp;
-      }
-    }
-
     if (!isset($paymentData['split'])) {
-      $paymentData['split'] = [];
+      $paymentData['split'] = null;
     }
 
     $paymentDayLifeTime = 90;
