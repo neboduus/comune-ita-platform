@@ -6,7 +6,7 @@
       <div class="row pt-3 pb-3">
         <div class="col">
           <div class="menu-wrapper">
-            <ul class="user-menu nav nav-tabs nav-tabs-icon-text justify-content-center">
+            <ul class="user-menu nav nav-tabs nav-tabs-icon-text justify-content-center" data-element="main-navigation">
               <li class="nav-item">
                 <a class="nav-link text-capitalize {% if  app.request.pathInfo ends with 'operatori/' %} active {% endif %}"
                    href="{{ path('operatori_index') }}">
@@ -17,7 +17,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-capitalize {% if  app.request.pathInfo ends with 'services' %} active {% endif %}"
+                <a data-element="all-services" class="nav-link text-capitalize {% if  app.request.pathInfo ends with 'services' %} active {% endif %}"
                    href="{{ path('backend_services_index') }}">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-piattaforme"></use>
@@ -98,7 +98,7 @@
                       <div class="link-list-wrapper">
                         <ul class="link-list">
                           <li><a class="list-item text-capitalize" href="{{ path('admin_edit_ente') }}"><span>{{ 'nav.admin.ente'|trans }}</span></a></li>
-                          <li><a class="list-item text-capitalize" href="{{ path('admin_category_index') }}"><span>{{ 'nav.admin.categorie'|trans }}</span></a></li>
+                          <li><a data-element="all-topics" class="list-item text-capitalize" href="{{ path('admin_category_index') }}"><span>{{ 'nav.admin.categorie'|trans }}</span></a></li>
                           <li><a class="list-item text-capitalize" href="{{ path('admin_recipient_index') }}"><span>{{ 'recipients.title'|trans }}</span></a></li>
                           <li><a class="list-item text-capitalize" href="{{ path('admin_geographic_area_index') }}"><span>{{ 'geographic_areas.title'|trans }}</span></a></li>
                           <li><a class="list-item text-capitalize" href="{{ path('admin_webhook_index') }}"><span>{{ 'nav.admin.webhook'|trans }}</span></a></li>
@@ -129,7 +129,7 @@
                   </div>
                 </li>
                 <li class="nav-item {% if 'servizio' in app.request.pathInfo %} active {% endif %}">
-                  <a class="nav-link text-capitalize"
+                  <a class="nav-link text-capitalize" data-element="all-services"
                      href="{{ path('admin_servizio_index') }}">
                     {{ 'nav.admin.servizi'|trans }}
                   </a>
@@ -179,10 +179,10 @@
     <div class="row pt-3 pb-3">
       <div class="col">
         <div class="menu-wrapper">
-          <ul class="user-menu nav nav-tabs nav-tabs-icon-text justify-content-center">
+          <ul class="user-menu nav nav-tabs nav-tabs-icon-text justify-content-center" data-element="main-navigation">
             {% if  login_route == constant('App\\Security\\AbstractAuthenticator::LOGIN_TYPE_NONE') %}
               <li class="nav-item">
-                <a class="nav-link text-capitalize {% if 'servizi' in app.request.pathInfo %} active {% endif %}" href="{{ path('servizi_list') }}">
+                <a class="nav-link text-capitalize {% if 'servizi' in app.request.pathInfo %} active {% endif %}" href="{{ path('servizi_list') }}" data-element="all-services">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-piattaforme"></use>
                   </svg>
@@ -190,15 +190,15 @@
                 </a>
               </li>
             {% else %}
-              <li class="nav-item ">
-                <a class="nav-link text-capitalize {% if 'servizi' in app.request.pathInfo %} active {% endif %}" href="{{ path('servizi_list') }}">
+              <li class="nav-item">
+                <a class="nav-link text-capitalize {% if 'servizi' in app.request.pathInfo %} active {% endif %}" href="{{ path('servizi_list') }}" data-element="all-services">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-piattaforme"></use>
                   </svg>
                   {{ 'nav.servizi'|trans }}
                 </a>
               </li>
-              <li class="nav-item ">
+              <li class="nav-item">
                 <a class="nav-link text-capitalize {% if 'dashboard' in app.request.pathInfo %} active {% endif %}" href="{{ path('user_dashboard') }}">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pa"></use>
@@ -207,7 +207,7 @@
                 </a>
               </li>
               <li
-                class="nav-item ">
+                class="nav-item">
                 <a class="nav-link text-capitalize {% if 'pratiche' in app.request.pathInfo and 'allegati' not in app.request.pathInfo %} active {% endif %}" href="{{ path('pratiche') }}">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-files"></use>
@@ -223,7 +223,7 @@
                   {{ 'nav.profilo'|trans }}
                 </a>
               </li>#}
-              <li class="nav-item ">
+              <li class="nav-item">
                 <a class="nav-link text-capitalize {% if 'allegati' in app.request.pathInfo %} active {% endif %}" href="{{ path('allegati_list_cpsuser') }}">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-box"></use>
@@ -231,7 +231,7 @@
                   {{ 'nav.allegati'|trans }}
                 </a>
               </li>
-              <li class="nav-item ">
+              <li class="nav-item">
                 <a class="nav-link text-capitalize {% if 'documenti' in app.request.pathInfo %} active {% endif %}" href="{{ path('folders_list_cpsuser') }}">
                   <svg class="icon icon-sm icon-primary left mr-1">
                     <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-folder"></use>
@@ -240,7 +240,7 @@
                 </a>
               </li>
               {% if 'operatori_subscription-service_index' in ente.backofficeEnabledIntegrations %}
-                <li class="nav-item ">
+                <li class="nav-item">
                   <a class="nav-link text-capitalize {% if 'iscrizioni' in app.request.pathInfo %} active {% endif %}" href="{{ path('subscriptions_list_cpsuser') }}">
                     <svg class="icon icon-sm icon-primary left mr-1">
                       <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>

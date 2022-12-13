@@ -19,7 +19,7 @@
           <ul class="link-list m-0">
             {% for item in categories|slice(0, sidebar_list_limit) %}
               <li>
-                <a class="p-0 list-item {% if item.id == category.id %} medium{% endif %}"
+                <a data-element="topic-element" class="p-0 list-item {% if item.id == category.id %} medium{% endif %}"
                    href="{{ path('category_show', {'slug': item.slug}) }}">
                   {{ item.name }}
                 </a>
@@ -34,7 +34,7 @@
               </li>
             {% else %}
               <li>
-                <a class="p-0 list-item" href="{{ path('servizi_list') }}">
+                <a data-element="all-services" class="p-0 list-item" href="{{ path('servizi_list') }}">
                   {{ 'nav.servizi'|trans }}
                 </a>
               </li>
@@ -45,14 +45,14 @@
           <ul class="link-list">
             {% for item in categories|slice(sidebar_list_limit, (categories|length-sidebar_list_limit)) %}
               <li>
-                <a class="p-0 list-item {% if item.id == category.id %} medium{% endif %}"
+                <a data-element="topic-element" class="p-0 list-item {% if item.id == category.id %} medium{% endif %}"
                    href="{{ path('category_show', {'slug': item.slug}) }}">
                   {{ item.name }}
                 </a>
               </li>
             {% endfor %}
             <li>
-              <a class="p-0 list-item" href="{{ path('servizi_list') }}">
+              <a data-element="all-services" class="p-0 list-item" href="{{ path('servizi_list') }}">
                 {{ 'nav.servizi'|trans }}
               </a>
             </li>

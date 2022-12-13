@@ -2,7 +2,7 @@
   <div class="card card-bg rounded shadow border">
     <div class="card-body">
       <h5 class="card-title mb-2 big-heading">
-        <a class="text-decoration-none" href="{{ path('category_show', {'slug': item.slug}) }}">{{ item.name }}</a>
+        <a data-element="topic-element" class="text-decoration-none" href="{{ path('category_show', {'slug': item.slug}) }}">{{ item.name }}</a>
       </h5>
       <p class="card-text">{{ item.description|abstract }}</p>
     </div>

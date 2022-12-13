@@ -7,7 +7,7 @@
     <div class="card-body">
       {% if servizio.topics and showTopic %}
         <div class="category-top">
-          <a href="{{ path('category_show', {'slug': servizio.topics.slug}) }}" class="category">
+          <a data-element="service-category-link" href="{{ path('category_show', {'slug': servizio.topics.slug}) }}" class="category">
             <span class="category">{{ servizio.topics.name }}</span>
           </a>
         </div>
@@ -21,7 +21,7 @@
       {% if not servizio.shortDescription is same as(servizio.name) %}
         <p class="card-text">{{ servizio.shortDescription|abstract }}</p>
       {% endif %}
-      <a class="read-more stretched-link" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
+      <a data-element="service-link" class="read-more stretched-link" href="{{ path('servizi_show', {'slug': servizio.slug}) }}">
         <span class="text">{{ 'read_more'|trans }}</span>
         <svg class="icon">
           <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-arrow-right"></use>
