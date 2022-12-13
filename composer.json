@@ -66,7 +66,7 @@
     "ramsey/uuid": "4.2.3",
     "sensio/framework-extra-bundle": "6.2.8",
     "sentry/sentry-symfony": "3.5.2",
-    "stof/doctrine-extensions-bundle": "1.7.0",
+    "stof/doctrine-extensions-bundle": "1.7.1",
     "symfony/asset": "4.4.46",
     "symfony/console": "4.4.47",
     "symfony/flex": "1.19.3",
