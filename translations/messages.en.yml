@@ -365,6 +365,8 @@ pratica:
     riferimento_sdc: 'Reference in Citizen''s Room:'
     allegati_protocollo: 'Attachments sent to the protocol'
     allegati_no_protocollo: 'Attachments not sent to the protocol'
+    operator:
+      reply_application: ''
   dettaglio:
     data_ora_presentazione: 'Request submitted on'
     alle: 'to'
@@ -444,6 +446,10 @@ pratica:
     or: 'Or'
     cambio_operatore: 'Change operator'
     il: 'the'
+    richiesta_integrazione: ''
+    risposta_integrazione: ''
+    integrazione_annullata: ''
+    integrazione_annullata_da: ''
   messaggi:
     oggetto: 'New message request numer %pratica%'
     messaggio: '%message% <img src="%link%">'
@@ -528,6 +534,7 @@ pratica:
   already_assigned: 'Practice is already assigned to%operator_fullname%'
   no_protocol_number: 'The practice does not yet have a protocol number'
   error_signature_validation: ""
+  reply_to_attachments: ''
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'
@@ -1185,6 +1192,8 @@ operatori:
   delete_operator: "Are you sure to proceed? The operator will be permanently deleted."
   create_external_calendar_help: ""
   create_calendar_error_url: ""
+  note_richiesta: ''
+  note_richiesta_del_giorno: ''
 allegato:
   nome_file: 'File name'
   descrizione_file: 'File description'
@@ -1203,6 +1212,7 @@ allegato:
     protocollato: 'Registered'
     in_attesa: 'Pending registration'
     non_richiesto: 'Registration not required'
+  hash_file: ''
 email:
   detail_link: 'link'
   pratica:
@@ -1274,6 +1284,7 @@ messages:
       20000: "Dear <strong>%user_name%</strong>, <br /> we inform you that your request for the <strong>%servizio%</strong> service has been successfully withdrawn, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications relating to your request. <br /> Thank you for your cooperation."
       1000: "Dear <strong>%user_name%</strong>, <br /> we inform you that a draft file has been created in your name for the service <strong>%servizio%</strong>, enter your Stanza del Cittadino and visit the section <i> My practices </i> to proceed with sending the application. <br /> Thank you for your cooperation."
       50000: "Dear <strong>%user_name%</strong>, <br/>we inform you that your request for the <strong>%servizio%</strong> service has been canceled, the request number is <strong>%pratica_id%</strong>, always refer to this identifier in case of communications relating to your request."
+      4400: ''
     no_reason: '<i>No message specified</i>'
   subject_label: 'Object'
   message_label: 'Message'
@@ -1843,7 +1854,7 @@ steps:
       guida_alla_compilazione: "Measures (listed in Annex C of the S.C.I.A. application) to be attached if necessary"
       files:
         PROV_PC-PAE:
-          title: "a) authorization for landscape protection pursuant to l.p. 1/2008\\\\\\\\"
+          title: "a) authorization for landscape protection pursuant to l.p. 1/2008"
           description: "description"
         PROV_PC-CUL:
           title: "b) authorizations relating to cultural heritage referred to in Articles 21 and 22 of Legislative Decree 42/2004"
@@ -2545,6 +2556,7 @@ buttons:
   draft: 'Save draft'
   last_save: 'Last saved:'
   save_pratice: ''
+  submit: ''
 aggiungi: 'Add'
 annulla: 'cancel'
 modifica: 'edit'
@@ -2965,6 +2977,7 @@ user_group:
   delete_success: 'Office successfully deleted'
   delete_error: 'Unable to delete the office, there are services and operators connected'
   delete_popup: "Are you sure to proceed? The office will be permanently deleted."
+  core_contact_point: ""
 contact_point:
   title: 'Contact Point'
   contact_point_name: 'Name'
