@@ -45,8 +45,15 @@
 
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
+        {% if pratica.statusName == 'STATUS_SUBMITTED_AFTER_INTEGRATION' %}
+          <div class="row last">
+            <div class="col alert alert-info">
+              {{ 'operatori.protocollazione_risposta_integrazione' | trans }}
+            </div>
+          </div>
+        {% endif %}
 
-        {% if pratica.type == 'form_io' and (pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED') %}
+        {% if pratica.statusName == 'STATUS_COMPLETE' or pratica.statusName == 'STATUS_CANCELLED' %}
           <div class="row last">
             <div class="col-xs-12 col-sm-12">
               <div class="alert alert-{% if pratica.esito %}success{% else %}danger{% endif %}">
@@ -81,6 +88,7 @@
           </div>
         {% endif %}
 
+        {# Pratica in attesa di integrazioni #}
         {% if not pratica.servizio.legacy and (pratica.statusName == 'STATUS_DRAFT_FOR_INTEGRATION') and pratica.richiestaDiIntegrazioneAttiva is defined %}
           <div class="alert alert-warning">
             <h5>{{ 'pratica.dettaglio.integrazioni.alert'|trans }}</h5>
@@ -96,6 +104,7 @@
             {% endif %}
           </div>
         {% endif %}
+
         {{ include('Pratiche/summary/detail_summary.html.twig', {'pratica':pratica}) }}
       </div>
       <div class="col-lg-4 pt-5 pt-lg-2 px-lg-2">
