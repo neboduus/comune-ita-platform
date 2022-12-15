@@ -57,7 +57,7 @@ security:
       pattern: /%prefix%/api/(services|services-groups|calendars|status|subscription-services|categories|recipients|geographic-areas|tenants)
       methods: [ POST, PUT, PATCH, DELETE ]
       stateless: true
-      provider: app_user_provider
+      provider: chain_provider
       guard:
         authenticators:
           - lexik_jwt_authentication.jwt_token_authenticator
