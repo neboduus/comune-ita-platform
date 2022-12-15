@@ -18,7 +18,7 @@ security:
             password: '%giscom_password%'
             roles: 'ROLE_GISCOM'
           api:
-            password: 'api'
+            password: '%env(API_USER_PASSWORD)%'
             roles: 'ROLE_ADMIN'
     cps:
       id: App\Services\CPSUserProvider
