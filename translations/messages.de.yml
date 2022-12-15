@@ -57,21 +57,21 @@ nav:
     protocollo: 'Protokollkonfiguration'
     usage: 'Statistiken'
   admin:
-    impostazioni_istanza: 'BACKOFFICE'
-    operatori: 'BACKOFFICE'
-    servizi: 'BACKOFFICE'
+    impostazioni_istanza: 'Einstellungen'
+    operatori: 'Sachbearbeiter/-innen'
+    servizi: 'Diensten'
     gruppo_servizi: 'Gruppe von Diensten'
-    webhook: 'BACKOFFICE'
+    webhook: 'Webhook'
     metodi_pagamento: 'Zahlungsarten'
     strumenti: 'Extras'
-    azioni_programmate: 'geplante Aktionen'
-    logs: 'BACKOFFICE'
+    azioni_programmate: 'Geplante Aktionen'
+    logs: 'Logs'
     integrazioni: 'Ergänzungen'
     tenant:
       protocollo: 'Registrierung'
       pagamenti: 'Zahlungen'
       opzioni: 'Optionen'
-      webhooks: 'BACKOFFICE'
+      webhooks: 'Webhooks'
     ente: 'Behörde'
     categorie: 'Kategorien'
     impostazioni_istanza_descrizione: "Einstellungen_Antrag_Beschreibung"
@@ -159,13 +159,13 @@ servizio:
   consenti_ritiro: "BACKOFFICE"
   flusso: "Workflow"
   bozza_successo: 'Entwurf erfolgreich gespeichert'
-  nessun_template: 'BACKOFFICE'
+  nessun_template: 'Keine Vorlage verfügbar'
   importa: 'Remote-Import'
   destinatari: "Nutzerkategorie"
   sottotitolo: 'Anträge und Eintragungen, Beiträge und Rangordnungen, Meldungen, Ermächtigungen und Konzessionen, Bestätigungen und Erklärungen, Zahlungen, Öffentliche Dienste.'
   aree_geografiche: "Geografische Zonen"
   consenti_richiesta_integrazione: "BACKOFFICE"
-  no_topics: 'BACKOFFICE'
+  no_topics: 'Keine Kategorie wurde angegeben'
   no_recipients: 'Es wurde keine Nutzerkategorie angegeben'
   no_geographic_areas: 'Es wurde keine geografische Zone angegeben.'
   shared_with_group_message: 'Dieser Dienst teilt die Daten mit der Gruppe von Diensten, weiter unten werden die verknüpften Inhalte angezeigt.'
@@ -321,10 +321,10 @@ webhook:
   create: 'Webhook erstellen'
   edit: 'Bearbeiten'
   back_to_list: 'Zurück zur Liste'
-  no_services: 'BACKOFFICE'
+  no_services: 'Kein Dienst angegeben'
   active: 'Aktiv'
   not_Active: 'Nicht aktiv'
-  filters_label: 'BACKOFFICE'
+  filters_label: 'Webhook-fähige Dienste auswählen'
   headers: 'Headers (json)'
   version: 'Version'
 pratica:
@@ -396,6 +396,8 @@ pratica:
     riferimento_sdc: 'Den entsprechenden Vorgang finden Sie in Ihrem Bürgerservicekonto unter:'
     allegati_protocollo: 'Anhänge zur Registrierung gesendet'
     allegati_no_protocollo: 'Anhänge nicht zur Registrierung gesendet'
+    operator:
+      reply_application: ''
   dettaglio:
     data_ora_presentazione: 'Antrag gestellt am'
     # alle ore? um .... Uhr
@@ -482,6 +484,10 @@ pratica:
     or: 'oder'
     cambio_operatore: 'Sachbearbeiterwechsel'
     il: 'am'
+    richiesta_integrazione: ''
+    risposta_integrazione: ''
+    integrazione_annullata: ''
+    integrazione_annullata_da: ''
   messaggi:
     oggetto: 'Neue Mitteilung betreffend den Antrag Nr. %pratica%'
     messaggio: '%message% <img src="%link%">'
@@ -567,6 +573,7 @@ pratica:
   already_assigned: ''
   no_protocol_number: ''
   error_signature_validation: ""
+  reply_to_attachments: ''
 STATUS_CANCELLED: 'Abgelehnt'
 STATUS_DRAFT: 'Entwurf'
 STATUS_PRE_SUBMIT: 'Gesendet'
@@ -987,8 +994,8 @@ user:
     btn: ""
 admin:
   usage:
-    user_title: 'BACKOFFICE'
-    active_user_title: 'BACKOFFICE'
+    user_title: 'Anzahl der Nutzer'
+    active_user_title: 'Anzahl der aktiven Nutzer'
   create_operator_notify: 'Sachbearbeiterin/Sachbearbeiter erfolgreich erstellt'
   delete_operator_notify: 'Sachbearbeiterin/Sachbearbeiter erfolgreich gelöscht'
   error_delete_operator_notify: "Sachberarbeiter/-in kann nicht gelöscht werden. Es sind Vorgänge damit verknüpft."
@@ -1012,31 +1019,31 @@ operatori:
   sicuro_di_prendere_in_carico_la_pratica: 'Bestätigen Sie die Übernahme des Vorgangs %name%?'
   si: 'Ja, ich bin mir sicher.'
   'no': "Nein, Operation abbrechen."
-  pratiche_mie: 'BACKOFFICE'
-  pratiche_libere: 'BACKOFFICE'
+  pratiche_mie: 'Zu verwaltende Praktiken'
+  pratiche_libere: 'Zuzuweisende Praktiken'
   pratiche_concluse: 'Abgeschlossene Vorgänge'
   pratiche_ente: "Alle Vorgänge der Behörde"
   torna_alle_pratiche: "Zurück zur Liste der Vorgänge"
   gestione_pratica: "BACKOFFICE"
   allega: 'Anhängen'
-  approva: 'BACKOFFICE'
+  approva: 'Genehmigen Sie'
   rifiuta: 'Ablehnen'
   rigetta: 'Nicht stattgeben'
-  elabora: 'BACKOFFICE'
+  elabora: 'Prozess'
   scrivi_al_cittadino: "BACKOFFICE"
   riapri_pratica: "Vorgang erneut öffnen"
   richiedi_integrazioni_tpl: "Sehr geehrte/-r Frau/Herr <b>%user_name%, </b><br/> wir teilen Ihnen mit, dass die Daten zu Ihrer Anfrage betreffend <b>%servizio%</b> noch nicht vollständig sind.<br/>[Inserire motivazione]<br/>Steigen Sie in Ihr Bürgerservicekonto ein, um die Ergänzung vorzunehmen."
-  modulo: "BACKOFFICE\n"
+  modulo: "Modul"
   richiesta: 'Antrag'
   protocollo_arrivo: 'Eingang'
   protocollo_partenza: 'Start'
-  numero_fascicolo: 'BACKOFFICE'
+  numero_fascicolo: 'Aktenzeichen'
   numero_protocollo: 'Registrierungsnummer'
   id_documento: 'Identifikationsnummer des Dokuments'
   data_protocollo: 'Registrierungsdatum'
   esito: 'Ergebnis'
   allegati: 'Anhänge'
-  note_interne: 'BACKOFFICE'
+  note_interne: 'Interne Notizen'
   importo: "Betrag"
   pagamento: 'Zahlung'
   protocollo: 'Registrierung'
@@ -1234,6 +1241,8 @@ operatori:
   delete_operator: "Sind Sie sicher, dass Sie fortfahren möchten? Sachbearbeiter/-in wird endgültig gelöscht."
   create_external_calendar_help: ""
   create_calendar_error_url: ""
+  note_richiesta: ''
+  note_richiesta_del_giorno: ''
 allegato:
   nome_file: 'Dateiname'
   descrizione_file: 'Beschreibung der Datei'
@@ -1252,6 +1261,7 @@ allegato:
     protocollato: 'registriert'
     in_attesa: 'Registrierung noch ausständig'
     non_richiesto: 'keine Registrierung erforderlich'
+  hash_file: ''
 email:
   detail_link: 'Link'
   pratica:
@@ -1327,6 +1337,7 @@ messages:
       20000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde erfolgreich zurückgezogen. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
       1000: "Sehr geehrte/-r Frau/Herr <strong>%user_name%</strong>,<br /> wir teilen Ihnen mit, dass unter Ihrem Namen ein Vorgangsentwurf betreffend  <strong>%servizio%</strong> erstellt worden ist. Steigen Sie in Ihr Bürgerservicekonto ein und schauen Sie unter  <i>Meine Vorgänge</i> nach, wenn Sie die Anfrage senden wollen.<br />Wir danken für die Zusammenarbeit."
       50000: "Sehr geehrte/-r Frau/Herr<strong>%user_name%</strong>,<br /> Ihr Antrag betreffend <strong>%servizio%</strong> wurde annulliert. Die Referenznummer des Antrags lautet: <strong>%pratica_id%</strong>. Geben Sie bei Ihren Mitteilungen zu diesem Antrag stets diese Nummer an.<br />Wir danken für die Zusammenarbeit."
+      4400: ''
     no_reason: '<i>Keine Nachricht angegeben<i>'
   subject_label: 'Betreff'
   message_label: 'Nachricht'
@@ -2614,6 +2625,7 @@ buttons:
   draft: 'Entwurf speichern'
   last_save: 'Zuletzt gespeichert:'
   save_pratice: ''
+  submit: ''
 aggiungi: 'Hinzufügen'
 annulla: 'Rückgängig machen'
 modifica: 'Bearbeiten'
@@ -2662,7 +2674,7 @@ categories:
   delete_service_error: 'BACKOFFICE'
   delete_service_group_error: 'BACKOFFICE'
   delete_subcategories_error: 'BACKOFFICE'
-  related_title: 'BACKOFFICE'
+  related_title: 'Dienste dieser Kategorie'
   related_type: 'Kategorie'
   service_remove_success: 'Erfolgreich entfernt'
   service_remove_error: "Bei der Entfernung ist ein Fehler aufgetreten"
@@ -3023,7 +3035,7 @@ reset: ''
 save_processing: ''
 add_note: ''
 user_group:
-  title: ''
+  title: 'Ämter'
   main_function: ''
   manager: ''
   more_info: ''
@@ -3035,6 +3047,7 @@ user_group:
   delete_success: ''
   delete_error: ''
   delete_popup: 'Sind Sie sicher, dass Sie fortfahren möchten? Die Büro wird endgültig gelöscht.'
+  core_contact_point: ""
 contact_point:
   title: 'Kontaktpunkt'
   contact_point_name: 'Titel'
