@@ -10,12 +10,7 @@
               <div class="card w-100">
                 <div class="card-body">
                   <h2 class="title-medium-2-semi-bold">{{ 'contacts.title' | trans }}</h2>
-                  <ul class="contact-list p-0" data-element="page-index">
-                    <li>
-                      <a>
-                        <span class="sr-only">Contatti</span>
-                      </a>
-                    </li>
+                  <ul class="contact-list p-0">
                     {% if contacts.faq_url is defined %}
                       <li><a class="list-item" href="{{ contacts.faq_url }}">
                           <svg class="icon icon-primary icon-sm" aria-hidden="true">
