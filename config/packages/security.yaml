@@ -17,6 +17,9 @@ security:
           giscom:
             password: '%giscom_password%'
             roles: 'ROLE_GISCOM'
+          api:
+            password: 'api'
+            roles: 'ROLE_ADMIN'
     cps:
       id: App\Services\CPSUserProvider
 
@@ -45,7 +48,7 @@ security:
     api_secure:
       pattern: /%prefix%/api/(folders|documents|users|user-groups|meetings|applications|subscriptions|subscribers|subscription-services\/.{36}\/subscriptions|payments)
       stateless: true
-      provider: app_user_provider
+      provider: chain_provider
       guard:
         authenticators:
           - lexik_jwt_authentication.jwt_token_authenticator

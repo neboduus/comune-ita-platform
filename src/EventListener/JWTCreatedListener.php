@@ -5,6 +5,7 @@ namespace App\EventListener;
 use App\Services\InstanceService;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\User as CoreUser;
 
 class JWTCreatedListener
 {
@@ -35,7 +36,13 @@ class JWTCreatedListener
   public function onJWTCreated(JWTCreatedEvent $event)
   {
     $payload = $event->getData();
-    $payload['id'] = $event->getUser()->getId();
+
+    // Se ho richiesto il jwt per un utente in memory non ho l'id
+    if ($event->getUser() instanceof CoreUser\User) {
+      $payload['id'] = null;
+    } else {
+      $payload['id'] = $event->getUser()->getId();
+    }
     $payload['tenant_id'] = $this->instanceService->getCurrentInstance()->getId();
     $event->setData($payload);
   }
