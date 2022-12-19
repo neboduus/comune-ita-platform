@@ -4,3 +4,8 @@ service:
 user_group:
   name:
     not_blank: "Il nome non può essere vuoto"
+contact_point:
+  email:
+    not_valid: "Il campo email inserito non è una email valida"
+  pec:
+    not_valid: "Il campo pec inserito non è una email valida"

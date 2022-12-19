@@ -4,3 +4,8 @@ service:
 user_group:
   name:
     not_blank: "The name field can't be empty"
+contact_point:
+  email:
+    not_valid: "The field email is not a valid email"
+  pec:
+    not_valid: "The field pec is not a valid email"

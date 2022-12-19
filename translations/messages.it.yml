@@ -2981,7 +2981,7 @@ user_group:
   manager: 'Responsabile'
   more_info: 'Maggiori informazioni'
   users: "Operatori"
-  core_contact_point: "Punto di contatto principale"
+  core_contact_point: "Contatto principale"
   services: "Servizi"
   manager_not_in_users: "Il responsabile deve essere tra gli utenti dell'ufficio"
   create: 'Crea nuovo ufficio'
@@ -2989,7 +2989,28 @@ user_group:
   delete_success: 'Ufficio eliminato correttamente'
   delete_error: "Impossibile eliminare l'ufficio, ci sono servizi e operatori collegati"
   delete_popup: "Sei sicuro di procedere? L'ufficio verrà eliminato definitivamente."
+  new: 'Crea nuovo ufficio'
 contact_point:
   title: 'Punti di Contatto'
   contact_point_name: 'Nome'
   phone_number: 'Numero di telefono'
+  name: "Contatti"
+place:
+  title: "Luoghi"
+  other_name: "Nome alternativo"
+  identifier: "Identificatore"
+  latitude: "Latitudine"
+  longitude: "Longitudine"
+  address: "Indirizzo"
+  create: 'Crea nuovo luogo'
+  delete_popup: "Sei sicuro di procedere? Il luogo verrà eliminata definitivamente."
+  delete_error: "Impossibile eliminare il luogo"
+  delete_success: 'Luogo eliminato correttamente'
+  new: 'Crea nuovo luogo'
+  addressCountry: 'Paese'
+  addressLocality: 'Comune'
+  addressRegion: 'Regione'
+  postOfficeBoxNumber: 'Numero'
+  postalCode: 'CAP'
+  streetAddress: 'Via/Piazza'
+

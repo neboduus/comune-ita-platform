@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
@@ -98,6 +99,13 @@ class Categoria implements Translatable
   private $userGroups;
 
   /**
+   * @ORM\OneToMany(targetEntity=Place::class, mappedBy="topic")
+   * @var ArrayCollection
+   * @Serializer\Exclude()
+   */
+  private $places;
+
+  /**
    * Categoria constructor.
    */
   public function __construct()
@@ -108,6 +116,7 @@ class Categoria implements Translatable
     $this->children = new ArrayCollection();
     $this->services = new ArrayCollection();
     $this->servicesGroup = new ArrayCollection();
+    $this->places = new ArrayCollection();
   }
 
   public function __toString()
@@ -317,4 +326,5 @@ class Categoria implements Translatable
   {
     return $this->getChildren()->count() > 0 || $this->getVisibleService()->count() > 0 || $this->getVisibleServicesGroup()->count() > 0;
   }
+
 }

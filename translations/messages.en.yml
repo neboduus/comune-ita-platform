@@ -2978,7 +2978,27 @@ user_group:
   delete_error: 'Unable to delete the office, there are services and operators connected'
   delete_popup: "Are you sure to proceed? The office will be permanently deleted."
   core_contact_point: ""
+  new: 'Create new office'
 contact_point:
   title: 'Contact Point'
   contact_point_name: 'Name'
   phone_number: 'Phone number'
+  name: "Contacts"
+place:
+  title: "Place"
+  other_name: "Alternative name"
+  identifier: "Identifier"
+  latitude: "Latitude"
+  longitude: "Longitude"
+  address: "Address"
+  create: 'Create new place'
+  delete_popup: "Are you sure to proceed? The place will be permanently deleted."
+  delete_success: 'Place successfully deleted'
+  delete_error: 'Unable to delete the place'
+  new: 'Create new place'
+  addressCountry: 'Country'
+  addressLocality: 'Locality'
+  addressRegion: 'Region'
+  postOfficeBoxNumber: 'Box number'
+  postalCode: 'ZIP code'
+  streetAddress: 'Street'

@@ -140,6 +140,17 @@ class UserGroup implements Translatable
    */
   private $locale;
 
+
+
+  /**
+   * @var Place
+   * @ORM\ManyToOne(targetEntity=Place::class, cascade={"persist", "remove"})
+   * @OA\Property(property="core_location", description="User Group's Core Location")
+   * @Groups({"read", "write"})
+   */
+  private $coreLocation;
+
+
   public function __construct()
   {
     if (!$this->id) {
@@ -396,5 +407,17 @@ class UserGroup implements Translatable
   public function setTranslatableLocale($locale)
   {
     $this->locale = $locale;
+  }
+
+  public function getCoreLocation(): ?Place
+  {
+      return $this->coreLocation;
+  }
+
+  public function setCoreLocation(?Place $coreLocation): self
+  {
+      $this->coreLocation = $coreLocation;
+
+      return $this;
   }
 }

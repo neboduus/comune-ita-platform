@@ -3048,7 +3048,27 @@ user_group:
   delete_error: ''
   delete_popup: 'Sind Sie sicher, dass Sie fortfahren möchten? Die Büro wird endgültig gelöscht.'
   core_contact_point: ""
+  new: ''
 contact_point:
   title: 'Kontaktpunkt'
   contact_point_name: 'Titel'
   phone_number: 'Telefonnummer'
+  nome: ""
+place:
+  title: ""
+  other_name: ""
+  identifier: ""
+  latitude: ""
+  longitude: ""
+  address: ""
+  create: ""
+  delete_popup: 'Sind Sie sicher, dass Sie fortfahren möchten? Die Element wird endgültig gelöscht.'
+  new: ''
+  delete_success: ''
+  delete_error: ''
+  addressCountry: ''
+  addressLocality: ''
+  addressRegion: ''
+  postOfficeBoxNumber: ''
+  postalCode: ''
+  streetAddress: ''
