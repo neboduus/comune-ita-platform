@@ -10,7 +10,10 @@ use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -25,12 +28,12 @@ class PlaceType extends AbstractI18nType
         'required' => true,
         'purify_html' => true
       ])
-      ->add('otherName', I18nTextareaType::class, [
+      ->add('otherName', I18nTextType::class, [
         'label' => 'place.other_name',
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('shortDescription', I18nTextareaType::class, [
+      ->add('shortDescription', I18nTextType::class, [
         'label' => 'servizio.short_description',
         'required' => false,
         'purify_html' => true,
@@ -45,7 +48,7 @@ class PlaceType extends AbstractI18nType
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('identifier', I18nTextareaType::class, [
+      ->add('identifier', I18nTextType::class, [
         'label' => 'place.identifier',
         'required' => false,
         'purify_html' => true,
@@ -53,12 +56,12 @@ class PlaceType extends AbstractI18nType
     ;
 
     $builder
-      ->add('latitude', TextareaType::class, [
+      ->add('latitude', TextType::class, [
         'label' => 'place.latitude',
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('longitude', TextareaType::class, [
+      ->add('longitude', TextType::class, [
         'label' => 'place.longitude',
         'required' => false,
         'purify_html' => true,
@@ -87,6 +90,15 @@ class PlaceType extends AbstractI18nType
         'label' => 'place.address'
       ])
     ;
+
+    $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+  }
+
+  public function onPreSubmit(FormEvent $event)
+  {
+    $data = $event->getData();
+    $data['coreContactPoint']['name'] = $data['name'][$this->getLocale()] ?? '';
+    $event->setData($data);
   }
 
   /**

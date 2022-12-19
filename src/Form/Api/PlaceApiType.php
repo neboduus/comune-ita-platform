@@ -20,11 +20,11 @@ class PlaceApiType extends AbstractType
       ->add('name', TextType::class, [
         'required' => true,
       ])
-      ->add('other_name', TextareaType::class, [
+      ->add('other_name', TextType::class, [
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('short_description', TextareaType::class, [
+      ->add('short_description', TextType::class, [
         'required' => false,
         'purify_html' => true,
       ])
@@ -37,15 +37,15 @@ class PlaceApiType extends AbstractType
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('identifier', TextareaType::class, [
+      ->add('identifier', TextType::class, [
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('latitude', TextareaType::class, [
+      ->add('latitude', TextType::class, [
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('longitude', TextareaType::class, [
+      ->add('longitude', TextType::class, [
         'required' => false,
         'purify_html' => true,
       ])

@@ -3,6 +3,8 @@
 namespace App\Form\Admin;
 
 use App\Entity\UserGroup;
+use App\Form\Api\PlaceApiType;
+use App\Form\Api\PostalAddressApiType;
 use App\Form\I18n\AbstractI18nType;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
@@ -78,9 +80,10 @@ class UserGroupType extends AbstractI18nType
         'required' => false,
         'label' => 'user_group.core_contact_point',
       ])
-      ->add('coreLocation', PlaceType::class, [
+      // Utilizzo l'ApiType per un bug di inclusione di due form con translations attive
+      ->add('coreLocation', PlaceApiType::class, [
         'required' => false,
-        'label' => 'place.title'
+        'label' => 'place.address'
       ])
     ;
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
@@ -90,6 +93,9 @@ class UserGroupType extends AbstractI18nType
   {
     $data = $event->getData();
     $data['coreContactPoint']['name'] = $data['name'][$this->getLocale()] ?? '';
+    $data['coreLocation']['name'] = $data['name'][$this->getLocale()] ?? '';
+    $event->setData($data);
+
   }
 
   /**

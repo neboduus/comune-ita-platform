@@ -26,6 +26,11 @@
                                 aria-selected="false">{{ 'contact_point.name'|trans }}</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" id="place-tab" data-toggle="tab" href="#place" role="tab"
+             aria-controls="service-tab"
+             aria-selected="false">{{ 'place.address'|trans }}</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" id="operator-tab" data-toggle="tab" href="#operator" role="tab"
                                 aria-controls="operator-tab"
                                 aria-selected="false">{{ 'user_group.users'|trans }}</a>
@@ -48,10 +53,6 @@
 
         <div class="tab-pane p-3 fade" id="core-contact-point" role="tabpanel" aria-labelledby="core-contact-point-tab">
 
-          {#{ form_row(form.selectExistingContactPoint) }}
-          <div id="existing-core-contact-point">
-            {{ form_row(form.existingCoreContactPoint) }}
-          </div>#}
           <fieldset>
             {{ form_label(form.coreContactPoint) }}
             <div class="d-none">
@@ -68,6 +69,42 @@
               </div>
             </div>
           </fieldset>
+        </div>
+
+        <div class="tab-pane p-3 fade" id="place" role="tabpanel" aria-labelledby="place-tab">
+          <fieldset>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-4">{{ form_row(form.coreLocation.address.address_country) }}</div>
+                <div class="col-md-4">{{ form_row(form.coreLocation.address.address_region) }}</div>
+                <div class="col-md-4">{{ form_row(form.coreLocation.address.address_locality) }}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-6">{{ form_row(form.coreLocation.address.street_address) }}</div>
+                <div class="col-md-2">{{ form_row(form.coreLocation.address.post_office_box_number) }}</div>
+                <div class="col-md-4">{{ form_row(form.coreLocation.address.postal_code) }}</div>
+              </div>
+            </div>
+            <div class="form-group d-none">
+              <div class="row">
+                <div class="col-md-6">{{ form_row(form.coreLocation.latitude) }}</div>
+                <div class="col-md-6">{{ form_row(form.coreLocation.longitude) }}</div>
+              </div>
+            </div>
+          </fieldset>
+          <div class="d-none">
+            {{ form_row(form.coreLocation.name) }}
+            {{ form_row(form.coreLocation.other_name) }}
+            {{ form_row(form.coreLocation.short_description) }}
+            {{ form_row(form.coreLocation.description) }}
+            {{ form_row(form.coreLocation.more_info) }}
+            {{ form_row(form.coreLocation.identifier) }}
+            {{ form_row(form.coreLocation.topic_id) }}
+            {{ form_row(form.coreLocation.geographic_areas_ids) }}
+            {{ form_row(form.coreLocation.core_contact_point) }}
+          </div>
         </div>
 
 

@@ -117,6 +117,14 @@ class UserGroup implements Translatable
   private $coreContactPoint;
 
   /**
+   * @var Place
+   * @ORM\ManyToOne(targetEntity=Place::class, cascade={"persist", "remove"})
+   * @OA\Property(property="core_location", description="User Group's Core Location")
+   * @Groups({"read", "write"})
+   */
+  private $coreLocation;
+
+  /**
    * @var DateTime
    * @Gedmo\Timestampable(on="create")
    * @ORM\Column(type="datetime")
@@ -139,16 +147,6 @@ class UserGroup implements Translatable
    * this is not a mapped field of entity metadata, just a simple property
    */
   private $locale;
-
-
-
-  /**
-   * @var Place
-   * @ORM\ManyToOne(targetEntity=Place::class, cascade={"persist", "remove"})
-   * @OA\Property(property="core_location", description="User Group's Core Location")
-   * @Groups({"read", "write"})
-   */
-  private $coreLocation;
 
 
   public function __construct()
