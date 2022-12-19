@@ -1,0 +1,96 @@
+{% extends 'Default/index.html.twig' %}
+{% block main_content %}
+<section id="intro" class="container px-4 my-4">
+  <div class="row">
+    <div class="col-lg-12 px-lg-4 py-lg-2">
+      {% if item.name %}
+        <h2> {{ 'gruppo_di_servizi.modifica' | trans() }} - {{ item.name }}</h2>
+      {% else %}
+        <h2>{{ 'place.new' | trans() }}</h2>
+      {% endif %}
+    </div>
+
+    <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+      {{ form_start(form) }}
+      {{ form_errors(form) }}
+      <ul class="nav nav-tabs" id="placeTab" role="tablist">
+        <li class="nav-item"><a class="nav-link active" id="default-settings-tab" data-toggle="tab"
+                                href="#default-settings" role="tab" aria-controls="default-settings-tab"
+                                aria-selected="true">{{ 'operatori.scheda'|trans }}</a></li>
+        <li class="nav-item"><a class="nav-link" id="core-contact-point-tab" data-toggle="tab" href="#core-contact-point" role="tab"
+                                aria-controls="core-contact-point-tab"
+                                aria-selected="false">{{ 'contact_point.name'|trans }}</a></li>
+        <li class="nav-item"><a class="nav-link" id="postal-address-tab" data-toggle="tab" href="#postal-address" role="tab"
+                                aria-controls="postal-address-tab"
+                                aria-selected="false">{{ 'place.address'|trans }}</a></li>
+      </ul>
+
+      <div class="tab-content" id="placeTabContent">
+        <div class="tab-pane p-3 fade show active" id="default-settings" role="tabpanel"
+             aria-labelledby="default-settings-tab">
+
+          {{ form_widget(form.name) }}
+          {{ form_row(form.otherName) }}
+          {{ form_row(form.shortDescription) }}
+          {{ form_row(form.description) }}
+          {{ form_row(form.moreInfo) }}
+          {{ form_row(form.identifier) }}
+          {{ form_row(form.topic) }}
+
+        </div>
+
+        <div class="tab-pane p-3 fade" id="core-contact-point" role="tabpanel" aria-labelledby="core-contact-point-tab">
+          <fieldset>
+            {{ form_label(form.coreContactPoint) }}
+            <div class="d-none"> {{ form_row(form.coreContactPoint.name) }} </div>
+            <div class="row">
+              <div class="col-md-6">{{ form_row(form.coreContactPoint.email) }}</div>
+              <div class="col-md-6">{{ form_row(form.coreContactPoint.pec) }}</div>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-6">{{ form_row(form.coreContactPoint.phoneNumber) }}</div>
+                <div class="col-md-6">{{ form_row(form.coreContactPoint.url) }}</div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+
+        <div class="tab-pane p-3 fade" id="postal-address" role="tabpanel" aria-labelledby="postal-address-tab">
+          <fieldset>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-4">{{ form_row(form.address.address_country) }}</div>
+                <div class="col-md-4">{{ form_row(form.address.address_region) }}</div>
+                <div class="col-md-4">{{ form_row(form.address.address_locality) }}</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-6">{{ form_row(form.address.street_address) }}</div>
+                <div class="col-md-2">{{ form_row(form.address.post_office_box_number) }}</div>
+                <div class="col-md-4">{{ form_row(form.address.postal_code) }}</div>
+              </div>
+            </div>
+            {{ form_row(form.geographicAreas) }}
+            <div class="form-group d-none">
+              <div class="row">
+                <div class="col-md-6">{{ form_row(form.latitude) }}</div>
+                <div class="col-md-6">{{ form_row(form.longitude) }}</div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+
+      </div>
+
+      <input class="btn btn-primary mr-1" type="submit" value="{{ 'salva' | trans() }}" style="float: left"/>
+      <a class="btn btn-100 mr-1" href="{{ path('admin_place_index') }}"
+         style="float: left">{{ 'gruppo_di_servizi.torna_alla_lista' | trans() }}</a>
+
+      {{ form_end(form) }}
+    </div>
+  </div>
+</section>
+{% endblock %}

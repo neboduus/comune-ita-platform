@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -95,6 +96,13 @@ class GeographicArea implements Translatable
    */
   private $locale;
 
+  /**
+   * @ORM\ManyToMany(targetEntity=Place::class, mappedBy="geographicAreas")
+   * @var ArrayCollection
+   * @Serializer\Exclude()
+   */
+  private $places;
+
 
   /**
    * Categoria constructor.
@@ -106,6 +114,7 @@ class GeographicArea implements Translatable
     }
     $this->services = new ArrayCollection();
     $this->servicesGroup = new ArrayCollection();
+    $this->places = new ArrayCollection();
   }
 
   /**

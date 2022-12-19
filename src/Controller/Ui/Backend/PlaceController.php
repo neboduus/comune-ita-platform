@@ -2,7 +2,7 @@
 
 namespace App\Controller\Ui\Backend;
 
-use App\Entity\UserGroup;
+use App\Entity\Place;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,10 +13,10 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class UserGroupController
- * @Route("/admin/user-groups")
+ * Class PlaceController
+ * @Route("/admin/places")
  */
-class UserGroupController extends AbstractController
+class PlaceController extends AbstractController
 {
   /**
    * @var EntityManagerInterface
@@ -39,13 +39,13 @@ class UserGroupController extends AbstractController
 
 
   /**
-   * @Route("/", name="admin_user_group_index", methods={"GET"})
+   * @Route("/", name="admin_place_index", methods={"GET"})
    *
    */
-  public function indexUserGroupsAction(): Response
+  public function indexPlacesAction(): Response
   {
-    $items = $this->entityManager->getRepository('App\Entity\UserGroup')->findBy([], ['name' => 'asc']);
-    return $this->render('Admin/indexUserGroup.html.twig', [
+    $items = $this->entityManager->getRepository('App\Entity\Place')->findBy([], ['name' => 'asc']);
+    return $this->render('Admin/indexPlace.html.twig', [
       'user'  => $this->getUser(),
       'items' => $items
     ]);
@@ -53,14 +53,14 @@ class UserGroupController extends AbstractController
 
 
   /**
-   * @Route("/new", name="admin_user_group_new", methods={"GET", "POST"})
+   * @Route("/new", name="admin_place_new", methods={"GET", "POST"})
    * @param Request $request
    * @return RedirectResponse|Response|null
    */
-  public function newUserGroupAction(Request $request)
+  public function newPlaceAction(Request $request)
   {
-    $item = new UserGroup();
-    $form = $this->createForm('App\Form\Admin\UserGroupType', $item);
+    $item = new Place();
+    $form = $this->createForm('App\Form\Admin\PlaceType', $item);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
@@ -68,10 +68,10 @@ class UserGroupController extends AbstractController
       $this->entityManager->flush();
 
       $this->addFlash('feedback', $this->translator->trans('general.flash.created'));
-      return $this->redirectToRoute('admin_user_group_edit', ['id' => $item->getId()]);
+      return $this->redirectToRoute('admin_place_edit', ['id' => $item->getId()]);
     }
-
-    return $this->render( 'Admin/editUserGroup.html.twig', [
+    //dd($form->createView());
+    return $this->render( 'Admin/editPlace.html.twig', [
       'user'  => $this->getUser(),
       'item' => $item,
       'form' => $form->createView(),
@@ -80,22 +80,22 @@ class UserGroupController extends AbstractController
 
 
   /**
-   * @Route("/{id}/edit", name="admin_user_group_edit", methods={"GET", "POST"})
+   * @Route("/{id}/edit", name="admin_place_edit", methods={"GET", "POST"})
    * @param Request $request
-   * @param UserGroup $item
+   * @param Place $item
    * @return Response|null
    */
-  public function editUserGroupAction(Request $request, UserGroup $item): ?Response
+  public function editPlaceAction(Request $request, Place $item): ?Response
   {
-    $form = $this->createForm('App\Form\Admin\UserGroupType', $item);
+    $form = $this->createForm('App\Form\Admin\PlaceType', $item);
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
       $this->entityManager->flush();
-      return $this->redirectToRoute('admin_user_group_edit', ['id' => $item->getId()]);
+      return $this->redirectToRoute('admin_place_edit', ['id' => $item->getId()]);
     }
 
-    return $this->render( 'Admin/editUserGroup.html.twig',
+    return $this->render( 'Admin/editPlace.html.twig',
       [
         'user'  => $this->getUser(),
         'item' => $item,
@@ -105,19 +105,19 @@ class UserGroupController extends AbstractController
 
 
   /**
-   * @Route("/{id}/delete", name="admin_user_group_delete", methods={"GET", "POST"})
+   * @Route("/{id}/delete", name="admin_place_delete", methods={"GET", "POST"})
    */
-  public function deleteUserGroupAction(Request $request, UserGroup $item): RedirectResponse
+  public function deletePlaceAction(Request $request, Place $item): RedirectResponse
   {
     try {
       $this->entityManager->remove($item);
       $this->entityManager->flush();
-      $this->addFlash('feedback', $this->translator->trans('user_group.delete_success'));
-      return $this->redirectToRoute('admin_user_group_index');
+      $this->addFlash('feedback', $this->translator->trans('place.delete_success'));
+      return $this->redirectToRoute('admin_place_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
-      $this->addFlash('warning', $this->translator->trans('user_group.delete_error'));
-      return $this->redirectToRoute('admin_user_group_index');
+      $this->addFlash('warning', $this->translator->trans('place.delete_error'));
+      return $this->redirectToRoute('admin_place_index');
     }
   }
 

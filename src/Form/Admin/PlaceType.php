@@ -2,36 +2,41 @@
 
 namespace App\Form\Admin;
 
-use App\Entity\UserGroup;
+use App\Entity\Place;
+use App\Form\Api\PostalAddressApiType;
 use App\Form\I18n\AbstractI18nType;
+use App\Form\I18n\I18nDataMapperInterface;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
-use App\Form\Admin\ContactPointType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-class UserGroupType extends AbstractI18nType
+class PlaceType extends AbstractI18nType
 {
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-
     $this->createTranslatableMapper($builder, $options)
       ->add('name', I18nTextType::class, [
         'label' => 'general.nome',
         'required' => true,
+        'purify_html' => true
+      ])
+      ->add('otherName', I18nTextareaType::class, [
+        'label' => 'place.other_name',
+        'required' => false,
+        'purify_html' => true,
       ])
       ->add('shortDescription', I18nTextareaType::class, [
         'label' => 'servizio.short_description',
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('mainFunction', I18nTextareaType::class, [
-        'label' => 'user_group.main_function',
+      ->add('description', I18nTextareaType::class, [
+        'label' => 'servizio.descrizione',
         'required' => false,
         'purify_html' => true,
       ])
@@ -40,56 +45,48 @@ class UserGroupType extends AbstractI18nType
         'required' => false,
         'purify_html' => true,
       ])
+      ->add('identifier', I18nTextareaType::class, [
+        'label' => 'place.identifier',
+        'required' => false,
+        'purify_html' => true,
+      ])
     ;
 
-
     $builder
+      ->add('latitude', TextareaType::class, [
+        'label' => 'place.latitude',
+        'required' => false,
+        'purify_html' => true,
+      ])
+      ->add('longitude', TextareaType::class, [
+        'label' => 'place.longitude',
+        'required' => false,
+        'purify_html' => true,
+      ])
       ->add('topic', EntityType::class, [
         'class' => 'App\Entity\Categoria',
         'label' => 'servizio.categoria',
         'choice_label' => 'name',
         'required' => false
       ])
-      ->add('manager', EntityType::class, [
-        'class' => 'App\Entity\OperatoreUser',
-        'label' => 'user_group.manager',
-        'choice_label' => 'fullname',
-        'required' => false
-      ])
-      ->add('users', EntityType::class, [
-        'class' => 'App\Entity\OperatoreUser',
-        'label' => 'user_group.users',
-        'choice_label' => 'fullname',
-        'multiple' => true,
-        'required' => false,
-        'attr' => ['style' => 'columns: 3;'],
-        'expanded' => true
-      ])
-      ->add('services', EntityType::class, [
-        'class' => 'App\Entity\Servizio',
-        'label' => 'user_group.services',
-        'choice_label' => 'fullname',
-        'multiple' => true,
-        'required' => false,
+      ->add('geographicAreas', EntityType::class, [
+        'class' => 'App\Entity\GeographicArea',
+        'choice_label' => 'name',
+        'label' => 'servizio.aree_geografiche',
         'attr' => ['style' => 'columns: 2;'],
+        'required' => false,
+        'multiple' => true,
         'expanded' => true
       ])
       ->add('coreContactPoint', ContactPointType::class, [
         'required' => false,
         'label' => 'user_group.core_contact_point',
       ])
-      ->add('coreLocation', PlaceType::class, [
+      ->add('address', PostalAddressApiType::class, [
         'required' => false,
-        'label' => 'place.title'
+        'label' => 'place.address'
       ])
     ;
-    $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
-  }
-
-  public function onPreSubmit(FormEvent $event)
-  {
-    $data = $event->getData();
-    $data['coreContactPoint']['name'] = $data['name'][$this->getLocale()] ?? '';
   }
 
   /**
@@ -98,7 +95,8 @@ class UserGroupType extends AbstractI18nType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => UserGroup::class,
+      'data_class' => Place::class,
+      'csrf_protection' => false,
     ));
     $this->configureTranslationOptions($resolver);
   }

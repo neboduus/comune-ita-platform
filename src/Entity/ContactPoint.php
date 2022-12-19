@@ -45,8 +45,8 @@ class ContactPoint
   /**
    * @ORM\Column(type="string", length=255, nullable=true)
    * @Serializer\Type("string")
-   * @OA\Property(description="Contact Point's email")
-   * @Assert\Email()
+   * @OA\Property(description="Contact Point's email", type="string", format="email")
+   * @Assert\Email(message="contact_point.email.not_valid")
    * @Groups({"read", "write"})
    */
   private $email;
@@ -54,7 +54,7 @@ class ContactPoint
   /**
    * @ORM\Column(type="string", length=255, nullable=true)
    * @Serializer\Type("string")
-   * @OA\Property(description="Contact Point's url")
+   * @OA\Property(description="Contact Point's url", example="www.example.com")
    * @Assert\Url()
    * @Groups({"read", "write"})
    */
@@ -71,8 +71,8 @@ class ContactPoint
   /**
    * @ORM\Column(type="string", length=255, nullable=true)
    * @Serializer\Type("string")
-   * @OA\Property(description="Contact Point's pec")
-   * @Assert\Email()
+   * @OA\Property(description="Contact Point's pec", type="string", format="email")
+   * @Assert\Email(message="contact_point.pec.not_valid")
    * @Groups({"read", "write"})
    */
   private $pec;
@@ -200,5 +200,4 @@ class ContactPoint
 
     return $this;
   }
-
 }
