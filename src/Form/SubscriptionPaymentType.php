@@ -66,7 +66,8 @@ class SubscriptionPaymentType extends AbstractType
       ])
       ->add('date', DateType::class, [
         'widget' => 'single_text',
-        'label' => 'backoffice.integration.subscription_service.payment.due_date'
+        'label' => 'backoffice.integration.subscription_service.payment.due_date',
+        'label_attr' => ['class' => 'active']
       ])
       ->add('amount', MoneyType::class, [
         'label' => 'backoffice.integration.subscription_service.payment.amount'

@@ -575,21 +575,6 @@ input.form-control::placeholder {
   color: #ccc;
 }
 
-.form-group {
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
-
-  label {
-    position: relative;
-    white-space: normal;
-
-    &.active {
-      transform: unset;
-      font-size: inherit;
-    }
-  }
-}
-
 .formio-summary .form-group {
   padding-bottom: 0;
 }
@@ -837,6 +822,9 @@ textarea {
     .form-group.formio-hidden {
       padding-bottom: 0;
       margin-bottom: 0;
+    }
+    .form-group label{
+      position: relative;
     }
   }
 }

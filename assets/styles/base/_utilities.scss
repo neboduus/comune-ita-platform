@@ -169,8 +169,39 @@
 }
 
 //Fix resize label in tabs
-.tab-content .form-group label {
-  width: auto !important;
+.form-group {
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+    width: auto !important;
+    label {
+      position: relative;
+      white-space: normal;
+
+      &.active {
+        transform: unset;
+        font-size: inherit;
+      }
+    }
+  }
+
+// TODO remove with new PNRR interface
+#edit_user_profile{
+  .form-group{
+    select{
+      border: none;
+      border-bottom: 1px solid #5b6f82;
+      border-radius: 0;
+      padding: 0.375rem 0.5rem;
+      outline: 0;
+      height: 2.5rem;
+      width: 100%;
+      box-shadow: none;
+      transition: .2s ease-out;
+      font-weight: 700;
+      color: #17324d;
+      background-color: #fff;
+    }
+  }
 }
 
 .truncate-wrapper {
@@ -288,168 +319,6 @@ a.list-item.left-icon {
 }
 
 
-
-.cmp-info-progress {
-  margin-bottom: 1.5rem;
-
-  .icon.icon-sm {
-    width: 1.167rem;
-    height: 1.167rem;
-    min-width: 1.167rem;
-  }
-
-  .info-progress-wrapper:not(:last-child) {
-    border-right: 1px solid #e7eaed;
-  }
-  .step-active .info-progress-body {
-    border-bottom: 2px solid $primary;
-  }
-
-  .completed .title-medium, .cmp-info-progress .step-active .title-medium {
-    font-weight: 700;
-    color: $primary;
-  }
-
-  @include media-breakpoint-up(sm) {
-    margin-bottom: 2.222rem;
-  }
-
-  .info-progress-body {
-    border-bottom: 2px solid transparent;
-  }
-
-  .info-progress-wrapper {
-    &:first-child {
-      border-left: none;
-    }
-
-    &:not(:last-child) {
-      border-right: 1px solid #E7EAED;
-    }
-  }
-
-  .completed{
-    .title-medium {
-      font-weight: 700;
-      color: $primary;
-    }
-  }
-
-  .step-active {
-    .title-medium {
-      font-weight: 700;
-      color: $primary;
-    }
-
-    .info-progress-body {
-      border-bottom: 2px solid $primary;
-    }
-  }
-
-  .iscrizioni-header {
-    .drop-shadow {
-      box-shadow: 0 0.9375rem 1.325rem -0.9rem rgba(0, 0, 0, 0.1);
-    }
-
-    .step-wrapper {
-      font-weight: 700;
-      line-height: 30px;
-    }
-
-    .step-title {
-      font-weight: 600;
-      line-height: 2;
-      padding: 0.875rem 0;
-      font-size: 1.125rem;
-
-      @include media-breakpoint-up(sm) {
-        padding: 0.777rem 0;
-        font-size: 1rem;
-      }
-    }
-
-    .step {
-      font-weight: 600;
-      line-height: 1.5;
-    }
-  }
-}
-
-/*.cmp-nav-steps {
-  box-shadow: 0 -0.6375rem 1.125rem -0.9rem rgb(0,0,0,0.1);
-  margin-top: 3.875rem;
-
-  @include media-breakpoint-up(sm){
-    margin-top: 3.44rem;
-  }
-
-  @include media-breakpoint-up(md) {
-    border-top: 1px solid #ebeef0;
-    margin-top: 2.22rem;
-    box-shadow: unset;
-  }
-
-  .steppers-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.625rem 0 3.125rem 0;
-
-    @include media-breakpoint-up(sm) {
-      padding: 0.56rem 0 2.78rem 0;
-    }
-
-    @include media-breakpoint-up(md) {
-      padding: 0.89rem 0 4.44rem 0;
-    }
-    @include media-breakpoint-down(md) {
-      flex-direction: row !important;
-    }
-  }
-
-  .btn:not(:first-child) {
-    padding: 0.625rem 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-
-    .icon.icon-sm {
-      width: 1.3rem;
-      height: 1.3rem;
-    }
-
-    @include media-breakpoint-up(sm){
-      padding: 0.56rem 0.89rem;
-
-      .icon.icon-sm {
-        width: 1.167rem;
-        height: 1.167rem;
-      }
-    }
-
-    @include media-breakpoint-up(md) {
-      width: 8.89rem;
-    }
-
-  }
-
-  .btn.center{
-    min-width: 5rem;
-
-    @include media-breakpoint-up(sm) {
-      min-width: 4.44rem;
-    }
-  }
-
-  .btn.send{
-    min-width: 6.125rem;
-
-    @include media-breakpoint-up(sm) {
-      min-width: 5.44rem;
-    }
-  }
-}*/
-
 .t-primary {
   color: $primary;
 }
@@ -464,8 +333,14 @@ a.list-item.left-icon {
 
 
 
-
+// Max width
 .max-w{
+  &-100{
+    max-width: 100px;
+  }
+  &-200{
+    max-width: 200px;
+  }
   &-300{
     max-width: 300px;
   }

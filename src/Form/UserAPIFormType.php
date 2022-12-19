@@ -30,6 +30,7 @@ class UserAPIFormType extends AbstractType
       ->add('data_nascita', DateType::class, [
         'widget' => 'single_text',
         'required' => false,
+        'label_attr' => ['class' => 'active'],
         'empty_data' => ''
       ])
       ->add('luogo_nascita')

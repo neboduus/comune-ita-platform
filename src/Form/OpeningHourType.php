@@ -53,6 +53,7 @@ class OpeningHourType extends AbstractType
         'widget' => 'single_text',
         'required' => true,
         'label' => 'calendars.opening_hours.start_date',
+        'label_attr' => ['class' => 'active'],
         'constraints' => [new LessThan([
           'propertyPath' => 'parent.all[end_date].data',
           'message' => $this->translator->trans('calendars.opening_hours.errors.less_than_end_date')
@@ -62,6 +63,7 @@ class OpeningHourType extends AbstractType
         'widget' => 'single_text',
         'required' => true,
         'label' => 'calendars.opening_hours.end_date',
+        'label_attr' => ['class' => 'active'],
         'constraints' => [new GreaterThan([
           'propertyPath' => 'parent.all[start_date].data',
           'message' => $this->translator->trans('calendars.opening_hours.errors.greater_than_start_date')

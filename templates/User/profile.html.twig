@@ -124,9 +124,7 @@
                       <div class="col-12 col-md-6">
                         <div class="form-group">
                           {% if form.luogo_nascita.vars.choices is defined %}
-                            <div class="select-wrapper">
                               {{ form_row(form.luogo_nascita, {'label': 'user.profile.luogo_nascita'|trans()}) }}
-                            </div>
                           {% else %}
                             {{ form_row(form.luogo_nascita, {'label': 'user.profile.luogo_nascita'|trans()}) }}
                           {% endif %}
@@ -176,9 +174,7 @@
                     </div>
                     <div class="row">
                       <div class="col-6">
-                        <div class="select-wrapper">
                           {{ form_row(form.sdc_provincia_residenza, {'label': 'user.profile.provincia'|trans()}) }}
-                        </div>
                       </div>
                       <div class="col-6">
                         {{ form_row(form.sdc_stato_residenza, {'label': 'user.profile.stato'|trans()}) }}
@@ -210,9 +206,7 @@
                     </div>
                     <div class="row">
                       <div class="col-6">
-                        <div class="select-wrapper">
                           {{ form_row(form.sdc_provincia_domicilio, {'label': 'user.profile.provincia'|trans()}) }}
-                        </div>
                       </div>
                       <div class="col-6">
                         {{ form_row(form.sdc_stato_domicilio, {'label': 'user.profile.stato'|trans()}) }}

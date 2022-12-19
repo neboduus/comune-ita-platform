@@ -254,7 +254,7 @@ class UserController extends AbstractController
         ['label' => false, 'data' => $user->getIdCard(), 'required' => false]
       )
       ->add('data_nascita', DateType::class,
-        ['widget' => 'single_text', 'required' => true, 'label' => false, 'data' => $user->getDataNascita()]
+        ['widget' => 'single_text', 'required' => true, 'label' => false, 'data' => $user->getDataNascita(),'label_attr' => ['class' => 'active']]
       )
       ->add('stato_nascita', TextType::class,
         ['label' => false, 'data' => $user->getStatoNascita(), 'required' => false]

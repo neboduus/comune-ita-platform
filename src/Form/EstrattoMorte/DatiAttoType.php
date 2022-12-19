@@ -57,7 +57,8 @@ class DatiAttoType extends AbstractType
                     'class' => 'form-control input-inline datepicker',
                     'data-provide' => 'datepicker',
                     'data-date-format' => 'dd-mm-yyyy'
-                ]
+                ],
+                'label_attr' => ['class' => 'active']
             ]);
 
         $builder
