@@ -21,7 +21,7 @@
           <ul class="link-list m-0">
             {% for item in recipients|slice(0, sidebar_list_limit) %}
               <li>
-                <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}"
+                <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}" data-element="topic-element"
                    href="{{ path('recipient_show', {'slug': item.slug}) }}">
                   {{ item.name }}
                 </a>
@@ -37,7 +37,7 @@
             {% else %}
               <li>
                 <a class="p-0 list-item medium"
-                   href="{{ path('servizi_list') }}">
+                   href="{{ path('servizi_list') }}" data-element="all-services">
                   {{ 'nav.servizi'|trans }}
                 </a>
               </li>
@@ -48,14 +48,14 @@
           <ul class="link-list">
             {% for item in recipients|slice(sidebar_list_limit, (recipients|length-sidebar_list_limit)) %}
               <li>
-                <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}"
+                <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}" data-element="topic-element"
                    href="{{ path('recipient_show', {'slug': item.slug}) }}">
                   {{ item.name }}
                 </a>
               </li>
             {% endfor %}
             <li>
-              <a class="p-0 list-item medium"
+              <a class="p-0 list-item medium" data-element="topic-element"
                  href="{{ path('servizi_list') }}">
                 {{ 'nav.servizi'|trans }}
               </a>

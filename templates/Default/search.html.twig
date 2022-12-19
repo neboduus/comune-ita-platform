@@ -115,7 +115,7 @@
                     <div class="card-body pr-3">
                       {% if servizio.topics %}
                         <div class="mb-2 category-top">
-                          <a href="{{ path('category_show', {'slug': servizio.topics.slug}) }}" class="category text-decoration-none">
+                          <a data-element="topic-element" href="{{ path('category_show', {'slug': servizio.topics.slug}) }}" class="category text-decoration-none">
                             <span class="category">{{ servizio.topics.name }}</span>
                           </a>
                         </div>
