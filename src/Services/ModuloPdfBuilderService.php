@@ -738,11 +738,19 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
         $pratica->addModuloCompilato($pdf);
       }
 
-      if (isset($params['next_status']) && !empty($params['next_status'])) {
-        $this->statusService->setNewStatus($pratica, $params['next_status'], null, true);
-      } else {
-        $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+      try {
+        if (isset($params['next_status']) && !empty($params['next_status'])) {
+          $this->statusService->setNewStatus($pratica, $params['next_status'], null, true);
+        } else {
+          $this->statusService->validateChangeStatus($pratica, Pratica::STATUS_SUBMITTED);
+          $this->statusService->setNewStatus($pratica, Pratica::STATUS_SUBMITTED);
+        }
+      } catch (Exception $e) {
+        $this->logger->warning(
+          'ModuloPdfBuilderService -  ' . $this->translator->trans('errori.pratica.change_status_invalid') . ' - ' . $e->getMessage()
+        );
       }
+      
     }
   }
 }
