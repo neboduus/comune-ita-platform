@@ -21,10 +21,10 @@ class IdCardType extends AbstractType
         'label'=>false, 'required'=>false
       ])
       ->add('data_rilascio', DateType::class, [
-        'widget' => 'single_text', 'required' => true, 'label' => false
+        'widget' => 'single_text', 'required' => true, 'label' => false,'label_attr' => ['class' => 'active']
       ])
       ->add('data_scadenza', DateType::class, [
-        'widget' => 'single_text', 'required' => true, 'label' => false,
+        'widget' => 'single_text', 'required' => true, 'label' => false,'label_attr' => ['class' => 'active']
       ]);
 
   }

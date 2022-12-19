@@ -1,12 +1,12 @@
 {% block craue_flow_stepList_class %}
     {%- if loop.index == flow.getCurrentStepNumber() -%}
-        {{ ' class="craue_formflow_current_step step-active info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-300 d-none d-lg-flex"' }}
+        {{ ' class="craue_formflow_current_step step-active info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-200 d-none d-lg-flex"' }}
     {%- elseif flow.isStepSkipped(loop.index) -%}
-        {{ ' class="craue_formflow_skipped_step info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-300 d-none d-lg-flex"' }}
+        {{ ' class="craue_formflow_skipped_step info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-200 d-none d-lg-flex"' }}
     {%- elseif flow.isStepDone(loop.index) -%}
-        {{ ' class="craue_formflow_done_step completed info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-300 d-none d-lg-flex"' }}
+        {{ ' class="craue_formflow_done_step completed info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-200 d-none d-lg-flex"' }}
     {%- else -%}
-      {{ ' class="info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-300 d-none d-lg-flex"' }}
+      {{ ' class="info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-200 d-none d-lg-flex"' }}
     {%- endif -%}
 {% endblock %}
 

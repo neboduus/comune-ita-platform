@@ -29,7 +29,8 @@ class SubscriberType extends AbstractType
       ->add('date_of_birth', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'iscrizioni.subscribers.date_of_birth'
+        'label' => 'iscrizioni.subscribers.date_of_birth',
+        'label_attr' => ['class' => 'active']
       ])
       ->add('place_of_birth', TextType::class, [
         'required' => true,

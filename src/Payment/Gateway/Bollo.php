@@ -90,6 +90,7 @@ class Bollo extends AbstractPaymentData implements EventSubscriberInterface
         'required' => true,
         'mapped' => false,
         'label' => 'Inserisci data emissione bollo',
+        'label_attr' => ['class' => 'active'],
         'widget' => 'single_text',
         'data' => new \DateTime($day)
       ])

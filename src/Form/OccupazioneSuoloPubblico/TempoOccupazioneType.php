@@ -29,7 +29,8 @@ class TempoOccupazioneType extends AbstractType
                     'class' => 'form-control input-inline datepicker-range-from',
                     'data-provide' => 'datepicker',
                     'data-date-format' => 'dd-mm-yyyy'
-                ]
+                ],
+                'label_attr' => ['class' => 'active']
             ])
             ->add('inizioOccupazioneOra', ChoiceType::class, [
                 "label" => 'steps.occupazione_suolo_pubblico.tempo_occupazione.inizio_ora',
@@ -45,7 +46,8 @@ class TempoOccupazioneType extends AbstractType
                     'class' => 'form-control input-inline datepicker-range-to',
                     'data-provide' => 'datepicker',
                     'data-date-format' => 'dd-mm-yyyy'
-                ]
+                ],
+                'label_attr' => ['class' => 'active']
             ])
             ->add('fineOccupazioneOra', ChoiceType::class, [
                 "label" => 'steps.occupazione_suolo_pubblico.tempo_occupazione.fine_ora',

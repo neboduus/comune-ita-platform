@@ -66,22 +66,26 @@ class SubscriptionServiceType extends AbstractType
       ->add('subscription_begin', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'iscrizioni.data_inizio_iscrizioni'
+        'label' => 'iscrizioni.data_inizio_iscrizioni',
+        'label_attr' => ['class' => 'active']
       ])
       ->add('subscription_end', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'iscrizioni.data_fine_iscrizioni'
+        'label' => 'iscrizioni.data_fine_iscrizioni',
+        'label_attr' => ['class' => 'active']
       ])
       ->add('begin_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'iscrizioni.data_inizio'
+        'label' => 'iscrizioni.data_inizio',
+        'label_attr' => ['class' => 'active']
       ])
       ->add('end_date', DateType::class, [
         'widget' => 'single_text',
         'required' => true,
-        'label' => 'iscrizioni.data_fine'
+        'label' => 'iscrizioni.data_fine',
+        'label_attr' => ['class' => 'active']
       ])
       ->add('subscribers_limit', NumberType::class, [
         'required' => false,
