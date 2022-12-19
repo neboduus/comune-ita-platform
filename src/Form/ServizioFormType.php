@@ -20,6 +20,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\LessThan;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ServizioFormType extends AbstractType
 {
@@ -30,11 +32,16 @@ class ServizioFormType extends AbstractType
 
   private $defaultLocale;
 
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
 
-  public function __construct(ServiceManager $serviceManager, $defaultLocale)
+  public function __construct(ServiceManager $serviceManager, $defaultLocale, TranslatorInterface $translator)
   {
     $this->serviceManager = $serviceManager;
     $this->defaultLocale = $defaultLocale;
+    $this->translator = $translator;
   }
 
   /**
@@ -111,12 +118,20 @@ class ServizioFormType extends AbstractType
       ->add('access_level')
       ->add('login_suggested')
       ->add('scheduled_from', DateTimeType::class, [
+        'widget' => 'single_text',
         'required' => false,
-        'empty_data' => null
+        'empty_data' => null,
+        'constraints' => [
+          new LessThan([
+            'propertyPath' => 'parent.all[scheduled_to].data',
+            'message' => $this->translator->trans('general.scheduled.from_gte_to')
+          ])
+        ],
       ])
       ->add('scheduled_to', DateTimeType::class, [
+        'widget' => 'single_text',
         'required' => false,
-        'empty_data' => null
+        'empty_data' => null,
       ])
       ->add('service_group')
       ->add('shared_with_group')
