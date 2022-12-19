@@ -416,7 +416,7 @@ class ServicesAPIController extends AbstractFOSRestController
 
     try {
 
-      $this->checkServiceRelations($serviceDto);
+      $this->serviceManager->checkServiceRelations($serviceDto);
 
       $service = $this->serviceDto->toEntity($serviceDto);
       $service->setPraticaFCQN('\App\Entity\FormIO');
@@ -556,7 +556,7 @@ class ServicesAPIController extends AbstractFOSRestController
         return $this->view($data, Response::HTTP_BAD_REQUEST);
       }
 
-      $this->checkServiceRelations($serviceDto);
+      $this->serviceManager->checkServiceRelations($serviceDto);
       $service = $this->serviceDto->toEntity($serviceDto, $service);
 
       $this->serviceManager->save($service);
@@ -668,7 +668,7 @@ class ServicesAPIController extends AbstractFOSRestController
         return $this->view($data, Response::HTTP_BAD_REQUEST);
       }
 
-      $this->checkServiceRelations($serviceDto);
+      $this->serviceManager->checkServiceRelations($serviceDto);
       $service = $this->serviceDto->toEntity($serviceDto, $service);
 
       $this->serviceManager->save($service);
@@ -738,47 +738,6 @@ class ServicesAPIController extends AbstractFOSRestController
     }
 
     return true;
-  }
-
-
-  /**
-   * @param Service $serviceDto
-   */
-  private function checkServiceRelations(Service &$serviceDto)
-  {
-    $category = $this->em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
-    if ($category instanceof Categoria) {
-      $serviceDto->setTopics($category);
-    } else {
-      $category = $this->em->getRepository(Categoria::class)->findOneBy([], ['name' => 'ASC']);
-      if ($category instanceof Categoria) {
-        $serviceDto->setTopics($category);
-      }
-    }
-
-    $serviceGroup = $this->em->getRepository('App\Entity\ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]
-    );
-    if ($serviceGroup instanceof ServiceGroup) {
-      $serviceDto->setServiceGroup($serviceGroup);
-    }
-
-    $recipients = [];
-    foreach ($serviceDto->getRecipientsId() as $r) {
-      $recipient = $this->em->getRepository('App\Entity\Recipient')->find($r);
-      if ($recipient instanceof Recipient) {
-        $recipients [] = $recipient;
-      }
-    }
-    $serviceDto->setRecipientsId($recipients);
-
-    $geographicAreas = [];
-    foreach ($serviceDto->getGeographicAreasId() as $g) {
-      $geographicArea = $this->em->getRepository('App\Entity\GeographicArea')->find($g);
-      if ($geographicArea instanceof GeographicArea) {
-        $geographicAreas [] = $geographicArea;
-      }
-    }
-    $serviceDto->setGeographicAreasId($geographicAreas);
   }
 
   /**

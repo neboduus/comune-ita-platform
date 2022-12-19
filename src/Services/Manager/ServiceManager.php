@@ -10,6 +10,7 @@ use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
 use App\Event\KafkaEvent;
 use App\Model\FeedbackMessage;
+use App\Model\Service;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -326,41 +327,6 @@ class ServiceManager
   }
 
   /**
-   * @param array $recipientIds
-   * @return ArrayCollection
-   */
-  public function getRecipientsByIds(array $recipientIds): ArrayCollection
-  {
-    $recipients = new ArrayCollection();
-    $repository = $this->entityManager->getRepository(Recipient::class);
-    foreach ($recipientIds as $recipientId) {
-      $recipient = $repository->find($recipientId);
-      if ($recipient) {
-        $recipients->add($recipient);
-      }
-    }
-    return $recipients;
-  }
-
-
-  /**
-   * @param array $geographicAreasIds
-   * @return ArrayCollection
-   */
-  public function getGeographicAreasByIds(array $geographicAreasIds): ArrayCollection
-  {
-    $areas = new ArrayCollection();
-    $repository = $this->entityManager->getRepository(GeographicArea::class);
-    foreach ($geographicAreasIds as $geographicAreasId) {
-      $area = $repository->find($geographicAreasId);
-      if ($area) {
-        $areas->add($area);
-      }
-    }
-    return $areas;
-  }
-
-  /**
    * @return array
    */
   public function getDefaultFeedbackMessages(): array
@@ -389,8 +355,43 @@ class ServiceManager
         $i18nMessages[$locale][$k] = $temp;
       }
     }
-
     return $i18nMessages;
+  }
+
+  public function checkServiceRelations(Service &$serviceDto)
+  {
+    $category = $this->entityManager->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $serviceDto->getTopics()]);
+    if ($category instanceof Categoria) {
+      $serviceDto->setTopics($category);
+    } else {
+      $category = $this->entityManager->getRepository(Categoria::class)->findOneBy([], ['name' => 'ASC']);
+      if ($category instanceof Categoria) {
+        $serviceDto->setTopics($category);
+      }
+    }
+
+    $serviceGroup = $this->entityManager->getRepository('App\Entity\ServiceGroup')->findOneBy(['slug' => $serviceDto->getServiceGroup()]);
+    if ($serviceGroup instanceof ServiceGroup) {
+      $serviceDto->setServiceGroup($serviceGroup);
+    }
+
+    $recipients = [];
+    foreach ($serviceDto->getRecipients() as $r) {
+      $recipient = $this->entityManager->getRepository('App\Entity\Recipient')->findOneBy(['name' => $r]);
+      if ($recipient instanceof Recipient) {
+        $recipients []= $recipient;
+      }
+    }
+    $serviceDto->setRecipients($recipients);
+
+    $geographicAreas = [];
+    foreach ($serviceDto->getGeographicAreas() as $g) {
+      $geographicArea = $this->entityManager->getRepository('App\Entity\GeographicArea')->findOneBy(['name' => $g]);
+      if ($geographicArea instanceof GeographicArea) {
+        $geographicAreas []= $geographicArea;
+      }
+    }
+    $serviceDto->setGeographicAreas($geographicAreas);
   }
 
 }

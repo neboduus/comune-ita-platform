@@ -397,7 +397,7 @@ class Service
    * @var string[]
    * @Serializer\Type("array<string>")
    * @OA\Property(description="Service's recipients name", type="array", @OA\Items(type="string"))
-   * @Groups({"read"})
+   * @Groups({"read", "write"})
    */
   private $recipients;
 
@@ -413,7 +413,7 @@ class Service
    * @var string[]
    * @Serializer\Type("array<string>")
    * @OA\Property(description="Service's geographic areas name", type="array", @OA\Items(type="string"))
-   * @Groups({"read"})
+   * @Groups({"read", "write"})
    */
   private $geographicAreas;
 
@@ -1193,7 +1193,7 @@ class Service
   /**
    * @return string[]
    */
-  public function getRecipients(): array
+  public function getRecipients(): ?array
   {
     return $this->recipients;
   }
