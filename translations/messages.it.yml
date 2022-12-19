@@ -206,6 +206,11 @@ general:
     updated: 'Oggetto aggiornato correttamente'
   search: 'Cerca'
   download: 'Scarica'
+  scheduled:
+    from_invalid: "La data di attivazione del servizio non è valida"
+    to_invalid: "La data di cessazione del servizio non è valida"
+    from_to_invalid: "Le date di attivazione e cessazione del servizio non sono valide"
+    from_gte_to: "La data di attivazione non può essere maggiore o uguale alla data di cessazione"
 servizio:
   copy_url: 'Copia URL'
   url_copied: 'URL copiato'

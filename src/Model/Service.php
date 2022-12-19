@@ -319,15 +319,15 @@ class Service
   private $loginSuggested;
 
   /**
-   * @Serializer\Type("datetime")
-   * @OA\Property(description="Scheduled from date time")
+   * @Serializer\Type("DateTime")
+   * @OA\Property(description="Scheduled from date time", type="string", format="date-time")
    * @Groups({"read", "write"})
    */
   private $scheduledFrom;
 
   /**
-   * @Serializer\Type("datetime")
-   * @OA\Property(description="Scheduled to date time")
+   * @Serializer\Type("DateTime")
+   * @OA\Property(description="Scheduled to date time", type="string", format="date-time")
    * @Groups({"read", "write"})
    */
   private $scheduledTo;

@@ -43,4 +43,24 @@ class FormUtils
       return false;
     }
   }
+
+  /**
+   * Checks if an array has at least one key with an empty value
+   * 
+   * @param array $array
+   * @return boolean
+   */
+  public static function isArrayValueEmpty(?array $array) 
+  {
+    $isEmpty = false;
+    
+    array_walk_recursive($array, function ($leaf) use (&$isEmpty) {
+      if ($leaf !== "") {
+        return;
+      }
+      $isEmpty = true;
+    });
+
+    return $isEmpty;
+  }
 }

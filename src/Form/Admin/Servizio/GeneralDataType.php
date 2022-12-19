@@ -6,6 +6,7 @@ use App\Form\I18n\AbstractI18nType;
 use App\Form\I18n\I18nDataMapperInterface;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
+use App\Utils\FormUtils;
 use Flagception\Manager\FeatureManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -15,18 +16,28 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\LessThan;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GeneralDataType extends AbstractI18nType
 {
 
   private $featureManager;
+  /**
+   * @var TranslatorInterface
+   */
+  private $translator;
 
-  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, FeatureManagerInterface $featureManager)
+  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, FeatureManagerInterface $featureManager, TranslatorInterface $translator)
   {
     parent::__construct($dataMapper, $locale, $locales);
     $this->featureManager = $featureManager;
+    $this->translator = $translator;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
@@ -113,6 +124,12 @@ class GeneralDataType extends AbstractI18nType
             'hour' => 'time.hour',
             'minute' => 'time.minute',
             'second' => 'time.second',
+          ],
+          'constraints' => [
+            new LessThan([
+              'propertyPath' => 'parent.all[scheduled_to].data',
+              'message' => $this->translator->trans('general.scheduled.from_gte_to')
+            ])
           ],
           'label_attr' => ['class' => 'label-datetime-field'],
         ]
@@ -246,6 +263,26 @@ class GeneralDataType extends AbstractI18nType
         'required' => false,
         'disabled' => $servizio->isIdentifierImported()
       ]);
+    }
+
+    $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
+  }
+  
+  public function onPreSubmit(FormEvent $event)
+  {
+    $data = $event->getData();
+    if ($data['status'] == Servizio::STATUS_SCHEDULED) {
+      // controllo se almeno uno dei valori delle date inserite è vuoto, se lo è allora tale data è invalida
+      $isScheduledFromInvalid = FormUtils::isArrayValueEmpty($data['scheduled_from']);
+      $isScheduledToInvalid = FormUtils::isArrayValueEmpty($data['scheduled_to']);
+      
+      if ($isScheduledFromInvalid && $isScheduledToInvalid) {
+        $event->getForm()->addError(new FormError($this->translator->trans('general.scheduled.from_to_invalid')));
+      } else if ($isScheduledFromInvalid || $isScheduledToInvalid) {
+        $event->getForm()->addError(new FormError(
+          $this->translator->trans($isScheduledFromInvalid ? 'general.scheduled.from_invalid' : 'general.scheduled.to_invalid')
+        ));
+      } 
     }
   }
 
