@@ -11,6 +11,7 @@ use App\Model\FeedbackMessage;
 use App\Model\FeedbackMessages;
 use App\Model\Service;
 use App\Services\Manager\BackofficeManager;
+use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -270,6 +271,15 @@ class ServiceDto extends AbstractDto
     $entity->setLifeEvents($service->getLifeEvents());
     $entity->setBusinessEvents($service->getBusinessEvents());
     $entity->setExternalCardUrl($service->getExternalCardUrl());
+
+    if (!empty($service->getRecipients())) {
+      $entity->setRecipients(new ArrayCollection($service->getRecipients()));
+    }
+
+    if (!empty($service->getGeographicAreas())) {
+      $entity->setGeographicAreas(new ArrayCollection($service->getGeographicAreas()));
+    }
+
     $entity->setSource($service->getSource());
 
     $entity->setFeedbackMessages($this->normalizeFeedbackMessages($service->getFeedbackMessages()));

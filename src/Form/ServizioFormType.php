@@ -128,7 +128,21 @@ class ServizioFormType extends AbstractType
       )
       ->add('workflow')
       ->add('max_response_time')
+      ->add('recipients', CollectionType::class, [
+        'entry_type' => TextType::class,
+        "allow_add" => true,
+        "allow_delete" => true,
+        'prototype' => true,
+        "label" => false
+      ])
       ->add('recipients_id', CollectionType::class, [
+        'entry_type' => TextType::class,
+        "allow_add" => true,
+        "allow_delete" => true,
+        'prototype' => true,
+        "label" => false
+      ])
+      ->add('geographic_areas', CollectionType::class, [
         'entry_type' => TextType::class,
         "allow_add" => true,
         "allow_delete" => true,

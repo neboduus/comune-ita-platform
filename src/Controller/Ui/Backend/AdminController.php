@@ -35,6 +35,7 @@ use App\Services\IOService;
 use App\Services\MailerService;
 use App\Services\Manager\ServiceManager;
 use App\Services\Manager\UserManager;
+use App\Utils\FormUtils;
 use App\Utils\StringUtils;
 use DateTime;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
@@ -141,22 +142,21 @@ class AdminController extends AbstractController
    * @param $locales
    */
   public function __construct(
-    InstanceService             $instanceService,
+    InstanceService $instanceService,
     FormServerApiAdapterService $formServer,
-    TranslatorInterface           $translator,
-    SchemaFactoryInterface        $schemaFactory,
-    IOService                     $ioService,
-    RouterInterface               $router,
-    DataTableFactory              $dataTableFactory,
-    LoggerInterface               $logger,
-    ServiceManager                $serviceManager,
-    UserManager                   $userManager,
-    MailerService                 $mailer,
-    EntityManagerInterface        $entityManager,
+    TranslatorInterface $translator,
+    SchemaFactoryInterface $schemaFactory,
+    IOService $ioService,
+    RouterInterface $router,
+    DataTableFactory $dataTableFactory,
+    LoggerInterface $logger,
+    ServiceManager $serviceManager,
+    UserManager $userManager,
+    MailerService $mailer,
+    EntityManagerInterface $entityManager,
     ServiceAttachmentsFileService $fileService,
-                                  $locales
-  )
-  {
+    $locales
+  ) {
     $this->instanceService = $instanceService;
     $this->formServer = $formServer;
     $this->translator = $translator;
@@ -182,7 +182,7 @@ class AdminController extends AbstractController
   public function indexAction(Request $request)
   {
     return $this->render('Admin/index.html.twig', [
-      'user' => $this->getUser()
+      'user' => $this->getUser(),
     ]);
   }
 
@@ -219,7 +219,7 @@ class AdminController extends AbstractController
       'ente' => $ente,
       'statuses' => Webhook::TRIGGERS,
       'services' => $services,
-      'form' => $form->createView()
+      'form' => $form->createView(),
     ]);
   }
 
@@ -276,6 +276,7 @@ class AdminController extends AbstractController
       $em->flush();
 
       $this->addFlash('feedback', $this->translator->trans('admin.create_operator_notify'));
+
       return $this->redirectToRoute('admin_operatore_show', array('id' => $operatoreUser->getId()));
     }
 
@@ -304,7 +305,7 @@ class AdminController extends AbstractController
     return $this->render('Admin/showOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
-      'servizi_abilitati' => $serviziAbilitati
+      'servizi_abilitati' => $serviziAbilitati,
     ]);
   }
 
@@ -327,7 +328,7 @@ class AdminController extends AbstractController
     return $this->render('Admin/editOperatore.html.twig', [
       'user' => $this->getUser(),
       'operatoreUser' => $operatoreUser,
-      'form' => $form->createView()
+      'form' => $form->createView(),
     ]);
   }
 
@@ -358,10 +359,12 @@ class AdminController extends AbstractController
       $em->remove($operatoreUser);
       $em->flush();
       $this->addFlash('feedback', $this->translator->trans('admin.delete_operator_notify'));
+
       return $this->redirectToRoute('admin_operatore_index');
 
     } catch (ForeignKeyConstraintViolationException $exception) {
       $this->addFlash('warning', $this->translator->trans('admin.error_delete_operator_notify'));
+
       return $this->redirectToRoute('admin_servizio_index');
     }
   }
@@ -376,7 +379,11 @@ class AdminController extends AbstractController
   {
     $table = $this->dataTableFactory->create()
       ->add('type', TextColumn::class, ['label' => $this->translator->trans('event')])
-      ->add('eventTime', DateTimeColumn::class, ['label' => $this->translator->trans('date'), 'format' => 'd-m-Y H:i', 'searchable' => false])
+      ->add(
+        'eventTime',
+        DateTimeColumn::class,
+        ['label' => $this->translator->trans('date'), 'format' => 'd-m-Y H:i', 'searchable' => false]
+      )
       ->add('user', TextColumn::class, ['label' => $this->translator->trans('meetings.labels.user')])
       ->add('description', TextColumn::class, ['label' => $this->translator->trans('general.descrizione')])
       ->add('ip', TextColumn::class, ['label' => 'Ip'])
@@ -391,7 +398,7 @@ class AdminController extends AbstractController
 
     return $this->render('Admin/indexLogs.html.twig', [
       'user' => $this->getUser(),
-      'datatable' => $table
+      'datatable' => $table,
     ]);
   }
 
@@ -464,7 +471,7 @@ class AdminController extends AbstractController
     } catch (\Exception $e) {
       return new JsonResponse([
           'status' => 'error',
-          'message' => $e->getMessage()
+          'message' => $e->getMessage(),
         ]
       );
     }
@@ -515,19 +522,20 @@ class AdminController extends AbstractController
   {
 
     $em = $this->getDoctrine()->getManager();
-    $items = $em->getRepository('App\Entity\Servizio')->findBy(['praticaFCQN' => '\App\Entity\FormIO'], ['name' => 'ASC']);
+    $items = $em->getRepository('App\Entity\Servizio')->findBy(['praticaFCQN' => '\App\Entity\FormIO'],
+      ['name' => 'ASC']);
 
     $data = [];
     foreach ($items as $s) {
       $descLimit = 150;
       $description = strip_tags($s->getDescription());
       if (strlen($description) > $descLimit) {
-        $description = utf8_encode(substr($description, 0, $descLimit) . '...');
+        $description = utf8_encode(substr($description, 0, $descLimit).'...');
       }
       $data [] = [
         'id' => $s->getId(),
         'title' => $s->getName(),
-        'description' => $description
+        'description' => $description,
       ];
     }
 
@@ -552,7 +560,7 @@ class AdminController extends AbstractController
       $remoteUrl,
       [
         'Content-Type' => 'application/json',
-        'x-locale' => $request->getLocale()
+        'x-locale' => $request->getLocale(),
       ]
     );
 
@@ -574,6 +582,8 @@ class AdminController extends AbstractController
         // Populates default messages in the language provided in the request if not provided or incomplete
         // Messages may not be valued because they were entered only when the service was first saved
         $defaultFeedbackMessages = $this->serviceManager->getDefaultFeedbackMessages()[$request->getLocale()];
+
+        // Todo: sistemare assolutamente
         foreach ($data['feedback_messages'] as $statusName => $feedbackMessage) {
           $status = Pratica::getStatusCodeByName($statusName);
           if (!isset($feedbackMessage['subject']) || !$feedbackMessage['subject']) {
@@ -610,42 +620,42 @@ class AdminController extends AbstractController
           ->setIdentifier($identifier);
         $dto = $dto->setSource($serviceSource);
 
-        $category = $em->getRepository('App\Entity\Categoria')->findOneBy(['slug' => $dto->getTopics()]);
-        if ($category instanceof Categoria) {
-          $dto->setTopics($category);
-        } else {
-          $category = $em->getRepository(Categoria::class)->findOneBy([], ['name' => 'ASC']);
-          if ($category instanceof Categoria) {
-            $dto->setTopics($category);
-          }
-        }
-
+        $this->serviceManager->checkServiceRelations($dto);
         $service = $serviceDto->toEntity($dto);
+
         $service->setIdentifier($serviceSource->getIdentifier());
-        $importedAt = ' (' . $this->translator->trans('imported') . ' ' . date('d/m/Y H:i:s') . ')';
-        $shortenedImportedServiceName = StringUtils::shortenString($service->getName(),  255 - strlen($importedAt));
-        $service->setName($shortenedImportedServiceName . $importedAt);
+        $importedAt = ' ('.$this->translator->trans('imported').' '.date('d/m/Y H:i:s').')';
+        $shortenedImportedServiceName = StringUtils::shortenString($service->getName(), 255 - strlen($importedAt));
+        $service->setName($shortenedImportedServiceName.$importedAt);
         $service->setPraticaFCQN('\App\Entity\FormIO');
         $service->setPraticaFlowServiceName('ocsdc.form.flow.formio');
         $service->setEnte($ente);
         // Erogatore
         $erogatore = new Erogatore();
-        $erogatoreName = $this->translator->trans('provider_of') . ' ' . $service->getName() . ' ' . $this->translator->trans('for') . ' ' . $ente->getName();
-        $limit = strlen($erogatoreName) < 255 ? 255 : 255 - (strlen($erogatoreName) - 255); // nuova lunghezza limite in base alla lunghezza in eccesso dell'erogatore
-        $shortenedImportedServiceName = StringUtils::shortenString($shortenedImportedServiceName, $limit - strlen($importedAt)) . $importedAt;
-        $erogatore->setName($this->translator->trans('provider_of') . ' ' . $shortenedImportedServiceName . ' ' . $this->translator->trans('for') . ' ' . $ente->getName());
+        $erogatoreName = $this->translator->trans('provider_of').' '.$service->getName().' '.$this->translator->trans(
+            'for'
+          ).' '.$ente->getName();
+        $limit = strlen($erogatoreName) < 255 ? 255 : 255 - (strlen(
+              $erogatoreName
+            ) - 255); // nuova lunghezza limite in base alla lunghezza in eccesso dell'erogatore
+        $shortenedImportedServiceName = StringUtils::shortenString(
+            $shortenedImportedServiceName,
+            $limit - strlen($importedAt)
+          ).$importedAt;
+        $erogatore->setName(
+          $this->translator->trans('provider_of').' '.$shortenedImportedServiceName.' '.$this->translator->trans(
+            'for'
+          ).' '.$ente->getName()
+        );
         $erogatore->addEnte($ente);
         $em->persist($erogatore);
         $service->activateForErogatore($erogatore);
 
-        $service->setRecipients($this->serviceManager->getRecipientsByIds($dto->getRecipientsId()));
-        $service->setGeographicAreas($this->serviceManager->getGeographicAreasByIds($dto->getGeographicAreasId()));
-
         // todo: verificare se è possibile eliminare
-       $this->serviceManager->save($service);
+        $this->serviceManager->save($service);
 
         if (!empty($service->getFormIoId())) {
-          $response = $this->formServer->cloneFormFromRemote($service, $remoteUrl . '/form');
+          $response = $this->formServer->cloneFormFromRemote($service, $remoteUrl.'/form');
           if ($response['status'] == 'success') {
             $formId = $response['form_id'];
             $flowStep = new FlowStep();
@@ -662,6 +672,7 @@ class AdminController extends AbstractController
             $em->remove($service);
             $em->flush();
             $this->addFlash('error', $this->translator->trans('servizio.error_create_form'));
+
             return $this->redirectToRoute('admin_servizio_index');
           }
         }
@@ -669,18 +680,26 @@ class AdminController extends AbstractController
         $this->serviceManager->save($service);
 
         $this->addFlash('success', $this->translator->trans('servizio.success_import_service'));
+
         return $this->redirectToRoute('admin_servizio_index');
 
       }
     } catch (UniqueConstraintViolationException $e) {
+      dd($e);
       $this->logger->error("Import error: duplicated identifier {$identifier}");
-      $this->addFlash('error', $this->translator->trans('servizio.error_duplicated_identifier',
-        ['%identifier%' => $identifier]
-      ));
+      $this->addFlash(
+        'error',
+        $this->translator->trans(
+          'servizio.error_duplicated_identifier',
+          ['%identifier%' => $identifier]
+        )
+      );
     } catch (\Exception $e) {
-      $this->logger->error("Import error: " . $e->getMessage());
+      dd($e);
+      $this->logger->error("Import error: ".$e->getMessage());
       $this->addFlash('error', $this->translator->trans('servizio.error_create_form'));
     }
+
     return $this->redirectToRoute('admin_servizio_index');
   }
 
@@ -753,7 +772,7 @@ class AdminController extends AbstractController
         'label' => $this->translator->trans('general.protocol_data'),
         'class' => ProtocolDataType::class,
         'icon' => 'fa-folder-open-o',
-      ]
+      ],
     ];
 
     if ($servizio->isLegacy()) {
@@ -795,6 +814,7 @@ class AdminController extends AbstractController
         if ($request->request->get('save') === 'next') {
           return $this->redirectToRoute('admin_servizio_edit', ['id' => $servizio->getId(), 'step' => $nexStep]);
         }
+
         return $this->redirectToRoute('admin_servizio_edit', ['id' => $servizio->getId(), 'step' => $currentStep]);
       }
     }
@@ -808,7 +828,7 @@ class AdminController extends AbstractController
       'schema' => $schema,
       'backoffice_schema' => $backofficeSchema,
       'formserver_url' => $this->getParameter('formserver_admin_url'),
-      'user' => $user
+      'user' => $user,
     ]);
   }
 
@@ -827,17 +847,24 @@ class AdminController extends AbstractController
     $schema = $this->schemaFactory->createFromFormId($servizio->getFormIoId());
 
     $form = $this->createFormBuilder(null)->add(
-      "post_submit_validation_expression", TextareaType::class, [
-      "label" => $this->translator->trans('servizio.validate_submit'),
-      'required' => false,
-      'data' => $servizio->getPostSubmitValidationExpression()
-    ])->add(
-      "post_submit_validation_message", TextType::class, [
-      "label" => $this->translator->trans('servizio.validate_error_service'),
-      'required' => false,
-      'data' => $servizio->getPostSubmitValidationMessage()
-    ])->add(
-      'Save', SubmitType::class
+      "post_submit_validation_expression",
+      TextareaType::class,
+      [
+        "label" => $this->translator->trans('servizio.validate_submit'),
+        'required' => false,
+        'data' => $servizio->getPostSubmitValidationExpression(),
+      ]
+    )->add(
+      "post_submit_validation_message",
+      TextType::class,
+      [
+        "label" => $this->translator->trans('servizio.validate_error_service'),
+        'required' => false,
+        'data' => $servizio->getPostSubmitValidationMessage(),
+      ]
+    )->add(
+      'Save',
+      SubmitType::class
     )->getForm()->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
@@ -855,7 +882,7 @@ class AdminController extends AbstractController
       'servizio' => $servizio,
       'user' => $user,
       'schema' => $schema,
-      'statuses' => Pratica::getStatuses()
+      'statuses' => Pratica::getStatuses(),
     ]);
   }
 
@@ -871,7 +898,7 @@ class AdminController extends AbstractController
     $servizio = new Servizio();
     $ente = $this->instanceService->getCurrentInstance();
 
-    $name = 'Nuovo Servizio ' . time();
+    $name = 'Nuovo Servizio '.time();
     $servizio->setName($name);
     $servizio->setShortDescription($name);
     $servizio->setPraticaFCQN('\App\Entity\FormIO');
@@ -893,7 +920,11 @@ class AdminController extends AbstractController
 
     // Erogatore
     $erogatore = new Erogatore();
-    $erogatore->setName($this->translator->trans('provider_of') . ' ' . $servizio->getName() . ' ' . $this->translator->trans('for') . ' ' . $ente->getName());
+    $erogatore->setName(
+      $this->translator->trans('provider_of').' '.$servizio->getName().' '.$this->translator->trans(
+        'for'
+      ).' '.$ente->getName()
+    );
     $erogatore->addEnte($ente);
     $this->entityManager->persist($erogatore);
     $servizio->activateForErogatore($erogatore);
@@ -926,6 +957,7 @@ class AdminController extends AbstractController
       return $this->redirectToRoute('admin_servizio_index');
     } catch (ForeignKeyConstraintViolationException $exception) {
       $this->addFlash('warning', $this->translator->trans('servizio.impossible_delete_service'));
+
       return $this->redirectToRoute('admin_servizio_index');
     }
 
@@ -947,6 +979,7 @@ class AdminController extends AbstractController
 
       try {
         $response = $this->formServer->editForm($schema);
+
         return JsonResponse::create($response, Response::HTTP_OK);
       } catch (\Exception $exception) {
         return JsonResponse::create($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -971,7 +1004,8 @@ class AdminController extends AbstractController
     if (!($serviceId && $primaryKey && $fiscalCode)) {
       return new JsonResponse(
         ["error" => $this->translator->trans('app_io.errore.parametro_mancante')],
-        Response::HTTP_BAD_REQUEST);
+        Response::HTTP_BAD_REQUEST
+      );
     }
 
     $response = $this->ioService->test($serviceId, $primaryKey, $secondaryKey, $fiscalCode);
@@ -991,10 +1025,15 @@ class AdminController extends AbstractController
    * @param string $filename
    * @return JsonResponse
    */
-  public function deletePublicAttachmentAction(Request $request, Servizio $servizio, string $attachmentType, string $filename): JsonResponse
-  {
+  public function deletePublicAttachmentAction(
+    Request $request,
+    Servizio $servizio,
+    string $attachmentType,
+    string $filename
+  ): JsonResponse {
     if (!in_array($attachmentType, [PublicFile::CONDITIONS_TYPE, PublicFile::COSTS_TYPE])) {
       $this->logger->error("Invalid type $attachmentType");
+
       return new JsonResponse(["Invalid type: $attachmentType is not supported"], Response::HTTP_BAD_REQUEST);
     }
 
