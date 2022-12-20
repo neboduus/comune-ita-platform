@@ -22,11 +22,9 @@ class PlaceApiType extends AbstractType
       ])
       ->add('other_name', TextType::class, [
         'required' => false,
-        'purify_html' => true,
       ])
       ->add('short_description', TextType::class, [
         'required' => false,
-        'purify_html' => true,
       ])
       ->add('description', TextareaType::class, [
         'required' => false,
@@ -39,15 +37,12 @@ class PlaceApiType extends AbstractType
       ])
       ->add('identifier', TextType::class, [
         'required' => false,
-        'purify_html' => true,
       ])
       ->add('latitude', TextType::class, [
         'required' => false,
-        'purify_html' => true,
       ])
       ->add('longitude', TextType::class, [
         'required' => false,
-        'purify_html' => true,
       ])
       ->add('topic_id', EntityType::class, [
         'class' => 'App\Entity\Categoria',
@@ -59,6 +54,7 @@ class PlaceApiType extends AbstractType
       ->add('geographic_areas_ids', EntityType::class, [
         'class' => 'App\Entity\GeographicArea',
         'label' => 'servizio.aree_geografiche',
+        'choice_label' => 'name',
         'required' => false,
         'mapped' => false
       ])

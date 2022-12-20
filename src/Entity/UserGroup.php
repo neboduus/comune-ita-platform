@@ -120,7 +120,7 @@ class UserGroup implements Translatable
    * @var Place
    * @ORM\ManyToOne(targetEntity=Place::class, cascade={"persist", "remove"})
    * @OA\Property(property="core_location", description="User Group's Core Location")
-   * @Groups({"read", "write"})
+   * @Serializer\Exclude()
    */
   private $coreLocation;
 
@@ -392,14 +392,14 @@ class UserGroup implements Translatable
 
   public function getCoreContactPoint(): ?ContactPoint
   {
-      return $this->coreContactPoint;
+    return $this->coreContactPoint;
   }
 
   public function setCoreContactPoint(?ContactPoint $coreContactPoint): self
   {
-      $this->coreContactPoint = $coreContactPoint;
+    $this->coreContactPoint = $coreContactPoint;
 
-      return $this;
+    return $this;
   }
 
   public function setTranslatableLocale($locale)
@@ -409,13 +409,28 @@ class UserGroup implements Translatable
 
   public function getCoreLocation(): ?Place
   {
-      return $this->coreLocation;
+    return $this->coreLocation;
   }
 
   public function setCoreLocation(?Place $coreLocation): self
   {
-      $this->coreLocation = $coreLocation;
+    $this->coreLocation = $coreLocation;
 
-      return $this;
+    return $this;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("core_location_id")
+   * @OA\Property(description="Core location id (uuid)")
+   * @Groups({"read", "write"})
+   */
+  public function getCoreLocationId()
+  {
+    if ($this->coreLocation instanceof Place) {
+      return $this->coreLocation->getId();
+    }
+    return null;
   }
 }
