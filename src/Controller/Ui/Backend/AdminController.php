@@ -601,7 +601,16 @@ class AdminController extends AbstractController
         $form->submit($data, true);
 
         if ($form->isSubmitted() && !$form->isValid()) {
+          $errors = FormUtils::getErrorsFromForm($form);
           $this->addFlash('error', $this->translator->trans('servizio.error_import'));
+          foreach ($errors as $e ) {
+            if (is_array($e)) {
+              $this->addFlash('error', implode(', ', $e));
+            } else {
+              $this->addFlash('error', $e);
+            }
+          }
+          $this->logger->error("Import validation error: ", $errors);
           return $this->redirectToRoute('admin_servizio_index');
         }
 
@@ -685,7 +694,6 @@ class AdminController extends AbstractController
 
       }
     } catch (UniqueConstraintViolationException $e) {
-      dd($e);
       $this->logger->error("Import error: duplicated identifier {$identifier}");
       $this->addFlash(
         'error',
@@ -695,7 +703,6 @@ class AdminController extends AbstractController
         )
       );
     } catch (\Exception $e) {
-      dd($e);
       $this->logger->error("Import error: ".$e->getMessage());
       $this->addFlash('error', $this->translator->trans('servizio.error_create_form'));
     }

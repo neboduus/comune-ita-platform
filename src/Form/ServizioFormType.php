@@ -120,7 +120,6 @@ class ServizioFormType extends AbstractType
       ->add('scheduled_from', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => false,
-        'empty_data' => null,
         'constraints' => [
           new LessThan([
             'propertyPath' => 'parent.all[scheduled_to].data',
@@ -131,7 +130,6 @@ class ServizioFormType extends AbstractType
       ->add('scheduled_to', DateTimeType::class, [
         'widget' => 'single_text',
         'required' => false,
-        'empty_data' => null,
       ])
       ->add('service_group')
       ->add('shared_with_group')
