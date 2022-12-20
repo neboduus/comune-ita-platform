@@ -120,7 +120,7 @@ class UserGroup implements Translatable
    * @var Place
    * @ORM\ManyToOne(targetEntity=Place::class, cascade={"persist", "remove"})
    * @OA\Property(property="core_location", description="User Group's Core Location")
-   * @Serializer\Exclude()
+   * @Groups({"read", "write"})
    */
   private $coreLocation;
 
@@ -212,7 +212,7 @@ class UserGroup implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("topic_id")
-   * @OA\Property(description="UserGroup topic id (uuid)")
+   * @OA\Property(description="UserGroup topic id (uuid)", type="string", format="uuid")
    * @Groups({"read", "write"})
    */
   public function getTopicId()
@@ -275,7 +275,7 @@ class UserGroup implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("manager_id")
-   * @OA\Property(description="UserGroup manager id (uuid)")
+   * @OA\Property(description="UserGroup manager id (uuid)", type="string", format="uuid")
    * @Groups({"read", "write"})
    */
   public function getManagerId()
@@ -419,18 +419,4 @@ class UserGroup implements Translatable
     return $this;
   }
 
-  /**
-   * @Serializer\VirtualProperty()
-   * @Serializer\Type("string")
-   * @Serializer\SerializedName("core_location_id")
-   * @OA\Property(description="Core location id (uuid)")
-   * @Groups({"read", "write"})
-   */
-  public function getCoreLocationId()
-  {
-    if ($this->coreLocation instanceof Place) {
-      return $this->coreLocation->getId();
-    }
-    return null;
-  }
 }

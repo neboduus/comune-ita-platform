@@ -49,6 +49,10 @@ class UserGroupApiType extends AbstractType
         'required' => false,
         'label' => 'user_group.core_contact_point',
       ])
+      ->add('core_location', PlaceApiType::class, [
+        'required' => false,
+        'label' => 'place.address'
+      ])
     ;
   }
 
