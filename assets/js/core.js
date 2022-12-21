@@ -44,7 +44,7 @@ require("bootstrap-italia/src/js/plugins/transfer");
 require("bootstrap-italia/src/js/plugins/rating");
 require("bootstrap-italia/src/js/plugins/dimmer");
 require("bootstrap-italia/src/js/plugins/side-menu");
-require("bootstrap-italia/src/js/plugins/version");
+//require("bootstrap-italia/src/js/plugins/version");
 
 import "./utils/Search";
 
