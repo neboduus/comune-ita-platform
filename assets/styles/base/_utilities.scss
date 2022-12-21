@@ -331,7 +331,14 @@ a.list-item.left-icon {
   }
 }
 
-
+@media (max-width: 991px) {
+  .row-column-menu-left {
+    .border-right {
+      border-right: none!important;
+    }
+  ;
+  }
+}
 
 // Max width
 .max-w{
