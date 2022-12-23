@@ -10,9 +10,9 @@ use Doctrine\ORM\Mapping\UniqueConstraint;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
 use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
  * Folder
@@ -30,7 +30,8 @@ class Folder
   /**
    * @ORM\Column(type="guid")
    * @ORM\Id
-   * @OA\Property(description="Folder id", type="string")
+   * @OA\Property(description="Folder id", type="string", format="uuid")
+   * @Groups({"read"})
    */
   private $id;
 
@@ -40,6 +41,7 @@ class Folder
    * @ORM\Column(name="title", type="string", length=255, nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (title)")
    * @OA\Property(description="Folder's title", type="string")
+   * @Groups({"read", "write"})
    */
   private $title;
 
@@ -48,6 +50,7 @@ class Folder
    *
    * @ORM\Column(name="description", type="text", nullable=true)
    * @OA\Property(description="Folder's description", type="string")
+   * @Groups({"read", "write"})
    */
   private $description;
 
@@ -55,7 +58,6 @@ class Folder
    * @ORM\ManyToOne(targetEntity="App\Entity\CPSUser")
    * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (owner)")
-   * @OA\Property(description="Folder's owner id", type="string")
    * @Serializer\Exclude()
    */
   private $owner;
@@ -71,7 +73,6 @@ class Folder
    * @ORM\ManyToOne(targetEntity="App\Entity\Ente")
    * @ORM\JoinColumn(name="tenant_id", referencedColumnName="id", nullable=false)
    * @Assert\NotBlank(message="Questo campo è obbligatorio (tenant)")
-   * @OA\Property(description="Folder's tenant id", type="string")
    * @Serializer\Exclude()
    */
   private $tenant;
@@ -83,20 +84,21 @@ class Folder
    *      joinColumns={@ORM\JoinColumn(name="folder_id", referencedColumnName="id")},
    *      inverseJoinColumns={@ORM\JoinColumn(name="service_id", referencedColumnName="id")}
    *      )
-   * @OA\Property(description="Folder's correlated services", type="array",  @OA\Items(type="string"))
    * @Serializer\Exclude()
    */
   private $correlatedServices;
 
   /**
    * @ORM\Column(name="created_at", type="datetime")
-   * @OA\Property(description="Folder's creation date")
+   * @OA\Property(description="Folder's creation date", type="string", format="date-time")
+   * @Groups({"read"})
    */
   private $createdAt;
 
   /**
    * @ORM\Column(name="updated_at", type="datetime")
-   * @OA\Property(description="Folder's last modified date")
+   * @OA\Property(description="Folder's last modified date", type="string", format="date-time")
+   * @Groups({"read"})
    */
   private $updatedAt;
 
@@ -198,7 +200,8 @@ class Folder
    * @Serializer\VirtualProperty(name="owner")
    * @Serializer\Type("string")
    * @Serializer\SerializedName("owner")
-   *
+   * @OA\Property(description="Owner of the folder, only the owner and the users delegated to a document inside it will be able to view them", type="string", format="uuid")
+   * @Groups({"read", "write"})
    */
   public function getOwnerId(): string
   {
@@ -232,7 +235,8 @@ class Folder
    * @Serializer\VirtualProperty(name="tenant")
    * @Serializer\Type("string")
    * @Serializer\SerializedName("tenant")
-   *
+   * @OA\Property(description="Identifier of the tenant to which the folder belongs, its value is set automatically when the folder is created", type="string", format="uuid")
+   * @Groups({"read"})
    */
   public function getTenantId(): string
   {
@@ -262,7 +266,8 @@ class Folder
    * @Serializer\VirtualProperty(name="correlatedServices")
    * @Serializer\Type("array<string>")
    * @Serializer\SerializedName("correlated_services")
-   *
+   * @OA\Property(description="List of services related to the folder", type="array",  @OA\Items(type="string", format="uuid"))
+   * @Groups({"read", "write"})
    */
   public function getServicesId(): array
   {
