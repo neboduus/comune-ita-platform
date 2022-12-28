@@ -79,7 +79,7 @@ class FoldersAPIController extends AbstractFOSRestController
    *     description="Retrieve list of Folders",
    *     @OA\JsonContent(
    *         type="array",
-   *         @OA\Items(ref=@Model(type=Folder::class))
+   *         @OA\Items(ref=@Model(type=Folder::class, groups={"read"}))
    *     )
    * )
    *
@@ -130,7 +130,7 @@ class FoldersAPIController extends AbstractFOSRestController
    * @OA\Response(
    *     response=200,
    *     description="Retreive a Folder",
-   *     @Model(type=Folder::class)
+   *     @Model(type=Folder::class, groups={"read"})
    * )
    *
    * @OA\Response(
@@ -176,7 +176,7 @@ class FoldersAPIController extends AbstractFOSRestController
    *         mediaType="application/json",
    *         @OA\Schema(
    *             type="object",
-   *             ref=@Model(type=Folder::class)
+   *             ref=@Model(type=Folder::class, groups={"write"})
    *         )
    *     )
    * )
@@ -253,7 +253,7 @@ class FoldersAPIController extends AbstractFOSRestController
    *         mediaType="application/json",
    *         @OA\Schema(
    *             type="object",
-   *             ref=@Model(type=Folder::class)
+   *             ref=@Model(type=Folder::class, groups={"write"})
    *         )
    *     )
    * )
@@ -342,7 +342,7 @@ class FoldersAPIController extends AbstractFOSRestController
    *         mediaType="application/json",
    *         @OA\Schema(
    *             type="object",
-   *             ref=@Model(type=Folder::class)
+   *             ref=@Model(type=Folder::class, groups={"write"})
    *         )
    *     )
    * )
