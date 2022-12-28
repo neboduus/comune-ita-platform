@@ -441,7 +441,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
   private function checkRelations(UserGroup &$userGroup, Request $request): void
   {
 
-    if ($request->request->has('topic_id')) {
+    if ($request->request->has('topic_id') && $request->request->get('topic_id')) {
       $category = $this->entityManager->getRepository('App\Entity\Categoria')->find($request->request->get('topic_id'));
       if (!$category instanceof Categoria) {
         throw new InvalidArgumentException("Category does not exist");
@@ -449,7 +449,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
       $userGroup->setTopic($category);
     }
 
-    if ($request->request->has('manager_id')) {
+    if ($request->request->has('manager_id') && $request->request->get('manager_id')) {
       $manager = $this->entityManager->getRepository('App\Entity\OperatoreUser')->find($request->request->get('manager_id'));
       if (!$manager instanceof OperatoreUser) {
         throw new InvalidArgumentException("Manager does not exist");
