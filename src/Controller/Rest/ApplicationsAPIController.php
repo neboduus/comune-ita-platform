@@ -659,19 +659,21 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Empty application are not allowed"], Response::HTTP_BAD_REQUEST);
     }
 
-    foreach ($flatData as $k => $v) {
+    // Disabilito controllo su schema perchè non viene gestito correttamente dal fomserver lo schema delle checkbox
+    // Todo: trovare metodo alternativo
+    /*foreach ($flatData as $k => $v) {
       // In caso di datagrid/editgrid lo schema del form contiene un array per cui la chiave contiene campi del tipo
       // api_key_datagrid.0.api_key_interno. La submission contiene invece una array con i dati inseriti dall'utente nel
       // datagrid quindi api_key_datagrid.0.api_key_interno, api_key_datagrid.1.api_key_interno, api_key_datagrid.2.api_key_interno.
       $k = preg_replace('/\.\d+\./', '.0.', $k);
 
       // Todo: creare servizio più efficace per controllo conformità schema
-      if ($flatSchema[$k.'.type'] != 'file') {
+      if ($flatSchema[$k.'.type'] != 'file' && $flatSchema[$k.'.type'] != 'sdcfile') {
         if (!isset($flatSchema[$k.'.type'])) {
           return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
         }
       }
-    }
+    }*/
 
     $data = [
       'data' => [],
