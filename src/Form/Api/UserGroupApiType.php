@@ -32,12 +32,11 @@ class UserGroupApiType extends AbstractType
         'required' => false,
         'purify_html' => true,
       ])
-      ->add('topicId', EntityType::class, [
+      ->add('topic', EntityType::class, [
         'class' => 'App\Entity\Categoria',
         'label' => 'servizio.categoria',
         'choice_label' => 'name',
         'required' => false,
-        'mapped' => false
       ])
       ->add('manager', EntityType::class, [
         'class' => 'App\Entity\OperatoreUser',
