@@ -6,14 +6,15 @@ services:
     build:
       context: .
       args:
-        wodby_version: 7.3-dev-macos
+        wodby_version: 7.4-dev-macos
     environment:
       ENV: DEV
       APP_ENV: dev
     volumes:
       - ./config:/var/www/html/config:rw,cached
-      - ./compose_conf:/var/www/html/compose_conf:rw,cached
       - ./data:/var/www/html/data:rw,cached
+      - ./compose_conf:/var/www/html/compose_conf:rw,cached
+      - ./bin:/var/www/html/bin:rw,cached
       - ./src:/var/www/html/src:rw,cached
       - ./assets:/var/www/html/assets:rw,cached
       - ./templates:/var/www/html/templates:rw,cached
@@ -22,19 +23,18 @@ services:
       - ./public:/var/www/html/public:rw,cached
       - ./tests:/var/www/html/tests:rw,cached
       - ./phpunit.xml.dist:/var/www/html/phpunit.xml.dist:rw,cached
+      - ./composer.json:/var/www/html/composer.json:rw,cached
 
-  #apache:
-  #  build:
-  #    context: .
-  #    dockerfile: Dockerfile.apache
-  #    args:
-  #      php_image: registry.gitlab.com/opencontent/stanzadelcittadino/app:master
+  cron:
+    command: bash -c ""
+
+  #caddy:
   #  volumes:
-  #    - ./public:/var/www/html/public:rw
+  #    - ./public:/srv:rw
 
-  caddy:
-    volumes:
-      - ./public:/srv:rw
+  mailserver:
+    ports:
+      - "8025:8025"
 
   pgadmin:
     image: dpage/pgadmin4:6.4

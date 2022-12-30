@@ -14,7 +14,7 @@ RUN npx browserslist@latest --update-db && \
 RUN ls -l public
 
 # prepare the vendor dir for symfony
-FROM wodby/php:${wodby_version:-7.3} as builder
+FROM wodby/php:${wodby_version:-7.4} as builder
 
 USER root
 
@@ -24,7 +24,9 @@ COPY ./composer.json ./composer.lock ./
 RUN composer install --no-scripts --prefer-dist --no-suggest
 
 # prepare the final image
-FROM wodby/php:${wodby_version:-7.3}
+FROM registry.gitlab.com/opencontent/php-caddy-prometheus:7.4-4.33.4
+
+COPY Caddyfile /etc/caddy/Caddyfile
 
 USER root
 RUN apk add --no-cache jq httpie
@@ -87,3 +89,5 @@ ENV PHP_DATE_TIMEZONE=Europe/Rome
 
 # generate js transaltions file
 RUN php bin/console bazinga:js-translation:dump public --format=js --pattern=/translations/{domain}.{_format}
+
+

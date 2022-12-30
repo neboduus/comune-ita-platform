@@ -1,7 +1,7 @@
 :80
 
 respond /health status 200
-root * /srv
+root * /var/www/html/public
 
 metrics /metrics
 
@@ -26,7 +26,7 @@ header @assets {
 log {
   format console
 }
-php_fastcgi * php:9000 {
+php_fastcgi * 127.0.1.1:9000 {
   split .php
   root /var/www/html/public
   trusted_proxies private_ranges
