@@ -4,8 +4,6 @@ volumes:
   pgdata:
   uploads:
   mongo:
-  caddydata:
-  caddycfg:
 
 networks:
   default:
@@ -31,10 +29,36 @@ services:
   php:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
     #entrypoint: /bin/sleep 3600
+    networks:
+      default:
+        aliases:
+          - stanzadelcittadino.localtest.me
     build: .
     volumes:
       - "uploads:/var/www/html/var/uploads"
     stop_grace_period: 90s
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://stanzadelcittadino.localtest.me/health-check"]
+      interval: 30s
+      timeout: 3s
+      retries: 2
+      start_period: 5s
+
+
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: 'default'
+      traefik.http.services.sdc-http.loadbalancer.server.port: 80
+
+      traefik.http.routers.sdc-http.entrypoints: web
+      traefik.http.routers.sdc-http.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+
+      #per aggiungere un openlogin
+      #traefik.http.routers.caddy-auth.entrypoints: web
+      #traefik.http.routers.caddy-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/auth/login-open`)"
+      #traefik.http.routers.caddy-auth.middlewares: "spid-auth"
+
     environment:
       INSTANCE_OVERRIDE: 'true'
       INSTANCE_address: StanzaDelCittadino.localtest.me/comune-di-bugliano
@@ -120,7 +144,7 @@ services:
       - "uploads:/var/www/html/var/uploads"
     stop_grace_period: 90s
     healthcheck:
-      test: ["NONE"]
+      test: [ "NONE" ]
     environment:
       OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
@@ -148,47 +172,6 @@ services:
       UPLOAD_DESTINATION: ${UPLOAD_DESTINATION:-local_filesystem}
       API_VERSION: ${API_VERSION:-1}
       KAFKA_URL: ${KAFKA_URL:-}
-
-  caddy:
-    image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/caddy:latest
-    volumes:
-      #- "uploads:/srv/uploads"
-      - caddydata:/data
-      - caddycfg:/config
-    depends_on:
-      - php
-    build:
-      context: .
-      dockerfile: Dockerfile.caddy
-      args:
-        php_image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
-    networks:
-      default:
-        aliases:
-          - stanzadelcittadino.localtest.me
-    environment:
-      PHPFPM_HOST: php:9000
-    labels:
-      traefik.enable: 'true'
-      traefik.docker.network: 'default'
-      traefik.http.services.caddy.loadbalancer.server.port: 80
-
-      traefik.http.routers.sdc-http.entrypoints: web
-      traefik.http.routers.sdc-http.rule: 'Host(`stanzadelcittadino.localtest.me`)'
-
-      # Per provare https eliminare il commento al blocco successivo
-      #traefik.http.routers.sdc-https.entrypoints: websecure
-      #traefik.http.routers.sdc-https.rule: 'Host(`stanzadelcittadino.localtest.me`)'
-      #traefik.http.routers.sdc-https.tls:
-      #traefik.http.routers.sdc-https.tls.certresolver: 'mydnschallenge'
-
-      #traefik.http.middlewares.spid-auth.forwardauth.address: http://boreale.localtest.me:5252
-      #traefik.http.middlewares.spid-auth.forwardauth.authResponseHeaders: "X-Forwarded-User,X-Forwarded-User-Provider,X-Forwarded-User-registeredOffice,X-Forwarded-User-spidCode,X-Forwarded-User-name,X-Forwarded-User-companyName,X-Forwarded-User-ivaCode,X-Forwarded-User-countyOfBirth,X-Forwarded-User-idCard,X-Forwarded-User-gender,X-Forwarded-User-dateOfBirth,X-Forwarded-User-placeOfBirth,X-Forwarded-User-familyName,X-Forwarded-User-fiscalNumber,X-Forwarded-User-digitalAddress,X-Forwarded-User-mobilePhone,X-Forwarded-User-expirationDate,X-Forwarded-User-email,X-Forwarded-User-address,X-Forwarded-User-Session,X-Forwarded-User-Spid-Level,X-Forwarded-User-Spid-Idp"
-      #traefik.http.middlewares.spid-auth.forwardauth.trustForwardHeader: true
-
-      #traefik.http.routers.caddy-auth.entrypoints: web
-      #traefik.http.routers.caddy-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/auth/login-open`)"
-      #traefik.http.routers.caddy-auth.middlewares: "spid-auth"
 
   traefik:
     image: traefik:2.6
@@ -284,3 +267,5 @@ services:
       traefik.enable: 'true'
       traefik.http.services.mailserver.loadbalancer.server.port: 8025
       traefik.http.routers.mailserver.rule: 'Host(`mail.localtest.me`)'
+
+
