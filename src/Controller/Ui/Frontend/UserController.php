@@ -21,6 +21,9 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -139,8 +142,7 @@ class UserController extends AbstractController
 
     $form = $this->setupSdcUserForm($user)->handleRequest($request);
 
-    if ($form->isSubmitted()) {
-
+    if ($form->isSubmitted() && $form->isValid()) {
       $data = $form->getData();
       $this->storeSdcUserData($user, $data, $this->logger);
 
@@ -324,10 +326,22 @@ class UserController extends AbstractController
         ['label' => false, 'required' => true, 'choices' => CPSUser::getProvinces()]
       );
     }
+    $formBuilder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmitUserForm'));
 
     $form = $formBuilder->getForm();
 
     return $form;
+  }
+
+  public function onPreSubmitUserForm(FormEvent $event){
+    $data = $event->getData();
+
+    if (!isset($data['luogo_nascita']) or !$data['luogo_nascita'])
+    {
+      $event->getForm()->addError(
+        new FormError($this->translator->trans('user.error_birth_place'))
+      );
+    }
   }
 
   /**

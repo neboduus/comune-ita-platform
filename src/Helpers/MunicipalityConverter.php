@@ -6,6 +6,7 @@ namespace App\Helpers;
 class MunicipalityConverter
 {
   const data = [
+    "" => "",
     "A001" => "Abano Terme",
     "A004" => "Abbadia Cerreto",
     "A005" => "Abbadia Lariana",
