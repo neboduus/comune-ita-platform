@@ -482,6 +482,13 @@ class Service
   private $identifier;
 
   /**
+   * @Serializer\Type("string")
+   * @OA\Property(description="Service's app version")
+   * @Groups({"read"})
+   */
+  private $appVersion;
+
+  /**
    * @var DateTime
    * @Serializer\Type("DateTime")
    * @OA\Property(description="Creation date time", type="string", format="date-time")
@@ -1531,4 +1538,23 @@ class Service
     return $this;
   }
 
+  /**
+   * Get the value of appVersion
+   */ 
+  public function getAppVersion()
+  {
+    return $this->appVersion;
+  }
+
+  /**
+   * Set the value of appVersion
+   *
+   * @return  self
+   */ 
+  public function setAppVersion($appVersion)
+  {
+    $this->appVersion = $appVersion;
+
+    return $this;
+  }
 }

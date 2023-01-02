@@ -21,8 +21,8 @@ class VersionService
   public function getVersion()
   {
     if ($this->version == null) {
-      if (is_file('../web/VERSION')) {
-        $this->version = file_get_contents('../web/VERSION');
+      if (is_file('../public/VERSION')) {
+        $this->version = file_get_contents('../public/VERSION');
       } else {
         $this->version = 'Unknown';
       }
