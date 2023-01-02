@@ -2990,6 +2990,7 @@ user_group:
   delete_error: "Impossibile eliminare l'ufficio, ci sono servizi e operatori collegati"
   delete_popup: "Sei sicuro di procedere? L'ufficio verrà eliminato definitivamente."
   new: 'Crea nuovo ufficio'
+  confirm: 'Email, Pec e Numero di telefono nella sezione Contatti non compilati. Sei sicuro di voler salvare?'
 contact_point:
   title: 'Punti di Contatto'
   contact_point_name: 'Nome'

@@ -9,7 +9,7 @@
             <div class="col-9">
               <div class="card-body pe-3">
                 <p class="card-title text-paragraph-regular-medium-semi mb-3 font-weight-bold">
-                  {% if group.coreContactPoint.url %}
+                  {% if group.coreContactPoint and group.coreContactPoint.url %}
                     <a class="text-decoration-none" href="{{ group.coreContactPoint.url }}" target="_blank">{{ group.name }}</a>
                   {% else %}
                     <b>{{ group.name }}</b>
@@ -17,8 +17,17 @@
                 </p>
                 {% if group.coreContactPoint %}
                   <div class="card-text">
-                    {# todo: Da abilitare quando avremo i luoghi #}
-                    {#  <p class="u-main-black">Via Dei Transiti 21, 50302</p> #}
+                    {% if group.coreLocation and group.coreLocation.address
+                      and group.coreLocation.address.street_address
+                      and group.coreLocation.address.post_office_box_number %}
+                      <p class="u-main-black text-truncate">
+                        {{ group.coreLocation.address.street_address }}
+                        {{ group.coreLocation.address.post_office_box_number }}
+                        {% if group.coreLocation.address.postal_code %}
+                          , {{ group.coreLocation.address.postal_code }}
+                        {% endif %}
+                      </p>
+                    {% endif %}
                     {% if group.coreContactPoint.phoneNumber %}
                       <p class="u-main-black text-truncate"><a href="tel:{{ group.coreContactPoint.phoneNumber }}">{{ group.coreContactPoint.phoneNumber }}</a></p>
                     {% endif %}

@@ -689,7 +689,7 @@ class Servizio implements Translatable
   }
 
   /**
-   * @return ArrayCollection
+   * @return Collection
    */
   public function getUserGroups(): Collection
   {
@@ -697,11 +697,21 @@ class Servizio implements Translatable
   }
 
   /**
-   * @param ArrayCollection $userGroups
+   * @param UserGroup $userGroup
    */
-  public function setUserGroups(ArrayCollection $userGroups): void
+  public function addUserGroup(UserGroup $userGroup)
   {
-    $this->userGroups = $userGroups;
+    $this->userGroups[] = $userGroup;
+    $userGroup->addService($this);
+  }
+
+  /**
+   * @param UserGroup $userGroup
+   */
+  public function removeUserGroup(UserGroup $userGroup)
+  {
+    $userGroup->removeService($this);
+    $this->userGroups->removeElement($userGroup);
   }
 
   /**
