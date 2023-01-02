@@ -11,6 +11,7 @@ use App\Model\FeedbackMessage;
 use App\Model\FeedbackMessages;
 use App\Model\Service;
 use App\Services\Manager\BackofficeManager;
+use App\Services\VersionService;
 use Doctrine\Common\Collections\ArrayCollection;
 use ReflectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -28,13 +29,19 @@ class ServiceDto extends AbstractDto
 
   private $version;
 
+  /**
+   * @var VersionService
+   */
+  private $versionService;
+
 
   /**
    * @param RouterInterface $router
    */
-  public function __construct(RouterInterface $router)
+  public function __construct(RouterInterface $router, VersionService $versionService)
   {
     $this->router = $router;
+    $this->versionService = $versionService;
   }
 
   /**
@@ -186,6 +193,8 @@ class ServiceDto extends AbstractDto
     $service->setExternalCardUrl($servizio->getExternalCardUrl());
 
     $service->setFeedbackMessages($this->decorateFeedbackMessages($servizio->getFeedbackMessages()));
+
+    $service->setAppVersion($this->versionService->getVersion());
 
     $service->setCreatedAt($servizio->getCreatedAt());
     $service->setUpdatedAt($servizio->getUpdatedAt());
