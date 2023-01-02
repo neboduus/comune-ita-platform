@@ -286,9 +286,11 @@ servizio:
   apertura: 'Apertura'
   apertura_servizio: 'Apertura %servizio%'
   termine_presentazione_domande: 'Termine presentazione domande'
-  esito_richiesta: "Data ultima per ricevere l'Esito della domanda"
+  esito_richiesta: "Data ultima per ricevere l'esito della domanda"
   termine_presentazione_domande_per_servizio: 'Termine presentazione domande per %servizio%'
-  esito_richiesta_per_servizio: "Data ultima per ricevere l'Esito della domanda per %servizio%"
+  esito_richiesta_per_servizio: "Data ultima per ricevere l'esito della domanda per %servizio%"
+  tempo_massimo_esito_servizio_programmato: '{1} Un giorno dal termine di presentazione delle domande|]1,Inf[%count% giorni dal termine di presentazione delle domande'
+  tempo_massimo_esito_servizio: '{1} Un giorno dalla presentazione della domanda|]1,Inf[%count% giorni dalla presentazione della domanda'
   gruppo: "Gruppo"
   condiviso_con_gruppo: "Condividi scheda del servizio con il gruppo"
   livello_accesso: "Accesso"

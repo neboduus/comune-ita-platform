@@ -6,7 +6,7 @@
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
         <h1>{{ recipient.name }}</h1>
-        {% if recipient.description|striptags|trim != '' %}
+        {% if not recipient.description|isEmpty %}
           <article class="mb-3">
             <h4>{{ 'general.descrizione'|trans }}</h4>
             {{ recipient.description|raw }}

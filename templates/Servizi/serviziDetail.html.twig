@@ -112,13 +112,13 @@
                           href="#what-you-get"><span>{{ 'servizio.what_you_get' | trans }}</span></a>
                     </li>
                     <li class="nav-item">
-                      {% if servizio.maxResponseTime or servizio.status == constant('App\\Entity\\Servizio::STATUS_SCHEDULED') %}
+                      {% if servizio.timesAndDeadlines or servizio.maxResponseTime or servizio.isScheduled %}
                         <a class="nav-link" data-focus-mouse="false"
                           href="#times_and_deadlines"><span>{{ 'servizio.times_and_deadlines' | trans }}</span></a>
                       {% else %}
                         <a class="nav-link disabled" data-focus-mouse="false"
                           href="#times_and_deadlines"><span>{{ 'servizio.times_and_deadlines' | trans }}</span></a>
-                      {% endif %}  
+                      {% endif %}
                     </li>
                     <li class="nav-item">
                       <a class="nav-link" data-focus-mouse="false"
@@ -190,8 +190,8 @@
             <section class="it-page-section mb-4" id="how-to-do">
               <h2 class="title mb-3">{{ 'servizio.how_to_do' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
-                {{ servizio.howToDo|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-              </div>
+              {{ servizio.howToDo|cleanMarkup|raw|nl2br }}
+            </div>
             </section>
           {% else %}
             <div id="how-to-do"></div>
@@ -200,9 +200,7 @@
           {% if not servizio.whatYouNeed|isEmpty %}
             <section class="it-page-section mb-4 bg-aliceblue p-3" id="what-you-need">
               <h2 class="title mb-3">{{ 'servizio.what_you_need' | trans }}</h2>
-              <div class="rich-text text-serif text-paragraph">
-                {{ servizio.whatYouNeed|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-              </div>
+              <div class="rich-text text-serif text-paragraph">{{ servizio.whatYouNeed|cleanMarkup|raw|nl2br }}</div>
             </section>
           {% else %}
             <div id="what-you-need"></div>
@@ -211,45 +209,56 @@
           {% if not servizio.whatYouGet|isEmpty %}
             <section class="it-page-section mb-4" id="what-you-get">
               <h2 class="title mb-3">{{ 'servizio.what_you_get' | trans }}</h2>
-              <div class="rich-text text-serif text-paragraph">
-                {{ servizio.whatYouGet|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-              </div>
+              <div class="rich-text text-serif text-paragraph">{{ servizio.whatYouGet|cleanMarkup|raw|nl2br }}</div>
             </section>
           {% else %}
             <div id="what-you-get"></div>
           {% endif %}
-
-          {% if servizio.maxResponseTime or servizio.status == constant('App\\Entity\\Servizio::STATUS_SCHEDULED') %}
+          {% if servizio.timesAndDeadlines or servizio.maxResponseTime or servizio.isScheduled %}
             <section class="it-page-section mb-4" id="times_and_deadlines">
               <h2 class="title mb-3">{{ 'servizio.times_and_deadlines' | trans }}</h2>
-              <div class="rich-text text-serif text-paragraph">
-                {{ servizio.timesAndDeadlines|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-              </div>
+              {% if servizio.timesAndDeadlines %}
+                <div class="rich-text text-serif text-paragraph">
+                  {{ servizio.timesAndDeadlines|cleanMarkup|raw|nl2br }}
+                </div>
+              {% endif %}
               {% set serviceDates = [] %}
               {% if servizio.maxResponseTime %}
-                {% set serviceDates = serviceDates|merge({
-                  'servizio.esito_richiesta': ('+' ~ servizio.maxResponseTime ~ 'days')|date('Y-m-d')
-                }) %}
+                {% set startMaxResponseTimeDate = (servizio.isScheduled ? servizio.scheduledTo : 'now')|date('Y-m-d') %}
+                {% set serviceDates = serviceDates|merge([{
+                    'date': startMaxResponseTimeDate|date_modify( '+' ~ (servizio.maxResponseTime) ~ 'days'),
+                    'label': 'servizio.esito_richiesta',
+                    'checkpoint_info': (servizio.isScheduled ? 'servizio.tempo_massimo_esito_servizio_programmato' : 'servizio.tempo_massimo_esito_servizio')|transchoice(servizio.maxResponseTime)
+                  }]
+                ) %}
               {% endif %}
-              {% if servizio.status == constant('App\\Entity\\Servizio::STATUS_SCHEDULED') %}
-                {% set serviceDates = serviceDates|merge({
-                  'servizio.apertura': servizio.scheduledFrom|date('Y-m-d'),
-                  'servizio.termine_presentazione_domande': servizio.scheduledTo|date('Y-m-d')
-                }) %}
+              {% if servizio.isScheduled %}
+                {% set serviceDates = serviceDates|merge([
+                  {
+                    'date': servizio.scheduledFrom,
+                    'label': 'servizio.apertura',
+                    'checkpoint_info': ''
+                  },
+                  {
+                    'date': servizio.scheduledTo,
+                    'label': 'servizio.termine_presentazione_domande',
+                    'checkpoint_info': ''
+                  }
+                ]) %}
               {% endif %}
-              {{ include('Servizi/parts/panel/times_and_deadlines.html.twig', {'serviceDates': serviceDates}) }}
+              {{ include('Servizi/parts/panel/times_and_deadlines.html.twig', {'serviceDates': serviceDates})  }}
+
             </section>
           {% else %}
             <div id="times_and_deadlines"></div>
           {% endif %}
-          
           {# Accedi al servizio #}
           <section class="it-page-section mb-4 bg-aliceblue p-4" id="howto">
             <h2 class="title mb-3">{{ 'servizio.accedere' | trans }}</h2>
             {% if not servizio.howto|isEmpty %}
               <div class="rich-text text-serif text-paragraph">
-                {{ servizio.howto|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
-              </div>
+              {{ servizio.howto|cleanMarkup|raw|nl2br }}
+            </div>
             {% endif %}
             {% if can_access %}
               <div class="mt-3">
@@ -267,12 +276,11 @@
               </div>
             {% endif %}
           </section>
-
           {% if not servizio.conditions|isEmpty %}
             <section class="it-page-section mb-4" id="conditions">
               <h2 class="title mb-3">{{ 'servizio.conditions' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
-              {{ servizio.conditions|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+              {{ servizio.conditions|cleanMarkup|raw|nl2br }}
               </div>
               <div>
                 {% for attachment in servizio.conditionsAttachments %}
@@ -316,7 +324,7 @@
             <section class="it-page-section mb-4" id="constraints">
               <h2 class="title mb-3">{{ 'servizio.constraints' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
-                {{ servizio.constraints|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+                {{ servizio.constraints|cleanMarkup|raw|nl2br }}
               </div>
             </section>
           {% endif %}
@@ -324,7 +332,7 @@
             <section class="it-page-section mb-4" id="special_cases">
               <h2 class="title mb-3">{{ 'servizio.casi_particolari' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
-                {{ servizio.specialCases|replace({'%comune%': instance_service.getCurrentInstance().name})|cleanMarkup|raw|nl2br }}
+                {{ servizio.specialCases|cleanMarkup|raw|nl2br }}
               </div>
             </section>
           {% endif %}
