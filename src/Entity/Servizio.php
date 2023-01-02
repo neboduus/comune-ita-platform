@@ -2199,4 +2199,8 @@ class Servizio implements Translatable
     return false;
   }
 
+  public function isScheduled(): bool
+  {
+    return $this->status == self::STATUS_SCHEDULED;
+  }
 }

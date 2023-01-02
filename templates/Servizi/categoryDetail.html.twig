@@ -6,7 +6,7 @@
     <div class="row">
       <div class="col-lg-8 px-lg-4 py-lg-2">
         <h1>{{ category.name }}</h1>
-        {% if category.description|striptags|trim != '' %}
+        {% if not category.description|isEmpty %}
           <div class="clearfix">
             {{ category.description|raw }}
           </div>
