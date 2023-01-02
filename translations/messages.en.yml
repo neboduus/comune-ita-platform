@@ -940,6 +940,7 @@ user:
   welcome_msg: 'welcome_msg'
   forgot_password: 'Did you forget your password?'
   forgot_password_description: 'If you have forgotten your password, please enter your username or email address.'
+  error_birth_place: 'Select a valid birth place before saving, please.'
   reset_password:
     subject: 'Password recovery'
     message: 'You receive this email because you have requested a password reset on the Citizen''s Room, click on the button below to continue.'

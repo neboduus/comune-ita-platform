@@ -988,6 +988,7 @@ user:
   welcome_msg: 'Die Anmeldung wurde erfolgreich durchgeführt'
   forgot_password: 'Passwort vergessen?'
   forgot_password_description: 'Wenn Sie Ihr Passwort vergessen haben, geben Sie bitte Ihren Benutzernamen oder Ihre E-Mail-Adresse ein.'
+  error_birth_place: ''
   reset_password:
     subject: ''
     message: ''

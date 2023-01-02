@@ -1086,6 +1086,7 @@ user:
     salva: 'Salva'
   forgot_password: 'Hai dimenticato la password?'
   forgot_password_description: 'Se hai dimenticato la tua password, inserisci il tuo username o il tuo indirizzo email.'
+  error_birth_place: 'Compilare il luogo di nascita con un valore valido prima di salvare.'
 admin:
   usage:
     user_title: 'Numero utenti'
