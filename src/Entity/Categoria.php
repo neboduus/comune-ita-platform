@@ -25,7 +25,7 @@ class Categoria implements Translatable
    * @ORM\Column(type="guid")
    * @ORM\Id
    * @Serializer\Type("string")
-   * @OA\Property(description="Category id")
+   * @OA\Property(description="Category id", type="string", format="uuid")
    * @Groups({"read"})
    */
   protected $id;
@@ -215,7 +215,7 @@ class Categoria implements Translatable
    * @Serializer\VirtualProperty()
    * @Serializer\Type("string")
    * @Serializer\SerializedName("parent_id")
-   * @OA\Property(description="Parent category id")
+   * @OA\Property(description="Parent category id", type="string", format="uuid")
    * @Groups({"read", "write"})
    */
   public function getParentId()

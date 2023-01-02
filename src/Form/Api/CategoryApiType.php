@@ -5,6 +5,7 @@ namespace App\Form\Api;
 
 use App\Entity\Categoria;
 use App\Services\Manager\CategoryManager;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -98,6 +99,13 @@ class CategoryApiType extends AbstractType
     if (isset($data['parent_id']) && array_key_exists($data['parent_id'], $children)) {
       $event->getForm()->addError(
         new FormError($this->translator->trans('categories.error_reference_children'))
+      );
+    }
+
+    if (isset($data['parent_id']) && !empty($data['parent_id']) && !uuid_is_valid($data['parent_id'])) {
+      $data['parent_id'] = null;
+      $event->getForm()->addError(
+        new FormError($this->translator->trans('error_invalid_uuid'))
       );
     }
 
