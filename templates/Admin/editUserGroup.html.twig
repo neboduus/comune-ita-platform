@@ -1,5 +1,13 @@
 {% extends 'Default/index.html.twig' %}
 
+{% block stylesheets %}
+  {{ encore_entry_link_tags('user-group') }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ encore_entry_script_tags('user-group') }}
+{% endblock %}
+
 {% block main_content %}
 <section id="intro" class="container px-4 my-4">
   <div class="row">
@@ -119,7 +127,8 @@
 
       </div>
 
-      <input class="btn btn-primary mr-1" type="submit" value="{{ 'salva' | trans() }}" style="float: left"/>
+      <input class="btn btn-primary mr-1" id="submit_or_confirm_user_group" type="button" value="{{ 'salva' | trans() }}" style="float: left"/>
+
       <a class="btn btn-100 mr-1" href="{{ path('admin_user_group_index') }}"
          style="float: left">{{ 'gruppo_di_servizi.torna_alla_lista' | trans() }}</a>
 

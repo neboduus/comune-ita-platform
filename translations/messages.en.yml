@@ -2980,6 +2980,7 @@ user_group:
   delete_popup: "Are you sure to proceed? The office will be permanently deleted."
   core_contact_point: ""
   new: 'Create new office'
+  confirm: 'Email, Pec and Phone Number empty in the Contacts section. Are you sure you want to save?'
 contact_point:
   title: 'Contact Point'
   contact_point_name: 'Name'

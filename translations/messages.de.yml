@@ -3050,6 +3050,7 @@ user_group:
   delete_popup: 'Sind Sie sicher, dass Sie fortfahren möchten? Die Büro wird endgültig gelöscht.'
   core_contact_point: ""
   new: ''
+  confirm: ''
 contact_point:
   title: 'Kontaktpunkt'
   contact_point_name: 'Titel'

@@ -166,6 +166,18 @@ class GeneralDataType extends AbstractI18nType
         'label' => 'servizio.condiviso_con_gruppo',
         'required' => false,
       ])
+      ->add('user_groups', EntityType::class,
+        [
+          'class' => 'App\Entity\UserGroup',
+          'choice_label' => 'name',
+          'label' => 'user_group.title',
+          'required' => false,
+          'multiple' => true,
+          'attr' => ['style' => 'columns: 3;'],
+          'expanded' => true,
+          'by_reference' => false
+        ]
+      )
       ->add(
         'access_level',
         ChoiceType::class,
@@ -267,7 +279,7 @@ class GeneralDataType extends AbstractI18nType
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
-  
+
   public function onPreSubmit(FormEvent $event)
   {
     $data = $event->getData();
@@ -275,14 +287,14 @@ class GeneralDataType extends AbstractI18nType
       // controllo se almeno uno dei valori delle date inserite è vuoto, se lo è allora tale data è invalida
       $isScheduledFromInvalid = FormUtils::isArrayValueEmpty($data['scheduled_from']);
       $isScheduledToInvalid = FormUtils::isArrayValueEmpty($data['scheduled_to']);
-      
+
       if ($isScheduledFromInvalid && $isScheduledToInvalid) {
         $event->getForm()->addError(new FormError($this->translator->trans('general.scheduled.from_to_invalid')));
       } else if ($isScheduledFromInvalid || $isScheduledToInvalid) {
         $event->getForm()->addError(new FormError(
           $this->translator->trans($isScheduledFromInvalid ? 'general.scheduled.from_invalid' : 'general.scheduled.to_invalid')
         ));
-      } 
+      }
     }
   }
 
