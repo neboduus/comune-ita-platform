@@ -1,20 +1,41 @@
-<script type="application/ld+json">
+<script type="application/ld+json" data-element="metatag">
   {
     "@context": "https://schema.org",
-    "@type": "Service",
-    "@id": "{{ absolute_url( path('service_api_get', {'id': servizio.id})) }}",
+    "@type": "GovernmentService",
+    "name": "{{ servizio.name }}",
+    "serviceType": "{{ servizio.topics.name }}",
+    "serviceOperator":{
+      "name":"Comune di {{ servizio.ente.name }}"
+     },
     "areaServed": {
       "@type": "AdministrativeArea",
       "name": "{{ servizio.coverage and servizio.coverage|length ? servizio.coverage[0] : servizio.ente.name }}"
     },
     "audience": {
       "@type": "Audience",
-      "name": "{{ servizio.name }}"
+      "name": "{{ servizio.who }}"
     },
     "availableChannel": {
       "@type": "ServiceChannel",
-      "availableLanguage": "it",
-      "serviceUrl": "{{ absolute_url( path('servizi_show', {'slug': servizio.slug})) }}"
+      "name": "Dove rivolgersi",
+      "serviceUrl": "{{ absolute_url( path('servizi_show', {'slug': servizio.slug})) }}",
+      "availableLanguage": {
+         "@type": "Language",
+          "name": "Italian",
+          "alternateName": "it"
+       },
+        {% if servizio.userGroups.count > 0 %}
+      "serviceLocation":{
+        "@type": "Place",
+        "name": "{{ servizio.userGroups.current.name }}",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "{{ servizio.userGroups.current.coreLocation.address['street_address'] }}",
+          "postalCode": "{{ servizio.userGroups.current.coreLocation.address['postal_code'] }}",
+          "addressLocality": "{{ servizio.ente.name }}"
+        }
+      }
+        {% endif %}
     },
     {% if servizio.topics %}
       "category": "{{ servizio.topics.name }}",
@@ -28,7 +49,8 @@
       "phone": "{{ servizio.ente.contatti }}"
     },
     "description": "{{ servizio.description }}",
-    "name": "{{ servizio.name }}",
     "url": "{{ absolute_url( path('servizi_show', {'slug': servizio.slug})) }}"
   }
 </script>
+
+
