@@ -328,7 +328,7 @@ servizio:
   indirizzo_utente: "Indirizzo utente"
   enti_coinvolti: 'Servizio disponibile per'
   attivo: 'Servizio attivo'
-  non_attivo: 'Servizio sospeso'
+  non_attivo: 'Non attivo'
   cancellato: 'Il servizio è stato cancellato'
   sospeso: 'Al momento il servizio non è attivo'
   schedulato: 'Il servizio è attivo dal %from% al %to%'
