@@ -24,7 +24,7 @@ variables:
 # Build images with a temporary name
 #
 
-build_php:
+.build_php:
   stage: build
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -53,7 +53,7 @@ build_apache:
 # Push PHP image with defintive name
 #
 
-push_php_branch:
+.push_php_branch:
   stage: push
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -66,7 +66,7 @@ push_php_branch:
   except:
     - master
 
-push_php_tag:
+.push_php_tag:
   stage: push
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -77,7 +77,7 @@ push_php_tag:
   only:
     - tags
 
-push_php_latest:
+.push_php_latest:
   stage: push
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -94,7 +94,7 @@ push_php_latest:
 # Push Apache image with defintive name
 #
 
-push_apache_branch:
+.push_apache_branch:
   stage: push
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -107,7 +107,7 @@ push_apache_branch:
   except:
     - master
 
-push_apache_tag:
+.push_apache_tag:
   stage: push
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -118,7 +118,7 @@ push_apache_tag:
   only:
     - tags
 
-push_apache_latest:
+.push_apache_latest:
   stage: push
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -129,7 +129,7 @@ push_apache_latest:
   only:
     - master
 
-renovate:
+.renovate:
   stage: renovate
   image: renovate/renovate:slim
   variables:
@@ -181,7 +181,7 @@ renovate:
 #    # -z -config rules.csrf.ignorelist=search,login then ZAP will not fail the scan if forms with an ID of "search" or "login" do not have anti CSRF tokens.
 #    # - docker run -t owasp/zap2docker-stable zap-baseline.py -j -t https://10.0.1.22/ # with ajax scanning
 
-publiccode:
+.publiccode:
   stage: test
   allow_failure: false
   script:
@@ -201,7 +201,7 @@ api-tests:
     paths:
       - reports/*
 
-php-qa-tools:
+.php-qa-tools:
   stage: test
   allow_failure: true
   script:
@@ -215,12 +215,12 @@ php-qa-tools:
       - reports/*
     when: always
 
-var-dump-check:
+.var-dump-check:
   stage: test
   script:
     - docker run -t --rm -v "$(pwd):/app" umutphp/php-docker-images-for-ci:7.4 var-dump-check /app
 
-security_composer_checker:
+.security_composer_checker:
   stage: test
   image: umutphp/php-docker-images-for-ci:7.4
   script:
