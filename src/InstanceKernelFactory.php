@@ -63,7 +63,10 @@ final class InstanceKernelFactory
       throw new Exception("Instance $instance not found");
     }
 
-    $params['prefix'] = $instance;
+    $pathInfoParts = explode('/', trim($instance, '/'));
+
+    $path = $pathInfoParts[1] ?? $instance;
+    $params['prefix'] = $path;
     $kernel = new InstanceKernel($env, $debug);
     $kernel->setIdentifier($instance);
     $kernel->setInstanceParameters($params);
