@@ -32,12 +32,12 @@ class SessionAuthAPIController extends AbstractFOSRestController
 
 
   /**
-   * Retreive a session auth token
+   * Retrieve a session auth token
    * @Rest\Get("/session-auth", name="user_session_auth_token_get")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive an Auth Token"
+   *     description="Retrieve an Auth Token"
    * )
    *
    * @OA\Response(

@@ -26,7 +26,7 @@ class StatusAPIController extends AbstractFOSRestController
 
 
   /**
-   * Retreive an Application status
+   * Retrieve an Application status
    * @Rest\Get("/applications/{id}", name="status_application_api_get")
    *
    * @OA\Response(

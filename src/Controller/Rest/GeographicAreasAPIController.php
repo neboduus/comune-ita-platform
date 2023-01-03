@@ -79,7 +79,7 @@ class GeographicAreasAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a geographic area by id
+   * Retrieve a geographic area by id
    * @Rest\Get("/{id}", name="geographic_area_api_get")
    *
    * @OA\Parameter(
@@ -94,7 +94,7 @@ class GeographicAreasAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a GeographicArea",
+   *     description="Retrieve a GeographicArea",
    *     @Model(type=GeographicArea::class, groups={"read"})
    * )
    *

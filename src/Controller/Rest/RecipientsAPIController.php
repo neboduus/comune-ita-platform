@@ -79,7 +79,7 @@ class RecipientsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Recipient by id
+   * Retrieve a Recipient by id
    * @Rest\Get("/{id}", name="recipient_api_get")
    *
    * @OA\Parameter(
@@ -94,7 +94,7 @@ class RecipientsAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Recipient",
+   *     description="Retrieve a Recipient",
    *     @Model(type=Recipient::class, groups={"read"})
    * )
    *

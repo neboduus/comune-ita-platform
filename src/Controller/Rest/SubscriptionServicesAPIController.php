@@ -125,12 +125,12 @@ class SubscriptionServicesAPIController extends AbstractApiController
   }
 
   /**
-   * Retreive a SubscriptionService
+   * Retrieve a SubscriptionService
    * @Rest\Get("/{id}", name="subscription-services_api_get")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a SubscriptionService",
+   *     description="Retrieve a SubscriptionService",
    *     @Model(type=SubscriptionService::class)
    * )
    *
@@ -164,7 +164,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
   }
 
   /**
-   * Retreive a SubscriptionService's Payment settings
+   * Retrieve a SubscriptionService's Payment settings
    * @Rest\Get("/{id}/payment-settings", name="subscription-service_payment-settings_api_get")
    *
    * @OA\Parameter(
@@ -219,7 +219,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a SubscriptionService's payments",
+   *     description="Retrieve a SubscriptionService's payments",
    *     @Model(type=SubscriptionPayment::class)
    * )
    *
@@ -626,7 +626,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive the Subscriptions of a Subscription Service",
+   *     description="Retrieve the Subscriptions of a Subscription Service",
    *   @Model(type=Subscription::class, groups={"read"})
    * )
    *
@@ -685,7 +685,7 @@ class SubscriptionServicesAPIController extends AbstractApiController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Subscription of a SubscriptionService",
+   *     description="Retrieve a Subscription of a SubscriptionService",
    *      @Model(type=Subscription::class, groups={"read"})
    * )
    *
