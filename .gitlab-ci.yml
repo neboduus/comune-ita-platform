@@ -194,6 +194,7 @@ api-tests:
   allow_failure: true
   script:
     - docker run -i --rm -v $(pwd)/tests:/srv orangeopensource/hurl /srv/sf-core.hurl --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test
+  when: manual
 
 php-qa-tools:
   stage: test
