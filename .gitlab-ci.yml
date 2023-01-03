@@ -193,7 +193,7 @@ api-tests:
   allow_failure: true
   script:
     - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
-    - ls -l ${SHARED_PATH}
+    - ls -laR ${SHARED_PATH}
     - docker run -t --rm -u "$UID" -v "$(pwd):/app" --entrypoint /bin/ls orangeopensource/hurl -l /app
     - docker run -t --rm -u "$UID" -v "$(pwd):/app" orangeopensource/hurl /app/tests/sf-core.hurl --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html /app/reports
   when: manual
