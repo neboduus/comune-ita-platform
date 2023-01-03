@@ -23,8 +23,9 @@
          "@type": "Language",
           "name": "Italian",
           "alternateName": "it"
-       },
+       }
         {% if servizio.userGroups.count > 0 %}
+        ,
       "serviceLocation":{
         "@type": "Place",
         "name": "{{ servizio.userGroups.current.name }}",
