@@ -212,7 +212,7 @@ class SubscriptionsAPIController extends AbstractApiController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive all subscriptions",
+   *     description="Retrieve all subscriptions",
    *     @OA\JsonContent(
    *     		type="array",
    *          	@OA\items(
@@ -344,7 +344,7 @@ class SubscriptionsAPIController extends AbstractApiController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Subscription",
+   *     description="Retrieve a Subscription",
    *     @OA\JsonContent(
    *     		type="object",
    *        @OA\Property(property="id", type="string", description="Subscription identifier", format="uuid"),

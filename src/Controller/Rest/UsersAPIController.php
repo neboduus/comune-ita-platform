@@ -111,14 +111,14 @@ class UsersAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a User by id
+   * Retrieve a User by id
    * @Rest\Get("/{id}", name="user_api_get")
    *
    * @Security(name="Bearer")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a User",
+   *     description="Retrieve a User",
    *     @Model(type=User::class, groups={"read"})
    * )
    *

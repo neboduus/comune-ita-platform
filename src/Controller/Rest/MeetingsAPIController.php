@@ -138,12 +138,12 @@ class MeetingsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Meeting
+   * Retrieve a Meeting
    * @Rest\Get("/{id}", name="meeting_api_get")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Meeting",
+   *     description="Retrieve a Meeting",
    *     @Model(type=Meeting::class, groups={"read"})
    * )
    *

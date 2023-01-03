@@ -100,7 +100,7 @@ class PlacesAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Place",
+   *     description="Retrieve a Place",
    *     @Model(type=Place::class, groups={"read"})
    * )
    *

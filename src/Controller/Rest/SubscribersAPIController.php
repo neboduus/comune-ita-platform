@@ -94,7 +94,7 @@ class SubscribersAPIController extends AbstractApiController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive all subscriptions",
+   *     description="Retrieve all subscriptions",
    *      @Model(type=Subscriber::class, groups={"read"})
    * )
    *
@@ -177,7 +177,7 @@ class SubscribersAPIController extends AbstractApiController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Subscriber",
+   *     description="Retrieve a Subscriber",
    *      @Model(type=Subscriber::class, groups={"read"})
    * )
    *

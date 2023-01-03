@@ -105,12 +105,12 @@ class CalendarsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Calendar
+   * Retrieve a Calendar
    * @Rest\Get("/{id}", name="calendar_api_get")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Calendar",
+   *     description="Retrieve a Calendar",
    *     @Model(type=Calendar::class, groups={"read"})
    * )
    *
@@ -145,12 +145,12 @@ class CalendarsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Calendar availabilities
+   * Retrieve a Calendar availabilities
    * @Rest\Get("/{id}/availabilities", name="calendar-availabilities_api_get")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive Calendar's availabilities"
+   *     description="Retrieve Calendar's availabilities"
    * )
    *
    * @OA\Parameter(
@@ -267,7 +267,7 @@ class CalendarsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Calendar availabilities by Date
+   * Retrieve a Calendar availabilities by Date
    * @Rest\Get("/{id}/availabilities/{date}", name="calendar-day-availabilities_api_get")
    *
    * @OA\Parameter(
@@ -312,7 +312,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive Calendar's availabilities per date",
+   *     description="Retrieve Calendar's availabilities per date",
    * )
    *
    * @OA\Response(
@@ -708,7 +708,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive the Opening Hours of a Calendar",
+   *     description="Retrieve the Opening Hours of a Calendar",
    *     @OA\JsonContent(
    *         type="array",
    *         @OA\Items(ref=@Model(type=OpeningHour::class))
@@ -750,7 +750,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive an Opening Hour of a Calendar",
+   *     description="Retrieve an Opening Hour of a Calendar",
    *     @OA\JsonContent(
    *         type="array",
    *         @OA\Items(ref=@Model(type=OpeningHour::class))
@@ -1115,7 +1115,7 @@ class CalendarsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Calendar opening hours overlaps
+   * Retrieve a Calendar opening hours overlaps
    * @Rest\Get("/{id}/overlaps", name="calendar-overlaps_api_get")
    *
    *
@@ -1132,7 +1132,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive Calendar's opening hours overlaps",
+   *     description="Retrieve Calendar's opening hours overlaps",
    * )
    *
    * @OA\Response(

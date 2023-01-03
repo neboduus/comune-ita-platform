@@ -99,7 +99,7 @@ class UserGroupsAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a UserGroup",
+   *     description="Retrieve a UserGroup",
    *     @Model(type=UserGroup::class, groups={"read"})
    * )
    *

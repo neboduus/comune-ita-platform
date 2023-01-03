@@ -23,7 +23,7 @@ class FolderVoter extends Voter
     $this->security = $security;
   }
 
-  protected function supports($attribute, $subject)
+  protected function supports($attribute, $subject): bool
   {
     // if the attribute isn't one we support, return false
     if (!in_array($attribute, [self::EDIT, self::VIEW])) {
@@ -38,7 +38,7 @@ class FolderVoter extends Voter
     return true;
   }
 
-  protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+  protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
   {
     $user = $token->getUser();
 
@@ -49,7 +49,7 @@ class FolderVoter extends Voter
 
     // you know $subject is a Folder object, thanks to `supports()`
     /** @var Folder $folder */
-    $cpsUser = $subject;
+    $folder = $subject;
 
     switch ($attribute) {
       case self::EDIT:
@@ -62,17 +62,17 @@ class FolderVoter extends Voter
     throw new \LogicException('This code should not be reached!');
   }
 
-  private function canView(Folder $folder, User $user)
+  private function canView(Folder $folder, User $user): bool
   {
     // if they can edit, they can view
     if ($this->canEdit($folder, $user)) {
       return true;
     }
 
-    return $user->getId() === $folder->getOwnerId();
+    return $user->getId() == $folder->getOwnerId();
   }
 
-  private function canEdit(Folder $folder, User $user)
+  private function canEdit(Folder $folder, User $user): bool
   {
     if ($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_OPERATORE')) {
       return true;

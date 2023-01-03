@@ -92,7 +92,7 @@ class FoldersAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function getFoldersAction(Request $request)
+  public function getFoldersAction(Request $request): View
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
 
@@ -122,14 +122,14 @@ class FoldersAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Folder
+   * Retrieve a Folder
    * @Rest\Get("/{id}", name="folder_api_get")
    *
    * @Security(name="Bearer")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Folder",
+   *     description="Retrieve a Folder",
    *     @Model(type=Folder::class, groups={"read"})
    * )
    *
@@ -147,16 +147,17 @@ class FoldersAPIController extends AbstractFOSRestController
    * @param $id
    * @return View
    */
-  public function getFolderAction($id)
+  public function getFolderAction($id): View
   {
     try {
       $repository = $this->getDoctrine()->getRepository('App\Entity\Folder');
       $folder = $repository->find($id);
+
       if ($folder === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
-
       $this->denyAccessUnlessGranted(FolderVoter::VIEW, $folder);
+
       return $this->view($folder, Response::HTTP_OK);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
@@ -202,7 +203,7 @@ class FoldersAPIController extends AbstractFOSRestController
    * @return View
    * @throws \Exception
    */
-  public function postFolderAction(Request $request)
+  public function postFolderAction(Request $request): View
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE','ROLE_ADMIN']);
     $folder = new Folder();
@@ -283,7 +284,7 @@ class FoldersAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function putFolderAction($id, Request $request)
+  public function putFolderAction($id, Request $request): View
   {
     $repository = $this->getDoctrine()->getRepository('App\Entity\Folder');
     $folder = $repository->find($id);
@@ -373,7 +374,7 @@ class FoldersAPIController extends AbstractFOSRestController
    * @return View
    * @throws \Exception
    */
-  public function patchFolderAction($id, Request $request)
+  public function patchFolderAction($id, Request $request): View
   {
 
     $repository = $this->getDoctrine()->getRepository('App\Entity\Folder');
@@ -440,7 +441,7 @@ class FoldersAPIController extends AbstractFOSRestController
    * @param $id
    * @return View
    */
-  public function deleteAction($id)
+  public function deleteAction($id): View
   {
     $folder = $this->getDoctrine()->getRepository('App\Entity\Folder')->find($id);
     if ($folder) {

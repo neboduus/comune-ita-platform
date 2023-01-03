@@ -200,7 +200,7 @@ class Folder
    * @Serializer\VirtualProperty(name="owner")
    * @Serializer\Type("string")
    * @Serializer\SerializedName("owner")
-   * @OA\Property(description="Owner of the folder, only the owner and the users delegated to a document inside it will be able to view them", type="string", format="uuid")
+   * @OA\Property(description="Folder owner id, only the owner and the users delegated to a document inside it will be able to view them", type="string", format="uuid")
    * @Groups({"read", "write"})
    */
   public function getOwnerId(): string
@@ -235,7 +235,7 @@ class Folder
    * @Serializer\VirtualProperty(name="tenant")
    * @Serializer\Type("string")
    * @Serializer\SerializedName("tenant")
-   * @OA\Property(description="Identifier of the tenant to which the folder belongs, its value is set automatically when the folder is created", type="string", format="uuid")
+   * @OA\Property(description="Id of the tenant to which the folder belongs, its value is set automatically when the folder is created", type="string", format="uuid")
    * @Groups({"read"})
    */
   public function getTenantId(): string
@@ -266,7 +266,7 @@ class Folder
    * @Serializer\VirtualProperty(name="correlatedServices")
    * @Serializer\Type("array<string>")
    * @Serializer\SerializedName("correlated_services")
-   * @OA\Property(description="List of services related to the folder", type="array",  @OA\Items(type="string", format="uuid"))
+   * @OA\Property(description="List of service's ids related to the folder", type="array",  @OA\Items(type="string", format="uuid"))
    * @Groups({"read", "write"})
    */
   public function getServicesId(): array

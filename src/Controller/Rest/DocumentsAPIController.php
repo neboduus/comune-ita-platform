@@ -161,14 +161,14 @@ class DocumentsAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Document
+   * Retrieve a Document
    * @Rest\Get("/{id}", name="document_api_get")
    *
    * @Security(name="Bearer")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Document",
+   *     description="Retrieve a Document",
    *     @Model(type=Document::class, groups={"read"})
    * )
    *

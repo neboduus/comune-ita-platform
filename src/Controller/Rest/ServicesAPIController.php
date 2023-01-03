@@ -239,7 +239,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive service's facets"
+   *     description="Retrieve service's facets"
    * )
    *
    * @OA\Tag(name="services")
@@ -257,7 +257,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Service",
+   *     description="Retrieve a Service",
    *     @Model(type=Service::class, groups={"read"})
    * )
    *
@@ -303,7 +303,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive service Form schma"
+   *     description="Retrieve service Form schma"
    * )
    *
    * @OA\Response(

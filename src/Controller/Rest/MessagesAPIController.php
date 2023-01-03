@@ -90,7 +90,7 @@ class MessagesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive Applications messages
+   * Retrieve Applications messages
    * @Rest\Get("/applications/{id}/messages", name="application_api_messages_get")
    *
    * @OA\Response(
@@ -140,7 +140,7 @@ class MessagesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive Applications messages
+   * Retrieve Applications messages
    * @Rest\Get("/v2/applications/{id}/messages", name="v2_application_api_messages_get")
    *
    * @OA\Parameter(
@@ -300,7 +300,7 @@ class MessagesAPIController extends AbstractFOSRestController
 
 
   /**
-   * Retreive Application message
+   * Retrieve Application message
    * @Rest\Get("/applications/{id}/messages/{messageId}", name="application_api_message_get")
    *
    * @OA\Response(
@@ -573,12 +573,12 @@ class MessagesAPIController extends AbstractFOSRestController
 
 
   /**
-   * Retreive a message applications attachment
+   * Retrieve a message applications attachment
    * @Rest\Get("/applications/{id}/messages/{messageId}/attachments/{attachmentId}", name="message_api_attachment_get")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive attachment file",
+   *     description="Retrieve attachment file",
    * )
    *
    * @OA\Response(

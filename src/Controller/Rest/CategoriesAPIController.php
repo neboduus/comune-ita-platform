@@ -88,12 +88,12 @@ class CategoriesAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Category by id
+   * Retrieve a Category by id
    * @Rest\Get("/{id}", name="category_api_get")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Category",
+   *     description="Retrieve a Category",
    *     @Model(type=Categoria::class, groups={"read"})
    * )
    *

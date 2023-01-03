@@ -179,12 +179,12 @@ class ServicesGroupAPIController extends AbstractFOSRestController
   }
 
   /**
-   * Retreive a Service group by id or slug
+   * Retrieve a Service group by id or slug
    * @Rest\Get("/{id}", name="service_group_api_get")
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retreive a Service group by id or slug",
+   *     description="Retrieve a Service group by id or slug",
    *     @Model(type=ServiceGroup::class, groups={"read"})
    * )
    *
