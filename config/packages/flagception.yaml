@@ -7,7 +7,7 @@ flagception:
       # Default flag if inactive or active (default: false)
       # You can combine all parameter together. First the default value is checked. If the value is false, the value
       # from env is checked. If this also returns false, the constraints are checked.
-      default: true
+      default: false
       env: FEATURE_NEW_OUTDATED_BROWSER
     feature_application_detail:
       default: true

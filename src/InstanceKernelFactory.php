@@ -21,7 +21,7 @@ final class InstanceKernelFactory
 
     $host = $request->getHost();
     $pathInfoParts = explode('/', trim($request->getPathInfo(), '/'));
-    $path = isset($pathInfoParts[0]) ? $pathInfoParts[0] : null;
+    $path = $pathInfoParts[0] ?? null;
 
     $instance = false;
     if (isset($instanceParams[$host . '/' . $path])) {
@@ -52,10 +52,12 @@ final class InstanceKernelFactory
   public static function instanceFromConsole(string $env, string $instance, bool $debug): InstanceKernel
   {
     $instanceParams = self::parseYaml($env);
-    $params = false;
-    foreach ($instanceParams as $v) {
+    $params = $host = false;
+
+    foreach ($instanceParams as $k => $v) {
       if ($v['identifier'] == $instance) {
         $params = $v;
+        $host = $k;
       }
     }
 
@@ -63,7 +65,10 @@ final class InstanceKernelFactory
       throw new Exception("Instance $instance not found");
     }
 
-    $params['prefix'] = $instance;
+    $pathInfoParts = explode('/', trim($host, '/'));
+    $path = $pathInfoParts[1] ?? null;
+    $params['prefix'] = $path;
+
     $kernel = new InstanceKernel($env, $debug);
     $kernel->setIdentifier($instance);
     $kernel->setInstanceParameters($params);
