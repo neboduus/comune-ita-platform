@@ -192,6 +192,9 @@ api-tests:
   stage: test
   allow_failure: true
   script:
+    - 'export SHARED_PATH="$(dirname ${CI_PROJECT_DIR})/shared"'
+    - ls -l ${SHARED_PATH}
+    - docker run -t --rm -u "$UID" -v "$(pwd):/app" --entrypoint /bin/ls orangeopensource/hurl -l /app
     - docker run -t --rm -u "$UID" -v "$(pwd):/app" orangeopensource/hurl /app/tests/sf-core.hurl --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html /app/reports
   when: manual
   artifacts:
@@ -233,3 +236,4 @@ security_composer_checker:
 #    - if [[ $(find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \; | wc -l) -gt 0 ]]; then echo "Error, at least one production file contains dummy protocol!" && exit 1; else echo "OK, no dummy protocol in production files"; fi
 
 # vim: autoindent tabstop=2 shiftwidth=2 expandtab softtabstop=2 filetype=yaml fileencoding=utf-8
+
