@@ -193,7 +193,7 @@ api-tests:
   image: orangeopensource/hurl:latest
   allow_failure: true
   script:
-    - hurl --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports /app/tests/sf-core.hurl
+    - hurl --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports tests/sf-core.hurl
       #when: manual
   artifacts:
     name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
