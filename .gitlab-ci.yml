@@ -193,7 +193,7 @@ api-tests:
   allow_failure: true
   script:
     - ls -l tests/
-    - cat tests/sf-core.hurl | docker run -t --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test
+    - cat tests/sf-core.hurl | docker run -t --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test -
       #when: manual
   #artifacts:
   #  name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
