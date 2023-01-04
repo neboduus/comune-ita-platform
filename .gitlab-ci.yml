@@ -193,18 +193,12 @@ api-tests:
   allow_failure: true
   script:
     - echo "Starting generic tests"
-    - cat tests/sf-core.hurl | docker run -i --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --compressed --fail-at-end --connect-timeout 3 --report-html ./reports -
+    - cat tests/sf-core.hurl | docker run -i --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --compressed --fail-at-end -
     - echo "Starting folders tests"
-    - cat tests/sf-core-folders.hurl | docker run -i --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --compressed --fail-at-end --connect-timeout 3 --report-html ./reports -
+    - cat tests/sf-core-folders.hurl | docker run -i --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --compressed -
     - echo "Starting categories tests"
-    - cat tests/sf-core-categories.hurl | docker run -i --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --compressed --fail-at-end --connect-timeout 3 --report-html ./reports  -
+    - cat tests/sf-core-categories.hurl | docker run -i --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --compressed --fail-at-end --connect-timeout -
   when: manual
-  artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
-    expire_in: 1d
-    paths:
-      - reports/*
-    when: always
 
 .php-qa-tools:
   stage: test
