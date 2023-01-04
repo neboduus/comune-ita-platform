@@ -193,7 +193,7 @@ api-tests:
   allow_failure: true
   script:
     - echo "Starting generic tests"
-    - cat tests/sf-core.hurl | docker run -i --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test -
+    - cat tests/sf-core.hurl | docker run -i --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --compressed --fail-at-end --connect-timeout 3 --report-html ./reports -
     - echo "Starting folders tests"
     - cat tests/sf-core-folders.hurl | docker run -i --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test -
     - echo "Starting categories tests"
