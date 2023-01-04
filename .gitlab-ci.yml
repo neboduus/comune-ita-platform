@@ -192,7 +192,7 @@ api-tests:
   stage: build 
   allow_failure: true
   script:
-    - docker run -t --rm -v $(pwd):/app --entrypoint /bin/sh orangeopensource/hurl:latest -c "ls -l $(pwd)"
+    - docker run -t --rm -v $(pwd):/app --entrypoint /bin/sh orangeopensource/hurl:latest -c "ls -l /app"
     - docker run -t --rm -v $(pwd):/app orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports < tests/sf-core.hurl
       #when: manual
   #artifacts:
