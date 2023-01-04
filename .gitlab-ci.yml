@@ -193,13 +193,13 @@ api-tests:
   image: orangeopensource/hurl:latest
   allow_failure: true
   script:
-    - --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports tests/sf-core.hurl
+    - "--variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports tests/sf-core.hurl"
       #when: manual
-  artifacts:
-    name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
-    expire_in: 1d
-    paths:
-      - reports/*
+  #artifacts:
+  #  name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
+  #  expire_in: 1d
+  #  paths:
+  #    - reports/*
 
 .php-qa-tools:
   stage: test
@@ -225,14 +225,6 @@ api-tests:
   image: umutphp/php-docker-images-for-ci:7.4
   script:
     - local-php-security-checker --path=./composer.lock
-
-#dummy_protocol:
-#  stage: test
-#  allow_failure: true
-#  script:
-#    - echo "Looking for configuration files containing protocollo.handlers.dummy:"
-#    - find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \;
-#    - if [[ $(find app/config -type f -name "config_prod.yml" -exec grep -H protocollo.handlers.dummy {} \; | wc -l) -gt 0 ]]; then echo "Error, at least one production file contains dummy protocol!" && exit 1; else echo "OK, no dummy protocol in production files"; fi
 
 # vim: autoindent tabstop=2 shiftwidth=2 expandtab softtabstop=2 filetype=yaml fileencoding=utf-8
 
