@@ -190,12 +190,9 @@ variables:
 
 api-tests:
   stage: build 
-  image: 
-    name: orangeopensource/hurl:latest
-    entrypoint: [ "/usr/bin/hurl" ]
   allow_failure: true
   script:
-    - --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports tests/sf-core.hurl
+    - docker run -t --rm -v "$(pwd):/app" orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports /app/tests/sf-core.hurl
       #when: manual
   #artifacts:
   #  name: "${CI_JOB_NAME}-${CI_COMMIT_REF_SLUG}"
