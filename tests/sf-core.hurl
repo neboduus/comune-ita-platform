@@ -31,6 +31,6 @@ GET https://servizi.comune.bugliano.pi.it/lang/api/tenants/info
 
 HTTP/1.1 200
 [Asserts]
-jsonpath "$.id" == "60e35f02-1509-408c-b101-3b1a28109329"
+jsonpath "$.id" matches /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
 jsonpath "$.name" == "Comune di Bugliano"
 

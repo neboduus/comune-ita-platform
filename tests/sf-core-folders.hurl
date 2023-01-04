@@ -22,7 +22,7 @@ Authorization: Bearer {{token}}
 
 HTTP/1.1 201
 [Asserts]
-jsonpath "$.id" != null
+jsonpath "$.id" matches /^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$/
 jsonpath "$.owner" == "1c340b05-0808-4dbe-ad12-81ebbf3b6abf"
 jsonpath "$.title" == "Marvin wallpapers for Vittorino"
 jsonpath "$.description" == "Created during test, to be removed at the end by Marvin"
