@@ -192,8 +192,6 @@ api-tests:
   stage: build 
   allow_failure: true
   script:
-    - docker run -t --rm -v /builds/opencontent/stanza-del-cittadino:/builds/opencontent/stanza-del-cittadino:rw --entrypoint /bin/sh orangeopensource/hurl:latest -c "ls -l /builds/opencontent/stanza-del-cittadino/core/"
-    - docker run -t --rm -v /builds/opencontent/stanza-del-cittadino:/builds/opencontent/stanza-del-cittadino orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports /builds/opencontent/stanza-del-cittadino/core/tests/sf-core.hurl
     - docker run -t --rm orangeopensource/hurl:latest --variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports < tests/sf-core.hurl
       #when: manual
   #artifacts:
