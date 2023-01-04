@@ -191,8 +191,8 @@ variables:
 api-tests:
   stage: build 
   image: orangeopensource/hurl:latest
+    entrypoint: [ "/usr/bin/hurl" ]
   allow_failure: true
-  entrypoint: [ "/usr/bin/hurl" ]
   script:
     - '--variable admin_user=${tests_admin_user} --variable admin_pass=${tests_admin_pass} --test --report-html ./reports tests/sf-core.hurl'
       #when: manual
