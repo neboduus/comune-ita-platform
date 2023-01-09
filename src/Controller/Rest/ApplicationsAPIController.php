@@ -1521,13 +1521,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         )
         ->add(
           'protocol_document_id',
-          TextType::class,
-          [
-            'constraints' => [
-              new NotBlank(),
-              new NotNull(),
-            ],
-          ]
+          TextType::class
         )
         ->getForm();
       $this->processForm($request, $form);
@@ -1644,13 +1638,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         )
         ->add(
           'protocol_document_id',
-          TextType::class,
-          [
-            'constraints' => [
-              new NotBlank(),
-              new NotNull(),
-            ],
-          ]
+          TextType::class
         )
         ->getForm();
       $this->processForm($request, $form);
@@ -2230,13 +2218,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
         )
         ->add(
           'integration_outbound_protocol_document_id',
-          TextType::class,
-          [
-            'constraints' => [
-              new NotBlank(),
-              new NotNull(),
-            ],
-          ]
+          TextType::class
         )
         ->add('integration_outbound_protocolled_at', DateTimeType::class, [
           'widget' => 'single_text',
@@ -2329,13 +2311,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $form = $this->createFormBuilder(null, ['allow_extra_fields' => true, 'csrf_protection' => false])
         ->add(
           'integration_inbound_protocol_document_id',
-          TextType::class,
-          [
-            'constraints' => [
-              new NotBlank(),
-              new NotNull(),
-            ],
-          ]
+          TextType::class
         )
         ->add(
           'integration_inbound_protocol_number',
