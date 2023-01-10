@@ -388,3 +388,10 @@ a.list-item.left-icon {
     }
   }
 }
+
+
+.choices-auto-height {
+  .form-check + label {
+    height: auto;
+  }
+}

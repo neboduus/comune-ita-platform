@@ -262,7 +262,6 @@ class ServiceGroupType extends AbstractI18nType
         'expanded'=> true,
         'multiple' => true,
         'required' => false,
-        'attr' => ['style' => 'columns: 3;'],
         'label' => false,
         'empty_data' => []
       ])
@@ -272,7 +271,6 @@ class ServiceGroupType extends AbstractI18nType
         'multiple' => true,
         'required' => false,
         'label' => false,
-        'attr' => ['style' => 'columns: 3;'],
         'empty_data' => []
       ]);
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
