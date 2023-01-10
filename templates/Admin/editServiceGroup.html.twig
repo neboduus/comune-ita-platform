@@ -108,7 +108,15 @@
               </a>
             </div>
             <div id="life-events" class="collapse mt-3" role="region" aria-labelledby="heading-life-events">
-              <div class="collapse-body">{{ form_row(form.life_events) }}</div>
+              <fieldset class="form-group">
+                <div class="row choices-auto-height">
+                  {% for child in form.life_events %}
+                    <div class="col-12 col-lg-6">
+                      {{ form_widget(child) }}
+                    </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
             </div>
             <div class="collapse-header" id="heading-business-events">
               <a class="btn" data-toggle="collapse" href="#business-events" aria-expanded="false"
@@ -117,7 +125,15 @@
               </a>
             </div>
             <div id="business-events" class="collapse mt-3" role="region" aria-labelledby="heading-business-events">
-              <div class="collapse-body">{{ form_row(form.business_events) }}</div>
+              <fieldset class="form-group">
+                <div class="row choices-auto-height">
+                  {% for child in form.business_events %}
+                    <div class="col-12 col-lg-6">
+                      {{ form_widget(child) }}
+                    </div>
+                  {% endfor %}
+                </div>
+              </fieldset>
             </div>
           </div>
         </div>

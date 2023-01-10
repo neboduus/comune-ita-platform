@@ -228,16 +228,14 @@ class CardDataType extends AbstractI18nType
         'expanded' => true,
         'multiple' => true,
         'required' => false,
-        'attr' => ['style' => 'columns: 3;'],
-        'label' => false,
+        'label' => false
       ])
       ->add('business_events', ChoiceType::class, [
         'choices' => EventTaxonomy::BUSINESS_EVENTS,
         'expanded' => true,
         'multiple' => true,
         'required' => false,
-        'label' => false,
-        'attr' => ['style' => 'columns: 3;'],
+        'label' => false
       ]);
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
