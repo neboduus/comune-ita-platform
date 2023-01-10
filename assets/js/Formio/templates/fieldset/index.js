@@ -29,10 +29,9 @@ export default function fieldset(ctx) {
   }
   ${
     !ctx.collapsed
-      ? `<div class="card-body p-0" ref="${ctx.nestedKey}">
-            <div class="card p-3 p-lg-4">
+      ? `<div class="card p-3 p-lg-4 fieldset-body" ref="${ctx.nestedKey}">
                 ${ctx.children}
-            </div>
+
         </div>`
       : ""
   }
