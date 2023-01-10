@@ -535,6 +535,7 @@ pratica:
   no_protocol_number: 'The practice does not yet have a protocol number'
   error_signature_validation: ""
   reply_to_attachments: ''
+  remaining_response_time: '{0} You will receive an answer within today|{1} You will receive an answer within a day|]1,Inf[ You will receive an answer within %count% days'
 STATUS_CANCELLED: 'Cancelled'
 STATUS_DRAFT: 'Draft'
 STATUS_PRE_SUBMIT: 'Sent'

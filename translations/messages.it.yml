@@ -656,6 +656,7 @@ pratica:
   collate: 'Fascicola'
   cancel_search: 'Annulla ricerca'
   search_reload: 'Ricarica ricerca'
+  remaining_response_time: '{0} Riceverai risposta entro oggi|{1} Riceverai risposta entro un giorno|]1,Inf[ Riceverai risposta entro %count% giorni'
 STATUS_CANCELLED: 'Rifiutata'
 STATUS_DRAFT: 'Bozza'
 STATUS_PRE_SUBMIT: 'Inviata'
