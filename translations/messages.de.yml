@@ -574,6 +574,7 @@ pratica:
   no_protocol_number: ''
   error_signature_validation: ""
   reply_to_attachments: ''
+  remaining_response_time: ''
 STATUS_CANCELLED: 'Abgelehnt'
 STATUS_DRAFT: 'Entwurf'
 STATUS_PRE_SUBMIT: 'Gesendet'

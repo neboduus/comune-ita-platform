@@ -124,7 +124,12 @@
                 <h6>{{ 'pratica.dettaglio.data_ora_presentazione' | trans }}:</h6>
                 <span
                   class="text-nowrap">{{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}
-              </span>
+                </span>
+                {% if pratica.servizio.maxResponseTime and pratica.remainingResponseTime >= 0 %}
+                  <span class="text-nowrap">
+                    {{ 'pratica.remaining_response_time' | transchoice(pratica.remainingResponseTime) }}
+                  </span>
+                {% endif %}
               </div>
             {% endif %}
             {% if  pratica.servizio.isProtocolrequired %}

@@ -2172,4 +2172,11 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
         return $date;
     }
   }
+
+  public function getRemainingResponseTime()
+  {
+    // get days passed from the time of submission
+    $daysFromSubmission = round((time() - $this->submissionTime) / (60 * 60 * 24));
+    return $this->servizio->getMaxResponseTime() - $daysFromSubmission;
+  }
 }
