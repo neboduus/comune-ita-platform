@@ -394,4 +394,29 @@ class ServiceManager
     $serviceDto->setGeographicAreas($geographicAreas);
   }
 
+  /**
+   * Checks which of the pnrr service card fields are empty
+   * @param Servizio|null $servizio
+   * @return string
+   */
+  public function getMissingCardFields(?Servizio $servizio)
+  {
+    $requiredFields = [
+      'servizio.a_chi_si_rivolge' => $servizio->getWho(), 
+      'servizio.how_to_do' => $servizio->getHowToDo(), 
+      'servizio.what_you_need' => $servizio->getWhatYouNeed(),
+      'servizio.what_you_get' => $servizio->getWhatYouGet(), 
+      'servizio.times_and_deadlines' => $servizio->getTimesAndDeadlines(), 
+      'servizio.accedere' => $servizio->getHowto(), 
+      'servizio.conditions' => $servizio->getConditions()
+    ];
+    $emptyFields = [];
+    foreach ($requiredFields as $key => $value) {
+      if(empty($value)) {
+        $emptyFields [] = $this->translator->trans($key);
+      }
+    }
+    return implode(', ', $emptyFields);
+  }
+
 }

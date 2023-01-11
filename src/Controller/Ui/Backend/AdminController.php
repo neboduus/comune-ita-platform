@@ -826,6 +826,14 @@ class AdminController extends AbstractController
       }
     }
 
+    $missingRequiredFields = $this->serviceManager->getMissingCardFields($servizio);
+    if ($missingRequiredFields) {
+      $this->addFlash('warning', $this->translator->trans('servizio.campi_pnrr_mancanti',  [
+          '%nome_campi%' => $missingRequiredFields
+        ])
+      );
+    }
+
     return $this->render('Admin/editServizio.html.twig', [
       'form' => $form ? $form->createView() : null,
       'steps' => $steps,
