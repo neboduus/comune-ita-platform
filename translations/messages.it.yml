@@ -212,6 +212,8 @@ general:
     to_invalid: "La data di cessazione del servizio non è valida"
     from_to_invalid: "Le date di attivazione e cessazione del servizio non sono valide"
     from_gte_to: "La data di attivazione non può essere maggiore o uguale alla data di cessazione"
+    from_to_not_null: "La data di attivazione/cessazione non può essere valorizzata se il servizio non è programmato"
+    from_to_null: "La data di attivazione/cessazione non può essere nulla se il servizio è programmato"
 servizio:
   copy_url: 'Copia URL'
   url_copied: 'URL copiato'
