@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Dto\ServiceDto;
 use App\Entity\Pratica;
+use App\Entity\Servizio;
 use App\Helpers\EventTaxonomy;
 use App\Model\FeedbackMessage;
 use App\Model\Service;
@@ -17,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -204,8 +206,26 @@ class ServizioFormType extends AbstractType
       }
     }
 
-    $event->getForm()->setData($service);
+    // se mando un payload con data di attivazione/cessazione e il servizio non è programmato restituisco un errore
+    $status = isset($data['status']) ? $data['status'] : $service->getStatus(); 
+    if ($status != Servizio::STATUS_SCHEDULED && (isset($data['scheduled_from']) && $data['scheduled_from'] || isset($data['scheduled_to']) && $data['scheduled_to'])) {
+      $event->getForm()->addError(new FormError($this->translator->trans('general.scheduled.from_to_not_null')));
+    } 
+
+    // se mando un payload con data di attivazione/cessazione non valorizzati e il servizio è programmato restituisco un errore
+    if ($status == Servizio::STATUS_SCHEDULED && (!isset($data['scheduled_from']) || !isset($data['scheduled_to']))) {
+      $event->getForm()->addError(new FormError($this->translator->trans('general.scheduled.from_to_null')));
+    }
+
+    // se un servizio non è programmato, le date di attivazione/cessazione devono sempre essere nulle
+    if ($status != Servizio::STATUS_SCHEDULED) {
+      $service->setScheduledFrom(null);
+      $service->setScheduledTo(null);
+    }
+
     $event->setData($data);
+    $event->getForm()->setData($service);
+  
   }
 
   /**

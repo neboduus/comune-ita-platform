@@ -295,6 +295,16 @@ class GeneralDataType extends AbstractI18nType
           $this->translator->trans($isScheduledFromInvalid ? 'general.scheduled.from_invalid' : 'general.scheduled.to_invalid')
         ));
       }
+    } else {
+      // se il servizio non è programmato resetto le date di attivazione e cessazione
+      foreach (array('scheduled_from', 'scheduled_to') as $key) {
+        $data[$key]['date']['day'] = "";
+        $data[$key]['date']['month'] = "";
+        $data[$key]['date']['year'] = "";
+        $data[$key]['time']['hour'] = "";
+        $data[$key]['time']['minute'] = "";
+      }
+      $event->setData($data);
     }
   }
 
