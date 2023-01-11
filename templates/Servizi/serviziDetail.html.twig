@@ -89,45 +89,52 @@
                 <div class="link-list-wrapper menu-link-list">
                   <h3 class="no_toc">{{ 'servizio.indice' | trans }}</h3>
                   <ul class="link-list" data-element="page-index">
-                    <li class="nav-item">
-                        <a class="nav-link {% if servizio.who|isEmpty %} disabled {% endif %}" data-focus-mouse="false"
-                          href="#who"><span>{{ 'servizio.a_chi_si_rivolge' | trans }}</span></a>
-                    </li>
+                    {% if not servizio.who|isEmpty %}
+                      <li class="nav-item">
+                          <a class="nav-link" data-focus-mouse="false"
+                            href="#who"><span>{{ 'servizio.a_chi_si_rivolge' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                     {% if not servizio.description|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
                           href="#description"><span>{{ 'servizio.descrizione' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if servizio.howToDo|isEmpty %} disabled {% endif %}" data-focus-mouse="false"
-                          href="#how-to-do"><span>{{ 'servizio.how_to_do' | trans }}</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if servizio.whatYouNeed|isEmpty %} disabled {% endif %}" data-focus-mouse="false"
-                          href="#what-you-need"><span>{{ 'servizio.what_you_need' | trans }}</span></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if not servizio.whatYouGet|isEmpty %} disabled {% endif %}" data-focus-mouse="false"
-                          href="#what-you-get"><span>{{ 'servizio.what_you_get' | trans }}</span></a>
-                    </li>
-                    <li class="nav-item">
-                      {% if servizio.timesAndDeadlines or servizio.maxResponseTime or servizio.isScheduled %}
-                        <a class="nav-link" data-focus-mouse="false"
-                          href="#times_and_deadlines"><span>{{ 'servizio.times_and_deadlines' | trans }}</span></a>
-                      {% else %}
-                        <a class="nav-link disabled" data-focus-mouse="false"
-                          href="#times_and_deadlines"><span>{{ 'servizio.times_and_deadlines' | trans }}</span></a>
-                      {% endif %}
-                    </li>
+                    {% if not servizio.howToDo|isEmpty %}
+                      <li class="nav-item">
+                          <a class="nav-link" data-focus-mouse="false"
+                            href="#how-to-do"><span>{{ 'servizio.how_to_do' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if not servizio.whatYouNeed|isEmpty %}
+                      <li class="nav-item">
+                          <a class="nav-link" data-focus-mouse="false"
+                            href="#what-you-need"><span>{{ 'servizio.what_you_need' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if not servizio.whatYouGet|isEmpty %}
+                      <li class="nav-item">
+                          <a class="nav-link" data-focus-mouse="false"
+                            href="#what-you-get"><span>{{ 'servizio.what_you_get' | trans }}</span></a>
+                      </li>
+                    {% endif %}
+                    {% if servizio.timesAndDeadlines or servizio.maxResponseTime or servizio.isScheduled %}
+                      <li class="nav-item">
+                          <a class="nav-link" data-focus-mouse="false"
+                            href="#times_and_deadlines"><span>{{ 'servizio.times_and_deadlines' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                     <li class="nav-item">
                       <a class="nav-link" data-focus-mouse="false"
                           href="#howto"><span>{{ 'servizio.accedere' | trans }}</span></a>
                     </li>
-                    <li class="nav-item">
-                      <a class="nav-link {% if not servizio.conditions|isEmpty %} disabled {% endif %}" data-focus-mouse="false"
-                          href="#conditions"><span>{{ 'servizio.conditions' | trans }}</span></a>
-                    </li>
+                    {% if not servizio.conditions|isEmpty %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false"
+                            href="#conditions"><span>{{ 'servizio.conditions' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                     {% if not servizio.costs|isEmpty %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
@@ -152,15 +159,12 @@
                           href="#special_cases"><span>{{ 'servizio.casi_particolari' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    <li class="nav-item">
-                      {% if servizio.userGroups and servizio.userGroups|length > 0 %}
+                    {% if servizio.userGroups and servizio.userGroups|length > 0 %}
+                      <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false" data-element="service-area"
                             href="#contacts"><span>{{ 'servizio.contatti' | trans }}</span></a>
-                      {% else %}
-                        <a class="nav-link disabled" data-focus-mouse="false" data-element="service-area"
-                            href="#contacts"><span>{{ 'servizio.contatti' | trans }}</span></a>
-                      {% endif %}
-                    </li>
+                      </li>
+                    {% endif %}
                   </ul>
                 </div>
               </div>
@@ -175,8 +179,6 @@
               <h2 class="title mb-3">{{ 'servizio.a_chi_si_rivolge' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">{{ servizio.who|cleanMarkup|raw|nl2br }}</div>
             </section>
-          {% else %}
-            <div id="who"></div>
           {% endif %}
 
           {% if not servizio.description|isEmpty %}
@@ -190,11 +192,9 @@
             <section class="it-page-section mb-4" id="how-to-do">
               <h2 class="title mb-3">{{ 'servizio.how_to_do' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">
-              {{ servizio.howToDo|cleanMarkup|raw|nl2br }}
-            </div>
+                {{ servizio.howToDo|cleanMarkup|raw|nl2br }}
+              </div>
             </section>
-          {% else %}
-            <div id="how-to-do"></div>
           {% endif %}
 
           {% if not servizio.whatYouNeed|isEmpty %}
@@ -202,8 +202,6 @@
               <h2 class="title mb-3">{{ 'servizio.what_you_need' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">{{ servizio.whatYouNeed|cleanMarkup|raw|nl2br }}</div>
             </section>
-          {% else %}
-            <div id="what-you-need"></div>
           {% endif %}
 
           {% if not servizio.whatYouGet|isEmpty %}
@@ -211,8 +209,6 @@
               <h2 class="title mb-3">{{ 'servizio.what_you_get' | trans }}</h2>
               <div class="rich-text text-serif text-paragraph">{{ servizio.whatYouGet|cleanMarkup|raw|nl2br }}</div>
             </section>
-          {% else %}
-            <div id="what-you-get"></div>
           {% endif %}
           {% if servizio.timesAndDeadlines or servizio.maxResponseTime or servizio.isScheduled %}
             <section class="it-page-section mb-4" id="times_and_deadlines">
@@ -247,10 +243,7 @@
                 ]) %}
               {% endif %}
               {{ include('Servizi/parts/panel/times_and_deadlines.html.twig', {'serviceDates': serviceDates})  }}
-
             </section>
-          {% else %}
-            <div id="times_and_deadlines"></div>
           {% endif %}
           {# Accedi al servizio #}
           <section class="it-page-section mb-4 bg-aliceblue p-4" id="howto">
@@ -291,8 +284,6 @@
                 {% endfor %}
               </div>
             </section>
-          {% else %}
-            <div id="conditions"></div>
           {% endif %}
 
           {% if not servizio.costs|isEmpty %}

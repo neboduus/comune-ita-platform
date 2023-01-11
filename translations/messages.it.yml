@@ -376,6 +376,7 @@ servizio:
     schedulato: 'Programmato'
   condividi: "Condividi"
   torna_indietro: "Torna indietro"
+  campi_pnrr_mancanti: "La scheda di questo servizio non è completa, si consiglia di compilare anche i campi: %nome_campi%"
 gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppo di servizi'
   nome: 'Nome'
