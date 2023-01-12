@@ -42,7 +42,7 @@
     "doctrine/orm": "2.13.1",
     "doctrine/dbal": "2.13.9",
     "eightpoints/guzzle-bundle": "8.3.0",
-    "excelwebzone/recaptcha-bundle": "1.5.35",
+    "excelwebzone/recaptcha-bundle": "1.5.36",
     "exercise/htmlpurifier-bundle": "4.1",
     "flagception/flagception-bundle": "4.3.0",
     "friendsofsymfony/rest-bundle": "3.3.0",
