@@ -36,10 +36,10 @@
     "bootstrap": "4.6.2",
     "bootstrap-italia": "1.6.4",
     "bootstrap-select": "1.13.18",
-    "datatables.net-bs4": "1.10.23",
+    "datatables.net-bs4": "1.11.0",
     "element-ui": "2.15.12",
     "font-awesome": "4.7.0",
-    "formiojs": "4.14.10",
+    "formiojs": "4.14.12",
     "highcharts": "9.0.1",
     "ion-rangeslider": "2.3.1",
     "jquery": "3.5.1",
@@ -59,7 +59,7 @@
     "print-js": "1.6.0",
     "summernote": "0.8.18",
     "svgxuse": "1.2.6",
-    "sweetalert2": "11.1.9",
-    "webpack-jquery-ui": "2.0.1"
+    "webpack-jquery-ui": "2.0.1",
+    "sweetalert2": "11.1.9"
   }
 }
