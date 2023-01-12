@@ -1,5 +1,6 @@
 import BasePath from "../../utils/BasePath";
 import Auth from "../auth/Auth";
+import jwt_decode from "jwt-decode";
 
 class Users {
 
@@ -29,6 +30,10 @@ class Users {
         }
       }
     );
+  }
+
+  decodeJWTUser(token){
+    return  jwt_decode(token);
   }
 }
 

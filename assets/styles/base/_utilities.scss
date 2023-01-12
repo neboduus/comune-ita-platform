@@ -391,7 +391,37 @@ a.list-item.left-icon {
 
 
 .choices-auto-height {
-  .form-check + label {
+  .form-check > label {
     height: auto;
   }
+}
+
+.cursor{
+  &-none{
+    cursor: none;
+  }
+  &-help{
+    cursor: help;
+  }
+  &-pointer{
+  cursor: pointer;
+}
+  &-auto{
+    cursor: auto;
+  }
+  &-default{
+    cursor: default;
+  }
+}
+
+// Disable effect hover tab detail payment
+.it-list-wrapper .it-list a.cursor-auto:hover {
+  box-shadow: none;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid hsl(210deg, 3.6255162919%, 78.21%);
+  background: transparent;
+  position: relative;
+  z-index: 1;
+  transition: none;
 }
