@@ -16,8 +16,8 @@
   {% form_theme form 'form/ocsdc_form_style.html.twig' %}
 
   <section class="container {{ form.vars.id }}">
-    <div class="row">
-      <div class="col-md-12 px-lg-4 py-lg-2 cmp-heading">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10 py-lg-2 cmp-heading">
         <h1>{{ pratica.servizio.name }}</h1>
         {{ include('Pratiche/parts/compilation_info.html.twig') }}
         <p>
@@ -35,9 +35,40 @@
       </div>
     </div>
 
-    <div class="row mt-2">
+    <div class="row">
+    <div class="col-12 col-lg-3 d-lg-block mb-4 d-none">
+      <div class="cmp-navscroll sticky-top" aria-labelledby="accordion-title-one">
+        <nav class="navbar it-navscroll-wrapper navbar-expand-lg" aria-label="{{ 'servizio.info' | trans }}" data-navscroll="">
+          <div class="navbar-custom" id="navbarNavProgress">
+            <div class="menu-wrapper">
+              <div class="link-list-wrapper">
+                <div class="accordion">
+                  <div class="accordion-item">
+                          <span class="collapse-header" id="accordion-title-one">
+                            <button class="accordion-button pb-10 px-3" type="button" data-toggle="collapse" data-target="#collapse-one" aria-expanded="true" aria-controls="collapse-one" data-focus-mouse="false">
+                              {{ 'servizio.info' | trans }}
+                            </button>
+                          </span>
+                    <div class="progress">
+                      <div class="progress-bar it-navscroll-progressbar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+                    </div>
+                    <div id="collapse-one" class="accordion-collapse collapse show" role="region" aria-labelledby="accordion-title-one">
+                      <div class="accordion-body">
+                        <ul class="link-list" data-element="page-index" id="navItems">
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+      <div class="col-12 col-lg-8 offset-lg-1 mt-2 mt-lg-0">
       {% set currentStep = flow.steps[flow.getCurrentStepNumber() - 1] %}
-      <div class="px-lg-4 col-12">
+      <div class="it-page-sections-container px-lg-4 col-12">
         {{ form_start(form, {'action': path('pratiche_compila', {'pratica': pratica.id }) } ) }}
         <div class="step-{{ flow.getCurrentStepNumber() }}">
           {{ form_errors(form) }}
@@ -90,6 +121,7 @@
 
       {# Note compilazione per utente #}
       {{ include('Pratiche/parts/user_compilation_notes.html.twig') }}
+    </div>
     </div>
   </section>
 

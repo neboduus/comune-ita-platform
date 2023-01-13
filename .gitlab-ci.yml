@@ -206,11 +206,11 @@ php-qa-tools:
 var-dump-check:
   stage: test
   script:
-    - docker run -t --rm -v "$(pwd):/app" umutphp/php-docker-images-for-ci:7.3 var-dump-check /app
+    - docker run -t --rm -v "$(pwd):/app" umutphp/php-docker-images-for-ci:7.4 var-dump-check /app
 
 security_composer_checker:
   stage: test
-  image: umutphp/php-docker-images-for-ci:7.3
+  image: umutphp/php-docker-images-for-ci:7.4
   script:
     - local-php-security-checker --path=./composer.lock
 

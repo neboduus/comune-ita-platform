@@ -2,7 +2,7 @@ white_october_breadcrumbs:
   separator: '/'
   separatorClass: 'separator'
   listId: 'breadcrumb'
-  listClass: 'breadcrumb'
+  listClass: 'breadcrumb pb-0'
   itemClass: 'breadcrumb-item'
   linkRel: ''
   locale: ~ # defaults to null, so the default locale is used

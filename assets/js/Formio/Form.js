@@ -53,7 +53,7 @@ class Form {
         : "1") +
       "/" +
       ($(".info-progress-wrapper").length - 1);
-    const stepLabel = $(".step-active span").text();
+    const stepLabel = $(".step-active span").attr('title');
 
     $(".step").html(step);
     $(".step-label").html(stepLabel);
@@ -103,6 +103,7 @@ class Form {
             Form.createStepsMobile();
             Form.submissionForm = form;
             Form.initDraftButton();
+            Form.createCustomNavItem(form.component)
           });
 
           if (form.hasOwnProperty("wizard")) {
@@ -124,6 +125,7 @@ class Form {
             Form.createStepsMobile();
             Form.saveDraft(form);
             Form.initDraftButton();
+            Form.createCustomNavItem(form.component)
           });
 
           form.on("prevPage", function () {
@@ -131,6 +133,7 @@ class Form {
             setTimeout(Form.checkWizardNavCancelButton, 500);
             Form.createStepsMobile();
             Form.initDraftButton();
+            Form.createCustomNavItem(form.component)
           });
 
           form.on("pagesChanged", function () {
@@ -225,6 +228,7 @@ class Form {
             Form.createStepsMobile();
             Form.submissionForm = form;
             Form.initDraftButton();
+            Form.createCustomNavItem(form.component)
           });
 
           if (form.hasOwnProperty("wizard")) {
@@ -247,6 +251,7 @@ class Form {
             Form.createStepsMobile();
             Form.saveDraft();
             Form.initDraftButton();
+            Form.createCustomNavItem(form.component)
           });
 
           form.on("prevPage", function () {
@@ -255,6 +260,7 @@ class Form {
             setTimeout(Form.checkWizardNavCancelButton, 500);
             Form.createStepsMobile();
             Form.initDraftButton();
+            Form.createCustomNavItem(form.component)
           });
 
           form.on("pagesChanged", function () {
@@ -394,6 +400,21 @@ class Form {
           form.formReady.then(() => {
             Form.customBreadcrumbButton(form);
             setTimeout(Form.checkWizardNavCancelButton, 500);
+            Form.createCustomNavItem(form.component)
+          });
+
+          form.on("nextPage", function (e) {
+            Form.customBreadcrumbButton(form);
+            setTimeout(Form.checkWizardNavCancelButton, 500);
+            Form.createStepsMobile();
+            Form.createCustomNavItem(form.component)
+          });
+
+          form.on("prevPage", function () {
+            Form.customBreadcrumbButton(form);
+            setTimeout(Form.checkWizardNavCancelButton, 500);
+            Form.createStepsMobile();
+            Form.createCustomNavItem(form.component)
           });
         });
       }
@@ -435,6 +456,7 @@ class Form {
           form.formReady.then(() => {
             Form.getStoredSteps();
             Form.createStepsMobile();
+            Form.createCustomNavItem(form.component,true)
           });
         });
       }
@@ -566,6 +588,28 @@ class Form {
         })
       );
     }
+  }
+
+  static createCustomNavItem(data,isSummary){
+    // Filter only fieldset components
+    let navItem = []
+    if(isSummary){
+      data.components.forEach(item =>{
+        if(item.components.filter(el => el.type === 'fieldset').length){
+          const filtered = item.components.filter(el => el.type === 'fieldset')
+          navItem = [...navItem,...filtered]
+        }
+      })
+    }else{
+       navItem = data.components.filter(item => item.type === 'fieldset')
+    }
+
+    // Reset list items
+    $('#navItems').empty();
+    navItem.forEach( (el,idx) => {
+      // Write item
+      $('#navItems').append(`<li class="nav-item"><a class="nav-link ${idx === 0 ? 'active' : ''}" href="#${el.key}"><span class="title-medium">${el.legend}</span></a></li>`);
+    })
   }
 }
 
