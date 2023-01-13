@@ -275,11 +275,6 @@
   }
 }
 
-a.list-item.left-icon {
-  position: relative;
-  padding-left: inherit !important;
-}
-
 // Hide checkbox gateways
 .row-payments {
   .form-check > [type='checkbox'] + label::after,

@@ -1,4 +1,5 @@
 {% set locales = app_locales|split('|') %}
+{% set ente = instance_service.getCurrentInstance() %}
 <div class="header-slim-right-zone">
   {% if locales|length > 1 %}
     <div class="nav-item dropdown">
@@ -29,7 +30,7 @@
   {% if user.roles is defined %}
     <div class="it-access-top-wrapper">
       {% if 'ROLE_CPS_USER' in user.roles %}
-        <div class="dropdown">
+        <div class="dropdown menu-wrapper">
           <a class="btn btn-dropdown dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <svg class="icon icon-lg">
@@ -38,19 +39,65 @@
             <span>{{ user.fullName }}</span>
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+
             <div class="link-list-wrapper">
               <ul class="link-list">
                 <li>
                   <a class="list-item left-icon" href="{{ path('user_profile') }}">
-                    <svg class="icon icon-sm icon-primary left position-relative">
+                    <svg class="icon icon-sm icon-primary left ">
                       <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-user') }}"></use>
                     </svg>
                     <span>{{ 'nav.header.profile' | trans }}</span>
                   </a>
                 </li>
                 <li>
+                  <a class="list-item left-icon" href="{{ path('user_dashboard') }}">
+                     <svg class="icon icon-sm icon-primary left">
+                      <use xlink:href="{{ asset('/bootstrap-italia/dist/svg/sprite.svg#it-pa') }}"></use>
+                    </svg>
+                    <span>{{ 'nav.dashboard' | trans }}</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="list-item left-icon" href="{{ path('pratiche') }}">
+                    <svg class="icon icon-sm icon-primary left">
+                      <use xlink:href="{{ asset('/bootstrap-italia/dist/svg/sprite.svg#it-files') }}"></use>
+                    </svg>
+                    <span>{{ 'nav.pratiche' | trans }}</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="list-item left-icon" href="{{ path('allegati_list_cpsuser') }}">
+                    <svg class="icon icon-sm icon-primary left">
+                      <use xlink:href="{{ asset('/bootstrap-italia/dist/svg/sprite.svg#it-box') }}"></use>
+                    </svg>
+                    <span>{{ 'nav.allegati' | trans }}</span>
+                  </a>
+                </li>
+                <li>
+                  <a class="list-item left-icon" href="{{ path('folders_list_cpsuser') }}">
+                    <svg class="icon icon-sm icon-primary left">
+                      <use xlink:href="{{ asset('/bootstrap-italia/dist/svg/sprite.svg#it-folder') }}"></use>
+                    </svg>
+                    <span>{{ 'nav.documenti' | trans }}</span>
+                  </a>
+                </li>
+                {% if 'operatori_subscription-service_index' in ente.backofficeEnabledIntegrations %}
+                  <li>
+                    <a class="list-item left-icon" href="{{ path('subscriptions_list_cpsuser') }}">
+                      <svg class="icon icon-sm icon-primary left">
+                        <use xlink:href="{{ asset('/bootstrap-italia/dist/svg/sprite.svg#it-pencil') }}"></use>
+                      </svg>
+                      <span>{{ 'nav.iscrizioni' | trans }}</span>
+                    </a>
+                  </li>
+                {% endif %}
+                <li>
+                  <span class="divider"></span>
+                </li>
+                <li>
                   <a class="list-item left-icon" href="{{ logout_path('open_login') }}">
-                    <svg class="icon icon-sm icon-primary left position-relative">
+                    <svg class="icon icon-sm icon-primary left">
                       <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-link') }}"></use>
                     </svg>
                     <span>{{ 'nav.header.logout' | trans }}</span>
@@ -58,6 +105,7 @@
                 </li>
               </ul>
             </div>
+
           </div>
         </div>
       {% elseif is_granted('ROLE_ADMIN') or is_granted('ROLE_OPERATORE') %}
@@ -74,15 +122,26 @@
               <ul class="link-list">
                 <li>
                   <a class="list-item left-icon" href="{{ path('security_profile') }}">
-                    <svg class="icon icon-sm icon-primary left position-relative">
+                    <svg class="icon icon-sm icon-primary left ">
                       <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-user') }}"></use>
                     </svg>
                     <span>{{ 'nav.header.profile' | trans }}</span>
                   </a>
                 </li>
                 <li>
+                  <a class="list-item left-icon" href="{% if is_granted('ROLE_ADMIN') %}{{ path('admin_index') }}{% else %}{{ path('operatori_index') }}{% endif %}">
+                    <svg class="icon icon-sm icon-primary left ">
+                      <use xlink:href="{{ asset('/bootstrap-italia/dist/svg/sprite.svg#it-software') }}"></use>
+                    </svg>
+                    <span>Dashboard</span>
+                  </a>
+                </li>
+                <li>
+                  <span class="divider"></span>
+                </li>
+                <li>
                   <a class="list-item left-icon" href="{{ path('security_logout') }}">
-                    <svg class="icon icon-sm icon-primary left position-relative">
+                    <svg class="icon icon-sm icon-primary left ">
                       <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-link') }}"></use>
                     </svg>
                     <span>{{ 'nav.header.logout' | trans }}</span>

@@ -20,6 +20,7 @@ use App\Logging\LogConstants;
 use App\Security\Voters\AttachmentVoter;
 use App\Services\FileService\AbstractFileService;
 use App\Services\FileService\AllegatoFileService;
+use App\Services\BreadcrumbsService;
 use App\Validator\Constraints\ValidMimeType;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -70,6 +71,9 @@ class AllegatoController extends AbstractController
 
   /** @var SessionInterface */
   private $session;
+  
+  /** @var BreadcrumbsService*/
+  private $breadcrumbsService;
 
 
   /**
@@ -80,6 +84,7 @@ class AllegatoController extends AbstractController
    * @param AllegatoFileService $fileService
    * @param EntityManagerInterface $entityManager
    * @param SessionInterface $session
+   * @param BreadcrumbsService $breadcrumbsService
    * @param $allowedExtensions
    */
   public function __construct(
@@ -89,6 +94,7 @@ class AllegatoController extends AbstractController
     AllegatoFileService $fileService,
     EntityManagerInterface $entityManager,
     SessionInterface $session,
+    BreadcrumbsService $breadcrumbsService,
     $allowedExtensions
   )
   {
@@ -99,6 +105,7 @@ class AllegatoController extends AbstractController
     $this->entityManager = $entityManager;
     $this->session = $session;
     $this->allowedExtensions = array_merge(...$allowedExtensions);
+    $this->breadcrumbsService = $breadcrumbsService;
   }
 
   /**
@@ -573,6 +580,7 @@ class AllegatoController extends AbstractController
    */
   public function cpsUserListAllegatiAction()
   {
+    $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.allegati'), 'allegati_list_cpsuser');
     $user = $this->getUser();
     $allegati = [];
     if ($user instanceof CPSUser) {
