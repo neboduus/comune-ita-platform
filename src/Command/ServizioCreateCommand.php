@@ -180,9 +180,14 @@ class ServizioCreateCommand extends Command
         ->setStatus($status)
         ->setEnte($ente);
 
-      $area = $categoryRepo->findOneBySlug('agricoltura');
+      $area = $categoryRepo->findOneBySlug('catasto-e-urbanistica');
       if ($area instanceof Categoria) {
         $servizio->setTopics($area);
+      } else {
+        $area = $categoryRepo->findOneBy([], ['name' => 'ASC']);
+        if ($area instanceof Categoria) {
+          $servizio->setTopics($area);
+        }
       }
 
       $this->entityManager->persist($servizio);
