@@ -1,8 +1,7 @@
 {% if is_granted('ROLE_CPS_USER') and app.request.attributes.get('_route') not in ['search', 'instance_home', 'servizi_list', 'servizi_show', 'category_show', 'service_group_show'] %}
     <div class="container">
         <div class="row">
-            <div class="col-1"></div>
-            <div class="col-11">
+            <div class="col-12 col-lg-10 offset-lg-1 pb-2">
                 <div class="cmp-heading pb-3 pb-lg-4">
                     <h1 class="title-xxxlarge">{{ user.fullName }}</h1>
                     <p class="subtitle-small">CF: {{user.codiceFiscale }}</p>
