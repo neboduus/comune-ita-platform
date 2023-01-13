@@ -24,9 +24,12 @@
 // Components
 @import "components/navigation";
 @import "components/progressbar";
-@import "components/breadcrumb";
 @import "components/messages";
 @import "components/calendars";
+
+// Global cmp-components
+@import "components/cmp/base";
+@import "components/cmp/cmp-breadcrumbs";
 
 // External Components
 @import "~outdated-browser-rework/dist/style.css";
