@@ -1,3 +1,5 @@
+import {truncate} from "../../../utils/truncate";
+
 export default function wizardHeader(ctx) {
   const numberComponentsClass =
     ctx.panels.length > 4 ? "d-none" : "d-none d-lg-flex";
@@ -5,7 +7,7 @@ export default function wizardHeader(ctx) {
     ctx.panels.length > 4 ? "d-flex" : "d-lg-none";
 
   const options = ctx.panels.map((panel, index) => {
-    return `<div class="info-progress-wrapper w-100 px-3 flex-column justify-content-end page-item max-w-200 ${numberComponentsClass} ${
+    return `<div class="info-progress-wrapper w-100 px-1 px-xl-3 flex-column justify-content-center page-item  ${numberComponentsClass} ${
       ctx.currentPage === index ? "step-active" : ""
     }
             ${
@@ -19,10 +21,10 @@ export default function wizardHeader(ctx) {
          ? "completed"
          : ""
      }" data-index="${index}" ref="${ctx.wizardKey}-link">
-       <span class="d-block h-100 title-medium text-uppercase text-truncate" data-toggle="tooltip" title="${ctx.t(
+       <span class="d-block h-100 title-medium text-uppercase" data-toggle="tooltip" title="${ctx.t(
          panel.title,
          { _userInput: true }
-       )}"> ${ctx.t(panel.title, { _userInput: true })}</span>
+       )}"> ${truncate(ctx.t(panel.title, { _userInput: true }),30)}</span>
             ${
               !ctx.instance.components[index].invalid &&
               ctx.currentPage >= index

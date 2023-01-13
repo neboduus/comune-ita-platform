@@ -1,5 +1,7 @@
 export default function fieldset(ctx) {
-  return `<div class="cmp-card mb-40 mt-2">
+  return `
+<section class="it-page-section" id="${ctx.key}">
+<div class="cmp-card mb-40 mt-2">
 <div class="card has-bkg-grey shadow-sm p-big">
   ${
     ctx.component.legend
@@ -9,20 +11,20 @@ export default function fieldset(ctx) {
       ? "formio-clickable card-header border-0 p-0 mb-lg-30"
       : "card-header border-0 p-0 mb-lg-30"
   }">
-  <div class="d-flex">
-   ${
-     ctx.component.tooltip
-       ? `<i ref="tooltip" tabIndex="0" class="${ctx.iconClass(
-           "question-sign"
-         )} text-muted" data-tooltip="${ctx.component.tooltip}"></i>`
-       : ""
-   }
-                <h2 class="title-xxlarge mb-1"> ${ctx.t(ctx.component.legend, {
-                  _userInput: true,
-                })}
+  <div class="d-flex"><h2 class="title-xxlarge mb-1"> ${ctx.t(
+    ctx.component.legend,
+    {
+      _userInput: true,
+    }
+  )}
                  </h2>
           </div>
-
+  ${
+    ctx.component.tooltip
+      ? `
+<p class="subtitle-small mb-0">${ctx.component.tooltip}</p>`
+      : ""
+  }
 
   </div>`
       : ""
@@ -36,5 +38,6 @@ export default function fieldset(ctx) {
       : ""
   }
   </div>
-</div>`;
+</div>
+</section>`;
 }
