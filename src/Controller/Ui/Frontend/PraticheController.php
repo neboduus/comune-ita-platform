@@ -393,6 +393,8 @@ class PraticheController extends AbstractController
       } else {
 
         $pratica->setLocale($request->getLocale());
+        $pratica->setGeneratedSubject();
+
         $this->entityManager->persist($pratica);
         $this->entityManager->flush();
         $praticaFlowService->onFlowCompleted($pratica);

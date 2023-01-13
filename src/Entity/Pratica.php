@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Dto\UserAuthenticationData;
 use App\Model\Transition;
+use App\Utils\StringUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -815,7 +816,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
-   * @return mixed
+   * @return UuidInterface
    */
   public function getId()
   {
@@ -1111,6 +1112,33 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     $this->oggetto = $oggetto;
 
     return $this;
+  }
+
+  public function setGeneratedSubject()
+  {
+
+    if (!empty($this->getOggetto())) {
+      return $this;
+    }
+
+    if (!$this->user) {
+      return $this;
+    }
+
+    $subject = $this->generateSubject();
+    $this->setOggetto($subject);
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function generateSubject(): string
+  {
+    return StringUtils::shortenString($this->getServizio()->getName())
+    . ' ' . $this->getUser()->getNome()
+    . ' ' . $this->getUser()->getCognome()
+    . ' ' . $this->getUser()->getCodiceFiscale() ?? $this->getUser()->getId();
   }
 
   /**

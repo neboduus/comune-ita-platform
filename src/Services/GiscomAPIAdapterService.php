@@ -114,7 +114,7 @@ class GiscomAPIAdapterService implements GiscomAPIAdapterServiceInterface
           if ($pratica->getStatus() !== Pratica::STATUS_COMPLETE && $pratica->getStatus() !== Pratica::STATUS_CANCELLED) {
             $this->statusService->setNewStatus($pratica, Pratica::STATUS_PENDING_AFTER_INTEGRATION);
           }
-          $this->logger->info('Correctly updated pratica on Giscom Side', $pratica->getId());
+          $this->logger->info('Correctly updated pratica on Giscom Side', [$pratica->getId()]);
 
         } else {
           $responseBody = json_decode($response->getBody(), true);

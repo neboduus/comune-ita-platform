@@ -12,6 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
 class FormIO extends Pratica implements DematerializedFormPratica
 {
 
+
+  const FIELD_SUBJECT = 'application_subject';
+
   /**
    * @ORM\Column(type="json", options={"jsonb":true})
    * @var array
@@ -79,6 +82,15 @@ class FormIO extends Pratica implements DematerializedFormPratica
   public function getType(): string
   {
     return Pratica::TYPE_FORMIO;
+  }
+
+  public function generateSubject(): string
+  {
+    $data = $this->dematerializedForms;
+    if (isset($data['flattened'][self::FIELD_SUBJECT]) && !empty($data['flattened'][self::FIELD_SUBJECT])) {
+      return $data['flattened'][self::FIELD_SUBJECT] . ' '. $this->getId();
+    }
+    return parent::generateSubject();
   }
 
 }
