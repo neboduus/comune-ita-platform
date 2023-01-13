@@ -138,7 +138,7 @@ class ApplicationDto extends AbstractDto
     $application->setService($pratica->getServizio()->getSlug());
     $application->setServiceId($pratica->getServizio()->getId());
     $application->setServiceName($pratica->getServizio()->getName());
-    $application->setSubject($pratica->getOggetto());
+    $application->setSubject($pratica->getOggetto() ?? $pratica->generateSubject());
     $application->setServiceGroupName($pratica->getServiceGroup() ? $pratica->getServiceGroup()->getName() : null);
 
     // Form data

@@ -735,6 +735,9 @@ class ApplicationsAPIController extends AbstractFOSRestController
         $pratica->setSubmissionTime(time());
       }
       $this->praticaManager->addAttachmentsToApplication($pratica, $flatData);
+
+      $pratica->setGeneratedSubject();
+
       $this->em->persist($pratica);
       $this->em->flush();
 
