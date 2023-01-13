@@ -211,7 +211,7 @@ services:
       start_period: 30s
 
   formserver:
-    image: registry.gitlab.com/opencontent/stanza-del-cittadino/form-server:1.2.2
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/form-server:1.2.3
     healthcheck:
       test: ["NONE"]
     networks:
