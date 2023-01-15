@@ -1,118 +1,70 @@
-.cmp-navscroll {
-  z-index: 0;
-  top: 3.125rem;
-
-  @include media-breakpoint-up(sm) {
-    top: 2.78rem;
-  }
-
-  .navbar.it-navscroll-wrapper {
-    display: block;
-    flex-wrap: unset;
-    align-items: unset;
-    justify-content: unset;
-
-    .menu-wrapper {
-      padding-top: unset;
-    }
-
-    .progress {
-      background-color: #e9e6f2;
-    }
-
-    .link-list-wrapper {
-      ul {
-        padding: 0.5rem 0;
-
-        @include media-breakpoint-up(sm) {
-          padding: 14px 0;
-        }
-
-        li {
-
-          &+li {
-            margin-top: .75rem;
-
-            @include media-breakpoint-up(sm) {
-              margin-top: .67rem;
-            }
-          }
-
-          &:first-child {
-            margin-top: .375rem;
-
-            @include media-breakpoint-up(sm) {
-              margin-top: .33rem;
-            }
-          }
-
-          &:not(:last-child) {
-            margin-bottom: 0.75rem;
-
-            @include media-breakpoint-up(sm) {
-              margin-bottom: 0.67rem;
-            }
-          }
-
-          a {
-            padding: 0 24px;
-            line-height: 1.5;
-
-            &.active {
-              padding: 0 24px 0 22px;
-            }
-          }
-        }
-      }
-
-      .accordion {
-        border-bottom: unset;
-
-        .accordion-collapse {
-          padding: 0;
-        }
-
-        .accordion-header .accordion-button {
-          color: get-color(primary, main);
-          @include font(14, 14);
-          font-weight: 600;
-          line-height: 1.6;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-
-          //Custom - Remove with BTS-ITALIA 2
-          width: 100%;
-          text-align: left;
-          border: 0;
-          background-color: transparent;
-          box-shadow: none;
-          padding: 14px 24px;
-          cursor: pointer;
-        }
-
-        //Custom - Remove with BTS-ITALIA 2
-        .accordion-button {
-          font-size: .7777777778rem;
-        }
-        //Custom - Remove with BTS-ITALIA 2
-        .collapse-header *[data-toggle=collapse] {
-          border-top: none;
-        }
-        //Custom - Remove with BTS-ITALIA 2
-        .collapse-header *[data-toggle=collapse]:before {
-          width: 20px;
-          height: 20px;
-        }
-
-        .accordion-body {
-          padding: 0;
+.cmp-heading {
+  .categoryicon-top {
+    .icon {
+      position: relative;
+      top: 12px;
+      &.big-lg-icon{
+        width: 1.75rem;
+        @include media-breakpoint-up(md) {
+          width: 1.833rem;
         }
       }
     }
   }
-}
 
-aside .cmp-navscroll .navbar.it-navscroll-wrapper .link-list-wrapper ul li a.active {
-  border-left: 2px solid #007a52;
+  .btn {
+    &:not(.btn-dropdown) {
+      width: 100%;
+      margin-top: 1.5rem;
+
+      @include media-breakpoint-up(md) {
+        width: 18.889rem;
+        margin-top: 1.4rem;
+      }
+    }
+  }
+
+  &__tag {
+    margin: 1.563rem 0 0.625rem 0;
+
+    @include media-breakpoint-up(md) {
+      margin: 1.389rem 0;
+    }
+  }
+
+  .subtitle-small {
+    margin-bottom: 0.5rem;
+
+    @include media-breakpoint-up(md) {
+      margin-bottom: 0;
+    }
+  }
+
+  // .chip.chip-simple {
+  //   height: auto;
+  //   padding: 3px 10px;
+
+  //   .chip-label {
+  //     height: auto;
+  //     line-height: 1.2;
+  //     transform: unset;
+  //   }
+  // }
+
+  .dropdown {
+    display: inline-block;
+    padding: 10px 0;
+
+    .dropdown-menu {
+      z-index: 9999;
+
+      .link-list-wrapper ul li a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 16px;
+      }
+    }
+  }
+
 }

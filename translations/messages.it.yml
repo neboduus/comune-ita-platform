@@ -120,6 +120,8 @@ read_faq: 'Leggi le FAQ'
 booking_appointment: 'Prenotazione appuntamento'
 request_assistance: "Richiesta d'assistenza"
 back_to_top: "Torna all'inizio del contenuto"
+personal_area: 'area personale'
+new_request: 'nuova richiesta'
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'
@@ -428,6 +430,12 @@ webhook:
   active: 'Attivo'
   not_Active: 'Non attivo'
 pratica:
+  sent_to: 'Inviato il'
+  sent_to_email: 'Abbiamo inviato il riepilogo all’email'
+  sent_to_summary: 'Puoi consultare il resoconto della pratica in qualunque momento dalla tua'
+  sent_to_summary_or: 'oppure presenta una'
+  thanks_message: "Grazie, abbiamo ricevuto la tua richiesta per <strong>%name% (richiesta n. %id%)</strong> e la tua pratica è stata correttamente inviata all'ente %ente%</p>"
+  application_sent: 'Richiesta inviata'
   approved_pratice: 'Approva pratica'
   reject_pratice: 'Rigetta pratica'
   failed: 'Fallita'
