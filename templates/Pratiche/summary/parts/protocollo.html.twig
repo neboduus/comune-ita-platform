@@ -19,7 +19,7 @@
         </div>
       </div>
     {% endif %}
-    <div class="row" style="background-color: #fff">
+    <div class="row bg-white">
       <div class="col-sm-4"><strong>{{ 'pratica.dettaglio.data_ora_presentazione'|trans }}</strong></div>
       <div class="col-sm-8">
         {{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}

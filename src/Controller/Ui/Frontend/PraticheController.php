@@ -525,7 +525,12 @@ class PraticheController extends AbstractController
       $result['allegati'] = $allegati;
     }
 
-    return $this->render('Pratiche/show.html.twig', $result);
+    $template = 'Pratiche/show.html.twig';
+    if ($pratica->getServizio()->isLegacy()) {
+      $template = 'Pratiche/showLegacy.html.twig';
+    }
+
+    return $this->render($template, $result);
   }
 
   /**
