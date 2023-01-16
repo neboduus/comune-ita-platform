@@ -41,7 +41,7 @@ services:
       #KSQL_KSQL_QUERIES_FILE: /tmp/statements.sql
 
   ksqldb-cli:
-    image: confluentinc/ksqldb-cli:0.23.1
+    image: confluentinc/ksqldb-cli:0.28.2
     depends_on:
       - ksqldb-server
     entrypoint: /bin/sh
