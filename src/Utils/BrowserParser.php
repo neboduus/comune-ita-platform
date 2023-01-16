@@ -35,8 +35,7 @@ class BrowserParser
     $browserParser = new Parser(getallheaders());
     if (is_array($this->browserRestriction)) {
       foreach ($this->browserRestriction as $restriction) {
-        // Maxthon,<,4.0.5
-        if ($browserParser->isBrowser($restriction[0], $restriction[1], $restriction[2])) {
+        if ($browserParser->isBrowser($restriction[0], '<=', $restriction[1])) {
           return true;
         }
       }

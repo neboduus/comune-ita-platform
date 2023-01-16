@@ -222,7 +222,7 @@ parameters:
   env(SENTRY_DSN): ''
   env(LOGIN_ROUTE): login_pat
   env(SINGLE_LOGOUT_URL): /Shibboleth.sso/Logout
-  env(BROWSERS_RESTRICTIONS): null
+  env(BROWSERS_RESTRICTIONS): 'Chrome,57|Edge,39|Safari,10|Mobile Safari,10|Firefox,50|Opera,50|Vivaldi,1|Yandex,10|Internet Explorer,11'
   env(IO_API_URL): https://api.io.italia.it/api/v1
   env(CACHE_MAX_AGE): '0'
   env(METRICS_TYPE): in_memory
