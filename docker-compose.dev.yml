@@ -10,6 +10,11 @@ services:
     environment:
       ENV: DEV
       APP_ENV: dev
+      SINGLE_LOGOUT_URL: '/comune-di-bugliano'
+      ENABLE_MIGRATIONS: 'false'
+      ENABLE_INSTANCE_CONFIG: 'false'
+      INSTANCE_OVERRIDE: 'false'
+      SKIP_CACHE_WARMUP: 'true'
     volumes:
       - ./config:/var/www/html/config:rw,cached
       - ./data:/var/www/html/data:rw,cached

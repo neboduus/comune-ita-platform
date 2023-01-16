@@ -1,7 +1,10 @@
 import '../../core';
 import Gateways from "../../rest/gateways/Gateways";
+import GraphicAspectTenant from "../../utils/GraphicAspectTenant";
 
 $(document).ready(function () {
+
+  GraphicAspectTenant.init();
 
   var calendars_integration_checkbox = $('.operatori_calendars_index');
   if (calendars_integration_checkbox.prop('checked')) {
@@ -89,11 +92,13 @@ $(document).ready(function () {
     }, 400);
   }
 
-  $('a[data-toggle="tab"]').on("click", function () {
+  $('#myTab a[data-toggle="tab"]').on("click", function () {
     let newUrl;
     const hash = $(this).attr("href");
     newUrl = url.split("#")[0] + hash;
     history.replaceState(null, null, newUrl);
   });
+
+
 })
 ;

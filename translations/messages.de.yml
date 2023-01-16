@@ -923,6 +923,8 @@ errori:
     change_status: "Status des Vorgangs von <b>%before_status%</b> auf <b>%after_status%</b> des Dienstes %service_name%  mit ID %id% ändern."
     new_status: 'Status des Vorgangs "%status%" nicht gefunden'
     change_status_invalid: "Anfrage auf Änderung des Status des Vorgangs ist nicht gültig"
+  tenant:
+    graphic_aspect: ""
 user:
   dashboard:
     title: 'Mein Konto'

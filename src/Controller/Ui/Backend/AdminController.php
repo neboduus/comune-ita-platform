@@ -220,6 +220,7 @@ class AdminController extends AbstractController
       'statuses' => Webhook::TRIGGERS,
       'services' => $services,
       'form' => $form->createView(),
+      'locales' => $this->locales
     ]);
   }
 
