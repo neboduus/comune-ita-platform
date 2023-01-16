@@ -12,7 +12,6 @@ use App\Entity\ModuloCompilato;
 use App\Entity\Pratica;
 use App\Entity\RichiestaIntegrazione;
 use App\Entity\RichiestaIntegrazioneDTO;
-use App\Entity\RichiestaIntegrazioneRequestInterface;
 use App\Entity\RispostaIntegrazione;
 use App\Entity\RispostaOperatore;
 use App\Entity\RispostaOperatoreDTO;
@@ -28,22 +27,19 @@ use App\Utils\StringUtils;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Gotenberg\Exceptions\GotenbergApiErroed;
+use Gotenberg\Stream;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use ReflectionException;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use TheCodingMachine\Gotenberg\Client;
-use TheCodingMachine\Gotenberg\ClientException;
-use TheCodingMachine\Gotenberg\DocumentFactory;
-use TheCodingMachine\Gotenberg\HTMLRequest;
-use TheCodingMachine\Gotenberg\Request as GotembergRequest;
-use TheCodingMachine\Gotenberg\RequestException;
-use TheCodingMachine\Gotenberg\URLRequest;
+
 use Twig\Environment;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 use Vich\UploaderBundle\Naming\DirectoryNamerInterface;
+use Gotenberg\Gotenberg;
 
 class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 {
@@ -532,8 +528,6 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
   /**
    * @param Pratica $pratica
    * @param Allegato $allegato
-   * @throws ClientException
-   * @throws RequestException
    * @throws ReflectionException
    */
   private function createAllegatoInstance(Pratica $pratica, Allegato $allegato)
@@ -581,30 +575,19 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    */
   private function generatePdf($html)
   {
-    $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
+    $request = Gotenberg::chromium($this->wkhtmltopdfService)
+      ->margins(1,0,0,0)
+      ->paperSize("8.27","11.7")
+      ->html(Stream::string('index.html', $html));
 
     try {
-      $index = DocumentFactory::makeFromString('index.html', $html);
-      $request = new HTMLRequest($index);
-      $request->setPaperSize(GotembergRequest::A4);
-      $request->setMargins(GotembergRequest::NO_MARGINS);
-      //$request->setMargins([1,0,0,0]);
-      $response =  $client->post($request);
-      $fileStream = $response->getBody();
-      return $fileStream->getContents();
-
-    } catch (RequestException $e) {
-      # this exception is thrown if given paper size or margins are not correct.
-      $this->logger->error($e->getMessage());
-      return $e->getMessage();
-    } catch (ClientException $e) {
-      # this exception is thrown by the client if the API has returned a code != 200.
-      $this->logger->error($e->getMessage());
-      return $e->getMessage();
-    } catch (Exception $e) {
+      $response = Gotenberg::send($request);
+      return $response->getBody()->getContents();
+    } catch (GotenbergApiErroed $e) {
       $this->logger->error($e->getMessage());
       return $e->getMessage();
     }
+
   }
 
   /**
@@ -637,45 +620,53 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param Pratica $pratica
+   * @param $showProtocolNumber
    * @return string
-   * @throws ClientException
-   * @throws RequestException
+   * @throws GotenbergApiErroed
    */
-  public function generatePdfUsingGotemberg( Pratica $pratica, $showProtocolNumber = false )
+  public function generatePdfUsingGotemberg(Pratica $pratica, $showProtocolNumber = false )
   {
+
     $locale = $pratica->getLocale();
     $url = $this->router->generate('print_pratiche', ['_locale' => $locale, 'pratica' => $pratica, 'protocol' => $showProtocolNumber], UrlGeneratorInterface::ABSOLUTE_URL);
-    $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
-    $request = new URLRequest($url);
-    $request->setPaperSize(GotembergRequest::A4);
-    $request->setMargins([1,0,0,0]);
-    //$request->setWaitTimeout(30);
-    $request->setWaitDelay(20);
-    $request->addRemoteURLHTTPHeader('Authorization', 'Basic '.base64_encode(implode(':', ['ez', $this->printablePassword])));
-    $response =  $client->post($request);
-    $fileStream = $response->getBody();
-    return $fileStream->getContents();
+
+    $request = Gotenberg::chromium($this->wkhtmltopdfService)
+      ->margins(1,0,0,0)
+      ->paperSize("8.27","11.7")
+      //->waitDelay("20s")
+      ->waitForExpression("window.status === 'ready'")
+      // Rimuovo conversione a PDF/A-1a per questo errore di gotenberg, da indagare
+      // convert PDF to 'PDF/A-1a' with unoconv: unoconv PDF: unix process error: wait for unix process: exit status 5
+      //->pdfFormat('PDF/A-1a')
+      ->extraHttpHeaders([
+        'Authorization' => 'Basic '.base64_encode(implode(':', ['ez', $this->printablePassword]))
+      ])
+      ->url($url);
+
+    $response = Gotenberg::send($request);
+    return $response->getBody()->getContents();
 
   }
 
   /**
    * @param Servizio $service
    * @return string
-   * @throws ClientException
-   * @throws RequestException
+   * @throws GotenbergApiErroed
    */
   public function generateServicePdfUsingGotemberg( Servizio $service )
   {
     $url = $this->router->generate('print_service', ['service' => $service->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-    $client = new Client($this->wkhtmltopdfService, new \Http\Adapter\Guzzle6\Client());
-    $request = new URLRequest($url);
-    $request->setPaperSize(GotembergRequest::A4);
-    $request->setMargins([1,0,0,0]);
-    $request->setWaitDelay(20);
-    $response =  $client->post($request);
-    $fileStream = $response->getBody();
-    return $fileStream->getContents();
+    $request = Gotenberg::chromium($this->wkhtmltopdfService)
+      ->margins(1,0,0,0)
+      ->paperSize("8.27","11.7")
+      ->waitDelay("20s")
+      ->extraHttpHeaders([
+        'Authorization' => 'Basic '.base64_encode(implode(':', ['ez', $this->printablePassword]))
+      ])
+      ->url($url);
 
+    $response = Gotenberg::send($request);
+    return $response->getBody()->getContents();
   }
 
   /**
@@ -750,7 +741,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
           'ModuloPdfBuilderService -  ' . $this->translator->trans('errori.pratica.change_status_invalid') . ' - ' . $e->getMessage()
         );
       }
-      
+
     }
   }
 }

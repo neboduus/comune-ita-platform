@@ -248,18 +248,13 @@ services:
         http --check-status formserver:80/form/605dd397a406c00020e9eef6 || (http post formserver:80/form < /data/personal-data-minimal.json)
 
   gotenberg:
-    #image: gotenberg/gotenberg:7
-    image: registry.gitlab.com/opencontent/gotemberg:6-ok
+    image: gotenberg/gotenberg:7
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/ping"]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
       interval: 1m30s
       timeout: 10s
       retries: 3
       start_period: 5s
-    environment:
-      LOG_LEVEL: INFO
-      DISABLE_UNOCONV: 1
-      MAXIMUM_WAIT_DELAY: 30
 
   mailserver:
     image: mailhog/mailhog

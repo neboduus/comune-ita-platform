@@ -7,6 +7,7 @@ use App\Entity\Pratica;
 use App\Entity\Servizio;
 use App\Services\FileService\AllegatoFileService;
 use App\Services\ModuloPdfBuilderService;
+use Gotenberg\Exceptions\GotenbergApiErroed;
 use League\Flysystem\FileNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Component\Routing\Annotation\Route;
@@ -104,35 +105,24 @@ class PrintController extends AbstractController
   /**
    * @Route("/pratica/{pratica}/show", name="print_pratiche_show")
    * @ParamConverter("pratica", class="App\Entity\Pratica")
-   * @param Request $request
    * @param Pratica $pratica
    * @return Response
-   * @throws \TheCodingMachine\Gotenberg\ClientException
-   * @throws \TheCodingMachine\Gotenberg\RequestException
    */
-  public function printPraticaShowAction(Request $request, Pratica $pratica)
+  public function printPraticaShowAction(Pratica $pratica)
   {
-
-    $fileContent = $this->moduloPdfBuilderService->generatePdfUsingGotemberg($pratica);
-
-    // Provide a name for your file with extension
-    $filename = time() . '.pdf';
-
-    // Return a response with a specific content
-    $response = new Response($fileContent);
-
-    // Create the disposition of the file
-    $disposition = $response->headers->makeDisposition(
-      ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-      $filename
-    );
-
-    // Set the content disposition
-    $response->headers->set('Content-Disposition', $disposition);
-
-    // Dispatch request
-    return $response;
-
+    try {
+      $fileContent = $this->moduloPdfBuilderService->generatePdfUsingGotemberg($pratica);
+      $filename = time() . '.pdf';
+      $response = new Response($fileContent);
+      $disposition = $response->headers->makeDisposition(
+        ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+        $filename
+      );
+      $response->headers->set('Content-Disposition', $disposition);
+      return $response;
+    } catch (GotenbergApiErroed $e) {
+      dd($e);
+    }
   }
 
   /**
