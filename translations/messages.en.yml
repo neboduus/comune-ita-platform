@@ -877,6 +877,8 @@ errori:
     change_status: "Change application status from <b>%before_status%</b> to <b>%after_status%</b> for the application service %service_name% with ID %id%"
     new_status: 'Application status "%status%" not found'
     change_status_invalid: "Invalid status change request"
+  tenant:
+    graphic_aspect: "The form <strong>%lang%</strong> has some errors that need to be corrected."
 user:
   dashboard:
     title: 'Personal Area'

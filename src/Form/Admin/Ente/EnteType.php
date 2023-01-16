@@ -122,9 +122,10 @@ class EnteType extends AbstractI18nType
         'label' => 'ente.nome'
       ])
       ->add('meta', I18nJsonType::class, [
-        'label' => 'ente.meta',
+        'label' => false,
         'required' => false,
         'empty_data' => "",
+        //'attr' => ['class' => "d-none"],
       ]);
 
     $builder

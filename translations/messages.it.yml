@@ -1032,6 +1032,8 @@ errori:
     change_status: "Modifica stato della pratica da <b>%before_status%</b> a <b>%after_status%</b> per la pratica del servizio %service_name% con ID %id%"
     new_status: 'Stato della pratica "%status%" non trovato'
     change_status_invalid: "Richiesta modifica stato della pratica non valido"
+  tenant:
+    graphic_aspect: "Il form <strong>%lang%</strong> presenta alcuni errori da correggere."
 
 user:
   reset_password:

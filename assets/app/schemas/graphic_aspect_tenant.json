@@ -1,0 +1,527 @@
+{
+  "title": "Page 1",
+  "label": "Page 1",
+  "type": "panel",
+  "key": "page1",
+  "components": [
+    {
+      "label": "Tipo di ente",
+      "optionsLabelPosition": "right",
+      "description": "Scegli \"Comune\" se sei tra gli enti che hanno fatto richiesta per i fondi PNRR. Ti verranno applicate le restrizioni necessarie per essere aderente al modello 2022 dei siti comunali.",
+      "inline": true,
+      "tableView": false,
+      "defaultValue": "comune",
+      "values": [
+        {
+          "label": "Comune",
+          "value": "comune",
+          "shortcut": ""
+        },
+        {
+          "label": "Altro",
+          "value": "altro",
+          "shortcut": ""
+        }
+      ],
+      "clearOnHide": false,
+      "validate": {
+        "required": true
+      },
+      "key": "tipoDiEnte",
+      "type": "radio",
+      "input": true
+    },
+    {
+      "label": "Favicon url",
+      "tableView": true,
+      "key": "favicon",
+      "type": "url",
+      "input": true
+    },
+    {
+      "label": "Logo url",
+      "tableView": true,
+      "key": "logo",
+      "type": "url",
+      "input": true
+    },
+    {
+      "label": "Tema",
+      "widget": "choicesjs",
+      "tableView": true,
+      "data": {
+        "values": [
+          {
+            "label": "Default",
+            "value": "default"
+          }
+        ]
+      },
+      "validate": {
+        "required": true
+      },
+      "calculateValue": "if(value == ''){value = 'default';}",
+      "key": "theme",
+      "type": "select",
+      "input": true,
+      "defaultValue": "default"
+    },
+    {
+      "title": "Header servizi",
+      "collapsible": false,
+      "key": "headerServizi",
+      "type": "panel",
+      "label": "Panel",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Servizio",
+          "tableView": false,
+          "key": "service",
+          "type": "container",
+          "input": true,
+          "components": [
+            {
+              "legend": "Amministrazione afferente",
+              "tooltip": "Per i comuni indicare la regione o la provincia.",
+              "key": "fieldSet",
+              "type": "fieldset",
+              "label": "Field Set",
+              "input": false,
+              "tableView": false,
+              "components": [
+                {
+                  "label": "Amministrazione afferente",
+                  "tableView": false,
+                  "key": "amministrazione_afferente",
+                  "type": "container",
+                  "input": true,
+                  "components": [
+                    {
+                      "label": "Nome",
+                      "tableView": true,
+                      "validate": {
+                        "required": true
+                      },
+                      "key": "text",
+                      "type": "textfield",
+                      "input": true
+                    },
+                    {
+                      "label": "Url",
+                      "tableView": true,
+                      "validate": {
+                        "required": true
+                      },
+                      "key": "url",
+                      "type": "url",
+                      "input": true
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "label": "Nav",
+              "tooltip": "Indicare qui le altre voci del top menù, verranno mostrate insieme alla voce 'amministrazione afferente'",
+              "reorder": false,
+              "addAnotherPosition": "bottom",
+              "layoutFixed": false,
+              "enableRowGroups": false,
+              "initEmpty": false,
+              "tableView": false,
+              "defaultValue": [],
+              "key": "nav",
+              "type": "datagrid",
+              "input": true,
+              "components": [
+                {
+                  "label": "Nome",
+                  "tableView": true,
+                  "key": "text",
+                  "type": "textfield",
+                  "input": true
+                },
+                {
+                  "label": "Url",
+                  "tableView": true,
+                  "key": "url",
+                  "type": "url",
+                  "input": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Navigazione",
+      "tooltip": "Per i comuni compilare le voci del menù Amministrazione, Novità, Servizi, Vivere il comune",
+      "reorder": false,
+      "addAnotherPosition": "bottom",
+      "layoutFixed": false,
+      "enableRowGroups": false,
+      "initEmpty": false,
+      "tableView": false,
+      "defaultValue": [],
+      "key": "main",
+      "type": "datagrid",
+      "input": true,
+      "components": [
+        {
+          "label": "Nome",
+          "tableView": true,
+          "key": "text",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "Url",
+          "tableView": true,
+          "key": "url",
+          "type": "url",
+          "input": true
+        },
+        {
+          "label": "Voci di secondo livello",
+          "description": "Le voci di secondo livello compaiono solo nel footer. Il menù principale resta a un solo livello",
+          "reorder": false,
+          "addAnotherPosition": "bottom",
+          "layoutFixed": false,
+          "enableRowGroups": false,
+          "initEmpty": false,
+          "tableView": false,
+          "defaultValue": [],
+          "key": "children",
+          "type": "datagrid",
+          "input": true,
+          "components": [
+            {
+              "label": "Nome",
+              "tableView": true,
+              "key": "text",
+              "type": "textfield",
+              "input": true
+            },
+            {
+              "label": "Url",
+              "tableView": true,
+              "key": "url",
+              "type": "url",
+              "input": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Argomenti in evidenza",
+      "tooltip": "Questi campi sono mostrati sulla metà destra del menù di navigazione, affianco alle voci inserite nella sezione 'Navigazione'",
+      "reorder": false,
+      "addAnotherPosition": "bottom",
+      "layoutFixed": false,
+      "enableRowGroups": false,
+      "initEmpty": false,
+      "tableView": false,
+      "defaultValue": [],
+      "customDefaultValue": "value = [{}]",
+      "validate": {
+        "maxLength": "3"
+      },
+      "key": "argomentiInEvidenza",
+      "type": "datagrid",
+      "input": true,
+      "components": [
+        {
+          "label": "Titolo",
+          "tableView": true,
+          "key": "titolo",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "Url",
+          "tableView": true,
+          "key": "url",
+          "type": "url",
+          "input": true
+        }
+      ]
+    },
+    {
+      "label": "Tutti gli argomenti",
+      "tooltip": "Indicare il link a tutti gli argimenti",
+      "tableView": true,
+      "key": "tuttiGliArgomenti",
+      "type": "url",
+      "input": true
+    },
+    {
+      "label": "Info",
+      "editor": "ckeditor",
+      "tableView": true,
+      "key": "info",
+      "type": "textarea",
+      "input": true,
+      "isUploadEnabled": false
+    },
+    {
+      "legend": "Contatti",
+      "tooltip": "Inserire qui le info di contatto da mostrare nel footer",
+      "key": "fieldSet1",
+      "type": "fieldset",
+      "label": "Field Set",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Contatti",
+          "tableView": false,
+          "key": "contacts",
+          "type": "container",
+          "input": true,
+          "components": [
+            {
+              "label": "Indirizzo",
+              "tableView": true,
+              "key": "address",
+              "type": "textfield",
+              "input": true
+            },
+            {
+              "label": "Numero di telefono",
+              "tableView": true,
+              "key": "phone",
+              "type": "textfield",
+              "input": true
+            },
+            {
+              "label": "Email",
+              "tableView": true,
+              "key": "email1",
+              "type": "email",
+              "input": true
+            },
+            {
+              "label": "Pec",
+              "tableView": true,
+              "key": "legal_email",
+              "type": "email",
+              "input": true
+            },
+            {
+              "label": "P.iva",
+              "tableView": true,
+              "key": "piva",
+              "type": "textfield",
+              "input": true
+            },
+            {
+              "label": "Codice fiscale",
+              "tableView": true,
+              "key": "cf",
+              "type": "textfield",
+              "input": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "legend": "Social",
+      "tooltip": "Inserire il link al social relativo",
+      "key": "fieldSet2",
+      "type": "fieldset",
+      "label": "Field Set",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Social",
+          "tableView": false,
+          "key": "social",
+          "type": "container",
+          "input": true,
+          "components": [
+            {
+              "label": "Facebook",
+              "tableView": true,
+              "key": "facebook",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Twitter",
+              "tableView": true,
+              "key": "twitter",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Youtube",
+              "tableView": true,
+              "key": "youtube",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Telegram",
+              "tableView": true,
+              "key": "telegram",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Whatsapp",
+              "tableView": true,
+              "key": "whatsapp",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "RSS",
+              "tableView": true,
+              "key": "rss",
+              "type": "url",
+              "input": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "legend": "Info legali",
+      "tooltip": "Inserire il link alla pagina relativa.",
+      "key": "fieldSet3",
+      "type": "fieldset",
+      "label": "Field Set",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Info legali",
+          "tableView": false,
+          "key": "legals",
+          "type": "container",
+          "input": true,
+          "components": [
+            {
+              "label": "Amministrazione trasparente",
+              "tableView": true,
+              "key": "transparent_administration",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Informativa privacy",
+              "tableView": true,
+              "key": "privacy_info",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Note legali",
+              "tableView": true,
+              "key": "legal_notes",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Dichiarazione di accessibilità",
+              "tableView": true,
+              "key": "accessibility",
+              "type": "url",
+              "input": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "legend": "Servizi generali",
+      "tooltip": "Inserire il link alla pagina relativa.",
+      "key": "fieldSet4",
+      "type": "fieldset",
+      "label": "Field Set",
+      "input": false,
+      "tableView": false,
+      "components": [
+        {
+          "label": "Servizi built-in",
+          "tableView": false,
+          "key": "built-in_services",
+          "type": "container",
+          "input": true,
+          "components": [
+            {
+              "label": "Leggi le FAQ",
+              "tableView": true,
+              "key": "faq",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Prenotazione appuntamento",
+              "tableView": true,
+              "key": "appointment_booking",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Segnalazione disservizio",
+              "tableView": true,
+              "key": "report_disruption",
+              "type": "url",
+              "input": true
+            },
+            {
+              "label": "Richiesta d'assistenza",
+              "tableView": true,
+              "key": "support",
+              "type": "url",
+              "input": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Utils",
+      "reorder": false,
+      "addAnotherPosition": "bottom",
+      "layoutFixed": false,
+      "enableRowGroups": false,
+      "initEmpty": false,
+      "tableView": false,
+      "defaultValue": [
+        {
+          "text": "",
+          "url": ""
+        }
+      ],
+      "key": "utils",
+      "type": "datagrid",
+      "input": true,
+      "components": [
+        {
+          "label": "Nome",
+          "tableView": true,
+          "key": "text",
+          "type": "textfield",
+          "input": true
+        },
+        {
+          "label": "Url",
+          "tableView": true,
+          "key": "url",
+          "type": "url",
+          "input": true
+        }
+      ]
+    }
+  ],
+  "input": false,
+  "tableView": false
+}
