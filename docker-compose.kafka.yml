@@ -28,7 +28,7 @@ services:
       KAFKA_CREATE_TOPICS: "applications,services,messages,payments,calendars"
 
   ksqldb-server:
-    image: confluentinc/ksqldb-server:0.23.1
+    image: confluentinc/ksqldb-server:0.28.2
     ports:
       - "8088:8088"
     depends_on:
