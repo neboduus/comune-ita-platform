@@ -129,12 +129,7 @@
                            href="#special_cases"><span>{{ 'servizio.casi_particolari' | trans }}</span></a>
                       </li>
                     {% endif %}
-                    {% if servizio.userGroups and servizio.userGroups|length > 0 %}
-                      <li class="nav-item">
-                          <a class="nav-link disabled" data-focus-mouse="false" data-element="service-area"
-                              href="#contacts"><span>{{ 'servizio.contatti' | trans }}</span></a>
-                      </li>
-                    {% endif %}
+
                     {% if servizio.getNotStickyServices.count > 0 %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
@@ -297,9 +292,7 @@
             </section>
           {% endif %}
           <section class="it-page-section mb-4" id="contacts">
-            {% if servizio.userGroups and servizio.userGroups|length > 0 %}
-              {{ include('Servizi/parts/_userGroupsContacts.html.twig', {'item': servizio})}}
-            {% endif %}
+
             <div class="col-12 mb-3">
               <span class="text-paragraph-small">{{ 'search.topics' | trans }}:</span>
               {% if servizio.topics.name is defined %}
@@ -340,7 +333,7 @@
     </section>
   {% endif %}
 
-  {{ include('Servizi/parts/_feedback.html.twig', {'type': 'group'})}}
+  {{ include('Servizi/parts/_feedback.html.twig', {'type': 'group','service_id': servizio.id})}}
 
   <a href="#" aria-hidden="true" data-attribute="back-to-top" class="back-to-top shadow back-to-top-show"
      aria-label="{{ 'back_to_top' | trans }}">

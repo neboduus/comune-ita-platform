@@ -351,7 +351,7 @@
     </div>
   </div>
 
-  {{ include('Servizi/parts/_feedback.html.twig', {'type': 'service'})}}
+  {{ include('Servizi/parts/_feedback.html.twig', {'type': 'service','service_id': servizio.id})}}
 
   <a href="#" aria-hidden="true" data-attribute="back-to-top" class="back-to-top shadow back-to-top-show"
      aria-label="{{ 'back_to_top' | trans }}">
