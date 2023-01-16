@@ -399,15 +399,21 @@ class ServiceManager
    * @param Servizio|null $servizio
    * @return string
    */
-  public function getMissingCardFields(?Servizio $servizio)
+  public function getMissingCardFields(?Servizio $servizio): string
   {
+
+    if (!$servizio instanceof Servizio) {
+      return '';
+    }
+
     $requiredFields = [
-      'servizio.a_chi_si_rivolge' => $servizio->getWho(), 
-      'servizio.how_to_do' => $servizio->getHowToDo(), 
+      'servizio.a_chi_si_rivolge' => $servizio->getWho(),
+      'servizio.how_to_do' => $servizio->getHowToDo(),
       'servizio.what_you_need' => $servizio->getWhatYouNeed(),
-      'servizio.what_you_get' => $servizio->getWhatYouGet(), 
-      'servizio.times_and_deadlines' => $servizio->getTimesAndDeadlines(), 
-      'servizio.accedere' => $servizio->getHowto(), 
+      'servizio.what_you_get' => $servizio->getWhatYouGet(),
+      'servizio.times_and_deadlines' => $servizio->getTimesAndDeadlines(),
+      'servizio.accedere' => $servizio->getHowto(),
+      'user_group.title' => $servizio->getUserGroups()->count(),
       'servizio.conditions' => $servizio->getConditions()
     ];
     $emptyFields = [];
