@@ -1,12 +1,9 @@
 import 'formiojs/dist/formio.form.min.css';
 import {Formio} from "formiojs";
-import Swal from 'sweetalert2/src/sweetalert2.js'
-import "@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css";
 
 const language = document.documentElement.lang.toString();
 
 class GraphicAspectTenant {
-  //per ogni dic class graphic-aspect instanzia un formio.
   static init() {
     let formContainers = document.getElementsByClassName("graphic-aspect");
 
