@@ -173,11 +173,30 @@ Per accedere come admin usare le seguenti credenziali
 
 ## Restrizioni di accesso ai servizi
 
-Mediante la variabile d'ambiente `BROWSERS_RESTRICTIONS` è possibile limitare l'accesso di una specifica versione di un browser ai servizi.
+L'utilizzo completo della piattaforma è limitato di default per i seguenti browser:
 
-La sintassi della variabile è cosi definita:  `nome browser,operatore logico, versione|nome browser,operatore logico, versione`
+- Chrome <= 57
+- Edge <= 39
+- Safari <= 10
+- Mobile Safari <= 10
+- Firefox <= 50
+- Opera <= 50
+- Vivaldi <= 1
+- Yandex <= 10
+- Internet Explorer <= 11 (Nessuna versione)
 
-Es. `Maxthon,<,4.0.5`
+Gli utenti dotati di browser che rientrano nell'elenco precedente potranno navigare correttamente l'area personale ma saranno
+impossibilitati alla presentazione delle pratiche.
+
+Mediante la variabile d'ambiente `BROWSERS_RESTRICTIONS` è possibile sovrascrivere tale configurazione.
+
+La sintassi della variabile è cosi definita:  `nome browser,versione|nome browser,versione`
+
+La configurazione di default è la seguente.
+
+`Chrome,57|Edge,39|Safari,10|Mobile Safari,10|Firefox,50|Opera,50|Vivaldi,1|Yandex,10|Internet Explorer,11`
+
+Passando il valore `null` alla variabile ambiente `BROWSERS_RESTRICTIONS` non verrà effettuato alcun controllo sui browser.
 
 Il componente utilizzato è [Parser-PHP](https://github.com/WhichBrowser/Parser-PHP) al quale si rimanda per uteriori informazioni.
 
