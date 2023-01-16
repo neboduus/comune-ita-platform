@@ -373,6 +373,13 @@ class Form {
                 .data,
             };
           }
+
+          // Called when the form has completed the render, attach, and one initialization change event loop
+          form.on('initialized', () => {
+            console.log('initialized');
+            window.status = 'ready'
+          });
+
         });
       }
     );
