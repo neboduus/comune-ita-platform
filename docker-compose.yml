@@ -65,6 +65,7 @@ services:
       INSTANCE_identifier: comune-di-bugliano
       INSTANCE_database: sdc_bugliano
       INSTANCE_codice_meccanografico: c_cbug
+      INSTANCE_app_locales: it|en
       OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       PHP_FPM_LOG_LEVEL: error
