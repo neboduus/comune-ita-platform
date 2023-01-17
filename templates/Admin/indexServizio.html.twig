@@ -3,12 +3,49 @@
 
 {% block stylesheets %}
   {{ parent() }}
-  {{ encore_entry_link_tags('datatables') }}
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/jq-3.6.0/dt-1.12.1/datatables.min.css"/>
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
-  {{ encore_entry_script_tags('datatables') }}
+  <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jq-3.6.0/dt-1.12.1/datatables.min.js"></script>
+  <script>
+    const lang = document.documentElement.lang.toString();
+    //Default
+    let url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/it-IT.json';
+    if(lang === 'en'){
+      url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/en-GB.json';
+    }else if(lang === 'de'){
+      url_language = '//cdn.datatables.net/plug-ins/1.12.1/i18n/de-DE.json';
+    }
+    // Datatable
+    $('#service-table').DataTable({
+      "order": [[ 0, "asc" ]],
+      columnDefs: [
+        { orderable: false, targets: 2 },
+        { orderable: false, targets: 3 },
+        { orderable: false, targets: 4 },
+        { orderable: false, targets: 5 }
+      ],
+      language: {
+        url: url_language
+      },
+      stateSave: true,
+      dom: "<'row'<'col-6 pt-2'l><'col-6'f>>" +
+        "<'row'<'col-12'tr>>" +
+        "<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 mt-2'p>>"
+    });
+
+    $('.clone').click(function (e) {
+      e.preventDefault()
+      let button = $(this)
+      let temp = $("<input>")
+      $("body").append(temp)
+      temp.val(button.data('url')).select()
+      document.execCommand("copy")
+      temp.remove();
+    })
+  </script>
 {% endblock %}
 
 {% block main_content %}
