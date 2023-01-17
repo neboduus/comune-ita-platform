@@ -92,8 +92,17 @@
         }
 
         //Custom - Remove with BTS-ITALIA 2
+        .accordion-button {
+          font-size: .7777777778rem;
+        }
+        //Custom - Remove with BTS-ITALIA 2
         .collapse-header *[data-toggle=collapse] {
           border-top: none;
+        }
+        //Custom - Remove with BTS-ITALIA 2
+        .collapse-header *[data-toggle=collapse]:before {
+          width: 20px;
+          height: 20px;
         }
 
         .accordion-body {
