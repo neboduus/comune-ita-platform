@@ -70,10 +70,10 @@ class DefaultController extends AbstractController
       return $this->forward(ServiziController::class . '::serviziAction');
     } else {
       $enti = [];
-      foreach (InstancesProvider::factory()->getInstances() as $identifier => $instance){
+      foreach (InstancesProvider::factory()->getInstances() as $identifier => $instance) {
         $indentifierParts = explode('/', $identifier);
         $enti[] = [
-          'name' => isset($instance['name']) ? $instance['name'] : ucwords(str_replace('-', ' ', $indentifierParts[1])),
+          'name' => $instance['name'] ?? ucwords(str_replace('-', ' ', $instance['identifier'])),
           'slug' => $indentifierParts[1]
         ];
       }

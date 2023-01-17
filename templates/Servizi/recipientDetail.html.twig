@@ -4,63 +4,72 @@
 {% block main_content %}
   <section class="container">
     <div class="row">
-      <div class="col-lg-8 px-lg-4 py-lg-2">
-        <h1>{{ recipient.name }}</h1>
-        {% if not recipient.description|isEmpty %}
-          <article class="mb-3">
-            <h4>{{ 'general.descrizione'|trans }}</h4>
-            {{ recipient.description|raw }}
-          </article>
-        {% endif %}
-        {{ include('Servizi/parts/_searchForm.html.twig') }}
-      </div>
-
-      <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
-        <h6>{{ 'recipients.all'|trans }}</h6>
-        <div class="link-list-wrapper">
-          <ul class="link-list m-0">
-            {% for item in recipients|slice(0, sidebar_list_limit) %}
-              <li>
-                <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}" data-element="topic-element"
-                   href="{{ path('recipient_show', {'slug': item.slug}) }}">
-                  {{ item.name }}
-                </a>
-              </li>
-            {% endfor %}
-            {% if recipients|length > sidebar_list_limit %}
-              <li>
-                <a class="p-0 list-item" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                  <svg class="icon"><use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-actions"></use></svg>
-                  <em>{{ 'load_more'|trans }}</em>
-                </a>
-              </li>
-            {% else %}
-              <li>
-                <a class="p-0 list-item medium"
-                   href="{{ path('servizi_list') }}" data-element="all-services">
-                  {{ 'nav.servizi'|trans }}
-                </a>
-              </li>
+      <div class="col-12 col-lg-10 py-lg-2">
+        <div class="row pb-3 pb-lg-4">
+          <div class="col-lg-8">
+            <h1>{{ recipient.name }}</h1>
+            {% if not recipient.description|isEmpty %}
+              <article class="mb-3">
+                <h4>{{ 'general.descrizione'|trans }}</h4>
+                {{ recipient.description|raw }}
+              </article>
             {% endif %}
-          </ul>
-        </div>
-        <div class="link-list-wrapper collapse" id="collapseExample">
-          <ul class="link-list">
-            {% for item in recipients|slice(sidebar_list_limit, (recipients|length-sidebar_list_limit)) %}
-              <li>
-                <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}" data-element="topic-element"
-                   href="{{ path('recipient_show', {'slug': item.slug}) }}">
-                  {{ item.name }}
-                </a>
-              </li>
-            {% endfor %}
-            <li>
-              <a class="p-0 list-item medium" data-element="topic-element"
-                 href="{{ path('servizi_list') }}">
-                {{ 'nav.servizi'|trans }}
-              </a>
-            </li>
-          </ul>
+            {{ include('Servizi/parts/_searchForm.html.twig') }}
+          </div>
+
+          <div class="col-lg-4 pt-5 pt-lg-2 pl-lg-4">
+            <h6>{{ 'recipients.all'|trans }}</h6>
+            <div class="link-list-wrapper">
+              <ul class="link-list m-0">
+                {% for item in recipients|slice(0, sidebar_list_limit) %}
+                  <li>
+                    <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}"
+                       data-element="topic-element"
+                       href="{{ path('recipient_show', {'slug': item.slug}) }}">
+                      {{ item.name }}
+                    </a>
+                  </li>
+                {% endfor %}
+                {% if recipients|length > sidebar_list_limit %}
+                  <li>
+                    <a class="p-0 list-item" data-toggle="collapse" href="#collapseExample" role="button"
+                       aria-expanded="false" aria-controls="collapseExample">
+                      <svg class="icon">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-more-actions"></use>
+                      </svg>
+                      <em>{{ 'load_more'|trans }}</em>
+                    </a>
+                  </li>
+                {% else %}
+                  <li>
+                    <a class="p-0 list-item medium"
+                       href="{{ path('servizi_list') }}" data-element="all-services">
+                      {{ 'nav.servizi'|trans }}
+                    </a>
+                  </li>
+                {% endif %}
+              </ul>
+            </div>
+            <div class="link-list-wrapper collapse" id="collapseExample">
+              <ul class="link-list">
+                {% for item in recipients|slice(sidebar_list_limit, (recipients|length-sidebar_list_limit)) %}
+                  <li>
+                    <a class="p-0 list-item {% if item.id == recipient.id %} medium{% endif %}"
+                       data-element="topic-element"
+                       href="{{ path('recipient_show', {'slug': item.slug}) }}">
+                      {{ item.name }}
+                    </a>
+                  </li>
+                {% endfor %}
+                <li>
+                  <a class="p-0 list-item medium" data-element="topic-element"
+                     href="{{ path('servizi_list') }}">
+                    {{ 'nav.servizi'|trans }}
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

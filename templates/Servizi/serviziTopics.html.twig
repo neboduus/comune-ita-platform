@@ -1,15 +1,19 @@
 {% extends 'Default/index.html.twig' %}
-{% block title %}{{'nav.servizi'|trans()}} - Stanza del cittadino{% endblock %}
+{% block title %}{{ 'nav.servizi'|trans() }} - Stanza del cittadino{% endblock %}
 {% block main_content %}
 
   <section class="container">
-    <div class="row">
-      <div class="col-lg-8 px-lg-4 py-lg-2">
-        <h1>{{ 'nav.servizi'|trans }}</h1>
-        <div class="clearfix">
-          <p>{{ 'servizio.sottotitolo_categorie'|trans }}</p>
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-10 py-lg-2">
+        <div class="row pb-3 pb-lg-4">
+          <div class="col-lg-8">
+            <h1>{{ 'nav.servizi'|trans }}</h1>
+            <div class="clearfix">
+              <p>{{ 'servizio.sottotitolo_categorie'|trans }}</p>
+            </div>
+            {{ include('Servizi/parts/_searchForm.html.twig') }}
+          </div>
         </div>
-        {{ include('Servizi/parts/_searchForm.html.twig') }}
       </div>
     </div>
   </section>
