@@ -2203,12 +2203,14 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
   public function getRemainingResponseTime(): int
   {
+    $now = new \DateTime();
     if($this->servizio->getStatus() === Servizio::STATUS_SCHEDULED){
       // get days passed from the scheduled final date
-      $daysFromSubmission = round((time() - $this->servizio->getScheduledTo()->getTimestamp()) / (60 * 60 * 24));
+      $daysFromSubmission = $now->diff($this->servizio->getScheduledTo())->days;
     } else {
       // get days passed from the time of submission
-      $daysFromSubmission = round((time() - $this->submissionTime) / (60 * 60 * 24));
+      $submissionDate = (new \DateTime())->setTimestamp($this->submissionTime);
+      $daysFromSubmission = $now->diff($submissionDate)->days;
     }
     return $this->servizio->getMaxResponseTime() - $daysFromSubmission;
   }
