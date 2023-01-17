@@ -1,4 +1,4 @@
-{% if is_granted('ROLE_CPS_USER') and app.request.attributes.get('_route') not in ['search', 'instance_home', 'servizi_list', 'servizi_show', 'category_show', 'service_group_show', 'pratiche_show', 'pratiche_compila', 'user_profile'] %}
+{% if is_granted('ROLE_CPS_USER') and app.request.attributes.get('_route') not in ['search', 'instance_home', 'servizi_list', 'servizi_show', 'category_show', 'service_group_show', 'pratiche_show', 'pratiche_compila', 'pratica_show_detail', 'user_profile'] %}
     <div class="container">
         <div class="row">
             <div class="col-12 col-lg-10 offset-lg-1 pb-2">
@@ -13,7 +13,7 @@
                 <div class="menu-wrapper">
                     <ul class="user-menu nav nav-tabs nav-tabs-icon-text mb-3 auto" data-element="main-navigation">
                             <li class="nav-item">
-                                <a class="nav-link text-capitalize justify-content-lg-start {% if 'dashboard' in app.request.pathInfo %} active {% endif %}" href="{{ path('user_dashboard') }}">
+                                <a class="nav-link text-capitalize justify-content-lg-start {% if 'user' in app.request.pathInfo %} active {% endif %}" href="{{ path('user_dashboard') }}">
                                     <svg class="icon icon-sm icon-primary left mr-1">
                                         <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pa"></use>
                                     </svg>
@@ -46,7 +46,7 @@
                             </li>
                             {% if 'operatori_subscription-service_index' in ente.backofficeEnabledIntegrations %}
                                 <li class="nav-item">
-                                    <a class="nav-link text-capitalize justify-content-lg-start {% if 'iscrizioni' in app.request.pathInfo %} active {% endif %}" href="{{ path('subscriptions_list_cpsuser') }}">
+                                    <a class="nav-link text-capitalize justify-content-lg-start {% if 'subscriptions' in app.request.pathInfo %} active {% endif %}" href="{{ path('subscriptions_list_cpsuser') }}">
                                         <svg class="icon icon-sm icon-primary left mr-1">
                                             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pencil"></use>
                                         </svg>
