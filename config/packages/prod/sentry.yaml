@@ -5,6 +5,7 @@ sentry:
     capture_soft_fails: false
   options:
     environment: '%kernel.environment%'
+    release: '%version%'
     integrations:
       - Sentry\Integration\IgnoreErrorsIntegration
 

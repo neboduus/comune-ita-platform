@@ -6,6 +6,8 @@
 {% set social = ente.getMetaAsArray('social') %}
 {% set utils = ente.getMetaAsArray('utils') %}
 {% set logo = ente.getMetaAsArray('logo') %}
+{% set builtInServices = ente.getMetaAsArray('builtin_services') %}
+
 {% set legals = ente.getMetaAsArray('legals') %}
 {% set customName = ente.getMetaAsArray('name') %}
 {% set enteName = customName != '' ? customName :  ente.name %}
@@ -66,95 +68,127 @@
 
       <div class="row">
         {% set calcCol = social is defined and social | length > 0 ? '9': '12' %}
-        {% if contacts %}
-          <div class="col-md-{{ calcCol }} mt-md-4 footer-items-wrapper">
-            <h4 class="footer-heading-title"><span>{{ 'steps.common.org_richiedente.contatti' | trans }}</span></h4>
-            <div class="row">
-              <div class="col-md-4">
-                <p class="footer-info">
-                  {{ enteName }}<br>
-                  {% if contacts.address is defined %}
-                    <a class="list-item"
-                       href="https://maps.google.com/maps?q={{ contacts.address }}">
-                      {{ contacts.address }}<br>
-                    </a>
-                  {% endif %}
-                  {% if contacts.piva is defined or contacts.cf is defined %}
-                    {{ 'user.profile.codice_fiscale' | trans }} / {{ 'steps.common.org_richiedente.piva' | trans }}: {{ contacts.piva ? contacts.piva :  contacts.cf }}
-                  {% endif %}
-                  <br><br>
-                  <span>{{ 'contacts.public_relations_office' | trans }}</span><br>
-                  {% if contacts.phone is defined %}
-                    {{ 'steps.common.dati_richiedente.richiedente_telefono' | trans }}:
-                    <a class="list-item"
-                       href="tel:{{ contacts.phone }}">
-                      {{ contacts.phone }}
-                    </a><br>
-                  {% endif %}
-                  {% if contacts.toll_free_number is defined %}
-                    {{ 'contacts.toll_free_number' | trans }}:
-                    <a class="list-item"
-                       href="tel:{{ contacts.phone }}">
-                      {{ contacts.toll_free_number }}
-                    </a><br>
-                  {% endif %}
+        <div class="col-md-{{ calcCol }} mt-md-4 footer-items-wrapper">
+          <h4 class="footer-heading-title"><span>{{ 'steps.common.org_richiedente.contatti' | trans }}</span></h4>
+          <div class="row">
+            <div class="col-md-4">
+              <p class="footer-info">
+                {{ enteName }}<br>
+                {% if contacts.address is defined %}
+                  <a class="list-item"
+                     href="https://maps.google.com/maps?q={{ contacts.address }}">
+                    {{ contacts.address }}<br>
+                  </a>
+                {% endif %}
+                {% if (contacts.piva is defined and not contacts.piva is empty) or (contacts.cf is defined and not contacts.cf is empty) %}
+                  {{ 'user.profile.codice_fiscale' | trans }} / {{ 'steps.common.org_richiedente.piva' | trans }}: {{ contacts.piva ? contacts.piva :  contacts.cf }}
+                {% endif %}
+                <br><br>
+                <span>{{ 'contacts.public_relations_office' | trans }}</span><br>
+                {% if contacts.phone is defined and not contacts.phone is empty %}
+                  {{ 'steps.common.dati_richiedente.richiedente_telefono' | trans }}:
+                  <a class="list-item"
+                     href="tel:{{ contacts.phone }}">
+                    {{ contacts.phone }}
+                  </a><br>
+                {% endif %}
+                {% if contacts.toll_free_number is defined and not contacts.toll_free_number is empty %}
+                  {{ 'contacts.toll_free_number' | trans }}:
+                  <a class="list-item"
+                     href="tel:{{ contacts.phone }}">
+                    {{ contacts.toll_free_number }}
+                  </a><br>
+                {% endif %}
 
-                  {% if contacts.fax is defined %}
-                    Fax:
-                    <a class="list-item" href="tel:{{ contacts.fax }}">
-                      {{ contacts.fax }}</a><br>
-                  {% endif %}
-                  {% if contacts.email is defined %}
-                    Email:
-                    <a class="list-item" href="mailto: {{ contacts.email }}">
-                      {{ contacts.email }}
-                    </a><br>
-                  {% endif %}
-                  {% if contacts.legal_email is defined %}
-                    PEC:
-                    <a class="list-item" href="mailto: {{ contacts.legal_email }}">
-                      {{ contacts.legal_email }}
-                    </a>
-                  {% endif %}
-                </p>
-              </div>
-              <div class="col-md-4">
-                <ul class="footer-list p-0">
-                  {% if contacts.faq_url is defined %}
-                    <li>
-                      <a href="{{ contacts.faq_url }}"
-                         data-element="faq" data-focus-mouse="false">{{ 'read_faq' | trans }}</a>
-                    </li>
-                  {% endif %}
+                {% if contacts.fax is defined %}
+                  Fax:
+                  <a class="list-item" href="tel:{{ contacts.fax }}">
+                    {{ contacts.fax }}</a><br>
+                {% endif %}
+                {% if contacts.email is defined and not contacts.email is empty %}
+                  Email:
+                  <a class="list-item" href="mailto: {{ contacts.email }}">
+                    {{ contacts.email }}
+                  </a><br>
+                {% endif %}
+                {% if contacts.legal_email is defined and not contacts.legal_email is empty %}
+                  PEC:
+                  <a class="list-item" href="mailto: {{ contacts.legal_email }}">
+                    {{ contacts.legal_email }}
+                  </a>
+                {% endif %}
+              </p>
+            </div>
+            <div class="col-md-4">
+              <ul class="footer-list p-0">
+                {% if builtInServices.faq is defined %}
                   <li>
-                    {% if contacts.meetings_reservation_url is defined %}
-                      <a href="{{ contacts.meetings_reservation_url }}">{{ 'booking_appointment' | trans }}</a>
-                    {% endif %}
+                    <a href="{{ builtInServices.faq }}" data-element="faq">{{ 'read_faq' | trans }}</a>
                   </li>
+                {% endif %}
+                <li>
+                  {% if builtInServices.appointment_booking is defined %}
+                    <a href="{{ builtInServices.appointment_booking }}"
+                       data-element="appointment-booking">{{ 'booking_appointment' | trans }}</a>
+                  {% endif %}
+                </li>
+                <li>
+                  {% if builtInServices.report_inefficiency is defined %}
+                    <a href="{{ builtInServices.report_inefficiency }}"
+                       data-element="report-inefficiency">{{ 'report_inefficiency' | trans }}</a>
+                  {% endif %}
+                </li>
+                <li>
+                  {% if builtInServices.support is defined %}
+                    <a href="{{ builtInServices.support }}">{{ 'request_assistance' | trans }}</a>
+                  {% endif %}
+                </li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <ul class="footer-list p-0">
+                {% if legals.transparent_administration is defined %}
                   <li>
-                    {% if contacts.support_url is defined %}
-                      <a href="{{ contacts.support_url }}">{{ 'request_assistance' | trans }}</a>
-                    {% endif %}
+                    <a href="{{ legals.transparent_administration }}">{{ 'transparent_administration' | trans }}</a>
                   </li>
-                </ul>
-              </div>
+                {% endif %}
+                <li>
+                  {% if legals.privacy_info is defined %}
+                    <a href="{{ legals.privacy_info }}"
+                       data-element="privacy-policy-link">{{ 'privacy_info' | trans }}</a>
+                  {% endif %}
+                </li>
+                <li>
+                  {% if legals.legal_notes is defined %}
+                    <a href="{{ legals.legal_notes }}">{{ 'legal_notes' | trans }}</a>
+                  {% endif %}
+                </li>
+                <li>
+                  {% if legals.accessibility is defined %}
+                    <a href="{{ legals.accessibility }}"
+                       data-element="accessibility-link">{{ 'accessibility' | trans }}</a>
+                  {% endif %}
+                </li>
+              </ul>
             </div>
           </div>
-        {% endif %}
+        </div>
 
         {% if social %}
           <div class="col-md-3 mt-md-4 footer-items-wrapper">
             <h4 class="footer-heading-title"><span>{{ 'general.follow_social' | trans }}</span></h4>
             <ul class="list-inline text-start social">
               {% for key,value in social %}
-                <li class="list-inline-item">
-                  <a class="p-1 text-white" href="{{ value }}"
-                     aria-label="{{ key }}" target="_blank">
-                    <svg class="icon icon-sm icon-white align-top">
-                      <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{{ key }}"></use>
-                    </svg>
-                    <span class="sr-only">{{ key }}</span></a>
-                </li>
+                {% if not value is empty %}
+                  <li class="list-inline-item">
+                    <a class="p-1 text-white" href="{{ value }}"
+                       aria-label="{{ key }}" target="_blank">
+                      <svg class="icon icon-sm icon-white align-top">
+                        <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{{ key }}"></use>
+                      </svg>
+                      <span class="sr-only">{{ key }}</span></a>
+                  </li>
+                {% endif %}
               {% endfor %}
             </ul>
           </div>
@@ -165,16 +199,13 @@
         <div class="col-12 footer-items-wrapper">
           <div class="footer-bottom">
             <span class="sr-only sr-only-focusable">{{ 'help_link' | trans }}</span>
+
             {% if utils %}
               {% for item in utils %}
                 <a href="{{ item.url }}" title="{{ 'link_to' | trans }} {{ item.text }}">{{ item.text }}</a>
               {% endfor %}
             {% endif %}
-            {% if legals %}
-              {% for key, value in legals %}
-                <a href="{{ value }}" title="{{ 'link_to' | trans }} {{ key | trans }}">{{ key | trans }}</a>
-              {% endfor %}
-            {% endif %}
+
             <a href="{{ path('app.swagger_ui') }}">Api</a>
             <a class="float-md-right text-right"
                href="{{ path('operatori_index') }}">{{ 'nav.operatori.accesso_operatori'|trans() }}</a>

@@ -297,7 +297,7 @@
             {
               "label": "Email",
               "tableView": true,
-              "key": "email1",
+              "key": "email",
               "type": "email",
               "input": true
             },
@@ -448,7 +448,7 @@
         {
           "label": "Servizi built-in",
           "tableView": false,
-          "key": "built-in_services",
+          "key": "builtin_services",
           "type": "container",
           "input": true,
           "components": [
@@ -469,7 +469,7 @@
             {
               "label": "Segnalazione disservizio",
               "tableView": true,
-              "key": "report_disruption",
+              "key": "report_inefficiency",
               "type": "url",
               "input": true
             },

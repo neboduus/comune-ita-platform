@@ -118,7 +118,12 @@ link_to: 'Link a'
 go_to_page: 'Vai alla pagina'
 read_faq: 'Leggi le FAQ'
 booking_appointment: 'Prenotazione appuntamento'
+report_inefficiency: 'Segnalazione disservizio'
 request_assistance: "Richiesta d'assistenza"
+transparent_administration: 'Amministrazione trasparente'
+privacy_info: 'Informativa privacy'
+legal_notes: 'Note legali'
+accessibility: "Dichiarazione di accessibilità"
 back_to_top: "Torna all'inizio del contenuto"
 personal_area: 'area personale'
 new_request: 'nuova richiesta'
@@ -2994,7 +2999,6 @@ taxonomies:
     selling_company: 'Vendita impresa'
     bankruptcy: 'Bancarotta'
     participating_in_public_procurement_national_and_cross_border: 'Partecipazione ad appalti pubblici nazionali e transfrontalieri'
-accessibility: "Accessibilità"
 user_group:
   title: 'Uffici'
   main_function: 'Funzione principale'

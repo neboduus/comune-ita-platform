@@ -25,17 +25,19 @@
                     </svg>
                   </a>
                   <div class="link-list-wrapper collapse" id="service-menu">
-                    <ul class="link-list">
-                      {% for item in service.nav %}
-                        <li>
-                          {% if item.url is defined and item.text is defined %}
-                            <a href="{{ item.url }}" title="{{ 'link_to'|trans }} {{ item.text }}">
-                              {{ item.text }}
-                            </a>
-                          {% endif %}
-                        </li>
-                      {% endfor %}
-                    </ul>
+                    {% if not service.nav is empty %}
+                      <ul class="link-list">
+                        {% for item in service.nav %}
+                          <li>
+                            {% if item.url is defined and item.text is defined %}
+                              <a href="{{ item.url }}" title="{{ 'link_to'|trans }} {{ item.text }}">
+                                {{ item.text }}
+                              </a>
+                            {% endif %}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    {% endif %}
                   </div>
                 {% endif %}
               </nav>
@@ -77,13 +79,15 @@
                     <span>{{ 'general.follow_social' | trans }}</span>
                     <ul>
                       {% for key,value in social %}
-                        <li>
-                          <a href="{{ value }}" aria-label="{{ key }}" target="_blank">
-                            <svg class="icon">
-                              <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{{ key }}"></use>
-                            </svg>
-                          </a>
-                        </li>
+                        {% if not value is empty %}
+                          <li>
+                            <a href="{{ value }}" aria-label="{{ key }}" target="_blank">
+                              <svg class="icon">
+                                <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-{{ key }}"></use>
+                              </svg>
+                            </a>
+                          </li>
+                        {% endif %}
                       {% endfor %}
                     </ul>
                   </div>
