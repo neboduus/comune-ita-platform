@@ -56,6 +56,10 @@ class LocaleRewriteListener
       return;
     }
 
+    if (strpos($request->getRequestUri(), '/api/') == true) {
+      return;
+    }
+
     if (!$request->attributes->has('_locale') && $request->attributes->has('exception')) {
 
       $redirectUrl = str_replace($this->prefix, $this->prefix . '/' . $this->defaultLocale, $path);
