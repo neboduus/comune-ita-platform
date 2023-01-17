@@ -1,4 +1,4 @@
-{% if is_granted('ROLE_CPS_USER') and app.request.attributes.get('_route') not in ['search', 'instance_home', 'servizi_list', 'servizi_show', 'category_show', 'service_group_show'] %}
+{% if is_granted('ROLE_CPS_USER') and app.request.attributes.get('_route') not in ['search', 'instance_home', 'servizi_list', 'servizi_show', 'category_show', 'service_group_show', 'pratiche_show', 'pratiche_compila', 'user_profile'] %}
     <div class="container">
         <div class="row">
             <div class="col-12 col-lg-10 offset-lg-1 pb-2">
