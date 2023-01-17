@@ -125,7 +125,7 @@ new_request: 'nuova richiesta'
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'
-  servizi: 'Tutti i servizi'
+  servizi: 'Servizi'
   pratiche: 'Le mie pratiche'
   profilo: 'Il mio profilo'
   allegati: 'I miei allegati'

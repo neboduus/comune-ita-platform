@@ -37,7 +37,7 @@
         {% if main %}
           {% set calcCol = (main | length) <= 4 ? (12 / (main | length)) : '4' %}
           {% for item in main %}
-            {% if item.url is not empty and item.text is not empty %}
+            {% if item.url is defined and item.text is defined %}
               <div class="col-12 col-md-{{ calcCol }} footer-items-wrapper">
                 <h4 class="footer-heading-title"><span>
                     <a href="{{ item.url }}" title="{{ 'go_to_page' | trans }}: {{ item.text }}">{{ item.text }}</a>
@@ -46,10 +46,12 @@
                 {% if item.children is defined %}
                   <ul class="footer-list p-0">
                     {% for subitem in item.children %}
-                      <li>
-                        <a href="{{ subitem.url }}"
-                           title="{{ 'go_to_page' | trans }}: {{ subitem.text }}">{{ subitem.text }}</a>
-                      </li>
+                      {% if subitem.url is defined and subitem.text is defined %}
+                        <li>
+                          <a href="{{ subitem.url }}"
+                             title="{{ 'go_to_page' | trans }}: {{ subitem.text }}">{{ subitem.text }}</a>
+                        </li>
+                      {% endif %}
                     {% endfor %}
                     <li>
                       <a href="{{ item.url }}"><em>{{ 'show_all' | trans }}</em></a>
@@ -158,6 +160,8 @@
           </div>
         {% endif %}
       </div>
+
+      {{ dump(ente.getMetaAsArray()) }}
 
       <div class="row">
         <div class="col-12 footer-items-wrapper">

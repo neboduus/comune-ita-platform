@@ -1,8 +1,5 @@
 {
-  "title": "Page 1",
-  "label": "Page 1",
-  "type": "panel",
-  "key": "page1",
+  "display": "form",
   "components": [
     {
       "label": "Tipo di ente",

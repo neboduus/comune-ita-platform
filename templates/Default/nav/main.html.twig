@@ -26,13 +26,11 @@
               {% if main %}
                 <ul class="navbar-nav" data-element="main-navigation">
                   {% for item in main %}
+                    {% if item.url is defined and item.text is defined %}
                     <li class="nav-item">
-                      {% if item.text | lower == 'nav.admin.servizi' | trans | lower  %}
-                        <a class="nav-link " data-element="all-services" href="{{ item.url }}">{{ item.text }}</a>
-                      {% else %}
-                        <a class="nav-link " href="{{ item.url }}">{{ item.text }}</a>
-                      {% endif %}
+                      <a class="nav-link" {% if item.text|lower == 'nav.admin.servizi'|trans|lower  %}data-element="all-services"{% endif %} href="{{ item.url }}">{{ item.text }}</a>
                     </li>
+                    {% endif %}
                   {% endfor %}
                 </ul>
               {% endif %}
