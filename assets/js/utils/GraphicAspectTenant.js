@@ -27,10 +27,9 @@ class GraphicAspectTenant {
         //form.ready.then(() => {});
         form.on('change', (changed) => {
           enteMetaTextarea.value = JSON.stringify(changed.data);
-          if (changed.isValid) {
+          if (form.checkValidity(null, true, null, false)) {
             $('#meta-alert-'+locale).addClass('d-none');
           } else {
-            form.submit();
             let lang = locale.charAt(0).toUpperCase() + locale.slice(1); //capitalize first letter
             $('#meta-alert-'+locale).removeClass('d-none')
               .html(Translator.trans('errori.tenant.graphic_aspect', {"lang": lang}, 'messages', language));

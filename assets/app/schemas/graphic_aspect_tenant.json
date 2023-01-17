@@ -24,7 +24,7 @@
       "validate": {
         "required": true
       },
-      "key": "tipoDiEnte",
+      "key": "tenant_type",
       "type": "radio",
       "input": true
     },
@@ -66,7 +66,7 @@
     {
       "title": "Header servizi",
       "collapsible": false,
-      "key": "headerServizi",
+      "key": "services_header_panel",
       "type": "panel",
       "label": "Panel",
       "input": false,
@@ -82,7 +82,7 @@
             {
               "legend": "Amministrazione afferente",
               "tooltip": "Per i comuni indicare la regione o la provincia.",
-              "key": "fieldSet",
+              "key": "administration_fieldset",
               "type": "fieldset",
               "label": "Field Set",
               "input": false,
@@ -227,14 +227,14 @@
       "validate": {
         "maxLength": "3"
       },
-      "key": "argomentiInEvidenza",
+      "key": "topics",
       "type": "datagrid",
       "input": true,
       "components": [
         {
-          "label": "Titolo",
+          "label": "Nome",
           "tableView": true,
-          "key": "titolo",
+          "key": "text",
           "type": "textfield",
           "input": true
         },
@@ -251,23 +251,34 @@
       "label": "Tutti gli argomenti",
       "tooltip": "Indicare il link a tutti gli argimenti",
       "tableView": true,
-      "key": "tuttiGliArgomenti",
+      "key": "all_topics",
       "type": "url",
       "input": true
     },
     {
       "label": "Info",
       "editor": "ckeditor",
+      "autoExpand": false,
       "tableView": true,
       "key": "info",
       "type": "textarea",
       "input": true,
-      "isUploadEnabled": false
+      "isUploadEnabled": false,
+      "wysiwyg": {
+        "toolbar": {
+          "items": [
+            "bold",
+            "italic",
+            "bulletedList",
+            "numberedList"
+          ]
+        }
+      }
     },
     {
       "legend": "Contatti",
       "tooltip": "Inserire qui le info di contatto da mostrare nel footer",
-      "key": "fieldSet1",
+      "key": "contacts_fieldset",
       "type": "fieldset",
       "label": "Field Set",
       "input": false,
@@ -329,7 +340,7 @@
     {
       "legend": "Social",
       "tooltip": "Inserire il link al social relativo",
-      "key": "fieldSet2",
+      "key": "social_fieldset",
       "type": "fieldset",
       "label": "Field Set",
       "input": false,
@@ -391,7 +402,7 @@
     {
       "legend": "Info legali",
       "tooltip": "Inserire il link alla pagina relativa.",
-      "key": "fieldSet3",
+      "key": "legal_info_fieldset",
       "type": "fieldset",
       "label": "Field Set",
       "input": false,
@@ -439,7 +450,7 @@
     {
       "legend": "Servizi generali",
       "tooltip": "Inserire il link alla pagina relativa.",
-      "key": "fieldSet4",
+      "key": "general_services_fieldset",
       "type": "fieldset",
       "label": "Field Set",
       "input": false,
