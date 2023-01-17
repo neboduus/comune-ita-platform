@@ -13,7 +13,7 @@
     },
     "audience": {
       "@type": "Audience",
-      "name": "{{ servizio.who }}"
+      "name": "{{ servizio.who|striptags|replace({"\n": "", "\r": "", "\t": ""})|trim }}"
     },
     "availableChannel": {
       "@type": "ServiceChannel",
