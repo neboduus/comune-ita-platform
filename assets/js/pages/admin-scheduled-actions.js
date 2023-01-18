@@ -1,5 +1,5 @@
 import '../core';
-import 'datatables.net-bs4/js/dataTables.bootstrap4.min';
+
 import 'datatables.net-bs4/css/dataTables.bootstrap4.min.css';
 import '../utils/datatables'
 import Swal from 'sweetalert2/src/sweetalert2.js'
