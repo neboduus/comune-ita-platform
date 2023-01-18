@@ -406,8 +406,8 @@ class AdminController extends AbstractController
 
   /**
    * Lists all scheduled actions entities.
-   * @Route("/scheduled-actions", name="admin_scheduled_actions_index")
-   * @Method({"GET", "POST"})
+   * @Route("/scheduled-actions", name="admin_scheduled_actions_index", methods={"GET", "POST"})
+   * @throws \Doctrine\DBAL\Driver\Exception
    */
   public function indexScheduledActionsAction(Request $request): Response
   {

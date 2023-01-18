@@ -36,6 +36,7 @@
     "bootstrap": "4.6.2",
     "bootstrap-italia": "1.6.4",
     "bootstrap-select": "1.13.18",
+    "datatables.net-bs4": "^1.13.1",
     "element-ui": "2.15.12",
     "font-awesome": "4.7.0",
     "formiojs": "4.14.12",
@@ -58,7 +59,7 @@
     "print-js": "1.6.0",
     "summernote": "0.8.18",
     "svgxuse": "1.2.6",
-    "webpack-jquery-ui": "2.0.1",
-    "sweetalert2": "11.1.9"
+    "sweetalert2": "11.1.9",
+    "webpack-jquery-ui": "2.0.1"
   }
 }

@@ -1,6 +1,8 @@
 import '../core';
+import 'datatables.net-bs4/js/dataTables.bootstrap4.min';
+import 'datatables.net-bs4/css/dataTables.bootstrap4.min.css';
+import '../utils/datatables'
 import Swal from 'sweetalert2/src/sweetalert2.js'
-import "@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css";
 
 $(document).ready(function () {
 
@@ -14,7 +16,7 @@ $(document).ready(function () {
     pagingType: 'simple_numbers'
   };
 
-  $('#scheduled-actions').initDataTables(datatableSetting, datatableOptions)
+  const table = $('#scheduled-actions').initDataTables(datatableSetting, datatableOptions)
     .then(function (dt) {
       // dt contains the initialized instance of DataTables
       dt.on('draw', function () {
@@ -32,7 +34,6 @@ $(document).ready(function () {
         });
 
         $('#filter-status').change(function (e){
-          console.log($(this).val())
           dt.column(5).search($(this).val()).draw();
           //$(this).parents('form').submit();
         });

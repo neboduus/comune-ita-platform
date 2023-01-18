@@ -90,6 +90,21 @@
                 <span>{{ button_text }}</span>
               </a>
             {% endif %}
+
+            {# Pratica protocollata #}
+          {% elseif pratica.status == 3000 %}
+            {% if pratica.servizio.isProtocolRequired and pratica.numeroProtocollo %}
+              {% set button_text = 'operatori.scarica_richiesta_protocollata'|trans %}
+              <a href="{{ path('pratiche_show_pdf', {'pratica': pratica}) }}" class="btn btn-outline-primary fw-bold mt-3" download>
+                  <span class="rounded-icon">
+                    <svg class="icon icon-primary icon-sm" aria-hidden="true">
+                      <use href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
+                    </svg>
+                  </span>
+                <span class="">{{ button_text }}</span>
+              </a>
+            {% endif %}
+
           {% endif %}
 
           {% if can_compile %}
