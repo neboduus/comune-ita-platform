@@ -202,7 +202,9 @@
 
             {% if utils %}
               {% for item in utils %}
+                {% if item.url %}
                 <a href="{{ item.url }}" title="{{ 'link_to' | trans }} {{ item.text }}">{{ item.text }}</a>
+                {% endif %}
               {% endfor %}
             {% endif %}
 
