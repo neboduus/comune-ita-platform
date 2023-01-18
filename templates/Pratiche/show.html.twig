@@ -24,7 +24,9 @@
           <p class="subtitle-small">{{ 'pratica.thanks_message'|trans({'%name%':pratica.servizio.name,'%id%':pratica.id,'%ente%':pratica.ente.name})|raw }}</p>
           {% if pratica.servizio.paymentRequired %}
             <p class="mt-4 mb-0">{{ 'payment.type' | trans }}: <strong>{{ pratica.getPaymentType }}</strong></p>
-            <p class="m-0">{{ 'payment.amount' | trans }}: <strong>{{ pratica.servizio.paymentParameters['total_amounts'] }} €</strong></p>
+            <p class="m-0">{{ 'payment.amount' | trans }}:
+              <strong>{{ pratica.paymentData is not null and pratica.paymentData.payment_amount is defined
+                ? pratica.paymentData.payment_amount : pratica.servizio.paymentParameters['total_amounts'] }}€</strong></p>
           {% endif %}
           <p class="m-0">{{ 'pratica.sent_to' | trans }}: <strong> {{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</strong></p>
           {% if pratica.servizio.isProtocolRequired %}

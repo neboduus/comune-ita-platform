@@ -8,6 +8,8 @@
  * @author Niels Keurentjes <niels.keurentjes@omines.com>
  */
 
+$.fn.dataTable = $.fn.DataTable = global.DataTable = require('datatables.net-bs4').default;
+
 (function ($) {
   /**
    * Initializes the datatable dynamically.
@@ -21,6 +23,7 @@
       config = $.extend({}, $.fn.initDataTables.defaults, config),
       state = ''
     ;
+
 
     // Load page state if needed
     switch (config.state) {

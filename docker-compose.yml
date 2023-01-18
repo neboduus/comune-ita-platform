@@ -175,7 +175,7 @@ services:
       KAFKA_URL: ${KAFKA_URL:-}
 
   traefik:
-    image: traefik:2.6
+    image: traefik:2.8
     command:
       #- '--log.level=DEBUG'
       - '--api.insecure=true'
