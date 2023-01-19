@@ -1239,3 +1239,8 @@ div.rich-text {
     font-family: "Titillium Web", Geneva, Tahoma, sans-serif !important;
   }
 }
+
+// Workaround formiojs 4.14.10 to 4.14.12
+.formio-component-datagrid {
+  overflow-x: unset!important;
+}
