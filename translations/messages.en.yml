@@ -2917,6 +2917,7 @@ read_faq: 'Read FAQ'
 booking_appointment: 'Booking appointment'
 request_assistance: "Request for assistance"
 back_to_top: "Back to the beginning of the content"
+all_topics: "All topics"
 contacts:
   title: "Title"
   faq_url_label: "Read the frequently asked questions"

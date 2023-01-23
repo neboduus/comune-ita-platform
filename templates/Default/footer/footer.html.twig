@@ -19,7 +19,7 @@
         <div class="col-12">
           <div class="it-brand-wrapper">
             <a href="{{ ente.siteUrl }}">
-              {% if logo is defined and logo is not empty %}
+              {% if logo|default %}
                 <img class="icon" src="{{ logo }}" alt="{{ enteName }}"/>
               {% else %}
                 <img class="icon" src="{{ asset('bundles/app/images/logo-default.png') }}" alt="{{ enteName }}"/>
@@ -80,19 +80,19 @@
                     {{ contacts.address }}<br>
                   </a>
                 {% endif %}
-                {% if (contacts.piva is defined and not contacts.piva is empty) or (contacts.cf is defined and not contacts.cf is empty) %}
+                {% if (contacts.piva|default) or (contacts.cf|default) %}
                   {{ 'user.profile.codice_fiscale' | trans }} / {{ 'steps.common.org_richiedente.piva' | trans }}: {{ contacts.piva ? contacts.piva :  contacts.cf }}
                 {% endif %}
                 <br><br>
                 <span>{{ 'contacts.public_relations_office' | trans }}</span><br>
-                {% if contacts.phone is defined and not contacts.phone is empty %}
+                {% if contacts.phone|default %}
                   {{ 'steps.common.dati_richiedente.richiedente_telefono' | trans }}:
                   <a class="list-item"
                      href="tel:{{ contacts.phone }}">
                     {{ contacts.phone }}
                   </a><br>
                 {% endif %}
-                {% if contacts.toll_free_number is defined and not contacts.toll_free_number is empty %}
+                {% if contacts.toll_free_number|default %}
                   {{ 'contacts.toll_free_number' | trans }}:
                   <a class="list-item"
                      href="tel:{{ contacts.phone }}">
@@ -105,13 +105,13 @@
                   <a class="list-item" href="tel:{{ contacts.fax }}">
                     {{ contacts.fax }}</a><br>
                 {% endif %}
-                {% if contacts.email is defined and not contacts.email is empty %}
+                {% if contacts.email|default %}
                   Email:
                   <a class="list-item" href="mailto: {{ contacts.email }}">
                     {{ contacts.email }}
                   </a><br>
                 {% endif %}
-                {% if contacts.legal_email is defined and not contacts.legal_email is empty %}
+                {% if contacts.legal_email|default %}
                   PEC:
                   <a class="list-item" href="mailto: {{ contacts.legal_email }}">
                     {{ contacts.legal_email }}
@@ -121,25 +121,25 @@
             </div>
             <div class="col-md-4">
               <ul class="footer-list p-0">
-                {% if builtInServices.faq is defined %}
+                {% if builtInServices.faq|default %}
                   <li>
                     <a href="{{ builtInServices.faq }}" data-element="faq">{{ 'read_faq' | trans }}</a>
                   </li>
                 {% endif %}
                 <li>
-                  {% if builtInServices.appointment_booking is defined %}
+                  {% if builtInServices.appointment_booking|default %}
                     <a href="{{ builtInServices.appointment_booking }}"
                        data-element="appointment-booking">{{ 'booking_appointment' | trans }}</a>
                   {% endif %}
                 </li>
                 <li>
-                  {% if builtInServices.report_inefficiency is defined %}
+                  {% if builtInServices.report_inefficiency|default %}
                     <a href="{{ builtInServices.report_inefficiency }}"
                        data-element="report-inefficiency">{{ 'report_inefficiency' | trans }}</a>
                   {% endif %}
                 </li>
                 <li>
-                  {% if builtInServices.support is defined %}
+                  {% if builtInServices.support|default %}
                     <a href="{{ builtInServices.support }}">{{ 'request_assistance' | trans }}</a>
                   {% endif %}
                 </li>
@@ -153,18 +153,18 @@
                   </li>
                 {% endif %}
                 <li>
-                  {% if legals.privacy_info is defined %}
+                  {% if legals.privacy_info|default %}
                     <a href="{{ legals.privacy_info }}"
                        data-element="privacy-policy-link">{{ 'privacy_info' | trans }}</a>
                   {% endif %}
                 </li>
                 <li>
-                  {% if legals.legal_notes is defined %}
+                  {% if legals.legal_notes|default %}
                     <a href="{{ legals.legal_notes }}">{{ 'legal_notes' | trans }}</a>
                   {% endif %}
                 </li>
                 <li>
-                  {% if legals.accessibility is defined %}
+                  {% if legals.accessibility|default %}
                     <a href="{{ legals.accessibility }}"
                        data-element="accessibility-link">{{ 'accessibility' | trans }}</a>
                   {% endif %}

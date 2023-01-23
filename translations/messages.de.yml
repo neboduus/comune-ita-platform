@@ -2987,6 +2987,7 @@ read_faq: ''
 booking_appointment: ''
 request_assistance: ""
 back_to_top: ""
+all_topics: ""
 contacts:
   title: ""
   faq_url_label: ""
