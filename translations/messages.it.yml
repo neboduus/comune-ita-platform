@@ -127,6 +127,7 @@ accessibility: "Dichiarazione di accessibilità"
 back_to_top: "Torna all'inizio del contenuto"
 personal_area: 'area personale'
 new_request: 'nuova richiesta'
+all_topics: 'Tutti gli argomenti'
 nav:
   home: 'Homepage'
   dashboard: 'La mia stanza'

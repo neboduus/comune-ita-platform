@@ -1,5 +1,6 @@
 {% set main = ente.getMetaAsArray('main') %}
 {% set topics = ente.getMetaAsArray('topics') %}
+{% set all_topics = ente.getMetaAsArray('all_topics') %}
 <div class="it-header-navbar-wrapper">
   <div class="container">
     <div class="row">
@@ -26,10 +27,10 @@
               {% if main %}
                 <ul class="navbar-nav" data-element="main-navigation">
                   {% for item in main %}
-                    {% if item.url is defined and item.text is defined %}
-                    <li class="nav-item">
-                      <a class="nav-link" {% if item.text|lower == 'nav.admin.servizi'|trans|lower  %}data-element="all-services"{% endif %} href="{{ item.url }}">{{ item.text }}</a>
-                    </li>
+                    {% if item.url|default and item.text|default %}
+                      <li class="nav-item">
+                        <a class="nav-link" {% if item.text|lower == 'nav.admin.servizi'|trans|lower  %}data-element="all-services"{% endif %} href="{{ item.url }}">{{ item.text }}</a>
+                      </li>
                     {% endif %}
                   {% endfor %}
                 </ul>
@@ -38,16 +39,23 @@
                 <ul class="navbar-nav navbar-secondary">
                   {% for item in topics %}
                     <li class="nav-item">
-                      {% if loop.last %}
-                        <a data-element="all-topics" class="nav-link " href="{{ item.url }}">
-                          <span class="font-weight-bold">{{ item.text }}</span>
-                        </a>
-                      {% else %}
-                        <a data-element="topic-element" class="nav-link" href="{{ item.url }}">{{ item.text }}</a>
+                      {% if item.url|default and item.text|default %}
+                        {% if loop.last and not all_topics|default %}
+                          <a data-element="all-topics" class="nav-link " href="{{ item.url }}">
+                            <span class="font-weight-bold">{{ item.text }}</span>
+                          </a>
+                        {% else %}
+                          <a data-element="topic-element" class="nav-link" href="{{ item.url }}">{{ item.text }}</a>
+                        {% endif %}
                       {% endif %}
                     </li>
                   {% endfor %}
                 </ul>
+              {% endif %}
+              {% if all_topics|default %}
+              <a data-element="all-topics" class="nav-link " href="{{ all_topics }}">
+                <span class="font-weight-bold">{{ "all_topics" | trans }}</span>
+              </a>
               {% endif %}
             </div>
           </div>

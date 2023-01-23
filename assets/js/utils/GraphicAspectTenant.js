@@ -1,6 +1,7 @@
 import 'formiojs/dist/formio.form.min.css';
 import {Formio} from "formiojs";
 
+
 const language = document.documentElement.lang.toString();
 
 class GraphicAspectTenant {
