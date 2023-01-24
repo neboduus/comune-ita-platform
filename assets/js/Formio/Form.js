@@ -375,9 +375,12 @@ class Form {
           }
 
           // Called when the form has completed the render, attach, and one initialization change event loop
+          // Da migliorare il controllo sulla fine del rendering del form
           form.on('initialized', () => {
-            console.log('initialized');
-            window.status = 'ready'
+            setTimeout(function() {
+              console.log('initialized');
+              window.status = 'ready'
+              }, 5000)
           });
 
         });
