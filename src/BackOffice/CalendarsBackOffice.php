@@ -233,6 +233,10 @@ class CalendarsBackOffice implements BackOfficeInterface
     try {
       $meeting = $meetingData['meeting_id'] ? $this->em->getRepository('App\Entity\Meeting')->find($meetingData['meeting_id']) : null;
       if (!$meeting) {
+        if ($meetingData['meeting_id']) {
+          $this->logger->warning('Meeting with id ' . $meetingData['meeting_id'] . ' not found');
+        }
+        $this->logger->info('Creating a new meeting');
         $meeting = new Meeting();
       }
 
