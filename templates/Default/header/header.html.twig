@@ -93,15 +93,17 @@
                   </div>
                 {% endif %}
 
-                <div class="it-search-wrapper">
-                  <span class="d-none d-md-block">{{ 'search.label' | trans }}</span>
-                  <a class="search-link rounded-icon" href="#" aria-label="{{ 'search.label' | trans }}"
-                     id="globalSearchBtn" data-toggle="modal" data-target="#globalSearchModal">
-                    <svg class="icon">
-                      <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-search') }}"></use>
-                    </svg>
-                  </a>
-                </div>
+                {% if ente.isSearchAndCatalogueEnabled() %}
+                  <div class="it-search-wrapper">
+                    <span class="d-none d-md-block">{{ 'search.label' | trans }}</span>
+                    <a class="search-link rounded-icon" href="#" aria-label="{{ 'search.label' | trans }}"
+                      id="globalSearchBtn" data-toggle="modal" data-target="#globalSearchModal">
+                      <svg class="icon">
+                        <use xlink:href="{{ asset('bootstrap-italia/dist/svg/sprite.svg#it-search') }}"></use>
+                      </svg>
+                    </a>
+                  </div>
+                {% endif %}        
               </div>
             </div>
           </div>

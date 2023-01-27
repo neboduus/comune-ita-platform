@@ -494,6 +494,40 @@ class Ente implements Translatable
   }
 
   /**
+   * Get tenant type (comune|altro)
+   * @return mixed
+   */
+  public function getTenantType() {
+    $meta = $this->getMetaAsArray();
+    return isset($meta['tenant_type']) ? $meta['tenant_type'] : null;
+  }
+  
+  /**
+   * Get if search engine and services catalogue are enabled
+   * @return boolean
+   */
+  public function isSearchAndCatalogueEnabled() {
+    $meta = $this->getMetaAsArray();
+    return isset($meta['enable_search_and_catalogue']) ? $meta['enable_search_and_catalogue'] : true;
+  }
+
+  /**
+   * Get services catalogue url
+   * @return mixed
+   */
+  public function getServicesUrl() {
+    $meta = $this->getMetaAsArray();
+    if (isset($meta['main']) && !empty($meta['main'])) {
+      foreach($meta['main'] as $item) {
+        if (strtolower($item['text']) == strtolower('Servizi')) {
+          return $item['url'];
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * @param string $meta
    * @return $this
    */
