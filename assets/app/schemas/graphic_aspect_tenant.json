@@ -29,6 +29,23 @@
       "input": true
     },
     {
+      "label": "Mostrare il motore di ricerca e il catalogo dei servizi",
+      "tableView": false,
+      "defaultValue": true,
+      "validate": {
+          "customMessage": "Per disabilitare la ricerca e il catalogo è necessario inserire un url ad un catalogo dei servizi alternativo nella sezione \"Navigazione\"",
+          "custom": "var linkExists = false;\nif (data.main) {\n  data.main.forEach((item, index) => {\n    if (item.text == 'Servizi' && item.url) {\n      linkExists = true;\n    }\n  });  \n}\n\nif (!linkExists && !data.enable_search_and_catalogue) {\n  valid = false;\n} else if (data.enable_search_and_catalogue) {\n  valid = true;\n}\n\n"
+      },
+      "key": "enable_search_and_catalogue",
+      "conditional": {
+          "show": true,
+          "when": "tenant_type",
+          "eq": "comune"
+      },
+      "type": "checkbox",
+      "input": true
+    },
+    {
       "label": "Favicon url",
       "tableView": true,
       "key": "favicon",

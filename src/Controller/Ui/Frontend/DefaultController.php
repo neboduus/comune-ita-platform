@@ -99,7 +99,11 @@ class DefaultController extends AbstractController
    */
   public function indexAction(Request $request)
   {
-    return $this->forward(ServiziController::class . '::serviziAction');
+    $ente = $this->instanceService->getCurrentInstance();
+    if ($ente->isSearchAndCatalogueEnabled()) {
+      return $this->forward(ServiziController::class . '::serviziAction');
+    }
+    return $this->redirect($ente->getServicesUrl());
   }
 
   /**
