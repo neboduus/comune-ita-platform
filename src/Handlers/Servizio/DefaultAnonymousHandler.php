@@ -23,7 +23,7 @@ class DefaultAnonymousHandler extends DefaultHandler
   public function execute(Servizio $servizio)
   {
 
-    $user = $this->createAnonymousUser();
+    $user = $this->cpsUserProvider->createAnonymousUser();
     $pratica = $this->createNewPratica($servizio, $user);
     $this->em->flush();
 
@@ -76,34 +76,6 @@ class DefaultAnonymousHandler extends DefaultHandler
     );
 
     return $pratica;
-  }
-
-  /**
-   * @return CPSUser
-   */
-  private function createAnonymousUser(): CPSUser
-  {
-    $sessionString = md5($this->session->getId()) . '-' . time();
-    $user = new CPSUser();
-    $email = $user->getId()->toString() . '@' . CPSUser::ANONYMOUS_FAKE_EMAIL_DOMAIN;
-    $user
-      ->setUsername($user->getId()->toString())
-      ->setNome('Anonymous')
-      ->setCognome('User')
-      ->setCodiceFiscale($user->getId()->toString())
-      ->setDataNascita(new \DateTime())
-      ->setLuogoNascita('-')
-      ->setEmail($email)
-      ->setEmailContatto($email)
-      ->setConfirmationToken(hash('sha256', $sessionString));
-
-    $user->addRole('ROLE_USER')
-      ->addRole('ROLE_CPS_USER')
-      ->setEnabled(true)
-      ->setPassword('');
-
-    $this->em->persist($user);
-    return $user;
   }
 
 }

@@ -410,4 +410,34 @@ class CPSUserProvider implements UserProviderInterface
     return filter_var($email, FILTER_VALIDATE_EMAIL);
   }
 
+  /**
+   * @return CPSUser
+   */
+  public function createAnonymousUser($doFlush = false): CPSUser
+  {
+    $user = new CPSUser();
+    $email = $user->getId()->toString() . '@' . CPSUser::ANONYMOUS_FAKE_EMAIL_DOMAIN;
+    $sessionString = uniqid($user->getId()->toString());
+    $user
+      ->setUsername($user->getId()->toString())
+      ->setNome('Anonymous')
+      ->setCognome('User')
+      ->setCodiceFiscale($user->getId()->toString())
+      ->setDataNascita(new \DateTime())
+      ->setLuogoNascita('-')
+      ->setEmail($email)
+      ->setEmailContatto($email)
+      ->setConfirmationToken(hash('sha256', $sessionString));
+
+    $user->addRole('ROLE_USER')
+      ->addRole('ROLE_CPS_USER')
+      ->setEnabled(true)
+      ->setPassword('');
+
+    $this->em->persist($user);
+    if ($doFlush){
+      $this->em->flush();
+    }
+    return $user;
+  }
 }

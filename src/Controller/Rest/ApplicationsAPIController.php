@@ -689,7 +689,25 @@ class ApplicationsAPIController extends AbstractFOSRestController
     if ($this->getUser() instanceof CPSUser) {
       $user = $this->getUser();
       try {
-        $this->praticaManager->validateUserData($flatData, $user);
+        // se l'utente non è anaonimo verifico la coerenza dei dati
+        if (!$user->isAnonymous()) {
+          $this->praticaManager->validateUserData($flatData, $user);
+        }else{
+          // @see FormIORenderType::updateUser
+          // altrimenti decoro l'utente anonimo
+          //@todo check recaptcha
+
+          $email = $user->getId() . '@' . CPSUser::ANONYMOUS_FAKE_EMAIL_DOMAIN;
+          $user
+            ->setEmail($data['flattened']['applicant.data.email_address'] ?? $email)
+            ->setEmailContatto($data['flattened']['applicant.data.email_address'] ?? $email)
+            ->setNome($data['flattened']['applicant.data.completename.data.name'] ?? '')
+            ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ?? '')
+            ->setCellulareContatto($data['flattened']['applicant.data.cell_number'] ?? '')
+            ->setCpsTelefono($data['flattened']['applicant.data.phone_number'] ?? '');
+          $this->em->persist($user);
+          $this->em->flush();
+        }
       } catch (\Exception $e) {
         $data = [
           'type' => 'error',
