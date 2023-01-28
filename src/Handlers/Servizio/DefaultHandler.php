@@ -6,6 +6,7 @@ use App\Entity\CPSUser;
 use App\Entity\Ente;
 use App\Entity\Servizio;
 use App\Form\PraticaFlowRegistry;
+use App\Services\CPSUserProvider;
 use App\Services\UserSessionService;
 use App\Utils\BrowserParser;
 use Doctrine\ORM\EntityManagerInterface;
@@ -43,6 +44,11 @@ class DefaultHandler extends AbstractServizioHandler
   protected $browserRestrictions;
 
   /**
+   * @var CPSUserProvider
+   */
+  protected $cpsUserProvider;
+
+  /**
    * DefaultHandler constructor.
    * @param TokenStorageInterface $tokenStorage
    * @param LoggerInterface $logger
@@ -54,6 +60,7 @@ class DefaultHandler extends AbstractServizioHandler
    * @param $formServerPublicUrl
    * @param UserSessionService $userSessionService
    * @param $browserRestrictions
+   * @param CPSUserProvider $cpsUserProvider
    */
   public function __construct(
     TokenStorageInterface $tokenStorage,
@@ -65,7 +72,8 @@ class DefaultHandler extends AbstractServizioHandler
     Environment $templating,
     $formServerPublicUrl,
     UserSessionService $userSessionService,
-    $browserRestrictions
+    $browserRestrictions,
+    CPSUserProvider $cpsUserProvider
   ) {
     $this->em = $em;
     $this->flowRegistry = $flowRegistry;
@@ -74,9 +82,9 @@ class DefaultHandler extends AbstractServizioHandler
     $this->formServerPublicUrl = $formServerPublicUrl;
     $this->userSessionService = $userSessionService;
     $this->browserRestrictions = $browserRestrictions;
+    $this->cpsUserProvider = $cpsUserProvider;
 
     parent::__construct($tokenStorage, $logger, $router);
-
   }
 
   public function canAccess(Servizio $servizio)
@@ -113,7 +121,8 @@ class DefaultHandler extends AbstractServizioHandler
         $this->templating,
         $this->formServerPublicUrl,
         $this->userSessionService,
-        $this->browserRestrictions
+        $this->browserRestrictions,
+        $this->cpsUserProvider
       ))->execute($servizio);
 
     } else {
@@ -136,7 +145,8 @@ class DefaultHandler extends AbstractServizioHandler
         $this->templating,
         $this->formServerPublicUrl,
         $this->userSessionService,
-        $this->browserRestrictions
+        $this->browserRestrictions,
+        $this->cpsUserProvider
       ))->execute($servizio);
     }
   }

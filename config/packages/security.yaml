@@ -54,7 +54,7 @@ security:
       pattern: /%prefix%/api/(services|services-groups|calendars|status|subscription-services|categories|recipients|geographic-areas|tenants|places)
       methods: [ POST, PUT, PATCH, DELETE ]
       stateless: true
-      provider: app_user_provider
+      provider: chain_provider
       guard:
         authenticators:
           - lexik_jwt_authentication.jwt_token_authenticator
@@ -140,7 +140,7 @@ security:
     - { path: ^/%prefix%/(%app_locales%)/(pratiche|terms_accept|user|documenti|subscriptions)/, role: ROLE_CPS_USER }
     - { path: ^/%prefix%/api/v\d+\.\d+/user/.*, role: ROLE_CPS_USER }
 
-    - { path: ^/%prefix%/api/session-auth, role: [ ROLE_CPS_USER, ROLE_OPERATORE, ROLE_ADMIN ] }
+    - { methods: GET, path: ^/%prefix%/api/session-auth, role: [ ROLE_CPS_USER, ROLE_OPERATORE, ROLE_ADMIN ] }
 
     - { path: ^/%prefix%/(%app_locales%)/operatori/profile, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }
     - { path: ^/%prefix%/(%app_locales%)/operatori/change-password, role: [ ROLE_OPERATORE, ROLE_ADMIN ] }

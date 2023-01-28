@@ -3,9 +3,8 @@
 
 namespace App\Controller\Rest;
 
+use App\Services\CPSUserProvider;
 use Nelmio\ApiDocBundle\Annotation\Security;
-
-
 use App\Entity\User;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -21,13 +20,19 @@ class SessionAuthAPIController extends AbstractFOSRestController
    */
   private $JWTTokenManager;
 
+  private CPSUserProvider $cpsUserProvider;
+
   /**
    * SessionAuthAPIController constructor.
    * @param JWTTokenManagerInterface $JWTTokenManager
    */
-  public function __construct(JWTTokenManagerInterface $JWTTokenManager)
+  public function __construct(
+    JWTTokenManagerInterface $JWTTokenManager,
+    CPSUserProvider $cpsUserProvider
+  )
   {
     $this->JWTTokenManager = $JWTTokenManager;
+    $this->cpsUserProvider = $cpsUserProvider;
   }
 
 
@@ -59,4 +64,29 @@ class SessionAuthAPIController extends AbstractFOSRestController
 
     return $this->view(['error' => 'You are not logged in']);
   }
+
+  /**
+   * Retrieve a session auth token
+   * @Rest\Post("/session-auth", name="user_session_auth_token_create")
+   *
+   * @OA\Response(
+   *     response=200,
+   *     description="Create an Auth Token"
+   * )
+   *
+   * @OA\Response(
+   *     response=400,
+   *     description="Bad request"
+   * )
+   * @OA\Tag(name="SessionAuth")
+   *
+   * @return View
+   */
+  public function createAnonymousSessionAuthToken()
+  {
+    $user = $this->cpsUserProvider->createAnonymousUser(true);
+
+    return $this->view(['token' => $this->JWTTokenManager->create($user)]);
+  }
+
 }
