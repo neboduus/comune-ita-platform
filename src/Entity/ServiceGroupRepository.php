@@ -45,7 +45,16 @@ class ServiceGroupRepository extends EntityRepository
         ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
 
-    $qb->orderBy('s.name', 'ASC');
+    // sticky
+    if ($criteria['sticky'] !== null) {
+      $qb->andWhere($criteria['sticky'] ? 's.sticky = true' : 's.sticky = false OR s.sticky IS NULL');
+    }
+
+    $qb->orderBy('s.' . $criteria['order_by'], $criteria['ascending'] ? 'ASC' : 'DESC');
+
+    if (isset($criteria['limit'])) {
+      $qb->setMaxResults($criteria['limit']);
+    }
 
     return $qb->getQuery()->getResult();
   }
@@ -59,11 +68,15 @@ class ServiceGroupRepository extends EntityRepository
     return $qb->getQuery()->getResult();
   }
 
-  public function findNotStickyAvailable()
+  public function findNotStickyAvailable(string $orderBy = 'name', bool $ascending = true, int $limit = null)
   {
     $qb = $this->createQueryBuilder('s')
       ->where('s.sticky = false OR s.sticky IS NULL')
-      ->orderBy('s.name', 'ASC');
+      ->orderBy('s.' . $orderBy, $ascending ? 'ASC' : 'DESC');
+
+    if ($limit){
+      $qb->setMaxResults($limit);
+    }
 
     return $qb->getQuery()->getResult();
   }

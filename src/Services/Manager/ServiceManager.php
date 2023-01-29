@@ -73,7 +73,11 @@ class ServiceManager
     $recipientIds = $request->get('recipient_id', false);
     $geographicAreaIds = $request->get('geographic_area_id', false);
     $grouped = boolean_value($request->get('grouped', true));
+    $limit = $request->get('limit', false);
 
+    $criteria['order_by'] = $request->get('order_by', 'name');
+    $criteria['ascending'] = boolean_value($request->get('ascending', true));
+    $criteria['sticky'] = boolean_value($request->get('sticky'));
     $criteria['locale'] = $request->getLocale();
 
     if ($searchText) {
@@ -154,6 +158,10 @@ class ServiceManager
         }
       }
       $criteria['geographic_areas'] = $geographicAreaIds;
+    }
+
+    if ($limit) {
+      $criteria['limit'] = $limit;
     }
 
     $services = $repoServices->findByCriteria($criteria);

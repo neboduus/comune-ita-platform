@@ -107,6 +107,46 @@ class ServicesGroupAPIController extends AbstractFOSRestController
    *      description="If true empty services groups are excluded from results"
    *  )
    *
+   * @OA\Parameter(
+   *      name="order_by",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
+   *      required=false,
+   *      description="Ordering parameter"
+   *  )
+   *
+   * @OA\Parameter(
+   *      name="ascending",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="boolean"
+   *      ),
+   *      required=false,
+   *      description="Ascending or descending"
+   *  )
+   * 
+   * @OA\Parameter(
+   *      name="sticky",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="boolean"
+   *      ),
+   *      required=false,
+   *      description="Get sticky or not sticky services"
+   *  )
+   *
+   * @OA\Parameter(
+   *      name="limit",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="integer"
+   *      ),
+   *      required=false,
+   *      description="Limit the returned results"
+   *  )
+   * 
    * @OA\Response(
    *     response=200,
    *     description="Retrieve list of services groups",
@@ -124,7 +164,12 @@ class ServicesGroupAPIController extends AbstractFOSRestController
     $recipientId = $request->get('recipient_id', false);
     $geographicAreaId = $request->get('geographic_area_id', false);
     $notEmpty = boolean_value($request->get('not_empty', false));
+    $limit = $request->get('limit', false);
     $criteria = [];
+
+    $criteria['order_by'] = $request->get('order_by', 'name');
+    $criteria['ascending'] = boolean_value($request->get('ascending', true));
+    $criteria['sticky'] = boolean_value($request->get('sticky'));
 
     if ($categoryId) {
       $categoriesRepo = $this->em->getRepository('App\Entity\Categoria');
@@ -153,6 +198,9 @@ class ServicesGroupAPIController extends AbstractFOSRestController
       $criteria['geographic_areas'] = $geographicAreaId;
     }
 
+    if ($limit) {
+      $criteria['limit'] = $limit;
+    }
 
     $services = $this->em->getRepository('App\Entity\ServiceGroup')->findByCriteria($criteria);
     /** @var ServiceGroup $s */

@@ -251,7 +251,7 @@ servizio:
   what_you_need: "Cosa serve"
   what_you_get: "Cosa si ottiene"
   costs: "Costi"
-  sottotitolo: 'Domande e iscrizioni, contributi e graduatorie, segnalazioni, autorizzazioni e concessioni, certificati e dichiarazioni, pagamenti, servizi pubblici.'
+  sottotitolo: 'Tutti i servizi comunali per i cittadini, disponibili online o a sportello, per richiedere documenti e permessi, iscriversi a graduatorie ed effettuare pagamenti.'
   sottotitolo_categorie: "Gli argomenti rispondono a un'esigenza di organizzazione dei contenuti del sito istituzionale per temi e rappresentano le principali categorie di contenuti, informazioni e documenti specifici."
   bozza_successo: 'Bozza salvata con successo'
   nessun_template: 'Nessun template disponibile'
@@ -388,6 +388,13 @@ servizio:
   torna_indietro: "Torna indietro"
   info: 'INFORMAZIONI RICHIESTE'
   campi_pnrr_mancanti: "La scheda di questo servizio non è completa, si consiglia di compilare anche i campi: %nome_campi%"
+  esplora_servizi: 'Esplora tutti i servizi'
+  esplora_per_categoria: 'Esplora per categoria'
+  carica_altri_risultati: 'Carica altri risultati'
+  servizi_in_evidenza: 'SERVIZI IN EVIDENZA'
+  nessun_servizio_in_evidenza: 'Nessun servizio in evidenza'
+  nessun_servizio_trovato: 'Nessun servizio trovato'
+  n_servizi_trovati: '%servizi_trovati% in ordine di ultimo aggiornamento'
 gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppo di servizi'
   nome: 'Nome'
@@ -2767,6 +2774,7 @@ breadcrumbs:
   compile: 'Compila'
 search:
   label: 'Cerca'
+  label_keyword: 'Cerca una parola chiave'
   close: 'Chiudi'
   filters: 'Filtri'
   apply_filters: 'Applica filtri'

@@ -6,18 +6,20 @@
       <div class="col-12 col-lg-10 py-lg-2">
         <div class="row pb-3 pb-lg-4">
           <div class="col-lg-8">
-            <h1 data-element="page-name">{{ 'nav.servizi'|trans }}</h1>
+            <h1 data-element="page-name">{{ 'nav.servizi' | trans }}</h1>
             <div class="clearfix">
-              <p>{{ 'servizio.sottotitolo'|trans }}</p>
+              <p>{{ 'servizio.sottotitolo' | trans }}</p>
             </div>
-            {{ include('Servizi/parts/_searchForm.html.twig') }}
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  {% if sticky_services %}
+  {{ include('Servizi/parts/_exploreServices.html.twig', {'sticky': sticky, 'servizi': servizi, 'servizi_count': servizi_count}) }}
+  {{ include('Servizi/parts/_exploreCategories.html.twig', {'topics': topics}) }}
+
+  {# {% if sticky_services %}
     <section class="container-fluid py-5 bg-light">
       <div class="container">
         <div class="row">
@@ -49,6 +51,6 @@
         {% endfor %}
       </div>
     </section>
-  {% endif %}
+  {% endif %} #}
 
 {% endblock %}

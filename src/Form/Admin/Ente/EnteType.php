@@ -81,11 +81,6 @@ class EnteType extends AbstractI18nType
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
 
-    $navigationTypes = [
-      'ente.navigation_type.services' => Ente::NAVIGATION_TYPE_SERVICES,
-      'ente.navigation_type.categories' => Ente::NAVIGATION_TYPE_CATEGORIES
-    ];
-
     /** @var Ente $ente */
     $ente = $builder->getData();
     $settings = new DefaultProtocolSettings();
@@ -138,11 +133,6 @@ class EnteType extends AbstractI18nType
       ->add('codice_amministrativo', TextType::class, [
         'label' => 'ente.codice_amministrativo'
       ])
-      ->add('navigation_type', ChoiceType::class, [
-          'label' => 'ente.navigation_type.label',
-          'choices' => $navigationTypes,
-        ]
-      )
       ->add(DefaultProtocolSettings::KEY, DefaultProtocolSettingsType::class, [
         'label' => 'ente.impostazioni_protocollo',
         'mapped' => false,
