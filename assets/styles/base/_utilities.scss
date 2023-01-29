@@ -420,3 +420,12 @@
   z-index: 1;
   transition: none;
 }
+
+.cmp-card-after-0 {
+  .card {
+    &:after {
+      content: unset;
+      margin: 0 !important;
+    }
+  }
+}

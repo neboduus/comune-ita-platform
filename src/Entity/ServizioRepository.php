@@ -30,7 +30,7 @@ class ServizioRepository extends EntityRepository
 
       if ($criteria['ascending']) {
         ksort($results);
-      }    
+      }
 
       return $results;
     }
@@ -100,11 +100,14 @@ class ServizioRepository extends EntityRepository
     }
 
     // sticky
-    if ($criteria['sticky'] !== null) {
+    if (isset($criteria['sticky'])) {
       $qb->andWhere($criteria['sticky'] ? 's.sticky = true' : 's.sticky = false OR s.sticky IS NULL');
     }
 
-    $qb->orderBy('s.' . $criteria['order_by'], $criteria['ascending'] ? 'ASC' : 'DESC');
+    if (isset($criteria['order_by'])) {
+      $sort = $criteria['ascending'] ? 'ASC' : 'DESC';
+      $qb->orderBy('s.' . $criteria['order_by'], $sort);
+    }
 
     if (isset($criteria['limit'])) {
       $qb->setMaxResults($criteria['limit']);
@@ -181,13 +184,16 @@ class ServizioRepository extends EntityRepository
         ->andWhere('geographicAreas.id IN (:geographic_areas)')
         ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
-    
+
     // sticky
-    if ($criteria['sticky'] != null) {
+    if (isset($criteria['sticky'])) {
       $qb->andWhere($criteria['sticky'] ? 's.sticky = true' : 's.sticky = false OR s.sticky IS NULL');
     }
 
-    $qb->orderBy('s.' . $criteria['order_by'], $criteria['ascending'] ? 'ASC' : 'DESC');
+    if (isset($criteria['order_by'])) {
+      $sort = $criteria['ascending'] ? 'ASC' : 'DESC';
+      $qb->orderBy('s.' . $criteria['order_by'], $sort);
+    }
 
     if (isset($criteria['limit'])) {
       $qb->setMaxResults($criteria['limit']);
@@ -208,7 +214,6 @@ class ServizioRepository extends EntityRepository
 
   public function findAvailable($criteria = [])
   {
-
     $criteria['grouped'] = false;
     $criteria['status'] = Servizio::PUBLIC_STATUSES;
     return $this->findByCriteria($criteria);
@@ -266,7 +271,7 @@ class ServizioRepository extends EntityRepository
       ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
       ->andWhere('s.sticky = false OR s.sticky IS NULL')
       ->andWhere('s.serviceGroup IS NULL');
-    
+
     return $qb->getQuery()->getSingleScalarResult();
   }
 
