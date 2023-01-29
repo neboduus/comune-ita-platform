@@ -26,6 +26,7 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use League\Flysystem\FileNotFoundException;
+use OpenApi\Annotations as OA;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -55,7 +56,7 @@ class AllegatoController extends AbstractController
   /** @var TranslatorInterface $translator */
   private $translator;
 
-  /** @var RouterInterface  */
+  /** @var RouterInterface */
   private $router;
 
   /** @var LoggerInterface */
@@ -71,8 +72,8 @@ class AllegatoController extends AbstractController
 
   /** @var SessionInterface */
   private $session;
-  
-  /** @var BreadcrumbsService*/
+
+  /** @var BreadcrumbsService */
   private $breadcrumbsService;
 
 
@@ -88,14 +89,14 @@ class AllegatoController extends AbstractController
    * @param $allowedExtensions
    */
   public function __construct(
-    TranslatorInterface $translator,
-    RouterInterface $router,
-    LoggerInterface $logger,
-    AllegatoFileService $fileService,
+    TranslatorInterface    $translator,
+    RouterInterface        $router,
+    LoggerInterface        $logger,
+    AllegatoFileService    $fileService,
     EntityManagerInterface $entityManager,
-    SessionInterface $session,
-    BreadcrumbsService $breadcrumbsService,
-    $allowedExtensions
+    SessionInterface       $session,
+    BreadcrumbsService     $breadcrumbsService,
+                           $allowedExtensions
   )
   {
     $this->translator = $translator;
@@ -129,7 +130,7 @@ class AllegatoController extends AbstractController
       return new RedirectResponse($this->router->generate('allegati_list_cpsuser'));
     }
 
-    return $this->render( 'Allegato/cpsUserCreateAllegato.html.twig', [
+    return $this->render('Allegato/cpsUserCreateAllegato.html.twig', [
       'form' => $form->createView(),
       'user' => $this->getUser(),
     ]);
@@ -137,14 +138,56 @@ class AllegatoController extends AbstractController
 
   /**
    * @param Request $request
-   * @return JsonResponse
+   *
    * @Route("/upload", name="attachment_upload", methods={"POST"})
+   *
+   * @OA\Parameter(
+   *      name="_locale",
+   *      in="path",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
+   *      required=true,
+   *      description="Locale of the application"
+   * )
+   *
+   * @OA\RequestBody(
+   *     description="Create an attachment",
+   *     required=true,
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="original_filename", type="string", description="Attachment file name"),
+   *             @OA\Property(property="description", type="string", description="Attachment description"),
+   *             @OA\Property(property="mime_type", type="string", description="Attachment Mime Type"),
+   *             @OA\Property(property="protocol_required", type="bool", description="Is protocol required for attachment")
+   *         )
+   *     )
+   * )
+   *
+   * @OA\Response(
+   *     response=201,
+   *     description="Updated",
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="id", type="string", description="Id of the created attachment"),
+   *             @OA\Property(property="uri", type="string", description="Upload url for the attachment content")
+   *         )
+   *     )
+   * )
+   *
+   * @OA\Tag(name="attachments")
+   *
+   * @return JsonResponse
    */
   public function uploadAttachmentAction(Request $request)
   {
     try {
       $session = $this->session;
-      if (!$session->isStarted()){
+      if (!$session->isStarted()) {
         $session->start();
       }
 
@@ -154,7 +197,7 @@ class AllegatoController extends AbstractController
       $protocolRequired = $request->request->get('protocol_required') ?? true;
 
       $allegato = new Allegato();
-      $user  = $this->getUser();
+      $user = $this->getUser();
       // Gli allegati sono di proprietà dei soli utenti
       if ($user instanceof CPSUser) {
         $allegato->setOwner($user);
@@ -192,8 +235,62 @@ class AllegatoController extends AbstractController
   /**
    * @param Request $request
    * @param Allegato $allegato
-   * @return JsonResponse
+   *
    * @Route("/upload/{allegato}",name="attachment_upload_finalize", methods={"PUT"})
+   *
+   * @OA\Parameter(
+   *      name="_locale",
+   *      in="path",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
+   *      required=true,
+   *      description="Locale of the application"
+   * )
+   *
+   * @OA\Parameter(
+   *      name="allegato",
+   *      in="path",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
+   *      required=true,
+   *      description="Attachment id"
+   * )
+   *
+   * @OA\RequestBody(
+   *     description="Finalize attachment creation after uploading the file content by the url received with POST to /upload",
+   *     required=true,
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="file_hash", type="string", description="Hash of the file content"),
+   *             @OA\Property(property="check_signature", type="string", description="Attachment description")
+   *         )
+   *     )
+   * )
+   *
+   * @OA\Response(
+   *     response=200,
+   *     description="If check_signature = true returns the url to call for the check",
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             @OA\Property(property="url", type="string", description="Url to call for signature file check")
+   *         )
+   *     )
+   * )
+   *
+   * @OA\Response(
+   *     response=204,
+   *     description="Attachment is correctly finalised"
+   * )
+   *
+   * @OA\Tag(name="attachments")
+   *
+   * @return JsonResponse
    */
   public function uploadAttachmentFinalizeAction(Request $request, Allegato $allegato)
   {
@@ -201,7 +298,7 @@ class AllegatoController extends AbstractController
 
     try {
       $session = $this->session;
-      if (!$session->isStarted()){
+      if (!$session->isStarted()) {
         $session->start();
       }
 
@@ -224,7 +321,6 @@ class AllegatoController extends AbstractController
   }
 
 
-
   /**
    * @param Request $request
    * @Route("/allegati",name="allegati_upload")
@@ -233,7 +329,7 @@ class AllegatoController extends AbstractController
   public function uploadAllegatoAction(Request $request)
   {
     $session = $this->session;
-    if (!$session->isStarted()){
+    if (!$session->isStarted()) {
       $session->start();
     }
 
@@ -243,13 +339,13 @@ class AllegatoController extends AbstractController
         $fileName = str_replace('/', '', $request->get('form'));
         $allegato = $this->entityManager->getRepository('App\Entity\Allegato')->findOneBy(['originalFilename' => $fileName]);
         if ($allegato instanceof Allegato) {
-          if ($allegato->getHash() == hash('sha256', $session->getId())){
+          if ($allegato->getHash() == hash('sha256', $session->getId())) {
             try {
               return $this->fileService->download($allegato);
             } catch (FileNotFoundException $e) {
               return new Response(["Attachment not found"], Response::HTTP_NOT_FOUND);
             }
-          }else{
+          } else {
             return $this->redirectToRoute('allegati_download_cpsuser', ['allegato' => $allegato]);
           }
         } else {
@@ -276,7 +372,7 @@ class AllegatoController extends AbstractController
           $description = $request->get('description') ?? Allegato::DEFAULT_DESCRIPTION;
           $allegato->setDescription($description);
           $allegato->setOriginalFilename($request->get('name'));
-          $user  = $this->getUser();
+          $user = $this->getUser();
           if ($user instanceof CPSUser) {
             $allegato->setOwner($user);
           }
@@ -377,7 +473,7 @@ class AllegatoController extends AbstractController
 
     if ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
       $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
-      if ( !$integrationRequest instanceof RichiestaIntegrazione ) {
+      if (!$integrationRequest instanceof RichiestaIntegrazione) {
         throw new \Exception('Integration request not found.');
       }
       $allegato = new Integrazione();
@@ -414,7 +510,7 @@ class AllegatoController extends AbstractController
    */
   public function operatoreAllegatoUploadAction(Request $request, Pratica $pratica)
   {
-    if ($pratica->getStatus() !== Pratica::STATUS_PENDING && $pratica->getStatus() !== Pratica::STATUS_PENDING_AFTER_INTEGRATION){
+    if ($pratica->getStatus() !== Pratica::STATUS_PENDING && $pratica->getStatus() !== Pratica::STATUS_PENDING_AFTER_INTEGRATION) {
       return new JsonResponse("Pratica {$pratica->getId()} is not pending", Response::HTTP_BAD_REQUEST);
     }
 
@@ -431,7 +527,7 @@ class AllegatoController extends AbstractController
     }
 
     $uploadedFile = $request->files->get('file');
-    if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions) || !array_key_exists($uploadedFile->getClientOriginalExtension(),$this->allowedExtensions)) {
+    if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions) || !array_key_exists($uploadedFile->getClientOriginalExtension(), $this->allowedExtensions)) {
       if (!in_array($uploadedFile->getClientMimeType(), $this->allowedExtensions)) {
         $this->logger->error('mime_type_invalid', [
           'mime_type' => $uploadedFile->getMimeType(),
@@ -475,9 +571,9 @@ class AllegatoController extends AbstractController
       if ($pratica->getUser()->getId() !== $user->getId()) {
         return new JsonResponse("User can not access pratica {$pratica->getId()}", Response::HTTP_BAD_REQUEST);
       }
-      if ($pratica->getStatus() != Pratica::STATUS_DRAFT_FOR_INTEGRATION){
-        $responseMessage = $this->translator->trans('operatori.messaggi.pratica_id').
-          ' '.$pratica->getId().' ' .$this->translator->trans('operatori.messaggi.errore_carica_allegato');
+      if ($pratica->getStatus() != Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
+        $responseMessage = $this->translator->trans('operatori.messaggi.pratica_id') .
+          ' ' . $pratica->getId() . ' ' . $this->translator->trans('operatori.messaggi.errore_carica_allegato');
         return new JsonResponse($responseMessage, Response::HTTP_BAD_REQUEST);
       }
     } else if ($user instanceof OperatoreUser) {
@@ -493,9 +589,9 @@ class AllegatoController extends AbstractController
         Pratica::STATUS_COMPLETE_WAITALLEGATIOPERATORE, Pratica::STATUS_CANCELLED_WAITALLEGATIOPERATORE,
         Pratica::STATUS_CANCELLED, Pratica::STATUS_WITHDRAW, Pratica::STATUS_REVOKED
       ];
-      if (!in_array($pratica->getStatus(), $allowedStatus)){
-        $responseMessage = $this->translator->trans('operatori.messaggi.pratica_id').
-          ' '.$pratica->getId().' ' .$this->translator->trans('operatori.messaggi.errore_carica_allegato');
+      if (!in_array($pratica->getStatus(), $allowedStatus)) {
+        $responseMessage = $this->translator->trans('operatori.messaggi.pratica_id') .
+          ' ' . $pratica->getId() . ' ' . $this->translator->trans('operatori.messaggi.errore_carica_allegato');
         return new JsonResponse($responseMessage, Response::HTTP_BAD_REQUEST);
       }
     } else {
@@ -505,7 +601,7 @@ class AllegatoController extends AbstractController
     /** @var UploadedFile $uploadedFile */
     $uploadedFile = $request->files->get('file');
 
-    if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions) || !array_key_exists($uploadedFile->getClientOriginalExtension(),$this->allowedExtensions)) {
+    if (!in_array($uploadedFile->getMimeType(), $this->allowedExtensions) || !array_key_exists($uploadedFile->getClientOriginalExtension(), $this->allowedExtensions)) {
       if (!in_array($uploadedFile->getClientMimeType(), $this->allowedExtensions)) {
         $this->logger->error('mime_type_invalid', [
           'mime_type' => $uploadedFile->getMimeType(),
@@ -525,7 +621,7 @@ class AllegatoController extends AbstractController
     // Imposto riferimento a richiesta integrazione attiva
     if ($pratica->getStatus() == Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
       $integrationRequest = $pratica->getRichiestaDiIntegrazioneAttiva();
-      if ( !$integrationRequest instanceof RichiestaIntegrazione ) {
+      if (!$integrationRequest instanceof RichiestaIntegrazione) {
         return new JsonResponse('Integration request not found.');
       }
       $allegato->setIdRichiestaIntegrazione($integrationRequest->getId());
@@ -605,7 +701,7 @@ class AllegatoController extends AbstractController
       }
     }
 
-    return $this->render( 'Allegato/cpsUserListAllegati.html.twig',  [
+    return $this->render('Allegato/cpsUserListAllegati.html.twig', [
       'allegati' => $allegati,
       'user' => $this->getUser(),
     ]);
