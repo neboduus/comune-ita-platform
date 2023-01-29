@@ -6,8 +6,6 @@ use App\Dto\UserAuthenticationData;
 use App\Entity\CPSUser;
 use App\Services\InstanceService;
 use App\Services\UserSessionService;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsGeneratorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,10 +17,7 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
    * @var InstanceService
    */
   private $instanceService;
-  /**
-   * @var MetricsGeneratorInterface
-   */
-  private $userMetrics;
+
 
   /**
    * OpenLoginAuthenticator constructor.
@@ -30,16 +25,14 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
    * @param $loginRoute
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
-   * @param MetricsCollectorInterface $userMetrics
    * @param JWTTokenManagerInterface $JWTTokenManager
    */
-  public function __construct(UrlGeneratorInterface $urlGenerator, $loginRoute, UserSessionService $userSessionService, InstanceService $instanceService, MetricsCollectorInterface $userMetrics, JWTTokenManagerInterface $JWTTokenManager)
+  public function __construct(UrlGeneratorInterface $urlGenerator, $loginRoute, UserSessionService $userSessionService, InstanceService $instanceService, JWTTokenManagerInterface $JWTTokenManager)
   {
     $this->urlGenerator = $urlGenerator;
     $this->loginRoute = $loginRoute;
     $this->userSessionService = $userSessionService;
     $this->instanceService = $instanceService;
-    $this->userMetrics = $userMetrics;
     $this->JWTTokenManager = $JWTTokenManager;
   }
 
@@ -212,8 +205,6 @@ class OpenLoginAuthenticator extends AbstractAuthenticator
       'instant' => $dateTimeObject->format(DATE_ISO8601),
       'sessionIndex' => $request->headers->get('x-forwarded-user-session'),
     ];
-
-    $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-open', $data['authenticationMethod'], $data['spidLevel']);
 
     return UserAuthenticationData::fromArray($data);
   }

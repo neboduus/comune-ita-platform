@@ -4,45 +4,36 @@
 namespace App\Services\Manager;
 
 
+use App\Entity\AdminUser;
+use App\Entity\OperatoreUser;
+use App\Entity\Servizio;
 use App\Entity\User;
+use App\Event\KafkaEvent;
+use App\Event\SecurityEvent;
+use App\Model\Security\SecurityLogInterface;
 use App\Services\InstanceService;
 use App\Services\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class UserManager
 {
-  /** @var EntityManagerInterface */
-  private $entityManager;
-
-  /** @var TranslatorInterface */
-  private $translator;
-
-  /** @var InstanceService */
-  private $instanceService;
-
-  /** @var RouterInterface */
-  private $router;
-
-  /** @var MailerService */
-  private $mailerService;
-
-  /**
-   * @var TokenGeneratorInterface
-   */
-  private $tokenGenerator;
-
-  /**
-   * @var UserPasswordEncoderInterface $encoder
-   */
-  private $encoder;
-
-  private $defaultSender;
+  private EntityManagerInterface $entityManager;
+  private TranslatorInterface $translator;
+  private InstanceService $instanceService;
+  private RouterInterface $router;
+  private MailerService $mailerService;
+  private TokenGeneratorInterface $tokenGenerator;
+  private UserPasswordEncoderInterface $encoder;
+  private string $defaultSender;
+  private EventDispatcherInterface $dispatcher;
 
 
   /**
@@ -50,10 +41,11 @@ class UserManager
    * @param EntityManagerInterface $entityManager
    * @param TranslatorInterface $translator
    * @param InstanceService $instanceService
-   * @param TokenGeneratorInterface $tokenGenerator
    * @param RouterInterface $router
    * @param MailerService $mailerService
+   * @param TokenGeneratorInterface $tokenGenerator
    * @param UserPasswordEncoderInterface $encoder
+   * @param EventDispatcherInterface $dispatcher
    * @param string $defaultSender
    */
   public function __construct(
@@ -64,6 +56,7 @@ class UserManager
     MailerService $mailerService,
     TokenGeneratorInterface $tokenGenerator,
     UserPasswordEncoderInterface $encoder,
+    EventDispatcherInterface $dispatcher,
     string $defaultSender
   )
   {
@@ -75,8 +68,32 @@ class UserManager
     $this->tokenGenerator = $tokenGenerator;
     $this->encoder = $encoder;
     $this->defaultSender = $defaultSender;
+    $this->dispatcher = $dispatcher;
   }
 
+  public function save(UserInterface $user)
+  {
+    $this->entityManager->persist($user);
+    $this->entityManager->flush();
+
+    if ($user instanceof AdminUser) {
+      $this->dispatcher->dispatch(new SecurityEvent(SecurityLogInterface::ACTION_USER_ADMIN_CREATED, $user));
+    } elseif ($user instanceof OperatoreUser) {
+      $this->dispatcher->dispatch(new SecurityEvent(SecurityLogInterface::ACTION_USER_OPERATOR_CREATED, $user));
+    }
+  }
+
+  public function remove(UserInterface $user)
+  {
+    $this->entityManager->remove($user);
+    $this->entityManager->flush();
+
+    if ($user instanceof AdminUser) {
+      $this->dispatcher->dispatch(new SecurityEvent(SecurityLogInterface::ACTION_USER_ADMIN_REMOVED, $user));
+    } elseif ($user instanceof OperatoreUser) {
+      $this->dispatcher->dispatch(new SecurityEvent(SecurityLogInterface::ACTION_USER_OPERATOR_REMOVED, $user));
+    }
+  }
 
   /**
    * @param User $user
@@ -106,6 +123,8 @@ class UserManager
         ],
       ]
     );
+
+    $this->dispatcher->dispatch(new SecurityEvent(SecurityLogInterface::ACTION_USER_RESET_PASSWORD_REQUEST, ['email' => $user->getEmail()]));
   }
 
 
@@ -116,5 +135,7 @@ class UserManager
     $user->setLastChangePassword();
     $this->entityManager->persist($user);
     $this->entityManager->flush();
+
+    $this->dispatcher->dispatch(new SecurityEvent(SecurityLogInterface::ACTION_USER_RESET_PASSWORD_SUCCESS, ['email' => $user->getEmail()]));
   }
 }

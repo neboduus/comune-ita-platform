@@ -11,9 +11,11 @@ use App\Entity\Meeting;
 use App\Entity\Pratica;
 use App\Entity\ScheduledAction;
 use App\Entity\Servizio;
+use App\Model\Security\SecurityLogInterface;
 use App\ScheduledAction\Exception\AlreadyScheduledException;
 use App\ScheduledAction\ScheduledActionHandlerInterface;
 use DateTime;
+use DateTimeInterface;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
@@ -182,6 +184,9 @@ class KafkaService implements ScheduledActionHandlerInterface
       $context->setGroups('kafka');
       $content = $item;
       $topic = $this->topics['calendars'];
+    } elseif ($item instanceof SecurityLogInterface) {
+      $content = $item;
+      $topic = $this->topics['security'];
     } else {
       $topic = 'default';
       $content = $item;
@@ -196,9 +201,10 @@ class KafkaService implements ScheduledActionHandlerInterface
 
     $data['event_id'] = Uuid::uuid4()->toString();
     $date = new DateTime();
-    $data['event_created_at'] = $date->format(DateTime::W3C);
+    $data['event_created_at'] = $date->format(DateTimeInterface::W3C);
     $data['event_version'] = $this->kafkaEventVersion;
     $data['app_version'] = $this->versionService->getVersion();
+    $data['app_id'] = 'symfony-core:' . $this->versionService->getVersion();
 
     $data = json_encode($data);
     $params = [
@@ -209,6 +215,7 @@ class KafkaService implements ScheduledActionHandlerInterface
     try {
       $this->sendMessage($params);
     } catch (\Exception $e) {
+      dd($e);
       $this->logger->error($e->getMessage());
       $this->produceMessageAsync($params);
     }

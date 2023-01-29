@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\AdminUser;
 use App\Entity\User;
+use App\Services\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Symfony\Component\Console\Command\Command;
@@ -19,22 +20,23 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
  */
 class AdministratorCreateCommand extends Command
 {
-  /** @var EntityManagerInterface */
-  private $entityManager;
+  private EntityManagerInterface $entityManager;
 
-  /** @var UserPasswordEncoderInterface */
-  private $passwordEncoder;
+  private UserPasswordEncoderInterface $passwordEncoder;
+  private UserManager $userManager;
 
   /**
    * AdministratorCreateCommand constructor.
    * @param EntityManagerInterface $entityManager
    * @param UserPasswordEncoderInterface $passwordEncoder
    */
-  public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
+  public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder, UserManager $userManager)
   {
     $this->entityManager = $entityManager;
     $this->passwordEncoder = $passwordEncoder;
+    $this->userManager = $userManager;
     parent::__construct();
+
   }
 
   protected function configure()
@@ -115,13 +117,12 @@ class AdministratorCreateCommand extends Command
           $password
         )
       );
-      $this->entityManager->persist($user);
-      $this->entityManager->flush();
+      $this->userManager->save($user);
       $output->writeln('Ok: generato nuovo admin');
       return 0;
     } catch (Exception $e) {
       $output->writeln('Errore: '.$e->getMessage());
-      return 0;
+      return 1;
     }
   }
 

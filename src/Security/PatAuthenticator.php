@@ -5,9 +5,7 @@ namespace App\Security;
 use App\Dto\UserAuthenticationData;
 use App\Entity\CPSUser;
 use App\Services\InstanceService;
-use App\Services\Metrics\UserMetrics;
 use App\Services\UserSessionService;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -23,18 +21,12 @@ class PatAuthenticator extends AbstractAuthenticator
   private $instanceService;
 
   /**
-   * @var UserMetrics
-   */
-  private $userMetrics;
-
-  /**
    * OpenLoginAuthenticator constructor.
    * @param UrlGeneratorInterface $urlGenerator
    * @param array $shibboletServerVarNames
    * @param $loginRoute
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
-   * @param MetricsCollectorInterface $userMetrics
    * @param JWTTokenManagerInterface $JWTTokenManager
    */
   public function __construct(
@@ -43,14 +35,12 @@ class PatAuthenticator extends AbstractAuthenticator
     $loginRoute,
     UserSessionService $userSessionService,
     InstanceService $instanceService,
-    MetricsCollectorInterface $userMetrics,
     JWTTokenManagerInterface $JWTTokenManager
   ) {
     $this->urlGenerator = $urlGenerator;
     $this->shibboletServerVarNames = $shibboletServerVarNames;
     $this->loginRoute = $loginRoute;
     $this->userSessionService = $userSessionService;
-    $this->userMetrics = $userMetrics;
     $this->instanceService = $instanceService;
     $this->JWTTokenManager = $JWTTokenManager;
   }
@@ -143,7 +133,6 @@ class PatAuthenticator extends AbstractAuthenticator
         'spidLevel' => $request->server->get($this->shibboletServerVarNames['spidLevel'] ?? ''),
       ];
 
-      $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], $data['spidLevel']);
       return UserAuthenticationData::fromArray($data);
     }
 
@@ -166,7 +155,6 @@ class PatAuthenticator extends AbstractAuthenticator
         'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex'])
       ];
 
-      $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], '');
       return UserAuthenticationData::fromArray($data);
     }
 
@@ -184,7 +172,6 @@ class PatAuthenticator extends AbstractAuthenticator
         'sessionIndex' => $request->server->get($this->shibboletServerVarNames['shibSessionIndex']),
       ];
 
-      $this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-pat', $data['authenticationMethod'], '');
       return UserAuthenticationData::fromArray($data);
     }
 

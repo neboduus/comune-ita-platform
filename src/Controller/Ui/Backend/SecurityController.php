@@ -37,23 +37,12 @@ class SecurityController extends AbstractController
 {
   use TargetPathTrait;
 
-  /** @var MailerService  */
-  private $mailer;
-
-  /** @var ParameterBagInterface  */
-  private $params;
-
-  /** @var InstanceService */
-  private $instanceService;
-
-  /** @var RouterInterface */
-  private $router;
-
-  /** @var UserManager */
-  private $userManager;
-
-  /** @var TranslatorInterface */
-  private $translator;
+  private MailerService $mailer;
+  private ParameterBagInterface $params;
+  private InstanceService $instanceService;
+  private RouterInterface $router;
+  private UserManager $userManager;
+  private TranslatorInterface $translator;
 
   /**
    * SecurityController constructor.

@@ -41,16 +41,12 @@
 | SINGLE_LOGOUT_URL          | No       | /Shibboleth.sso/Logout              | Url a cui rendirizzare dopo il logout
 | BROWSERS_RESTRICTIONS      | No       | null                                |
 | CACHE_MAX_AGE              | No       | 0                                   | Valore degli header `cache-control` restituiti dai path che consentono il caching
-| METRICS_TYPE               | No       | in_memory                           | Alternativa: redis
-| METRICS_REDIS_HOST         | No       | redis                               |
-| METRICS_REDIS_PORT         | No       | 6379                                |
-| METRICS_REDIS_PASSWORD     | No       | ~                                   |
 | UPLOAD_DESTINATION         | No       | local_filesystem                    | Destinazione dei file caricati dagli utenti del sistema. Alternativa: s3_filesystem e allora richiede le variabili S3_** per dettagliare le configurazioni    |
-| S3_REGION     	           | No       | eu-west-1                           |
+| S3_REGION     	            | No       | eu-west-1                           |
 | S3_KEY                     | No       |                                     |
 | S3_SECRET                  | No       |                                     |
 | S3_BUCKET                  | No       | test                                |
-| KAFKA_BROKERS		           | No       |                                     | Lista dei broker di kafka, necessaria per i check sui pagamenti
+| KAFKA_BROKERS		            | No       |                                    | Lista dei broker di kafka, necessaria per i check sui pagamenti
 | KAFKA_URL                  | No       | null                                | Se configurato, gli eventi delle entità dell'applicativo vengono inviati al server Kafka
 | KAFKA_EVENT_VERSION        | No       | 1                                   | Versione dell'API che determina il formato dell'evento Kafka                                                                                                  |
 | KAFKA_TOPIC_APPLICATIONS   | No       | applications                        | Nome del topic a cui vengono inviati gli eventi relativi alle Pratiche                                                                                        |
@@ -58,7 +54,10 @@
 | KAFKA_TOPIC_PAYMENTS       | No       | payments                            | Nome del topic a cui vengono inviati gli eventi relativi ai Payments                                                                                          |
 | API_VERSION                | No       | 1                                   | Versione delle API service in caso non venga specificato                                                                                                      |
 | SKIP_CACHE_WARMUP	         | No       | false                               | Salta la creazione anticipata della cache all'avvio del container                                                                                             |
-| SIGNATURE_CHECK_WS_URL	   | No       | null                                | Url del microservizio per la verifica dei file firmati                                                               |
+| SIGNATURE_CHECK_WS_URL	    | No       | null                               | Url del microservizio per la verifica dei file firmati                                                                                                        |
+| IP_INFO_WS_URL	            | No       | null                               | Url del microservizio per recupero di informazioni da ip                                                                                                      |
+| DEFAULT_CACHE_REDIS_PROVIDER| No       | null                               | Provider della cache redis espresso in DSN. Es: redis://redis:6379                                                                                            |
+
 
 ## Grafica generale
 
