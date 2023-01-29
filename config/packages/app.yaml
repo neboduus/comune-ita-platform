@@ -104,10 +104,6 @@ parameters:
   browsers_restrictions: '%env(BROWSERS_RESTRICTIONS)%'
   io_api_url: '%env(IO_API_URL)%'
   cache_max_age: '%env(CACHE_MAX_AGE)%'
-  metrics_type: '%env(METRICS_TYPE)%'
-  metrics_redis_host: '%env(METRICS_REDIS_HOST)%'
-  metrics_redis_port: 6379
-  metrics_redis_password: '%env(METRICS_REDIS_PASSWORD)%'
   upload_destination: '%env(UPLOAD_DESTINATION)%'
   s3_region: '%env(S3_REGION)%'
   s3_key: '%env(S3_KEY)%'
@@ -125,6 +121,7 @@ parameters:
     services: '%env(KAFKA_TOPIC_SERVICES)%'
     meetings: '%env(KAFKA_TOPIC_MEETINGS)%'
     calendars: '%env(KAFKA_TOPIC_CALENDARS)%'
+    security: '%env(KAFKA_TOPIC_SECURITY)%'
   api_version: 1
   cas_login_url: https://mycasserver/cas/
   cas_validation_url: https://mycasserver/cas/serviceValidate
@@ -149,6 +146,7 @@ parameters:
   google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
   google_tag_manager_key: '%env(GOOGLE_TAG_MANAGER_KEY)%'
   signature_check_ws_url: '%env(SIGNATURE_CHECK_WS_URL)%'
+  ip_info_ws_url: '%env(IP_INFO_WS_URL)%'
   env(PREFIX): ''
   env(DB_DRIVER): pdo_pgsql
   env(DB_HOST): postgres
@@ -227,10 +225,6 @@ parameters:
     Safari,10|Firefox,50|Opera,50|Vivaldi,1|Yandex,10|Internet Explorer,11
   env(IO_API_URL): https://api.io.italia.it/api/v1
   env(CACHE_MAX_AGE): '0'
-  env(METRICS_TYPE): in_memory
-  env(METRICS_REDIS_HOST): redis
-  env(METRICS_REDIS_PORT): 6379
-  env(METRICS_REDIS_PASSWORD): null
   env(UPLOAD_DESTINATION): local_filesystem
   env(S3_REGION): eu-west-1
   env(S3_KEY): ''
@@ -244,6 +238,7 @@ parameters:
   env(KAFKA_TOPIC_SERVICES): services
   env(KAFKA_TOPIC_MEETINGS): meetings
   env(KAFKA_TOPIC_CALENDARS): calendars
+  env(KAFKA_TOPIC_SECURITY): security
   env(API_VERSION): 1
   env(MYPAY_ADAPTER_URL): https://mypay-dev.ship.opencontent.io
   env(ANALYTICS_PLAN): free
@@ -253,3 +248,4 @@ parameters:
   env(MAILER_URL): smtp://mailserver:1025
   env(GOOGLE_TAG_MANAGER_KEY): null
   env(SIGNATURE_CHECK_WS_URL): null
+  env(IP_INFO_WS_URL): null

@@ -136,7 +136,7 @@ services:
       shibb_Shib-Authentication-Instant: 2000-01-01T00-00Z
       #shibb_Shib-AuthnContext-Class: urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard
       GOOGLE_TAG_MANAGER_KEY: ${GOOGLE_TAG_MANAGER_KEY:-}
-
+      DEFAULT_CACHE_REDIS_PROVIDER: ${DEFAULT_CACHE_REDIS_PROVIDER:-redis://redis:6379}
   cron:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
     build: .
@@ -263,5 +263,8 @@ services:
       traefik.enable: 'true'
       traefik.http.services.mailserver.loadbalancer.server.port: 8025
       traefik.http.routers.mailserver.rule: 'Host(`mail.localtest.me`)'
+
+  redis:
+    image: redis:5-alpine
 
 

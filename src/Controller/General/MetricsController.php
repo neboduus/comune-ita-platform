@@ -3,7 +3,6 @@
 namespace App\Controller\General;
 
 use App\InstancesProvider;
-use Artprima\PrometheusMetricsBundle\Metrics\Renderer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,27 +14,13 @@ class MetricsController extends AbstractController
 {
 
   /**
-   * @var Renderer
-   */
-  private $metricsRenderer;
-
-  /**
-   * MetricsController constructor.
-   * @param Renderer $metricsRenderer
-   */
-  public function __construct(Renderer $metricsRenderer)
-  {
-    $this->metricsRenderer = $metricsRenderer;
-  }
-
-  /**
    * @Route("/metrics", name="sdc_metrics")
    *
    * @return Response
    */
   public function metricsAction()
   {
-    return $this->metricsRenderer->renderResponse();
+    return new JsonResponse([]);
   }
 
   /**

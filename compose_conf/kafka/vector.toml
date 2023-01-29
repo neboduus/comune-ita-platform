@@ -27,6 +27,11 @@ type = "filter"
 inputs = [ "http-messages" ]
 condition =  '.path == "/calendars"'
 
+[transforms.security-msg]
+type = "filter"
+inputs = [ "http-messages" ]
+condition =  '.path == "/security"'
+
 
 [sinks.applications]
 type = "kafka"
@@ -64,10 +69,11 @@ compression = "none"
 topic = "calendars"
 key_field = "id"
 
-
-
-#[sinks.debug]
-#type = "console"
-#inputs = [ "application-msg" ]
-#target = "stdout"
-#encoding = "json"
+[sinks.security]
+type = "kafka"
+bootstrap_servers = "kafka:9092"
+inputs = [ "security-msg" ]
+encoding = "json"
+compression = "none"
+topic = "security"
+key_field = "action"

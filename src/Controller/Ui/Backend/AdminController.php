@@ -274,8 +274,7 @@ class AdminController extends AbstractController
       );
 
       $this->userManager->resetPassword($operatoreUser);
-      $em->persist($operatoreUser);
-      $em->flush();
+      $this->userManager->save($operatoreUser);
 
       $this->addFlash('feedback', $this->translator->trans('admin.create_operator_notify'));
 
@@ -357,9 +356,7 @@ class AdminController extends AbstractController
   public function deleteOperatoreAction(Request $request, OperatoreUser $operatoreUser): RedirectResponse
   {
     try {
-      $em = $this->getDoctrine()->getManager();
-      $em->remove($operatoreUser);
-      $em->flush();
+      $this->userManager->remove($operatoreUser);
       $this->addFlash('feedback', $this->translator->trans('admin.delete_operator_notify'));
 
       return $this->redirectToRoute('admin_operatore_index');

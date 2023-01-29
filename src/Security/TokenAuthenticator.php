@@ -6,7 +6,6 @@ use App\Dto\UserAuthenticationData;
 use App\Entity\CPSUser;
 use App\Services\InstanceService;
 use App\Services\UserSessionService;
-use Artprima\PrometheusMetricsBundle\Metrics\MetricsCollectorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -30,11 +29,6 @@ class TokenAuthenticator extends AbstractAuthenticator
    */
   private $instanceService;
 
-  /**
-   * @var MetricsCollectorInterface
-   */
-  private $userMetrics;
-
   private $userdata = [];
   /**
    * @var LoggerInterface
@@ -51,7 +45,6 @@ class TokenAuthenticator extends AbstractAuthenticator
    * @param $loginRoute
    * @param UserSessionService $userSessionService
    * @param InstanceService $instanceService
-   * @param MetricsCollectorInterface $userMetrics
    * @param JWTTokenManagerInterface $JWTTokenManager
    * @param LoggerInterface $logger
    */
@@ -60,7 +53,6 @@ class TokenAuthenticator extends AbstractAuthenticator
     $loginRoute,
     UserSessionService $userSessionService,
     InstanceService $instanceService,
-    MetricsCollectorInterface $userMetrics,
     JWTTokenManagerInterface $JWTTokenManager,
     LoggerInterface $logger,
     EntityManagerInterface $entityManager
@@ -71,7 +63,6 @@ class TokenAuthenticator extends AbstractAuthenticator
     $this->loginRoute = $loginRoute;
     $this->userSessionService = $userSessionService;
     $this->instanceService = $instanceService;
-    $this->userMetrics = $userMetrics;
     $this->JWTTokenManager = $JWTTokenManager;
     $this->logger = $logger;
     $this->entityManager = $entityManager;
@@ -134,8 +125,6 @@ class TokenAuthenticator extends AbstractAuthenticator
       'instant' => $dateTimeObject->format(DATE_ISO8601),
       'sessionIndex' => '',
     ];
-
-    //$this->userMetrics->incLoginSuccess($this->instanceService->getCurrentInstance()->getSlug(), 'login-open', $data['authenticationMethod'], $data['spidLevel']);
 
     return UserAuthenticationData::fromArray($data);
   }

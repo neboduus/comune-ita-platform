@@ -292,7 +292,6 @@ services:
       - "%login_route%"
       - '@App\Services\UserSessionService'
       - '@ocsdc.instance_service'
-      - '@App\Services\Metrics\UserMetrics'
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
 
   ocsdc.openlogin.authenticator:
@@ -302,7 +301,6 @@ services:
       - "%login_route%"
       - '@App\Services\UserSessionService'
       - '@ocsdc.instance_service'
-      - '@App\Services\Metrics\UserMetrics'
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
 
   ocsdc.dedalogin.authenticator:
@@ -312,7 +310,6 @@ services:
       - "%login_route%"
       - '@App\Services\UserSessionService'
       - '@ocsdc.instance_service'
-      - '@App\Services\Metrics\UserMetrics'
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
       - "@session"
 
@@ -323,7 +320,6 @@ services:
       - "%login_route%"
       - '@App\Services\UserSessionService'
       - '@ocsdc.instance_service'
-      - '@App\Services\Metrics\UserMetrics'
       - '@Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface'
       - "%cas_login_url%"
       - "%cas_validation_url%"
@@ -333,7 +329,6 @@ services:
     class: App\Security\TokenAuthenticator
     arguments:
       $loginRoute: "%login_route%"
-      $userMetrics: '@App\Services\Metrics\UserMetrics'
 
   App\Security\DedaLogin\DedaLoginClient:
     public: true
@@ -918,22 +913,6 @@ services:
     class: App\Security\LogoutSuccessHandler
     arguments: [ '@router', "%single_logout_url%" ]
 
-
-  App\Services\Metrics\ApplicationMetrics:
-    autowire: true
-    tags:
-      - { name: prometheus_metrics_bundle.metrics_collector }
-
-  App\Services\Metrics\ScheduledActionMetrics:
-    autowire: true
-    tags:
-      - { name: prometheus_metrics_bundle.metrics_collector }
-
-  App\Services\Metrics\UserMetrics:
-    autowire: true
-    tags:
-      - { name: prometheus_metrics_bundle.metrics_collector }
-
   App\Security\Voters\AttachmentVoter:
     arguments:
       $hashValidity: '%hash_validity%'
@@ -973,3 +952,7 @@ services:
     arguments:
       $host: "%ocsdc_host%"
       $scheme: "%ocsdc_scheme%"
+
+  App\Logging\SecurityLogFactory:
+    arguments:
+      $ipInfoWsUrl: "%ip_info_ws_url%"

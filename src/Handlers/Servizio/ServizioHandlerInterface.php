@@ -2,7 +2,6 @@
 
 namespace App\Handlers\Servizio;
 
-use App\Entity\Ente;
 use App\Entity\Servizio;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +15,6 @@ interface ServizioHandlerInterface
 
   /**
    * @param Servizio $servizio
-   * @param Ente $ente
    * @return Response
    * @throws \Exception
    */
