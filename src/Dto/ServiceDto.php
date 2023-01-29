@@ -34,7 +34,6 @@ class ServiceDto extends AbstractDto
    */
   private $versionService;
 
-
   /**
    * @param RouterInterface $router
    */
@@ -198,6 +197,7 @@ class ServiceDto extends AbstractDto
 
     $service->setCreatedAt($servizio->getCreatedAt());
     $service->setUpdatedAt($servizio->getUpdatedAt());
+    $service->setSatisfyEntrypointId($servizio->getSatisfyEntrypointId());
 
     return $service;
   }
@@ -290,8 +290,8 @@ class ServiceDto extends AbstractDto
     }
 
     $entity->setSource($service->getSource());
-
     $entity->setFeedbackMessages($this->normalizeFeedbackMessages($service->getFeedbackMessages()));
+    $entity->setSatisfyEntrypointId($service->getSatisfyEntrypointId());
 
     return $entity;
   }

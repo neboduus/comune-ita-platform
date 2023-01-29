@@ -44,6 +44,7 @@ class TenantType extends AbstractType
       ->add('site_url', TextType::class, ['label' => false])
       ->add('meta', TextareaType::class, ['empty_data' => ""])
       ->add('io_enabled', CheckboxType::class)
+      ->add('satisfy_entrypoint_id', TextType::class, ['label' => false, 'required' => false])
       ->add('gateways', CollectionType::class, [
         'entry_type' => GatewayType::class,
         'allow_add' => true,

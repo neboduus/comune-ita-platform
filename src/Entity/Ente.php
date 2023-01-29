@@ -168,6 +168,11 @@ class Ente implements Translatable
    */
   private $locale;
 
+  /**
+   * @var string
+   * @ORM\Column(type="text", nullable=true)
+   */
+  private $satisfyEntrypointId;
 
   /**
    * Ente constructor.
@@ -685,6 +690,27 @@ class Ente implements Translatable
   public function setTranslatableLocale($locale)
   {
     $this->locale = $locale;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSatisfyEntrypointId(): ?string
+  {
+    return $this->satisfyEntrypointId;
+  }
+
+  /**
+   * @param string|null $satisfyEntrypointId
+   */
+  public function setSatisfyEntrypointId(?string $satisfyEntrypointId): void
+  {
+    $this->satisfyEntrypointId = $satisfyEntrypointId;
+  }
+
+  public function isSatisfyEnabled(): bool
+  {
+    return isset($this->satisfyEntrypointId);
   }
 
   public static function fromEntity(Ente $ente)

@@ -137,6 +137,8 @@ services:
       #shibb_Shib-AuthnContext-Class: urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard
       GOOGLE_TAG_MANAGER_KEY: ${GOOGLE_TAG_MANAGER_KEY:-}
       DEFAULT_CACHE_REDIS_PROVIDER: ${DEFAULT_CACHE_REDIS_PROVIDER:-redis://redis:6379}
+      SATISFY_WIDGET_URL: ${SATISFY_WIDGET_URL:-https://satisfy.opencontent.it/widget.js}
+
   cron:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
     build: .

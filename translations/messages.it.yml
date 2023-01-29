@@ -2751,6 +2751,9 @@ ente:
   password_certifcato: 'Password certificato'
   app_io: 'Abilita App IO?'
   backoffices: 'Abilita integrazione con i backoffice'
+  satisfy_entrypoint_id: 'Entry point verifica della soddisfazione utente'
+  satisfy_enabled: 'Abilita verifica della soddisfazione utente'
+  satisfy_entrypoint_id_empty: 'Per abilitare correttamente la verifica della soddisfazione utente è necessario impostare un entry point id valido'
   mailers:
     title: 'Configurazione mailers'
     helper: "Non sono ancora stati impostati mailer per l'ente, i messaggi verranno inviati via e-mail dall'indirizzo di default dal sistema."
