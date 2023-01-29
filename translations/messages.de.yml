@@ -2613,6 +2613,9 @@ ente:
   password_certifcato: 'Passwort Zertifikat'
   app_io: 'IO-App aktivieren'
   backoffices: 'BACKOFFICE'
+  satisfy_entrypoint_id: ''
+  satisfy_enabled: ''
+  satisfy_entrypoint_id_empty: ''
   mailers:
     title: 'BACKOFFICE'
     helper: "BACKOFFICE"

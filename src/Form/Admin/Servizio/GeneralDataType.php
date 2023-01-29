@@ -267,6 +267,14 @@ class GeneralDataType extends AbstractI18nType
           'required' => false,
         ]
       )
+      ->add(
+        'satisfyEntrypointId',
+        TextType::class,
+        [
+          'label' => 'ente.satisfy_entrypoint_id',
+          'required' => false
+        ]
+      )
       ;
 
     if ($this->featureManager->isActive('feature_service_identifier')) {

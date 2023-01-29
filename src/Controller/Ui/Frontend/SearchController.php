@@ -4,6 +4,7 @@ namespace App\Controller\Ui\Frontend;
 
 use App\Entity\Servizio;
 use App\Services\BreadcrumbsService;
+use App\Services\InstanceService;
 use App\Services\Manager\ServiceManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -35,16 +36,25 @@ class SearchController extends AbstractController
    */
   private $breadcrumbsService;
 
+  /** @var InstanceService */
+  private $instanceService;
+
   /**
    * @param EntityManagerInterface $entityManager
    * @param ServiceManager $serviceManager
    * @param BreadcrumbsService $breadcrumbsService
+   * @param InstanceService $instanceService
    */
-  public function __construct(EntityManagerInterface $entityManager, ServiceManager $serviceManager, BreadcrumbsService $breadcrumbsService)
+  public function __construct(
+    EntityManagerInterface $entityManager,
+    ServiceManager $serviceManager,
+    BreadcrumbsService $breadcrumbsService,
+    InstanceService $instanceService)
   {
     $this->entityManager = $entityManager;
     $this->serviceManager = $serviceManager;
     $this->breadcrumbsService = $breadcrumbsService;
+    $this->instanceService = $instanceService;
   }
 
   /**
@@ -74,7 +84,8 @@ class SearchController extends AbstractController
     return $this->render('Default/search.html.twig', [
       'services' => $services,
       'facets' => $facets,
-      'filters' => $filters
+      'filters' => $filters,
+      'ente' => $this->instanceService->getCurrentInstance()
     ]);
   }
 }

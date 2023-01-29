@@ -2544,6 +2544,9 @@ ente:
   password_certifcato: 'Certificate password'
   app_io: 'Enable App IO?'
   backoffices: 'backoffices'
+  satisfy_entrypoint_id: 'Entry point user satisfaction'
+  satisfy_enabled: 'Enable user satisfaction'
+  satisfy_entrypoint_id_empty: 'For enabling user satisfaction a valid entry point id is required'
   mailers:
     title: 'title'
     helper: "helper"

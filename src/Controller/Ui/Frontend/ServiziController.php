@@ -107,7 +107,7 @@ class ServiziController extends AbstractController
   public function serviziAction(Request $request)
   {
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.servizi', 'servizi_list');
-
+    
     $services = $this->getServices($request);
     $topics = $this->getServicesByCategories();
     $response = $this->render('Servizi/servizi.html.twig', [
@@ -347,6 +347,7 @@ class ServiziController extends AbstractController
       'categories' => $topics,
       'children' => $children,
       'services' => $result,
+      'ente' => $this->instanceService->getCurrentInstance()
     ]);
 
     return $response;

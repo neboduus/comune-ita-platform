@@ -505,6 +505,13 @@ class Service
   private $updatedAt;
 
   /**
+   * @Serializer\Type("string")
+   * @OA\Property(description="Entry point for user satisfaction")
+   * @Groups({"read","write"})
+   */
+  private $satisfyEntrypointId;
+
+  /**
    * @return mixed
    */
   public function getId()
@@ -1540,7 +1547,7 @@ class Service
 
   /**
    * Get the value of appVersion
-   */ 
+   */
   public function getAppVersion()
   {
     return $this->appVersion;
@@ -1550,11 +1557,27 @@ class Service
    * Set the value of appVersion
    *
    * @return  self
-   */ 
+   */
   public function setAppVersion($appVersion)
   {
     $this->appVersion = $appVersion;
 
     return $this;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getSatisfyEntrypointId()
+  {
+    return $this->satisfyEntrypointId;
+  }
+
+  /**
+   * @param mixed $satisfyEntrypointId
+   */
+  public function setSatisfyEntrypointId($satisfyEntrypointId): void
+  {
+    $this->satisfyEntrypointId = $satisfyEntrypointId;
   }
 }

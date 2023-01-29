@@ -173,7 +173,12 @@ class ServizioFormType extends AbstractType
       ])
       ->add('allow_withdraw')
       ->add('external_card_url')
-      ->add('feedback_messages', FeedbackMessagesFormType::class);
+      ->add('feedback_messages', FeedbackMessagesFormType::class)
+      ->add('satisfy_entrypoint_id', TextType::class, [
+          'label' => false,
+          'required' => false
+      ])
+    ;
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
@@ -207,13 +212,13 @@ class ServizioFormType extends AbstractType
     }
 
     // se mando un payload con data di attivazione/cessazione e il servizio non è programmato restituisco un errore
-    $status = isset($data['status']) ? $data['status'] : $service->getStatus(); 
+    $status = isset($data['status']) ? $data['status'] : $service->getStatus();
     if ($status != Servizio::STATUS_SCHEDULED && (isset($data['scheduled_from']) && $data['scheduled_from'] || isset($data['scheduled_to']) && $data['scheduled_to'])) {
       $event->getForm()->addError(new FormError($this->translator->trans('general.scheduled.from_to_not_null')));
-    } 
+    }
 
     // se mando un payload con data di attivazione/cessazione non valorizzati e il servizio è programmato restituisco un errore
-    if ($status == Servizio::STATUS_SCHEDULED && (!isset($data['scheduled_from']) || !isset($data['scheduled_to']))) {
+    if (isset($data['status']) && $data['status'] == Servizio::STATUS_SCHEDULED && (!isset($data['scheduled_from']) || !isset($data['scheduled_to']))) {
       $event->getForm()->addError(new FormError($this->translator->trans('general.scheduled.from_to_null')));
     }
 
@@ -225,7 +230,7 @@ class ServizioFormType extends AbstractType
 
     $event->setData($data);
     $event->getForm()->setData($service);
-  
+
   }
 
   /**

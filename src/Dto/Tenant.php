@@ -86,6 +86,12 @@ class Tenant
    */
   private $linkableApplicationMeetings;
 
+  /**
+   * @Serializer\Type("string")
+   * @OA\Property(description="Configure entry point for user satisfaction")
+   * @Groups({"read", "write"})
+   */
+  private $satisfyEntrypointId;
 
   /**
    * @return mixed
@@ -240,6 +246,22 @@ class Tenant
   }
 
   /**
+   * @return mixed
+   */
+  public function getSatisfyEntrypointId()
+  {
+    return $this->satisfyEntrypointId;
+  }
+
+  /**
+   * @param mixed $satisfyEntrypointId
+   */
+  public function setSatisfyEntrypointId($satisfyEntrypointId): void
+  {
+    $this->satisfyEntrypointId = $satisfyEntrypointId;
+  }
+
+  /**
    * @param TenantEntity $tenant
    * @return Tenant
    */
@@ -255,6 +277,7 @@ class Tenant
     $dto->gateways = [];
     $dto->backofficeEnabledIntegrations = $tenant->getBackofficeEnabledIntegrations();
     $dto->linkableApplicationMeetings = $tenant->isLinkableApplicationMeetings();
+    $dto->satisfyEntrypointId = $tenant->getSatisfyEntrypointId();
 
     foreach ($tenant->getGateways() as $gateway) {
       $g = new Gateway();
@@ -283,6 +306,7 @@ class Tenant
     $entity->setIOEnabled($this->ioEnabled);
     $entity->setGateways($this->gateways);
     $entity->setBackofficeEnabledIntegrations($this->backofficeEnabledIntegrations);
+    $entity->setSatisfyEntrypointId($this->satisfyEntrypointId);
 
     if (!in_array(CalendarsBackOffice::PATH, $entity->getBackofficeEnabledIntegrations())) {
       // disable if integration is not set
@@ -315,5 +339,6 @@ class Tenant
     }
     return $data;
   }
+
 
 }

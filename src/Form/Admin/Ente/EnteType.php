@@ -18,12 +18,14 @@ use App\Payment\GatewayCollection;
 use App\Payment\PaymentDataInterface;
 use App\Services\BackOfficeCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use phpDocumentor\Reflection\Types\String_;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -222,6 +224,18 @@ class EnteType extends AbstractI18nType
       'allow_delete' => true
     ]);
 
+    $builder->add('is_satisfy_enabled', CheckboxType::class, [
+      'label' => 'ente.satisfy_enabled',
+      'data' => $ente->isSatisfyEnabled(),
+      "mapped" => false,
+      'required' => false
+    ]);
+
+    $builder->add('satisfy_entrypoint_id', TextType::class, [
+      'label' => 'ente.satisfy_entrypoint_id',
+      'required' => false
+    ]);
+
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
 
@@ -256,6 +270,15 @@ class EnteType extends AbstractI18nType
     }
     $ente->setGateways($gateways);
 
+    if(!isset($data['is_satisfy_enabled']) or !$data['is_satisfy_enabled']) {
+      $data['satisfy_entrypoint_id'] = null;
+      $event->setData($data);
+    } elseif(!isset($data['satisfy_entrypoint_id']) or !$data['satisfy_entrypoint_id']){
+      $event->getForm()->addError(
+        new FormError($this->translator->trans('ente.satisfy_entrypoint_id_empty'))
+      );
+    }
+
     $this->em->persist($ente);
   }
 
@@ -272,4 +295,5 @@ class EnteType extends AbstractI18nType
   {
     return 'ente';
   }
+
 }

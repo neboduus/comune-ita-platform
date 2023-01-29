@@ -145,6 +145,7 @@ parameters:
     plan: '%env(ANALYTICS_PLAN)%'
   google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
   google_tag_manager_key: '%env(GOOGLE_TAG_MANAGER_KEY)%'
+  satisfy_widget_url: '%env(SATISFY_WIDGET_URL)%'
   signature_check_ws_url: '%env(SIGNATURE_CHECK_WS_URL)%'
   ip_info_ws_url: '%env(IP_INFO_WS_URL)%'
   env(PREFIX): ''
@@ -247,5 +248,6 @@ parameters:
   env(JWT_PASSPHRASE): stanzadelcittadino
   env(MAILER_URL): smtp://mailserver:1025
   env(GOOGLE_TAG_MANAGER_KEY): null
+  env(SATISFY_WIDGET_URL): https://satisfy.opencontent.it/widget.js
   env(SIGNATURE_CHECK_WS_URL): null
   env(IP_INFO_WS_URL): null

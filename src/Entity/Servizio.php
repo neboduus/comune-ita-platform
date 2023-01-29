@@ -561,6 +561,13 @@ class Servizio implements Translatable
   private $locale;
 
   /**
+   * @var string
+   * @ORM\Column(type="string", length=255, nullable=true)
+   * @OA\Property(description="Entry point for user satisfaction")
+   */
+  private $satisfyEntrypointId;
+
+  /**
    * Servizio constructor.
    */
   public function __construct()
@@ -2202,5 +2209,21 @@ class Servizio implements Translatable
   public function isScheduled(): bool
   {
     return $this->status == self::STATUS_SCHEDULED;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSatisfyEntrypointId(): ?string
+  {
+    return $this->satisfyEntrypointId;
+  }
+
+  /**
+   * @param string|null $satisfyEntrypointId
+   */
+  public function setSatisfyEntrypointId(?string $satisfyEntrypointId): void
+  {
+    $this->satisfyEntrypointId = $satisfyEntrypointId;
   }
 }
