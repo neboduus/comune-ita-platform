@@ -12,7 +12,7 @@ class Origin
 
   private ?string $countryIso;
 
-  private bool $countryEu;
+  private ?bool $countryEu;
 
   private ?string $region;
 
@@ -93,7 +93,7 @@ class Origin
   /**
    * @return bool
    */
-  public function isCountryEu(): bool
+  public function isCountryEu(): ?bool
   {
     return $this->countryEu;
   }
@@ -101,7 +101,7 @@ class Origin
   /**
    * @param bool $countryEu
    */
-  public function setCountryEu(bool $countryEu): void
+  public function setCountryEu(?bool $countryEu): void
   {
     $this->countryEu = $countryEu;
   }
