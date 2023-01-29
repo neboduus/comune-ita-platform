@@ -108,24 +108,15 @@ class ServiziController extends AbstractController
   {
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.servizi', 'servizi_list');
 
-    switch ($this->instanceService->getCurrentInstance()->getNavigationType()) {
-      case Ente::NAVIGATION_TYPE_CATEGORIES:
-        $topics = $this->getServicesByCategories();
-        $response = $this->render('Servizi/serviziTopics.html.twig', [
-          'topics' => $topics,
-          'user' => $this->getUser()
-        ]);
-        break;
-
-      default:
-        $services = $this->getServices($request);
-        $response = $this->render('Servizi/servizi.html.twig', [
-          'sticky_services' => $services['sticky'],
-          'servizi' => $services['default'],
-          'user' => $this->getUser(),
-        ]);
-        break;
-    }
+    $services = $this->getServices($request);
+    $topics = $this->getServicesByCategories();
+    $response = $this->render('Servizi/servizi.html.twig', [
+      'sticky' => $services['sticky'],
+      'servizi' => $services['default'],
+      'servizi_count' => $services['count'],
+      'topics' => $topics,
+      'user' => $this->getUser(),
+    ]);
 
     return $response;
   }
@@ -409,11 +400,11 @@ class ServiziController extends AbstractController
     /** @var ServiceGroupRepository $servicesGroupRepository */
     $servicesGroupRepository = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup');
 
-    $stickyServices = $serviziRepository->findStickyAvailable();
-    $servizi = $serviziRepository->findNotStickyAvailable();
+    $stickyServices = $serviziRepository->findStickyAvailable($orderBy = 'updatedAt', $ascending = false, $limit = 6);
+    $servizi = $serviziRepository->findNotStickyAvailable($orderBy = 'updatedAt', $ascending = false, $limit = 3);
+    $servicesCount = $serviziRepository->getNotStickyCount();
 
-    $stickyservicesGroup = $servicesGroupRepository->findStickyAvailable();
-    $servicesGroup = $servicesGroupRepository->findNotStickyAvailable();
+    $servicesGroup = $servicesGroupRepository->findNotStickyAvailable($orderBy = 'updatedAt', $ascending = false, $limit = 3);
 
     $services = array();
     $sticky = array();
@@ -438,20 +429,13 @@ class ServiziController extends AbstractController
       $sticky[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
     }
 
-    /** @var ServiceGroup $item */
-    foreach ($stickyservicesGroup as $item) {
-      if ($item->getPublicServices()->count() > 0) {
-        $sticky[$item->getSlug() . '-' . $item->getId()]['type'] = 'group';
-        $sticky[$item->getSlug() . '-' . $item->getId()]['object'] = $item;
-      }
-    }
-
-    ksort($services);
-    ksort($sticky);
+    // ksort($services);
+    // ksort($sticky);
 
     return [
       'sticky' => $sticky,
-      'default' => $services
+      'default' => $services,
+      'count' => $servicesCount
     ];
 
   }

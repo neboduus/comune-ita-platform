@@ -193,7 +193,47 @@ class ServicesAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="If false grouped services are excluded from results"
    *  )
+   * 
+   * @OA\Parameter(
+   *      name="order_by",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
+   *      required=false,
+   *      description="Ordering parameter"
+   *  )
    *
+   * @OA\Parameter(
+   *      name="ascending",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="boolean"
+   *      ),
+   *      required=false,
+   *      description="Ascending or descending"
+   *  )
+   * 
+   * @OA\Parameter(
+   *      name="sticky",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="boolean"
+   *      ),
+   *      required=false,
+   *      description="Get sticky or not sticky services"
+   *  )
+   *
+   * @OA\Parameter(
+   *      name="limit",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="integer"
+   *      ),
+   *      required=false,
+   *      description="Limit the returned results"
+   *  )
+   * 
    * @OA\Response(
    *     response=200,
    *     description="Retrieve list of services",

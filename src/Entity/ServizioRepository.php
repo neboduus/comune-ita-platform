@@ -28,7 +28,10 @@ class ServizioRepository extends EntityRepository
         $results[$item->getSlug()]= $item;
       }
 
-      ksort($results);
+      if ($criteria['ascending']) {
+        ksort($results);
+      }    
+
       return $results;
     }
   }
@@ -95,7 +98,17 @@ class ServizioRepository extends EntityRepository
         ->andWhere('geographicAreas.id IN (:geographic_areas)')
         ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
-    $qb->orderBy('s.name', 'ASC');
+
+    // sticky
+    if ($criteria['sticky'] !== null) {
+      $qb->andWhere($criteria['sticky'] ? 's.sticky = true' : 's.sticky = false OR s.sticky IS NULL');
+    }
+
+    $qb->orderBy('s.' . $criteria['order_by'], $criteria['ascending'] ? 'ASC' : 'DESC');
+
+    if (isset($criteria['limit'])) {
+      $qb->setMaxResults($criteria['limit']);
+    }
 
     return $qb->getQuery()
       ->setHint(
@@ -168,7 +181,17 @@ class ServizioRepository extends EntityRepository
         ->andWhere('geographicAreas.id IN (:geographic_areas)')
         ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
-    $qb->orderBy('s.name', 'ASC');
+    
+    // sticky
+    if ($criteria['sticky'] != null) {
+      $qb->andWhere($criteria['sticky'] ? 's.sticky = true' : 's.sticky = false OR s.sticky IS NULL');
+    }
+
+    $qb->orderBy('s.' . $criteria['order_by'], $criteria['ascending'] ? 'ASC' : 'DESC');
+
+    if (isset($criteria['limit'])) {
+      $qb->setMaxResults($criteria['limit']);
+    }
 
     return $qb->getQuery()
       ->setHint(
@@ -191,14 +214,14 @@ class ServizioRepository extends EntityRepository
     return $this->findByCriteria($criteria);
   }
 
-  public function findStickyAvailable(int $limit = null)
+  public function findStickyAvailable(string $orderBy = 'name', bool $ascending = true, int $limit = null)
   {
     $qb = $this->createQueryBuilder('s')
       ->where('s.status NOT IN (:notAvailableStatues)')
       ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
       ->andWhere('s.sticky = true')
       ->andWhere('s.serviceGroup IS NULL')
-      ->orderBy('s.name', 'ASC');
+      ->orderBy('s.' . $orderBy, $ascending ? 'ASC' : 'DESC');
 
     if ($limit){
       $qb->setMaxResults($limit);
@@ -207,14 +230,18 @@ class ServizioRepository extends EntityRepository
     return $qb->getQuery()->getResult();
   }
 
-  public function findNotStickyAvailable()
+  public function findNotStickyAvailable(string $orderBy = 'name', bool $ascending = true, int $limit = null)
   {
     $qb = $this->createQueryBuilder('s')
       ->where('s.status NOT IN (:notAvailableStatues)')
       ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
       ->andWhere('s.sticky = false OR s.sticky IS NULL')
       ->andWhere('s.serviceGroup IS NULL')
-      ->orderBy('s.name', 'ASC');
+      ->orderBy('s.' . $orderBy, $ascending ? 'ASC' : 'DESC');
+
+    if ($limit){
+      $qb->setMaxResults($limit);
+    }
 
     return $qb->getQuery()->getResult();
   }
@@ -229,6 +256,18 @@ class ServizioRepository extends EntityRepository
       ->orderBy('s.name', 'ASC');
 
     return $qb->getQuery()->getResult();
+  }
+
+  public function getNotStickyCount()
+  {
+    $qb = $this->createQueryBuilder('s')
+      ->select('count(s.id)')
+      ->where('s.status NOT IN (:notAvailableStatues)')
+      ->setParameter('notAvailableStatues', [Servizio::STATUS_CANCELLED, Servizio::STATUS_PRIVATE])
+      ->andWhere('s.sticky = false OR s.sticky IS NULL')
+      ->andWhere('s.serviceGroup IS NULL');
+    
+    return $qb->getQuery()->getSingleScalarResult();
   }
 
 }

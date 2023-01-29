@@ -1,0 +1,72 @@
+<div class="bg-grey-card">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<h2 class="title-xxlarge mb-4 mt-5 mb-lg-10">{{ 'servizio.esplora_servizi' | trans }}</h2>
+			</div>
+
+			<div class="col-12 col-lg-8 pt-lg-50 pb-lg-50">
+				{{ include('Servizi/parts/_searchForm.html.twig') }}
+                <p class="mb-4">
+                    {% if servizi_count == 0 %}
+                        <i>{{ 'servizio.nessun_servizio_trovato' | trans }}</i>
+                    {% elseif servizi_count == 1 %}
+                        <strong>{{ servizi_count }}</strong>
+                        {{ 'servizio.n_servizi_trovati' | trans({'%servizi_trovati%': 'servizio trovato'}) }}
+                    {% else %}
+                        <strong>{{ servizi_count }}</strong>
+                        {{ 'servizio.n_servizi_trovati' | trans({'%servizi_trovati%': 'servizi trovati'}) }}
+                    {% endif %}
+                </p>
+                {% if servizi %}
+                    {% for servizio in servizi %}
+                        <div class="cmp-card-latest-messages mb-3 mb-30" data-bs-toggle="modal" data-bs-target="#" id="">
+                            <div class="card shadow-sm px-4 pt-4 pb-4 rounded">
+                                <div class="card-header border-0 p-0">
+                                    <a class="text-decoration-none title-xsmall-bold mb-2 category text-uppercase" href="{{ path('category_show', {'slug': servizio.object.topics.slug}) }}">
+                                        {{ servizio.object.topics.name }}
+                                    </a>
+                                </div>
+                                <div class="card-body p-0 my-2">
+                                    <h3 class="green-title-big t-primary mb-8">
+                                        <a href="{% if servizio.type == 'service' %}{{ path('servizi_show', {'slug': servizio.object.slug}) }}{% else %}{{ path('service_group_show', {'slug': servizio.object.slug}) }}{% endif %}" 
+                                        class="text-decoration-none" data-element="service-link">{{ servizio.object.name }}</a>
+                                    </h3>
+                                    {% if not servizio.object.shortDescription is same as(servizio.object.name) %}
+                                        <p class="text-paragraph">{{ servizio.object.shortDescription|abstract }}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <form action="{{ path('search') }}" method="get">
+                        <button type="submit" class="btn btn-outline-primary pt-15 pb-15 pl-90 pr-90 mb-30 mt-3 mb-lg-50 full-mb text-button">
+                            <span class="">{{ 'servizio.carica_altri_risultati' | trans }}</span>
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+
+			<div class="col-12 col-lg-4 pt-30 pt-lg-5 ps-lg-5 order-first order-md-last">
+                <div class="link-list-wrap">
+					<h2 class="title-xsmall-semi-bold ml-4">
+						<span>{{ 'servizio.servizi_in_evidenza' | trans }}</span>
+					</h2>
+                    {% if sticky %}
+                        {% for item in sticky %}
+                            <ul class="link-list t-primary">
+                                <li class="mb-3 mt-3">
+                                    <a class="list-item ps-0 title-medium" href="#">
+                                        <span>{{ item.object.name }}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        {% endfor %}
+                    {% else %}
+                        <p><i>{{ 'servizio.nessun_servizio_in_evidenza' | trans }}</i></p>
+                    {% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

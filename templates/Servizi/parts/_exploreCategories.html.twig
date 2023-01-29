@@ -1,0 +1,21 @@
+{% if topics %}
+	<div class="container py-5">
+		<h2 class="title-xxlarge mb-4">{{ 'servizio.esplora_per_categoria' | trans }}</h2>
+		<div class="row g-4">
+			{% for topic in topics %}		
+				<div class="col-md-6 col-xl-4">
+					<div class="cmp-card-simple card-wrapper pb-0 rounded border border-light">
+						<div class="card shadow-sm rounded">
+							<div class="card-body">
+								<a href="{{ path('category_show', {'slug': topic.object.slug}) }}" class="text-decoration-none" data-element="service-category-link">
+									<h3 class="card-title t-primary title-xlarge">{{ topic.object.name }}</h3>
+								</a>
+								<p class="titillium text-paragraph mb-0">{{ topic.object.description|abstract }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% endif %}
