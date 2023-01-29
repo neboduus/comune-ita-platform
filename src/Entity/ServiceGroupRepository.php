@@ -46,11 +46,14 @@ class ServiceGroupRepository extends EntityRepository
     }
 
     // sticky
-    if ($criteria['sticky'] !== null) {
+    if (isset($criteria['sticky'])) {
       $qb->andWhere($criteria['sticky'] ? 's.sticky = true' : 's.sticky = false OR s.sticky IS NULL');
     }
 
-    $qb->orderBy('s.' . $criteria['order_by'], $criteria['ascending'] ? 'ASC' : 'DESC');
+    if (isset($criteria['order_by'])) {
+      $sort = $criteria['ascending'] ? 'ASC' : 'DESC';
+      $qb->orderBy('s.' . $criteria['order_by'], $sort);
+    }
 
     if (isset($criteria['limit'])) {
       $qb->setMaxResults($criteria['limit']);

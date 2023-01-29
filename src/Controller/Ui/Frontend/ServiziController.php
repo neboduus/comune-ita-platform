@@ -401,11 +401,11 @@ class ServiziController extends AbstractController
     /** @var ServiceGroupRepository $servicesGroupRepository */
     $servicesGroupRepository = $this->getDoctrine()->getRepository('App\Entity\ServiceGroup');
 
-    $stickyServices = $serviziRepository->findStickyAvailable($orderBy = 'updatedAt', $ascending = false, $limit = 6);
-    $servizi = $serviziRepository->findNotStickyAvailable($orderBy = 'updatedAt', $ascending = false, $limit = 3);
+    $stickyServices = $serviziRepository->findStickyAvailable('updatedAt', false, 6);
+    $servizi = $serviziRepository->findNotStickyAvailable('updatedAt', false, 3);
     $servicesCount = $serviziRepository->getNotStickyCount();
 
-    $servicesGroup = $servicesGroupRepository->findNotStickyAvailable($orderBy = 'updatedAt', $ascending = false, $limit = 3);
+    $servicesGroup = $servicesGroupRepository->findNotStickyAvailable('updatedAt', false, 3);
 
     $services = array();
     $sticky = array();
