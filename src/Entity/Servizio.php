@@ -52,6 +52,7 @@ class Servizio implements Translatable
   const WORKFLOW_FORWARD = 1;
 
   const FORMIO_SERVICE_CLASS = '\App\Entity\FormIO';
+  const BUILTIN_SERVICE_CLASS = '\App\Entity\BuiltIn';
 
   /**
    * Hook timestampable behavior
@@ -548,7 +549,6 @@ class Servizio implements Translatable
   /**
    * @var string
    * @ORM\Column(type="string", length=255, nullable=true, unique=true)
-   * @Assert\Url
    * @OA\Property(description="Public service identifier")
    */
   private $identifier;
@@ -1098,10 +1098,12 @@ class Servizio implements Translatable
 
   /**
    * @param string|null $who
+   * @return Servizio
    */
-  public function setWho( $who )
+  public function setWho(?string $who): Servizio
   {
     $this->who = $who;
+    return $this;
   }
 
   /**
@@ -1209,10 +1211,12 @@ class Servizio implements Translatable
 
   /**
    * @param string|null $conditions
+   * @return Servizio
    */
-  public function setConditions(?string $conditions)
+  public function setConditions(?string $conditions): Servizio
   {
     $this->conditions = $conditions;
+    return $this;
   }
 
   /**
@@ -1678,11 +1682,13 @@ class Servizio implements Translatable
   }
 
   /**
-   * @param int $workflow
+   * @param int|null $workflow
+   * @return Servizio
    */
-  public function setWorkflow(?int $workflow)
+  public function setWorkflow(?int $workflow): Servizio
   {
     $this->workflow = $workflow;
+    return $this;
   }
 
 
@@ -1820,9 +1826,28 @@ class Servizio implements Translatable
     $this->locale = $locale;
   }
 
-  public function isLegacy()
+  /**
+   * @return bool
+   */
+  public function isLegacy(): bool
   {
-    return $this->getPraticaFCQN() != self::FORMIO_SERVICE_CLASS;
+    return !in_array($this->getPraticaFCQN(), [self::FORMIO_SERVICE_CLASS, self::BUILTIN_SERVICE_CLASS]);
+  }
+
+  /**
+   * @return bool
+   */
+  public function isBuiltIn(): bool
+  {
+    return $this->getPraticaFCQN() == self::BUILTIN_SERVICE_CLASS;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isFormio(): bool
+  {
+    return $this->getPraticaFCQN() == self::FORMIO_SERVICE_CLASS;
   }
 
   public function getFullName(): string
@@ -2198,8 +2223,11 @@ class Servizio implements Translatable
     return $this;
   }
 
-  public function isIdentifierImported(): bool
+  public function isIdentifierReadonly(): bool
   {
+    if ($this->getPraticaFCQN() == self::BUILTIN_SERVICE_CLASS) {
+      return true;
+    }
     if ($this->source && $this->source->getIdentifier()) {
       return true;
     }

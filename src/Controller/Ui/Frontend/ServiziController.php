@@ -107,7 +107,7 @@ class ServiziController extends AbstractController
   public function serviziAction(Request $request)
   {
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem('nav.servizi', 'servizi_list');
-    
+
     $services = $this->getServices($request);
     $topics = $this->getServicesByCategories();
     $response = $this->render('Servizi/servizi.html.twig', [
@@ -207,7 +207,6 @@ class ServiziController extends AbstractController
   public function accessAction(Request $request, Servizio $servizio)
   {
     $handler = $this->servizioHandlerRegistry->getByName($servizio->getHandler());
-
     try {
       $handler->canAccess($servizio);
     } catch (ForbiddenAccessException $e) {
@@ -218,12 +217,10 @@ class ServiziController extends AbstractController
     try {
       return $handler->execute($servizio);
     } catch (ForbiddenAccessException $e) {
-
       $this->saveTargetPath($request->getSession(), 'open_login', $this->generateUrl('service_access', ['servizio' => $servizio->getSlug()]));
       return $this->redirectToRoute('login', [], Response::HTTP_FOUND);
 
     } catch (\Exception $e) {
-
       $this->logger->error($e->getMessage(), ['servizio' => $servizio->getSlug()]);
       return $this->render(
         'Servizi/serviziFeedback.html.twig',

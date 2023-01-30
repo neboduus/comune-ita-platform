@@ -36,7 +36,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "estratto_morte" = "EstrattoMorte",
  *     "certificato_matrimonio" = "CertificatoMatrimonio",
  *     "estratto_matrimonio" = "EstrattoMatrimonio",
- *     "form_io" = "FormIO"
+ *     "form_io" = "FormIO",
+ *      "built_in" = "BuiltIn"
  * })
  * @ORM\HasLifecycleCallbacks
  */
@@ -112,6 +113,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   const TYPE_ESTRATTO_MATRIMONIO = "estratto_matrimonio";
 
   const TYPE_FORMIO = 'form_io';
+  const TYPE_BUILTIN = 'built_in';
 
   const TIPO_DELEGA_DELEGATO = 'delegato';
   const TIPO_DELEGA_INCARICATO = 'incaricato';
@@ -2213,5 +2215,17 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
       $daysFromSubmission = $now->diff($submissionDate)->days;
     }
     return $this->servizio->getMaxResponseTime() - $daysFromSubmission;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isFormIOType(): bool
+  {
+    if (in_array($this->type, [self::TYPE_FORMIO, self::TYPE_BUILTIN])) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -49,13 +49,11 @@
 
             {{ include('Pratiche/parts/pratica_actions.html.twig', {'pratica':pratica}) }}
 
-            {% if pratica.type != 'form_io' %}
-              <div class="row">
-                <div class="col-12">
-                  {{ include('Pratiche/parts/pratica_iter.html.twig', {'pratica':pratica}) }}
-                </div>
+            <div class="row">
+              <div class="col-12">
+                {{ include('Pratiche/parts/pratica_iter.html.twig', {'pratica':pratica}) }}
               </div>
-            {% endif %}
+            </div>
           </div>
         </div>
       </div>

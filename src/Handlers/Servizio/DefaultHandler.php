@@ -109,6 +109,7 @@ class DefaultHandler extends AbstractServizioHandler
   public function execute(Servizio $servizio)
   {
     $user = $this->getUser();
+
     if ($this->getUser() instanceof CPSUser && !$user->isAnonymous()) {
 
       return (new DefaultLoggedInHandler(

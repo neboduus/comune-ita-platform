@@ -136,7 +136,7 @@
                               <span class="text-primary"><i class="fa fa-file-text-o fa-lg"></i> {{ 'operatori.scheda' | trans }}</span>
                             </a>
                           </li>
-                          {% if not item.legacy %}
+                          {% if item.formio %}
                             <li>
                               <a class="list-item " href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'formio' }) }}">
                                 <span class="text-primary"><i class="fa fa-server fa-lg"></i> {{ 'operatori.modulo' | trans }}</span>

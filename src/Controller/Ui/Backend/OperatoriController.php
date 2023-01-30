@@ -759,7 +759,7 @@ class OperatoriController extends AbstractController
     $praticheRecenti = $repository->findRecentlySubmittedPraticheByUser($pratica, $applicant, 5);
 
     $fiscalCode = null;
-    if ($pratica->getType() == Pratica::TYPE_FORMIO) {
+    if ($pratica->isFormIOType()) {
       /** @var Schema $schema */
       $schema = $this->schemaFactory->createFromFormId($pratica->getServizio()->getFormIoId());
       if (!empty($pratica->getDematerializedForms()['data'])) {

@@ -24,7 +24,7 @@ class FormIOFlow extends PraticaFlow
 
   public function onFlowCompleted(Pratica $pratica)
   {
-    if ($pratica->getType() == Pratica::TYPE_FORMIO) {
+    if ($pratica->isFormIOType()) {
       $schema = $this->formIOFactory->createFromFormId($pratica->getServizio()->getFormIoId());
       if (!empty($pratica->getDematerializedForms()['data'])) {
         $data = $schema->getDataBuilder()->setDataFromArray($pratica->getDematerializedForms()['data'])->toFullFilledFlatArray();
