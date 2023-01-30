@@ -114,7 +114,7 @@
           </div>
         </div>
         <div class="row pl-4">
-          {% if pratica.type == 'form_io' %}
+          {% if pratica.isFormIOType %}
             <div class="col-12 pb-3">
               <h6>{{ 'pratica.numero' | trans }}:</h6>
               <code class="text-nowrap">{{ pratica.id }}</code>

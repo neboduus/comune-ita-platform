@@ -1,6 +1,6 @@
 {% if is_granted('ROLE_CPS_USER')
-      and not app.request.attributes.get('_route') is empty
-      and app.request.attributes.get('_route') not in ['search', 'instance_home', 'servizi_list', 'servizi_show', 'category_show', 'service_group_show', 'pratiche_show', 'pratiche_compila', 'pratica_show_detail', 'user_profile'] %}
+  and not app.request.attributes.get('_route') is empty
+  and app.request.attributes.get('_route') not in ['search', 'instance_home', 'servizi_list', 'servizi_show', 'category_show', 'service_group_show', 'pratiche_show', 'pratiche_compila', 'pratica_show_detail', 'user_profile'] %}
   <div class="container">
     <div class="row">
       <div class="col-12 col-lg-10 offset-lg-1 pb-2">
@@ -73,3 +73,4 @@
     </div>
   </div>
 {% endif %}
+

@@ -278,10 +278,10 @@ class GeneralDataType extends AbstractI18nType
       ;
 
     if ($this->featureManager->isActive('feature_service_identifier')) {
-      $builder->add('identifier', UrlType::class, [
+      $builder->add('identifier', TextType::class, [
         'label' => 'servizio.public_service_identifier',
         'required' => false,
-        'disabled' => $servizio->isIdentifierImported()
+        'disabled' => $servizio->isIdentifierReadonly()
       ]);
     }
 

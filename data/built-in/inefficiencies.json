@@ -1,0 +1,231 @@
+{
+  "name": "Segnalazione disservizio",
+  "slug": "segnalazione-disservizio",
+  "topic": "ambiente",
+  "description": "Il servizio permette di segnalare in modo dettagliato un problema all’amministrazione comunale. È possibile indicare il luogo del disservizio su mappa o tramite indirizzo e allegare foto. Le segnalazioni sono gestite dall’Ufficio Relazioni con il Pubblico (URP).",
+  "short_description": "Un servizio aperto a tutti i cittadini per segnalare disservizi, guasti e criticità rilevati sul territorio comunale.",
+  "howto": "Invia una segnalazione online dal tuo smartphone o computer",
+  "how_to_do": "Si può inviare una segnalazione online da smartphone o computer, oppure a sportello presso l'URP.\r\n\r\nAlcune tipologie di segnalazioni online richiedono l'accesso con identità digitale SPID o CIE. Non ci sono limitazioni per le segnalazioni generiche.\r\n\r\nLe segnalazioni per disservizi e guasti possono riguardare solo il territorio comunale.",
+  "what_you_need": "Per accedere al servizio, assicurati di avere:\r\n\r\n- informazioni sul tipo di disservizio e sul luogo all'interno del territorio comunale;\r\n- foto, se disponibili.",
+  "what_you_get": "Chi segnala un disservizio online identificandosi con identità digitale riceverà, tramite posta elettronica, gli aggiornamenti sullo stato di avanzamento della segnalazione.",
+  "costs": "Il servizio è gratuito",
+  "who": "Possono segnalare un disservizio tutte le persone residenti e non residenti nel comune.",
+  "conditions": "Per conoscere i dettagli di scadenze, requisiti e altre informazioni importanti, leggi i termini e le condizioni di servizio.",
+  "access_level": 0,
+  "workflow": 1,
+  "identifier": "inefficiencies",
+  "status": 3,
+  "form": {
+    "display": "wizard",
+    "type": "form",
+    "components": [
+      {
+        "title": "Dati segnalazione",
+        "breadcrumbClickable": true,
+        "buttonSettings": {
+          "previous": true,
+          "cancel": true,
+          "next": true
+        },
+        "navigateOnEnter": false,
+        "saveOnEnter": false,
+        "scrollToTop": false,
+        "collapsible": false,
+        "key": "panel",
+        "type": "panel",
+        "label": "Panel",
+        "mask": false,
+        "tableView": false,
+        "alwaysEnabled": false,
+        "input": false,
+        "components": [
+          {
+            "legend": "Luogo",
+            "tooltip": "Indica il luogo del disservizio",
+            "key": "fieldSet1",
+            "type": "fieldset",
+            "label": "Field Set",
+            "input": false,
+            "tableView": false,
+            "components": [
+              {
+                "label": "Indirizzo",
+                "placeholder": "Cerca un luogo",
+                "tableView": false,
+                "provider": "nominatim",
+                "key": "address",
+                "type": "address",
+                "providerOptions": {
+                  "params": {
+                    "autocompleteOptions": []
+                  }
+                },
+                "input": true,
+                "components": [
+                  {
+                    "label": "Address 1",
+                    "tableView": false,
+                    "key": "address1",
+                    "type": "textfield",
+                    "input": true,
+                    "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                  },
+                  {
+                    "label": "Address 2",
+                    "tableView": false,
+                    "key": "address2",
+                    "type": "textfield",
+                    "input": true,
+                    "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                  },
+                  {
+                    "label": "City",
+                    "tableView": false,
+                    "key": "city",
+                    "type": "textfield",
+                    "input": true,
+                    "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                  },
+                  {
+                    "label": "State",
+                    "tableView": false,
+                    "key": "state",
+                    "type": "textfield",
+                    "input": true,
+                    "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                  },
+                  {
+                    "label": "Country",
+                    "tableView": false,
+                    "key": "country",
+                    "type": "textfield",
+                    "input": true,
+                    "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                  },
+                  {
+                    "label": "Zip Code",
+                    "tableView": false,
+                    "key": "zip",
+                    "type": "textfield",
+                    "input": true,
+                    "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "legend": "Disservizio",
+            "key": "fieldSet2",
+            "type": "fieldset",
+            "label": "Field Set",
+            "input": false,
+            "tableView": false,
+            "components": [
+              {
+                "label": "Tip di disservizio",
+                "widget": "choicesjs",
+                "tableView": true,
+                "dataSrc": "url",
+                "data": {
+                  "url": "https://servizi.comune.bugliano.pi.it/lang/api/categories?limit=100",
+                  "headers": [
+                    {
+                      "key": "",
+                      "value": ""
+                    }
+                  ]
+                },
+                "template": "<span>{{ item.name }}</span>",
+                "validate": {
+                  "required": true
+                },
+                "key": "type",
+                "type": "select",
+                "input": true,
+                "disableLimit": false
+              },
+              {
+                "label": "Titolo",
+                "tableView": true,
+                "validate": {
+                  "required": true
+                },
+                "key": "titolo",
+                "type": "textfield",
+                "input": true
+              },
+              {
+                "label": "Descrizione",
+                "description": "Inserire al massimo 200 caratteri",
+                "autoExpand": false,
+                "tableView": true,
+                "validate": {
+                  "required": true,
+                  "maxWords": 200
+                },
+                "key": "descrizione",
+                "type": "textarea",
+                "input": true,
+                "rows": 2
+              },
+              {
+                "label": "Immagini",
+                "description": "Seleziona una o più immagini da allegare alla segnalazione",
+                "tableView": false,
+                "protocol_required": false,
+                "check_signature": false,
+                "fileTypes": [
+                  {
+                    "label": "",
+                    "value": ""
+                  }
+                ],
+                "filePattern": ".jpg,.jpeg,.png",
+                "fileMinSize": "1KB",
+                "fileMaxSize": "10MB",
+                "key": "images",
+                "type": "sdcfile",
+                "storage": "url",
+                "url": "https://servizi.comune.bugliano.pi.it/lang/it/upload",
+                "input": true
+              }
+            ]
+          },
+          {
+            "legend": "Autore della segnalazione",
+            "tooltip": "Informazione su di te\n\n",
+            "key": "fieldSet",
+            "type": "fieldset",
+            "label": "Field Set",
+            "input": false,
+            "tableView": false,
+            "components": [
+              {
+                "label": "applicant",
+                "tableView": true,
+                "form": "5e5e26ede170600020175850",
+                "useOriginalRevision": false,
+                "reference": false,
+                "key": "applicant",
+                "type": "form",
+                "input": true,
+                "lazyLoad": false
+              }
+            ]
+          }
+        ],
+        "collapsed": false,
+        "reorder": false
+      }
+    ],
+    "tags": [
+      "custom"
+    ],
+    "title": "inefficiencies",
+    "name": "inefficiencies",
+    "path": "inefficiencies",
+    "description": "inefficiencies"
+  }
+}
+

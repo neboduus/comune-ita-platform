@@ -781,9 +781,10 @@ class AdminController extends AbstractController
       ],
     ];
 
-    if ($servizio->isLegacy()) {
+    if ($servizio->isLegacy() || $servizio->isBuiltIn()) {
       unset($steps['template']);
       unset($steps['formio']);
+      unset($steps['formioI18n']);
     }
 
     if (!$servizio->isLegacy() && !empty($servizio->getFormIoId())) {
