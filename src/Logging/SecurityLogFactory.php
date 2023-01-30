@@ -76,8 +76,8 @@ class SecurityLogFactory
         break;
     }
 
-    if ($this->ipInfoWsUrl && $request instanceof Request && $request->server->has('REMOTE_ADDR')) {
-      $origin = $this->generateOrigin($request->server->get('REMOTE_ADDR'));
+    if ($this->ipInfoWsUrl && $request instanceof Request && $request->server->has('HTTP_X_REAL_IP')) {
+      $origin = $this->generateOrigin($request->server->get('HTTP_X_REAL_IP'));
       $securityLog->setOrigin($origin);
     }
 

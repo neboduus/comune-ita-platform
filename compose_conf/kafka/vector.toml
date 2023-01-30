@@ -76,4 +76,4 @@ inputs = [ "security-msg" ]
 encoding = "json"
 compression = "none"
 topic = "security"
-key_field = "action"
+key_field = "tenant_id"
