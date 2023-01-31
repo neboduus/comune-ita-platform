@@ -57,7 +57,7 @@
                 "label": "Email",
                 "description": " Inserisci la tua email ",
                 "tableView": true,
-                "calculateValue": "console.log(data)",
+                "calculateValue": "",
                 "key": "email",
                 "type": "email",
                 "input": true

@@ -57,7 +57,9 @@
                 "type": "address",
                 "providerOptions": {
                   "params": {
-                    "autocompleteOptions": []
+                    "autocompleteOptions": [
+
+                    ]
                   }
                 },
                 "input": true,
@@ -126,24 +128,18 @@
                 "label": "Tip di disservizio",
                 "widget": "choicesjs",
                 "tableView": true,
-                "dataSrc": "url",
+                "dataSrc": "custom",
                 "data": {
-                  "url": "https://servizi.comune.bugliano.pi.it/lang/api/categories?limit=100",
-                  "headers": [
-                    {
-                      "key": "",
-                      "value": ""
-                    }
-                  ]
+                  "custom": "async function get_data() {\n    window.FormioHelper.authenticatedCall(\"categories\")\n    .then(function(promise) {\n      const items = promise.map(elem => (\n  {\n    id: elem.id,\n    name: elem.name\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n    get_data()\n}"
                 },
+                "dataType": "object",
                 "template": "<span>{{ item.name }}</span>",
                 "validate": {
                   "required": true
                 },
                 "key": "type",
                 "type": "select",
-                "input": true,
-                "disableLimit": false
+                "input": true
               },
               {
                 "label": "Titolo",
