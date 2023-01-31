@@ -98,7 +98,7 @@ class UserController extends AbstractController
 
     /** @var ServizioRepository $serviziRepository */
     $serviziRepository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
-    $servizi = $serviziRepository->findStickyAvailable(3);
+    $servizi = $serviziRepository->findStickyAvailable('name', true, 3);
 
     $praticheRepo = $this->getDoctrine()->getRepository('App\Entity\Pratica');
     $pratiche = $praticheRepo->findBy(
