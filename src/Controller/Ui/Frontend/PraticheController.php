@@ -505,7 +505,8 @@ class PraticheController extends AbstractController
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'can_compile' => $this->isGranted(ApplicationVoter::COMPILE, $pratica),
-      'can_withdraw' => $this->isGranted(ApplicationVoter::WITHDRAW, $pratica)
+      'can_withdraw' => $this->isGranted(ApplicationVoter::WITHDRAW, $pratica),
+      'servizio' => $pratica->getServizio()
     ];
 
     if ($pratica instanceof GiscomPratica) {
