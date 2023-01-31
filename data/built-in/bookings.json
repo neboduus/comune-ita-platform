@@ -50,15 +50,15 @@
                 "tableView": true,
                 "dataSrc": "custom",
                 "data": {
-                  "custom": "async function get_data() {\n  window.FormioHelper.authenticatedCall(\"calendars?type=time_fixed_slots\")\n  .then(\n    function(promise) {\n      instance.setItems(promise)\n    })\n}\n\nif (values.length === 0) {\n  get_data()\n}"
+                  "custom": "async function get_data() {\n    window.FormioHelper.authenticatedCall(\"calendars?type=time_fixed_slots\")\n    .then(function(promise) {\n      const items = promise.map(elem => (\n  {\n    id: elem.id,\n    title: elem.title\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n    get_data()\n}"
                 },
-                "valueProperty": "id",
+                "dataType": "object",
+                "idPath": "",
                 "template": "<span>{{ item.title }}</span>",
                 "validate": {
-                  "required": true,
-                  "custom": "console.log(data);"
+                  "required": true
                 },
-                "key": "calendar_id",
+                "key": "calendar_obj",
                 "type": "select",
                 "input": true
               }
@@ -101,7 +101,7 @@
                 "tableView": true,
                 "dataSrc": "custom",
                 "data": {
-                  "custom": "async function get_data(id) {\n  var dates = [];\n  window.FormioHelper.authenticatedCall(\"calendars/\" + id + \"/availabilities\").then(function(promise) {\n    var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};\n    promise.forEach(function(item) {\n      dates.push({\n        datestring: new Date(item.date).toLocaleDateString('it-IT', options), \n        date: item.date\n      });\n    });\n    instance.setItems(dates);\n  })\n}\n\nif (values.length === 0) {\n  get_data(data.calendar_id)\n}"
+                  "custom": "async function get_data(id) {\n  var dates = [];\n  window.FormioHelper.authenticatedCall(\"calendars/\" + id + \"/availabilities\").then(function(promise) {\n    var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};\n    promise.forEach(function(item) {\n      dates.push({\n        datestring: new Date(item.date).toLocaleDateString('it-IT', options), \n        date: item.date\n      });\n    });\n    instance.setItems(dates);\n  })\n}\n\nif (values.length === 0) {\n  get_data(data.calendar_obj.id)\n}"
                 },
                 "valueProperty": "date",
                 "template": "<span>{{ item.datestring }}</span>",
@@ -119,7 +119,7 @@
                 "tableView": true,
                 "dataSrc": "custom",
                 "data": {
-                  "custom": "async function get_data(id, day) {\n  window.FormioHelper.authenticatedCall(\"calendars/\" + id + \"/availabilities/\" + day + \"?available=available\")\n  .then(function(promise) {\n    instance.setItems(promise)\n  })\n}\n\nif (values.length === 0) {\n  get_data(data.calendar_id, data.day)\n}"
+                  "custom": "async function get_data(id, day) {\n  window.FormioHelper.authenticatedCall(\"calendars/\" + id + \"/availabilities/\" + day + \"?available=available\")\n  .then(function(promise) {\n    instance.setItems(promise)\n  })\n}\n\nif (values.length === 0) {\n  get_data(data.calendar_obj.id, data.day)\n}"
                 },
                 "template": "<span>{{ item.start_time }} - {{ item.end_time }}</span>",
                 "validate": {
@@ -139,7 +139,7 @@
               },
               {
                 "label": "Data e ora",
-                "calculateValue": "day = data.day.split(\"-\")\nday = day[2] + \"/\" + day[1] + \"/\" + day[0];\ndata.calendar = day + \" @ \" + data.time.start_time + \"-\" + data.time.end_time + \" (\" + data.calendar_id + \"#\" + data.meeting_id + \"#\"+ data.time.opening_hour + \")\";\n\n",
+                "calculateValue": "day = data.day.split(\"-\")\nday = day[2] + \"/\" + day[1] + \"/\" + day[0];\ndata.calendar = day + \" @ \" + data.time.start_time + \"-\" + data.time.end_time + \" (\" + data.calendar_obj.id + \"#\" + data.meeting_id + \"#\"+ data.time.opening_hour + \")\";\n\n",
                 "key": "calendar",
                 "type": "hidden",
                 "input": true,
