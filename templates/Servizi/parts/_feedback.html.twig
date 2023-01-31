@@ -1,20 +1,23 @@
-<div class="bg-primary-a6" id="customer-satisfaction-container">
-  <div class="container">
-    <div class="row d-flex justify-content-center">
-      <div class="col-12 col-lg-6 p-lg-0 px-4">
-        {% if servizio is defined and servizio.satisfyEntrypointId %}
-          <div id="customer-satisfaction-{{ servizio.id }}">
-            <app-widget data-entrypoints="{{ servizio.satisfyEntrypointId }}"></app-widget>
-          </div>
-        {% elseif ente is defined and ente.satisfyEntrypointId %}
-          <div id="customer-satisfaction-{{ ente.id }}">
-            <app-widget data-entrypoints="{{ ente.satisfyEntrypointId }}"></app-widget>
-          </div>
-        {% endif %}
+{% set ente = ente is defined ? ente : instance_service.currentInstance %}
+{% if ente.satisfyEnabled %}
+  <div class="bg-primary-a6" id="customer-satisfaction-container">
+    <div class="container">
+      <div class="row d-flex justify-content-center">
+        <div class="col-12 col-lg-6 p-lg-0 px-4">
+          {% if (servizio is defined and servizio.satisfyEntrypointId) %}
+            <div id="customer-satisfaction-{{ servizio.id }}">
+              <app-widget data-entrypoints="{{ servizio.satisfyEntrypointId }}"></app-widget>
+            </div>
+          {% elseif ente.satisfyEntrypointId %}
+            <div id="customer-satisfaction-{{ ente.id }}">
+              <app-widget data-entrypoints="{{ ente.satisfyEntrypointId }}"></app-widget>
+            </div>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
-</div>
+{% endif %}
 
 
 
