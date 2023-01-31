@@ -58,7 +58,7 @@
             {% for item in sticky %}
               <ul class="list-unstyled">
                 <li class="mb-3 mt-3">
-                  <a class="list-item ps-0 title-medium" href="#">
+                  <a class="list-item ps-0 title-medium" data-element="service-link" href="{{ path('servizi_show', {'slug': item.object.slug}) }}">
                     <span>{{ item.object.name }}</span>
                   </a>
                 </li>
