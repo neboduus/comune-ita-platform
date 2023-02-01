@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Entity\OperatoreUser;
 use App\Entity\User;
+use App\Services\Manager\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
@@ -19,22 +20,20 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class OperatoreCreateCommand extends Command
 {
 
-  /** @var EntityManagerInterface */
-  private $entityManager;
-  /**
-   * @var UserPasswordEncoderInterface
-   */
-  private $passwordEncoder;
+  private EntityManagerInterface $entityManager;
+  private UserPasswordEncoderInterface $passwordEncoder;
+  private UserManager $userManager;
 
   /**
    * @param EntityManagerInterface $entityManager
    * @param UserPasswordEncoderInterface $passwordEncoder
    */
-  public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
+  public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder, UserManager $userManager)
   {
     $this->entityManager = $entityManager;
-    parent::__construct();
     $this->passwordEncoder = $passwordEncoder;
+    $this->userManager = $userManager;
+    parent::__construct();
   }
 
   protected function configure()
@@ -114,8 +113,7 @@ class OperatoreCreateCommand extends Command
           $password
         )
       );
-      $this->entityManager->persist($user);
-      $this->entityManager->flush();
+      $this->userManager->save($user);
       $output->writeln('Ok: generato nuovo operatore');
     } catch (\Exception $e) {
       $output->writeln('Errore: '.$e->getMessage());

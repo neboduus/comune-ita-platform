@@ -2,7 +2,6 @@
 
 namespace App\Logging;
 
-use App\Model\Security\Origin;
 use App\Model\Security\SecurityLogInterface;
 use App\Model\Security\User\AdminCreatedSecurityLog;
 use App\Model\Security\User\AdminRemovedSecurityLog;
@@ -102,34 +101,32 @@ class SecurityLogFactory
    * @throws \Exception
    * @throws InvalidArgumentException
    */
-  private function generateOrigin(string $ip): Origin
+  private function generateOrigin(string $ip): ?array
   {
 
-    $ipInfo = $this->securityCache->getItem($ip);
+    try {
+      $ipInfo = $this->securityCache->getItem($ip);
+      if (!$ipInfo->isHit())
+      {
+        $ipInfo->set($this->fetchIpInfo($ip));
+        $ipInfo->expiresAfter(86400);
+        $this->securityCache->save($ipInfo);
+      }
 
-    if (!$ipInfo->isHit())
-    {
-      $ipInfo->set($this->fetchIpInfo($ip));
-      $ipInfo->expiresAfter(86400);
-      $this->securityCache->save($ipInfo);
+      $ipInfoValue = $ipInfo->get();
+
+      $origin = [];
+      $keys = ['ip', 'ip_decimal', 'country', 'country_iso', 'country_eu', 'region_name', 'region_code', 'city', 'asn', 'asn_org'];
+
+      foreach ($keys as $k ) {
+        if (isset($ipInfoValue[$k]) && !empty($ipInfoValue[$k])) {
+          $origin[$k] = $ipInfoValue[$k];
+        }
+      }
+      return $origin;
+    } catch (\Exception $e) {
+      return null;
     }
-
-    $ipInfoValue = $ipInfo->get();
-
-    $origin = new Origin();
-    $origin->setIp($ipInfoValue['ip'] ?? null);
-    $origin->setIpDecimal($ipInfoValue['ip_decimal'] ?? null);
-    $origin->setCountry($ipInfoValue['country'] ?? null);
-    $origin->setCountryIso($ipInfoValue['country_iso'] ?? null);
-    $origin->setCountryEu($ipInfoValue['country_eu']);
-    $origin->setRegion($ipInfoValue['region_name'] ?? null);
-    $origin->setRegionCode($ipInfoValue['region_code'] ?? null);
-    $origin->setCity($ipInfoValue['city'] ?? null);
-    $origin->setAsn($ipInfoValue['asn'] ?? null);
-    $origin->setAsn($ipInfoValue['asn_org'] ?? null);
-
-    return $origin;
-
   }
 
   /**
@@ -145,14 +142,18 @@ class SecurityLogFactory
       CURLOPT_MAXREDIRS => 10,
       CURLOPT_TIMEOUT => self::REQUEST_TIMEOUT,
       CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST => "GET"
+      CURLOPT_CUSTOMREQUEST => "GET",
+      CURLOPT_HTTPHEADER => [
+        "Accept: application/json",
+      ],
     ]);
 
     $response = curl_exec($curl);
     $err = curl_error($curl);
+    $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     curl_close($curl);
 
-    if ($err) {
+    if ($err || $httpCode != 200) {
       throw new \Exception($err);
     } else {
       return json_decode($response, true);

@@ -13,7 +13,7 @@ abstract class AbstractSecurityLog implements SecurityLogInterface
 
   protected string $action = 'default';
 
-  protected ?Origin $origin = null;
+  protected ?array $origin = null;
 
   private ?Actor $actor;
 
@@ -72,17 +72,17 @@ abstract class AbstractSecurityLog implements SecurityLogInterface
   }
 
   /**
-   * @return Origin
+   * @return array|null
    */
-  public function getOrigin(): ?Origin
+  public function getOrigin(): ?array
   {
     return $this->origin;
   }
 
   /**
-   * @param Origin|null $origin
+   * @param array|null $origin
    */
-  public function setOrigin(?Origin $origin): void
+  public function setOrigin(?array $origin): void
   {
     $this->origin = $origin;
   }
