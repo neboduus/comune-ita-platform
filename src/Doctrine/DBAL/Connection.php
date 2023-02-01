@@ -3,6 +3,7 @@
 namespace App\Doctrine\DBAL;
 
 use App\Doctrine\DBAL\Driver\ServerGoneAwayExceptionsAwareInterface;
+use App\Doctrine\DBAL\Driver\DriverExceptionUtils;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Configuration;
@@ -193,7 +194,7 @@ class Connection extends DBALConnection implements ConnectionInterface
       try {
         parent::beginTransaction();
       } catch (\Exception $e) {
-        if ($this->canTryAgain($attempt, true) && $this->_driver->isGoneAwayException($e)) {
+        if ($this->canTryAgain($attempt, true) && DriverExceptionUtils::isGoneAwayException($e)) {
           $this->close();
           if (0 < $this->getTransactionNestingLevel()) {
             $this->resetTransactionNestingLevel();
@@ -274,10 +275,10 @@ class Connection extends DBALConnection implements ConnectionInterface
   public function isRetryableException(\Exception $e, $query = null)
   {
     if (null === $query || $this->isUpdateQuery($query)) {
-      return $this->_driver->isGoneAwayInUpdateException($e);
+      return DriverExceptionUtils::isGoneAwayInUpdateException($e);
     }
 
-    return $this->_driver->isGoneAwayException($e);
+    return DriverExceptionUtils::isGoneAwayException($e);
   }
 
   /**
