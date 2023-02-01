@@ -233,7 +233,8 @@ class EnteType extends AbstractI18nType
 
     $builder->add('satisfy_entrypoint_id', TextType::class, [
       'label' => 'ente.satisfy_entrypoint_id',
-      'required' => false
+      'required' => false,
+      'help' => 'ente.satisfy_help_tenant'
     ]);
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));

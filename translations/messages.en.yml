@@ -2547,6 +2547,8 @@ ente:
   satisfy_entrypoint_id: 'Entry point user satisfaction'
   satisfy_enabled: 'Enable user satisfaction'
   satisfy_entrypoint_id_empty: 'For enabling user satisfaction a valid entry point id is required'
+  satisfy_help_tenant: "Enter here the entrypoint id configured for your tenant"
+  satisfy_help_service: "Enter here the entrypoint id configured for the specific service you are editing"
   mailers:
     title: 'title'
     helper: "helper"

@@ -2616,6 +2616,8 @@ ente:
   satisfy_entrypoint_id: ''
   satisfy_enabled: ''
   satisfy_entrypoint_id_empty: ''
+  satisfy_help_tenant: ''
+  satisfy_help_service: ''
   mailers:
     title: 'BACKOFFICE'
     helper: "BACKOFFICE"

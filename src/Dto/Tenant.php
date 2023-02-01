@@ -52,7 +52,7 @@ class Tenant
   private $siteUrl;
 
   /**
-   * @Serializer\Type("object")
+   * @Serializer\Type("array")
    * @OA\Property(description="Tenant graphic appearance")
    * @Groups({"read", "write"})
    */
