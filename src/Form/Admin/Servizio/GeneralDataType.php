@@ -272,7 +272,8 @@ class GeneralDataType extends AbstractI18nType
         TextType::class,
         [
           'label' => 'ente.satisfy_entrypoint_id',
-          'required' => false
+          'required' => false,
+          'help' => 'ente.satisfy_help_service'
         ]
       )
       ;

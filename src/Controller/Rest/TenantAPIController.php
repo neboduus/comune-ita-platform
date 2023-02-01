@@ -67,7 +67,7 @@ class TenantAPIController extends AbstractFOSRestController
    *
    * @OA\Tag(name="tenants")
    */
-  public function getTenantInfoAction(Request $request)
+  public function getTenantInfoAction(Request $request): View
   {
     try {
       $tenant = $this->is->getCurrentInstance();
@@ -76,7 +76,7 @@ class TenantAPIController extends AbstractFOSRestController
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
-      $tenantDto = Ente::fromEntity($tenant);
+      $tenantDto = Tenant::fromEntity($tenant);
 
       return $this->view($tenantDto, Response::HTTP_OK);
     } catch (NotFoundHttpException $e) {
