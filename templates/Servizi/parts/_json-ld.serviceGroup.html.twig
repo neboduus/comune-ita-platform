@@ -1,0 +1,60 @@
+{% set ente = ente is defined ? ente : instance_service.currentInstance %}
+{% set logo = ente.getMetaAsArray('logo') ? ente.getMetaAsArray('logo') :  absolute_url(asset('bundles/app/images/logo-default.png')) %}
+{% set metaContacts = ente.getMetaAsArray('contacts') ? ente.getMetaAsArray('contacts') : null %}
+<script type="application/ld+json" data-element="metatag">
+  {
+    "@context": "https://schema.org",
+    "@type": "GovernmentService",
+    "name": "{{ servizio.name }}",
+    "serviceType": "{{ servizio.topics.name }}",
+    "serviceOperator":{
+      "name":"{{ ente.name }}"
+     },
+    "areaServed": {
+      "@type": "AdministrativeArea",
+      "name": "{{ servizio.coverage and servizio.coverage|length ? servizio.coverage[0] : ente.name }}"
+    },
+    "audience": {
+      "@type": "Audience",
+      "name": "{{ servizio.who|striptags|replace({"\n": "", "\r": "", "\t": ""})|trim }}"
+    },
+    "availableChannel": {
+      "@type": "ServiceChannel",
+      "name": "Dove rivolgersi",
+      "serviceUrl": "{{ absolute_url( path('service_group_show', {'slug': servizio.slug})) }}",
+      "availableLanguage": {
+         "@type": "Language",
+          "name": "Italian",
+          "alternateName": "it"
+       }
+        {% if servizio.userGroups.count > 0 %}
+        ,
+      "serviceLocation":{
+        "@type": "Place",
+        "name": "{{ servizio.userGroups.current.name }}",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "{{ servizio.userGroups.current.coreLocation.address['street_address'] }}",
+          "postalCode": "{{ servizio.userGroups.current.coreLocation.address['postal_code'] }}",
+          "addressLocality": "{{ ente.name }}"
+        }
+      }
+        {% endif %}
+    }},
+    {% if servizio.topics %}
+      "category": "{{ servizio.topics.name }}",
+    {% endif %}
+    "logo": "{{ logo }}",
+    "provider": {
+      "@type": "Organization",
+      "legalName": "{{ ente.name }}",
+      "address": "{{ metaContacts.address is defined ?  metaContacts.address  : '' }}",
+      "email": "{{ ente.email }}",
+      "phone": "{{ ente.contatti }}"
+    },
+    "description": "{{ servizio.description|striptags|replace({"\n": "", "\r": "", "\t": ""})|trim }}",
+    "url": "{{ absolute_url( path('service_group_show', {'slug': servizio.slug})) }}"
+  }
+</script>
+
+
