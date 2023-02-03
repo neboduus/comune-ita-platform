@@ -506,7 +506,7 @@ class Ente implements Translatable
     $meta = $this->getMetaAsArray();
     return isset($meta['tenant_type']) ? $meta['tenant_type'] : null;
   }
-  
+
   /**
    * Get if search engine and services catalogue are enabled
    * @return boolean
@@ -530,6 +530,22 @@ class Ente implements Translatable
       }
     }
     return null;
+  }
+
+  public function getTopicsNav()
+  {
+    $result = [];
+    if ($topics = $this->getMetaAsArray('topics')) {
+      $result = $topics;
+    }
+
+    if ($allTopics = $this->getMetaAsArray('all_topics')) {
+      $result []= [
+        'text' => 'all_topics',
+        'url'  => $allTopics
+      ];
+    }
+    return $result;
   }
 
   /**

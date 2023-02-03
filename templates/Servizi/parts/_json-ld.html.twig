@@ -5,7 +5,7 @@
     "name": "{{ servizio.name }}",
     "serviceType": "{{ servizio.topics.name }}",
     "serviceOperator":{
-      "name":"Comune di {{ servizio.ente.name }}"
+      "name":"{{ servizio.ente.name }}"
      },
     "areaServed": {
       "@type": "AdministrativeArea",
@@ -49,7 +49,7 @@
       "email": "{{ servizio.ente.email }}",
       "phone": "{{ servizio.ente.contatti }}"
     },
-    "description": "{{ servizio.description }}",
+    "description": "{{ servizio.description|striptags|replace({"\n": "", "\r": "", "\t": ""})|trim }}",
     "url": "{{ absolute_url( path('servizi_show', {'slug': servizio.slug})) }}"
   }
 </script>

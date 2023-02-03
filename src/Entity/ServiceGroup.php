@@ -1192,4 +1192,14 @@ class ServiceGroup implements Translatable
     $this->conditionsAttachments = $conditionsAttachments;
     $this->costsAttachments = $costsAttachments;
   }
+
+  public function userGroups(): Collection
+  {
+    if (!$this->services->isEmpty()) {
+      /** @var Servizio $firstService */
+      $firstService = $this->services->first();
+      return $firstService->getUserGroups();
+    }
+    return new ArrayCollection();
+  }
 }

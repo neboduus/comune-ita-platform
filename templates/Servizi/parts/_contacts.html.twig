@@ -1,4 +1,4 @@
-{% set ente = instance_service.getCurrentInstance() %}
+{% set ente = ente is defined ? ente : instance_service.currentInstance %}
 {% set contacts = ente.getMetaAsArray('contacts') %}
   {% if contacts %}
     <div class="bg-grey-card shadow-contacts">

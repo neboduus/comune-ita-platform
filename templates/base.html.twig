@@ -34,12 +34,6 @@
 </head>
 <body>
 
-{% if satisfy_widget_url %}
-  <!-- Satisfy -->
-  <script src="{{ satisfy_widget_url }}" defer="defer"></script>
-  <!-- End of Satisfy -->
-{% endif %}
-
 {% if google_tag_manager_key is defined and google_tag_manager_key is not empty %}
   <!-- Google Tag Manager (noscript) -->
   <noscript>
@@ -53,6 +47,11 @@
 {% block footer %}{% endblock %}
 {% if feature('feature_new_outdatedbrowser') %}
   <div id="outdated"></div>
+{% endif %}
+{% if satisfy_widget_url %}
+  <!-- Satisfy -->
+  <script src="{{ satisfy_widget_url }}" defer="defer"></script>
+  <!-- End of Satisfy -->
 {% endif %}
 {% block javascripts %}{% endblock %}
 </body>

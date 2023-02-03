@@ -1,6 +1,11 @@
 {% extends 'Default/index.html.twig' %}
 {% block title %}{{ servizio.name }} - Stanza del cittadino{% endblock %}
 
+{% block head %}
+  {{ parent() }}
+  {{ include('Servizi/parts/_json-ld.serviceGroup.html.twig', {'servizio':servizio}) }}
+{% endblock %}
+
 {% block stylesheets %}
   {{ parent() }}
   {{ encore_entry_link_tags('compile') }}
@@ -129,7 +134,12 @@
                            href="#special_cases"><span>{{ 'servizio.casi_particolari' | trans }}</span></a>
                       </li>
                     {% endif %}
-
+                    {% if servizio.userGroups and servizio.userGroups|length > 0 %}
+                      <li class="nav-item">
+                        <a class="nav-link" data-focus-mouse="false" data-element="service-area"
+                           href="#contacts"><span>{{ 'servizio.contatti' | trans }}</span></a>
+                      </li>
+                    {% endif %}
                     {% if servizio.getNotStickyServices.count > 0 %}
                       <li class="nav-item">
                         <a class="nav-link" data-focus-mouse="false"
@@ -291,8 +301,12 @@
               </div>
             </section>
           {% endif %}
-          <section class="it-page-section mb-4" id="contacts">
 
+          {# Contatti #}
+          <section class="it-page-section mb-4" id="contacts">
+            {% if servizio.userGroups and servizio.userGroups|length > 0 %}
+              {{ include('Servizi/parts/_userGroupsContacts.html.twig', {'item': servizio})}}
+            {% endif %}
             <div class="col-12 mb-3">
               <span class="text-paragraph-small">{{ 'search.topics' | trans }}:</span>
               {% if servizio.topics.name is defined %}
@@ -307,6 +321,7 @@
             </div>
             <p class="small mb-0">{{ 'servizio.page_updated_at' | trans({'%updatedAt%': servizio.updatedAt | date('d/m/Y') }) }}</p>
           </section>
+
           {% if servizio.getNotStickyServices.count > 0 %}
             <section class="it-page-section mb-4" id="related-services">
               <h2 class="title mb-3">{{ 'gruppo_di_servizi.servizi_correlati' | trans }}</h2>

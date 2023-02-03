@@ -1,6 +1,6 @@
 {% set main = ente.getMetaAsArray('main') %}
-{% set topics = ente.getMetaAsArray('topics') %}
-{% set all_topics = ente.getMetaAsArray('all_topics') %}
+{% set topics = ente.topicsNav %}
+
 <div class="it-header-navbar-wrapper">
   <div class="container">
     <div class="row">
@@ -40,9 +40,9 @@
                   {% for item in topics %}
                     <li class="nav-item">
                       {% if item.url|default and item.text|default %}
-                        {% if loop.last and not all_topics|default %}
+                        {% if item.text == 'all_topics' %}
                           <a data-element="all-topics" class="nav-link " href="{{ item.url }}">
-                            <span class="font-weight-bold">{{ item.text }}</span>
+                            <span class="font-weight-bold">{{ item.text | trans}}</span>
                           </a>
                         {% else %}
                           <a data-element="topic-element" class="nav-link" href="{{ item.url }}">{{ item.text }}</a>
@@ -52,11 +52,7 @@
                   {% endfor %}
                 </ul>
               {% endif %}
-              {% if all_topics|default %}
-              <a data-element="all-topics" class="nav-link " href="{{ all_topics }}">
-                <span class="font-weight-bold">{{ "all_topics" | trans }}</span>
-              </a>
-              {% endif %}
+
             </div>
           </div>
         </nav>
