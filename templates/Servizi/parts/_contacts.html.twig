@@ -1,55 +1,63 @@
 {% set ente = ente is defined ? ente : instance_service.currentInstance %}
 {% set contacts = ente.getMetaAsArray('contacts') %}
-  {% if contacts %}
-    <div class="bg-grey-card shadow-contacts">
-      <div class="container">
-        <div class="row d-flex justify-content-center p-contacts">
-          <div class="col-12 col-lg-5">
-            <div class="cmp-contacts">
-              {% if contacts.faq_url is defined or contacts.support_url is defined or contacts.phone is defined or contacts.phone is defined or contacts.toll_free_number is defined or contacts.meetings_reservation_url is defined  %}
+{% set builtin_services = ente.getMetaAsArray('builtin_services') %}
+{% if contacts or builtin_services %}
+  <div class="bg-grey-card shadow-contacts">
+    <div class="container">
+      <div class="row d-flex justify-content-center p-contacts">
+        <div class="col-12 col-lg-5">
+          <div class="cmp-contacts">
+            {% if builtin_services.faq is defined or builtin_services.support is defined or contacts.phone is defined or contacts.phone is defined or contacts.toll_free_number is defined or contacts.appointment_booking is defined %}
               <div class="card w-100">
                 <div class="card-body">
                   <h2 class="title-medium-2-semi-bold">{{ 'contacts.title' | trans }}</h2>
                   <ul class="contact-list p-0">
-                    {% if contacts.faq_url is defined %}
-                      <li><a class="list-item" href="{{ contacts.faq_url }}">
+                    {% if contacts.faq is defined %}
+                      <li><a class="list-item" href="{{ contacts.faq }}">
                           <svg class="icon icon-primary icon-sm" aria-hidden="true">
                             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-help-circle"></use>
-                          </svg><span>{{ 'contacts.faq_url_label' | trans }}</span></a></li>
+                          </svg>
+                          <span>{{ 'contacts.faq_url_label' | trans }}</span></a></li>
                     {% endif %}
-                    {% if contacts.support_url is defined %}
-                      <li><a class="list-item" href="{{ contacts.support_url }}" data-element="contacts">
+                    {% if contacts.support is defined %}
+                      <li><a class="list-item" href="{{ contacts.support }}" data-element="contacts">
                           <svg class="icon icon-primary icon-sm" aria-hidden="true">
                             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-mail"></use>
-                          </svg><span>{{ 'contacts.support_url_label' | trans }}</span></a></li>
+                          </svg>
+                          <span>{{ 'contacts.support_url_label' | trans }}</span></a></li>
                     {% endif %}
                     {% if contacts.phone is defined %}
                       <li><a class="list-item" href="tel:{{ contacts.phone }}" data-element="contacts">
                           <svg class="icon icon-primary icon-sm" aria-hidden="true">
                             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-telephone"></use>
-                          </svg><span>{{ 'contacts.phone_label' | trans }} {{ contacts.phone }}</span></a></li>
+                          </svg>
+                          <span>{{ 'contacts.phone_label' | trans }} {{ contacts.phone }}</span></a></li>
                     {% endif %}
                     {% if contacts.toll_free_number is defined %}
                       <li><a class="list-item" href="tel:{{ contacts.toll_free_number }}" data-element="contacts">
                           <svg class="icon icon-primary icon-sm" aria-hidden="true">
                             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-hearing"></use>
-                          </svg><span>{{ 'contacts.phone_toll_free_number' | trans }}{{ contacts.toll_free_number }}</span></a></li>
+                          </svg>
+                          <span>{{ 'contacts.phone_toll_free_number' | trans }}{{ contacts.toll_free_number }}</span></a>
+                      </li>
                     {% endif %}
-                    {% if contacts.meetings_reservation_url is defined %}
+                    {% if contacts.appointment_booking is defined %}
                       <li>
-                        <a class="list-item" href="{{ contacts.meetings_reservation_url }}" data-element="appointment-booking">
+                        <a class="list-item" href="{{ contacts.appointment_booking }}"
+                           data-element="appointment-booking">
                           <svg class="icon icon-primary icon-sm" aria-hidden="true">
                             <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
-                          </svg><span>{{ 'contacts.meetings_reservation_url_label' | trans }}</span></a></li>
+                          </svg>
+                          <span>{{ 'contacts.meetings_reservation_url_label' | trans }}</span></a></li>
                     {% endif %}
                   </ul>
                 </div>
               </div>
-              {% endif %}
-            </div>
-
+            {% endif %}
           </div>
+
         </div>
       </div>
     </div>
-  {% endif %}
+  </div>
+{% endif %}
