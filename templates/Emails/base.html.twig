@@ -1,5 +1,5 @@
 {% set ente = instance_service.getCurrentInstance() %}
-{% set instance_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' ~ ente.getSlug %}
+{% set instance_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' ~ prefix %}
 {% set host_url = ocsdc_scheme ~ '://' ~ ocsdc_host ~ '/' %}
 {% set email_footer = ente.getMetaAsArray('email_footer') %}
 {% set logo = ente.getMetaAsArray('logo') is defined and ente.getMetaAsArray('logo') is not empty ? ente.getMetaAsArray('logo') : host_url ~ 'bundles/app/images/logo-default.png' %}
