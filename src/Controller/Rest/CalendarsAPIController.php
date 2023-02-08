@@ -24,8 +24,8 @@ use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use App\Services\Manager\CalendarManager;
+
 
 /**
  * Class CalendarsAPIController
@@ -39,23 +39,15 @@ class CalendarsAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  private $em;
+  private EntityManagerInterface $em;
+  private MeetingService $meetingService;
 
-  private $is;
+  private LoggerInterface $logger;
+  private CalendarManager $calendarManager;
 
-  /** @var MeetingService */
-  private $meetingService;
-
-  /** @var LoggerInterface */
-  private $logger;
-
-  /** @var CalendarManager  */
-  private $calendarManager;
-
-  public function __construct(CalendarManager $calendarManager, EntityManagerInterface $em, InstanceService $is, MeetingService $meetingService, LoggerInterface $logger)
+  public function __construct(CalendarManager $calendarManager, EntityManagerInterface $em, MeetingService $meetingService, LoggerInterface $logger)
   {
     $this->em = $em;
-    $this->is = $is;
     $this->meetingService = $meetingService;
     $this->logger = $logger;
     $this->calendarManager = $calendarManager;
@@ -87,7 +79,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @OA\Tag(name="calendars")
    */
-  public function getCalendarsAction(Request $request)
+  public function getCalendarsAction(Request $request): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -123,7 +115,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @param $id
    * @return View
    */
-  public function getCalendarAction($id)
+  public function getCalendarAction($id): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -157,7 +149,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *      name="available",
    *      in="query",
    *      @OA\Schema(
-   *          type="string"
+   *          type="boolean"
    *      ),
    *      required=false,
    *      description="Get only available dates: available dates includes at least one available slot"
@@ -203,7 +195,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function getCalendarAvailabilitiesAction($id, Request $request)
+  public function getCalendarAvailabilitiesAction($id, Request $request): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -213,6 +205,7 @@ class CalendarsAPIController extends AbstractFOSRestController
 
     $startDate = $request->query->get('from_time');
     $endDate = $request->query->get('to_time');
+    $excludeUnavailable = boolval($request->get('available', false));
     $selectedOpeningHours = $request->query->get('opening_hours');
     if ($selectedOpeningHours) {
       $selectedOpeningHours = explode(',', $selectedOpeningHours);
@@ -245,6 +238,8 @@ class CalendarsAPIController extends AbstractFOSRestController
       sort($availabilities);
       $availabilities = array_unique($availabilities);
 
+      // Dall'intero gruppo delle disponibilità elimina quelle che coincidono con i periodi di chiusura
+      // Todo: array_search è molto oneroso, provare a modificare con meccanismo basato su chiave
       foreach ($calendar->getClosingPeriods() as $closingPeriod) {
         $fromTime = $closingPeriod->getFromTime();
         $toTime = $closingPeriod->getToTime();
@@ -255,10 +250,20 @@ class CalendarsAPIController extends AbstractFOSRestController
           }
         }
       }
-
       $availableAvailabilities = [];
-      foreach ($availabilities as $availability) {
-        $availableAvailabilities[] = ['date' => $availability, 'available' => !empty($this->meetingService->getAvailabilitiesByDate($calendar, new DateTime($availability), false, true))];
+      foreach ($availabilities as $date) {
+        $slots = $this->meetingService->getAvailabilitiesByDate($calendar, new DateTime($date), false, true);
+        $isAvailable = !empty($slots);
+
+        // Se voglio i giorni disbonibili ed il giorno non ha delle disponibiità
+        if ($excludeUnavailable && !$isAvailable) {
+          continue;
+        }
+
+        $availableAvailabilities[] = [
+          'date' => $date,
+          'available' => $isAvailable
+        ];
       }
       return $this->view(array_values($availableAvailabilities), Response::HTTP_OK);
     } catch (\Exception $e) {
@@ -294,7 +299,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *      name="available",
    *      in="query",
    *      @OA\Schema(
-   *          type="string"
+   *          type="boolean"
    *      ),
    *      required=false,
    *      description="Get only available slots"
@@ -326,7 +331,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function getCalendarAvailabilitiesByDateAction($id, $date, Request $request)
+  public function getCalendarAvailabilitiesByDateAction($id, $date, Request $request): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -334,9 +339,15 @@ class CalendarsAPIController extends AbstractFOSRestController
       CalendarsBackOffice::IDENTIFIER . ' integration is not enabled on current tenant'
     );
 
-    $allAvailabilities = strtolower($request->get('all') == 'true') ? true : false;
-    $excludeUnavailable = $request->get('available');
+    $allAvailabilities = (bool)strtolower($request->get('all') == 'true');
     $excludedMeeting = $request->query->get('exclude');
+
+    $excludeUnavailable = false;
+    // Questo controllo è stato inserito per retrocompatibilità, nella versione precedente infatti bastava la presenza
+    // della variabile available per escludere gli slot senza disponibilità
+    if ($request->query->has('available') && $request->get('available') !== 'false' && $request->get('available') !== 0) {
+      $excludeUnavailable = true;
+    }
 
     $selectedOpeningHours = $request->query->get('opening_hours');
     if ($selectedOpeningHours) {
@@ -357,13 +368,13 @@ class CalendarsAPIController extends AbstractFOSRestController
     try {
       /** @var OpeningHour[] $openingHours */
       $openingHours = $this->em->getRepository('App\Entity\OpeningHour')->findBy(['calendar' => $id]);
-      $calendar = $this->em->getRepository('App\Entity\Calendar')->findOneBy(['id' => $id]);
       if ($openingHours === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
 
-      $slots = $this->meetingService->getAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, isset($excludeUnavailable), $excludedMeeting, $selectedOpeningHours);
+      $slots = $this->meetingService->getAvailabilitiesByDate($calendar, $inputDate, $allAvailabilities, $excludeUnavailable, $excludedMeeting, $selectedOpeningHours);
 
+      // Todo: includere questa logica nella query al database
       if ($selectedOpeningHours) {
         foreach ($slots as $key => $slot) {
           if (!in_array($slot["opening_hour"], $selectedOpeningHours)) {
@@ -417,7 +428,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @return View
    * @throws \Exception
    */
-  public function postCalendarAction(Request $request)
+  public function postCalendarAction(Request $request): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -503,7 +514,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function putCalendarAction($id, Request $request)
+  public function putCalendarAction($id, Request $request): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -595,7 +606,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function patchCalendarAction($id, Request $request)
+  public function patchCalendarAction($id, Request $request): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -666,7 +677,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @param $id
    * @return View
    */
-  public function deleteAction($id)
+  public function deleteAction($id): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -724,7 +735,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @return View
    */
-  public function getOpeningHoursAction($calendar_id)
+  public function getOpeningHoursAction($calendar_id): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -768,7 +779,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @return View
    */
-  public function getOpeningHourAction($calendar_id, $id)
+  public function getOpeningHourAction($calendar_id, $id): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -813,7 +824,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @Method("DELETE")
    * @return View
    */
-  public function deleteOpeningHourAction($calendar_id, $id)
+  public function deleteOpeningHourAction($calendar_id, $id): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -875,7 +886,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @throws \Exception
    */
 
-  public function postOpeningHourAction($calendar_id, Request $request)
+  public function postOpeningHourAction($calendar_id, Request $request): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -967,7 +978,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @return View
    */
-  public function putOpeningHourAction($calendar_id, $id, Request $request)
+  public function putOpeningHourAction($calendar_id, $id, Request $request): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -1062,7 +1073,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    *
    * @return View
    */
-  public function patchOpeningHourAction($calendar_id, $id, Request $request)
+  public function patchOpeningHourAction($calendar_id, $id, Request $request): View
   {
     $this->denyAccessUnlessGranted(
       BackofficeVoter::VIEW,
@@ -1145,7 +1156,7 @@ class CalendarsAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function getCalendarOverlapsAction($id, Request $request)
+  public function getCalendarOverlapsAction($id, Request $request): View
   {
     $selectedOpeningHours = $request->query->get('opening_hours');
     if ($selectedOpeningHours) {
