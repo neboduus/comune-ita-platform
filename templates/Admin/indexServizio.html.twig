@@ -85,7 +85,7 @@
                   {% endif %}
                 </td>
                 <td>
-                  <a class="btn btn-xs btn-outline-secondary" href="{{ absolute_url(path('servizi_show', { 'slug': item.slug })) }}" target="_blank"
+                  <a class="btn btn-xs btn-outline-secondary {% if item.externalCardUrl %}disabled{% endif %}" href="{{ absolute_url(path('servizi_show', { 'slug': item.slug })) }}" target="_blank"
                      data-url="{{ absolute_url(path('servizi_show', { 'slug': item.slug })) }}"
                      data-container="body" data-toggle="popover" data-trigger="hover"
                      data-placement="right"
@@ -105,6 +105,15 @@
                       <span class="sr-only">{{ 'admin.show_api_service' | trans }}</span>
                     </a>
                   {% endif %}
+                  <a class="btn btn-xs btn-outline-secondary clone" href="#"
+                      data-url="{{ absolute_url(path('service_access', { 'servizio': item.slug })) }}"
+                      data-container="body" data-toggle="popover" data-trigger="hover"
+                      data-placement="right"
+                      data-html="true" title="{{ 'admin.url_service_access' | trans }}"
+                      data-content="{{ 'admin.show_service_access' | trans }}">
+                    <i class="fa fa-key" aria-hidden="true"></i>
+                    <span class="sr-only">{{ 'admin.show_service_access' | trans }}</span>
+                  </a>
                 </td>
                 <td>
                   {% if access_levels[item.accessLevel] is defined %}
