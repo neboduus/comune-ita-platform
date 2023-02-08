@@ -1133,8 +1133,10 @@ admin:
   error_delete_operator_notify: "Impossibile eliminare l'operatore, ci sono delle pratiche collegate."
   url_service: 'Url del servizio'
   url_api_service: 'Url API del servizio'
+  url_service_access: 'Url di accesso al servizio'
   show_service: 'Clicca per visualizzare il servizio'
   show_api_service: "Clicca per copiare l'Url API del servizio"
+  show_service_access: "Clicca per copiare l'url di accesso alla compilazione del servizio"
   payment_amount_description: "(L'importo è determinato dal modulo tramite il valore del campo 'payment_amount')"
 operatori:
   error_pratice_state: 'La pratica non si trova nello stato corretto'
