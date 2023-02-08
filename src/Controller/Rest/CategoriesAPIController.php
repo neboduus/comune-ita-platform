@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,13 +30,9 @@ class CategoriesAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  /**
-   * @var EntityManagerInterface
-   */
-  private $entityManager;
+  private EntityManagerInterface $entityManager;
 
-  /** @var LoggerInterface */
-  private $logger;
+  private LoggerInterface $logger;
 
   public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
   {
@@ -57,6 +54,16 @@ class CategoriesAPIController extends AbstractFOSRestController
    *      description="If true empty categories are excluded from results"
    *  )
    *
+   * @OA\Parameter(
+   *      name="parent_id",
+   *      in="query",
+   *      @OA\Schema(
+   *          type="string"
+   *      ),
+   *      required=false,
+   *      description="Filter categories by parent (uuid), null for first level categories"
+   *  )
+   *
    * @OA\Response(
    *     response=200,
    *     description="Retrieve list of categories",
@@ -70,13 +77,27 @@ class CategoriesAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function getCategoriesAction(Request $request)
+  public function getCategoriesAction(Request $request): View
   {
 
     $result = [];
     $notEmpty = boolean_value($request->get('not_empty', false));
+    if ($request->query->has('parent_id')) {
 
-    $categories = $this->entityManager->getRepository('App\Entity\Categoria')->findBy([], ['name' => 'asc']);
+      if ($request->get('parent_id') == 'null') {
+        $categories = $this->entityManager->getRepository('App\Entity\Categoria')->findFirstLevelCategories();
+      } else {
+        if (!Uuid::isValid($request->get('parent_id'))) {
+          return $this->view(['parent_id is not a valid uuid'], Response::HTTP_BAD_REQUEST);
+        }
+        $criteria = ['parent' => $request->get('parent_id')];
+        $categories = $this->entityManager->getRepository('App\Entity\Categoria')->findBy($criteria, ['name' => 'asc']);
+      }
+      
+    } else {
+      $categories = $this->entityManager->getRepository('App\Entity\Categoria')->findBy([], ['name' => 'asc']);
+    }
+
     /** @var Categoria $c */
     foreach ($categories as $c) {
       if ($notEmpty && !$c->hasVisibleRelations()) {

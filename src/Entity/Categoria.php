@@ -12,12 +12,14 @@ use JMS\Serializer\Annotation\Groups;
 use Ramsey\Uuid\Uuid;
 use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\CategoriaRepository;
 
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="categoria")
  * @ORM\HasLifecycleCallbacks
+ * @ORM\Entity(repositoryClass=CategoriaRepository::class)
  */
 class Categoria implements Translatable
 {
