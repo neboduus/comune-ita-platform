@@ -14,6 +14,7 @@ use App\Entity\Pratica;
 use App\Entity\RispostaOperatore;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
+use App\Event\PraticaOnChangeStatusEvent;
 use App\Model\Application;
 use App\Model\File as FileModel;
 use App\Model\LinksPagedList;
@@ -49,6 +50,7 @@ use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
@@ -164,6 +166,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @var GiscomAPIAdapterServiceInterface
    */
   private $giscomAPIAdapterService;
+  private EventDispatcherInterface $dispatcher;
 
   /**
    * ApplicationsAPIController constructor.
@@ -192,7 +195,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
     AllegatoFileService $fileService,
     ApplicationDto $applicationDto,
     PaymentService $paymentService,
-    GiscomAPIAdapterServiceInterface $giscomAPIAdapterService
+    GiscomAPIAdapterServiceInterface $giscomAPIAdapterService,
+    EventDispatcherInterface $dispatcher
   ) {
     $this->em = $em;
     $this->is = $is;
@@ -207,6 +211,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $this->applicationDto = $applicationDto;
     $this->paymentService = $paymentService;
     $this->giscomAPIAdapterService = $giscomAPIAdapterService;
+    $this->dispatcher = $dispatcher;
   }
 
   /**
@@ -762,6 +767,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if ($pratica->getStatus() > Pratica::STATUS_DRAFT) {
         if ($applicationModel->getStatus() == Pratica::STATUS_PRE_SUBMIT) {
           $this->pdfBuilder->createForPraticaAsync($pratica, Pratica::STATUS_SUBMITTED);
+          $this->dispatcher->dispatch(new PraticaOnChangeStatusEvent($pratica, Pratica::STATUS_SUBMITTED, Pratica::STATUS_DRAFT), PraticaOnChangeStatusEvent::NAME);
         } else {
           $this->pdfBuilder->createForPraticaAsync($pratica, $applicationModel->getStatus());
         }
