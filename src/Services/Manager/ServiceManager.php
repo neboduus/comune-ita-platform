@@ -8,10 +8,10 @@ use App\Entity\Pratica;
 use App\Entity\Recipient;
 use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
+use App\Entity\UserGroup;
 use App\Event\KafkaEvent;
 use App\Model\FeedbackMessage;
 use App\Model\Service;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -391,6 +391,15 @@ class ServiceManager
       }
     }
     $serviceDto->setRecipients($recipients);
+
+    $userGroups = [];
+    foreach ($serviceDto->getUserGroupIds() as $id) {
+      $userGroup = $this->entityManager->getRepository('App\Entity\UserGroup')->findOneBy(['id' => $id]);
+      if ($userGroup instanceof UserGroup) {
+        $userGroups []= $userGroup;
+      }
+    }
+    $serviceDto->setUserGroupIds($userGroups);
 
     $geographicAreas = [];
     foreach ($serviceDto->getGeographicAreas() as $g) {

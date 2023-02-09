@@ -135,6 +135,13 @@ class ServizioFormType extends AbstractType
       ])
       ->add('service_group')
       ->add('shared_with_group')
+      ->add('user_group_ids', CollectionType::class, [
+        'entry_type' => TextType::class,
+        "allow_add" => true,
+        "allow_delete" => true,
+        'prototype' => true,
+        "label" => false
+      ])
       ->add('allow_reopening')
       ->add('allow_withdraw')
       ->add('allow_integration_request', CheckboxType::class, [

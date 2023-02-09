@@ -193,7 +193,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="If false grouped services are excluded from results"
    *  )
-   * 
+   *
    * @OA\Parameter(
    *      name="order_by",
    *      in="query",
@@ -213,7 +213,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Ascending or descending"
    *  )
-   * 
+   *
    * @OA\Parameter(
    *      name="sticky",
    *      in="query",
@@ -233,7 +233,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *      required=false,
    *      description="Limit the returned results"
    *  )
-   * 
+   *
    * @OA\Response(
    *     response=200,
    *     description="Retrieve list of services",
@@ -254,6 +254,7 @@ class ServicesAPIController extends AbstractFOSRestController
       foreach ($services as $s) {
         $result [] = $this->serviceDto->fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
       }
+
 
       return $this->view($result, Response::HTTP_OK);
     } catch (NotFoundHttpException $e) {
@@ -710,7 +711,6 @@ class ServicesAPIController extends AbstractFOSRestController
 
       $this->serviceManager->checkServiceRelations($serviceDto);
       $service = $this->serviceDto->toEntity($serviceDto, $service);
-
       $this->serviceManager->save($service);
     } catch (\Exception $e) {
       $data = [
