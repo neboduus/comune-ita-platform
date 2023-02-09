@@ -39,6 +39,7 @@ class TenantType extends AbstractType
     }
 
     $builder
+      ->add('name', TextType::class, ['label' => false])
       ->add('mechanographic_code', TextType::class, ['label' => false])
       ->add('administrative_code', TextType::class, ['label' => false])
       ->add('site_url', TextType::class, ['label' => false])

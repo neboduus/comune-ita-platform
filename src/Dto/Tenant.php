@@ -25,6 +25,14 @@ class Tenant
 
 
   /**
+   * @var string
+   * @Serializer\Type("string")
+   * @OA\Property(description="Tenant mechanographic code")
+   * @Groups({"read", "write"})
+   */
+  private $name;
+
+  /**
    * @Assert\NotBlank(message="Mechanographic code is mandatory")
    * @Assert\NotNull(message="Mechanographic code is mandatory")
    * @Serializer\Type("string")
@@ -262,6 +270,22 @@ class Tenant
   }
 
   /**
+   * @return string
+   */
+  public function getName(): string
+  {
+    return $this->name;
+  }
+
+  /**
+   * @param string $name
+   */
+  public function setName(string $name): void
+  {
+    $this->name = $name;
+  }
+
+  /**
    * @param TenantEntity $tenant
    * @return Tenant
    */
@@ -269,6 +293,7 @@ class Tenant
   {
     $dto = new self();
     $dto->id = $tenant->getId();
+    $dto->name = $tenant->getName();
     $dto->mechanographicCode = $tenant->getCodiceMeccanografico();
     $dto->administrativeCode = $tenant->getCodiceAmministrativo();
     $dto->siteUrl = $tenant->getSiteUrl();
@@ -300,6 +325,7 @@ class Tenant
     }
 
     $entity->setCodiceMeccanografico($this->mechanographicCode);
+    $entity->setName($this->name);
     $entity->setCodiceAmministrativo($this->administrativeCode);
     $entity->setSiteUrl($this->siteUrl);
     $entity->setMeta($this->meta);
@@ -339,6 +365,5 @@ class Tenant
     }
     return $data;
   }
-
 
 }
