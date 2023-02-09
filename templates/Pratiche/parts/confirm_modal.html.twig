@@ -2,15 +2,57 @@
      role="dialog"
      aria-labelledby="confirmAutoAssignLabel">
   <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
-      </div>
+    <div class="modal-content modal-dimensions">
+      {% if not pratica.servizio.conditionsAttachments | default and (not pratica.servizio.conditions | default or pratica.servizio.conditions | isEmpty) %}
+        <div class="modal-body">
+          {{ 'steps.common.conferma.sei_sicuro_di_inviare'|trans }}
+        </div>
+      {% else %}
+        <div class="modal-header pb-0">
+          <h2 class="modal-title">{{ 'conditions.title'|trans }}</h2>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>{{ 'conditions.body'|trans }}</p>
+
+          {%  if pratica.servizio.conditions | default and not pratica.servizio.conditions | isEmpty %}
+            <div class="bg-light my-3 scrollable-box">
+              {{ pratica.servizio.conditions | raw }}
+            </div>
+          {% endif %}
+          {%  if pratica.servizio.conditionsAttachments | default %}
+            {% if pratica.servizio.conditionsAttachments | length == 1 %}
+              {% set attachment = pratica.servizio.conditionsAttachments | first %}
+              <p class=" my-3">
+                <a href="{{ path('service_api_attachment_get', {'id': pratica.servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}) }}"
+                   class="underline"
+                   data-focus-mouse="false"
+                   download>
+                  {{ 'conditions.attachment'|trans }}
+                </a>
+              </p>
+            {% else %}
+              {{ 'conditions.attachment'|trans }}:
+                {% for attachment in pratica.servizio.conditionsAttachments %}
+                  <br>
+                  <a href="{{ path('service_api_attachment_get', {'id': pratica.servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}) }}"
+                     class="underline mt-1" data-focus-mouse="false" download>
+                    {{ attachment.name }}
+                  </a>
+                {% endfor %}
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endif %}
       <div class="modal-footer">
-        <button type="button" data-dismiss="modal"
-                class="btn">{{ 'steps.common.conferma.no'|trans }}</button>
-        <button type="button" data-dismiss="modal" class="btn btn-primary"
-                id="ok">{{ 'steps.common.conferma.si'|trans }}</button>
+        <button class="btn btn-primary w-100 mx-0 fw-bold mb-4" type="button" data-dismiss="modal" id="ok">
+          {{ 'conditions.confirm'|trans }}
+        </button>
+        <button class="btn btn-outline-primary w-100 mx-0 fw-bold mb-4" type="button" data-dismiss="modal">
+          {{ 'conditions.cancel'|trans }}
+        </button>
       </div>
     </div>
   </div>
