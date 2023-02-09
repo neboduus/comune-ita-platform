@@ -13,6 +13,7 @@ use App\Model\Service;
 use App\Services\Manager\BackofficeManager;
 use App\Services\VersionService;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use ReflectionException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -35,12 +36,18 @@ class ServiceDto extends AbstractDto
   private $versionService;
 
   /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
+
+  /**
    * @param RouterInterface $router
    */
-  public function __construct(RouterInterface $router, VersionService $versionService)
+  public function __construct(RouterInterface $router, VersionService $versionService, EntityManagerInterface $entityManager)
   {
     $this->router = $router;
     $this->versionService = $versionService;
+    $this->entityManager = $entityManager;
   }
 
   /**
@@ -149,6 +156,15 @@ class ServiceDto extends AbstractDto
     $service->setServiceGroup($servizio->getServiceGroup() ? $servizio->getServiceGroup()->getSlug() : null);
 
     $service->setSharedWithGroup($servizio->isSharedWithGroup());
+
+    $userGroupId = [];
+    if($servizio->getUserGroups()){
+      foreach ($servizio->getUserGroups() as $userGroup){
+        $userGroupId[] = $userGroup->getId();
+      }
+    }
+    $service->setUserGroupIds($userGroupId);
+
     $service->setAllowReopening($servizio->isAllowReopening());
     $service->setAllowWithdraw($servizio->isAllowWithdraw());
     $service->setAllowIntegrationRequest($servizio->isAllowIntegrationRequest());
@@ -266,6 +282,12 @@ class ServiceDto extends AbstractDto
       $entity->setServiceGroup($service->getServiceGroup());
     }
     $entity->setSharedWithGroup($service->isSharedWithGroup());
+    $userGroups = new ArrayCollection();
+    foreach ($service->getUserGroupIds() as $userGroupId){
+      $userGroup = $this->entityManager->getRepository('App\Entity\UserGroup')->find($userGroupId);
+      $userGroups->add($userGroup);
+    }
+    $entity->replaceUserGroups($userGroups);
 
     $entity->setAllowReopening($service->isAllowReopening());
     $entity->setAllowWithdraw($service->isAllowWithdraw());

@@ -5,6 +5,7 @@ namespace App\Model;
 
 use App\Entity\Servizio;
 use DateTime;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\Mapping\Annotation as Gedmo;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
@@ -46,7 +47,7 @@ class Service
 
   /**
    * @Serializer\Type("string")
-   * @OA\Property(description="Services's tenant id")
+   * @OA\Property(description="Services's tenant id", format="uuid")
    * @Groups({"read", "write"})
    */
   private $tenant;
@@ -62,7 +63,7 @@ class Service
   /**
    *
    * @Serializer\Type("string")
-   * @OA\Property(description="Services's topic id")
+   * @OA\Property(description="Services's topic id", format="uuid")
    * @Groups({"read"})
    */
   private $topics_id;
@@ -341,7 +342,7 @@ class Service
 
   /**
    * @Serializer\Type("string")
-   * @OA\Property(description="Services group id")
+   * @OA\Property(description="Services group id", format="uuid")
    * @Groups({"read", "write"})
    */
   private $serviceGroupId;
@@ -353,6 +354,13 @@ class Service
    * @Groups({"read", "write"})
    */
   private $sharedWithGroup;
+
+  /**
+   * @Serializer\Type("array<string>")
+   * @OA\Property(description="Users group id", type="array",  @OA\Items(type="string", format="uuid"))
+   * @Groups({"read", "write"})
+   */
+  private $userGroupIds;
 
   /**
    * @var bool
@@ -1579,5 +1587,21 @@ class Service
   public function setSatisfyEntrypointId($satisfyEntrypointId): void
   {
     $this->satisfyEntrypointId = $satisfyEntrypointId;
+  }
+
+  /**
+   * @return string[]
+   */
+  public function getUserGroupIds(): ?array
+  {
+    return $this->userGroupIds;
+  }
+
+  /**
+   * @param string[] $userGroupIds
+   */
+  public function setUserGroupIds(array $userGroupIds): void
+  {
+    $this->userGroupIds = $userGroupIds;
   }
 }

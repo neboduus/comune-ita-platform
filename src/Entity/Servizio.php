@@ -704,12 +704,32 @@ class Servizio implements Translatable
   }
 
   /**
+   * @param ArrayCollection $userGroups
+   * @return void
+   */
+  public function replaceUserGroups(ArrayCollection $userGroups): void
+  {
+    foreach ($this->userGroups as $userGroup) {
+      if (!$userGroups->contains($userGroup)) {
+        $this->removeUserGroup($userGroup);
+      }
+    }
+    if (!$userGroups->isEmpty()) {
+      foreach ($userGroups as $group) {
+        $this->addUserGroup($group);
+      }
+    }
+  }
+
+  /**
    * @param UserGroup $userGroup
    */
   public function addUserGroup(UserGroup $userGroup)
   {
-    $this->userGroups[] = $userGroup;
-    $userGroup->addService($this);
+    if (!$this->userGroups->contains($userGroup)) {
+      $this->userGroups->add($userGroup);
+      $userGroup->addService($this);
+    }
   }
 
   /**
