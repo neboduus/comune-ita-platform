@@ -3013,3 +3013,9 @@ place:
   postOfficeBoxNumber: 'Box number'
   postalCode: 'ZIP code'
   streetAddress: 'Street'
+conditions:
+  title: 'Terms and conditions'
+  body: 'By clicking on Confirm and send, you confirm that you have read the terms and conditions of the service.'
+  attachment: 'Read terms and conditions'
+  confirm: 'Confirm and send'
+  cancel: 'Cancel'

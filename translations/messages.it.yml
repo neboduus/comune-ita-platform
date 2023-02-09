@@ -3052,4 +3052,9 @@ place:
   postOfficeBoxNumber: 'Numero'
   postalCode: 'CAP'
   streetAddress: 'Via/Piazza'
-
+conditions:
+  title: 'Termini e condizioni'
+  body: 'Cliccando su Conferma e invia confermi di aver preso visione dei termini e delle condizioni di servizio.'
+  attachment: 'Leggi termini e condizioni'
+  confirm: 'Conferma e invia'
+  cancel: 'Annulla'

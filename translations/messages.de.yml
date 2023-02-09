@@ -3083,3 +3083,9 @@ place:
   postOfficeBoxNumber: ''
   postalCode: ''
   streetAddress: ''
+conditions:
+  title: ''
+  body: ''
+  attachment: ''
+  confirm: ''
+  cancel: ''
