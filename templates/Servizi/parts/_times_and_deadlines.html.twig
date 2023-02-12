@@ -1,0 +1,40 @@
+<section class="it-page-section mb-4" id="{{ section_id }}">
+    <h2 class="title mb-3">
+        {% if section_id == "times_and_deadlines" %}
+            {{ 'servizio.times_and_deadlines' | trans }}
+        {% else %}
+            {{ 'pratica.next_steps' | trans }}
+        {% endif %}
+    </h2>
+    {% if servizio.timesAndDeadlines %}
+        <div class="rich-text text-serif text-paragraph">
+            {{ servizio.timesAndDeadlines|cleanMarkup|raw|nl2br }}
+        </div>
+    {% endif %}
+    {% set serviceDates = [] %}
+    {% if servizio.maxResponseTime %}
+        {% set startMaxResponseTimeDate = (servizio.isScheduled ? servizio.scheduledTo : 'now')|date('Y-m-d') %}
+        {% set serviceDates = serviceDates|merge([{
+                'date': startMaxResponseTimeDate|date_modify( '+' ~ (servizio.maxResponseTime) ~ 'days'),
+                'label': 'servizio.esito_richiesta',
+                'checkpoint_info': (servizio.isScheduled ? 'servizio.tempo_massimo_esito_servizio_programmato' : 'servizio.tempo_massimo_esito_servizio')|transchoice(servizio.maxResponseTime)
+            }]
+        ) %}
+    {% endif %}
+    {% if servizio.isScheduled %}
+        {% set serviceDates = serviceDates|merge([
+            {
+                'date': servizio.scheduledFrom,
+                'label': 'servizio.apertura',
+                'checkpoint_info': ''
+            },
+            {
+                'date': servizio.scheduledTo,
+                'label': 'servizio.termine_presentazione_domande',
+                'checkpoint_info': ''
+            }
+            ]) 
+        %}
+    {% endif %}
+    {{ include('Servizi/parts/panel/times_and_deadlines.html.twig', {'serviceDates': serviceDates, 'section_id': section_id})  }}
+</section>

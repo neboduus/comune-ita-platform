@@ -211,39 +211,7 @@
             </section>
           {% endif %}
           {% if servizio.timesAndDeadlines or servizio.maxResponseTime or servizio.isScheduled %}
-            <section class="it-page-section mb-4" id="times_and_deadlines">
-              <h2 class="title mb-3">{{ 'servizio.times_and_deadlines' | trans }}</h2>
-              {% if servizio.timesAndDeadlines %}
-                <div class="rich-text text-serif text-paragraph">
-                  {{ servizio.timesAndDeadlines|cleanMarkup|raw|nl2br }}
-                </div>
-              {% endif %}
-              {% set serviceDates = [] %}
-              {% if servizio.maxResponseTime %}
-                {% set startMaxResponseTimeDate = (servizio.isScheduled ? servizio.scheduledTo : 'now')|date('Y-m-d') %}
-                {% set serviceDates = serviceDates|merge([{
-                    'date': startMaxResponseTimeDate|date_modify( '+' ~ (servizio.maxResponseTime) ~ 'days'),
-                    'label': 'servizio.esito_richiesta',
-                    'checkpoint_info': (servizio.isScheduled ? 'servizio.tempo_massimo_esito_servizio_programmato' : 'servizio.tempo_massimo_esito_servizio')|transchoice(servizio.maxResponseTime)
-                  }]
-                ) %}
-              {% endif %}
-              {% if servizio.isScheduled %}
-                {% set serviceDates = serviceDates|merge([
-                  {
-                    'date': servizio.scheduledFrom,
-                    'label': 'servizio.apertura',
-                    'checkpoint_info': ''
-                  },
-                  {
-                    'date': servizio.scheduledTo,
-                    'label': 'servizio.termine_presentazione_domande',
-                    'checkpoint_info': ''
-                  }
-                ]) %}
-              {% endif %}
-              {{ include('Servizi/parts/panel/times_and_deadlines.html.twig', {'serviceDates': serviceDates})  }}
-            </section>
+            {{ include('Servizi/parts/_times_and_deadlines.html.twig', {'servizio': servizio, 'section_id': 'times_and_deadlines'})  }}
           {% endif %}
           {# Accedi al servizio #}
           <section class="it-page-section mb-4 bg-aliceblue p-4" id="howto">

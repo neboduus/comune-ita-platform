@@ -1,19 +1,41 @@
 <div class="point-list-wrapper my-3">
-  {% for timeline in serviceDates | sort((a, b) => a.date <=> b.date) %}
-    <div class="point-list point-list-step">
-      <div class="point-list-aside point-list-primary px-4 py-2">
-        <div class="small">{{ timeline.date | date('Y') }}</div>
-        <div class="point-date font-weight-bolder large">{{ timeline.date | date('d') }}</div>
-        <div class="small text-lowercase font-weight-semibold">{{ ('calendars.opening_hours.months.short.' ~ ( timeline.date | date('M'))) | trans }}</div>
-      </div>
-      <div class="point-list-content mb-3">
-        <div class="card card-teaser rounded shadow">
-          <div class="card-body mb-0">
-            <h5 class="font-weight-bolder text-primary">{{ timeline.label | trans }}</h5>
-            <p>{{ timeline.checkpoint_info | trans }}</p>
+  {% if section_id == 'times_and_deadlines'%}
+    {% for timeline in serviceDates | sort((a, b) => a.date <=> b.date) %}
+      <div class="point-list point-list-step">
+        <div class="point-list-aside point-list-primary px-4 py-2">
+          <div class="small">{{ timeline.date | date('Y') }}</div>
+          <div class="point-date font-weight-bolder large">{{ timeline.date | date('d') }}</div>
+          <div class="small text-lowercase font-weight-semibold">{{ ('calendars.opening_hours.months.short.' ~ ( timeline.date | date('M'))) | trans }}</div>
+        </div>
+        <div class="point-list-content mb-3">
+          <div class="card card-teaser rounded shadow">
+            <div class="card-body mb-0">
+              <h5 class="font-weight-bolder text-primary">{{ timeline.label | trans }}</h5>
+              <p>{{ timeline.checkpoint_info | trans }}</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  {% else %}
+    {% for timeline in serviceDates | sort((a, b) => a.date <=> b.date) %}
+      {% if timeline.date >= date("now" | date('Y-m-d')) %}
+        <div class="point-list point-list-step">
+          <div class="point-list-aside point-list-primary px-4 py-2">
+            <div class="small">{{ timeline.date | date('Y') }}</div>
+            <div class="point-date font-weight-bolder large">{{ timeline.date | date('d') }}</div>
+            <div class="small text-lowercase font-weight-semibold">{{ ('calendars.opening_hours.months.short.' ~ ( timeline.date | date('M'))) | trans }}</div>
+          </div>
+          <div class="point-list-content mb-3">
+            <div class="card card-teaser rounded shadow">
+              <div class="card-body mb-0">
+                <h5 class="font-weight-bolder text-primary">{{ timeline.label | trans }}</h5>
+                <p>{{ timeline.checkpoint_info | trans }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 </div>

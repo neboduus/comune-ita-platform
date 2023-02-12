@@ -25,6 +25,7 @@ use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
 use App\Services\Manager\MessageManager;
 use App\Services\Manager\PraticaManager;
+use App\Services\Manager\ServiceManager;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
 use App\Utils\StringUtils;
@@ -107,7 +108,10 @@ class PraticheController extends AbstractController
    * @var MessageManager
    */
   private $messageManager;
-
+  /**
+   * @var ServiceManager
+   */
+  private $serviceManager;
 
   /**
    * @param InstanceService $instanceService
@@ -125,6 +129,7 @@ class PraticheController extends AbstractController
    * @param BreadcrumbsService $breadcrumbsService
    * @param ServizioHandlerRegistry $servizioHandlerRegistry
    * @param MessageManager $messageManager
+   * @param ServiceManager $serviceManager
    */
   public function __construct(
     InstanceService             $instanceService,
@@ -141,7 +146,8 @@ class PraticheController extends AbstractController
     EntityManagerInterface      $entityManager,
     BreadcrumbsService          $breadcrumbsService,
     ServizioHandlerRegistry     $servizioHandlerRegistry,
-    MessageManager              $messageManager
+    MessageManager              $messageManager,
+    ServiceManager              $serviceManager
   )
   {
     $this->instanceService = $instanceService;
@@ -159,6 +165,7 @@ class PraticheController extends AbstractController
     $this->breadcrumbsService = $breadcrumbsService;
     $this->servizioHandlerRegistry = $servizioHandlerRegistry;
     $this->messageManager = $messageManager;
+    $this->serviceManager = $serviceManager;
   }
 
   /**
@@ -491,6 +498,12 @@ class PraticheController extends AbstractController
    */
   public function showAction(Request $request, Pratica $pratica)
   {
+    if ($pratica->getStatus() == Pratica::STATUS_DRAFT) {
+      return $this->redirectToRoute(
+        'pratiche_compila', 
+        ['pratica' => $pratica->getId()]
+      );
+    }
 
     /** @var CPSUser $user */
     $user = $this->getUser();
@@ -499,14 +512,15 @@ class PraticheController extends AbstractController
 
     $this->breadcrumbsService->getBreadcrumbs()->addRouteItem($this->translator->trans('nav.pratiche'), 'pratiche');
     $this->breadcrumbsService->getBreadcrumbs()->addItem($pratica->getServizio()->getName());
-
+    
     $result = [
       'pratica' => $pratica,
       'user' => $user,
       'formserver_url' => $this->getParameter('formserver_public_url'),
       'can_compile' => $this->isGranted(ApplicationVoter::COMPILE, $pratica),
       'can_withdraw' => $this->isGranted(ApplicationVoter::WITHDRAW, $pratica),
-      'servizio' => $pratica->getServizio()
+      'servizio' => $pratica->getServizio(),
+      'servizi_correlati' => $this->serviceManager->getRelatedServices($pratica->getServizio())
     ];
 
     if ($pratica instanceof GiscomPratica) {
