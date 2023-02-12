@@ -9,9 +9,6 @@ twig:
     - 'form/fields.html.twig'
     - '@EWZRecaptcha/Form/ewz_recaptcha_widget.html.twig'
   globals:
-    header_top:
-      title: "%header_top_title%"
-      link: "%header_top_link%"
     ocsdc_iter_duration_start_status: "%ocsdc_iter_duration_start_status%"
     ocsdc_iter_duration_end_statuses: "%ocsdc_iter_duration_end_statuses%"
     ocsdc_default_date_format: "%ocsdc_default_date_format%"

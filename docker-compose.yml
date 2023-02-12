@@ -90,8 +90,6 @@ services:
       WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-http://gotenberg:3000}
       #EZ_PASSWORD: ${EZ_PASSWORD:-ez}
       #PITRE_ADAPTER_URL: ${PITRE_ADAPTER_URL:-http://pitre-soap:8080/}
-      HEADER_TOP_TITLE: 'Developers Italia'
-      HEADER_TOP_LINK: https://developers.italia.it/it/software/opencontent-stanza-del-cittadino-core-410a6e
       PHP_APCU_ENABLED: 0
       PHP_OPCACHE_ENABLE: 0
       FORMSERVER_PRIVATE_URL: ${FORMSERVER_PRIVATE_URL:-http://formserver:80}
