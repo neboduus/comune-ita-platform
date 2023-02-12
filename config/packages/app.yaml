@@ -23,8 +23,6 @@ parameters:
   wkhtmltopdf_service: '%env(WKHTMLTOPDF_SERVICE)%'
   ez_password: '%env(EZ_PASSWORD)%'
   pitre_adapter_url: '%env(PITRE_ADAPTER_URL)%'
-  header_top_title: '%env(HEADER_TOP_TITLE)%'
-  header_top_link: '%env(HEADER_TOP_LINK)%'
   ocsdc_iter_duration_start_status: 3
   ocsdc_iter_duration_end_statuses:
     - 10
@@ -147,6 +145,8 @@ parameters:
   google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
   google_tag_manager_key: '%env(GOOGLE_TAG_MANAGER_KEY)%'
   satisfy_widget_url: '%env(SATISFY_WIDGET_URL)%'
+  satisfy_api_url: '%env(SATISFY_API_URL)%'
+  satisfy_secret: '%env(SATISFY_SECRET)%'
   signature_check_ws_url: '%env(SIGNATURE_CHECK_WS_URL)%'
   ip_info_ws_url: '%env(IP_INFO_WS_URL)%'
   env(PREFIX): ''
@@ -168,10 +168,6 @@ parameters:
   env(WKHTMLTOPDF_SERVICE): wkhtmltopdf
   env(EZ_PASSWORD): ez
   env(PITRE_ADAPTER_URL): http://localhost:8080/
-  env(HEADER_TOP_TITLE): Provincia autonoma di Trento
-  env(HEADER_TOP_LINK): >-
-    http://www.provincia.tn.it/ La <strong>Stanza del cittadino</strong> è una
-    iniziativa progettuale del Consorzio dei Comuni Trentini
   env(OCSDC_SCHEME): http
   env(OCSDC_HOST): stanzadelcittadino.localtest.me
   env(GISCOM_PASSWORD): giscom
@@ -251,5 +247,7 @@ parameters:
   env(MAILER_URL): smtp://mailserver:1025
   env(GOOGLE_TAG_MANAGER_KEY): null
   env(SATISFY_WIDGET_URL): https://satisfy.opencontent.it/widget.js
+  env(SATISFY_API_URL): https://satisfy.opencityitalia.it/v1/graphql
+  env(SATISFY_SECRET): null
   env(SIGNATURE_CHECK_WS_URL): null
   env(IP_INFO_WS_URL): null

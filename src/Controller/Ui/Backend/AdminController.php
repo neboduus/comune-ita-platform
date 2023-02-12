@@ -35,6 +35,7 @@ use App\Services\IOService;
 use App\Services\MailerService;
 use App\Services\Manager\ServiceManager;
 use App\Services\Manager\UserManager;
+use App\Services\Satisfy\SatisfyService;
 use App\Utils\FormUtils;
 use App\Utils\StringUtils;
 use DateTime;
@@ -716,10 +717,9 @@ class AdminController extends AbstractController
    * @param Request $request
    * @return Response
    */
-  public function editServizioAction(Servizio $servizio, Request $request): Response
+  public function editServizioAction(Servizio $servizio, Request $request, SatisfyService $satisfyService): Response
   {
     $user = $this->getUser();
-
     $steps = [
       'template' => [
         'label' => $this->translator->trans('general.form_template'),
@@ -816,6 +816,15 @@ class AdminController extends AbstractController
       $form = $this->createForm($steps[$currentStep]['class'], $servizio);
       $form->handleRequest($request);
       if ($form->isSubmitted() && $form->isValid()) {
+
+        if (empty($servizio->getSatisfyEntrypointId())) {
+          try {
+            $satisfyService->syncEntryPoint($servizio, false);
+          } catch (\Exception $e) {
+            $this->logger->error('Error on configure satisfy entrypoint for service '.$servizio->getName().' - '.$e->getMessage());
+          }
+        }
+
         $this->serviceManager->save($servizio);
 
         if ($request->request->get('save') === 'next') {
@@ -908,7 +917,7 @@ class AdminController extends AbstractController
    * @param Request $request
    * @return RedirectResponse|Response|null
    */
-  public function newServiceAction(Request $request, ServiceManager $serviceManager)
+  public function newServiceAction(Request $request)
   {
     $servizio = new Servizio();
     $ente = $this->instanceService->getCurrentInstance();
@@ -926,7 +935,7 @@ class AdminController extends AbstractController
       $servizio->setTopics($category);
     }
 
-    $defaultFeedbackMessages = $serviceManager->getDefaultFeedbackMessages();
+    $defaultFeedbackMessages = $this->serviceManager->getDefaultFeedbackMessages();
     $translationsRepo = $this->entityManager->getRepository('Gedmo\Translatable\Entity\Translation');
 
     foreach ($this->locales as $locale) {
@@ -943,7 +952,6 @@ class AdminController extends AbstractController
     $erogatore->addEnte($ente);
     $this->entityManager->persist($erogatore);
     $servizio->activateForErogatore($erogatore);
-
     $this->serviceManager->save($servizio);
 
     return $this->redirectToRoute('admin_servizio_edit', ['id' => $servizio->getId()]);

@@ -2762,7 +2762,7 @@ ente:
   satisfy_enabled: 'Abilita verifica della soddisfazione utente'
   satisfy_entrypoint_id_empty: 'Per abilitare correttamente la verifica della soddisfazione utente è necessario impostare un entry point id valido'
   satisfy_help_tenant: "Inserisci qui l'id dell'entrypoint configurato per il tuo ente"
-  satisfy_help_service: "Inserisci qui l'id dell'entrypoint configurato per il servizio specifico che stai modificando"
+  satisfy_help_service: "Inserisci qui l'id dell'entrypoint configurato per il servizio specifico che stai modificando, se non inserito il sistema cercherà di configurarlo automaticamente"
   mailers:
     title: 'Configurazione mailers'
     helper: "Non sono ancora stati impostati mailer per l'ente, i messaggi verranno inviati via e-mail dall'indirizzo di default dal sistema."
