@@ -8,7 +8,7 @@ use App\Model\Security\User\AdminRemovedSecurityLog;
 use App\Model\Security\User\LoginSuccessSecurityLog;
 use App\Model\Security\User\LoginFailedSecurityLog;
 use App\Model\Security\User\OperatorCreatedSecurityLog;
-use App\Model\Security\User\OperatorRemovedecurityLog;
+use App\Model\Security\User\OperatorRemovedSecurityLog;
 use App\Model\Security\User\ResetPasswordRequestSecurityLog;
 use App\Model\Security\User\ResetPasswordSuccessSecurityLog;
 use Psr\Cache\CacheItemPoolInterface;
@@ -40,8 +40,15 @@ class SecurityLogFactory
   public function getSecurityLog($type, ?UserInterface $user, ?Request $request, $subject = null): SecurityLogInterface
   {
 
+    if (!isset(SecurityLogInterface::ACTIONS_MAPPING[$type])) {
+      throw new \Exception(SecurityLogInterface::ACTIONS_MAPPING[$type] . 'not found');
+    }
+
+    $securityClass = SecurityLogInterface::ACTIONS_MAPPING[$type];
+    $securityLog = new $securityClass($user, $subject);
+
     // Todo: creare un registry o init in automatico
-    switch ($type) {
+    /*switch ($type) {
       case SecurityLogInterface::ACTION_USER_LOGIN_SUCCESS:
         $securityLog = new LoginSuccessSecurityLog($user);
         break;
@@ -71,9 +78,9 @@ class SecurityLogFactory
         break;
 
       case SecurityLogInterface::ACTION_USER_OPERATOR_REMOVED:
-        $securityLog = new OperatorRemovedecurityLog($user, $subject);
+        $securityLog = new OperatorRemovedSecurityLog($user, $subject);
         break;
-    }
+    }*/
 
     if ($this->ipInfoWsUrl && $request instanceof Request && $request->server->has('HTTP_X_REAL_IP')) {
       $origin = $this->generateOrigin($request->server->get('HTTP_X_REAL_IP'));
@@ -125,7 +132,7 @@ class SecurityLogFactory
       }
       return $origin;
     } catch (\Exception $e) {
-      return null;
+      return ['ip' => $ip];
     }
   }
 

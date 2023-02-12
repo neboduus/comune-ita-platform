@@ -6,7 +6,7 @@ use App\Entity\OperatoreUser;
 use App\Model\Security\AbstractSecurityLog;
 use App\Model\Security\SecurityLogInterface;
 
-class OperatorRemovedecurityLog extends AbstractSecurityLog
+class OperatorRemovedSecurityLog extends AbstractSecurityLog
 {
   const SHORT_DESCRIPTION_TEMPLATE = "E' stato eliminato un operatore da %ip% (%city%, %country%)";
 
