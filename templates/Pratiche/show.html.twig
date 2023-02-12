@@ -1,5 +1,5 @@
 {% extends 'Default/index.html.twig' %}
-{% block title %}{{pratica.servizio.name}} - Stanza del cittadino{% endblock %}
+{% block title %}{{ pratica.servizio.name }} - Stanza del cittadino{% endblock %}
 {% block stylesheets %}
   {{ parent() }}
   {{ encore_entry_link_tags('compile') }}
@@ -21,19 +21,24 @@
             </svg>
             <h1 class="title-xxxlarge">{{ 'pratica.application_sent' | trans }}</h1>
           </div>
-          <p class="subtitle-small">{{ 'pratica.thanks_message'|trans({'%name%':pratica.servizio.name,'%id%':pratica.id,'%ente%':pratica.ente.name})|raw }}</p>
+          <p
+            class="subtitle-small">{{ 'pratica.thanks_message'|trans({'%name%':pratica.servizio.name,'%id%':pratica.id,'%ente%':pratica.ente.name})|raw }}</p>
           {% if pratica.servizio.paymentRequired %}
             <p class="mt-4 mb-0">{{ 'payment.type' | trans }}: <strong>{{ pratica.getPaymentType }}</strong></p>
             <p class="m-0">{{ 'payment.amount' | trans }}:
               <strong>{{ pratica.paymentData is not null and pratica.paymentData.payment_amount is defined
-                ? pratica.paymentData.payment_amount : pratica.servizio.paymentParameters['total_amounts'] }}€</strong></p>
+                ? pratica.paymentData.payment_amount : pratica.servizio.paymentParameters['total_amounts'] }}€</strong>
+            </p>
           {% endif %}
-          <p class="m-0">{{ 'pratica.sent_to' | trans }}: <strong> {{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</strong></p>
+          <p class="m-0">{{ 'pratica.sent_to' | trans }}:
+            <strong> {{ pratica.submissionTime|date(ocsdc_default_date_format) }} {{ 'pratica.dettaglio.alle'|trans }} {{ pratica.submissionTime|date(ocsdc_default_time_format) }}</strong>
+          </p>
           {% if pratica.servizio.isProtocolRequired %}
             {% if pratica.numeroProtocollo %}
               <p class="m-0">{{ 'pratica.protocollo'|trans }}: <strong>{{ pratica.numeroProtocollo }}</strong></p>
             {% else %}
-              <p class="m-0">{{ 'pratica.protocollo'|trans }}: <strong>{{ 'pratica.in_attesa_protocollo'|trans }}</strong></p>
+              <p class="m-0">{{ 'pratica.protocollo'|trans }}:
+                <strong>{{ 'pratica.in_attesa_protocollo'|trans }}</strong></p>
             {% endif %}
           {% endif %}
           <p class="pt-4 pt-lg-40 mb-0">{{ 'pratica.sent_to_email' | trans }}:<br>
@@ -70,20 +75,22 @@
                 {% endif %}
               </p>
             {% endif %}
-          {% set attachment = pratica.moduliCompilati|first %}
+            {% set attachment = pratica.moduliCompilati|first %}
             {% if pratica.numeroProtocollo %}
               {% set button_text = 'operatori.scarica_richiesta_protocollata'|trans %}
-              <a href="{{ path('pratiche_show_pdf', {'pratica': pratica}) }}" class="btn btn-outline-primary fw-bold mt-3" download>
+              <a href="{{ path('pratiche_show_pdf', {'pratica': pratica}) }}"
+                 class="btn btn-outline-primary fw-bold mt-3" download>
                   <span class="rounded-icon">
                     <svg class="icon icon-primary icon-sm" aria-hidden="true">
                       <use href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
                     </svg>
                   </span>
-                <span class="">{{ button_text }}</span>
+                <span>{{ button_text }}</span>
               </a>
             {% else %}
               {% set button_text = 'operatori.scarica_ricevuta'|trans %}
-              <a class="btn btn-outline-primary fw-bold mt-3" href="{{ path('allegati_download', {'allegato': attachment.id}) }}" download>
+              <a class="btn btn-outline-primary fw-bold mt-3"
+                 href="{{ path('allegati_download', {'allegato': attachment.id}) }}" download>
                   <span class="rounded-icon">
                     <svg class="icon icon-primary icon-sm" aria-hidden="true">
                       <use href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
@@ -94,16 +101,17 @@
             {% endif %}
 
             {# Pratica protocollata #}
-          {% elseif pratica.status == 3000 %}
-            {% if pratica.servizio.isProtocolRequired and pratica.numeroProtocollo %}
+          {% else %}
+            {% if pratica.numeroProtocollo %}
               {% set button_text = 'operatori.scarica_richiesta_protocollata'|trans %}
-              <a href="{{ path('pratiche_show_pdf', {'pratica': pratica}) }}" class="btn btn-outline-primary fw-bold mt-3" download>
+              <a href="{{ path('pratiche_show_pdf', {'pratica': pratica}) }}"
+                 class="btn btn-outline-primary fw-bold mt-3" download>
                   <span class="rounded-icon">
                     <svg class="icon icon-primary icon-sm" aria-hidden="true">
                       <use href="/bootstrap-italia/dist/svg/sprite.svg#it-download"></use>
                     </svg>
                   </span>
-                <span class="">{{ button_text }}</span>
+                <span>{{ button_text }}</span>
               </a>
             {% endif %}
 
@@ -113,7 +121,7 @@
             {% if pratica.status == constant('\\App\\Entity\\Pratica::STATUS_PAYMENT_PENDING') %}
               <a class="btn btn-outline-primary fw-bold mt-3" data-action="edit_draft"
                  href="{{ path('pratiche_compila', {'pratica': pratica.id, 'instance': pratica.instanceId, 'step': pratica.lastCompiledStep}) }}">
-              <i class="fa fa-arrow-circle-right"></i>
+                <i class="fa fa-arrow-circle-right"></i>
                 {{ 'pratica.vai_al_pagamento'|trans }}
               </a>
             {% endif %}
@@ -126,7 +134,10 @@
             {% endif %}
           {% endif %}
         </div>
-        <p class="mt-4 mt-lg-3 mb-40 mb-lg-80">{{ 'pratica.sent_to_summary' | trans}} <a class="t-primary" href="{{ app.request.uri ~ '/detail'}}">{{ 'personal_area' | trans }}</a> {{ 'pratica.sent_to_summary_or' | trans}} <a class="t-primary" href="{{ path('service_access', {'servizio': pratica.servizio.slug}) }}">{{ 'new_request' | trans }}</a></p>
+        <p class="mt-4 mt-lg-3 mb-40 mb-lg-80">{{ 'pratica.sent_to_summary' | trans }}
+          <a class="t-primary" href="{{ app.request.uri ~ '/detail' }}">{{ 'personal_area' | trans }}</a> {{ 'pratica.sent_to_summary_or' | trans }}
+          <a class="t-primary" href="{{ path('service_access', {'servizio': pratica.servizio.slug}) }}">{{ 'new_request' | trans }}</a>
+        </p>
         <div class="col-12 py-lg-2">
           {% if pratica.servizio.finalIndications and pratica.status >= 1900 and pratica.status <= 3000 %}
             <div class="alert alert-info">
@@ -143,9 +154,9 @@
     {% endif %}
   </div>
 
-  {{ include('Servizi/parts/_feedback.html.twig', {'type': 'thanks', 'service_id': pratica.servizio.id})}}
+  {{ include('Servizi/parts/_feedback.html.twig', {'type': 'thanks', 'service_id': pratica.servizio.id}) }}
 
-  {{ include('Servizi/parts/_contacts.html.twig')}}
+  {{ include('Servizi/parts/_contacts.html.twig') }}
 
 {% endblock %}
 
