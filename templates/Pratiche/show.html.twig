@@ -136,6 +136,9 @@
         </div>
       </div>
     </div>
+    {% if not pratica.meetings.count > 0 %}
+      {{ include('Pratiche/parts/_general.html.twig', {'servizio': servizio, 'servizi_correlati': servizi_correlati})}}
+    {% endif %}
   </div>
 
   {{ include('Servizi/parts/_feedback.html.twig', {'type': 'thanks', 'service_id': pratica.servizio.id})}}

@@ -1,0 +1,88 @@
+
+<hr class="d-none d-lg-block mt-3 mb-40">
+<div class="row">
+	<div class="d-none d-sm-none d-lg-block col-lg-3">
+		<div class="cmp-navscroll sticky-top" aria-labelledby="accordion-title-">
+			<nav class="navbar it-navscroll-wrapper navbar-expand-lg" aria-label="{{ 'pratica.page_index' | trans }}" data-bs-navscroll>
+				<div class="navbar-custom" id="navbarNavProgress">
+					<div class="menu-wrapper">
+						<div class="link-list-wrapper">
+							<div class="accordion">
+								<div class="accordion-item">
+									<span class="accordion-header" id="accordion-title-">
+										<button class="accordion-button pb-10 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-" aria-expanded="true" aria-controls="collapse-">
+											{{ 'pratica.page_index' | trans }}
+											<svg class="icon icon-xs right">
+												<use href="/bootstrap-italia/dist/svg/sprite.svg#it-expand"></use>
+											</svg>
+										</button>
+									</span>
+									<div class="progress">
+										<div class="progress-bar it-navscroll-progressbar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+									</div>
+									<div id="collapse-" class="accordion-collapse collapse show" role="region" aria-labelledby="accordion-title-">
+										<div class="accordion-body">
+											<ul class="link-list" data-element="page-index">
+												{% if servizio.timesAndDeadlines or servizio.maxResponseTime or servizio.isScheduled %}
+													<li class="nav-item">
+														<a class="nav-link" href="#next-step">
+															<span class="title-medium">{{ 'pratica.next_steps' | trans }}</span>
+														</a>
+													</li>
+												{% endif %}
+												{% if servizi_correlati %}
+													<li class="nav-item">
+														<a class="nav-link" href="#related-service">
+															<span class="title-medium">{{ 'pratica.servizi_correlati' | trans }}</span>
+														</a>
+													</li>
+												{% endif %}
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+	</div>
+
+	<div class="col-12 col-lg-8 offset-lg-1">
+		<div class="it-page-sections-container">
+			{% if servizio.timesAndDeadlines or servizio.maxResponseTime or servizio.isScheduled %}
+				{{ include('Servizi/parts/_times_and_deadlines.html.twig', {'servizio': servizio, 'section_id': 'next-step'})  }}
+				<p class="mt-4 mt-lg-30 mb-10"><a class="t-primary" href="{{ app.request.uri ~ '/detail'}}">{{ 'pratica.consulta_la_richiesta' | trans}}</a> {{'pratica.nella_tua_area_riservata' | trans}}.</p>
+			{% endif %}
+			
+			{% if servizi_correlati %}
+				<section id="related-service">
+					<div class="cmp-icon-list">
+						<h2 class="title-xxlarge mt-40 mb-2 mb-lg-4 mb-3">{{ 'pratica.servizi_correlati' | trans }}</h2>
+						<div class="link-list-wrapper">
+							<ul class="list-unstyled">
+								{% for item in servizi_correlati %}
+									{% if servizio.id != item.id %}
+										<li class="shadow-sm border-gray mb-20 h-70">			
+											<a class="list-item icon-left t-primary title-small-semi-bold" href="{{ absolute_url(path('servizi_show', { 'slug': item.slug })) }}">
+												<span class="list-item-title-icon-wrapper mt-3">
+													<svg class="icon icon-sm align-self-start icon-color" aria-hidden="true">
+														<use href="/bootstrap-italia/dist/svg/sprite.svg#it-settings"></use>
+													</svg>
+													<span class="list-item-title title-small-semi-bold">{{ item.name }}</span>
+												</span>
+											</a>
+										</li>
+									{% endif %}
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+				</section>
+			{% endif %}
+			<div class="mb-50 mb-lg-80"></div>
+		</div>
+	</div>
+</div>
+

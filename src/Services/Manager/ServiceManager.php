@@ -442,4 +442,25 @@ class ServiceManager
     return implode(', ', $emptyFields);
   }
 
+  /**
+   * Given a Service, get the ones in its same ServiceGroup or Category
+   * @param Servizio|null $servizio
+   * @return array|null
+   */
+  public function getRelatedServices(?Servizio $servizio)
+  {
+    $servizioRepository = $this->entityManager->getRepository('App\Entity\Servizio');
+    $relatedServices = null;
+    if ($servizio->getServiceGroup()) {
+      $relatedServices = $servizioRepository->findBy(
+        ['serviceGroup' => $servizio->getServiceGroup()->getId(), 'status' => Servizio::STATUS_AVAILABLE], [], 4
+      );
+    } else {
+      $relatedServices = $servizioRepository->findBy(
+        ['topics' => $servizio->getTopics()->getId(), 'status' => Servizio::STATUS_AVAILABLE], [], 4
+      );
+    }
+    return count($relatedServices) > 1 ? $relatedServices : null;
+  }
+
 }
