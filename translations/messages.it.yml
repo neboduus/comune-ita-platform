@@ -348,6 +348,7 @@ servizio:
   schedulato: 'Il servizio è attivo dal %from% al %to%'
   accedi_al_servizio: 'Accedi al servizio online %name%'
   browser_restricted: "Il sistema ha rilevato l'utilizzo di un browser non supportato o datato. La preghiamo di riprovare ad accedere con un browser aggiornato."
+  service_not_compilable: "Non è possibile procedere alla compilazione del servizio."
   attivo_per: "Servizio attivo per:"
   servizi_area_title: '%area%'
   vai: "Vai al servizio"
@@ -1157,6 +1158,7 @@ admin:
   show_service_access: "Clicca per copiare l'url di accesso alla compilazione del servizio"
   payment_amount_description: "(L'importo è determinato dal modulo tramite il valore del campo 'payment_amount')"
 operatori:
+  error_compile_built-in: 'Per questo servizio non è possibile inviare una pratica per conto del cittadino'
   error_pratice_state: 'La pratica non si trova nello stato corretto'
   integration_accepted_success: 'Integrazione accettata correttamente'
   integration_accepted_error: 'Si è verificato un errore durante la fase di accettazione'

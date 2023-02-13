@@ -216,10 +216,16 @@ class OperatoriController extends AbstractController
   /**
    * @Route("/pratiche/{servizio}/new", name="new_application_by_operator")
    * @param Request $request
+   * @param Servizio $servizio
    * @return Response
    */
   public function newAppicationByOperatorAction(Request $request, Servizio $servizio)
   {
+    // Todo: rimuoveve non appena sarà possibile compilare una pratica built-in per conto del cittadino
+    if ($servizio->isBuiltIn()) {
+      $this->addFlash('error', $this->translator->trans('operatori.error_compile_built-in'));
+      return $this->redirectToRoute('backend_services_index');
+    }
     $userId = $request->query->get('user', false);
 
     $application = new Pratica();

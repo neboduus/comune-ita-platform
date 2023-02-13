@@ -244,6 +244,7 @@ class Calendar
     if (!$this->id) {
       $this->id = Uuid::uuid4();
       $this->type = self::TYPE_TIME_FIXED;
+      $this->isModerated = false;
       $this->moderators = new ArrayCollection();
       $this->openingHours = new ArrayCollection();
       $this->closingPeriods = new ArrayCollection();

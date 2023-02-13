@@ -169,16 +169,20 @@
                               <span class="text-primary"><i class="fa fa-bullhorn fa-lg"></i> {{ 'app_io.title' | trans }}</span>
                             </a>
                           </li>
-                          <li>
-                            <a class="list-item " href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'payments' }) }}">
-                              <span class="text-primary"><i class="fa fa-credit-card fa-lg"></i> {{ 'backoffice.integration.subscription_service.payments' | trans }}</span>
-                            </a>
-                          </li>
-                          <li>
-                            <a class="list-item " href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'backoffices' }) }}">
-                              <span class="text-primary"><i class="fa fa-cogs fa-lg"></i> {{ 'integrations' | trans }}</span>
-                            </a>
-                          </li>
+                          {% if not item.builtIn %}
+                            <li>
+                              <a class="list-item " href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'payments' }) }}">
+                                <span class="text-primary"><i class="fa fa-credit-card fa-lg"></i> {{ 'backoffice.integration.subscription_service.payments' | trans }}</span>
+                              </a>
+                            </li>
+                          {% endif %}
+                          {% if item.formio %}
+                            <li>
+                              <a class="list-item " href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'backoffices' }) }}">
+                                <span class="text-primary"><i class="fa fa-cogs fa-lg"></i> {{ 'integrations' | trans }}</span>
+                              </a>
+                            </li>
+                          {% endif %}
                           <li>
                             <a class="list-item " href="{{ path('admin_servizio_edit', { 'id': item.id, 'step': 'protocol' }) }}">
                               <span class="text-primary"><i class="fa fa-folder-open-o fa-lg"></i> {{ 'servizio.protocollo' | trans }}</span>

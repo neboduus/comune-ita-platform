@@ -29,6 +29,8 @@ interface BackOfficeInterface
 
   public function getAllowedActivationPoints();
 
+  public function isAllowedActivationPoint($activationPoint);
+
   public function checkRequiredFields($schema);
 
   public function execute($data);

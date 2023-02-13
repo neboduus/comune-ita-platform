@@ -1,0 +1,227 @@
+{
+  "display": "form",
+  "type": "form",
+  "components": [
+    {
+      "title": "Dati segnalazione",
+      "breadcrumbClickable": true,
+      "buttonSettings": {
+        "previous": true,
+        "cancel": true,
+        "next": true
+      },
+      "navigateOnEnter": false,
+      "saveOnEnter": false,
+      "scrollToTop": false,
+      "collapsible": false,
+      "key": "panel",
+      "type": "panel",
+      "label": "Panel",
+      "mask": false,
+      "tableView": false,
+      "alwaysEnabled": false,
+      "input": false,
+      "components": [
+        {
+          "legend": "Luogo",
+          "tooltip": "Indica il luogo del disservizio",
+          "key": "fieldSet1",
+          "type": "fieldset",
+          "label": "Field Set",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Indirizzo",
+              "placeholder": "Cerca un luogo",
+              "tableView": false,
+              "calculateValue": "console.log(data)",
+              "provider": "nominatim",
+              "key": "address",
+              "type": "address",
+              "providerOptions": {
+                "params": {
+                  "autocompleteOptions": [
+
+                  ]
+                }
+              },
+              "input": true,
+              "components": [
+                {
+                  "label": "Address 1",
+                  "tableView": false,
+                  "key": "address1",
+                  "type": "textfield",
+                  "input": true,
+                  "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                },
+                {
+                  "label": "Address 2",
+                  "tableView": false,
+                  "key": "address2",
+                  "type": "textfield",
+                  "input": true,
+                  "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                },
+                {
+                  "label": "City",
+                  "tableView": false,
+                  "key": "city",
+                  "type": "textfield",
+                  "input": true,
+                  "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                },
+                {
+                  "label": "State",
+                  "tableView": false,
+                  "key": "state",
+                  "type": "textfield",
+                  "input": true,
+                  "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                },
+                {
+                  "label": "Country",
+                  "tableView": false,
+                  "key": "country",
+                  "type": "textfield",
+                  "input": true,
+                  "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                },
+                {
+                  "label": "Zip Code",
+                  "tableView": false,
+                  "key": "zip",
+                  "type": "textfield",
+                  "input": true,
+                  "customConditional": "show = _.get(instance, 'parent.manualMode', false);"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "legend": "Disservizio",
+          "key": "fieldSet2",
+          "type": "fieldset",
+          "label": "Field Set",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "Tip di disservizio",
+              "widget": "choicesjs",
+              "tableView": true,
+              "dataSrc": "custom",
+              "data": {
+                "custom": "async function get_data() {\n    window.FormioHelper.authenticatedCall(\"services\")\n    .then(function(promise) {\n      const items = promise.map(elem => (\n  {\n    id: elem.id,\n    name: elem.name\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n    get_data()\n}"
+              },
+              "dataType": "object",
+              "template": "<span>{{ item.name }}</span>",
+              "validate": {
+                "required": true
+              },
+              "key": "type",
+              "type": "select",
+              "input": true
+            },
+            {
+              "label": "Titolo",
+              "tableView": true,
+              "validate": {
+                "required": true
+              },
+              "key": "subject",
+              "type": "textfield",
+              "input": true
+            },
+            {
+              "label": "Descrizione",
+              "description": "Inserire al massimo 200 caratteri",
+              "autoExpand": false,
+              "tableView": true,
+              "validate": {
+                "required": true,
+                "maxWords": 200
+              },
+              "key": "details",
+              "type": "textarea",
+              "rows": 2,
+              "input": true
+            },
+            {
+              "label": "Immagini",
+              "description": "Seleziona una o più immagini da allegare alla segnalazione",
+              "tableView": false,
+              "protocol_required": false,
+              "check_signature": false,
+              "fileTypes": [
+                {
+                  "label": "",
+                  "value": ""
+                }
+              ],
+              "filePattern": ".jpg,.jpeg,.png",
+              "fileMinSize": "1KB",
+              "fileMaxSize": "10MB",
+              "key": "images",
+              "type": "sdcfile",
+              "storage": "url",
+              "url": "",
+              "input": true
+            },
+            {
+              "label": "Documenti",
+              "description": "Seleziona uno o più documenti da allegare alla segnalazione",
+              "tableView": false,
+              "protocol_required": false,
+              "check_signature": false,
+              "fileTypes": [
+                {
+                  "label": "",
+                  "value": ""
+                }
+              ],
+              "filePattern": ".pdf",
+              "fileMinSize": "1KB",
+              "fileMaxSize": "10MB",
+              "key": "docs",
+              "type": "sdcfile",
+              "storage": "url",
+              "url": "",
+              "input": true
+            }
+          ]
+        },
+        {
+          "legend": "Autore della segnalazione",
+          "tooltip": "Informazione su di te\n\n",
+          "key": "fieldSet",
+          "type": "fieldset",
+          "label": "Field Set",
+          "input": false,
+          "tableView": false,
+          "components": [
+            {
+              "label": "applicant",
+              "tableView": true,
+              "form": "5e5e26ede170600020175850",
+              "useOriginalRevision": false,
+              "reference": false,
+              "key": "applicant",
+              "type": "form",
+              "input": true,
+              "lazyLoad": false
+            }
+          ]
+        }
+      ],
+      "collapsed": false,
+      "reorder": false
+    }
+  ],
+  "title": "inefficiencies",
+  "name": "inefficiencies",
+  "path": "inefficiencies",
+  "description": "inefficiencies"
+}

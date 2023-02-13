@@ -2,18 +2,20 @@
 
 namespace App\Command;
 
+use App\Entity\Calendar;
+use App\Entity\OpeningHour;
 use App\Entity\Servizio;
 use App\Model\FlowStep;
-use App\Services\FormServerApiAdapterService;
+use App\Services\BackOfficeCollection;
 use App\Services\InstanceService;
 use Doctrine\ORM\EntityManagerInterface;
-use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use App\Entity\Categoria;
 use App\Entity\Erogatore;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Class BuiltInCreateCommand
@@ -27,43 +29,42 @@ class BuiltInCreateCommand extends Command
   /** @var InstanceService */
   private InstanceService $instanceService;
 
-  /** @var FormServerApiAdapterService */
-  private FormServerApiAdapterService $formServer;
+  /** @var BackOfficeCollection */
+  private BackOfficeCollection $backOfficeCollection;
 
   /**
    * AdministratorCreateCommand constructor.
    * @param EntityManagerInterface $entityManager
    * @param InstanceService $instanceService
-   * @param FormServerApiAdapterService $formServer
-   * @param string $scheme
-   * @param string $host
-   * @param string $prefix
+   * @param BackOfficeCollection $backOfficeCollection
    */
-  public function __construct(EntityManagerInterface $entityManager, InstanceService $instanceService, FormServerApiAdapterService $formServer)
+  public function __construct(EntityManagerInterface $entityManager, InstanceService $instanceService, BackOfficeCollection $backOfficeCollection)
   {
     $this->entityManager = $entityManager;
     $this->instanceService = $instanceService;
-    $this->formServer = $formServer;
+    $this->backOfficeCollection = $backOfficeCollection;
     parent::__construct();
   }
 
   protected function configure()
   {
     $this
-      ->setName('ocsdc:crea-servizio-built-in')
+      ->setName('ocsdc:built-in-services-import')
       ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'Load data from file')
       ->setDescription(
-        'Crea un servizio built-in. Usare -f path/al/file.yml'
+        'Crea un servizio built-in. Usare -f path/al/file.json'
       );
   }
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
+    $symfonyStyle = new SymfonyStyle($input, $output);
+
     $file = $input->getOption('file');
-    $output->writeln("<info>Loading data from file $file</info>");
+    $symfonyStyle->writeln('Loading data from file ' . $file);
     if (!file_exists($file)) {
-      $output->writeln("<error>$file file not found</error>");
-      die(1);
+      $symfonyStyle->error('File ' . $file . " not found");
+      return 1;
     }
 
     $parsed = json_decode(file_get_contents($file), true);
@@ -83,9 +84,10 @@ class BuiltInCreateCommand extends Command
     $accessLevel = $parsed['access_level'];
     $workflow = $parsed['workflow'];
     $handler = "";
+    $integrationsData = $parsed['integrations'];
+    $calendarData = $parsed['calendar'];
     $status = $parsed['status'];
     $flow = 'ocsdc.form.flow.formio';
-    $formSchema = $parsed['form'];
 
     $serviziRepo = $this->entityManager->getRepository('App\Entity\Servizio');
     $categoryRepo = $this->entityManager->getRepository('App\Entity\Categoria');
@@ -117,6 +119,24 @@ class BuiltInCreateCommand extends Command
         ->setPraticaFlowServiceName($flow)
         ->setEnte($ente);
 
+      // Integrazioni
+      $integrations = [];
+      foreach ($integrationsData as $activationPoint => $backOfficeIdentifier) {
+        // Verifico correttezza identifier backoffice
+        $backoffice = $this->backOfficeCollection->getBackOfficeByIdentifier($backOfficeIdentifier);
+        if (!$backoffice) {
+          $symfonyStyle->error('Backoffice ' . $backOfficeIdentifier . ' does not exists');
+          return 1;
+        }
+        // Verifico correttezza del punto di attivazione
+        if (!$backoffice->isAllowedActivationPoint($activationPoint)) {
+          $symfonyStyle->error('Backoffice ' . $backOfficeIdentifier . ' does not support activation point ' . $activationPoint);
+        }
+        $integrations[$activationPoint] = get_class($backoffice);
+      }
+      $servizio->setIntegrations($integrations);
+
+      // Categorie
       $area = $categoryRepo->findOneBySlug($topic);
       if ($area instanceof Categoria) {
         $servizio->setTopics($area);
@@ -127,35 +147,51 @@ class BuiltInCreateCommand extends Command
         }
       }
 
-      // Ricerco il form per path che coincide con l'identifier del servizio, se non esiste creo un form
-      // dato lo schema definito nel json del servizio altrimenti aggangio al servizio il form eistente
-      // In questo modo tutti i servizio built-in con lo stesso identifier condividono il medesimo form
-      // nel formserver
-      $response = $this->formServer->getFormBySlug($identifier);
-      if ($response['status'] != 'success') {
-        $output->writeln("<info>Creazione form {$identifier}</info>");
+      // Calendario
+      if ($calendarData) {
+        $title = $calendarData['title'];
+        $type = $calendarData['type'] ?? Calendar::TYPE_TIME_FIXED;
+        $beginHour = $calendarData['opening_hours']['begin_hour'] ?? Calendar::MIN_DATE;
+        $endHour = $calendarData['opening_hours']['end_hour'] ?? Calendar::MAX_DATE;
+        $daysOfWeek = $calendarData['opening_hours']['days_of_week'] ?? [1, 2, 3, 4, 5];
 
-        try {
-          $response = $this->formServer->createFormFromSchema($formSchema);
-          $formId = $response['form_id'];
-        } catch (GuzzleException $e) {
-          $output->writeln("<error>Si è verificato un errore durante la creazione del form per il servizio built-in {$name}</error>");
-          die(1);
+        $calendarRepo = $this->entityManager->getRepository('App\Entity\Calendar');
+        $adminRepo = $this->entityManager->getRepository('App\Entity\AdminUser');
+        $calendar = $calendarRepo->findOneBy(['title' => $title]);
+
+        if (!$calendar) {
+          $admin = $adminRepo->findOneBy([], ['createdAt' => 'ASC']);
+
+          $calendar = new Calendar();
+
+          $calendar
+            ->setTitle($title)
+            ->setLocation($ente->getName())
+            ->setType($type)
+            ->setOwner($admin);
+
+          $openingHour = new OpeningHour();
+
+          $openingHour
+            ->setCalendar($calendar)
+            ->setStartDate(new \DateTime('now'))
+            ->setEndDate(new \DateTime(date('Y') +1 . '-12-31'))
+            ->setBeginHour(\DateTime::createFromFormat('H:i', $beginHour))
+            ->setEndHour(\DateTime::createFromFormat('H:i', $endHour))
+            ->setDaysOfWeek($daysOfWeek);
+
+          $this->entityManager->persist($calendar);
+          $this->entityManager->persist($openingHour);
+        } else {
+          $symfonyStyle->writeln('Calendar '. $title . ' already exists');
         }
-      } else {
-        $formId = $response['form']['_id'];
       }
 
       $flowStep = new FlowStep();
       $flowStep
-        ->setIdentifier($formId)
-        ->setType('formio')
-        ->addParameter('formio_id', $formId);
+        ->setIdentifier($identifier)
+        ->setType('built-in');
       $servizio->setFlowSteps([$flowStep]);
-      // Backup
-      $additionalData = $servizio->getAdditionalData();
-      $additionalData['formio_id'] = $formId;
-      $servizio->setAdditionalData($additionalData);
 
       $this->entityManager->persist($servizio);
 
@@ -166,11 +202,9 @@ class BuiltInCreateCommand extends Command
       $servizio->activateForErogatore($erogatore);
       $this->entityManager->flush();
 
-
-      $output->writeln("<info>Servizio creato correttamente</info>");
-
+      $symfonyStyle->success('Built-in service ' . $identifier . ' successfully created');
     } else {
-      $output->writeln("<error>Servizio già presente, non verrà eseguita nessuan azione</error>");
+      $symfonyStyle->error('Service ' . $identifier . ' already exists, no action will be performed');
     }
     return 0;
   }

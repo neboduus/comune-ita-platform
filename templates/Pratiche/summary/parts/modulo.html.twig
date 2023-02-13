@@ -1,0 +1,14 @@
+{% if pratica.dematerializedForms.data is defined and formserver_url is defined %}
+  <div id="formio_summary"
+       class="formio-front {{ pratica.servizio.builtIn ? 'formio-built-in-summary' : 'formio-summary' }}"
+       data-formserver_url="{{ formserver_url }}"
+       data-submission="{{ pratica.dematerializedForms.data | json_encode }}"
+    {% if pratica.servizio.builtIn %}
+      data-url="{{ absolute_url(asset('bundles/app/schemas/' ~ pratica.servizio.identifier ~ '.json')) }}"
+    {% else %}
+      data-form_id="{{ pratica.servizio.getFormIoId }}"
+    {% endif %}
+  ></div>
+{% else %}
+  {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
+{% endif %}
