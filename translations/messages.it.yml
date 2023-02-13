@@ -1155,7 +1155,7 @@ admin:
   url_service_access: 'Url di accesso al servizio'
   show_service: 'Clicca per visualizzare il servizio'
   show_api_service: "Clicca per copiare l'Url API del servizio"
-  show_service_access: "Clicca per copiare l'url di accesso alla compilazione del servizio"
+  show_service_access: "Clicca per copiare l'url di accesso alla compilazione della pratica"
   payment_amount_description: "(L'importo è determinato dal modulo tramite il valore del campo 'payment_amount')"
 operatori:
   error_compile_built-in: 'Per questo servizio non è possibile inviare una pratica per conto del cittadino'
