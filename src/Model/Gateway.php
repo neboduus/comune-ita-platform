@@ -6,6 +6,7 @@ namespace App\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use InvalidArgumentException;
 use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
@@ -18,6 +19,7 @@ class Gateway implements \JsonSerializable
    * @Assert\NotBlank(message="This field is mandatory: identifier")
    * @Assert\NotNull(message="This field is mandatory: identifier")
    * @OA\Property(description="Human-readable unique identifiers")
+   * @Groups({"read", "write"})
    */
   private $identifier;
 
@@ -25,6 +27,7 @@ class Gateway implements \JsonSerializable
    * @var array
    * @Serializer\Type("array<string, string>")
    * @OA\Property(description="Specific parameters for gateways")
+   * @Groups({"read", "write"})
    *
    */
   private $parameters = array();

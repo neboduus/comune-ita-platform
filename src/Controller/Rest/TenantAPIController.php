@@ -19,7 +19,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class TenantAPIController
@@ -32,19 +31,12 @@ class TenantAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  private $em;
-  private $is;
-  /**
-   * @var TranslatorInterface $translator
-   */
-  private $translator;
+  private EntityManagerInterface $em;
+  private InstanceService $is;
+  private LoggerInterface $logger;
 
-  /** @var LoggerInterface */
-  private $logger;
-
-  public function __construct(TranslatorInterface $translator, EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
+  public function __construct(EntityManagerInterface $em, InstanceService $is, LoggerInterface $logger)
   {
-    $this->translator = $translator;
     $this->em = $em;
     $this->is = $is;
     $this->logger = $logger;
@@ -57,7 +49,8 @@ class TenantAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Tenant info"
+   *     description="Tenant info",
+   *     @Model(type=Tenant::class, groups={"read"})
    * )
    *
    * @OA\Response(

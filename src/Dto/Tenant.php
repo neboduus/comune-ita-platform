@@ -307,7 +307,8 @@ class Tenant
     foreach ($tenant->getGateways() as $gateway) {
       $g = new Gateway();
       $g->setIdentifier($gateway['identifier']);
-      $g->setParameters($gateway['parameters']);
+      // Todo: Display parameters only to admin users
+      $g->setParameters(null);
       $dto->gateways[] = $g;
     }
 
