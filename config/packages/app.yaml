@@ -1,5 +1,5 @@
 parameters:
-  version: 2.10.3
+  version: 2.11.0-rc.0
   locale: it
   app_locales: it
   database_driver: '%env(DB_DRIVER)%'
@@ -146,49 +146,49 @@ parameters:
       url: '%env(REGISTRY_API_URL)%/datagraph/v1'
       handler: external
       headers:
-        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+        - X-Registry-API-Key=%env(REGISTRY_API_KEY)%
       enabled: true
     dedeagroup:
       name: Dedagroup
       url: '%env(REGISTRY_API_URL)%/dedagroup/v1'
       handler: external
       headers:
-        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+        - X-Registry-API-Key=%env(REGISTRY_API_KEY)%
       enabled: true
     halley:
       name: Halley
       url: '%env(REGISTRY_API_URL)%/halley/v1'
       handler: external
       headers:
-        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+        - X-Registry-API-Key=%env(REGISTRY_API_KEY)%
       enabled: true
     halley-cloud:
       name: Halley Cloud
       url: '%env(REGISTRY_API_URL)%/halley-cloud/v1'
       handler: external
       headers:
-        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+        - X-Registry-API-Key=%env(REGISTRY_API_KEY)%
       enabled: true
     insiel:
       name: Insiel
       url: '%env(REGISTRY_API_URL)%/insiel/v1'
       handler: external
       headers:
-        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+        - X-Registry-API-Key=%env(REGISTRY_API_KEY)%
       enabled: true
     maggioli:
       name: SicraWeb
       url: '%env(REGISTRY_API_URL)%/maggioli/v1'
       handler: external
       headers:
-        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+        - X-Registry-API-Key=%env(REGISTRY_API_KEY)%
       enabled: true
     pitre_rest:
       name: piTre REST
       url: '%env(REGISTRY_API_URL)%/pitre/v1'
       handler: external
       headers:
-        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+        - X-Registry-API-Key=%env(REGISTRY_API_KEY)%
       enabled: true
     pitre:
       name: piTre SOAP
