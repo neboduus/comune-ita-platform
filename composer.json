@@ -1,8 +1,16 @@
 {
   "name": "opencontent/stanzadelcittadino",
-  "license": "GPL-3.0-only",
+  "license": "AGPL-3.0-only",
   "type": "project",
   "description": "The citizen's personal area, designed with the Italian Digital Team using the starter KIT for a municipality site.",
+  "authors": [
+    {
+      "name": "Opencity Labs S.r.l.",
+      "email": "info@opencitylabs.it",
+      "homepage": "https://opencitylabs.it/",
+      "role": "Mantainer"
+    }
+  ],
   "version": "2.10.3",
   "config": {
     "bin-dir": "bin",

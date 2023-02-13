@@ -1,8 +1,8 @@
 {
   "name": "stanzadelcittadino",
-  "author": "Opencontent S.c.a.r.l",
+  "author": "Opencity Labs S.r.l.",
   "version": "2.10.3",
-  "license": "GPL-3.0-only",
+  "license": "AGPL-3.0-only",
   "devDependencies": {
     "@babel/core": "7.20.12",
     "@babel/plugin-proposal-class-properties": "7.18.6",
