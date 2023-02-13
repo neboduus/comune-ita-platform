@@ -2151,8 +2151,8 @@ class Servizio implements Translatable
    */
   public function toArray()
   {
-    $this->conditionsAttachments = $this->getConditionsAttachments()->toArray();
-    $this->costsAttachments = $this->getCostsAttachments()->toArray();
+    $this->conditionsAttachments = $this->conditionsAttachments->toArray();
+    $this->costsAttachments =  $this->costsAttachments->toArray();
 
     if ($this->source instanceof ServiceSource) {
       $this->source = $this->source->jsonSerialize();
