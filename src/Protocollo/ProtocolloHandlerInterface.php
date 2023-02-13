@@ -11,6 +11,8 @@ interface ProtocolloHandlerInterface
   const PROTOCOL_EXECUTION_TYPE_INTERNAL = 'internal';
   const PROTOCOL_EXECUTION_TYPE_EXTERNAL = 'external';
 
+  public function getIdentifier();
+
   public function getName();
 
   /**

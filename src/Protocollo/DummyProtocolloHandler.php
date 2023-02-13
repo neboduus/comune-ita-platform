@@ -7,6 +7,12 @@ use App\Entity\Pratica;
 
 class DummyProtocolloHandler implements ProtocolloHandlerInterface
 {
+  const IDENTIFIER = 'dummy';
+
+  public function getIdentifier(): string
+  {
+    return self::IDENTIFIER;
+  }
 
   public function getName()
   {

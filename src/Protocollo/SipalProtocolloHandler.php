@@ -20,6 +20,13 @@ use SoapVar;
 class SipalProtocolloHandler implements ProtocolloHandlerInterface
 {
 
+  const IDENTIFIER = 'sipal';
+
+  public function getIdentifier(): string
+  {
+    return self::IDENTIFIER;
+  }
+
   const ACTION_ADD_PROTOCOLLO = 'addProtocollo';
   const ACTION_ADD_ALLEGATO = 'addAllegato';
 

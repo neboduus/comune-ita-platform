@@ -287,6 +287,28 @@
   }
 }
 
+// Hide checkbox providers
+.row-protocol-providers {
+  .form-check > [type='radio'] + label::after,
+  .form-check > [type='radio'] + label::before {
+    z-index: -2;
+  }
+
+  .collapse-header *[data-toggle='collapse'] {
+    border-top: 0
+  }
+
+  .formio-component .formio-hidden {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .formio-component-datagrid .datagrid-table, .formio-component-datagrid .datagrid-table td, .formio-component-datagrid .datagrid-table th {
+    border: 1px solid #ddd!important;
+    padding: 10px;
+  }
+}
+
 .p-contacts {
   padding: 2.5rem 1.5rem;
 }

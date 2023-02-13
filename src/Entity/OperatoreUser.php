@@ -51,6 +51,12 @@ class OperatoreUser extends User
   private $userGroups;
 
   /**
+   * @var bool
+   * @ORM\Column(type="boolean", nullable=true, options={"default" : 0})
+   */
+  private $systemUser = false;
+
+  /**
    * OperatoreUser constructor.
    */
   public function __construct()
@@ -184,4 +190,21 @@ class OperatoreUser extends User
     return $this;
   }
 
+  /**
+   * @return bool
+   */
+  public function isSystemUser(): ?bool
+  {
+    return $this->systemUser;
+  }
+
+  /**
+   * @param bool $systemUser
+   * @return $this
+   */
+  public function setSystemUser(bool $systemUser): OperatoreUser
+  {
+    $this->systemUser = $systemUser;
+    return $this;
+  }
 }

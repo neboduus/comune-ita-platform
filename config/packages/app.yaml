@@ -140,6 +140,72 @@ parameters:
       url: mypay.gateway.opencontent.io
       handler: mypay
       enabled: true
+  register_providers:
+    datagraph:
+      name: Datagraph
+      url: '%env(REGISTRY_API_URL)%/datagraph/v1'
+      handler: external
+      headers:
+        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+      enabled: true
+    dedeagroup:
+      name: Dedagroup
+      url: '%env(REGISTRY_API_URL)%/dedagroup/v1'
+      handler: external
+      headers:
+        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+      enabled: true
+    halley:
+      name: Halley
+      url: '%env(REGISTRY_API_URL)%/halley/v1'
+      handler: external
+      headers:
+        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+      enabled: true
+    halley-cloud:
+      name: Halley Cloud
+      url: '%env(REGISTRY_API_URL)%/halley-cloud/v1'
+      handler: external
+      headers:
+        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+      enabled: true
+    insiel:
+      name: Insiel
+      url: '%env(REGISTRY_API_URL)%/insiel/v1'
+      handler: external
+      headers:
+        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+      enabled: true
+    maggioli:
+      name: SicraWeb
+      url: '%env(REGISTRY_API_URL)%/maggioli/v1'
+      handler: external
+      headers:
+        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+      enabled: true
+    pitre_rest:
+      name: piTre REST
+      url: '%env(REGISTRY_API_URL)%/pitre/v1'
+      handler: external
+      headers:
+        - 'X-Registry-API-Key=%env(REGISTRY_API_KEY)%'
+      enabled: true
+    pitre:
+      name: piTre SOAP
+      handler: pitre
+      enabled: true
+    sipal:
+      name: Sipal
+      handler: sipal
+      enabled: true
+    pec:
+      name: Pec
+      handler: pec
+      enabled: true
+    infor:
+      name: Infor
+      handler: infor
+      enabled: true
   analytics:
     plan: '%env(ANALYTICS_PLAN)%'
   google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'

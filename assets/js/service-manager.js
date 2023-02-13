@@ -8,6 +8,7 @@ import '../styles/vendor/_formio.scss';
 import FormioI18n from "./utils/FormioI18n";
 import {TextEditor} from "./utils/TextEditor";
 import Gateways from "./rest/gateways/Gateways";
+import ProtocolProviders from "./rest/protocol_providers/ProtocolProviders";
 
 require("jsrender")();    // Load JsRender as jQuery plugin (jQuery instance as parameter)
 
@@ -507,32 +508,37 @@ $(document).ready(function () {
 
   // Protocol data
   if ($('#form-step-protocol').length) {
-    $('#protocol_data_protocol_required').change(function () {
-      if (this.checked) {
-        $('.protocollo_params').removeAttr('disabled');
-      } else {
-        $('.protocollo_params').attr('disabled', 'disabled');
-      }
-    })
+    const protocolRequiredField = $('#protocol_data_protocol_required');
 
-    let protocolHandler = $('#protocol_data_protocol_handler');
+    protocolRequiredField.change(function () {
+      if (!this.checked) {
+        // Select "empty" protocol provider
+        let placeholderHandler = $('#protocol_data_protocol_handler_placeholder');
+        placeholderHandler.prop("checked", true);
+        placeholderHandler.attr('checked', 'checked');
+      }
+    });
+
+    protocolRequiredField.trigger('change');
+
     let setupProtocolSettings = function () {
+      let protocolHandler =  $('input[name="protocol_data[protocol_handler]"]:checked');
       $('.protocollo_params').each(function (i, e) {
         let element = $(e);
         if (element.hasClass(protocolHandler.val())) {
-          element.closest('div').removeClass('d-none');
           element.removeAttr('disabled');
         } else {
-          element.closest('div').addClass('d-none');
           element.attr('disabled', 'disabled');
         }
       });
     }
     setupProtocolSettings();
-    protocolHandler.change(function () {
-      setupProtocolSettings();
-    });
+
+    if( $('#protocol-tab').length > 0){
+      ProtocolProviders.init();
+    }
   }
+
 
 
   // IO config

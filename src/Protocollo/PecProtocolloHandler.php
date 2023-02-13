@@ -20,6 +20,12 @@ use Twig\Error\Error;
 class PecProtocolloHandler implements ProtocolloHandlerInterface
 {
 
+  const IDENTIFIER = 'pec';
+
+  public function getIdentifier(): string
+  {
+    return self::IDENTIFIER;
+  }
   const TYPE_SEND_APPLICATION = 'send_applcation';
   const TYPE_SEND_INTEGRATION = 'send_integration';
   const TYPE_SEND_ATTACHMENT = 'send_attachment';

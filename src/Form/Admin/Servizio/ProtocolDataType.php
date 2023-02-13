@@ -5,10 +5,9 @@ namespace App\Form\Admin\Servizio;
 
 
 use App\Entity\Servizio;
-use App\Protocollo\ProtocolloHandlerRegistry;
-use App\Services\ProtocolloService;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Protocollo\ExternalProtocolloHandler;
+use App\Protocollo\ProvidersCollection;
+use App\Services\ExternalProtocolService;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -18,42 +17,46 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 
 class ProtocolDataType extends AbstractType
 {
-  /**
-   * @var ProtocolloService
-   */
-  private $protocolloService;
+  /** @var ProvidersCollection */
+  private ProvidersCollection $providersCollection;
+
+  /** @var ExternalProtocolService */
+  private ExternalProtocolService $externalProtocolService;
+
+  /** @var TranslatorInterface */
+  private TranslatorInterface $translator;
 
   /**
-   * @var EntityManager
+   * @param ExternalProtocolService $externalProtocolService
+   * @param ProvidersCollection $providersCollection
+   * @param TranslatorInterface $translator
    */
-  private $em;
-
-  /**
-   * @var ProtocolloHandlerRegistry
-   */
-  private $handlerRegistry;
-
-  public function __construct(ProtocolloService $protocolloService, EntityManagerInterface $entityManager, ProtocolloHandlerRegistry $handlerRegistry)
+  public function __construct(
+    ExternalProtocolService $externalProtocolService,
+    ProvidersCollection $providersCollection,
+    TranslatorInterface $translator
+  )
   {
-    $this->protocolloService = $protocolloService;
-    $this->em = $entityManager;
-    $this->handlerRegistry = $handlerRegistry;
+    $this->externalProtocolService = $externalProtocolService;
+    $this->providersCollection = $providersCollection;
+    $this->translator = $translator;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-
     /** @var Servizio $service */
     $service = $builder->getData();
     $currentServiceParameters = $service->getProtocolloParameters();
 
+    $availableRegisterProviders = $this->providersCollection->getAvailableRegisterProviders();
     $handlerList = [];
-    foreach ($this->handlerRegistry->getAvailableHandlers() as $alias => $handler){
-      $handlerList[$handler->getName()] = $alias;
+    foreach ($availableRegisterProviders as $alias => $provider){
+      $handlerList[$provider['name']] = $alias;
     }
 
     $builder
@@ -66,10 +69,25 @@ class ProtocolDataType extends AbstractType
       ->add('protocol_handler', ChoiceType::class, [
         'label' => 'nav.backoffices.protocol_type',
         'choices' => $handlerList,
+        'choice_attr' => function($choice, $key, $value) use ($availableRegisterProviders, $service) {
+          $handler = $availableRegisterProviders[$choice]['handler'];
+          $isExternalProtocolHandler = $handler instanceof ExternalProtocolloHandler;
+          $attr = [];
+          if ($isExternalProtocolHandler) {
+            $attr['class'] = 'external-register-choice';
+            $attr['data-tenant'] = $service->getEnte()->getId();
+            $attr['data-service'] = $service->getId();
+            $attr['data-identifier'] = $choice;
+            $attr['data-url'] = $availableRegisterProviders[$choice]['url'];
+            $attr['data-headers'] = implode(',', $availableRegisterProviders[$choice]['headers'] ?? []);
+          }
+          return $attr;
+        },
+        'expanded' => true,
         'required' => false
       ]);
 
-    foreach ($this->handlerRegistry->getAvailableHandlers() as $alias => $handler){
+    foreach ($this->providersCollection->getHandlers() as $alias => $handler) {
       $this->buildConfigParameters($builder, $service, $alias, $handler->getConfigParameters(), $currentServiceParameters);
     }
 
@@ -94,7 +112,7 @@ class ProtocolDataType extends AbstractType
                 $builder
                   ->add($key, CheckboxType::class, [
                     'label' => 'protocollo.' . $key,
-                    'data' => isset($currentServiceParameters[$key]) ? boolval($currentServiceParameters[$key]) : false,
+                    'data' => isset($currentServiceParameters[$key]) && boolval($currentServiceParameters[$key]),
                     'mapped' => false,
                     'required' => false,
                     'attr' => $attr
@@ -104,7 +122,7 @@ class ProtocolDataType extends AbstractType
                 $builder
                   ->add($key, TextType::class, [
                       'label' => 'protocollo.' . $key,
-                      'data' => isset($currentServiceParameters[$key]) ? $currentServiceParameters[$key] : '',
+                      'data' => $currentServiceParameters[$key] ?? '',
                       'mapped' => false,
                       'required' => $param['required'] ?? true,
                       'attr' => $attr
@@ -122,7 +140,7 @@ class ProtocolDataType extends AbstractType
               $paramForm
                 ->add($subparam, TextType::class, [
                     'label' => 'protocollo.' . $key . '.' . $subparam,
-                    'data' => isset($currentServiceParameters[$key][$subparam]) ? $currentServiceParameters[$key][$subparam] : '',
+                    'data' => $currentServiceParameters[$key][$subparam] ?? '',
                     'mapped' => false,
                     'required' => true,
                     'attr' => $attr
@@ -136,7 +154,7 @@ class ProtocolDataType extends AbstractType
           $builder
             ->add($param, TextType::class, [
                 'label' => 'protocollo.' . $param,
-                'data' => isset($currentServiceParameters[$param]) ? $currentServiceParameters[$param] : '',
+                'data' => $currentServiceParameters[$param] ?? '',
                 'mapped' => false,
                 'required' => true,
                 'attr' => $attr
@@ -153,16 +171,41 @@ class ProtocolDataType extends AbstractType
     $service = $event->getForm()->getData();
     $data = $event->getData();
 
-
     if (isset($data['protocol_required']) && !empty($data['protocol_required']) && empty($data['protocol_handler'])) {
       $event->getForm()->addError(
-        new FormError('Devi selezionare almeno un tipo di protocollo per abilitare la protocollazione!')
+        new FormError($this->translator->trans('servizio.protocol_provider_required'))
       );
     }
 
+    $availableProviders = $this->providersCollection->getAvailableRegisterProviders();
+
+    if (isset($data['protocol_handler']) && !empty($data['protocol_handler'])) {
+      $providerKey = $data['protocol_handler'];
+
+      if (!key_exists($providerKey, $availableProviders)) {
+        $event->getForm()->addError(
+          new FormError($this->translator->trans('servizio.protocol_provider_not_exists'))
+        );
+      } else if ($availableProviders[$providerKey]['handler']->getIdentifier() === ExternalProtocolloHandler::IDENTIFIER) {
+        $config = $availableProviders[$providerKey];
+        try {
+          $tenant = $this->externalProtocolService->setup($config);
+        } catch (\Exception $e) {
+          // Reset protocol data
+          $data['protocol_handler'] = $service->getProtocolHandler();
+          $data['protocol_required'] = $service->getPaymentRequired();;
+          $event->setData($data);
+
+          $event->getForm()->addError(
+            new FormError($e->getMessage())
+          );
+        }
+      }
+    }
     $service->setProtocolloParameters($data);
-    $this->em->persist($service);
   }
+
+
 
 
   public function getBlockPrefix()

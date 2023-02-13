@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-lg-12 px-lg-4">
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% if not servizio.isProtocolRequired %}
+      <div class="alert alert-info">{{ 'servizio.no_protocol_required' | trans }}</div>
+    {% elseif not servizio.ProtocolHandler %}
+      {# configurazioni pre-esistenti #}
+      <div class="alert alert-info">{{ 'servizio.no_protocol_handler' | trans }}</div>
+    {% endif %}
+
+    <div class="d-none">{{ form_row(form.protocol_required) }}</div>
+    {{ include('Admin/protocol_providers/_providers_list.html.twig') }}
+    <div id="formio-protocol"></div>
+    {{ form_rest(form) }}
+
+    {{ form_end(form) }}
+  </div>
+</div>
+

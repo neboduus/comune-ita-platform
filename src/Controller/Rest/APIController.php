@@ -23,7 +23,6 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
  * @property EntityManager em
  * @property InstanceService is
  * @package App\Controller
- * @Route("/v1.0")
  */
 class APIController extends AbstractFOSRestController
 {
@@ -43,7 +42,7 @@ class APIController extends AbstractFOSRestController
   }
 
   /**
-   * @Route("/status",name="api_status")
+   * @Route("/v1.0/status",name="api_status")
    * @return JsonResponse
    */
   public function statusAction()
@@ -55,7 +54,7 @@ class APIController extends AbstractFOSRestController
   }
 
   /**
-   * @Route("/usage",name="api_usage")
+   * @Route("/v1.0/usage",name="api_usage")
    * @return JsonResponse
    */
   public function usageAction()
@@ -90,7 +89,7 @@ class APIController extends AbstractFOSRestController
   }
 
   /**
-   * @Route("/user/{pratica}/notes",name="api_set_notes_for_pratica", methods={"POST"})
+   * @Route("/v1.0/user/{pratica}/notes",name="api_set_notes_for_pratica", methods={"POST"})
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -109,7 +108,7 @@ class APIController extends AbstractFOSRestController
   }
 
   /**
-   * @Route("/user/{pratica}/notes",name="api_get_notes_for_pratica", methods={"GET"})
+   * @Route("/v1.0/user/{pratica}/notes",name="api_get_notes_for_pratica", methods={"GET"})
    * @param Request $request
    * @param Pratica $pratica
    * @return Response
@@ -122,6 +121,15 @@ class APIController extends AbstractFOSRestController
     }
 
     return new Response($pratica->getUserCompilationNotes());
+  }
+
+  /**
+   * @Route("",name="api_base", methods={"GET"})
+   * @return Response
+   */
+  public function ping(): Response
+  {
+    return new Response(['Pong', Response::HTTP_OK]);
   }
 
 }
