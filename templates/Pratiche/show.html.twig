@@ -136,7 +136,9 @@
         </div>
       </div>
     </div>
-    {% if not pratica.meetings.count > 0 %}
+    {% if pratica.meetings.count > 0 %}
+      {{ include('Pratiche/parts/_meeting.html.twig', {'meeting': pratica.meetings.getValues()[0], 'servizio': pratica.servizio}) }}
+    {% else %}
       {{ include('Pratiche/parts/_general.html.twig', {'servizio': servizio, 'servizi_correlati': servizi_correlati})}}
     {% endif %}
   </div>

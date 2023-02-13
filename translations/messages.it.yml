@@ -2464,6 +2464,10 @@ meetings:
     select_slot: "Seleziona orario"
     select_slot_start: "Dalle"
     select_slot_end: "Alle"
+    what_you_need: "Cosa serve"
+    location: "Indirizzo"
+    add_to_your_calendar: "Aggiungi al tuo calendario"
+    page_index: "INDICE DELLA PAGINA"
   error:
     no_slots_available: "Non ci sono orari disponibili alla data e all'ora selezionata"
     no_slots_available_for_opening_hor: "Non ci sono orari disponibili alla data e all'ora selezionata per l'orario di apertura selezionato"
@@ -2527,6 +2531,7 @@ meetings:
   min_cancel: "Sarà possibile annullare l'appuntamento entro minimo"
   days_to_date: "giorni dalla data dell'appuntamento"
   delete: 'Annulla appuntamento'
+  ical_format: 'Formato iCalendar'
   delete_draft:
     label: "Annulla appuntamento riservato"
     description: "Questo appuntamento è stato riservato tramite la compilazione di un servizio di prenotazione: se non confermato dall'utente verrà eliminato automaticamente alle ore %expire_time% del giorno %expire_date%. <br>L'eliminazione forzata della bozza renderà l'intervallo di nuovo disponibile e il cittadino che ha riservato l'appuntamento potrebbe dover richiedere un nuovo appuntamento. <br><br>Sei sicuro di voler procedere con la rimozione forzata della bozza?"

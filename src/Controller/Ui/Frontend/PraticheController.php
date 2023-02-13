@@ -28,6 +28,7 @@ use App\Services\Manager\PraticaManager;
 use App\Services\Manager\ServiceManager;
 use App\Services\ModuloPdfBuilderService;
 use App\Services\PraticaStatusService;
+use App\Utils\iCalUtils;
 use App\Utils\StringUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Flagception\Manager\FeatureManagerInterface;
@@ -487,6 +488,26 @@ class PraticheController extends AbstractController
       return new JsonResponse(['status' => 'error'], Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
+  }
+
+  /**
+   * @Route("/{pratica}/calendar_event/{type}", name="pratiche_get_meeting_event")
+   * @ParamConverter("pratica", class="App\Entity\Pratica")
+   * @param Pratica $pratica
+   * @param string $type
+   * @return Response
+   */
+  public function downloadPraticaMeetingEventAction(Request $request, Pratica $pratica, ?string $type) 
+  {
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica, "User can not read application {$pratica->getId()}");
+
+    try {
+      $calendarEvent = new iCalUtils($pratica);
+      return $calendarEvent->getMeetingEvent($type);
+    } catch (\Exception $e) {
+      $this->logger->error("An error occurred while trying to download the calendar event for the application {$pratica->getId()}: {$e->getMessage()}");
+      return new Response('error', Response::HTTP_INTERNAL_SERVER_ERROR);
+    } 
   }
 
   /**
