@@ -8,6 +8,13 @@ use App\Entity\Pratica;
 
 class ByPraticaProtocolloHandler implements ProtocolloHandlerInterface, PredisposedProtocolHandlerInterface
 {
+  const IDENTIFIER = 'by_pratica';
+
+  public function getIdentifier(): string
+  {
+    return self::IDENTIFIER;
+  }
+
   private $registry;
 
   private $currentHandler;

@@ -22,6 +22,13 @@ use League\Flysystem\FileNotFoundException;
  */
 class PiTreProtocolloHandler implements ProtocolloHandlerInterface, PredisposedProtocolHandlerInterface
 {
+  const IDENTIFIER = 'pitre';
+
+  public function getIdentifier(): string
+  {
+    return self::IDENTIFIER;
+  }
+
   /**
    * @var Client
    */

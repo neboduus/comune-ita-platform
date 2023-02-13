@@ -192,6 +192,7 @@ general:
   username: 'Username'
   email: 'Email'
   enabled: 'Abilitato'
+  system_user: 'Utente di sistema'
   stato: 'Stato'
   url: 'Url'
   alert_elimina: "Sicuro di voler procedere?"
@@ -395,6 +396,18 @@ servizio:
   nessun_servizio_in_evidenza: 'Nessun servizio in evidenza'
   nessun_servizio_trovato: 'Nessun servizio trovato'
   n_servizi_trovati: '%servizi_trovati% in ordine di ultimo aggiornamento'
+  show_parameters: 'Mostra parametri'
+  protocol_provider_not_exists: 'Il protocollo selezionato non esiste oppure non è configurato su questa istanza!'
+  protocol_provider_required: 'Devi selezionare almeno un tipo di protocollo per abilitare la protocollazione!'
+  no_protocol_form_schema: 'Non è stato possibile recuperare il modulo di configurazione del protocollo'
+  error_disable_external_protocol: 'Si è verificato un errore disabilitando la configurazione precedente'
+  error_enable_external_protocol: 'Si è verificato un errore abilitando la configurazione precedente'
+  mupliple_provider_configurations: 'Non è stato possibile abilitare la configurazione esistente in quanto sono disponibili più opzioni. Dovrai abilitare MANUALMENTE la configurazione corretta'
+  error_retrieving_protocol_tenant: 'Si è verificato un errore durante il caricamento della configurazione'
+  error_creating_protocol_tenant: 'Si è verificato un errore durante il salvataggio della configurazione'
+  configuration_needs_technical_support: "Contattare il supporto tecnico per completare la configurazione"
+  no_protocol_required: 'La protocollazione non risulta attiva per questo sevizio'
+  no_protocol_handler: 'Nessun protocollo risulta abilitato per questo servizio'
 gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppo di servizi'
   nome: 'Nome'

@@ -58,6 +58,12 @@ use SimpleXMLElement;
  */
 class InforProtocolloHandler implements ProtocolloHandlerInterface
 {
+  const IDENTIFIER = 'infor';
+
+  public function getIdentifier(): string
+  {
+    return self::IDENTIFIER;
+  }
 
   const ACTION_ALLEGA_DOCUMENTO = 'allegaDocumento';
   const ACTION_INSERISCI_ARRIVO = 'inserisciArrivo';

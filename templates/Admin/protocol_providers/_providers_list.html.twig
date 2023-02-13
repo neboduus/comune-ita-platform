@@ -1,0 +1,76 @@
+<div class="form-check-group form-check row-protocol-providers">
+  {{ form_label(form.protocol_handler) }}
+  {% set identifier = '' %}
+  {% for key,provider in form.protocol_handler.children %}
+    {% set isExternal = not identifier or provider.vars.attr and provider.vars.attr.class == 'external-register-choice' %}
+
+    {% set identifier =  '.' in provider.vars.value ? provider.vars.value|replace({'.': ""}) : provider.vars.value %}
+    <div class="card card-bg my-3 {% if identifier == '' %}d-none{% endif %}" id="accordion-{{ identifier }}">
+      <div class="card-body">
+        <h4 class="mb-0">
+          <div class="d-flex justify-content-between" data-toggle="collapse" data-target="#collapse-{{ identifier }}"
+               aria-expanded="false" aria-controls="collapse-{{ identifier }}">
+            {{ form_widget(provider) }}
+            <button type="submit" class="d-none" data-identifier="submit_{{ identifier }}" data-parent="protocol_handler_{{ key }}"></button>
+            <button type="button" class="btn {{ provider.vars.checked ? 'btn-danger' : 'btn-primary' }} float-right" data-parent="protocol_handler_{{ key }}"  {% if isExternal %} data-identifier="ente_providers_{{ identifier }}" {% endif %}>
+              {{ provider.vars.checked ? 'not_enable' | trans  : 'enable' | trans }}
+            </button>
+            {{ form_label(provider) }}
+            {{ form_errors(provider) }}
+          </div>
+        </h4>
+      </div>
+
+      {% if identifier %}
+        <div class="collapse-header" id="heading-{{ identifier }}">
+          <button type="button" data-toggle="collapse" data-target="#collapse-{{ identifier }}" aria-expanded="false"
+                  aria-controls="collapse-{{ identifier }}">
+            {{ 'servizio.show_parameters' | trans }}
+          </button>
+        </div>
+        <div id="collapse-{{ identifier }}" class="collapse"
+             aria-labelledby="heading-{{ identifier }}" data-parent="#accordion-{{ identifier }}">
+          <div class="card-body" id="card-collapse-{{ identifier }}">
+            {% if not isExternal %}
+              <div class="gateway-form-type mb-5">
+                {% if identifier == 'sipal' %}
+                  {{ form_row(form.sipal_wsUrl) }}
+                  {{ form_row(form.sipal_proxy_host) }}
+                  {{ form_row(form.sipal_proxy_port) }}
+                  {{ form_row(form.sipal_proxy_login) }}
+                  {{ form_row(form.sipal_proxy_password) }}
+                  {{ form_row(form.sipal_username) }}
+                  {{ form_row(form.sipal_token) }}
+                  {{ form_row(form.sipal_registro) }}
+                  {{ form_row(form.sipal_classificazione) }}
+                  {{ form_row(form.sipal_destinatario_interno) }}
+                {% elseif identifier == 'infor' %}
+                  {{ form_row(form.infor_username) }}
+                  {{ form_row(form.infor_denominazione) }}
+                  {{ form_row(form.infor_email) }}
+                  {{ form_row(form.infor_wsdl) }}
+                  {{ form_row(form.infor_wsUrl) }}
+                  {{ form_row(form.arrivo) }}
+                  {{ form_row(form.risposta) }}
+                {% elseif identifier == 'pec' %}
+                  {{ form_row(form.receiver) }}
+                  {{ form_row(form.send_attachment) }}
+                {% elseif identifier == 'pitre' %}
+                  {{ form_row(form.recipientIDArray) }}
+                  {{ form_row(form.recipientTypeIDArray) }}
+                  {{ form_row(form.codeNodeClassification) }}
+                  {{ form_row(form.codeAdm) }}
+                  {{ form_row(form.trasmissionIDArray) }}
+                  {{ form_row(form.instance) }}
+                {% endif %}
+              </div>
+              <div>
+                <button type="submit" id="ente_save" class="btn-primary btn">{{ 'salva'|trans }}</button>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>

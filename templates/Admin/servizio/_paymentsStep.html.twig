@@ -5,16 +5,16 @@
       {{ form_errors(form) }}
       {{ form_row(form.payment_required) }}
       {{ form_row(form.total_amounts) }}
-    {{ include('Admin/gateways/_gateways_list.html.twig') }}
-  </div>
+      {{ include('Admin/gateways/_gateways_list.html.twig') }}
 
-  {{ include('Admin/servizio/_saveButtons.html.twig') }}
+      {{ include('Admin/servizio/_saveButtons.html.twig') }}
       {{ form_end(form) }}
     {% else %}
       <div class="alert alert-warning">
-        <p>{{ 'backoffice.gateway.enable' | trans}} <a href="{{ path('admin_edit_ente') }}#payments">{{ 'backoffice.gateway.payment_gateway' | trans }}</a> {{ 'backoffice.integration.enable_integration_access' | trans }}.</p>
+        <p>{{ 'backoffice.gateway.enable' | trans }} <a
+            href="{{ path('admin_edit_ente') }}#payments">{{ 'backoffice.gateway.payment_gateway' | trans }}</a> {{ 'backoffice.integration.enable_integration_access' | trans }}
+          .</p>
       </div>
     {% endif %}
-
   </div>
 </div>

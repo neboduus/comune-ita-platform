@@ -502,6 +502,7 @@ services:
 
   App\Protocollo\ExternalProtocolloHandler:
     public: false
+    autowire: true
     tags:
       - { name: ocsdc.protocollo.handler, alias: external }
 
@@ -532,6 +533,11 @@ services:
     tags:
       - { name: ocsdc.protocollo.handler, alias: sipal }
 
+  App\Protocollo\ProvidersCollection:
+    arguments:
+      - !tagged ocsdc.protocollo.handler
+      - "%register_providers%"
+
   App\Services\DelayedProtocolloService:
     arguments: [ "@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service" ]
     tags:
@@ -539,6 +545,9 @@ services:
 
   App\Services\ProtocolloService:
     arguments: [ "@ocsdc.protocollo.handler","@doctrine.orm.entity_manager","@logger","@event_dispatcher" ]
+
+  App\Services\ExternalProtocolService:
+    autowire: true
 
   ocsdc.protocollo: '@App\Services\DelayedProtocolloService'
   ocsdc.protocollo_direct: '@App\Services\ProtocolloService'

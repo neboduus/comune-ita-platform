@@ -9,6 +9,13 @@ use App\Entity\Pratica;
 
 class ExternalProtocolloHandler implements ProtocolloHandlerInterface
 {
+  const IDENTIFIER = 'external';
+
+  public function getIdentifier(): string
+  {
+    return self::IDENTIFIER;
+  }
+
   public function getName()
   {
     return 'Esterno';

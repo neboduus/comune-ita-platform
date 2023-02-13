@@ -777,6 +777,7 @@ class AdminController extends AbstractController
       'protocol' => [
         'label' => $this->translator->trans('general.protocol_data'),
         'class' => ProtocolDataType::class,
+        'template' => 'Admin/servizio/_protocolStep.html.twig',
         'icon' => 'fa-folder-open-o',
       ],
     ];

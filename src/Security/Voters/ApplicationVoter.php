@@ -120,14 +120,14 @@ class ApplicationVoter extends Voter
     return $isTheOwner || $isRelated;
   }
 
-  private function canEdit(Pratica $pratica, User $user)
+  private function canEdit(Pratica $pratica, User $user): bool
   {
     if ($this->security->isGranted('ROLE_ADMIN')) {
       return true;
     }
     if ($this->security->isGranted('ROLE_OPERATORE')) {
       /** @var OperatoreUser $user */
-      if (in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray())) {
+      if ($user->isSystemUser() || in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray())) {
         return true;
       }
     }
@@ -148,7 +148,7 @@ class ApplicationVoter extends Voter
   {
     if ($this->security->isGranted('ROLE_OPERATORE')) {
       /** @var OperatoreUser $user */
-      if (in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray())) {
+      if ($user->isSystemUser() || in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray())) {
         return true;
       }
     }

@@ -91,6 +91,10 @@ class OperatoreUserType extends AbstractType
         'label' => 'general.enabled',
         'required' => false
       ])
+      ->add('system_user', CheckboxType::class, [
+        'label' => 'general.system_user',
+        'required' => false
+      ])
       ->add('services', ChoiceType::class, [
         'label' => 'operatori.servizi_abilitati',
         'data' => $serviziAbilitati,

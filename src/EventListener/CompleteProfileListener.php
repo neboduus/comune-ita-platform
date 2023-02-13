@@ -77,7 +77,9 @@ class CompleteProfileListener
             $currentRoute = $event->getRequest()->get('_route');
             $currentRouteParams = $event->getRequest()->get('_route_params');
             $currentRouteQuery = $event->getRequest()->query->all();
-            if ( ($user->getLastChangePassword() == null || $user->getLastChangePassword()->getTimestamp() < strtotime('-' . $this->passwordLifeTime .' day' )) && $currentRoute !== 'security_change_password') {
+            $needsToChangePassword = $user->getLastChangePassword()->getTimestamp() < strtotime('-' . $this->passwordLifeTime .' day') && !$user->isSystemUser();
+
+            if ( ($user->getLastChangePassword() == null || $needsToChangePassword) && $currentRoute !== 'security_change_password') {
                 $redirectParameters['r'] = $currentRoute;
                 if ($currentRouteParams) {
                     $redirectParameters['p'] = serialize($currentRouteParams);
