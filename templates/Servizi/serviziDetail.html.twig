@@ -277,10 +277,17 @@
               </div>
               <div>
                 {% for attachment in servizio.conditionsAttachments %}
-                  {{ include('Servizi/parts/panel/service_attachment.html.twig', {
-                    'download_url': path('service_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}),
-                    'attachment': attachment
-                  }) }}
+                  {% if servizio.serviceGroup and servizio.sharedWithGroup %}
+                    {{ include('Servizi/parts/panel/service_attachment.html.twig', {
+                      'download_url': path('service_group_api_attachment_get', {'id': servizio.serviceGroup.id, 'attachmentType': attachment.type, 'filename': attachment.name}),
+                      'attachment': attachment
+                    }) }}
+                  {% else %}
+                    {{ include('Servizi/parts/panel/service_attachment.html.twig', {
+                      'download_url': path('service_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}),
+                      'attachment': attachment
+                    }) }}
+                  {% endif %}
                 {% endfor %}
               </div>
             </section>
@@ -294,10 +301,17 @@
               </div>
               <div>
                 {% for attachment in servizio.costsAttachments %}
-                  {{ include('Servizi/parts/panel/service_attachment.html.twig', {
-                    'download_url': path('service_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}),
-                    'attachment': attachment
-                  }) }}
+                  {% if servizio.serviceGroup and servizio.sharedWithGroup %}
+                    {{ include('Servizi/parts/panel/service_attachment.html.twig', {
+                      'download_url': path('service_group_api_attachment_get', {'id': servizio.serviceGroup.id, 'attachmentType': attachment.type, 'filename': attachment.name}),
+                      'attachment': attachment
+                    }) }}
+                  {% else %}
+                    {{ include('Servizi/parts/panel/service_attachment.html.twig', {
+                      'download_url': path('service_api_attachment_get', {'id': servizio.id, 'attachmentType': attachment.type, 'filename': attachment.name}),
+                      'attachment': attachment
+                    }) }}
+                  {% endif %}
                 {% endfor %}
               </div>
             </section>
