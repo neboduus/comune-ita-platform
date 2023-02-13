@@ -16,6 +16,8 @@ use JMS\Serializer\Annotation\Groups;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use function PHPStan\dumpType;
+use function Sodium\add;
 
 /**
  * @ORM\Entity(repositoryClass=PlaceRepository::class)
@@ -349,4 +351,17 @@ class Place implements Translatable
 
     return $this;
   }
+
+  public function getHumanReadableAddress(): ?string
+  {
+    if (is_array($this->address) and in_array('street_address', $this->address)
+      and in_array('post_office_box_number', $this->address)){
+      $address = $this->address['street_address'].', '.$this->address['post_office_box_number'];
+      $address .= in_array('postal_code', $this->address) ? " ".$this->address['postal_code'] : '';
+      $address .= in_array('address_locality', $this->address) ? " ".$this->address['address_locality'] : '';
+      return $address;
+    }
+    return null;
+  }
+
 }

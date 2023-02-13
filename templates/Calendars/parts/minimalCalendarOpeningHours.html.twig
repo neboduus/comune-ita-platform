@@ -1,0 +1,22 @@
+<div>
+  <div class="row bg-light mb-4 js-opening_hour-item">
+    <h5 class="col-12 p-3 font-weight-bold text-secondary"> {{ opening_hour.vars.value.name }} </h5>
+    {{ form_row(opening_hour.days_of_week) }}
+    <div class="col-6">
+      {{ form_row(opening_hour.begin_hour) }}
+    </div>
+    <div class="col-6">
+      {{ form_row(opening_hour.end_hour) }}
+    </div>
+  </div>
+
+  <div class="d-none">
+      {{ form_row(opening_hour.end_date) }}
+      {{ form_row(opening_hour.start_date) }}
+      {{ form_row(opening_hour.name) }}
+      {{ form_row(opening_hour.is_moderated) }}
+      {{ form_row(opening_hour.meeting_queue) }}
+      {{ form_row(opening_hour.meeting_minutes) }}
+      {{ form_row(opening_hour.interval_minutes) }}
+  </div>
+</div>

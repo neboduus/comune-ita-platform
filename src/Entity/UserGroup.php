@@ -148,6 +148,13 @@ class UserGroup implements Translatable
    */
   private $locale;
 
+  /**
+   * @var Calendar
+   * @ORM\ManyToOne(targetEntity=Calendar::class, cascade={"persist"})
+   * @OA\Property(property="calendar", description="User Group's Calendar")
+   * @Serializer\Exclude()
+   */
+  private $calendar;
 
   public function __construct()
   {
@@ -430,6 +437,37 @@ class UserGroup implements Translatable
   {
     if ($this->coreLocation instanceof Place) {
       return $this->coreLocation->getId();
+    }
+    return null;
+  }
+
+  /**
+   * @return Calendar
+   */
+  public function getCalendar(): ?Calendar
+  {
+    return $this->calendar;
+  }
+
+  /**
+   * @param Calendar|null $calendar
+   */
+  public function setCalendar(?Calendar $calendar): void
+  {
+    $this->calendar = $calendar;
+  }
+
+  /**
+   * @Serializer\VirtualProperty()
+   * @Serializer\Type("string")
+   * @Serializer\SerializedName("calendar_id")
+   * @OA\Property(description="Calendar id (uuid)",  type="string", format="uuid")
+   * @Groups({"read", "write"})
+   */
+  public function getCalendarId()
+  {
+    if ($this->calendar instanceof Calendar) {
+      return $this->calendar->getId();
     }
     return null;
   }

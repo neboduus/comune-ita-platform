@@ -3060,6 +3060,9 @@ user_group:
   core_contact_point: ""
   new: ''
   confirm: ''
+  calendar: ''
+  hours: ''
+  opening_hours_alert: ''
 contact_point:
   title: 'Kontaktpunkt'
   contact_point_name: 'Titel'

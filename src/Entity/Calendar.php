@@ -190,7 +190,7 @@ class Calendar
   private $moderators;
 
   /**
-   * @ORM\OneToMany(targetEntity="App\Entity\OpeningHour", mappedBy="calendar")
+   * @ORM\OneToMany(targetEntity="App\Entity\OpeningHour", mappedBy="calendar", cascade={"persist"})
    * @Serializer\Exclude()
    */
   private $openingHours;
@@ -615,7 +615,7 @@ class Calendar
    * @param OpeningHour $openingHour
    * @return $this
    */
-  public function addOpeningHours(OpeningHour $openingHour): self
+  public function addOpeningHour(OpeningHour $openingHour): self
   {
     if (!$this->openingHours->contains($openingHour)) {
       $this->openingHours[] = $openingHour;
@@ -631,7 +631,7 @@ class Calendar
    * @param OpeningHour $openingHour
    * @return $this
    */
-  public function removeOpeningHours(OpeningHour $openingHour): self
+  public function removeOpeningHour(OpeningHour $openingHour): self
   {
     if ($this->openingHours->contains($openingHour)) {
       $this->openingHours->removeElement($openingHour);
@@ -824,7 +824,7 @@ class Calendar
    * @ORM\PrePersist
    * @ORM\PreUpdate
    */
-  public function updatedTimestamps(): void
+  public function updatedTimestampfs(): void
   {
     $dateTimeNow = new DateTime('now');
 
