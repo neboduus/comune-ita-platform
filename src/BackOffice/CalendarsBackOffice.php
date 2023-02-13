@@ -21,22 +21,19 @@ class CalendarsBackOffice implements BackOfficeInterface
 
   const PATH = 'operatori_calendars_index';
 
-  /**
-   * @var EntityManagerInterface
-   */
-  private $em;
+  /** @var EntityManagerInterface */
+  private EntityManagerInterface $em;
 
-  /**
-   * @var MeetingService
-   */
-  private $meetingService;
+  /** @var MeetingService */
+  private MeetingService $meetingService;
 
-  /**
-   * @var TranslatorInterface $translator
-   */
-  private $translator;
+  /** @var TranslatorInterface $translator */
+  private TranslatorInterface $translator;
 
-  private $required_fields = [
+  /** @var LoggerInterface */
+  private LoggerInterface $logger;
+
+  private array $required_fields = [
     'applicant_meeting' => array(
       "applicant.data.completename.data.name",
       "applicant.data.completename.data.surname",
@@ -44,17 +41,12 @@ class CalendarsBackOffice implements BackOfficeInterface
     )
   ];
 
-  private $allowedActivationPoints = [
+  private array $allowedActivationPoints = [
     Pratica::STATUS_PRE_SUBMIT,
     Pratica::STATUS_SUBMITTED,
     Pratica::STATUS_REGISTERED,
     Pratica::STATUS_COMPLETE
   ];
-
-  /**
-   * @var LoggerInterface
-   */
-  private $logger;
 
   public function __construct(EntityManagerInterface $em, MeetingService $meetingService, TranslatorInterface $translator, LoggerInterface $logger)
   {
@@ -65,22 +57,22 @@ class CalendarsBackOffice implements BackOfficeInterface
   }
 
 
-  public function getIdentifier()
+  public function getIdentifier(): string
   {
     return self::IDENTIFIER;
   }
 
-  public function getName()
+  public function getName(): string
   {
     return $this->translator->trans(self::NAME);
   }
 
-  public function getPath()
+  public function getPath(): string
   {
     return self::PATH;
   }
 
-  public function getRequiredFields()
+  public function getRequiredFields(): array
   {
     return $this->required_fields;
   }
@@ -188,9 +180,14 @@ class CalendarsBackOffice implements BackOfficeInterface
     return $errors;
   }
 
-  public function getAllowedActivationPoints()
+  public function getAllowedActivationPoints(): array
   {
     return $this->allowedActivationPoints;
+  }
+
+  public function isAllowedActivationPoint($activationPoint): bool
+  {
+    return in_array($activationPoint, $this->allowedActivationPoints);
   }
 
   private function createMeetingFromPratica(Pratica $pratica)
@@ -247,7 +244,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       $meeting->setPhoneNumber($meetingData['phone_number']);
       $meeting->setFiscalCode($meetingData['fiscal_code']);
       $meeting->setUser($meetingData['user']);
-      $meeting->setUserMessage(isset($meetingData['user_message']) ? $meetingData['user_message'] : null);
+      $meeting->setUserMessage($meetingData['user_message'] ?? null);
       $meeting->setFromTime($meetingData['from_time']);
       $meeting->setToTime($meetingData['to_time']);
       $meeting->setCalendar($calendar);
@@ -291,7 +288,7 @@ class CalendarsBackOffice implements BackOfficeInterface
     return $integrationType;
   }
 
-  private function getMeetingData($submission, CPSUser $user)
+  private function getMeetingData($submission, CPSUser $user): array
   {
     // Get start-end datetime
     $tmp = explode('@', $submission['calendar']);
@@ -314,7 +311,7 @@ class CalendarsBackOffice implements BackOfficeInterface
       "phone_number" => null,
       "fiscal_code" => $submission['applicant.data.fiscal_code.data.fiscal_code'],
       "user" => $user,
-      "user_message" => isset($submission['user_message']) ? $submission['user_message'] : null,
+      "user_message" => $submission['user_message'] ?? null,
       "from_time" => $start,
       "to_time" => $end,
       "calendar" => trim($meetingData[0]),

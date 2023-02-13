@@ -27,23 +27,17 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
   const APPLICANT_SUBSCRIPTION_PAYMENT_BY_ID = 'applicant_subscription_payment_by_id';
   const SUBSCRIBER_SUBSCRIPTION_PAYMENT_BY_ID = 'subscriber_subscription_payment_by_id';
 
-  /**
-   * @var LoggerInterface
-   */
-  private $logger;
+  /** @var LoggerInterface */
+  private LoggerInterface $logger;
 
-  /**
-   * @var TranslatorInterface $translator
-   */
-  private $translator;
+  /** @var TranslatorInterface $translator */
+  private TranslatorInterface $translator;
 
-  /**
-   * @var EntityManagerInterface
-   */
-  private $em;
+  /** @var EntityManagerInterface */
+  private EntityManagerInterface $em;
 
 
-  private $required_fields = [
+  private array $required_fields = [
     self::SUBSCRIBER_SUBSCRIPTION_PAYMENT_BY_CODE=> array(
       "subscriber.data.fiscal_code.data.fiscal_code",
       "code",
@@ -78,7 +72,7 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
     )
   ];
 
-  private $allowedActivationPoints = [
+  private array $allowedActivationPoints = [
     Pratica::STATUS_PAYMENT_SUCCESS,
     Pratica::STATUS_SUBMITTED,
     Pratica::STATUS_REGISTERED,
@@ -93,27 +87,27 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
     $this->em = $em;
   }
 
-  public function getIdentifier()
+  public function getIdentifier(): string
   {
     return self::IDENTIFIER;
   }
 
-  public function getName()
+  public function getName(): string
   {
     return $this->translator->trans(self::NAME);
   }
 
-  public function getPath()
+  public function getPath(): string
   {
     return self::PATH;
   }
 
-  public function getRequiredFields()
+  public function getRequiredFields(): array
   {
     return $this->required_fields;
   }
 
-  public function checkRequiredFields($schema)
+  public function checkRequiredFields($schema): ?array
   {
     $errors = [];
     foreach ($this->getRequiredFields() as $key => $requiredFields) {
@@ -230,7 +224,13 @@ class SubcriptionPaymentsBackOffice implements BackOfficeInterface
     }
   }
 
-  public function getAllowedActivationPoints() {
+  public function getAllowedActivationPoints(): array
+  {
     return $this->allowedActivationPoints;
+  }
+
+  public function isAllowedActivationPoint($activationPoint): bool
+  {
+    return in_array($activationPoint, $this->allowedActivationPoints);
   }
 }

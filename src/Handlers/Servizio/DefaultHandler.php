@@ -98,6 +98,11 @@ class DefaultHandler extends AbstractServizioHandler
         throw new ForbiddenAccessException('servizio.browser_restricted');
       }
     }
+
+    // Check Built-in Services
+    if ($servizio->isBuiltIn()) {
+      throw new ForbiddenAccessException('servizio.service_not_compilable');
+    }
   }
 
 

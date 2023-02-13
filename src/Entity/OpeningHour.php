@@ -195,6 +195,8 @@ class OpeningHour
     $this->meetings = new ArrayCollection();
     $this->setMeetingQueue(1);
     $this->setMeetingMinutes(30);
+    $this->setIntervalMinutes(0);
+    $this->setIsModerated(false);
   }
 
   /**

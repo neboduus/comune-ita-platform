@@ -26,22 +26,16 @@ class SubcriptionsBackOffice implements BackOfficeInterface
   const APPLICANT_SUBSCRIPTION = 'applicant_subscription';
   const SUBSCRIBER_SUBSCRIPTION = 'subscriber_subscription';
 
-  /**
-   * @var LoggerInterface
-   */
-  private $logger;
+  /** @var LoggerInterface */
+  private LoggerInterface $logger;
 
-  /**
-   * @var TranslatorInterface $translator
-   */
-  private $translator;
+  /** @var TranslatorInterface $translator */
+  private TranslatorInterface $translator;
 
-  /**
-   * @var EntityManagerInterface
-   */
-  private $em;
+  /** @var EntityManagerInterface */
+  private EntityManagerInterface $em;
 
-  private $required_headers = array(
+  private array $required_headers = array(
     "name",
     "surname",
     "natoAIl",
@@ -56,7 +50,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     "related_cfs",
   );
 
-  private $required_fields = [
+  private array $required_fields = [
     self::SUBSCRIBER_SUBSCRIPTION => array(
       "subscriber.data.completename.data.name",
       "subscriber.data.completename.data.surname",
@@ -85,7 +79,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     )
   ];
 
-  private $allowedActivationPoints = [
+  private array $allowedActivationPoints = [
     Pratica::STATUS_PAYMENT_SUCCESS,
     Pratica::STATUS_PRE_SUBMIT,
     Pratica::STATUS_SUBMITTED,
@@ -102,32 +96,32 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     $this->em = $em;
   }
 
-  public function getIdentifier()
+  public function getIdentifier(): string
   {
     return self::IDENTIFIER;
   }
 
-  public function getName()
+  public function getName(): string
   {
     return $this->translator->trans(self::NAME);
   }
 
-  public function getPath()
+  public function getPath(): string
   {
     return self::PATH;
   }
 
-  public function getRequiredFields()
+  public function getRequiredFields(): array
   {
     return $this->required_fields;
   }
 
-  public function getRequiredHeaders()
+  public function getRequiredHeaders(): array
   {
     return $this->required_headers;
   }
 
-  public function checkRequiredFields($schema)
+  public function checkRequiredFields($schema): ?array
   {
     $errors = [];
     foreach ($this->getRequiredFields() as $key => $requiredFields) {
@@ -273,7 +267,7 @@ class SubcriptionsBackOffice implements BackOfficeInterface
       $subscription = new Subscription();
       $subscription->setSubscriptionService($subscriptionService);
       $subscription->setSubscriber($subscriber);
-      $subscription->setRelatedCFs(isset($fixedData["related_cfs"]) ? $fixedData["related_cfs"] : []);
+      $subscription->setRelatedCFs($fixedData["related_cfs"] ?? []);
 
       $this->em->persist($subscription);
       $this->em->flush();
@@ -324,7 +318,13 @@ class SubcriptionsBackOffice implements BackOfficeInterface
     }
   }
 
-  public function getAllowedActivationPoints() {
+  public function getAllowedActivationPoints(): array
+  {
     return $this->allowedActivationPoints;
+  }
+
+  public function isAllowedActivationPoint($activationPoint): bool
+  {
+    return in_array($activationPoint, $this->allowedActivationPoints);
   }
 }

@@ -75,17 +75,17 @@ class Form {
         Formio.createForm(
           document.getElementById("formio"),
           $("#formio").data("formserver_url") +
-            "/form/" +
-            $("#formio_render_form_id").val(),
+          "/form/" +
+          $("#formio_render_form_id").val(),
           {
             noAlerts: true,
             language: $container.data("locale"),
             i18n: data,
-            buttonSettings: { showCancel: false },
+            buttonSettings: {showCancel: false},
             breadcrumbSettings: {
               clickable: true,
             },
-            breadCrumb: { clickable: true },
+            breadCrumb: {clickable: true},
             hooks: {
               beforeCancel: () => Form.handleBeforeSubmit(event),
             },
@@ -208,11 +208,11 @@ class Form {
           noAlerts: true,
           language: $container.data("locale"),
           i18n: data,
-          buttonSettings: { showCancel: false },
+          buttonSettings: {showCancel: false},
           breadcrumbSettings: {
             clickable: true,
           },
-          breadCrumb: { clickable: true },
+          breadCrumb: {clickable: true},
           hooks: {
             beforeCancel: () => Form.handleBeforeSubmit(event),
           },
@@ -349,10 +349,10 @@ class Form {
       $container.data("form_id");
     $.getJSON(
       $container.data("formserver_url") +
-        "/form/" +
-        $container.data("form_id") +
-        "/i18n?lang=" +
-        $container.data("locale"),
+      "/form/" +
+      $container.data("form_id") +
+      "/i18n?lang=" +
+      $container.data("locale"),
       function (data) {
         Formio.icons = "fontawesome";
         Formio.createForm(document.getElementById(containerId), formUrl, {
@@ -360,7 +360,7 @@ class Form {
           language: $container.data("locale"),
           i18n: data,
           readOnly: true,
-          buttonSettings: { showCancel: false },
+          buttonSettings: {showCancel: false},
           hooks: {
             beforeCancel: () => Form.handleBeforeSubmit(event),
           },
@@ -377,15 +377,55 @@ class Form {
           // Called when the form has completed the render, attach, and one initialization change event loop
           // Da migliorare il controllo sulla fine del rendering del form
           form.on('initialized', () => {
-            setTimeout(function() {
+            setTimeout(function () {
               console.log('initialized');
               window.status = 'ready'
-              }, 5000)
+            }, 5000)
           });
 
         });
       }
     );
+  }
+
+  static initPrintableBuiltIn(containerId) {
+    const $container = $("#" + containerId);
+    const formUrl = $container.data("url");
+    const baseUrl = $container.data("formserver_url");
+
+    Form.getFormSchemaSchema(formUrl, true).then((formSchema) => {
+      Formio.setBaseUrl(baseUrl);
+      Formio.icons = "fontawesome";
+
+      Formio.createForm(document.getElementById(containerId), formSchema, {
+        noAlerts: true,
+        language: $container.data("locale"),
+        i18n: {},
+        readOnly: true,
+        buttonSettings: {showCancel: false},
+        hooks: {
+          beforeCancel: () => Form.handleBeforeSubmit(event),
+        },
+        //renderMode: 'html'
+      }).then(function (form) {
+        // Recupero i dati della pratica se presenti
+        if ($("#formio_render_dematerialized_forms").val() != "") {
+          form.submission = {
+            data: JSON.parse($("#formio_render_dematerialized_forms").val())
+              .data,
+          };
+        }
+
+        // Called when the form has completed the render, attach, and one initialization change event loop
+        // Da migliorare il controllo sulla fine del rendering del form
+        form.on('initialized', () => {
+          setTimeout(function () {
+            console.log('initialized');
+            window.status = 'ready'
+          }, 5000)
+        });
+      });
+    });
   }
 
   static initPreview(containerId) {
@@ -401,7 +441,7 @@ class Form {
           language: $container.data("locale"),
           i18n: data,
           readOnly: false,
-          buttonSettings: { showCancel: false },
+          buttonSettings: {showCancel: false},
           hooks: {
             beforeCancel: () => Form.handleBeforeSubmit(event),
           },
@@ -436,9 +476,7 @@ class Form {
     const formUrl =
       $container.data("formserver_url") + "/form/" + $container.data("form_id");
     const printableFormUrl =
-      $container.data("formserver_url") +
-      "/printable/" +
-      $container.data("form_id");
+      $container.data("formserver_url") + "/printable/" + $container.data("form_id");
 
     $.getJSON(
       formUrl + "/i18n?lang=" + $container.data("locale"),
@@ -463,14 +501,61 @@ class Form {
           form.submission = {
             data: $container.data("submission"),
           };
-          form.formReady.then(() => {
-            Form.getStoredSteps();
-            Form.createStepsMobile();
-            Form.createCustomNavItem(form.component,true)
+
+          Form.getStoredSteps();
+          Form.createStepsMobile();
+          Form.createCustomNavItem(form.component, true)
+
+          form.ready.then(() => {
+            $('.formio-component-file a,.formio-component-sdcfile a').each(function () {
+              $(this).parent().html($(this).html());
+            });
           });
         });
       }
     );
+  }
+
+  static initSummaryBuiltIn(containerId) {
+    const $container = $("#" + containerId);
+    const formUrl = $container.data("url");
+    const baseUrl = $container.data("formserver_url");
+
+    Form.getFormSchemaSchema(formUrl, true).then((formSchema) => {
+      Formio.setBaseUrl(baseUrl);
+
+      Formio.icons = "fontawesome";
+      Formio.createForm(
+        document.getElementById(containerId),
+        formSchema,
+        {
+          readOnly: true,
+          noAlerts: true,
+          language: $container.data("locale"),
+          i18n: {},
+          sanitizeConfig: {
+            allowedAttrs: ["ref", "src", "url", "data-oembed-url", "svg"],
+            allowedTags: ["oembed", "svg"],
+            addTags: ["oembed", "svg"],
+            addAttr: ["url", "data-oembed-url"],
+          },
+        }
+      ).then(function (form) {
+        form.submission = {
+          data: $container.data("submission"),
+        };
+
+        Form.getStoredSteps();
+        Form.createStepsMobile();
+        Form.createCustomNavItem(form.component, true)
+
+        form.ready.then(() => {
+          $('.formio-component-file a,.formio-component-sdcfile a').each(function () {
+            $(this).parent().html($(this).html());
+          });
+        });
+      });
+    });
   }
 
   static init(containerId) {
@@ -498,6 +583,16 @@ class Form {
     if ($("#" + containerId + ".formio-summary").length > 0) {
       this.initSummary(containerId);
     }
+
+    // Init built-in printable
+    if ($("#" + containerId + ".built-in-printable").length > 0) {
+      this.initPrintableBuiltIn(containerId);
+    }
+
+    // Init built-in summary
+    if ($("#" + containerId + ".formio-built-in-summary").length > 0) {
+      this.initSummaryBuiltIn(containerId);
+    }
   }
 
   static customBreadcrumbButton(form) {
@@ -513,14 +608,14 @@ class Form {
     });
   }
 
-  //Funzione per aggiungere l'attributo type=button al pulsante "Annulla" se è visibile
+//Funzione per aggiungere l'attributo type=button al pulsante "Annulla" se è visibile
   static checkWizardNavCancelButton() {
     if ($(".btn-wizard-nav-cancel").length > 0) {
       $(".btn-wizard-nav-cancel").attr("type", "button");
     }
   }
 
-  // Refresh page on handle "cancel button"
+// Refresh page on handle "cancel button"
   static handleBeforeSubmit() {
     if (
       confirm(
@@ -600,27 +695,102 @@ class Form {
     }
   }
 
-  static createCustomNavItem(data,isSummary){
+  static createCustomNavItem(data, isSummary) {
     // Filter only fieldset components
     let navItem = []
-    if(isSummary){
-      data.components.forEach(item =>{
-        if(item.components.filter(el => el.type === 'fieldset').length){
+    if (isSummary) {
+      data.components.forEach(item => {
+        if (item.components.filter(el => el.type === 'fieldset').length) {
           const filtered = item.components.filter(el => el.type === 'fieldset')
-          navItem = [...navItem,...filtered]
+          navItem = [...navItem, ...filtered]
         }
       })
-    }else{
-       navItem = data.components.filter(item => item.type === 'fieldset')
+    } else {
+      navItem = data.components.filter(item => item.type === 'fieldset')
     }
 
     // Reset list items
     $('#navItems').empty();
-    navItem.forEach( (el,idx) => {
+    navItem.forEach((el, idx) => {
       // Write item
       $('#navItems').append(`<li class="nav-item"><a class="nav-link ${idx === 0 ? 'active' : ''}" href="#${el.key}"><span class="title-medium">${el.legend}</span></a></li>`);
     })
   }
+
+  static getFormSchemaSchema(formUrl, printable = false) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: formUrl,
+        dataType: 'json',
+        type: 'GET',
+        success: function (form) {
+          if (printable) {
+            form = Form.wizardConverter(form)
+          }
+          resolve(form)
+        },
+        error: function (error) {
+          reject(error)
+        }
+      })
+    })
+  }
+
+  static wizardConverter(form) {
+    if (form.display === 'wizard') {
+      let converted = JSON.parse(JSON.stringify(form));
+      // Metodo 1: conversione semplice: espansione delle pagine in verticale
+      converted.display = 'form';
+
+      return Form.disable(converted);
+    } else return Form.disable(form);
+  }
+
+  static disable(form) {
+    let disabledForm = JSON.parse(JSON.stringify(form))
+
+    if (disabledForm.components) {
+      // Disable form components
+      disabledForm.components.forEach(function (component) {
+        if (component.components) {
+          component.components.forEach(function (nested_component, index) {
+            component.components[index] = Form.disable(nested_component);
+          })
+        } else {
+          component = Form.disable(component);
+        }
+      })
+    } else if (disabledForm.columns) {
+      // Disable columns components
+      disabledForm.columns.forEach(function (column) {
+        if (column.components) {
+          column.components.forEach(function (nested_component, index) {
+            column.components[index] = Form.disable(nested_component);
+          })
+        }
+      })
+    } else {
+      // Simple component
+      // Disable select populated via API
+      if (disabledForm.type === 'select' && disabledForm['dataSrc'] === 'url') {
+        disabledForm.type = "textfield"
+      }
+      // Disable JS custom default values
+      if (disabledForm.customDefaultValue) {
+        disabledForm.customDefaultValue = '';
+      }
+      // Disable JS custom calculated values
+      if (disabledForm.calculateValue) {
+        disabledForm.calculateValue = '';
+      }
+      // Disable JS validation
+      if (disabledForm.validate) {
+        disabledForm.validate.custom = '';
+      }
+    }
+    return disabledForm;
+  }
+
 }
 
 export default Form;

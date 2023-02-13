@@ -61,7 +61,15 @@
         {{ form_start(form) }}
         {{ form_errors(form) }}
         {{ form_rest(form) }}
-        <div id="formio" class="printable" data-locale="{{ app.request.locale }}" data-formserver_url="{{ formserver_url }}" data-form_id="{{ pratica.servizio.formIoId }}"></div>
+        <div id="formio" class="{{ pratica.servizio.builtIn ? 'built-in-printable' : 'printable' }}"
+             data-locale="{{ app.request.locale }}"
+             data-formserver_url="{{ formserver_url }}"
+          {% if pratica.servizio.builtIn %}
+             data-url="{{ absolute_url(asset('bundles/app/schemas/' ~ pratica.servizio.identifier ~ '.json')) }}"
+          {% else %}
+             data-form_id="{{ pratica.servizio.formIoId }}"
+          {% endif %}
+        ></div>
         {{ form_end(form) }}
       </div>
     </div>

@@ -55,6 +55,17 @@ class BackOfficeCollection
     return null;
   }
 
+  public function getBackOfficeByIdentifier(string $identifier)
+  {
+    foreach ($this->backOffices as $backOffice) {
+      if ($backOffice->getIdentifier() == $identifier) {
+        return $backOffice;
+      }
+    }
+
+    return null;
+  }
+
   public function getNav()
   {
     if (null === $this->nav) {

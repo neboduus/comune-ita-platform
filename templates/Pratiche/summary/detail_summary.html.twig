@@ -33,18 +33,8 @@
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
-  <div class="tab-pane py-4 fade show {% if not tab or tab == 'modulo' %} show active {% endif %}" id="modulo"
-       role="tabpanel" aria-labelledby="modulo-tab">
-    {% if pratica.dematerializedForms.data is defined and formserver_url is defined %}
-      <div id="formio_summary" class="formio-front formio-summary"
-           data-locale="{{ app.request.locale }}"
-           data-formserver_url="{{ formserver_url }}"
-           data-form_id="{{ pratica.servizio.getFormIoId }}"
-           data-submission="{{ pratica.dematerializedForms.data | json_encode }}">
-      </div>
-    {% else %}
-      {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':pratica}) }}
-    {% endif %}
+  <div class="tab-pane py-4 fade show {% if not tab or tab == 'modulo' %} show active {% endif %}" id="modulo" role="tabpanel" aria-labelledby="modulo-tab">
+    {{ include('Pratiche/summary/parts/modulo.html.twig', {'pratica':pratica, 'formserver_url': formserver_url}) }}
   </div>
   <div class="tab-pane py-4 fade {% if tab and tab == 'allegati' %} show active {% endif %}" id="allegati" role="tabpanel" aria-labelledby="allegati-tab">
     {{ include('Allegato/parts/_application_attachments.html.twig', {'pratica':pratica}) }}

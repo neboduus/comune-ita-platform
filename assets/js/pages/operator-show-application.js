@@ -12,6 +12,7 @@ import moment from "moment";
 import RequestIntegration from "../utils/RequestIntegration";
 import InfoPayment from "../rest/payment/InfoPayment";
 import ApplicationsMessage from "../rest/applications/Message";
+import Form from '../Formio/Form';
 
 Formio.registerComponent('calendar', Calendar);
 Formio.registerComponent('dynamic_calendar', DynamicCalendar);
@@ -22,33 +23,11 @@ const language = document.documentElement.lang.toString();
 
 // Todo: spostare in ./assets/js/Formio/Formio.js
 window.onload = function () {
-  // Application summary
-  Formio.createForm(document.getElementById('formio_summary'), $('#formio_summary').data('formserver_url') + '/printable/' + $('#formio_summary').data('form_id'), {
-    readOnly: true,
-    noAlerts: true,
-    language: language,
-    i18n: FormioI18n.languages()
-  }).then(function (form) {
-    form.submission = {
-      data: $('#formio_summary').data('submission')
-    };
 
-    let delay = 3;
-    form.formReady.then(() => {
-      const disableFileLink = function () {
-        if (delay === 0) {
-          $('.formio-component-file a').each(function () {
-            $(this).parent().html($(this).html());
-          });
-        } else {
-          delay--;
-          setTimeout(disableFileLink, 500);
-        }
-      };
-      disableFileLink();
-    });
-  });
-
+  // Init formIo
+  if ($('#formio_summary').length > 0) {
+    Form.init('formio_summary');
+  }
 
   // Backoffice
   const backofficeFormContainer = $('#backoffice-form');
