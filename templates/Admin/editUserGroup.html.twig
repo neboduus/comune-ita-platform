@@ -48,6 +48,11 @@
                                 aria-controls="service-tab"
                                 aria-selected="false">{{ 'user_group.services'|trans }}</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab"
+             aria-controls="calendar-tab"
+             aria-selected="false">{{ 'user_group.calendar'|trans }}</a>
+        </li>
       </ul>
       <div class="tab-content" id="userGroupTabContent">
         <div class="tab-pane p-3 fade show active" id="default-settings" role="tabpanel"
@@ -123,6 +128,15 @@
 
         <div class="tab-pane p-3 fade" id="service" role="tabpanel" aria-labelledby="service-tab">
           {{ form_row(form.services) }}
+        </div>
+
+        <div class="tab-pane p-3 fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
+          <div class="d-none">{{ form_row(form.calendar.location) }}</div>
+          <p>{{ 'user_group.opening_hours_alert'|trans }}</p>
+
+          {% for opening_hour in form.calendar.opening_hours %}
+            {{ include('Calendars/parts/minimalCalendarOpeningHours.html.twig') }}
+          {% endfor %}
         </div>
 
       </div>

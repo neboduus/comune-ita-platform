@@ -3056,6 +3056,9 @@ user_group:
   delete_popup: "Sei sicuro di procedere? L'ufficio verrà eliminato definitivamente."
   new: 'Crea nuovo ufficio'
   confirm: 'Email, Pec e Numero di telefono nella sezione Contatti non compilati. Sei sicuro di voler salvare?'
+  calendar: 'Orari di apertura'
+  hours: 'Orari'
+  opening_hours_alert: 'Questo è un orario semplificato, potrai modificare il calendario completo una volta salvato.'
 contact_point:
   title: 'Punti di Contatto'
   contact_point_name: 'Nome'

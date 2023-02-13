@@ -5,7 +5,6 @@ namespace App\Model;
 use JMS\Serializer\Annotation as Serializer;
 use JMS\Serializer\Annotation\Groups;
 use OpenApi\Annotations as OA;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class PostalAddress implements \JsonSerializable
 {

@@ -2990,6 +2990,9 @@ user_group:
   core_contact_point: ""
   new: 'Create new office'
   confirm: 'Email, Pec and Phone Number empty in the Contacts section. Are you sure you want to save?'
+  calendar: 'Opening hours'
+  hours: 'Hours'
+  opening_hours_alert: 'This is a simplified timetable, you will be able to edit the complete calendar once saved.'
 contact_point:
   title: 'Contact Point'
   contact_point_name: 'Name'

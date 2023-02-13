@@ -2,25 +2,72 @@
 
 namespace App\Form\Admin;
 
+use App\Entity\Calendar;
+use App\Entity\OpeningHour;
 use App\Entity\UserGroup;
 use App\Form\Api\PlaceApiType;
-use App\Form\Api\PostalAddressApiType;
 use App\Form\I18n\AbstractI18nType;
+use App\Form\I18n\I18nDataMapperInterface;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
-use App\Form\Admin\ContactPointType;
+use App\Form\Admin\MinimalCalendarType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserGroupType extends AbstractI18nType
 {
 
+  /**
+   * @var TranslatorInterface
+   */
+  private TranslatorInterface $translator;
+
+  /**
+   * @param I18nDataMapperInterface $dataMapper
+   * @param $locale
+   * @param $locales
+   * @param TranslatorInterface $translator
+   */
+  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, TranslatorInterface $translator)
+  {
+    parent::__construct($dataMapper, $locale, $locales);
+    $this->translator = $translator;
+  }
+
+  /**
+   * @throws \Exception
+   */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+    /* @var UserGroup $userGroup**/
+    $userGroup = $builder->getData();
+
+    /** @var Calendar $calendar */
+    $calendar = $builder->getData()->getCalendar() ?? new Calendar();
+
+    $calendar->setTitle($calendar->getTitle() ?? $userGroup->getName());
+    $calendar->setLocation($calendar->getLocation() ?? $userGroup->getCoreLocation() ? $userGroup->getCoreLocation()->getHumanReadableAddress() : '');
+
+    if($calendar->getOpeningHours()->isEmpty()){
+      $now = new \DateTime();
+      $openingHours = (new OpeningHour())
+        ->setIsModerated(false)
+        ->setMeetingMinutes(30)
+        ->setIntervalMinutes(0)
+        ->setCreatedAt($now)
+        ->setUpdatedAt($now)
+        ->setStartDate($now)
+        ->setEndDate(new \DateTime(date('Y') +1 . '-12-31'))
+        ->setBeginHour(\DateTime::createFromFormat('H:i', Calendar::MIN_DATE))
+        ->setEndHour(\DateTime::createFromFormat('H:i', Calendar::MAX_DATE))
+        ->setDaysOfWeek([1, 2, 3, 4, 5])
+        ->setName($this->translator->trans('user_group.hours'));
+      $calendar->addOpeningHour($openingHours);
+    }
 
     $this->createTranslatableMapper($builder, $options)
       ->add('name', I18nTextType::class, [
@@ -85,6 +132,11 @@ class UserGroupType extends AbstractI18nType
         'required' => false,
         'label' => 'place.address'
       ])
+      ->add('calendar', MinimalCalendarType::class, [
+        'required' => false,
+        'label' => false,
+        'data' => $calendar
+      ])
     ;
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
   }
@@ -94,8 +146,9 @@ class UserGroupType extends AbstractI18nType
     $data = $event->getData();
     $data['coreContactPoint']['name'] = $data['name'][$this->getLocale()] ?? '';
     $data['coreLocation']['name'] = $data['name'][$this->getLocale()] ?? '';
+    $data['calendar']['title'] = $data['name'][$this->getLocale()];
+    $data['calendar']['location'] = $data['name'][$this->getLocale()];
     $event->setData($data);
-
   }
 
   /**
