@@ -166,4 +166,24 @@ abstract class AbstractSecurityLog implements SecurityLogInterface
   {
     $this->subject = $subject;
   }
+
+  public function addOriginToDescription(string $description)
+  {
+    $placeholder = [];
+    if (!empty($this->origin)) {
+      if (isset($this->origin['ip']) && !empty($this->origin['ip'])) {
+        $placeholder['%ip%'] = $this->origin['ip'];
+      }
+
+      if (isset($this->origin['city']) && !empty($this->origin['city'])) {
+        $placeholder['%city%'] = $this->origin['city'];
+      }
+
+      if (isset($this->origin['country']) && !empty($this->origin['country'])) {
+        $placeholder['%country%'] = $this->origin['city'];
+      }
+    }
+
+    return strtr($description, $placeholder);
+  }
 }

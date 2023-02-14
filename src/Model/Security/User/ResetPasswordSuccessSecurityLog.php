@@ -14,25 +14,9 @@ class ResetPasswordSuccessSecurityLog extends AbstractSecurityLog
 
   public function generateShortDescription(): void
   {
-    $placeholder = [];
-
+    $description = $this->addOriginToDescription(self::SHORT_DESCRIPTION_TEMPLATE);
     $placeholder['%email%'] = $this->subject['email'];
-
-    if ($this->origin) {
-      if ($this->origin->getIp()) {
-        $placeholder['%ip%'] = $this->origin->getIp();
-      }
-
-      if ($this->origin->getCity()) {
-        $placeholder['%city%'] = $this->origin->getCity();
-      }
-
-      if ($this->origin->getCountry()) {
-        $placeholder['%country%'] = $this->origin->getCountry();
-      }
-    }
-
-    $this->setShortDescription(strtr(self::SHORT_DESCRIPTION_TEMPLATE, $placeholder));
+    $this->setShortDescription(strtr($description, $placeholder));
   }
 
   public function generateMeta(): void

@@ -47,41 +47,6 @@ class SecurityLogFactory
     $securityClass = SecurityLogInterface::ACTIONS_MAPPING[$type];
     $securityLog = new $securityClass($user, $subject);
 
-    // Todo: creare un registry o init in automatico
-    /*switch ($type) {
-      case SecurityLogInterface::ACTION_USER_LOGIN_SUCCESS:
-        $securityLog = new LoginSuccessSecurityLog($user);
-        break;
-
-      case SecurityLogInterface::ACTION_USER_LOGIN_FAILED:
-        $securityLog = new LoginFailedSecurityLog($user);
-        break;
-
-      case SecurityLogInterface::ACTION_USER_RESET_PASSWORD_REQUEST:
-        $securityLog = new ResetPasswordRequestSecurityLog($user, $subject);
-        break;
-
-      case SecurityLogInterface::ACTION_USER_RESET_PASSWORD_SUCCESS:
-        $securityLog = new ResetPasswordSuccessSecurityLog($user, $subject);
-        break;
-
-      case SecurityLogInterface::ACTION_USER_ADMIN_CREATED:
-        $securityLog = new AdminCreatedSecurityLog($user, $subject);
-        break;
-
-      case SecurityLogInterface::ACTION_USER_ADMIN_REMOVED:
-        $securityLog = new AdminRemovedSecurityLog($user, $subject);
-        break;
-
-      case SecurityLogInterface::ACTION_USER_OPERATOR_CREATED:
-        $securityLog = new OperatorCreatedSecurityLog($user, $subject);
-        break;
-
-      case SecurityLogInterface::ACTION_USER_OPERATOR_REMOVED:
-        $securityLog = new OperatorRemovedSecurityLog($user, $subject);
-        break;
-    }*/
-
     if ($this->ipInfoWsUrl && $request instanceof Request && $request->server->has('HTTP_X_REAL_IP')) {
       $origin = $this->generateOrigin($request->server->get('HTTP_X_REAL_IP'));
       $securityLog->setOrigin($origin);
