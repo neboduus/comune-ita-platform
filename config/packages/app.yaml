@@ -314,6 +314,6 @@ parameters:
   env(GOOGLE_TAG_MANAGER_KEY): null
   env(SATISFY_WIDGET_URL): https://satisfy.opencontent.it/widget.js
   env(SATISFY_API_URL): https://satisfy.opencityitalia.it/v1/graphql
-  env(SATISFY_SECRET): null
+  env(SATISFY_SECRET): ''
   env(SIGNATURE_CHECK_WS_URL): null
   env(IP_INFO_WS_URL): null
