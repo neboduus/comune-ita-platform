@@ -72,7 +72,7 @@
 				</section>
 			{% endif %}
 			
-			{% if meeting.calendar.location %}
+			{% if not meeting.calendar.location|isEmpty %}
 				<section class="it-page-section" id="address">
 					<div class="address-wrapper mb-50">
 						<h2 class="title-xxlarge mb-10">{{ 'meetings.labels.location' | trans }}</h2>
@@ -81,7 +81,7 @@
 								<div class="card card-teaser card-teaser-info rounded shadow-sm">
 									<div class="card-body align-items-center card-body d-flex justify-content-between">
 										<div class="left">
-											<p class="subtitle-small mb-0">{{ meeting.calendar.location }}</p>
+											<p class="subtitle-small mb-0">{{ meeting.calendar.location|raw }}</p>
 											<p class="subtitle-small mb-0">{{ meeting.calendar.contactEmail }}</p>
 										</div>
 									</div>
