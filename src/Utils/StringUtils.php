@@ -176,7 +176,7 @@ class StringUtils
     return $result;
   }
 
-  public static function shortenString($string, $limit = 255) 
+  public static function shortenString($string, $limit = 255)
   {
     return strlen($string) > $limit ? substr($string, 0, $limit - 3) . '...' : $string;
   }
@@ -205,4 +205,5 @@ class StringUtils
 
     return '<div class="avatar avatar-'.$color.' size-'.$size.'"><p aria-hidden="true">'. $firstLetter . $secondLetter .'</p><span class="sr-only">'. $string .'</span></div>';
   }
+
 }
