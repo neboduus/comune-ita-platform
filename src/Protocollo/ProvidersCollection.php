@@ -4,6 +4,8 @@
 namespace App\Protocollo;
 
 
+use App\Entity\Pratica;
+
 class ProvidersCollection
 {
   private $availableRegisterProviders;
@@ -35,6 +37,16 @@ class ProvidersCollection
         }
       }
     }
+  }
+
+  public function getHandlerByPratica(Pratica $pratica)
+  {
+    $providerIdentifier = $pratica->getServizio()->getProtocolHandler();
+    if (isset($this->availableRegisterProviders[$providerIdentifier])) {
+      return $this->availableRegisterProviders[$providerIdentifier]['handler'];
+    }
+
+    throw new \InvalidArgumentException("Protocollo handler $providerIdentifier not found");
   }
 
   /**

@@ -6,6 +6,7 @@ use App\Entity\GiscomPratica;
 use App\Entity\Pratica;
 use App\Event\PraticaOnChangeStatusEvent;
 use App\Protocollo\ProtocolloHandlerInterface;
+use App\Protocollo\ProvidersCollection;
 use App\ScheduledAction\ScheduledActionHandlerInterface;
 use App\Services\PraticaStatusService;
 use App\Services\ProtocolloServiceInterface;
@@ -13,24 +14,22 @@ use Psr\Log\LoggerInterface;
 
 class ProtocollaPraticaListener
 {
-  /**
-   * @var ProtocolloServiceInterface
-   */
-  private $protocollo;
+  /** @var ProtocolloServiceInterface */
+  private ProtocolloServiceInterface $protocollo;
 
-  /**
-   * @var PraticaStatusService
-   */
-  protected $statusService;
+  /** @var PraticaStatusService */
+  protected PraticaStatusService $statusService;
 
-  /**
-   * @var LoggerInterface
-   */
+  /** @var LoggerInterface */
   private $logger;
 
-  public function __construct(ProtocolloServiceInterface $protocollo, PraticaStatusService $statusService, LoggerInterface $logger)
+  /** @var ProvidersCollection */
+  private ProvidersCollection $providersCollection;
+
+  public function __construct(ProtocolloServiceInterface $protocollo, PraticaStatusService $statusService, LoggerInterface $logger, ProvidersCollection $providersCollection)
   {
     $this->protocollo = $protocollo;
+    $this->providersCollection = $providersCollection;
     $this->statusService = $statusService;
     $this->logger = $logger;
   }
@@ -41,15 +40,8 @@ class ProtocollaPraticaListener
     $pratica = $event->getPratica();
     if ($pratica->getServizio()->isProtocolRequired()) {
 
-      /** @var ProtocolloHandlerInterface $handler */
-      if ($this->protocollo instanceof ScheduledActionHandlerInterface) {
+      $handler = $this->providersCollection->getHandlerByPratica($pratica);
 
-        // Todo: da rivedere metodo di selezione del protocollo, adesso lasciare così altrimenti non va.
-        // In service.yaml c'è il ByPraticaProtocolloHandler
-        $handler = $this->protocollo->getHandler()->getHandler($pratica);
-      } else {
-        $handler = $this->protocollo->getHandler($pratica);
-      }
       $handlerIsExternal = $handler->getExecutionType() == ProtocolloHandlerInterface::PROTOCOL_EXECUTION_TYPE_EXTERNAL;
       //$handlerIsExternal = $this->protocollo->getHandler()->getExecutionType() == ProtocolloHandlerInterface::PROTOCOL_EXECUTION_TYPE_EXTERNAL;
 
