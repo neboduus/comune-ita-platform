@@ -14,23 +14,8 @@ class OperatorRemovedSecurityLog extends AbstractSecurityLog
 
   public function generateShortDescription(): void
   {
-    $placeholder = [];
-
-    if ($this->origin) {
-      if ($this->origin->getIp()) {
-        $placeholder['%ip%'] = $this->origin->getIp();
-      }
-
-      if ($this->origin->getCity()) {
-        $placeholder['%city%'] = $this->origin->getCity();
-      }
-
-      if ($this->origin->getCountry()) {
-        $placeholder['%country%'] = $this->origin->getCountry();
-      }
-    }
-
-    $this->setShortDescription(strtr(self::SHORT_DESCRIPTION_TEMPLATE, $placeholder));
+    $description = $this->addOriginToDescription(self::SHORT_DESCRIPTION_TEMPLATE);
+    $this->setShortDescription($description);
   }
 
   public function generateMeta(): void

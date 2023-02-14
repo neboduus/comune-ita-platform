@@ -63,6 +63,10 @@ class UserSecuritySubscriber implements EventSubscriberInterface
 
   public function onInteractiveLogin(InteractiveLoginEvent $event)
   {
+    $request = $this->requestStack->getCurrentRequest();
+    if (strpos($request->getRequestUri(), '/api/') == true) {
+      return;
+    }
     $user = $event->getAuthenticationToken()->getUser();
     $this->generateSecurityLog(SecurityLogInterface::ACTION_USER_LOGIN_SUCCESS, $user);
   }
@@ -81,6 +85,7 @@ class UserSecuritySubscriber implements EventSubscriberInterface
     try {
       $request = $this->requestStack->getCurrentRequest();
       $securityLog = $this->factory->getSecurityLog($type, $user, $request, $subject);
+
       $this->kafkaService->produceMessage($securityLog);
     } catch (Throwable $e) {
       $this->logger->error($e->getMessage());
