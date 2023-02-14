@@ -206,6 +206,10 @@ parameters:
       name: Infor
       handler: infor
       enabled: true
+    dummy:
+      name: Dummy
+      handler: dummy
+      enabled: true
   analytics:
     plan: '%env(ANALYTICS_PLAN)%'
   google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'

@@ -538,6 +538,8 @@ services:
       - !tagged ocsdc.protocollo.handler
       - "%register_providers%"
 
+  ocsdc.providers: '@App\Protocollo\ProvidersCollection'
+
   App\Services\DelayedProtocolloService:
     arguments: [ "@ocsdc.protocollo_direct","@doctrine.orm.entity_manager","@logger", "@ocsdc.schedule_action_service" ]
     tags:
@@ -582,7 +584,7 @@ services:
       - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 35 }
 
   App\EventListener\ProtocollaPraticaListener:
-    arguments: [ "@ocsdc.protocollo", "@ocsdc.pratica_status_service","@logger" ]
+    arguments: [ "@ocsdc.protocollo", "@ocsdc.pratica_status_service","@logger", "@ocsdc.providers" ]
     tags:
       - { name: kernel.event_listener, event: ocsdc.pratica.on_status_change, method: onStatusChange, priority: 100 }
 
