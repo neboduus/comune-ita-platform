@@ -254,6 +254,7 @@ class Calendar
       $this->draftsDuration = self::DEFAULT_DRAFT_DURATION;
       $this->draftsDurationIncrement = self::DEFAULT_DRAFT_INCREMENT;
       $this->allowOverlaps = false;
+      $this->minimumSchedulingNotice = 0;
     }
   }
 
@@ -429,7 +430,7 @@ class Calendar
    */
   public function getMinimumSchedulingNotice()
   {
-    return $this->minimumSchedulingNotice;
+    return ($this->minimumSchedulingNotice ?? 0);
   }
 
   /**

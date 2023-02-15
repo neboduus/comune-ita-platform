@@ -121,5 +121,4 @@ class UserGroupController extends AbstractController
     }
   }
 
-
 }
