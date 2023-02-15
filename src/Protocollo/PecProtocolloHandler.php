@@ -145,7 +145,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     if ($pratica->getModuliCompilati()->count() > 0 ) {
       /** @var AllegatoInterface $moduloCompilato */
       $moduloCompilato = $pratica->getModuliCompilati()->first();
-      $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFilename(), $this->fileService->getMimeType($moduloCompilato));
+      $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($moduloCompilato), $moduloCompilato->getFilename(), $this->fileService->getAttachmentMimeType($moduloCompilato));
       $message->attach($attachment);
     }
     $result = $this->mailer->send($message);

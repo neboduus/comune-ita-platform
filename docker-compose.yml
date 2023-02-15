@@ -84,7 +84,7 @@ services:
       PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
       PEC_MAILER_USER: ${PEC_MAILER_USER:-null}
       PEC_MAILER_PASSWORD: ${PEC_MAILER_PASSWORD:-null}
-      PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-:stanzadelcittadino@pec.net}
+      PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-stanzadelcittadino@pec.net}
       SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
       DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-php@stanzadelcittadino.localtest.me}
       WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-http://gotenberg:3000}
@@ -162,7 +162,7 @@ services:
       PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
       PEC_MAILER_USER: ${PEC_MAILER_USER:-null}
       PEC_MAILER_PASSWORD: ${PEC_MAILER_PASSWORD:-null}
-      PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-:stanzadelcittadino@pec.net}
+      PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-stanzadelcittadino@pec.net}
       SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
       DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-php@stanzadelcittadino.localtest.me}
       WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-http://gotenberg:3000}
