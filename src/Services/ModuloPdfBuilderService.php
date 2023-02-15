@@ -449,17 +449,14 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
 
   /**
    * @param Pratica $pratica
-   *
+   * @param bool $showProtocolNumber
    * @return string
-   * @throws ClientException
-   * @throws RequestException
-   * @throws ReflectionException
    */
-  public function renderForPratica(Pratica $pratica, $showProtocolNumber = false)
+  public function renderForPratica(Pratica $pratica, bool $showProtocolNumber = false): string
   {
 
     $className = (new ReflectionClass($pratica))->getShortName();
-    if ($className == 'FormIO') {
+    if (in_array($className, ['FormIO', 'BuiltIn'])) {
       return $this->generatePdfUsingGotemberg( $pratica, $showProtocolNumber );
     } else {
       return $this->renderForClass($pratica, $className);
