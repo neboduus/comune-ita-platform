@@ -29,6 +29,8 @@ services:
       - ./tests:/var/www/html/tests:rw,cached
       - ./phpunit.xml.dist:/var/www/html/phpunit.xml.dist:rw,cached
       - ./composer.json:/var/www/html/composer.json:rw,cached
+    healthcheck:
+      disable: true
 
   cron:
     command: bash -c ""

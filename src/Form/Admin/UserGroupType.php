@@ -10,7 +10,7 @@ use App\Form\I18n\AbstractI18nType;
 use App\Form\I18n\I18nDataMapperInterface;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
-use App\Form\Admin\MinimalCalendarType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -31,12 +31,19 @@ class UserGroupType extends AbstractI18nType
    * @param $locale
    * @param $locales
    * @param TranslatorInterface $translator
+   * @param EntityManagerInterface $entityManager
    */
-  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, TranslatorInterface $translator)
+  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, TranslatorInterface $translator, EntityManagerInterface $entityManager)
   {
     parent::__construct($dataMapper, $locale, $locales);
     $this->translator = $translator;
+    $this->entityManager = $entityManager;
   }
+
+  /**
+   * @var EntityManagerInterface
+   */
+  private $entityManager;
 
   /**
    * @throws \Exception
@@ -146,8 +153,19 @@ class UserGroupType extends AbstractI18nType
     $data = $event->getData();
     $data['coreContactPoint']['name'] = $data['name'][$this->getLocale()] ?? '';
     $data['coreLocation']['name'] = $data['name'][$this->getLocale()] ?? '';
-    $data['calendar']['title'] = $data['name'][$this->getLocale()];
-    $data['calendar']['location'] = $data['name'][$this->getLocale()];
+    $isTitleSet = (array_key_exists('calendar', $data) and array_key_exists('title', $data['calendar']));
+    if (!$isTitleSet or !$data['calendar']['title']){
+      $calendarTitle = $data['name'][$this->getLocale()];
+      $titleAlreadyExists = $this->entityManager->getRepository('App\Entity\Calendar')->findOneBy(['title' => $calendarTitle]);
+      if ($titleAlreadyExists){
+        $calendarTitle .= '-'.substr(uuid_create(),0,4);
+      }
+      $data['calendar']['title'] = $calendarTitle;
+    }
+    $isLocationSet = (array_key_exists('calendar', $data) and array_key_exists('location', $data['calendar']));
+    if (!$isLocationSet or !$data['calendar']['location']) {
+      $data['calendar']['location'] = $data['name'][$this->getLocale()];
+    }
     $event->setData($data);
   }
 
