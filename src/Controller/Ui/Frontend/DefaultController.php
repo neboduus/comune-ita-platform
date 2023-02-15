@@ -62,18 +62,25 @@ class DefaultController extends AbstractController
   /**
    * @return Response|null
    */
-  public function commonAction()
+  public function commonAction(Request $request)
   {
     if ($this->instanceService->hasInstance()) {
       return $this->forward(ServiziController::class . '::serviziAction');
     } else {
+      $host = $request->server->get('HTTP_HOST');
       $enti = [];
       foreach (InstancesProvider::factory()->getInstances() as $identifier => $instance) {
         $indentifierParts = explode('/', $identifier);
-        $enti[] = [
-          'name' => $instance['name'] ?? ucwords(str_replace('-', ' ', $instance['identifier'])),
-          'slug' => $indentifierParts[1]
-        ];
+        if ($indentifierParts[0] === $host) {
+          $enti[] = [
+            'name' => $instance['name'] ?? ucwords(str_replace('-', ' ', $instance['identifier'])),
+            'slug' => $indentifierParts[1]
+          ];
+        }
+      }
+
+      if (count($enti) == 1) {
+        return $this->redirect('/'. $enti[0]['slug']. '/'. $request->getDefaultLocale());
       }
 
       return $this->render(
