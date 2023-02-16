@@ -409,6 +409,7 @@ servizio:
   configuration_needs_technical_support: "Contattare il supporto tecnico per completare la configurazione"
   no_protocol_required: 'La protocollazione non risulta attiva per questo sevizio'
   no_protocol_handler: 'Nessun protocollo risulta abilitato per questo servizio'
+  no_external_protocol_configuration_needed: 'Non è necessaria una configurazione per questo protocollo esterno'
 gruppo_di_servizi:
   gruppo_di_servizi: 'Gruppo di servizi'
   nome: 'Nome'

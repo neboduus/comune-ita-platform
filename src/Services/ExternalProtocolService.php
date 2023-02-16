@@ -72,6 +72,13 @@ class ExternalProtocolService
    * @throws Exception
    */
   public function setup(array $configuration) {
+    $url = $configuration['url'] ?? '';
+
+    if (!$url){
+      $this->logger->debug('servizio.no_external_protocol_configuration_needed');
+      return null;
+    }
+
     $currentInstance = $this->instanceService->getCurrentInstance();
     $client = new Client();
 
