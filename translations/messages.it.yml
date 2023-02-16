@@ -2994,6 +2994,8 @@ security:
   remember_me: 'Ricordami'
   login: 'Login'
   password_reset: 'Password reset'
+  missing_username: 'Username non trovata.'
+  error_login_system_user: "Questo utente non ha i permessi necessari per accedere all'interfaccia"
 contacts:
   title: "Contatta il comune"
   faq_url_label: "Leggi le domande frequenti"

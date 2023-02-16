@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\OperatoreUser;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -22,17 +23,32 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {
   use TargetPathTrait;
 
-  private $entityManager;
-  private $urlGenerator;
-  private $csrfTokenManager;
-  private $passwordEncoder;
-  private $refreshTokenManager;
-  private $authorizationChecker;
+  /** @var EntityManagerInterface  */
+  private EntityManagerInterface $entityManager;
+
+  /** @var UrlGeneratorInterface  */
+  private UrlGeneratorInterface $urlGenerator;
+
+  /** @var CsrfTokenManagerInterface  */
+  private CsrfTokenManagerInterface $csrfTokenManager;
+
+  /** @var UserPasswordEncoderInterface  */
+  private UserPasswordEncoderInterface $passwordEncoder;
+
+  /** @var CsrfTokenManagerInterface  */
+  private CsrfTokenManagerInterface $refreshTokenManager;
+
+  /** @var AuthorizationCheckerInterface  */
+  private AuthorizationCheckerInterface $authorizationChecker;
+
+  /** @var TranslatorInterface  */
+  private TranslatorInterface $translator;
 
   /**
    * LoginFormAuthenticator constructor.
@@ -42,19 +58,23 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
    * @param CsrfTokenManagerInterface $csrfTokenManager
    * @param UserPasswordEncoderInterface $passwordEncoder
    * @param AuthorizationCheckerInterface $authorizationChecker
+   * @param TranslatorInterface $translator
    */
   public function __construct(
     EntityManagerInterface $entityManager,
     UrlGeneratorInterface $urlGenerator,
     CsrfTokenManagerInterface $csrfTokenManager,
     UserPasswordEncoderInterface $passwordEncoder,
-    AuthorizationCheckerInterface $authorizationChecker)
+    AuthorizationCheckerInterface $authorizationChecker,
+    TranslatorInterface $translator
+  )
   {
     $this->entityManager = $entityManager;
     $this->urlGenerator = $urlGenerator;
     $this->csrfTokenManager = $csrfTokenManager;
     $this->passwordEncoder = $passwordEncoder;
     $this->authorizationChecker = $authorizationChecker;
+    $this->translator = $translator;
   }
 
   /**
@@ -107,7 +127,11 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
     if (!$user) {
       // fail authentication with a custom error
-      throw new CustomUserMessageAuthenticationException('Username non trovata.');
+      throw new CustomUserMessageAuthenticationException($this->translator->trans('security.missing_username'));
+    }
+    if ($user instanceof OperatoreUser && $user->isSystemUser()) {
+      // fail authentication api user
+      throw new CustomUserMessageAuthenticationException($this->translator->trans('security.error_login_system_user'));
     }
     return $user;
   }
