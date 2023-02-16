@@ -2222,7 +2222,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
    */
   public function isFormIOType(): bool
   {
-    if (in_array($this->getType(), [self::TYPE_FORMIO, self::TYPE_BUILTIN])) {
+    if (in_array($this->type, [self::TYPE_FORMIO, self::TYPE_BUILTIN])) {
       return true;
     } else {
       return false;
