@@ -91,9 +91,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
   /**
    * @param Request $request
    *
-   * @return array|mixed
+   * @return array
    */
-  public function getCredentials(Request $request)
+  public function getCredentials(Request $request): array
   {
     $credentials = [
       'username' => $request->request->get('_username'),
@@ -111,7 +111,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
   /**
    * @param mixed $credentials
-   * @param UserProviderInterface $userProvider
    * @param UserProviderInterface $userProvider
    *
    * @return User|object|UserInterface|null
@@ -184,7 +183,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
   /**
    * @return string
    */
-  protected function getLoginUrl()
+  protected function getLoginUrl(): string
   {
     return $this->urlGenerator->generate('security_login');
   }

@@ -192,7 +192,8 @@ general:
   username: 'Username'
   email: 'Email'
   enabled: 'Abilitato'
-  system_user: 'Utente di sistema'
+  system_user: 'Utente API'
+  system_user_helper: "Questo utente verrà utilizzato ESCLUSIVAMENTE per l'accesso alle API. Attenzione: quest'impostazione NON é REVERSIBILE"
   stato: 'Stato'
   url: 'Url'
   alert_elimina: "Sicuro di voler procedere?"
@@ -2996,6 +2997,10 @@ security:
   password_reset: 'Password reset'
   missing_username: 'Username non trovata.'
   error_login_system_user: "Questo utente non ha i permessi necessari per accedere all'interfaccia"
+  error_reset_password_system_user: "Questo utente non ha i permessi necessari per resettare la password"
+  user_not_found: 'Utente non trovato...'
+  user_disabled: 'Utente non attivo...'
+  check_email_reset_password: 'Controlla la tua casella e-mail per il link di conferma!'
 contacts:
   title: "Contatta il comune"
   faq_url_label: "Leggi le domande frequenti"

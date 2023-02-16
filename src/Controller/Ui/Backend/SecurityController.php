@@ -4,6 +4,7 @@
 namespace App\Controller\Ui\Backend;
 
 
+use App\Entity\OperatoreUser;
 use App\Entity\User;
 use App\Form\Security\NewPasswordType;
 use App\Form\Security\PasswordRequestType;
@@ -120,19 +121,25 @@ class SecurityController extends AbstractController
       $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
       if (!$user instanceof User) {
-        $this->addFlash('danger', "Utente non trovato...");
+        $this->addFlash('danger', $this->translator->trans('security.user_not_found'));
 
         return $this->redirectToRoute('reset_password');
       }
 
       if (!$user->isEnabled()) {
-        $this->addFlash('danger', "Utente non attivo...");
+        $this->addFlash('danger', $this->translator->trans('security.user_disabled'));
+
+        return $this->redirectToRoute('reset_password');
+      }
+
+      if ($user instanceof OperatoreUser && $user->isSystemUser()) {
+        $this->addFlash('danger', $this->translator->trans('security.error_reset_password_system_user'));
 
         return $this->redirectToRoute('reset_password');
       }
 
       $this->userManager->resetPassword($user);
-      $this->addFlash('info', "Controlla la tua casella e-mail per il link di conferma!");
+      $this->addFlash('info', $this->translator->trans('security.check_email_reset_password'));
 
       return $this->redirectToRoute('security_login');
     }

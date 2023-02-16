@@ -91,10 +91,6 @@ class OperatoreUserType extends AbstractType
         'label' => 'general.enabled',
         'required' => false
       ])
-      ->add('system_user', CheckboxType::class, [
-        'label' => 'general.system_user',
-        'required' => false
-      ])
       ->add('services', ChoiceType::class, [
         'label' => 'operatori.servizi_abilitati',
         'data' => $serviziAbilitati,
@@ -110,6 +106,15 @@ class OperatoreUserType extends AbstractType
         'multiple' => true,
         'required' => false
       ]);
+
+    if ($operatore->getUsername() && !$operatore->isSystemUser()) {
+      // Show the checkbox only in case of editing of an existing operator and if the operator is not a system user
+      $builder->add('system_user', CheckboxType::class, [
+        'label' => 'general.system_user',
+        'help' => 'general.system_user_helper',
+        'required' => false
+      ]);
+    }
 
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmitWithGroups'));
   }
