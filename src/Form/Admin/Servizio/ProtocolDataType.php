@@ -78,8 +78,12 @@ class ProtocolDataType extends AbstractType
             $attr['data-tenant'] = $service->getEnte()->getId();
             $attr['data-service'] = $service->getId();
             $attr['data-identifier'] = $choice;
-            $attr['data-url'] = $availableRegisterProviders[$choice]['url'];
-            $attr['data-headers'] = implode(',', $availableRegisterProviders[$choice]['headers'] ?? []);
+            if (isset($availableRegisterProviders[$choice]['url'])) {
+              $attr['data-url'] = $availableRegisterProviders[$choice]['url'];
+            }
+            if (isset($availableRegisterProviders[$choice]['headers'])) {
+              $attr['data-headers'] = implode(',', $availableRegisterProviders[$choice]['headers'] ?? []);
+            }
           }
           return $attr;
         },

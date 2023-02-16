@@ -29,7 +29,7 @@ class ProtocolProviders {
   static showParameters() {
     // Hide configuration parameters if provider is not enabled
     $('input[name="protocol_data[protocol_handler]"]').each(function (i, e) {
-      if (e.checked) {
+      if (e.checked && $(e).data('url')) {
         $(`[id$="collapse-${e.value}"]`).removeClass('d-none');
         $(`[id$="heading-${e.value}"]`).removeClass('d-none');
       } else {
@@ -43,7 +43,7 @@ class ProtocolProviders {
   static disablePreviousConfiguration(previousHandler) {
     return new Promise((resolve, reject) => {
       // If there is already a configuration for the previously selected external protocol, disable it
-      if (previousHandler.hasClass('external-register-choice')) {
+      if (previousHandler.hasClass('external-register-choice') && previousHandler.data('url')) {
         const identifier = previousHandler.data('identifier').replace(/\./g, '');
         const serviceId = previousHandler.data('service');
         let url = `${previousHandler.data('url')}/services/${serviceId}`;
@@ -95,7 +95,7 @@ class ProtocolProviders {
 
   static enableExistingConfiguration(handler) {
     return new Promise((resolve, reject) => {
-      if (handler.hasClass('external-register-choice')) {
+      if (handler.hasClass('external-register-choice') && handler.data('url')) {
         const serviceId = handler.data('service');
         const identifier = handler.data('identifier').replace(/\./g, '');
         const url = `${handler.data('url')}/services/${serviceId}`
@@ -190,8 +190,10 @@ class ProtocolProviders {
   static createPopulateExternalProtocolChoice() {
     $('.external-register-choice').each((i, e) => {
       let checked = $(e).is(':checked');
-      if (!checked) {
-        // If provider is not selected don't render schema
+      let baseUrl = $(e).data('url');
+
+      if (!checked || !baseUrl) {
+        // If provider is not selected don't render schema or provider has not an external url
         return
       }
 
@@ -201,8 +203,6 @@ class ProtocolProviders {
 
       const tenantId = $(e).data('tenant');
       const serviceId = $(e).data('service');
-      let baseUrl = $(e).data('url');
-
 
       let isFirstConf = false;
       let customHeaders = $(e).data('headers')

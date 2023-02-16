@@ -141,6 +141,10 @@ parameters:
       handler: mypay
       enabled: true
   register_providers:
+    external:
+      name: Esterno
+      handler: external
+      enabled: true
     datagraph:
       name: Datagraph
       url: '%env(REGISTRY_API_URL)%/datagraph/v1'
