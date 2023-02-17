@@ -1537,7 +1537,8 @@ steps:
       sei_sicuro_di_inviare: 'Sei sicuro di aver compilato il modulo correttamente e di voler inviare la pratica?'
       si: 'Sì, sono sicuro'
       no: 'No'
-      payment_help_text_top: 'Verifica i dati inseriti prima di passare al metodo di pagamento'
+      payment_help_text_top: 'Conferma i dati e prosegui con il pagamento. La pratica verrà inviata dopo la registrazione del pagamento.'
+      not_payment_help_text_top: 'Conferma i dati e invia la pratica.'
       help_text_top: "Scorri l'anteprima verificando che tutti i dati siano corretti e fai click su Invia alla fine della pagina"
       help_text_bottom: 'Per inviare la richiesta, premere il pulsante "Invia"'
     nucleo_familiare:
