@@ -1401,6 +1401,7 @@ steps:
       si: 'Ja, ich bin mir sicher.'
       'no': 'Nein'
       payment_help_text_top: 'DA NON TRADURRE'
+      not_payment_help_text_top: 'DA NON TRADURRE'
       help_text_top: "Überprüfen Sie, ob alle Daten korrekt eingegeben sind. Klicken Sie dann am Ende der Seite auf „Senden“."
       help_text_bottom: 'DA NON TRADURRE'
     nucleo_familiare:
