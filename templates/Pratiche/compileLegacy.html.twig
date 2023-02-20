@@ -107,7 +107,11 @@
             {% endif %}
 
           {% if currentStep.formType == "App\\Form\\Base\\SummaryType" %}
-            <p>{{ 'steps.common.conferma.payment_help_text_top' | trans }}</p>
+            {% if pratica.servizio.isPaymentRequired %}
+              <p>{{ 'steps.common.conferma.payment_help_text_top' | trans }}</p>
+            {% else %}
+              <p>{{ 'steps.common.conferma.not_payment_help_text_top' | trans }}</p>
+            {% endif %}
             {{ include('Pratiche/parts/pratica_summary.html.twig', {'pratica':form.vars.data, 'user': user}) }}
           {% elseif  flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
             <p><b>{{ 'steps.common.conferma.help_text_top'|trans }}</b></p>

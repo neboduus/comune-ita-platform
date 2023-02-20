@@ -1347,6 +1347,7 @@ steps:
       si: 'Yes, I''m sure'
       'no': 'No'
       payment_help_text_top: 'Check the data entered before switching to the payment method'
+      not_payment_help_text_top: 'Check the data entered before switching to the payment method'
       help_text_top: "Scroll through the preview verifying that all data is correct and click Submit at the end of the page"
       help_text_bottom: 'To send the request, press the "Send" button'
     nucleo_familiare:
