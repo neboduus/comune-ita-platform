@@ -17,6 +17,7 @@ use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
 use App\Services\Manager\ServiceManager;
 use App\Utils\FormUtils;
+use Ramsey\Uuid\Uuid;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -298,7 +299,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retrieve a Service",
+   *     description="Retrieve a Service by uuid or identifier",
    *     @Model(type=Service::class, groups={"read"})
    * )
    *
@@ -316,7 +317,12 @@ class ServicesAPIController extends AbstractFOSRestController
   {
     try {
       $repository = $this->getDoctrine()->getRepository('App\Entity\Servizio');
-      $result = $repository->find($id);
+      if (Uuid::isValid($id)) {
+        $result = $repository->find($id);
+      } else {
+        $result = $repository->findOneBy(['identifier' => $id]);
+      }
+
       if ($result === null) {
         return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
       }
