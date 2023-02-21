@@ -252,7 +252,7 @@ servizio:
   what_you_need: "Cosa serve"
   what_you_get: "Cosa si ottiene"
   costs: "Costi"
-  sottotitolo: 'Tutti i servizi comunali per i cittadini, disponibili online o a sportello, per richiedere documenti e permessi, iscriversi a graduatorie ed effettuare pagamenti.'
+  sottotitolo: 'Tutti i servizi per i cittadini, disponibili online o a sportello, per richiedere documenti e permessi, iscriversi a graduatorie ed effettuare pagamenti.'
   sottotitolo_categorie: "Gli argomenti rispondono a un'esigenza di organizzazione dei contenuti del sito istituzionale per temi e rappresentano le principali categorie di contenuti, informazioni e documenti specifici."
   bozza_successo: 'Bozza salvata con successo'
   nessun_template: 'Nessun template disponibile'
