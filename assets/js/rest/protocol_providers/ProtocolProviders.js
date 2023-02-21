@@ -29,7 +29,8 @@ class ProtocolProviders {
   static showParameters() {
     // Hide configuration parameters if provider is not enabled
     $('input[name="protocol_data[protocol_handler]"]').each(function (i, e) {
-      if (e.checked && $(e).data('url')) {
+      // Show parameters if checked, if is not external or if external has registry url
+      if (e.checked && (!$(e).hasClass('external-register-choice') || $(e).data('url'))) {
         $(`[id$="collapse-${e.value}"]`).removeClass('d-none');
         $(`[id$="heading-${e.value}"]`).removeClass('d-none');
       } else {
