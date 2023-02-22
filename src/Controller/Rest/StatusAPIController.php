@@ -15,7 +15,7 @@ use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 /**
- * Class ServicesAPIController
+ * Class StatusAPIController
  * @property EntityManager em
  * @property InstanceService is
  * @package App\Controller
@@ -34,7 +34,8 @@ class StatusAPIController extends AbstractFOSRestController
    *    description="Application has been accepted",
    *    @OA\JsonContent(
    *       type="object",
-   *       @OA\Property(property="result", type="boolean")
+   *       @OA\Property(property="result", type="boolean"),
+   *       @OA\Property(property="status", type="integer")
    *    )
    * )
    *
@@ -48,7 +49,8 @@ class StatusAPIController extends AbstractFOSRestController
    *    description="Application status is rejected or pending",
    *    @OA\JsonContent(
    *       type="object",
-   *       @OA\Property(property="result", type="boolean")
+   *       @OA\Property(property="result", type="boolean", default="false"),
+   *       @OA\Property(property="status", type="integer")
    *    )
    *
    * )
