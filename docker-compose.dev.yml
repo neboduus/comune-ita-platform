@@ -35,10 +35,6 @@ services:
   cron:
     command: bash -c ""
 
-  #caddy:
-  #  volumes:
-  #    - ./public:/srv:rw
-
   mailserver:
     ports:
       - "8025:8025"
