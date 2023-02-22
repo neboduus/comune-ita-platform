@@ -33,15 +33,15 @@
               "tableView": true,
               "dataSrc": "custom",
               "data": {
-                "custom": "async function get_data() {\n    window.FormioHelper.authenticatedCall(\"calendars?type=time_fixed_slots\")\n    .then(function(promise) {\n      const items = promise.map(elem => (\n  {\n    id: elem.id,\n    title: elem.title\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n    get_data()\n}"
+                "custom": "async function get_data(service_id) {\n    let url = 'user-groups?has_calendar=true';\n    if (service_id) {\n      url = url + '&service_id=' + service_id;\n    }\n    \n    window.FormioHelper.authenticatedCall(url)\n    .then(function(promise) {\n      const items = promise.map(elem => (\n  {\n    id: elem.id,\n    name: elem.name,\n    calendar_id: elem.calendar_id\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n  let service_id = data.service && data.service.id ? data.service.id : null;\n  get_data(service_id)\n}\n\n"
               },
               "dataType": "object",
               "idPath": "",
-              "template": "<span>{{ item.title }}</span>",
+              "template": "<span>{{ item.name }}</span>",
               "validate": {
                 "required": true
               },
-              "key": "calendar_obj",
+              "key": "user_group",
               "type": "select",
               "input": true
             }
@@ -84,7 +84,7 @@
               "tableView": true,
               "dataSrc": "custom",
               "data": {
-                "custom": "async function get_data(id) {\n  var dates = [];\n  window.FormioHelper.authenticatedCall(\"calendars/\" + id + \"/availabilities\").then(function(promise) {\n    var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};\n    promise.forEach(function(item) {\n      dates.push({\n        datestring: new Date(item.date).toLocaleDateString('it-IT', options), \n        date: item.date\n      });\n    });\n    instance.setItems(dates);\n  })\n}\n\nif (values.length === 0) {\n  get_data(data.calendar_obj.id)\n}"
+                "custom": "async function get_data(id) {\n  var dates = [];\n  window.FormioHelper.authenticatedCall(\"calendars/\" + id + \"/availabilities?available=true\").then(function(promise) {\n    var options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};\n    promise.forEach(function(item) {\n      dates.push({\n        datestring: new Date(item.date).toLocaleDateString('it-IT', options), \n        date: item.date\n      });\n    });\n    instance.setItems(dates);\n  })\n}\n\nif (values.length === 0) {\n  get_data(data.user_group.calendar_id)\n}"
               },
               "valueProperty": "date",
               "template": "<span>{{ item.datestring }}</span>",
@@ -102,7 +102,7 @@
               "tableView": true,
               "dataSrc": "custom",
               "data": {
-                "custom": "async function get_data(id, day) {\n  window.FormioHelper.authenticatedCall(\"calendars/\" + id + \"/availabilities/\" + day + \"?available=available\")\n  .then(function(promise) {\n    instance.setItems(promise)\n  })\n}\n\nif (values.length === 0) {\n  get_data(data.calendar_obj.id, data.day)\n}"
+                "custom": "async function get_data(id, day) {\n  window.FormioHelper.authenticatedCall(\"calendars/\" + id + \"/availabilities/\" + day + \"?available=true\")\n  .then(function(promise) {\n    instance.setItems(promise)\n  })\n}\n\nif (values.length === 0) {\n  get_data(data.user_group.calendar_id, data.day)\n}"
               },
               "template": "<span>{{ item.start_time }} - {{ item.end_time }}</span>",
               "validate": {
@@ -114,7 +114,6 @@
             },
             {
               "label": "Meeting",
-              "calculateValue": "/*async function get_meeting() {\n  window.FormioHelper.authenticatedCall(\"/meetings/new-draft\")\n  .then(function(promise) {\n    instance.setItems(promise)\n  })\n}\n\nif (data.meeting_id) {\n  if (data.day && data.calendar && data.time.start_time && data.time.opening_hour) {\n    get_meeting()\n  }\n}*/\n",
               "key": "meeting_id",
               "type": "hidden",
               "input": true,
@@ -122,7 +121,7 @@
             },
             {
               "label": "Data e ora",
-              "calculateValue": "day = data.day.split(\"-\")\nday = day[2] + \"/\" + day[1] + \"/\" + day[0];\ndata.calendar = day + \" @ \" + data.time.start_time + \"-\" + data.time.end_time + \" (\" + data.calendar_obj.id + \"#\" + data.meeting_id + \"#\"+ data.time.opening_hour + \")\";\n\n",
+              "calculateValue": "day = data.day.split(\"-\")\nday = day[2] + \"/\" + day[1] + \"/\" + day[0];\ndata.calendar = day + \" @ \" + data.time.start_time + \"-\" + data.time.end_time + \" (\" + data.user_group.calendar_id + \"#\" + data.meeting_id + \"#\"+ data.time.opening_hour + \")\";\n\n",
               "key": "calendar",
               "type": "hidden",
               "input": true,
@@ -158,12 +157,18 @@
           "components": [
             {
               "label": "Aggiungi il motivo dell'appuntamento",
+              "widget": "choicesjs",
               "tableView": true,
+              "dataSrc": "custom",
+              "data": {
+                "custom": "async function get_data(id) {\n    window.FormioHelper.authenticatedCall(\"services?user_group_ids=\" + id)\n    .then(function(promise) {\n      const items = promise.map(elem => (\n  {\n    id: elem.id,\n    name: elem.name\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n    get_data(data.user_group.id)\n}"
+              },
+              "template": "<span>{{ item.name }}</span>",
               "validate": {
                 "required": true
               },
-              "key": "user_message",
-              "type": "textfield",
+              "key": "service",
+              "type": "select",
               "input": true
             }
           ]
@@ -178,9 +183,13 @@
           "components": [
             {
               "label": "Aggiungi ulteriori dettagli",
+              "autoExpand": false,
               "tableView": true,
-              "key": "details",
-              "type": "textfield",
+              "validate": {
+                "maxLength": 600
+              },
+              "key": "user_message",
+              "type": "textarea",
               "input": true
             }
           ]
