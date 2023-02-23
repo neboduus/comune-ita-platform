@@ -99,6 +99,14 @@ class ServizioRepository extends EntityRepository
         ->setParameter('geographic_areas', $criteria['geographic_areas']);
     }
 
+    // User groups
+    if (isset($criteria['user_groups'])) {
+      $qb
+        ->leftJoin('s.userGroups', 'userGroups')
+        ->andWhere('userGroups.id IN (:user_groups)')
+        ->setParameter('user_groups', $criteria['user_groups']);
+    }
+
     // sticky
     if (isset($criteria['sticky'])) {
       $qb->andWhere($criteria['sticky'] ? 's.sticky = true' : 's.sticky = false OR s.sticky IS NULL');

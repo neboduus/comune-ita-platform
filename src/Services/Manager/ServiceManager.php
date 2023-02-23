@@ -14,6 +14,7 @@ use App\Model\FeedbackMessage;
 use App\Model\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -61,6 +62,7 @@ class ServiceManager
   /**
    * @param Request $request
    * @return array|int|mixed|string
+   * @throws \Exception
    */
   public function getServices(Request $request)
   {
@@ -72,6 +74,7 @@ class ServiceManager
     $categoryIds = $request->get('topics_id', false);
     $recipientIds = $request->get('recipient_id', false);
     $geographicAreaIds = $request->get('geographic_area_id', false);
+    $userGroupIds = $request->get('user_group_ids', false);
     $grouped = boolean_value($request->get('grouped', true));
     $limit = $request->get('limit', false);
 
@@ -98,6 +101,9 @@ class ServiceManager
     }
 
     if ($serviceGroupId) {
+      if (!Uuid::isValid($serviceGroupId)) {
+        throw new \Exception("Service group id {$serviceGroupId} is not a valid uuid");
+      }
       $serviceGroupRepo = $this->entityManager->getRepository('App\Entity\ServiceGroup');
       $serviceGroup = $serviceGroupRepo->find($serviceGroupId);
       if (!$serviceGroup instanceof ServiceGroup) {
@@ -108,17 +114,14 @@ class ServiceManager
 
     if ($categoryIds) {
       $categoriesRepo = $this->entityManager->getRepository('App\Entity\Categoria');
-      if (is_array($categoryIds)) {
-        foreach ($categoryIds as $id) {
-          $category = $categoriesRepo->find($id);
-          if (!$category instanceof Categoria) {
-            throw new NotFoundHttpException("Category {$id} not found");
-          }
+      $categories = explode(',', $categoryIds);
+      foreach ($categories as $id) {
+        if (!Uuid::isValid($id)) {
+          throw new \Exception("Category id {$id} is not a valid uuid");
         }
-      } else {
-        $category = $categoriesRepo->find($categoryIds);
+        $category = $categoriesRepo->find($id);
         if (!$category instanceof Categoria) {
-          throw new NotFoundHttpException("Category {$categoryIds} not found");
+          throw new NotFoundHttpException("Category {$id} not found");
         }
       }
       $criteria['topics'] = $categoryIds;
@@ -126,17 +129,14 @@ class ServiceManager
 
     if ($recipientIds) {
       $recipientsRepo = $this->entityManager->getRepository('App\Entity\Recipient');
-      if (is_array($recipientIds)) {
-        foreach ($recipientIds as $id) {
-          $recipient = $recipientsRepo->find($id);
-          if (!$recipient instanceof Recipient) {
-            throw new NotFoundHttpException("Recipient {$id} not found");
-          }
+      $recipients = explode(',', $recipientIds);
+      foreach ($recipients as $id) {
+        if (!Uuid::isValid($id)) {
+          throw new \Exception("Recipient id {$id} is not a valid uuid");
         }
-      } else {
-        $recipient = $recipientsRepo->find($recipientIds);
+        $recipient = $recipientsRepo->find($id);
         if (!$recipient instanceof Recipient) {
-          throw new NotFoundHttpException("Recipient {$recipientIds} not found");
+          throw new NotFoundHttpException("Recipient {$id} not found");
         }
       }
       $criteria['recipients'] = $recipientIds;
@@ -144,15 +144,12 @@ class ServiceManager
 
     if ($geographicAreaIds) {
       $geographicAreaRepo = $this->entityManager->getRepository('App\Entity\GeographicArea');
-      if (is_array($geographicAreaIds)) {
-        foreach ($geographicAreaIds as $id) {
-          $geographicArea = $geographicAreaRepo->find($id);
-          if (!$geographicArea instanceof GeographicArea) {
-            throw new NotFoundHttpException("Geographic {$id} area not found");
-          }
+      $geographicAreas = explode(',', $geographicAreaIds);
+      foreach ($geographicAreas as $id) {
+        if (!Uuid::isValid($id)) {
+          throw new \Exception("Geographic area id {$id} is not a valid uuid");
         }
-      } else {
-        $geographicArea = $geographicAreaRepo->find($geographicAreaIds);
+        $geographicArea = $geographicAreaRepo->find($id);
         if (!$geographicArea instanceof GeographicArea) {
           throw new NotFoundHttpException("Geographic {$id} area not found");
         }
@@ -160,12 +157,26 @@ class ServiceManager
       $criteria['geographic_areas'] = $geographicAreaIds;
     }
 
+    if ($userGroupIds) {
+      $userGroups = explode(',', $userGroupIds);
+      $userGroupRepo = $this->entityManager->getRepository('App\Entity\UserGroup');
+      foreach ($userGroups as $id) {
+        if (!Uuid::isValid($id)) {
+          throw new \Exception("User group {$id} is not a valid uuid");
+        }
+        $userGroup = $userGroupRepo->find($id);
+        if (!$userGroup instanceof UserGroup) {
+          throw new NotFoundHttpException("User group {$id} not found");
+        }
+      }
+      $criteria['user_groups'] = $userGroupIds;
+    }
+
     if ($limit) {
       $criteria['limit'] = $limit;
     }
 
-    $services = $repoServices->findByCriteria($criteria);
-    return $services;
+    return $repoServices->findByCriteria($criteria);
   }
 
   /**
