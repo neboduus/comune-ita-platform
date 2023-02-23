@@ -451,7 +451,7 @@ class InforProtocolloHandler implements ProtocolloHandlerInterface
     $riferimento->addChild('web:anno', $anno, 'web');
     $riferimento->addChild('web:numero', $numero, 'web');
 
-    if ($this->fileService->fileExists($allegato)) {
+    if ($this->fileService->attachmentExists($allegato)) {
       $documento = $richiesta->addChild('web:documento', null, 'web');
       $documento->addChild('web:titolo', substr($allegato->getDescription(), 0, 99), 'web');
       $documento->addChild('web:nomeFile', $allegato->getFilename(), 'web');

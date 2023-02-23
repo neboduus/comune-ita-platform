@@ -3,11 +3,7 @@
 namespace App\Controller\Rest;
 
 use App\Dto\ServiceDto;
-use App\Entity\Categoria;
 use App\Entity\Erogatore;
-use App\Entity\GeographicArea;
-use App\Entity\Recipient;
-use App\Entity\ServiceGroup;
 use App\Entity\Servizio;
 use App\Model\PublicFile;
 use App\Model\Service;
@@ -18,7 +14,6 @@ use App\Services\InstanceService;
 use App\Services\Manager\ServiceManager;
 use App\Utils\FormUtils;
 use Ramsey\Uuid\Uuid;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -48,33 +43,21 @@ class ServicesAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  /** @var EntityManagerInterface */
-  private $em;
+  private EntityManagerInterface $em;
 
-  /** @var InstanceService */
-  private $is;
+  private InstanceService $is;
 
-  /** @var LoggerInterface */
-  private $logger;
-  /**
-   * @var FormServerApiAdapterService
-   */
-  private $formServerApiAdapterService;
-  /**
-   * @var ProtocolloHandlerRegistry
-   */
-  private $handlerRegistry;
+  private LoggerInterface $logger;
 
-  private $handlerList = [];
-  /**
-   * @var ServiceManager
-   */
-  private $serviceManager;
+  private FormServerApiAdapterService $formServerApiAdapterService;
 
-  /**
-   * @var ServiceDto
-   */
-  private $serviceDto;
+  private ProtocolloHandlerRegistry $handlerRegistry;
+
+  private array $handlerList = [];
+
+  private ServiceManager $serviceManager;
+
+  private ServiceDto $serviceDto;
 
 
   /**
@@ -118,9 +101,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="q",
    *      in="query",
-   *      @OA\Schema(
-   *          type="string"
-   *      ),
+   *      @OA\Schema(type="string"),
    *      required=false,
    *      description="Search text"
    *  )
@@ -128,9 +109,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="status",
    *      in="query",
-   *      @OA\Schema(
-   *          type="string"
-   *      ),
+   *      @OA\Schema(type="string"),
    *      required=false,
    *      description="Status of service, accepted values: 1 - Pubblished, 2 - Suspended, 4 - scheduled"
    *  )
@@ -138,9 +117,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="identifier",
    *      in="query",
-   *      @OA\Schema(
-   *          type="string"
-   *      ),
+   *      @OA\Schema(type="string"),
    *      required=false,
    *      description="Public service identifier"
    *  )
@@ -148,9 +125,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="topics_id",
    *      in="query",
-   *      @OA\Schema(
-   *          type="string"
-   *      ),
+   *      @OA\Schema(type="string"),
    *      required=false,
    *      description="Id of the category"
    *  )
@@ -158,9 +133,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="service_group_id",
    *      in="query",
-   *      @OA\Schema(
-   *          type="string"
-   *      ),
+   *      @OA\Schema(type="string"),
    *      required=false,
    *      description="Id of the service group"
    *  )
@@ -168,9 +141,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="recipient_id",
    *      in="query",
-   *      @OA\Schema(
-   *          type="string"
-   *      ),
+   *      @OA\Schema(type="string"),
    *      required=false,
    *      description="Id of the recipient"
    *  )
@@ -178,19 +149,23 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="geographic_area_id",
    *      in="query",
-   *      @OA\Schema(
-   *          type="string"
-   *      ),
+   *      @OA\Schema(type="string"),
    *      required=false,
    *      description="Id of the geographic area"
    *  )
    *
    * @OA\Parameter(
+   *      name="user_group_ids",
+   *      in="query",
+   *      @OA\Schema(type="string"),
+   *      required=false,
+   *      description="Comma separated user group ids"
+   *  )
+   *
+   * @OA\Parameter(
    *      name="grouped",
    *      in="query",
-   *      @OA\Schema(
-   *          type="string"
-   *      ),
+   *      @OA\Schema(type="string"),
    *      required=false,
    *      description="If false grouped services are excluded from results"
    *  )
@@ -198,9 +173,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="order_by",
    *      in="query",
-   *      @OA\Schema(
-   *          type="string"
-   *      ),
+   *      @OA\Schema(type="string"),
    *      required=false,
    *      description="Ordering parameter"
    *  )
@@ -208,9 +181,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="ascending",
    *      in="query",
-   *      @OA\Schema(
-   *          type="boolean"
-   *      ),
+   *      @OA\Schema(type="boolean"),
    *      required=false,
    *      description="Ascending or descending"
    *  )
@@ -218,9 +189,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="sticky",
    *      in="query",
-   *      @OA\Schema(
-   *          type="boolean"
-   *      ),
+   *      @OA\Schema(type="boolean"),
    *      required=false,
    *      description="Get sticky or not sticky services"
    *  )
@@ -228,9 +197,7 @@ class ServicesAPIController extends AbstractFOSRestController
    * @OA\Parameter(
    *      name="limit",
    *      in="query",
-   *      @OA\Schema(
-   *          type="integer"
-   *      ),
+   *      @OA\Schema(type="integer"),
    *      required=false,
    *      description="Limit the returned results"
    *  )
@@ -256,15 +223,14 @@ class ServicesAPIController extends AbstractFOSRestController
         $result [] = $this->serviceDto->fromEntity($s, $this->formServerApiAdapterService->getFormServerPublicUrl());
       }
 
-
       return $this->view($result, Response::HTTP_OK);
     } catch (NotFoundHttpException $e) {
       return $this->view([$e->getMessage()], Response::HTTP_NOT_FOUND);
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
-        'title' => 'There was an error during save process',
-        'description' => 'Contact technical support at support@opencontent.it',
+        'title' => 'There was an error during fetch process',
+        'description' => $e->getMessage(),
       ];
       $this->logger->error(
         $e->getMessage(),
@@ -299,7 +265,7 @@ class ServicesAPIController extends AbstractFOSRestController
    *
    * @OA\Response(
    *     response=200,
-   *     description="Retrieve a Service by uuid or identifier",
+   *     description="Retrieve a service by uuid or identifier",
    *     @Model(type=Service::class, groups={"read"})
    * )
    *
