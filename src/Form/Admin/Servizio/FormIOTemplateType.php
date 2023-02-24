@@ -167,6 +167,7 @@ class FormIOTemplateType extends AbstractType
     $service->setLoginSuggested($ServiceToClone->isLoginSuggested() ?? false);
     $service->setSticky($ServiceToClone->isSticky() ?? false);
     $service->setProtocolRequired($ServiceToClone->isProtocolRequired() ?? false);
+    $service->setProtocolHandler($ServiceToClone->getProtocolHandler());
     $service->setProtocolloParameters($ServiceToClone->getProtocolloParameters() ?? []);
     $service->setPaymentRequired($ServiceToClone->isPaymentRequired() ?? false);
     $service->setPaymentParameters($ServiceToClone->getPaymentParameters() ?? []);
@@ -184,7 +185,7 @@ class FormIOTemplateType extends AbstractType
     $defaultFeedbackMessages = $service->getFeedbackMessages();
     foreach ($ServiceToClone->getFeedbackMessages() as $status => $item) {
       $feedbackMessage = new FeedbackMessage();
-      $feedbackMessage->setIsActive($item['isActive']);
+      $feedbackMessage->setIsActive($item['isActive'] ?? $item['is_active']);
       $feedbackMessage->setMessage($item['message']);
       $feedbackMessage->setName($item['name']);
 
