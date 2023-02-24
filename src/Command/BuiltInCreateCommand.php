@@ -96,116 +96,135 @@ class BuiltInCreateCommand extends Command
     $ente = $this->instanceService->getCurrentInstance();
 
     if (!$servizio instanceof Servizio) {
-
+      $symfonyStyle->writeln('Service ' . $identifier . ' not found, create built-in service');
       $servizio = new Servizio();
-      $servizio
-        ->setName($name)
-        ->setSlug($slug)
-        ->setDescription($description)
-        ->setShortDescription($shortDescription)
-        ->setIdentifier($identifier)
-        ->setHowto($howTo)
-        ->setHowToDo($howToDo)
-        ->setWhatYouNeed($whatYouNeed)
-        ->setWhatYouGet($whatYouGet)
-        ->setCosts($costs)
-        ->setWho($who)
-        ->setConditions($conditions)
-        ->setAccessLevel($accessLevel)
-        ->setStatus($status)
-        ->setHandler($handler)
-        ->setWorkflow($workflow)
-        ->setPraticaFCQN('\App\Entity\BuiltIn')
-        ->setPraticaFlowServiceName($flow)
-        ->setEnte($ente);
+    } else if (!$servizio->isBuiltIn()){
+      $symfonyStyle->error('Service ' . $identifier . ' already exists but is not built-in, no action will be performed');
+      return 1;
+    } else {
+      // Update built-in service with json data
+      $symfonyStyle->writeln('Service ' . $identifier . ' already exists, update service data');
+    }
 
-      // Integrazioni
-      $integrations = [];
-      foreach ($integrationsData as $activationPoint => $backOfficeIdentifier) {
-        // Verifico correttezza identifier backoffice
-        $backoffice = $this->backOfficeCollection->getBackOfficeByIdentifier($backOfficeIdentifier);
-        if (!$backoffice) {
-          $symfonyStyle->error('Backoffice ' . $backOfficeIdentifier . ' does not exists');
-          return 1;
-        }
-        // Verifico correttezza del punto di attivazione
-        if (!$backoffice->isAllowedActivationPoint($activationPoint)) {
-          $symfonyStyle->error('Backoffice ' . $backOfficeIdentifier . ' does not support activation point ' . $activationPoint);
-        }
-        $integrations[$activationPoint] = get_class($backoffice);
+    // Update service data
+    $servizio
+      ->setName($name)
+      ->setSlug($slug)
+      ->setDescription($description)
+      ->setShortDescription($shortDescription)
+      ->setIdentifier($identifier)
+      ->setHowto($howTo)
+      ->setHowToDo($howToDo)
+      ->setWhatYouNeed($whatYouNeed)
+      ->setWhatYouGet($whatYouGet)
+      ->setCosts($costs)
+      ->setWho($who)
+      ->setConditions($conditions)
+      ->setAccessLevel($accessLevel)
+      ->setStatus($status)
+      ->setHandler($handler)
+      ->setWorkflow($workflow)
+      ->setPraticaFCQN('\App\Entity\BuiltIn')
+      ->setPraticaFlowServiceName($flow)
+      ->setEnte($ente);
+
+    // Integrazioni
+    $integrations = [];
+    foreach ($integrationsData as $activationPoint => $backOfficeIdentifier) {
+      // Verifico correttezza identifier backoffice
+      $backoffice = $this->backOfficeCollection->getBackOfficeByIdentifier($backOfficeIdentifier);
+      if (!$backoffice) {
+        $symfonyStyle->error('Backoffice ' . $backOfficeIdentifier . ' does not exists');
+        return 1;
       }
-      $servizio->setIntegrations($integrations);
+      // Verifico correttezza del punto di attivazione
+      if (!$backoffice->isAllowedActivationPoint($activationPoint)) {
+        $symfonyStyle->error('Backoffice ' . $backOfficeIdentifier . ' does not support activation point ' . $activationPoint);
+      }
+      $integrations[$activationPoint] = get_class($backoffice);
+    }
+    $servizio->setIntegrations($integrations);
 
-      // Categorie
-      $area = $categoryRepo->findOneBySlug($topic);
+    // Categorie
+    $area = $categoryRepo->findOneBySlug($topic);
+    if ($area instanceof Categoria) {
+      $servizio->setTopics($area);
+    } else {
+      $area = $categoryRepo->findOneBy([], ['name' => 'ASC']);
       if ($area instanceof Categoria) {
         $servizio->setTopics($area);
-      } else {
-        $area = $categoryRepo->findOneBy([], ['name' => 'ASC']);
-        if ($area instanceof Categoria) {
-          $servizio->setTopics($area);
-        }
       }
+    }
 
-      // Calendario
-      if ($calendarData) {
-        $title = $calendarData['title'];
-        $type = $calendarData['type'] ?? Calendar::TYPE_TIME_FIXED;
-        $beginHour = $calendarData['opening_hours']['begin_hour'] ?? Calendar::MIN_DATE;
-        $endHour = $calendarData['opening_hours']['end_hour'] ?? Calendar::MAX_DATE;
-        $daysOfWeek = $calendarData['opening_hours']['days_of_week'] ?? [1, 2, 3, 4, 5];
+    // Calendario: creo un calendario solo se non è presente un calendario con il nome passato come parametro
+    // Se esiste NON ne aggiorno i dati come viene fatto per il servizio
+    if ($calendarData) {
+      $title = $calendarData['title'];
+      $type = $calendarData['type'] ?? Calendar::TYPE_TIME_FIXED;
+      $openingHoursData = $calendarData['opening_hours'];
 
-        $calendarRepo = $this->entityManager->getRepository('App\Entity\Calendar');
-        $adminRepo = $this->entityManager->getRepository('App\Entity\AdminUser');
-        $calendar = $calendarRepo->findOneBy(['title' => $title]);
+      $adminRepo = $this->entityManager->getRepository('App\Entity\AdminUser');
 
-        if (!$calendar) {
-          $admin = $adminRepo->findOneBy([], ['createdAt' => 'ASC']);
+      $calendar = $this->entityManager->createQueryBuilder()
+        ->select('calendar')
+        ->from(Calendar::class, 'calendar')
+        ->where('lower(calendar.title) = lower(:title)')
+        ->setParameter('title', $title)
+        ->getQuery()->getResult();
 
-          $calendar = new Calendar();
 
-          $calendar
-            ->setTitle($title)
-            ->setLocation($ente->getName())
-            ->setType($type)
-            ->setOwner($admin);
+      if (!$calendar) {
+        $admin = $adminRepo->findOneBy([], ['createdAt' => 'ASC']);
+
+        $calendar = new Calendar();
+
+        $calendar
+          ->setTitle($title)
+          ->setLocation($ente->getName())
+          ->setType($type)
+          ->setOwner($admin);
+
+        $this->entityManager->persist($calendar);
+
+        foreach ($openingHoursData as $openingHourData) {
+          $beginHour = $openingHourData['begin_hour'] ?? Calendar::MIN_DATE;
+          $endHour = $openingHourData['end_hour'] ?? Calendar::MAX_DATE;
+          $daysOfWeek = $openingHourData['days_of_week'] ?? [1, 2, 3, 4, 5];
 
           $openingHour = new OpeningHour();
 
           $openingHour
             ->setCalendar($calendar)
             ->setStartDate(new \DateTime('now'))
-            ->setEndDate(new \DateTime(date('Y') +1 . '-12-31'))
+            ->setEndDate(new \DateTime(date('Y') + 1 . '-12-31'))
             ->setBeginHour(\DateTime::createFromFormat('H:i', $beginHour))
             ->setEndHour(\DateTime::createFromFormat('H:i', $endHour))
             ->setDaysOfWeek($daysOfWeek);
 
-          $this->entityManager->persist($calendar);
           $this->entityManager->persist($openingHour);
-        } else {
-          $symfonyStyle->writeln('Calendar '. $title . ' already exists');
         }
+      } else {
+        $symfonyStyle->writeln('Calendar ' . $title . ' already exists');
       }
-
-      $flowStep = new FlowStep();
-      $flowStep
-        ->setIdentifier($identifier)
-        ->setType('built-in');
-      $servizio->setFlowSteps([$flowStep]);
-
-      $this->entityManager->persist($servizio);
-
-      $erogatore = new Erogatore();
-      $erogatore->setName('Erogatore di ' . $servizio->getName() . ' per ' . $ente->getName());
-      $erogatore->addEnte($ente);
-      $this->entityManager->persist($erogatore);
-      $servizio->activateForErogatore($erogatore);
-      $this->entityManager->flush();
-
-      $symfonyStyle->success('Built-in service ' . $identifier . ' successfully created');
-    } else {
-      $symfonyStyle->error('Service ' . $identifier . ' already exists, no action will be performed');
     }
+
+    $flowStep = new FlowStep();
+    $flowStep
+      ->setIdentifier($identifier)
+      ->setType('built-in');
+    $servizio->setFlowSteps([$flowStep]);
+
+    $this->entityManager->persist($servizio);
+
+    $erogatore = new Erogatore();
+    $erogatore->setName('Erogatore di ' . $servizio->getName() . ' per ' . $ente->getName());
+    $erogatore->addEnte($ente);
+    $this->entityManager->persist($erogatore);
+    $servizio->activateForErogatore($erogatore);
+    $this->entityManager->flush();
+
+    $symfonyStyle->success('Built-in service ' . $identifier . ' successfully imported');
+
     return 0;
   }
 }
