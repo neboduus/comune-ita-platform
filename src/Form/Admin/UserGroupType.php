@@ -3,7 +3,6 @@
 namespace App\Form\Admin;
 
 use App\Entity\Calendar;
-use App\Entity\OpeningHour;
 use App\Entity\UserGroup;
 use App\Form\Api\PlaceApiType;
 use App\Form\I18n\AbstractI18nType;
@@ -12,6 +11,7 @@ use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -25,6 +25,11 @@ class UserGroupType extends AbstractI18nType
    * @var TranslatorInterface
    */
   private TranslatorInterface $translator;
+
+  /**
+   * @var EntityManagerInterface
+   */
+  private EntityManagerInterface $entityManager;
 
   /**
    * @param I18nDataMapperInterface $dataMapper
@@ -41,39 +46,15 @@ class UserGroupType extends AbstractI18nType
   }
 
   /**
-   * @var EntityManagerInterface
-   */
-  private $entityManager;
-
-  /**
    * @throws \Exception
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    /* @var UserGroup $userGroup**/
-    $userGroup = $builder->getData();
-
-    /** @var Calendar $calendar */
-    $calendar = $builder->getData()->getCalendar() ?? new Calendar();
-
-    $calendar->setTitle($calendar->getTitle() ?? $userGroup->getName());
-    $calendar->setLocation($calendar->getLocation() ?? $userGroup->getCoreLocation() ? $userGroup->getCoreLocation()->getHumanReadableAddress() : '');
-
-    if($calendar->getOpeningHours()->isEmpty()){
-      $now = new \DateTime();
-      $openingHours = (new OpeningHour())
-        ->setIsModerated(false)
-        ->setMeetingMinutes(30)
-        ->setIntervalMinutes(0)
-        ->setCreatedAt($now)
-        ->setUpdatedAt($now)
-        ->setStartDate($now)
-        ->setEndDate(new \DateTime(date('Y') +1 . '-12-31'))
-        ->setBeginHour(\DateTime::createFromFormat('H:i', Calendar::MIN_DATE))
-        ->setEndHour(\DateTime::createFromFormat('H:i', Calendar::MAX_DATE))
-        ->setDaysOfWeek([1, 2, 3, 4, 5])
-        ->setName($this->translator->trans('user_group.hours'));
-      $calendar->addOpeningHour($openingHours);
+    $qb = $this->entityManager->getRepository(Calendar::class)->createQueryBuilder('c');
+    $calendarsQuery = $qb->select('c.id', 'c.title')->getQuery()->execute();
+    $calendars = ['Aggiungi calendario' => 'new'];
+    foreach ($calendarsQuery as $calendar){
+      $calendars[$calendar['title']] = $calendar['id'];
     }
 
     $this->createTranslatableMapper($builder, $options)
@@ -139,10 +120,10 @@ class UserGroupType extends AbstractI18nType
         'required' => false,
         'label' => 'place.address'
       ])
-      ->add('calendar', MinimalCalendarType::class, [
-        'required' => false,
-        'label' => false,
-        'data' => $calendar
+      ->add('calendar', ChoiceType::class, [
+        'choices' => $calendars,
+        'label' => 'user_group.calendar',
+        'required' => false
       ])
     ;
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));

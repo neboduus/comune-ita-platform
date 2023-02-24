@@ -4,6 +4,7 @@ namespace App\Form\Admin;
 
 use App\Entity\Calendar;
 use App\Form\OpeningHourType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -47,10 +48,9 @@ class MinimalCalendarType extends AbstractType
 
     $builder
       ->add('opening_hours', CollectionType::class, [
-        'label' => 'user_group.calendar',
+        'label' => false,
         'entry_type' => OpeningHourType::class,
         'entry_options' => ['label' => false],
-        //'data' => $data
       ])
       ->add('location', TextareaType::class, [
         'required' => true,
@@ -123,6 +123,7 @@ class MinimalCalendarType extends AbstractType
   {
     $resolver->setDefaults(array(
       'data_class' => Calendar::class,
+      'allow_extra_fields' => true,
       'csrf_protection' => false
     ));
   }

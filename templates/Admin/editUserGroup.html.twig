@@ -51,7 +51,7 @@
         <li class="nav-item">
           <a class="nav-link" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab"
              aria-controls="calendar-tab"
-             aria-selected="false">{{ 'user_group.calendar'|trans }}</a>
+             aria-selected="false">{{ 'user_group.opening_hours'|trans }}</a>
         </li>
       </ul>
       <div class="tab-content" id="userGroupTabContent">
@@ -131,12 +131,18 @@
         </div>
 
         <div class="tab-pane p-3 fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
-          <div class="d-none">{{ form_row(form.calendar.location) }}</div>
-          <p>{{ 'user_group.opening_hours_alert'|trans }}</p>
+          {{ form_row(form.calendar) }}
 
-          {% for opening_hour in form.calendar.opening_hours %}
-            {{ include('Calendars/parts/minimalCalendarOpeningHours.html.twig') }}
-          {% endfor %}
+          <div class="d-none" id="calendar_cards">
+            <Span>Calendar cards</Span>
+            {% for calendar in calendars %}
+              {{ include('Calendars/parts/showDetails.html.twig', {'calendar': calendar}) }}
+            {% endfor %}
+          </div>
+          <div class="d-none" id="new_calendar">
+            <p>{{ 'user_group.opening_hours_alert'|trans }}</p>
+            {{ include('Calendars/parts/newUserGroupCalendar.html.twig') }}
+          </div>
         </div>
 
       </div>
