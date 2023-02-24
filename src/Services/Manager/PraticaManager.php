@@ -980,4 +980,9 @@ class PraticaManager
     return $files;
   }
 
+  public function getUserEmail(array $data, CPSUser $user)
+  {
+    return $data['flattened']['applicant.data.email_address'] ?? $data['flattened']['email_address']
+      ?? $data['flattened']['email'] ?? $user->getId() . '@' . User::ANONYMOUS_FAKE_EMAIL_DOMAIN;
+  }
 }

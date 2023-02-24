@@ -357,15 +357,16 @@ class FormIORenderType extends AbstractType
       $birthDay = DateTime::createFromFormat('d/m/Y', $data['flattened']['applicant.data.Born.data.natoAIl']);
     }
     $sessionString = md5($this->session->getId()) . '-' . time();
-    $email = $user->getId() . '@' . CPSUser::ANONYMOUS_FAKE_EMAIL_DOMAIN;
+
+    $email = $this->praticaManager->getUserEmail($data, $user);
     $user
       //->setUsername($sessionString)
       //->setCodiceFiscale($cf . '-' . $sessionString)
       ->setSessoAsString($data['flattened']['applicant.gender.gender'] ?? '')
       ->setCellulareContatto($data['flattened']['applicant.data.cell_number'] ?? '')
       ->setCpsTelefono($data['flattened']['applicant.data.phone_number'] ?? '')
-      ->setEmail($data['flattened']['applicant.data.email_address'] ?? $email)
-      ->setEmailContatto($data['flattened']['applicant.data.email_address'] ?? $email)
+      ->setEmail($email)
+      ->setEmailContatto($email)
       ->setNome($data['flattened']['applicant.data.completename.data.name'] ?? '')
       ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ?? '')
       ->setDataNascita($birthDay)
