@@ -14,6 +14,7 @@ use App\Entity\Pratica;
 use App\Entity\RispostaOperatore;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
+use App\Entity\User;
 use App\Event\PraticaOnChangeStatusEvent;
 use App\Model\Application;
 use App\Model\File as FileModel;
@@ -702,10 +703,10 @@ class ApplicationsAPIController extends AbstractFOSRestController
           // altrimenti decoro l'utente anonimo
           //@todo check recaptcha
 
-          $email = $user->getId() . '@' . CPSUser::ANONYMOUS_FAKE_EMAIL_DOMAIN;
+          $email = $this->praticaManager->getUserEmail($data, $user);
           $user
-            ->setEmail($data['flattened']['applicant.data.email_address'] ?? $email)
-            ->setEmailContatto($data['flattened']['applicant.data.email_address'] ?? $email)
+            ->setEmail($email)
+            ->setEmailContatto($email)
             ->setNome($data['flattened']['applicant.data.completename.data.name'] ?? '')
             ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ?? '')
             ->setCellulareContatto($data['flattened']['applicant.data.cell_number'] ?? '')
