@@ -9,21 +9,23 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 class ResponseListener
 {
 
-  private $cacheMaxAge = 0;
+  private int $cacheMaxAge = 0;
+  private ?string $allowedAuthOrigin;
 
   /**
    * ResponseListener constructor.
    */
-  public function __construct($cacheMaxAge)
+  public function __construct($cacheMaxAge, $allowedAuthOrigin)
   {
     $this->cacheMaxAge = $cacheMaxAge;
+    $this->allowedAuthOrigin = $allowedAuthOrigin;
   }
 
   public function onKernelResponse(FilterResponseEvent $event)
   {
     $response = $event->getResponse();
-
-    $controller = $event->getRequest()->attributes->get('_controller');
+    $request = $event->getRequest();
+    $controller = $request->attributes->get('_controller');
     $requiredActions = [
       "App\Controller\Ui\Frontend\DefaultController::commonAction",
       "App\Controller\Ui\Frontend\ServiziController::serviziAction",
@@ -41,6 +43,14 @@ class ResponseListener
       $response->headers->addCacheControlDirective('public', true);
       $response->headers->removeCacheControlDirective('private');
     }
+
+    $allowedOrigin = '*';
+    if ($controller === 'App\Controller\Rest\SessionAuthAPIController::getSessionAuthToken' && $request->query->get('with-cookie', false) && !empty($this->allowedAuthOrigin)) {
+      $response->headers->set('Access-Control-Allow-Credentials', 'true');
+      $allowedOrigin = $this->allowedAuthOrigin;
+    }
+    $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin);
+
     $event->setResponse($response);
   }
 
