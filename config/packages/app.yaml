@@ -181,6 +181,13 @@ parameters:
       headers:
         - X-Registry-API-Key=%env(REGISTRY_API_KEY)%
       enabled: true
+    infor-cloud:
+      name: Infor Cloud
+      url: '%env(REGISTRY_API_URL)%/infor/v1'
+      handler: external
+      headers:
+        - X-Registry-API-Key=%env(REGISTRY_API_KEY)%
+      enabled: true
     maggioli:
       name: SicraWeb
       url: '%env(REGISTRY_API_URL)%/maggioli/v1'
@@ -326,3 +333,5 @@ parameters:
   env(SATISFY_SECRET): ''
   env(SIGNATURE_CHECK_WS_URL): null
   env(IP_INFO_WS_URL): null
+  env(REGISTRY_API_URL): http://registry.localtest.me
+  env(REGISTRY_API_KEY): abc123abc123abc123abc123abc123abc123abc123

@@ -136,6 +136,8 @@ services:
       GOOGLE_TAG_MANAGER_KEY: ${GOOGLE_TAG_MANAGER_KEY:-}
       DEFAULT_CACHE_REDIS_PROVIDER: ${DEFAULT_CACHE_REDIS_PROVIDER:-redis://redis:6379}
       SATISFY_WIDGET_URL: ${SATISFY_WIDGET_URL:-https://satisfy.opencontent.it/widget.js}
+      REGISTRY_API_URL: ${REGISTRY_API_URL:-http://registry.localtest.me}
+      REGISTRY_API_KEY: ${REGISTRY_API_KEY:-abc123abc123abc123abc123abc123abc123abc123}
 
   cron:
     image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
