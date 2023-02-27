@@ -30,6 +30,7 @@ days: 'giorni'
 previous: 'Precedente'
 following: 'Successivo'
 apply: 'Applica'
+assign: 'Assegna'
 cancel: 'Cancella'
 from: 'Da'
 to: 'A'
@@ -1159,6 +1160,7 @@ admin:
   show_service_access: "Clicca per copiare l'url di accesso alla compilazione della pratica"
   payment_amount_description: "(L'importo è determinato dal modulo tramite il valore del campo 'payment_amount')"
 operatori:
+  operator_not_found: 'Operatore non trovato'
   error_compile_built-in: 'Per questo servizio non è possibile inviare una pratica per conto del cittadino'
   error_pratice_state: 'La pratica non si trova nello stato corretto'
   integration_accepted_success: 'Integrazione accettata correttamente'
@@ -1296,6 +1298,9 @@ operatori:
   form_field: 'Campi del form'
   scheda: "Scheda"
   cambio_stato: "Cambio stato"
+  operator_assign: 'Assegna ad un operatore'
+  select_user_group: 'Seleziona un ufficio'
+  select_operator: 'Seleziona un operatore'
   documenti: "Documenti"
   no_pratica_correlata: "Nessuna pratica correlata"
   ultime_pratiche: "Ultime pratiche inviate dall'utente"

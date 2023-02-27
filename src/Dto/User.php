@@ -11,15 +11,9 @@ use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use JMS\Serializer\Annotation\Groups;
 
-class User
+class User extends AbstractUser
 {
-
-  /**
-   * @Serializer\Type("string")
-   * @OA\Property(description="User's uuid")
-   * @Groups({"read"})
-   */
-  protected $id;
+  const USER_TYPE_CPS = 'user';
 
   /**
    * @var string
@@ -31,24 +25,6 @@ class User
    * @Groups({"read", "write"})
    */
   private $codiceFiscale;
-
-  /**
-   * @var string
-   *
-   * @Serializer\Type("string")
-   * @OA\Property(description="User's name")
-   * @Groups({"read", "write"})
-   */
-  private $nome;
-
-  /**
-   * @var string
-   *
-   * @Serializer\Type("string")
-   * @OA\Property(description="User's surname")
-   * @Groups({"read", "write"})
-   */
-  private $cognome;
 
   /**
    * @var \DateTime
@@ -112,24 +88,6 @@ class User
    * @Groups({"read", "write"})
    */
   private $telefono;
-
-  /**
-   * @var string
-   *
-   * @Serializer\Type("string")
-   * @OA\Property(description="User's mobile phone")
-   * @Groups({"read", "write"})
-   */
-  private $cellulare;
-
-  /**
-   * @var string
-   *
-   * @Serializer\Type("string")
-   * @OA\Property(description="User's email")
-   * @Groups({"read", "write"})
-   */
-  private $email;
 
   /**
    * @var string
@@ -229,25 +187,9 @@ class User
   private $idCard;
 
   /**
-   * @return mixed
-   */
-  public function getId()
-  {
-    return $this->id;
-  }
-
-  /**
-   * @param mixed $id
-   */
-  public function setId($id)
-  {
-    $this->id = $id;
-  }
-
-  /**
    * @return string
    */
-  public function getCodiceFiscale()
+  public function getCodiceFiscale(): string
   {
     return $this->codiceFiscale;
   }
@@ -255,41 +197,9 @@ class User
   /**
    * @param string $codiceFiscale
    */
-  public function setCodiceFiscale($codiceFiscale)
+  public function setCodiceFiscale(string $codiceFiscale)
   {
     $this->codiceFiscale = $codiceFiscale;
-  }
-
-  /**
-   * @return string
-   */
-  public function getNome()
-  {
-    return $this->nome;
-  }
-
-  /**
-   * @param string $nome
-   */
-  public function setNome($nome)
-  {
-    $this->nome = $nome;
-  }
-
-  /**
-   * @return string
-   */
-  public function getCognome()
-  {
-    return $this->cognome;
-  }
-
-  /**
-   * @param string $cognome
-   */
-  public function setCognome($cognome)
-  {
-    $this->cognome = $cognome;
   }
 
   /**
@@ -301,7 +211,7 @@ class User
   }
 
   /**
-   * @param \DateTime $dataNascita
+   * @param \DateTime|null $dataNascita
    */
   public function setDataNascita(?\DateTime $dataNascita): void
   {
@@ -317,7 +227,7 @@ class User
   }
 
   /**
-   * @param string $luogoNascita
+   * @param string|null $luogoNascita
    */
   public function setLuogoNascita(?string $luogoNascita): void
   {
@@ -333,7 +243,7 @@ class User
   }
 
   /**
-   * @param string $codiceNascita
+   * @param string|null $codiceNascita
    */
   public function setCodiceNascita(?string $codiceNascita): void
   {
@@ -349,7 +259,7 @@ class User
   }
 
   /**
-   * @param string $provinciaNascita
+   * @param string|null $provinciaNascita
    */
   public function setProvinciaNascita(?string $provinciaNascita): void
   {
@@ -365,7 +275,7 @@ class User
   }
 
   /**
-   * @param string $statoNascita
+   * @param string|null $statoNascita
    */
   public function setStatoNascita(?string $statoNascita): void
   {
@@ -381,7 +291,7 @@ class User
   }
 
   /**
-   * @param string $sesso
+   * @param string|null $sesso
    */
   public function setSesso(?string $sesso): void
   {
@@ -397,43 +307,11 @@ class User
   }
 
   /**
-   * @param string $telefono
+   * @param string|null $telefono
    */
   public function setTelefono(?string $telefono): void
   {
     $this->telefono = $telefono;
-  }
-
-  /**
-   * @return string
-   */
-  public function getCellulare(): ?string
-  {
-    return $this->cellulare;
-  }
-
-  /**
-   * @param string $cellulare
-   */
-  public function setCellulare(?string $cellulare): void
-  {
-    $this->cellulare = $cellulare;
-  }
-
-  /**
-   * @return string
-   */
-  public function getEmail(): ?string
-  {
-    return $this->email;
-  }
-
-  /**
-   * @param string $email
-   */
-  public function setEmail(?string $email): void
-  {
-    $this->email = $email;
   }
 
   /**
@@ -445,7 +323,7 @@ class User
   }
 
   /**
-   * @param string $indirizzoDomicilio
+   * @param string|null $indirizzoDomicilio
    */
   public function setIndirizzoDomicilio(?string $indirizzoDomicilio): void
   {
@@ -461,7 +339,7 @@ class User
   }
 
   /**
-   * @param string $capDomicilio
+   * @param string|null $capDomicilio
    */
   public function setCapDomicilio(?string $capDomicilio): void
   {
@@ -477,7 +355,7 @@ class User
   }
 
   /**
-   * @param string $cittaDomicilio
+   * @param string|null $cittaDomicilio
    */
   public function setCittaDomicilio(?string $cittaDomicilio): void
   {
@@ -493,7 +371,7 @@ class User
   }
 
   /**
-   * @param string $provinciaDomicilio
+   * @param string|null $provinciaDomicilio
    */
   public function setProvinciaDomicilio(?string $provinciaDomicilio): void
   {
@@ -509,7 +387,7 @@ class User
   }
 
   /**
-   * @param string $statoDomicilio
+   * @param string|null $statoDomicilio
    */
   public function setStatoDomicilio(?string $statoDomicilio): void
   {
@@ -525,7 +403,7 @@ class User
   }
 
   /**
-   * @param string $indirizzoResidenza
+   * @param string|null $indirizzoResidenza
    */
   public function setIndirizzoResidenza(?string $indirizzoResidenza): void
   {
@@ -541,7 +419,7 @@ class User
   }
 
   /**
-   * @param string $capResidenza
+   * @param string|null $capResidenza
    */
   public function setCapResidenza(?string $capResidenza): void
   {
@@ -557,7 +435,7 @@ class User
   }
 
   /**
-   * @param string $cittaResidenza
+   * @param string|null $cittaResidenza
    */
   public function setCittaResidenza(?string $cittaResidenza): void
   {
@@ -573,7 +451,7 @@ class User
   }
 
   /**
-   * @param string $provinciaResidenza
+   * @param string|null $provinciaResidenza
    */
   public function setProvinciaResidenza(?string $provinciaResidenza): void
   {
@@ -589,7 +467,7 @@ class User
   }
 
   /**
-   * @param string $statoResidenza
+   * @param string|null $statoResidenza
    */
   public function setStatoResidenza(?string $statoResidenza): void
   {
@@ -616,13 +494,14 @@ class User
    * @param CPSUser $user
    * @return User
    */
-  public static function fromEntity(CPSUser $user)
+  public static function fromEntity(CPSUser $user): User
   {
     $dto = new self();
     $dto->id = $user->getId();
     $dto->codiceFiscale = $user->getCodiceFiscale();
     $dto->nome = $user->getNome();
     $dto->cognome = $user->getCognome();
+    $dto->fullName = $user->getFullName();
     $dto->dataNascita = $user->getDataNascita();
     $dto->luogoNascita = $user->getLuogoNascita();
     $dto->codiceNascita = $user->getCodiceNascita();
@@ -642,6 +521,7 @@ class User
     $dto->cittaResidenza = $user->getCittaResidenza();
     $dto->provinciaResidenza = $user->getProvinciaResidenza();
     $dto->statoResidenza = $user->getStatoResidenza();
+    $dto->role = self::USER_TYPE_CPS;
     //$dto->idCard = $user->getIdCard();
 
     return $dto;
@@ -651,7 +531,7 @@ class User
    * @param CPSUser|null $entity
    * @return CPSUser
    */
-  public function toEntity(CPSUser $entity = null)
+  public function toEntity(CPSUser $entity = null): ?CPSUser
   {
     if (!$entity) {
       $entity = new CPSUser();
@@ -687,6 +567,4 @@ class User
 
     return $entity;
   }
-
-
 }

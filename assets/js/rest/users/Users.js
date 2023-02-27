@@ -12,8 +12,8 @@ class Users {
 
   init() {
     const auth = new Auth();
-    auth.getSessionAuthTokenPromise().then( res => {
-       this.token = res.token
+    auth.getSessionAuthTokenPromise().then(res => {
+      this.token = res.token
     });
     this.basePath = new BasePath().getBasePath()
   }
@@ -32,8 +32,40 @@ class Users {
     );
   }
 
-  decodeJWTUser(token){
-    return  jwt_decode(token);
+  getFilteredOperators(userGroupId, username) {
+    let self = this;
+    let url = self.basePath + '/api/users?roles=operator';
+    if (userGroupId) {
+      url = url + '&user_group_id=' + userGroupId;
+    }
+    if (username) {
+      url = url + '&username=' + username;
+    }
+    return $.ajax(url,
+      {
+        method: "GET",
+        dataType: 'json', // type of response data
+        headers: {
+          "Authorization": "Bearer " + self.token
+        }
+      }
+    );
+  }
+
+  getUserGroups() {
+    let self = this;
+    let url = self.basePath + '/api/user-groups';
+
+    return $.ajax(url,
+      {
+        method: "GET",
+        dataType: 'json', // type of response data
+      }
+    );
+  }
+
+  decodeJWTUser(token) {
+    return jwt_decode(token);
   }
 }
 

@@ -3,6 +3,10 @@
 namespace App\Controller\Rest;
 
 use App\Dto\User;
+use App\Dto\Operator;
+use App\Dto\Admin;
+use App\Entity\CPSUser;
+use App\Entity\OperatoreUser;
 use App\Security\Voters\UserVoter;
 use App\Services\InstanceService;
 use App\Utils\FormUtils;
@@ -20,8 +24,6 @@ use Symfony\Component\Form\FormInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class UsersAPIController
@@ -34,8 +36,10 @@ class UsersAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
+  /** @var LoggerInterface */
   private LoggerInterface $logger;
 
+  /** @var EntityManagerInterface */
   private EntityManagerInterface $entityManager;
 
   /**
@@ -55,12 +59,42 @@ class UsersAPIController extends AbstractFOSRestController
    * @Security(name="Bearer")
    *
    * @OA\Parameter(
+   *     name="role",
+   *     description="Comma separated user's roles. Available roles are user, operator and admin",
+   *     in="query",
+   *      @OA\Schema(
+   *          type="string",
+   *          default="user"
+   *      )
+   * )
+   *
+   * @OA\Parameter(
    *     name="cf",
+   *     in="query",
+   *      @OA\Schema(
+   *          type="string",
+   *          example="XXXXXX00XZ00X000X"
+   *      ),
+   *     description="Fiscal code of the user. This filter is only available if the user role is selected"
+   * )
+   *
+   * @OA\Parameter(
+   *     name="username",
    *     in="query",
    *      @OA\Schema(
    *          type="string"
    *      ),
-   *     description="Fiscal code of the user"
+   *     description="User's username. This filter is only available if the operator role or the admin role is selected"
+   * )
+   *
+   * @OA\Parameter(
+   *     name="user_group_id",
+   *     in="query",
+   *      @OA\Schema(
+   *          type="string",
+   *          format="uuid"
+   *      ),
+   *     description="Operator's user group. This filter is only available if the operator role is selected"
    * )
    *
    * @OA\Response(
@@ -68,7 +102,13 @@ class UsersAPIController extends AbstractFOSRestController
    *     description="Retrieve list of users",
    *     @OA\JsonContent(
    *         type="array",
-   *         @OA\Items(ref=@Model(type=User::class, groups={"read"}))
+   *         @OA\Items(
+   *          oneOf={
+   *              @OA\Schema(ref=@Model(type=User::class, groups={"read"})),
+   *              @OA\Schema(ref=@Model(type=Operator::class, groups={"read"})),
+   *              @OA\Schema(ref=@Model(type=Admin::class, groups={ "read"}))
+   *            }
+   *        )
    *     )
    * )
    *
@@ -77,32 +117,122 @@ class UsersAPIController extends AbstractFOSRestController
    *     description="Access denied"
    * )
    *
+   * @OA\Response(
+   *     response=400,
+   *     description="Bad request"
+   * )
+   *
    * @OA\Tag(name="users")
    * @param Request $request
    * @return View
    */
   public function getUsersAction(Request $request)
   {
-    $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
+    $user = $this->getUser();
 
-    $result = [];
-    $cf = $request->query->get('cf');
+    $roles = $request->query->get('roles', User::USER_TYPE_CPS);
+    $roles = explode(',', $roles);
 
-    $qb = $this->entityManager->createQueryBuilder()
-      ->select('user')
-      ->from('App:CPSUser', 'user');
+    $fiscalCodeParameter = $request->query->get('cf', false);
+    $userGroupId = $request->query->get('user_group_id', false);
+    $username = $request->query->get('username', false);
 
-    if (isset($cf)) {
-      $qb->andWhere('lower(user.codiceFiscale) = :cf')
-        ->setParameter('cf', strtolower($cf));
+    // Validate parameters with roles
+    if ($fiscalCodeParameter and !in_array(User::USER_TYPE_CPS, $roles)) {
+      $data = [
+        'type' => 'error',
+        'title' => 'Invalid cf query parameter',
+        'description' => 'You cannot search for a user by cf if you do not select the user role ',
+      ];
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    $users = $qb
-      ->getQuery()
-      ->getResult();
+    if ($userGroupId && !in_array(Operator::USER_TYPE_OPERATORE, $roles)) {
+      $data = [
+        'type' => 'error',
+        'title' => 'Invalid user_group_id query parameter',
+        'description' => 'You cannot search for a user by user_group_id if you do not select the operator role ',
+      ];
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
 
-    foreach ($users as $u) {
-      $result [] = User::fromEntity($u);
+    if ($username && !in_array([Operator::USER_TYPE_OPERATORE, Admin::USER_TYPE_ADMIN], $roles)) {
+      $data = [
+        'type' => 'error',
+        'title' => 'Invalid username query parameter',
+        'description' => 'You cannot search for a user by username if you do not select the operator or the admin role ',
+      ];
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    }
+
+    $result = [];
+
+    // USERS
+    if (in_array(User::USER_TYPE_CPS, $roles)) {
+      $qb = $this->entityManager->createQueryBuilder()
+        ->select('user')
+        ->from('App:CPSUser', 'user');
+
+      // If requester user is a user return only itself
+      if ($user instanceof CPSUser) {
+        $qb->andWhere('user.username = :username')
+          ->setParameter('username', $user->getUsername());
+      }
+
+      if ($fiscalCodeParameter) {
+        $qb->andWhere('lower(user.codiceFiscale) = :cf')
+          ->setParameter('cf', strtolower($fiscalCodeParameter));
+      }
+
+      $users = $qb->getQuery()->getResult();
+      foreach ($users as $u) {
+        $result[] = User::fromEntity($u);
+      }
+    }
+
+    // OPERATORS
+    if (in_array(Operator::USER_TYPE_OPERATORE, $roles)) {
+      // Only operators or admins can query operators
+      $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
+
+      $qb = $this->entityManager->createQueryBuilder()
+        ->select('operator')
+        ->from('App:OperatoreUser', 'operator');
+
+      if ($username) {
+        $qb->andWhere('operator.username = :username')
+          ->setParameter('username', $username);
+      }
+
+      if ($userGroupId) {
+        $qb->andWhere(':userGroupId MEMBER OF operator.userGroups')
+          ->setParameter('userGroupId', $userGroupId);
+      }
+
+      $operators = $qb->getQuery()->getResult();
+      foreach ($operators as $o) {
+        $result[] = Operator::fromEntity($o);
+      }
+    }
+
+    // ADMINS
+    if (in_array(Admin::USER_TYPE_ADMIN, $roles)) {
+      // Only operators or admins can query admins
+      $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
+
+      $qb = $this->entityManager->createQueryBuilder()
+        ->select('admin')
+        ->from('App:AdminUser', 'admin');
+
+      if ($username) {
+        $qb->andWhere('admin.username = :username')
+          ->setParameter('username', $username);
+      }
+
+      $admins = $qb->getQuery()->getResult();
+      foreach ($admins as $a) {
+        $result[] = Admin::fromEntity($a);
+      }
     }
 
     return $this->view($result, Response::HTTP_OK);
@@ -117,7 +247,13 @@ class UsersAPIController extends AbstractFOSRestController
    * @OA\Response(
    *     response=200,
    *     description="Retrieve a User",
-   *     @Model(type=User::class, groups={"read"})
+   *     @OA\JsonContent(
+   *       oneOf={
+   *          @OA\Schema(ref=@Model(type=User::class, groups={"read"})),
+   *          @OA\Schema(ref=@Model(type=Operator::class, groups={"read"})),
+   *          @OA\Schema(ref=@Model(type=Admin::class, groups={ "read"}))
+   *       }
+   *    )
    * )
    *
    * @OA\Response(
@@ -135,23 +271,31 @@ class UsersAPIController extends AbstractFOSRestController
    * @param string $id
    * @return View
    */
-  public function getUserAction(Request $request, $id)
+  public function getUserAction(Request $request, string $id): View
   {
     try {
-      $repository = $this->getDoctrine()->getRepository('App\Entity\CPSUser');
+      $repository = $this->getDoctrine()->getRepository('App\Entity\User');
       $result = $repository->find($id);
     } catch (\Exception $e) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
-    if ($result === null) {
+    if (!$result) {
       return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
 
     $this->denyAccessUnlessGranted(UserVoter::VIEW, $result);
 
     try {
-      return $this->view(User::fromEntity($result), Response::HTTP_OK);
+      if ($result instanceof CPSUser) {
+        $user = User::fromEntity($result);
+      } elseif ($result instanceof OperatoreUser) {
+        $user = Operator::fromEntity($result);
+      } else {
+        $user = Admin::fromEntity($result);
+      }
+
+      return $this->view($user, Response::HTTP_OK);
     } catch (\Exception $e) {
       $data = [
         'type' => 'error',
@@ -201,12 +345,12 @@ class UsersAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function postUserAction(Request $request)
+  public function postUserAction(Request $request): View
   {
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $userDto = new User();
-    $form = $this->createForm('App\Form\UserAPIFormType', $userDto);
+    $form = $this->createForm('App\Form\UserAPIType', $userDto);
     try {
       $this->processForm($request, $form);
 
@@ -271,8 +415,11 @@ class UsersAPIController extends AbstractFOSRestController
    *     @OA\MediaType(
    *         mediaType="application/json",
    *         @OA\Schema(
-   *             type="object",
-   *             ref=@Model(type=User::class, groups={"write"})
+   *             oneOf={
+   *                @OA\Schema(ref=@Model(type=User::class, groups={"write"})),
+   *                @OA\Schema(ref=@Model(type=Operator::class, groups={"write"})),
+   *                @OA\Schema(ref=@Model(type=Admin::class, groups={ "write"}))
+   *            }
    *         )
    *     )
    * )
@@ -302,9 +449,9 @@ class UsersAPIController extends AbstractFOSRestController
    * @param Request $request
    * @return View
    */
-  public function putUserAction($id, Request $request)
+  public function putUserAction($id, Request $request): View
   {
-    $repository = $this->getDoctrine()->getRepository('App\Entity\CPSUser');
+    $repository = $this->getDoctrine()->getRepository('App\Entity\User');
     $user = $repository->find($id);
 
     if (!$user) {
@@ -313,8 +460,17 @@ class UsersAPIController extends AbstractFOSRestController
 
     $this->denyAccessUnlessGranted(UserVoter::EDIT, $user);
 
-    $userDto = new User();
-    $form = $this->createForm('App\Form\UserAPIFormType', $userDto);
+    if ($user instanceof CPSUser) {
+      $userDto = new User();
+      $form = $this->createForm('App\Form\UserAPIType', $userDto);
+    } elseif ($user instanceof OperatoreUser) {
+      $userDto = new Operator();
+      $form = $this->createForm('App\Form\OperatorAPIType', $userDto);
+    } else {
+      $userDto = new Admin();
+      $form = $this->createForm('App\Form\AdminAPIType', $userDto);
+    }
+
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -363,8 +519,11 @@ class UsersAPIController extends AbstractFOSRestController
    *     @OA\MediaType(
    *         mediaType="application/json",
    *         @OA\Schema(
-   *             type="object",
-   *             ref=@Model(type=User::class, groups={"write"})
+   *             oneOf={
+   *                @OA\Schema(ref=@Model(type=User::class, groups={"write"})),
+   *                @OA\Schema(ref=@Model(type=Operator::class, groups={"write"})),
+   *                @OA\Schema(ref=@Model(type=Admin::class, groups={ "write"}))
+   *            }
    *         )
    *     )
    * )
@@ -396,7 +555,7 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function patchuserAction($id, Request $request)
   {
-    $repository = $this->entityManager->getRepository('App\Entity\CPSUser');
+    $repository = $this->entityManager->getRepository('App\Entity\User');
     $user = $repository->find($id);
 
     if (!$user) {
@@ -405,8 +564,17 @@ class UsersAPIController extends AbstractFOSRestController
 
     $this->denyAccessUnlessGranted(UserVoter::EDIT, $user);
 
-    $userDto = User::fromEntity($user);
-    $form = $this->createForm('App\Form\UserAPIFormType', $userDto);
+    if ($user instanceof CPSUser) {
+      $userDto = new User();
+      $form = $this->createForm('App\Form\UserAPIType', $userDto);
+    } elseif ($user instanceof OperatoreUser) {
+      $userDto = new Operator();
+      $form = $this->createForm('App\Form\OperatorAPIType', $userDto);
+    } else {
+      $userDto = new Admin();
+      $form = $this->createForm('App\Form\AdminAPIType', $userDto);
+    }
+
     $this->processForm($request, $form);
 
     if ($form->isSubmitted() && !$form->isValid()) {
@@ -457,6 +625,11 @@ class UsersAPIController extends AbstractFOSRestController
    *     description="Access denied"
    * )
    *
+   * @OA\Response(
+   *     response=404,
+   *     description="Not found"
+   * )
+   *
    * @OA\Tag(name="users")
    *
    * @Method("DELETE")
@@ -465,12 +638,15 @@ class UsersAPIController extends AbstractFOSRestController
    */
   public function deleteAction($id)
   {
-    $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
-    $user = $this->getDoctrine()->getRepository('App\Entity\CPSUser')->find($id);
-    if ($user) {
-      $this->entityManager->remove($user);
-      $this->entityManager->flush();
+    $user = $this->getDoctrine()->getRepository('App\Entity\User')->find($id);
+
+    if (!$user) {
+      return $this->view(["Object not found"], Response::HTTP_NOT_FOUND);
     }
+
+    $this->denyAccessUnlessGranted(UserVoter::DELETE, $user);
+    $this->entityManager->remove($user);
+    $this->entityManager->flush();
 
     return $this->view(null, Response::HTTP_NO_CONTENT);
   }
