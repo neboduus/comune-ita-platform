@@ -350,7 +350,7 @@ class UsersAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $userDto = new User();
-    $form = $this->createForm('App\Form\UserAPIType', $userDto);
+    $form = $this->createForm('UserApiType', $userDto);
     try {
       $this->processForm($request, $form);
 
@@ -462,13 +462,13 @@ class UsersAPIController extends AbstractFOSRestController
 
     if ($user instanceof CPSUser) {
       $userDto = new User();
-      $form = $this->createForm('App\Form\UserAPIType', $userDto);
+      $form = $this->createForm('UserApiType', $userDto);
     } elseif ($user instanceof OperatoreUser) {
       $userDto = new Operator();
-      $form = $this->createForm('App\Form\OperatorAPIType', $userDto);
+      $form = $this->createForm('OperatorApiType', $userDto);
     } else {
       $userDto = new Admin();
-      $form = $this->createForm('App\Form\AdminAPIType', $userDto);
+      $form = $this->createForm('App\Form\AdminApiType', $userDto);
     }
 
     $this->processForm($request, $form);
@@ -566,13 +566,13 @@ class UsersAPIController extends AbstractFOSRestController
 
     if ($user instanceof CPSUser) {
       $userDto = new User();
-      $form = $this->createForm('App\Form\UserAPIType', $userDto);
+      $form = $this->createForm('UserApiType', $userDto);
     } elseif ($user instanceof OperatoreUser) {
       $userDto = new Operator();
-      $form = $this->createForm('App\Form\OperatorAPIType', $userDto);
+      $form = $this->createForm('OperatorApiType', $userDto);
     } else {
       $userDto = new Admin();
-      $form = $this->createForm('App\Form\AdminAPIType', $userDto);
+      $form = $this->createForm('App\Form\AdminApiType', $userDto);
     }
 
     $this->processForm($request, $form);
