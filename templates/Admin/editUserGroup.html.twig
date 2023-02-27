@@ -133,13 +133,9 @@
         <div class="tab-pane p-3 fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
           {{ form_row(form.calendar) }}
 
-          <div class="d-none" id="calendar_cards">
-            <Span>Calendar cards</Span>
-            {% for calendar in calendars %}
-              {{ include('Calendars/parts/showDetails.html.twig', {'calendar': calendar}) }}
-            {% endfor %}
-          </div>
-          <div class="d-none" id="new_calendar">
+          <div class="d-none" id="calendar-cards"></div>
+
+          <div class="d-none" id="new-calendar">
             <p>{{ 'user_group.opening_hours_alert'|trans }}</p>
             {{ include('Calendars/parts/newUserGroupCalendar.html.twig') }}
           </div>

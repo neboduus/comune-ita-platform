@@ -30,15 +30,15 @@ $('#user_group_calendar').on('change', function () {
   console.log(this.value);
   if (!this.value){
     console.log('vuoto');
-    $('#new_calendar').addClass('d-none');
-    $('#calendar_cards').addClass('d-none');
+    $('#new-calendar').addClass('d-none');
+    $('#calendar-cards').addClass('d-none');
   } else if (this.value === 'new'){
     console.log('new');
-    $('#new_calendar').removeClass('d-none');
-    $('#calendar_cards').addClass('d-none');
+    $('#new-calendar').removeClass('d-none');
+    $('#calendar-cards').addClass('d-none');
   } else {
     console.log('altro');
-    $('#new_calendar').addClass('d-none');
-    $('#calendar_cards').removeClass('d-none');
+    $('#new-calendar').addClass('d-none');
+    $('#calendar-cards').removeClass('d-none');
   }
 });

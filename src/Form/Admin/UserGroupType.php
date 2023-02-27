@@ -9,6 +9,7 @@ use App\Form\I18n\AbstractI18nType;
 use App\Form\I18n\I18nDataMapperInterface;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -20,6 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserGroupType extends AbstractI18nType
 {
+  private string $CRETE_NEW_CALENDAR_KEY = 'crete_new_calendar';
 
   /**
    * @var TranslatorInterface
@@ -30,6 +32,11 @@ class UserGroupType extends AbstractI18nType
    * @var EntityManagerInterface
    */
   private EntityManagerInterface $entityManager;
+
+  /**
+   * @var ArrayCollection
+   */
+  private $availableCalendars;
 
   /**
    * @param I18nDataMapperInterface $dataMapper
@@ -43,6 +50,7 @@ class UserGroupType extends AbstractI18nType
     parent::__construct($dataMapper, $locale, $locales);
     $this->translator = $translator;
     $this->entityManager = $entityManager;
+    $this->availableCalendars = $this->entityManager->getRepository(Calendar::class)->findAll();
   }
 
   /**
@@ -50,11 +58,9 @@ class UserGroupType extends AbstractI18nType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $qb = $this->entityManager->getRepository(Calendar::class)->createQueryBuilder('c');
-    $calendarsQuery = $qb->select('c.id', 'c.title')->getQuery()->execute();
-    $calendars = ['Aggiungi calendario' => 'new'];
-    foreach ($calendarsQuery as $calendar){
-      $calendars[$calendar['title']] = $calendar['id'];
+    $calendars = ['Aggiungi calendario' => $this->CRETE_NEW_CALENDAR_KEY];
+    foreach ($this->availableCalendars as $calendar){
+      $calendars[$calendar->getTitle()] = $calendar->getId();
     }
 
     $this->createTranslatableMapper($builder, $options)
@@ -122,6 +128,7 @@ class UserGroupType extends AbstractI18nType
       ])
       ->add('calendar', ChoiceType::class, [
         'choices' => $calendars,
+        //'data' => $calendar,
         'label' => 'user_group.calendar',
         'required' => false
       ])
@@ -134,18 +141,30 @@ class UserGroupType extends AbstractI18nType
     $data = $event->getData();
     $data['coreContactPoint']['name'] = $data['name'][$this->getLocale()] ?? '';
     $data['coreLocation']['name'] = $data['name'][$this->getLocale()] ?? '';
-    $isTitleSet = (array_key_exists('calendar', $data) and array_key_exists('title', $data['calendar']));
-    if (!$isTitleSet or !$data['calendar']['title']){
-      $calendarTitle = $data['name'][$this->getLocale()];
-      $titleAlreadyExists = $this->entityManager->getRepository('App\Entity\Calendar')->findOneBy(['title' => $calendarTitle]);
-      if ($titleAlreadyExists){
-        $calendarTitle .= '-'.substr(uuid_create(),0,4);
+
+    if ($data['calendar'] == $this->CRETE_NEW_CALENDAR_KEY) {
+      $isTitleSet = (array_key_exists('calendar', $data) and array_key_exists('title', $data['calendar']));
+      if (!$isTitleSet or !$data['calendar']['title']) {
+        $calendarTitle = $data['name'][$this->getLocale()];
+        $titleAlreadyExists = $this->entityManager->getRepository('App\Entity\Calendar')->findOneBy(['title' => $calendarTitle]);
+        if ($titleAlreadyExists) {
+          $calendarTitle .= '-' . substr(uuid_create(), 0, 4);
+        }
+        $data['calendar']['title'] = $calendarTitle;
       }
-      $data['calendar']['title'] = $calendarTitle;
-    }
-    $isLocationSet = (array_key_exists('calendar', $data) and array_key_exists('location', $data['calendar']));
-    if (!$isLocationSet or !$data['calendar']['location']) {
-      $data['calendar']['location'] = $data['name'][$this->getLocale()];
+      $isLocationSet = (array_key_exists('calendar', $data) and array_key_exists('location', $data['calendar']));
+      if (!$isLocationSet or !$data['calendar']['location']) {
+        $data['calendar']['location'] = $data['name'][$this->getLocale()];
+      }
+    } else if (uuid_is_valid($data['calendar'])){
+      foreach ($this->availableCalendars as $calendar){
+        if ($calendar->getId() == $data['calendar']){
+          $data['calendar'] = $calendar->getId();
+          break;
+        }
+      }
+    } else {
+      $data['calendar'] = null;
     }
     $event->setData($data);
   }
