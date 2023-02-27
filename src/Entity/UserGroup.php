@@ -14,10 +14,12 @@ use JMS\Serializer\Annotation\Groups;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\UserGroupRepository;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user_group")
+ * @ORM\Entity(repositoryClass=UserGroupRepository::class)
  */
 class UserGroup implements Translatable
 {

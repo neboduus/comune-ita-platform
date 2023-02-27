@@ -34,11 +34,9 @@ class UsersAPIController extends AbstractFOSRestController
 {
   const CURRENT_API_VERSION = '1.0';
 
-  /** @var LoggerInterface */
-  private $logger;
+  private LoggerInterface $logger;
 
-  /** @var EntityManagerInterface */
-  private $entityManager;
+  private EntityManagerInterface $entityManager;
 
   /**
    * @param EntityManagerInterface $entityManager

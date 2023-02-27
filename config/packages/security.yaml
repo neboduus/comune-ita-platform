@@ -43,7 +43,7 @@ security:
         failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
     api_secure:
-      pattern: /%prefix%/api/(folders|documents|users|user-groups|meetings|applications|subscriptions|subscribers|subscription-services\/.{36}\/subscriptions|payments|places)
+      pattern: /%prefix%/api/(folders|documents|users|meetings|applications|subscriptions|subscribers|subscription-services\/.{36}\/subscriptions|payments|places)
       stateless: true
       provider: app_user_provider
       guard:
@@ -51,7 +51,7 @@ security:
           - lexik_jwt_authentication.jwt_token_authenticator
 
     api:
-      pattern: /%prefix%/api/(services|services-groups|calendars|status|subscription-services|categories|recipients|geographic-areas|tenants|places)
+      pattern: /%prefix%/api/(services|services-groups|calendars|status|subscription-services|categories|recipients|geographic-areas|tenants|places|user-groups)
       methods: [ POST, PUT, PATCH, DELETE ]
       stateless: true
       provider: chain_provider
