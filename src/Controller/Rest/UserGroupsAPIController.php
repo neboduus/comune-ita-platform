@@ -11,6 +11,7 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\View\View;
 use InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,13 +28,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserGroupsAPIController extends AbstractFOSRestController
 {
 
-  /**
-   * @var EntityManagerInterface
-   */
-  private $entityManager;
+  private EntityManagerInterface $entityManager;
 
-  /** @var LoggerInterface */
-  private $logger;
+  private LoggerInterface $logger;
 
   /**
    * @param EntityManagerInterface $entityManager
@@ -49,16 +46,28 @@ class UserGroupsAPIController extends AbstractFOSRestController
    * List all user groups
    * @Rest\Get("", name="user_group_api_list")
    *
-   * @Security(name="Bearer")
-   *
    * @OA\Parameter(
    *      name="x-locale",
    *      in="header",
    *      description="Request locale",
    *      required=false  ,
-   *      @OA\Schema(
-   *           type="string"
-   *      )
+   *      @OA\Schema(type="string")
+   *  )
+   *
+   * @OA\Parameter(
+   *      name="has_calendar",
+   *      in="query",
+   *      @OA\Schema(type="boolean"),
+   *      required=false,
+   *      description="If true retreive only user groups that have calendars, if false only user groups that not have calendars"
+   *  )
+   *
+   * @OA\Parameter(
+   *      name="service_id",
+   *      in="query",
+   *      @OA\Schema(type="string"),
+   *      required=false,
+   *      description="Uuid of the service"
    *  )
    *
    * @OA\Response(
@@ -76,7 +85,22 @@ class UserGroupsAPIController extends AbstractFOSRestController
    */
   public function getUserGroupsAction(Request $request): View
   {
-    $result = $this->entityManager->getRepository('App\Entity\UserGroup')->findBy([], ['name' => 'asc']);
+    $criteria = [];
+    if ($request->query->has('has_calendar')) {
+      $criteria['has_calendar'] = $request->query->getBoolean('has_calendar');
+    }
+
+    $serviceId = $request->get('service_id', false);
+    if ($serviceId) {
+      if (!Uuid::isValid($serviceId)) {
+        return $this->view('Parameter service_id is not a valid uuid');
+      }
+      $criteria['service_id'] = $serviceId;
+    }
+
+    $repo =  $this->entityManager->getRepository('App\Entity\UserGroup');
+    $result = $repo->findByCriteria($criteria);
+
     return $this->view($result, Response::HTTP_OK);
   }
 
@@ -84,8 +108,6 @@ class UserGroupsAPIController extends AbstractFOSRestController
   /**
    * Retrieve a user group by id
    * @Rest\Get("/{id}", name="user_group_api_get")
-   *
-   * @Security(name="Bearer")
    *
    * @OA\Parameter(
    *      name="x-locale",
