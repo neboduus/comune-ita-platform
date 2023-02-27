@@ -11,6 +11,7 @@ use App\Entity\GiscomPratica;
 use App\Entity\Message as MessageEntity;
 use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
+use App\Entity\PraticaRepository;
 use App\Entity\RispostaOperatore;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
@@ -60,6 +61,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Exception\ValidatorException;
@@ -446,18 +448,27 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $user = $this->getUser();
     $repositoryService = $this->em->getRepository('App\Entity\Servizio');
     $allowedServices = $this->getAllowedServices();
+    $servicesByOperatore = $this->getServicesByOperatore();
 
-    if (empty($allowedServices) && $user instanceof OperatoreUser) {
+    if (empty($servicesByOperatore) && $user instanceof OperatoreUser) {
       return $this->view(["You are not allowed to view applications"], Response::HTTP_FORBIDDEN);
     }
 
     if ($serviceParameter) {
       $service = $repositoryService->findOneBy(['slug' => $serviceParameter]);
+      $getOnlyAssignedApplications = false;
       if (!$service instanceof Servizio) {
         return $this->view(["Service not found"], Response::HTTP_NOT_FOUND);
       }
-      if (!empty($allowedServices) && !in_array($service->getId(), $allowedServices)) {
+      if (!empty($servicesByOperatore) && !in_array($service->getId(), $servicesByOperatore)) {
         return $this->view(["You are not allowed to view applications of passed service"], Response::HTTP_FORBIDDEN);
+      }
+      /* 
+        se il servizio passato non è uno a cui l'operatore è abilitato è uno nel quale ha almeno 
+        una pratica assegnata allora mi predispongo in modo tale da ottenere SOLO le pratiche a lui assegnate
+      */
+      if ($user instanceof OperatoreUser && !in_array($service->getId(), $allowedServices) && in_array($service->getId(), $servicesByOperatore)) {
+        $getOnlyAssignedApplications = true;
       }
       $allowedServices = [$service->getId()];
       $queryParameters['service'] = $serviceParameter;
@@ -475,6 +486,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $user = $this->getUser();
       if ($user instanceof CPSUser) {
         $parameters['user'] = $user->getId();
+      } elseif ($user instanceof OperatoreUser) {
+        if (isset($getOnlyAssignedApplications)) {
+          $parameters['get_only_assigned_applications'] = $getOnlyAssignedApplications;
+        }
+        $parameters['operatore'] = $user;
       }
       $count = $repoApplications->getApplications($parameters, true);
 
@@ -580,6 +596,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $data = $this->applicationDto->fromEntity($result, true, $version);
 
       return $this->view($data, Response::HTTP_OK);
+    } catch (AccessDeniedException $ade) {
+      return $this->view(["You are not allowed to view this application"], Response::HTTP_FORBIDDEN);
     } catch (\Exception $e) {
       return $this->view(["Identifier conversion error"], Response::HTTP_BAD_REQUEST);
     }
@@ -2479,5 +2497,25 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }
 
     return $allowedServices;
+  }
+
+  /**
+   * Get the services to which the operatore is enabled
+   * as well as the services where the operatore has at least
+   * an application to which he is assigned
+   * 
+   * @return array
+   */
+  private function getServicesByOperatore(): array
+  {
+    /** @var PraticaRepository $praticaRepository */
+    $praticaRepository = $this->getDoctrine()->getRepository(Pratica::class);
+
+    $user = $this->getUser();
+    $servicesByOperatore = [];
+    if ($user instanceof OperatoreUser) {
+      $servicesByOperatore = $praticaRepository->getServizioIdListByOperatore($user, PraticaRepository::OPERATORI_LOWER_STATE);
+    }
+    return $servicesByOperatore;
   }
 }

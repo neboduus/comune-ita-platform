@@ -950,7 +950,8 @@ class OperatoriController extends AbstractController
   private function checkUserCanAccessPratica(OperatoreUser $user, Pratica $pratica)
   {
     $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
-    if (!$isEnabled) {
+    $isAssigned = $pratica->getOperatore() ? $pratica->getOperatore()->getId() == $user->getId() : $isEnabled;
+    if (!$isEnabled && !$isAssigned) {
       throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
     }
   }

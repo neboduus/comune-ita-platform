@@ -476,6 +476,13 @@ class PraticaRepository extends EntityRepository
     if (!empty($filters['servizio'])) {
       $qb->andWhere('pratica.servizio = :servizio')
         ->setParameter('servizio', $filters['servizio']);
+      if (!in_array($filters['servizio'], $serviziAbilitati)) {
+        $qb->andWhere('pratica.operatore = :operatore')
+          ->setParameter('operatore', $user);
+      }
+    } else {
+      $qb->orWhere('pratica.operatore = :operatore')
+        ->setParameter('operatore', $user);
     }
 
     if (!empty($filters['gruppo'])) {
@@ -623,6 +630,16 @@ class PraticaRepository extends EntityRepository
     if (isset($parameters['service'])) {
       $qb->andWhere('pratica.servizio IN (:services)')->setParameter('services', $parameters['service']);
     }
+    
+    if (isset($parameters['operatore'])) {
+      if (isset($parameters['get_only_assigned_applications'])) {
+        if ($parameters['get_only_assigned_applications']) {
+          $qb->andWhere('pratica.operatore = :operatore')->setParameter('operatore', $parameters['operatore']);
+        }
+      } else {
+        $qb->orWhere('pratica.operatore = :operatore')->setParameter('operatore', $parameters['operatore']);
+      }
+    }
 
     if (isset($parameters['service_identifier'])) {
       $qb
@@ -725,10 +742,7 @@ class PraticaRepository extends EntityRepository
   public function getServizioIdListByOperatore(OperatoreUser $user, $minStatus = null)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)) {
-      return [];
-    }
-    $servizio = 'where servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\')';
+    $servizio = 'where (servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\') or operatore_id = \'' . $user->getId() . '\')';
 
     $status = '';
     if ($minStatus) {
@@ -754,10 +768,7 @@ class PraticaRepository extends EntityRepository
   public function getStateListByOperatore(OperatoreUser $user, $minStatus = null)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)) {
-      return [];
-    }
-    $servizio = 'where servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\')';
+    $servizio = 'where (servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\') or operatore_id = \'' . $user->getId() . '\')';
 
     $status = '';
     if ($minStatus) {
