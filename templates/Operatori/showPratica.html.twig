@@ -4,15 +4,23 @@
 {% block stylesheets %}
   {{ parent() }}
   {{ encore_entry_link_tags('operator-show-application') }}
-  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/element-ui/1.4.13/theme-default/index.css" integrity="sha512-698XkMvQis2vuqDf9fvwdvAjVWsAEwb/2yUWZZyzEEd/z3M++P03dmS/oxSIUGe7hg2aaS+MXUKQqMKi2iolxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/element-ui/1.4.13/theme-default/index.css"
+        integrity="sha512-698XkMvQis2vuqDf9fvwdvAjVWsAEwb/2yUWZZyzEEd/z3M++P03dmS/oxSIUGe7hg2aaS+MXUKQqMKi2iolxA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
 {% endblock %}
 
 {% block javascripts %}
   {{ parent() }}
   {{ encore_entry_script_tags('operator-show-application') }}
-  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js" integrity="sha512-yNMXFsZbP+Hii2fM4n1EvhKbBCZ2NAfW1FvlN6yB1ZanH+1sEcNV2rPEg6qCMRT/4dY01ELCdD75WflfTHdKJg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/element-ui/1.4.13/index.js" integrity="sha512-cxMPoY2pP9tAt+qy1y/9zQTKAFNtW9DT5tKin9+0qYml+iK6HdaqOS/r523pNmmps3c4E3v5rZSBQb0aA5EFKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"
+          integrity="sha512-yNMXFsZbP+Hii2fM4n1EvhKbBCZ2NAfW1FvlN6yB1ZanH+1sEcNV2rPEg6qCMRT/4dY01ELCdD75WflfTHdKJg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/element-ui/1.4.13/index.js"
+          integrity="sha512-cxMPoY2pP9tAt+qy1y/9zQTKAFNtW9DT5tKin9+0qYml+iK6HdaqOS/r523pNmmps3c4E3v5rZSBQb0aA5EFKQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"
+          integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   {% if feature('feature_application_detail') %}
     <script src="{{ asset('bundles/app/js/components/message_attachments.js') }}"></script>
@@ -127,6 +135,48 @@
                   class="save-backoffice-info w-100 mt-1 text-center text-info {% if pratica.backofficeFormData is not defined or pratica.backofficeFormData|length <= 0 %}d-none{% endif %}"><i
                     class="fa fa-clock-o" aria-hidden="true"></i> {{ 'buttons.last_save'|trans }}
                   <span>{{ pratica.updatedAt|date('U')|time_ago }}</span></small>
+              </div>
+            {% endif %}
+
+            {% if pratica.operatore is defined and pratica.operatore == user %}
+              <div class="col-12 pb-3">
+                <div id="accordion_change-assegnee" class="collapse-div w-100 border-0" role="tablist">
+                  <div class="collapse-header" id="heading_change-assignee">
+                    <button data-toggle="collapse" data-target="#acc_change-assegnee" aria-expanded="false"
+                            aria-controls="acc_change-assegnee">
+                      {{ 'operatori.operator_assign' | trans }}
+                    </button>
+                  </div>
+                  <div id="acc_change-assegnee" class="collapse" role="tabpanel"
+                       aria-labelledby="heading_change-assegnee"
+                       data-parent="#accordion_change-assegnee">
+                    <div class="collapse-body py-2">
+                      <div class="row">
+                        <div class="col-12 pb-3">
+                          <form action="{{ path('operatori_pratica_change_assignee', {'pratica': pratica.id}) }}"
+                                method="post">
+                            {# todo: replace with autocomplete select with bts-italia2: https://italia.github.io/bootstrap-italia/docs/form/autocompletamento/ #}
+
+                            <div class="form-group">
+                              <div class="select-wrapper">
+                                <select id="user_group" title="{{ 'operatori.select_user_group' | trans }}"
+                                        name="user_group"
+                                        required="required">
+                                </select>
+                              </div>
+                              <div class="select-wrapper mt-4">
+                                <select id="operator" title="{{ 'operatori.select_operator' | trans }}" name="operator"
+                                        required="required" disabled></select>
+                              </div>
+                            </div>
+                            <button id="assign_operator_btn" class="btn btn-outline-warning btn-sm w-100"
+                                    disabled aria-disabled="true" type="submit">{{ 'assign' | trans }}</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             {% endif %}
 

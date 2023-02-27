@@ -103,7 +103,7 @@ class ApplicationVoter extends Voter
     throw new \LogicException('This code should not be reached!');
   }
 
-  private function canView(Pratica $pratica, User $user)
+  private function canView(Pratica $pratica, User $user): bool
   {
     // if they can edit, they can view
     if ($this->canEdit($pratica, $user)) {
@@ -127,7 +127,7 @@ class ApplicationVoter extends Voter
     }
     if ($this->security->isGranted('ROLE_OPERATORE')) {
       /** @var OperatoreUser $user */
-      $isAssigned = $pratica->getOperatore() ? $pratica->getOperatore() === $user : false;
+      $isAssigned = $pratica->getOperatore() && $pratica->getOperatore() === $user;
       if ($user->isSystemUser() || in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray()) || $isAssigned) {
         return true;
       }
@@ -136,7 +136,7 @@ class ApplicationVoter extends Voter
     return false;
   }
 
-  private function canSubmit(Pratica $pratica, User $user)
+  private function canSubmit(Pratica $pratica, User $user): bool
   {
     // if they can edit, they can submit
     if ($this->canEdit($pratica, $user)) {
@@ -145,7 +145,7 @@ class ApplicationVoter extends Voter
     return $user === $pratica->getUser();
   }
 
-  private function canAssign(Pratica $pratica, User $user)
+  private function canAssign(Pratica $pratica, User $user): bool
   {
     if ($this->security->isGranted('ROLE_OPERATORE')) {
       /** @var OperatoreUser $user */
@@ -156,7 +156,7 @@ class ApplicationVoter extends Voter
     return false;
   }
 
-  private function canAcceptOrReject(Pratica $pratica, User $user)
+  private function canAcceptOrReject(Pratica $pratica, User $user): bool
   {
     if ($this->security->isGranted('ROLE_OPERATORE')) {
       /** @var OperatoreUser $user */
@@ -167,7 +167,7 @@ class ApplicationVoter extends Voter
     return false;
   }
 
-  private function canWithdraw(Pratica $pratica, User $user)
+  private function canWithdraw(Pratica $pratica, User $user): bool
   {
     // Non è possibile ritirare una pratica se non è abilitato il ritiro, se è presente un dovuto di pagamento o se l'utente non è il richiedente
     if (!$pratica->getServizio()->isAllowWithdraw() || !empty($pratica->getPaymentData()) || $pratica->getUser()->getId() !== $user->getId()) {
@@ -187,7 +187,7 @@ class ApplicationVoter extends Voter
     return in_array($pratica->getStatus(), [Pratica::STATUS_PRE_SUBMIT, Pratica::STATUS_SUBMITTED, Pratica::STATUS_REGISTERED, Pratica::STATUS_PENDING]);
   }
 
-  private function canCompile(Pratica $pratica, User $user)
+  private function canCompile(Pratica $pratica, User $user): bool
   {
     $canCompile = false;
     // se la pratica è in bozza oppure in attesa di creazione del pagamento
@@ -203,7 +203,7 @@ class ApplicationVoter extends Voter
     return $canCompile;
   }
 
-  private function canDelete(Pratica $pratica, User $user)
+  private function canDelete(Pratica $pratica, User $user): bool
   {
     return $user === $pratica->getUser();
   }

@@ -3,13 +3,12 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserAPIFormType extends AbstractType
+class UserAPIType extends AbstractType
 {
   /**
    * @param FormBuilderInterface $builder
@@ -50,8 +49,7 @@ class UserAPIFormType extends AbstractType
       ->add('cap_residenza')
       ->add('citta_residenza')
       ->add('provincia_residenza')
-      ->add('stato_residenza')
-    ;
+      ->add('stato_residenza');
   }
 
   /**

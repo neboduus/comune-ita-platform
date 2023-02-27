@@ -124,7 +124,7 @@ class MessageManager
       $addFlash = true;
     }
 
-    $this->mailerService->dispatchMail($defaultSender, $fromName, $userReceiver->getEmailContatto(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
+    $this->mailerService->dispatchMail($defaultSender, $fromName, $userReceiver->getEmailContatto() ?? $userReceiver->getEmail(), $userReceiver->getFullName(), $mess, $subject, $instance, $message->getCallToAction());
 
     $message->setSentAt(time());
     $message->setEmail($userReceiver->getEmailContatto());

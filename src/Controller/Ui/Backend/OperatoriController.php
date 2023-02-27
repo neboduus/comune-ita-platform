@@ -20,6 +20,7 @@ use App\Form\Operatore\Base\ApplicationOutcomeType;
 use App\FormIO\Schema;
 use App\FormIO\SchemaFactoryInterface;
 use App\Logging\LogConstants;
+use App\Security\Voters\ApplicationVoter;
 use App\Services\FormServerApiAdapterService;
 use App\Services\InstanceService;
 use App\Services\Manager\MessageManager;
@@ -28,7 +29,6 @@ use App\Services\PraticaStatusService;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use Doctrine\DBAL\FetchMode;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Flagception\Manager\FeatureManagerInterface;
 use JMS\Serializer\SerializerInterface;
@@ -524,7 +524,7 @@ class OperatoriController extends AbstractController
       $applicationArray['group'] = $parameters['collate'] && $s->getFolderId() != null ? true : false;
 
       try {
-        $this->checkUserCanAccessPratica($user, $s);
+        $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $s);
         $applicationArray['can_read'] = true;
       } catch (UnauthorizedHttpException $e) {
         $applicationArray['can_read'] = false;
@@ -562,10 +562,8 @@ class OperatoriController extends AbstractController
     $sql = "SELECT COUNT(p.id), date_trunc('year', TO_TIMESTAMP(p.submission_time) AT TIME ZONE '" . $timeZone . "') AS tslot
             FROM pratica AS p WHERE p.status > 1000 and p.submission_time IS NOT NULL GROUP BY tslot ORDER BY tslot ASC";
 
-    /** @var EntityManager $em */
-    $em = $this->getDoctrine()->getManager();
     try {
-      $stmt = $em->getConnection()->prepare($sql);
+      $stmt = $this->entityManager->getConnection()->prepare($sql);
       $stmt->execute();
       $result = $stmt->fetchAll(FetchMode::ASSOCIATIVE);
     } catch (DBALException $e) {
@@ -609,11 +607,11 @@ class OperatoriController extends AbstractController
    * @return RedirectResponse
    * @throws \Exception
    */
-  public function reassignPraticaAction(Pratica $pratica)
+  public function reassignPraticaAction(Pratica $pratica): RedirectResponse
   {
     /** @var OperatoreUser $user */
     $user = $this->getUser();
-    $this->checkUserCanAccessPratica($user, $pratica);
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica);
 
     try {
       if ($pratica->getOperatore() === null) {
@@ -622,27 +620,57 @@ class OperatoriController extends AbstractController
         );
       }
 
-      if ($pratica->getServizio()->isProtocolRequired() && $pratica->getNumeroProtocollo() === null) {
-        throw new BadRequestHttpException("La pratica non ha ancora un numero di protocollo");
-      }
-
-      $oldUser = $pratica->getOperatore();
-      $this->praticaManager->assign($pratica, $user);
-      $this->entityManager->flush($pratica);
-
-      $this->logger->info(
-        LogConstants::PRATICA_REASSIGNED,
-        [
-          'pratica' => $pratica->getId(),
-          'user' => $pratica->getUser()->getId(),
-          'old_user' => $oldUser->getId(),
-        ]
-      );
+      $this->reassignPratica($pratica, $user);
     } catch (\Exception $e) {
       $this->addFlash('error', $e->getMessage());
     }
 
     return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+  }
+
+  /**
+   * @Route("/{pratica}/change-assignee",name="operatori_pratica_change_assignee")
+   * @param Pratica|DematerializedFormPratica $pratica
+   * @return void
+   */
+  public function changeAssegneePraticaAction(Pratica $pratica, Request $request): RedirectResponse
+  {
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica);
+
+    try {
+      $operatorId = $request->request->get('operator', false);
+      if (!$operatorId) {
+        throw new BadRequestHttpException($this->translator->trans('operatori.operator_not_found'));
+      }
+      $operator = $this->entityManager->getRepository(OperatoreUser::class)->find($operatorId);
+      if (!$operator) {
+        throw new BadRequestHttpException($this->translator->trans('operatori.operator_not_found'));
+      }
+      $this->reassignPratica($pratica, $operator);
+    } catch (\Exception $e) {
+      $this->addFlash('error', $e->getMessage());
+    }
+
+    return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
+  }
+
+  /**
+   * @throws \Exception
+   */
+  private function reassignPratica(Pratica $pratica, OperatoreUser $operatoreUser)
+  {
+    $oldUser = $pratica->getOperatore();
+    $this->praticaManager->assign($pratica, $operatoreUser);
+    $this->entityManager->flush($pratica);
+
+    $this->logger->info(
+      LogConstants::PRATICA_REASSIGNED,
+      [
+        'pratica' => $pratica->getId(),
+        'user' => $pratica->getUser()->getId(),
+        'old_user' => $oldUser->getId(),
+      ]
+    );
   }
 
   /**
@@ -656,7 +684,8 @@ class OperatoriController extends AbstractController
 
     /** @var OperatoreUser $user */
     $user = $this->getUser();
-    $this->checkUserCanAccessPratica($user, $pratica);
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica);
+
     $tab = $request->query->get('tab');
 
     $attachments = $this->entityManager->getRepository('App\Entity\Pratica')->getMessageAttachments(['author' => $pratica->getUser()->getId()], $pratica);
@@ -848,7 +877,8 @@ class OperatoriController extends AbstractController
 
     /** @var OperatoreUser $user */
     $user = $this->getUser();
-    $this->checkUserCanAccessPratica($user, $pratica);
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica);
+
     if ($pratica->getServizio()->isAllowReopening()) {
       try {
 
@@ -879,7 +909,7 @@ class OperatoriController extends AbstractController
         );
         $this->addFlash('success', $this->translator->trans('operatori.change_status_success'));
       } catch (\Exception $e) {
-        $this->logger->error($this->translator->trans('operatori.error_change_state_description').': ' . $pratica->getIdDocumentoProtocollo() . ' ' . $e->getMessage());
+        $this->logger->error($this->translator->trans('operatori.error_change_state_description') . ': ' . $pratica->getIdDocumentoProtocollo() . ' ' . $e->getMessage());
         $this->addFlash('error', $this->translator->trans('operatori.error_change_state'));
       }
     } else {
@@ -899,7 +929,8 @@ class OperatoriController extends AbstractController
   {
     /** @var OperatoreUser $user */
     $user = $this->getUser();
-    $this->checkUserCanAccessPratica($user, $pratica);
+    $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica);
+
     if ($pratica->getStatus() === Pratica::STATUS_DRAFT_FOR_INTEGRATION) {
       try {
         $this->praticaManager->acceptIntegration($pratica, $user);
@@ -943,27 +974,10 @@ class OperatoriController extends AbstractController
     return $this->createForm('App\Form\ApplicationMessageType', $message);
   }
 
-  /**
-   * @param OperatoreUser $user
-   * @param Pratica $pratica
-   */
-  private function checkUserCanAccessPratica(OperatoreUser $user, Pratica $pratica)
-  {
-    $isEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
-    $isAssigned = $pratica->getOperatore() ? $pratica->getOperatore()->getId() == $user->getId() : $isEnabled;
-    if (!$isEnabled && !$isAssigned) {
-      throw new UnauthorizedHttpException("User can not read pratica {$pratica->getId()}");
-    }
-  }
-
-
   private function populateSelectStatusServicesPratiche()
   {
-    /** @var EntityManager $em */
-    $em = $this->getDoctrine()->getManager();
-
-    //Servizi, pratiche  delle select di filtraggio
-    $serviziPratiche = $em->createQueryBuilder()
+    //Servizi, pratiche delle select di filtraggio
+    $serviziPratiche = $this->entityManager->createQueryBuilder()
       ->select('s.name', 's.slug')
       ->from('App:Pratica', 'p')
       ->innerJoin('App:Servizio', 's', 'WITH', 's.id = p.servizio')
@@ -1039,10 +1053,8 @@ class OperatoriController extends AbstractController
       $where .
       " GROUP BY s.name, tslot ORDER BY tslot ASC";
 
-    /** @var EntityManager $em */
-    $em = $this->getDoctrine()->getManager();
     try {
-      $stmt = $em->getConnection()->executeQuery($sql, $sqlParams);
+      $stmt = $this->entityManager->getConnection()->executeQuery($sql, $sqlParams);
       $result = $stmt->fetchAllAssociative();
     } catch (Exception $e) {
       $this->logger->error($e->getMessage());
