@@ -14,6 +14,8 @@ Per i test che seguono fare riferimento al documento dei [Test Manuali](https://
 - [ ] Test importazione di un servizio DA una versione precedente
 - [ ] Test di importazione di un vervizio VERSO una versione precedente
 - [ ] Test compliancy PNRR con il tool [pa-website-validator](https://github.com/italia/pa-website-validator)
+- [ ] Test servizi built-in (almeno [prenotazione calendario](https://www.comune.bugliano.pi.it/prenota_appuntamento) e [richiedi assistenza](https://www.comune.bugliano.pi.it/richiedi_assistenza))
+- [ ] Test di un servizio con pagametno [immediato su efil](https://servizi.comune-qa.bugliano.pi.it/lang/it/servizi/pagamento-immediato-efil) e [posticipato su mypay](https://servizi.comune-qa.bugliano.pi.it/lang/it/servizi/pagamento-mypay-2-0)
 
 ## Test su nuovi sviluppi
 
