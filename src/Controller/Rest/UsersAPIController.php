@@ -156,7 +156,7 @@ class UsersAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    if ($username && !in_array([Operator::USER_TYPE_OPERATORE, Admin::USER_TYPE_ADMIN], $roles)) {
+    if ($username && !in_array(Operator::USER_TYPE_OPERATORE, $roles) && !in_array(Admin::USER_TYPE_ADMIN, $roles)) {
       $data = [
         'type' => 'error',
         'title' => 'Invalid username query parameter',
@@ -350,7 +350,7 @@ class UsersAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(['ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $userDto = new User();
-    $form = $this->createForm('UserApiType', $userDto);
+    $form = $this->createForm('App\Form\Api\UserApiType', $userDto);
     try {
       $this->processForm($request, $form);
 
@@ -461,32 +461,32 @@ class UsersAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(UserVoter::EDIT, $user);
 
     if ($user instanceof CPSUser) {
-      $userDto = new User();
-      $form = $this->createForm('UserApiType', $userDto);
+      $userDto = User::fromEntity($user);
+      $form = $this->createForm('App\Form\Api\UserApiType', $userDto);
     } elseif ($user instanceof OperatoreUser) {
-      $userDto = new Operator();
-      $form = $this->createForm('OperatorApiType', $userDto);
+      $userDto = Operator::fromEntity($user);
+      $form = $this->createForm('App\Form\Api\OperatorApiType', $userDto);
     } else {
-      $userDto = new Admin();
-      $form = $this->createForm('App\Form\AdminApiType', $userDto);
+      $userDto = Admin::fromEntity($user);
+      $form = $this->createForm('App\Form\Api\AdminApiType', $userDto);
     }
-
-    $this->processForm($request, $form);
-
-    if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = FormUtils::getErrorsFromForm($form);
-      $data = [
-        'type' => 'put_validation_error',
-        'title' => 'There was a validation error',
-        'errors' => $errors,
-      ];
-
-      return $this->view($data, Response::HTTP_BAD_REQUEST);
-    }
-
-    $user = $userDto->toEntity($user);
 
     try {
+      $this->processForm($request, $form);
+
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = FormUtils::getErrorsFromForm($form);
+        $data = [
+          'type' => 'put_validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $user = $userDto->toEntity($user);
+
       $this->entityManager->persist($user);
       $this->entityManager->flush();
     } catch (\Exception $e) {
@@ -565,32 +565,32 @@ class UsersAPIController extends AbstractFOSRestController
     $this->denyAccessUnlessGranted(UserVoter::EDIT, $user);
 
     if ($user instanceof CPSUser) {
-      $userDto = new User();
-      $form = $this->createForm('UserApiType', $userDto);
+      $userDto = User::fromEntity($user);
+      $form = $this->createForm('App\Form\Api\UserApiType', $userDto);
     } elseif ($user instanceof OperatoreUser) {
-      $userDto = new Operator();
-      $form = $this->createForm('OperatorApiType', $userDto);
+      $userDto = Operator::fromEntity($user);
+      $form = $this->createForm('App\Form\Api\OperatorApiType', $userDto);
     } else {
-      $userDto = new Admin();
-      $form = $this->createForm('App\Form\AdminApiType', $userDto);
+      $userDto = Admin::fromEntity($user);
+      $form = $this->createForm('App\Form\Api\AdminApiType', $userDto);
     }
-
-    $this->processForm($request, $form);
-
-    if ($form->isSubmitted() && !$form->isValid()) {
-      $errors = FormUtils::getErrorsFromForm($form);
-      $data = [
-        'type' => 'validation_error',
-        'title' => 'There was a validation error',
-        'errors' => $errors,
-      ];
-
-      return $this->view($data, Response::HTTP_BAD_REQUEST);
-    }
-
-    $user = $userDto->toEntity($user);
 
     try {
+      $this->processForm($request, $form);
+
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = FormUtils::getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $user = $userDto->toEntity($user);
+
       $this->entityManager->persist($user);
       $this->entityManager->flush();
     } catch (\Exception $e) {

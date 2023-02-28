@@ -550,7 +550,7 @@ class User extends AbstractUser
 
     $entity->setCpsTelefono($this->telefono);
     $entity->setCellulareContatto($this->cellulare);
-    $entity->setEmail($this->email);
+    $entity->setEmail($this->email ?? '');
     $entity->setEmailContatto($this->email);
 
     $entity->setSdcIndirizzoDomicilio($this->indirizzoDomicilio);
