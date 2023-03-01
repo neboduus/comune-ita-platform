@@ -2,6 +2,8 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\ModuloCompilato;
+use AppBundle\Entity\Pratica;
 use AppBundle\Services\DelayedGiscomAPIAdapterService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -47,10 +49,12 @@ class GeneratePdfCommand extends ContainerAwareCommand
     $entityManager = $this->getContainer()->get('doctrine')->getManager();
     $repository = $entityManager->getRepository('AppBundle:Pratica');
     $pdfService  = $this->getContainer()->get('ocsdc.modulo_pdf_builder');
+    $fileSystem = $this->getContainer()->get('ocsdc.filesystem');
 
     $count = 0;
     foreach ($applicationIds as $applicationId) {
       try {
+        /** @var Pratica $application */
         $application = $repository->find($applicationId);
 
         if (!$application) {
@@ -58,16 +62,25 @@ class GeneratePdfCommand extends ContainerAwareCommand
           continue;
         }
 
-        $pdf = $pdfService->createForPratica($application);
-        $application->addModuloCompilato($pdf);
-        $io->success("Generato pdf per la pratica: {$applicationId}");
-        $count ++;
+        $pdf = $pdfService->renderForPratica($application);
+
+        /** @var ModuloCompilato $modulo */
+        $modulo = $application->getModuliCompilati()->first();
+
+        $path = str_replace('uploads/', '', $modulo->getFile()->getPathname());
+        $result = $fileSystem->getFilesystem()->put($path, $pdf);
+
+        if ($result) {
+          $io->success("Generato pdf per la pratica: {$applicationId} al seguente path:" . $modulo->getFile()->getPathname());
+          $count ++;
+        } else {
+          $io->error("Errore salvando il pdf per la pratica: {$applicationId} al seguente path:" . $modulo->getFile()->getPathname());
+        }
 
       } catch (\Exception $e) {
-
+        $io->error($e->getMessage());
       }
     }
-    $entityManager->flush();
 
     $io->success("Sono stati generati {$count} pdf");
 
