@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\Entity\Servizio;
 use Symfony\Component\Form\FormInterface;
 use GuzzleHttp\Client;
 
@@ -62,5 +63,16 @@ class FormUtils
     });
 
     return $isEmpty;
+  }
+
+  /**
+   * Get booking url with the related service id
+   *
+   * @param string $service
+   * @param string|null $bookingUrl
+   * @return string
+   */
+  public static function getBookingCallToActionUrl($serviceId, $bookingUrl) {
+    return $bookingUrl ? $bookingUrl . '?service_id=' . $serviceId : null;
   }
 }

@@ -147,8 +147,9 @@ class ServiziController extends AbstractController
     }
 
     if (!$servizio->getBookingCallToAction()) {
-      $appointmentBookingUrl = $this->instanceService->getCurrentInstance()->getAppointmentBookingUrl();
-      $servizio->setBookingCallToAction($appointmentBookingUrl ? $appointmentBookingUrl . '?service_id=' . $servizio->getId() : null);
+      $servizio->setBookingCallToAction(FormUtils::getBookingCallToActionUrl(
+        $servizio->getId(), $this->instanceService->getCurrentInstance()->getAppointmentBookingUrl()
+      ));
     }
 
     $this->breadcrumbsService->generateServiceBreadcrumbs($servizio);

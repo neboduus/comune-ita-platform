@@ -77,8 +77,9 @@ class CardDataType extends AbstractI18nType
     /** @var Servizio $servizio */
     $servizio = $builder->getData();
 
-    $appointmentBookingUrl = $this->instanceService->getCurrentInstance()->getAppointmentBookingUrl();
-    $appointmentBookingUrl = $appointmentBookingUrl ? $appointmentBookingUrl . '?service_id=' . $servizio->getId() : null; 
+    $appointmentBookingUrl = FormUtils::getBookingCallToActionUrl(
+      $servizio->getId(), $this->instanceService->getCurrentInstance()->getAppointmentBookingUrl()
+    );
 
     // you can add the translatable fields
     $this->createTranslatableMapper($builder, $options)
