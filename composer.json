@@ -11,7 +11,7 @@
       "role": "Mantainer"
     }
   ],
-  "version": "2.12.0",
+  "version": "2.12.1",
   "config": {
     "bin-dir": "bin",
     "preferred-install": {
