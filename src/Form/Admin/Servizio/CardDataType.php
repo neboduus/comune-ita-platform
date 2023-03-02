@@ -145,11 +145,9 @@ class CardDataType extends AbstractI18nType
       ->add('bookingCallToAction', UrlType::class, [
         "label" => 'servizio.booking_call_to_action',
         'required' => false,
-        'help' => $this->translator->trans('servizio.booking_cta_help', [
-          '%link%' => $appointmentBookingUrl ?? $this->translator->trans('servizio.no_booking_url')
-        ]),
+        'help' => 'servizio.booking_cta_help',
         'attr' => [
-          'placeholder' => $appointmentBookingUrl ?? $this->translator->trans('servizio.no_booking_url')
+          'placeholder' => $appointmentBookingUrl
         ]
       ])
       ->add(

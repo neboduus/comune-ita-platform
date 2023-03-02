@@ -230,7 +230,7 @@ servizio:
   no_attachments_uploaded: "There are no attachments"
   page_updated_at: "Page updated on %updatedAt%"
   booking_call_to_action: 'Link for booking an appointment'
-  booking_cta_help: "Use this field to display a button on the service card for booking an appointment through external systems"
+  booking_cta_help: "Use this field to display a button on the service card for booking an appointment through external systems. If the value is empty, the link will be generated from the configured link for booking an appointment"
   book_appointment_description: "Or, book an appointment at the competent office."
   book_appointment_action: 'Book an appointment'
   times_and_deadlines: "Times and deadlines"
