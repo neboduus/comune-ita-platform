@@ -16,6 +16,7 @@ use App\Logging\LogConstants;
 use App\Services\BreadcrumbsService;
 use App\Services\InstanceService;
 use App\Services\Manager\CategoryManager;
+use App\Utils\FormUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Entity\Repository\CategoryRepository;
@@ -143,6 +144,11 @@ class ServiziController extends AbstractController
 
     if ($servizio->getExternalCardUrl()) {
       return $this->redirect($servizio->getExternalCardUrl());
+    }
+
+    if (!$servizio->getBookingCallToAction()) {
+      $appointmentBookingUrl = $this->instanceService->getCurrentInstance()->getAppointmentBookingUrl();
+      $servizio->setBookingCallToAction($appointmentBookingUrl ? $appointmentBookingUrl . '?service_id=' . $servizio->getId() : null);
     }
 
     $this->breadcrumbsService->generateServiceBreadcrumbs($servizio);

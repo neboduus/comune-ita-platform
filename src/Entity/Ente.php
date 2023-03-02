@@ -532,6 +532,19 @@ class Ente implements Translatable
     return null;
   }
 
+  /**
+   * Get appointment booking url
+   * @return string|null
+   */
+  public function getAppointmentBookingUrl() {
+    $meta = $this->getMetaAsArray();
+    $bookingUrlExists = isset($meta['builtin_services']['appointment_booking']) && !empty($meta['builtin_services']['appointment_booking']);
+    if ($bookingUrlExists) {
+      return $meta['built-in_services']['appointment_booking'];
+    }
+    return null;
+  }
+
   public function getTopicsNav()
   {
     $result = [];

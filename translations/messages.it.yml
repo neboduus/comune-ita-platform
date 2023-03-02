@@ -282,7 +282,8 @@ servizio:
   accedere: "Accedi al servizio"
   page_updated_at: "Pagina aggiornata il %updatedAt%"
   booking_call_to_action: 'Link per la prenotazione di un appuntamento'
-  booking_cta_help: "Utilizza questo campo per visualizzare nella scheda del servizio un pulsante per la prenotazione di un appuntamento tramite sistemi esterni"
+  booking_cta_help: "Utilizza questo campo per visualizzare nella scheda del servizio un pulsante per la prenotazione di un appuntamento tramite sistemi esterni. In caso di valore vuoto il link sarà creato automaticamente in base al link di prenotazione appuntamento configurato: %link%"
+  no_booking_url: "Nessun url configurato"
   book_appointment_description: "Oppure, prenota un appuntamento presso l'ufficio competente."
   book_appointment_action: 'Prenota appuntamento'
   casi_particolari: "Casi particolari"

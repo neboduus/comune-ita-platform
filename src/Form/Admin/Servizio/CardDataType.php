@@ -11,6 +11,8 @@ use App\Form\I18n\I18nTextareaType;
 use App\Helpers\EventTaxonomy;
 use App\Model\PublicFile;
 use App\Services\FileService\ServiceAttachmentsFileService;
+use App\Services\InstanceService;
+use App\Utils\FormUtils;
 use League\Flysystem\FileExistsException;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -42,6 +44,9 @@ class CardDataType extends AbstractI18nType
    */
   private $translator;
 
+  /** @var InstanceService */
+  private $instanceService;
+
   /**
    * @param I18nDataMapperInterface $dataMapper
    * @param $locale
@@ -56,19 +61,24 @@ class CardDataType extends AbstractI18nType
                                   $locales,
     ServiceAttachmentsFileService $fileService,
     TranslatorInterface           $translator,
-    array                         $allowedExtensions
+    array                         $allowedExtensions,
+    InstanceService               $instanceService
   )
   {
     parent::__construct($dataMapper, $locale, $locales);
     $this->fileService = $fileService;
     $this->translator = $translator;
     $this->allowedExtensions = array_merge(...$allowedExtensions);
+    $this->instanceService = $instanceService;
   }
 
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     /** @var Servizio $servizio */
     $servizio = $builder->getData();
+
+    $appointmentBookingUrl = $this->instanceService->getCurrentInstance()->getAppointmentBookingUrl();
+    $appointmentBookingUrl = $appointmentBookingUrl ? $appointmentBookingUrl . '?service_id=' . $servizio->getId() : null; 
 
     // you can add the translatable fields
     $this->createTranslatableMapper($builder, $options)
@@ -134,7 +144,12 @@ class CardDataType extends AbstractI18nType
       ->add('bookingCallToAction', UrlType::class, [
         "label" => 'servizio.booking_call_to_action',
         'required' => false,
-        'help' => 'servizio.booking_cta_help'
+        'help' => $this->translator->trans('servizio.booking_cta_help', [
+          '%link%' => $appointmentBookingUrl ?? $this->translator->trans('servizio.no_booking_url')
+        ]),
+        'attr' => [
+          'placeholder' => $appointmentBookingUrl ?? $this->translator->trans('servizio.no_booking_url')
+        ]
       ])
       ->add(
         'conditionsAttachments',
