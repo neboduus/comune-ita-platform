@@ -4,7 +4,7 @@
   padding: 15px;
 
   .icon {
-    fill: $color-primary;
+    fill: $primary;
   }
 }
 
@@ -46,7 +46,7 @@
       .icon {
         &.colorize {
           filter: none;
-          fill: $color-primary;
+          fill: $primary;
         }
       }
     }
@@ -66,5 +66,5 @@
 }
 
 .theme-light .custom-navbar-toggler svg {
-  fill: $color-primary;
+  fill: $primary;
 }

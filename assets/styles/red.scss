@@ -1,0 +1,39 @@
+@charset "UTF-8";
+// -----------------------------------------------------------------------------
+// This file contains everything about the essential styles
+// -----------------------------------------------------------------------------
+@import "base/all";
+
+// Abstracts
+@import "abstracts/variables-red";
+
+// Vendors
+@import "vendor/bootstrap-italia";
+@import "vendor/font-awesome";
+//@import "vendor/leaflet";
+@import "vendor/formio";
+
+// Layout
+@import "layout/header";
+@import "layout/footer";
+
+// Components
+@import "components/navigation";
+@import "components/progressbar";
+@import "components/messages";
+@import "components/calendars";
+
+// Global cmp-components
+@import "components/cmp/base";
+@import "components/cmp/cmp-breadcrumbs";
+
+// External Components
+@import "~outdated-browser-rework/dist/style.css";
+@import "vendor/outdated-browser";
+@import "vendor/sweetalert2";
+
+// Search
+@import "components/search";
+
+// Utilities
+@import "base/utilities";

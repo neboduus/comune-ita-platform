@@ -1,4 +1,4 @@
-import "../styles/core.scss";
+//import "../styles/core.scss";
 
 require("jquery");
 // TODO remove summernote

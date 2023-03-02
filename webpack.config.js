@@ -20,6 +20,8 @@ Encore
    * Each entry will result in one JavaScript file (e.g. app.js)
    * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
    */
+  .addStyleEntry('default', './assets/styles/default.scss')
+  .addStyleEntry('red', './assets/styles/red.scss')
   .addEntry('core', './assets/js/core.js')
   .addEntry('datatables', './assets/js/components/datatables.js')
   .addEntry('compile', './assets/js/compile.js')
