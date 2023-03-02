@@ -1301,6 +1301,8 @@ operatori:
   operator_assign: 'Assegna ad un operatore'
   select_user_group: 'Seleziona un ufficio'
   select_operator: 'Seleziona un operatore'
+  error_get_users_groups: 'Si è verificato un errore nella ricerca degli uffici'
+  error_get_operators: 'Si è verificato un errore nella ricerca degli operatori'
   documenti: "Documenti"
   no_pratica_correlata: "Nessuna pratica correlata"
   ultime_pratiche: "Ultime pratiche inviate dall'utente"

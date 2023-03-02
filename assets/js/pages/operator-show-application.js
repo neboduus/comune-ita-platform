@@ -22,6 +22,9 @@ Formio.registerComponent('financial_report', FinancialReport);
 Formio.registerComponent('sdcfile', SdcFile);
 const language = document.documentElement.lang.toString();
 
+const users = new Users()
+users.init();
+
 // Todo: spostare in ./assets/js/Formio/Formio.js
 window.onload = function () {
   // Init formIo
@@ -101,19 +104,18 @@ $(document).ready(function () {
   const operatorInput = $('#operator');
   const assignBtn = $('#assign_operator_btn');
 
-  const users = new Users()
-  users.init();
-
   function initUserGroupsSelect() {
     users.getUserGroups()
       .fail(function (xhr, type, exception) {
         Swal.fire(
-          exception,
-          'Something went wrong!',
+          `${Translator.trans('error_message_detail', {}, 'messages', language)}`,
+          `${Translator.trans('operatori.error_get_users_groups', {}, 'messages', language)}`,
           'error'
         );
       })
       .done((data) => {
+        let emptyOption = $(`<option disabled selected value>${Translator.trans('operatori.select_user_group', {}, 'messages', language)}</option>`);
+        userGroupInput.append(emptyOption);
         data.forEach((item) => {
           let option = $(`<option value="${item.id}">${item.name}</option>`);
           userGroupInput.append(option);
@@ -128,27 +130,37 @@ $(document).ready(function () {
     assignBtn.attr("disabled", "disabled");
     operatorInput.empty();
 
-    users.getFilteredOperators(userGroupInput.val())
-      .fail(function (xhr, type, exception) {
-        Swal.fire(
-          exception,
-          'Something went wrong!',
-          'error'
-        );
-      })
-      .done((data) => {
-        data.forEach((item) => {
-          let option = $(`<option value="${item.id}">${item.full_name}</option>`)
-          operatorInput.append(option)
+    if (userGroupInput.val()) {
+      users.getFilteredOperators(userGroupInput.val())
+        .fail(function (xhr, type, exception) {
+          Swal.fire(
+            `${Translator.trans('error_message_detail', {}, 'messages', language)}`,
+            `${Translator.trans('operatori.error_get_operators', {}, 'messages', language)}`,
+            'error'
+          );
         })
+        .done((data) => {
+          let emptyOption = $(`<option disabled selected value>${Translator.trans('operatori.select_operator', {}, 'messages', language)}</option>`);
+          operatorInput.append(emptyOption);
+          data.forEach((item) => {
+            let option = $(`<option value="${item.id}">${item.full_name}</option>`);
+            operatorInput.append(option);
+          })
 
-        operatorInput.removeAttr("disabled");
-        assignBtn.removeAttr("disabled");
-      })
+          operatorInput.removeClass("d-none");
+          operatorInput.removeAttr("disabled");
+        })
+    }
   }
 
   userGroupInput.on('change', () => {
     initFilteredOperatorsSelect();
+  });
+
+  operatorInput.on('change', () => {
+    if (operatorInput.val()) {
+      assignBtn.removeAttr("disabled");
+    }
   });
 
   $('.edit-meeting').on('click', function editMeeting(e) {
