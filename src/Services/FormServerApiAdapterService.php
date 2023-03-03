@@ -428,6 +428,19 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
     }
   }
 
+  public function getSchema(Servizio $service): array
+  {
+    // Todo: verificare se è meglio passare da curl
+    if ($service->isBuiltIn()) {
+      return [
+        'status' => 'success',
+        'schema' => file_get_contents('../data/built-in/'. $service->getIdentifier() .'-schema-flat.json'),
+      ];
+    } else {
+      return $this->getFormSchema($service->getFormIoId());
+    }
+  }
+
   public function getFormSchema($formID)
   {
     $client = new Client(['base_uri' => $this->formServerUrl]);

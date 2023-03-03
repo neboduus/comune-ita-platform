@@ -1,0 +1,62 @@
+{
+  "user_group": {
+    "label": "Ufficio selezionato",
+    "type": "select"
+  },
+  "day": {
+    "label": "Giorno selezionato",
+    "type": "select"
+  },
+  "time": {
+    "label": "Orario selezionato",
+    "type": "select"
+  },
+  "meeting_id": {
+    "label": "Meeting",
+    "type": "hidden"
+  },
+  "calendar": {
+    "label": "Data e ora",
+    "type": "hidden"
+  },
+  "service": {
+    "label": "Aggiungi il motivo dell'appuntamento",
+    "type": "select"
+  },
+  "user_message": {
+    "label": "Aggiungi ulteriori dettagli",
+    "type": "textarea"
+  },
+  "applicant": {
+    "data": {
+      "email_address": {
+        "label": "Indirizzo Email",
+        "type": "email"
+      },
+      "phone_number": {
+        "label": "Recapito telefonico",
+        "type": "phoneNumber"
+      },
+      "fiscal_code": {
+        "data": {
+          "fiscal_code": {
+            "label": "Codice Fiscale",
+            "type": "textfield"
+          }
+        }
+      },
+      "completename": {
+        "data": {
+          "name": {
+            "label": "Nome",
+            "type": "textfield"
+          },
+          "surname": {
+            "label": "Cognome",
+            "type": "textfield"
+          }
+        }
+      }
+    }
+  }
+}

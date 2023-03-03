@@ -1,0 +1,46 @@
+{
+  "privacy": {
+    "label": "Ho letto e compreso l'informativa sulla privacy",
+    "type": "checkbox"
+  },
+  "category": {
+    "label": "Categoria di servizio",
+    "type": "select"
+  },
+  "service": {
+    "label": "Servizio",
+    "type": "select"
+  },
+  "details": {
+    "label": "Dettagli",
+    "type": "textfield"
+  },
+  "email": {
+    "label": "Email",
+    "type": "email"
+  },
+  "applicant": {
+    "data": {
+      "fiscal_code": {
+        "data": {
+          "fiscal_code": {
+            "label": "Codice Fiscale",
+            "type": "textfield"
+          }
+        }
+      },
+      "completename": {
+        "data": {
+          "name": {
+            "label": "Nome",
+            "type": "textfield"
+          },
+          "surname": {
+            "label": "Cognome",
+            "type": "textfield"
+          }
+        }
+      }
+    }
+  }
+}
