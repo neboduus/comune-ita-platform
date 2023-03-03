@@ -3068,8 +3068,7 @@ user_group:
   calendar: 'Per permettere la prenotazione di appuntamenti è necessario creare un orario di apertura o selezionarne uno disponibile'
   opening_hours: 'Orari di apertura'
   hours: 'Orari'
-  opening_hours_alert: 'Questo è un orario semplificato, potrai modificare il calendario completo una volta salvato.'
-  no_calendar: 'Nessuno'
+  opening_hours_alert: 'Questo è un orario semplificato, potrai modificare il calendario completo una volta salvato:'
 contact_point:
   title: 'Punti di Contatto'
   contact_point_name: 'Nome'

@@ -2994,8 +2994,7 @@ user_group:
   calendar: 'To allow the booking of appointments it is necessary to create an opening time or select an available one'
   opening_hours: 'Opening hours'
   hours: 'Hours'
-  opening_hours_alert: 'This is a simplified timetable, you will be able to edit the complete calendar once saved.'
-  no_calendar: 'None'
+  opening_hours_alert: 'This is a simplified timetable, you will be able to edit the complete calendar once saved:'
 contact_point:
   title: 'Contact Point'
   contact_point_name: 'Name'

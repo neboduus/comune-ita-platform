@@ -137,7 +137,15 @@
 
           <div class="d-none" id="new-calendar">
             <p>{{ 'user_group.opening_hours_alert'|trans }}</p>
-            {{ include('Calendars/parts/newUserGroupCalendar.html.twig') }}
+            <div class="row bg-light mb-4 js-opening_hour-item">
+              {{ form_row(form.days_of_week) }}
+              <div class="col-6">
+                {{ form_row(form.begin_hour) }}
+              </div>
+              <div class="col-6">
+                {{ form_row(form.end_hour) }}
+              </div>
+            </div>
           </div>
         </div>
 

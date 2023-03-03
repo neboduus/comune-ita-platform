@@ -3,6 +3,7 @@
 namespace App\Form\Admin;
 
 use App\Entity\Calendar;
+use App\Entity\OpeningHour;
 use App\Entity\UserGroup;
 use App\Form\Api\PlaceApiType;
 use App\Form\I18n\AbstractI18nType;
@@ -13,10 +14,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\LessThan;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserGroupType extends AbstractI18nType
@@ -39,18 +44,24 @@ class UserGroupType extends AbstractI18nType
   private $availableCalendars;
 
   /**
+   * @var Security
+   */
+  private Security $security;
+
+  /**
    * @param I18nDataMapperInterface $dataMapper
    * @param $locale
    * @param $locales
    * @param TranslatorInterface $translator
    * @param EntityManagerInterface $entityManager
    */
-  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, TranslatorInterface $translator, EntityManagerInterface $entityManager)
+  public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, TranslatorInterface $translator, EntityManagerInterface $entityManager, Security $security)
   {
     parent::__construct($dataMapper, $locale, $locales);
     $this->translator = $translator;
     $this->entityManager = $entityManager;
     $this->availableCalendars = $this->entityManager->getRepository(Calendar::class)->findAll();
+    $this->security = $security;
   }
 
   /**
@@ -62,6 +73,7 @@ class UserGroupType extends AbstractI18nType
     foreach ($this->availableCalendars as $calendar){
       $calendars[$calendar->getTitle()] = $calendar->getId();
     }
+
 
     $this->createTranslatableMapper($builder, $options)
       ->add('name', I18nTextType::class, [
@@ -128,9 +140,36 @@ class UserGroupType extends AbstractI18nType
       ])
       ->add('calendar', ChoiceType::class, [
         'choices' => $calendars,
-        //'data' => $calendar,
         'label' => 'user_group.calendar',
         'required' => false
+      ])
+      ->add('days_of_week', ChoiceType::class, [
+        'label' => 'calendars.opening_hours.days_of_week',
+        'required' => false,
+        'choices' => OpeningHour::WEEKDAYS,
+        'multiple' => true,
+        'expanded' => true,
+        'mapped' => false
+      ])
+      ->add('begin_hour', TimeType::class, [
+        'widget' => 'single_text',
+        'required' => false,
+        'label' => 'calendars.opening_hours.begin_hour',
+        'mapped' => false,
+        'constraints' => [new LessThan([
+          'propertyPath' => 'parent.all[end_hour].data',
+          'message' => $this->translator->trans('calendars.opening_hours.errors.less_than_end_hour')
+        ]),]
+      ])
+      ->add('end_hour', TimeType::class, [
+        'widget' => 'single_text',
+        'required' => false,
+        'mapped' => false,
+        'label' => 'calendars.opening_hours.end_hour',
+        'constraints' => [new GreaterThan([
+          'propertyPath' => 'parent.all[begin_hour].data',
+          'message' => $this->translator->trans('calendars.opening_hours.errors.greater_than_begin_hour')
+        ]),]
       ])
     ;
     $builder->addEventListener(FormEvents::PRE_SUBMIT, array($this, 'onPreSubmit'));
@@ -139,27 +178,44 @@ class UserGroupType extends AbstractI18nType
   public function onPreSubmit(FormEvent $event)
   {
     $data = $event->getData();
-    $data['coreContactPoint']['name'] = $data['name'][$this->getLocale()] ?? '';
-    $data['coreLocation']['name'] = $data['name'][$this->getLocale()] ?? '';
+    $userGroupName = $data['name'][$this->getLocale()];
+    $data['coreContactPoint']['name'] = $userGroupName;
+    $data['coreLocation']['name'] = $userGroupName;
 
     if ($data['calendar'] == $this->CRETE_NEW_CALENDAR_KEY) {
-      $isTitleSet = (array_key_exists('calendar', $data) and array_key_exists('title', $data['calendar']));
-      if (!$isTitleSet or !$data['calendar']['title']) {
-        $calendarTitle = $data['name'][$this->getLocale()];
-        $titleAlreadyExists = $this->entityManager->getRepository('App\Entity\Calendar')->findOneBy(['title' => $calendarTitle]);
-        if ($titleAlreadyExists) {
-          $calendarTitle .= '-' . substr(uuid_create(), 0, 4);
-        }
-        $data['calendar']['title'] = $calendarTitle;
-      }
-      $isLocationSet = (array_key_exists('calendar', $data) and array_key_exists('location', $data['calendar']));
-      if (!$isLocationSet or !$data['calendar']['location']) {
-        $data['calendar']['location'] = $data['name'][$this->getLocale()];
-      }
+      // create new calendar for the user group
+      $calendarRepository = $this->entityManager->getRepository('App\Entity\Calendar');
+      $titleAlreadyExists = $calendarRepository->findOneBy(['title' => $userGroupName]);
+      $uniqueEnding = '-'.substr(uuid_create(), 0, 4);
+      $now = new \DateTime();
+
+      $openingHours = (new OpeningHour())
+        ->setIsModerated(false)
+        ->setMeetingMinutes(30)
+        ->setIntervalMinutes(0)
+        ->setCreatedAt($now)
+        ->setUpdatedAt($now)
+        ->setStartDate($now)
+        ->setEndDate(new \DateTime(date('Y') +1 . '-12-31'))
+        ->setBeginHour(\DateTime::createFromFormat('H:i', $data['begin_hour']))
+        ->setEndHour(\DateTime::createFromFormat('H:i', $data['end_hour']))
+        ->setDaysOfWeek($data['days_of_week'])
+        ->setName($this->translator->trans('user_group.hours'));
+
+      $calendar = (new Calendar())
+        ->setTitle($titleAlreadyExists? $userGroupName.$uniqueEnding : $userGroupName)
+        ->setLocation($userGroupName)
+        ->addOpeningHour($openingHours)
+        ->setOwner($this->security->getUser());
+
+      $this->entityManager->persist($calendar);
+      $this->entityManager->flush();
+      $data['calendar'] = $calendar;
+
     } else if (uuid_is_valid($data['calendar'])){
       foreach ($this->availableCalendars as $calendar){
         if ($calendar->getId() == $data['calendar']){
-          $data['calendar'] = $calendar->getId();
+          $data['calendar'] = $calendar;
           break;
         }
       }
@@ -167,6 +223,7 @@ class UserGroupType extends AbstractI18nType
       $data['calendar'] = null;
     }
     $event->setData($data);
+
   }
 
   /**
@@ -178,5 +235,10 @@ class UserGroupType extends AbstractI18nType
       'data_class' => UserGroup::class,
     ));
     $this->configureTranslationOptions($resolver);
+  }
+
+  private function getUniqueCalendarName($userGroupName)
+  {
+
   }
 }

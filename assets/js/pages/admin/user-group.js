@@ -32,7 +32,24 @@ $('#user_group_calendar').on('change', function () {
     console.log('vuoto');
     $('#new-calendar').addClass('d-none');
     $('#calendar-cards').addClass('d-none');
-  } else if (this.value === 'new'){
+  } else if (this.value === 'crete_new_calendar'){
+    console.log('new');
+    $('#new-calendar').removeClass('d-none');
+    $('#calendar-cards').addClass('d-none');
+  } else {
+    console.log('altro');
+    $('#new-calendar').addClass('d-none');
+    $('#calendar-cards').removeClass('d-none');
+  }
+});
+
+$('#user_group_calendar').on('load', function () {
+  console.log(this.value);
+  if (!this.value){
+    console.log('vuoto');
+    $('#new-calendar').addClass('d-none');
+    $('#calendar-cards').addClass('d-none');
+  } else if (this.value === 'crete_new_calendar'){
     console.log('new');
     $('#new-calendar').removeClass('d-none');
     $('#calendar-cards').addClass('d-none');

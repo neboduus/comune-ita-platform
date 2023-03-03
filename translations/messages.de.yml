@@ -3065,7 +3065,6 @@ user_group:
   opening_hours: ''
   hours: ''
   opening_hours_alert: ''
-  no_calendar: ''
 contact_point:
   title: 'Kontaktpunkt'
   contact_point_name: 'Titel'
