@@ -1,0 +1,58 @@
+{
+  "address": {
+    "label": "Indirizzo",
+    "type": "address"
+  },
+  "type": {
+    "label": "Tip di disservizio",
+    "type": "select"
+  },
+  "subject": {
+    "label": "Titolo",
+    "type": "textfield"
+  },
+  "details": {
+    "label": "Descrizione",
+    "type": "textarea"
+  },
+  "images": {
+    "label": "Immagini",
+    "type": "sdcfile"
+  },
+  "docs": {
+    "label": "Documenti",
+    "type": "sdcfile"
+  },
+  "applicant": {
+    "data": {
+      "email_address": {
+        "label": "Indirizzo Email",
+        "type": "email"
+      },
+      "phone_number": {
+        "label": "Recapito telefonico",
+        "type": "phoneNumber"
+      },
+      "fiscal_code": {
+        "data": {
+          "fiscal_code": {
+            "label": "Codice Fiscale",
+            "type": "textfield"
+          }
+        }
+      },
+      "completename": {
+        "data": {
+          "name": {
+            "label": "Nome",
+            "type": "textfield"
+          },
+          "surname": {
+            "label": "Cognome",
+            "type": "textfield"
+          }
+        }
+      }
+    }
+  }
+}

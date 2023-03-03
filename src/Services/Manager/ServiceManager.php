@@ -12,6 +12,7 @@ use App\Entity\UserGroup;
 use App\Event\KafkaEvent;
 use App\Model\FeedbackMessage;
 use App\Model\Service;
+use App\Services\FormServerApiAdapterService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Ramsey\Uuid\Uuid;
@@ -19,29 +20,17 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use function Aws\boolean_value;
 
 class ServiceManager
 {
 
-  /**
-   * @var EntityManagerInterface
-   */
-  private $entityManager;
+  private EntityManagerInterface $entityManager;
 
-  /**
-   * @var EventDispatcherInterface
-   */
-  private $dispatcher;
+  private EventDispatcherInterface $dispatcher;
 
-  /**
-   * @var TranslatorInterface
-   */
-  private $translator;
+  private TranslatorInterface $translator;
 
-  /**
-   * @var false|string[]
-   */
+  /** @var false|string[] */
   private $locales;
 
   /**
@@ -75,12 +64,12 @@ class ServiceManager
     $recipientIds = $request->get('recipient_id', false);
     $geographicAreaIds = $request->get('geographic_area_id', false);
     $userGroupIds = $request->get('user_group_ids', false);
-    $grouped = boolean_value($request->get('grouped', true));
+    $grouped = $request->query->getBoolean('grouped', true);
     $limit = $request->get('limit', false);
 
     $criteria['order_by'] = $request->get('order_by', 'name');
-    $criteria['ascending'] = boolean_value($request->get('ascending', true));
-    $criteria['sticky'] = boolean_value($request->get('sticky'));
+    $criteria['ascending'] = $request->query->getBoolean('ascending', true);
+    $criteria['sticky'] = $request->query->getBoolean('sticky');
     $criteria['locale'] = $request->getLocale();
 
     if ($searchText) {

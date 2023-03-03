@@ -15,7 +15,6 @@ use App\Entity\PraticaRepository;
 use App\Entity\RispostaOperatore;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
-use App\Entity\User;
 use App\Event\PraticaOnChangeStatusEvent;
 use App\Model\Application;
 use App\Model\File as FileModel;
@@ -123,52 +122,32 @@ class ApplicationsAPIController extends AbstractFOSRestController
     'description' => 'Withdraw Application',
   ];
 
-  /** @var EntityManagerInterface */
-  private $em;
+  private EntityManagerInterface $em;
 
-  /** @var InstanceService */
-  private $is;
+  private InstanceService $is;
 
-  /** @var PraticaStatusService */
-  private $statusService;
+  private PraticaStatusService $statusService;
 
-  /** @var ModuloPdfBuilderService */
-  protected $pdfBuilder;
+  protected ModuloPdfBuilderService $pdfBuilder;
 
   protected $router;
 
   protected $baseUrl = '';
 
-  /** @var LoggerInterface */
-  protected $logger;
+  protected LoggerInterface $logger;
 
-  /**
-   * @var PraticaManager
-   */
-  private $praticaManager;
-  /**
-   * @var FormServerApiAdapterService
-   */
-  private $formServerService;
+  private PraticaManager $praticaManager;
 
-  /**
-   * @var AllegatoFileService
-   */
-  private $fileService;
+  private FormServerApiAdapterService $formServerService;
 
-  /**
-   * @var ApplicationDto
-   */
-  private $applicationDto;
+  private AllegatoFileService $fileService;
 
-  /**
-   * @var PaymentService
-   */
-  private $paymentService;
-  /**
-   * @var GiscomAPIAdapterServiceInterface
-   */
-  private $giscomAPIAdapterService;
+  private ApplicationDto $applicationDto;
+
+  private PaymentService $paymentService;
+
+  private GiscomAPIAdapterServiceInterface $giscomAPIAdapterService;
+
   private EventDispatcherInterface $dispatcher;
 
   /**
@@ -185,6 +164,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param ApplicationDto $applicationDto
    * @param PaymentService $paymentService
    * @param GiscomAPIAdapterServiceInterface $giscomAPIAdapterService
+   * @param EventDispatcherInterface $dispatcher
    */
   public function __construct(
     EntityManagerInterface $em,
@@ -463,8 +443,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if (!empty($servicesByOperatore) && !in_array($service->getId(), $servicesByOperatore)) {
         return $this->view(["You are not allowed to view applications of passed service"], Response::HTTP_FORBIDDEN);
       }
-      /* 
-        se il servizio passato non è uno a cui l'operatore è abilitato è uno nel quale ha almeno 
+      /*
+        se il servizio passato non è uno a cui l'operatore è abilitato è uno nel quale ha almeno
         una pratica assegnata allora mi predispongo in modo tale da ottenere SOLO le pratiche a lui assegnate
       */
       if ($user instanceof OperatoreUser && !in_array($service->getId(), $allowedServices) && in_array($service->getId(), $servicesByOperatore)) {
@@ -660,16 +640,18 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_BAD_REQUEST);
     }
 
-    try {
-      $service = $this->em->getRepository('App\Entity\Servizio')->find($applicationModel->getService());
-      if (!$service instanceof Servizio) {
-        return $this->view(["Service not found"], Response::HTTP_BAD_REQUEST);
-      }
-    } catch (DriverException $e) {
-      return $this->view(["Service uuid is not formally correct"], Response::HTTP_BAD_REQUEST);
+    $serviceRepo = $this->em->getRepository('App\Entity\Servizio');
+    if (Uuid::isValid($applicationModel->getService())) {
+      $service = $serviceRepo->find($applicationModel->getService());
+    } else {
+      $service = $serviceRepo->findOneBy(['identifier' => $applicationModel->getService()]);
     }
 
-    $result = $this->formServerService->getFormSchema($service->getFormIoId());
+    if (!$service instanceof Servizio) {
+      return $this->view(["Service not found"], Response::HTTP_BAD_REQUEST);
+    }
+
+    $result = $this->formServerService->getSchema($service);
     if ($result['status'] != 'success') {
       return $this->view(["There was an error on retrieve form schema"], Response::HTTP_BAD_REQUEST);
     }
@@ -950,6 +932,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     $schema = null;
     $result = $this->formServerService->getFormSchema($service->getBackofficeFormId());
+
     if ($result['status'] == 'success') {
       $schema = $result['schema'];
     }
@@ -2503,7 +2486,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * Get the services to which the operatore is enabled
    * as well as the services where the operatore has at least
    * an application to which he is assigned
-   * 
+   *
    * @return array
    */
   private function getServicesByOperatore(): array
