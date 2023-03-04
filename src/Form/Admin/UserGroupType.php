@@ -10,7 +10,6 @@ use App\Form\I18n\AbstractI18nType;
 use App\Form\I18n\I18nDataMapperInterface;
 use App\Form\I18n\I18nTextareaType;
 use App\Form\I18n\I18nTextType;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -26,7 +25,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserGroupType extends AbstractI18nType
 {
-  private string $CRETE_NEW_CALENDAR_KEY = 'crete_new_calendar';
 
   /**
    * @var TranslatorInterface
@@ -39,11 +37,6 @@ class UserGroupType extends AbstractI18nType
   private EntityManagerInterface $entityManager;
 
   /**
-   * @var ArrayCollection
-   */
-  private $availableCalendars;
-
-  /**
    * @var Security
    */
   private Security $security;
@@ -54,13 +47,13 @@ class UserGroupType extends AbstractI18nType
    * @param $locales
    * @param TranslatorInterface $translator
    * @param EntityManagerInterface $entityManager
+   * @param Security $security
    */
   public function __construct(I18nDataMapperInterface $dataMapper, $locale, $locales, TranslatorInterface $translator, EntityManagerInterface $entityManager, Security $security)
   {
     parent::__construct($dataMapper, $locale, $locales);
     $this->translator = $translator;
     $this->entityManager = $entityManager;
-    $this->availableCalendars = $this->entityManager->getRepository(Calendar::class)->findAll();
     $this->security = $security;
   }
 
@@ -69,12 +62,6 @@ class UserGroupType extends AbstractI18nType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $calendars = ['Aggiungi calendario' => $this->CRETE_NEW_CALENDAR_KEY];
-    foreach ($this->availableCalendars as $calendar){
-      $calendars[$calendar->getTitle()] = $calendar->getId();
-    }
-
-
     $this->createTranslatableMapper($builder, $options)
       ->add('name', I18nTextType::class, [
         'label' => 'general.nome',
@@ -138,10 +125,11 @@ class UserGroupType extends AbstractI18nType
         'required' => false,
         'label' => 'place.address'
       ])
-      ->add('calendar', ChoiceType::class, [
-        'choices' => $calendars,
+      ->add('calendar', EntityType::class, [
+        'class' => Calendar::class,
         'label' => 'user_group.calendar',
-        'required' => false
+        'required' => false,
+        'placeholder' => 'user_group.no_calendar'
       ])
       ->add('days_of_week', ChoiceType::class, [
         'label' => 'calendars.opening_hours.days_of_week',
@@ -182,8 +170,7 @@ class UserGroupType extends AbstractI18nType
     $data['coreContactPoint']['name'] = $userGroupName;
     $data['coreLocation']['name'] = $userGroupName;
 
-    if ($data['calendar'] == $this->CRETE_NEW_CALENDAR_KEY) {
-      // create new calendar for the user group
+    if ($data['calendar'] == 'crete_new_calendar') {
       $calendarRepository = $this->entityManager->getRepository('App\Entity\Calendar');
       $titleAlreadyExists = $calendarRepository->findOneBy(['title' => $userGroupName]);
       $uniqueEnding = '-'.substr(uuid_create(), 0, 4);
@@ -202,28 +189,18 @@ class UserGroupType extends AbstractI18nType
         ->setDaysOfWeek($data['days_of_week'])
         ->setName($this->translator->trans('user_group.hours'));
 
-      $calendar = (new Calendar())
+      $newCalendar = (new Calendar())
         ->setTitle($titleAlreadyExists? $userGroupName.$uniqueEnding : $userGroupName)
         ->setLocation($userGroupName)
         ->addOpeningHour($openingHours)
         ->setOwner($this->security->getUser());
 
-      $this->entityManager->persist($calendar);
+      $this->entityManager->persist($newCalendar);
       $this->entityManager->flush();
-      $data['calendar'] = $calendar;
-
-    } else if (uuid_is_valid($data['calendar'])){
-      foreach ($this->availableCalendars as $calendar){
-        if ($calendar->getId() == $data['calendar']){
-          $data['calendar'] = $calendar;
-          break;
-        }
-      }
-    } else {
-      $data['calendar'] = null;
+      $data['calendar'] = $newCalendar;
     }
-    $event->setData($data);
 
+    $event->setData($data);
   }
 
   /**

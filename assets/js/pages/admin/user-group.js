@@ -26,7 +26,10 @@ $('#submit_or_confirm_user_group').on('click', function (e) {
   }
 });
 
-$('#user_group_calendar').on('change', function () {
+
+let userGroupCalendar = $('#user_group_calendar');
+
+userGroupCalendar.on('change', function () {
   console.log(this.value);
   if (!this.value){
     console.log('vuoto');
@@ -43,19 +46,23 @@ $('#user_group_calendar').on('change', function () {
   }
 });
 
-$('#user_group_calendar').on('load', function () {
-  console.log(this.value);
-  if (!this.value){
-    console.log('vuoto');
-    $('#new-calendar').addClass('d-none');
-    $('#calendar-cards').addClass('d-none');
-  } else if (this.value === 'crete_new_calendar'){
-    console.log('new');
-    $('#new-calendar').removeClass('d-none');
-    $('#calendar-cards').addClass('d-none');
-  } else {
-    console.log('altro');
-    $('#new-calendar').addClass('d-none');
-    $('#calendar-cards').removeClass('d-none');
-  }
-});
+let opt = document.createElement('option');
+opt.value = 'crete_new_calendar';
+opt.innerHTML = Translator.trans('user_group.new_calendar', {}, 'messages', $language);
+userGroupCalendar.prepend(opt);
+
+console.log(userGroupCalendar.value);
+if (!userGroupCalendar.value){
+  console.log('vuoto');
+  $('#new-calendar').addClass('d-none');
+  $('#calendar-cards').addClass('d-none');
+} else if (userGroupCalendar.value === 'crete_new_calendar'){
+  console.log('new');
+  $('#new-calendar').removeClass('d-none');
+  $('#calendar-cards').addClass('d-none');
+} else {
+  console.log('altro');
+  $('#new-calendar').addClass('d-none');
+  $('#calendar-cards').removeClass('d-none');
+}
+

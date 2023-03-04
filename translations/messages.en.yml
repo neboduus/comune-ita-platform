@@ -2995,6 +2995,8 @@ user_group:
   opening_hours: 'Opening hours'
   hours: 'Hours'
   opening_hours_alert: 'This is a simplified timetable, you will be able to edit the complete calendar once saved:'
+  new_calendar: '+ Add calendar'
+  no_calendar: '- None'
 contact_point:
   title: 'Contact Point'
   contact_point_name: 'Name'

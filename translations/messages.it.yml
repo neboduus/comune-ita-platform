@@ -3069,6 +3069,8 @@ user_group:
   opening_hours: 'Orari di apertura'
   hours: 'Orari'
   opening_hours_alert: 'Questo è un orario semplificato, potrai modificare il calendario completo una volta salvato:'
+  new_calendar: '+ Aggiungi calendario'
+  no_calendar: '- Nessuno'
 contact_point:
   title: 'Punti di Contatto'
   contact_point_name: 'Nome'
