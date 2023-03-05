@@ -61,6 +61,12 @@ push_php_branch:
     - docker pull $PHP_IMAGE_TMP
     - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
     - docker push "$PHP_IMAGE_NAME:$CI_COMMIT_REF_SLUG"
+    - apk add --no-cache aws-cli
+    - export FOLDER="$CI_COMMIT_REF_SLUG"
+    - export tmp_id=$(docker container create "$PHP_IMAGE_NAME:$CI_COMMIT_REF_SLUG")
+    - docker cp $tmp_id:/var/www/html/public .
+    - aws s3 cp --storage-class REDUCED_REDUNDANCY --no-progress --recursive --acl public-read public/ ${S3_DESTINATION}/${FOLDER}/
+    - docker rm $tmp_id
   only:
     - branches
   except:
@@ -74,6 +80,12 @@ push_php_tag:
     - docker pull $PHP_IMAGE_TMP
     - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:$CI_COMMIT_TAG"
     - docker push "$PHP_IMAGE_NAME:$CI_COMMIT_TAG"
+    - apk add --no-cache aws-cli
+    - export FOLDER="$CI_COMMIT_TAG"
+    - export tmp_id=$(docker container create "$PHP_IMAGE_NAME:$CI_COMMIT_TAG")
+    - docker cp $tmp_id:/var/www/html/public .
+    - aws s3 cp --storage-class REDUCED_REDUNDANCY --no-progress --recursive --acl public-read public/ ${S3_DESTINATION}/${FOLDER}/
+    - docker rm $tmp_id
   only:
     - tags
 
@@ -85,6 +97,12 @@ push_php_latest:
     - docker pull $PHP_IMAGE_TMP
     - docker tag $PHP_IMAGE_TMP "$PHP_IMAGE_NAME:latest"
     - docker push "$PHP_IMAGE_NAME:latest"
+    - apk add --no-cache aws-cli
+    - export FOLDER="latest"
+    - export tmp_id=$(docker container create "$PHP_IMAGE_NAME:latest")
+    - docker cp $tmp_id:/var/www/html/public .
+    - aws s3 cp --storage-class REDUCED_REDUNDANCY --no-progress --recursive --acl public-read public/ ${S3_DESTINATION}/${FOLDER}/
+    - docker rm $tmp_id
   only:
     - master
 
