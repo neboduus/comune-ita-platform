@@ -125,6 +125,7 @@ class ApplicationVoter extends Voter
     if ($this->security->isGranted('ROLE_ADMIN')) {
       return true;
     }
+
     if ($this->security->isGranted('ROLE_OPERATORE')) {
       /** @var OperatoreUser $user */
       $isAssigned = $pratica->getOperatore() && $pratica->getOperatore() === $user;
@@ -133,9 +134,11 @@ class ApplicationVoter extends Voter
       }
     }
 
-    return false;
+    return $user === $pratica->getUser();
+
   }
 
+  // Todo: è identico a canEdit, può essere rimosso
   private function canSubmit(Pratica $pratica, User $user): bool
   {
     // if they can edit, they can submit

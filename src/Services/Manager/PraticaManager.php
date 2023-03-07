@@ -882,6 +882,7 @@ class PraticaManager
    */
   public function addAttachmentsToApplication(Pratica $pratica, $flattenedData)
   {
+    $currentAttachments = $pratica->getAllegati();
     $attachments = [];
     foreach ($flattenedData as $key => $value) {
       // Associa gli allegati alla pratica
@@ -911,6 +912,14 @@ class PraticaManager
         }
       }
     }
+
+    // Rimuovo gli allegati che non sono più presenti nella pratica
+    foreach ($currentAttachments as $attachment) {
+      if (!in_array($attachment->getId(), $attachments)) {
+        $pratica->removeAllegato($attachment);
+      }
+    }
+
     // Verifico che il numero degli allegati associati alla pratica sia uguale a quello passato nel form
     if ($pratica->getAllegati()->count() != count($attachments)) {
       $msg = 'The number of files in form data is not equal to those linked to the application';
