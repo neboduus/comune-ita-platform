@@ -248,7 +248,7 @@ class PraticaRepository extends EntityRepository
 
   public function findPraticheByOperatore(OperatoreUser $user, $filters, $limit, $offset)
   {
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    $serviziAbilitati = $this->getServizioIdListByOperatore($user);
     if (empty($serviziAbilitati)) {
       return [];
     }
@@ -268,20 +268,19 @@ class PraticaRepository extends EntityRepository
 
   public function countPraticheByOperatore(OperatoreUser $user, $filters)
   {
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)) {
+    $servicesByOperatore = $this->getServizioIdListByOperatore($user);
+    if (empty($servicesByOperatore)) {
       return 0;
     }
 
     $qb = $this->getPraticheByOperatoreQueryBuilder($filters, $user);
     return $qb->select('count(pratica.id)')->getQuery()->getSingleScalarResult();
-
   }
 
   public function findStatesPraticheByOperatore(OperatoreUser $user, $filters = [])
   {
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)) {
+    $servicesByOperatore = $this->getServizioIdListByOperatore($user);
+    if (empty($servicesByOperatore)) {
       return [];
     }
 
@@ -329,13 +328,13 @@ class PraticaRepository extends EntityRepository
    * @param SchemaComponent[] $fields
    * @param OperatoreUser $user
    * @param $filters
-   * @return array|int
+   * @return array|int|string
    * @see OperatoriController::indexCalculateAction()
    */
   public function getSumFieldsInPraticheByOperatore($fields, OperatoreUser $user, $filters)
   {
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)) {
+    $servicesByOperatore = $this->getServizioIdListByOperatore($user);
+    if (empty($servicesByOperatore)) {
       return 'n/a';
     }
     $sqlSelectFields = [];
@@ -371,13 +370,13 @@ class PraticaRepository extends EntityRepository
    * @param SchemaComponent[] $fields
    * @param OperatoreUser $user
    * @param $filters
-   * @return array|int
+   * @return array|int|string
    * @see OperatoriController::indexCalculateAction()
    */
   public function getAvgFieldsInPraticheByOperatore($fields, OperatoreUser $user, $filters)
   {
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)) {
+    $servicesByOperatore = $this->getServizioIdListByOperatore($user);
+    if (empty($servicesByOperatore)) {
       return 'n/a';
     }
     $sqlSelectFields = [];
@@ -414,13 +413,13 @@ class PraticaRepository extends EntityRepository
    * @param SchemaComponent[] $fields
    * @param OperatoreUser $user
    * @param $filters
-   * @return array|int
+   * @return array|int|string
    * @see OperatoriController::indexCalculateAction()
    */
   public function getCountNotNullFieldsInPraticheByOperatore($fields, OperatoreUser $user, $filters)
   {
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    if (empty($serviziAbilitati)) {
+    $servicesByOperatore = $this->getServizioIdListByOperatore($user);
+    if (empty($servicesByOperatore)) {
       return 'n/a';
     }
     $sqlSelectFields = [];
@@ -737,67 +736,75 @@ class PraticaRepository extends EntityRepository
   }
 
   /**
+   * Get services list by operatore
+   * It contains both the services to which the operatore is enabled
+   * and the services where the operatore has at least one assigned application
+   *
+   * @param OperatoreUser $user
+   * @param int|null $minStatus
    * @return array
    */
   public function getServizioIdListByOperatore(OperatoreUser $user, $minStatus = null)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    $servizio = 'where (servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\') or operatore_id = \'' . $user->getId() . '\')';
 
-    $status = '';
+    $qb = $this->createQueryBuilder('pratica');
+    $qb->select('DISTINCT IDENTITY(pratica.servizio)');
+
+    if (!empty($serviziAbilitati)) {
+      $qb->where('pratica.servizio IN (:services)')
+        ->setParameter('services', $serviziAbilitati)
+        ->orWhere('pratica.operatore  = :operatore')
+        ->setParameter('operatore', $user);
+    } else {
+      $qb->where('pratica.operatore  = :operatore')->setParameter('operatore', $user);
+    }
+
     if ($minStatus) {
-      $status = 'and status >= ' . (int)$minStatus;
+      $qb->andWhere('pratica.status >= :status')->setParameter('status', $minStatus);
     }
 
-    try {
-      $stmt = $this->getEntityManager()->getConnection()->prepare(
-        "select distinct(servizio_id) from pratica $servizio $status order by servizio_id asc"
-      );
-      $stmt->execute();
-
-      return $stmt->fetchAll(FetchMode::COLUMN);
-    } catch (DBALException $e) {
-
-      return [];
-    }
+    return $qb->getQuery()->getSingleColumnResult();
   }
 
   /**
+   * Get applications statuses list by operatore
+   *
+   * @param OperatoreUser $user
+   * @param int|null $minStatus
    * @return array
    */
   public function getStateListByOperatore(OperatoreUser $user, $minStatus = null)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    $servizio = 'where (servizio_id in (\'' . implode('\',\'', $serviziAbilitati) . '\') or operatore_id = \'' . $user->getId() . '\')';
-
-    $status = '';
-    if ($minStatus) {
-      $status = 'and status >= ' . (int)$minStatus;
+    
+    $qb = $this->createQueryBuilder('pratica');
+    $qb->select('DISTINCT pratica.status');
+    
+    if (!empty($serviziAbilitati)) {
+      $qb->where('pratica.servizio IN (:services)')
+        ->setParameter('services', $serviziAbilitati)
+        ->orWhere('pratica.operatore  = :operatore')
+        ->setParameter('operatore', $user);
+    } else {
+      $qb->where('pratica.operatore  = :operatore')->setParameter('operatore', $user);
     }
 
-    try {
-      $stmt = $this->getEntityManager()->getConnection()->prepare(
-        "select distinct(status) from pratica $servizio $status order by status asc"
-      );
-      $stmt->execute();
+    if ($minStatus) {
+      $qb->andWhere('pratica.status >= :status')->setParameter('status', $minStatus);
+    }
 
-      $stateIdList = $stmt->fetchAll(FetchMode::COLUMN);
-
-      $states = [];
-      foreach ($stateIdList as $id) {
-        foreach ($this->getClassConstants() as $name => $value) {
-          if ($value == $id && strpos($name, 'STATUS_') === 0) {
-            $states[] = ['id' => $id, 'name' => $name];
-          }
+    $stateIdList = $qb->getQuery()->getSingleColumnResult();
+    $states = [];
+    foreach ($stateIdList as $id) {
+      foreach ($this->getClassConstants() as $name => $value) {
+        if ($value == $id && strpos($name, 'STATUS_') === 0) {
+          $states[] = ['id' => $id, 'name' => $name];
         }
       }
-
-      return $states;
-
-    } catch (DBALException $e) {
-
-      return [];
     }
+
+    return $states;
   }
 
   private function getClassConstants()

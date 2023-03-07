@@ -167,20 +167,21 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param EventDispatcherInterface $dispatcher
    */
   public function __construct(
-    EntityManagerInterface $em,
-    InstanceService $is,
-    PraticaStatusService $statusService,
-    ModuloPdfBuilderService $pdfBuilder,
-    UrlGeneratorInterface $router,
-    LoggerInterface $logger,
-    PraticaManager $praticaManager,
-    FormServerApiAdapterService $formServerService,
-    AllegatoFileService $fileService,
-    ApplicationDto $applicationDto,
-    PaymentService $paymentService,
+    EntityManagerInterface           $em,
+    InstanceService                  $is,
+    PraticaStatusService             $statusService,
+    ModuloPdfBuilderService          $pdfBuilder,
+    UrlGeneratorInterface            $router,
+    LoggerInterface                  $logger,
+    PraticaManager                   $praticaManager,
+    FormServerApiAdapterService      $formServerService,
+    AllegatoFileService              $fileService,
+    ApplicationDto                   $applicationDto,
+    PaymentService                   $paymentService,
     GiscomAPIAdapterServiceInterface $giscomAPIAdapterService,
-    EventDispatcherInterface $dispatcher
-  ) {
+    EventDispatcherInterface         $dispatcher
+  )
+  {
     $this->em = $em;
     $this->is = $is;
     $this->statusService = $statusService;
@@ -419,7 +420,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $applicationStatuses = array_keys(Pratica::getStatuses());
       if (!in_array($statusParameter, $applicationStatuses)) {
         return $this->view(
-          ["Status code not present, chose one between: ".implode(',', $applicationStatuses)],
+          ["Status code not present, chose one between: " . implode(',', $applicationStatuses)],
           Response::HTTP_BAD_REQUEST
         );
       }
@@ -624,7 +625,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function postApplicationAction(Request $request)
   {
     $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_OPERATORE', 'ROLE_ADMIN']);
-
     $applicationModel = new Application();
     $form = $this->createForm('App\Form\Rest\ApplicationFormType', $applicationModel);
     $this->processForm($request, $form);
@@ -682,23 +682,18 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }*/
 
     $data = [
-      'data' => [],
-      'flattened' => [],
+      'data' => $cleanedData,
+      'flattened' => $flatData,
       'schema' => $flatSchema,
     ];
-
-    if (!empty($cleanedData)) {
-      $data['data'] = $cleanedData;
-      $data['flattened'] = $flatData;
-    }
 
     if ($this->getUser() instanceof CPSUser) {
       $user = $this->getUser();
       try {
-        // se l'utente non è anaonimo verifico la coerenza dei dati
+        // se l'utente non è anonimo verifico la coerenza dei dati
         if (!$user->isAnonymous()) {
           $this->praticaManager->validateUserData($flatData, $user);
-        }else{
+        } else {
           // @see FormIORenderType::updateUser
           // altrimenti decoro l'utente anonimo
           //@todo check recaptcha
@@ -711,6 +706,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
             ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ?? '')
             ->setCellulareContatto($data['flattened']['applicant.data.cell_number'] ?? '')
             ->setCpsTelefono($data['flattened']['applicant.data.phone_number'] ?? '');
+
           $this->em->persist($user);
           $this->em->flush();
         }
@@ -795,6 +791,143 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     return $this->view($this->applicationDto->fromEntity($pratica), Response::HTTP_CREATED);
   }
+  
+  /**
+   * Edit full Application
+   * @Rest\Put("/{id}", name="applications_api_put")
+   *
+   * @Security(name="Bearer")
+   *
+   * @OA\RequestBody(
+   *     description="The application to edit",
+   *     required=true,
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Application::class, groups={"write"})
+   *         )
+   *     )
+   * )
+   *
+   * @OA\Response(
+   *     response=200,
+   *     description="Edit full Application"
+   * )
+   *
+   * @OA\Response(
+   *     response=400,
+   *     description="Bad request"
+   * )
+   *
+   * @OA\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @OA\Response(
+   *     response=404,
+   *     description="Not found"
+   * )
+   *
+   * @OA\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function putApplicationAction($id, Request $request): View
+  {
+    try {
+      $repository = $this->em->getRepository('App\Entity\Pratica');
+      /** @var Pratica $application */
+      $application = $repository->find($id);
+
+      if (!$application) {
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+      }
+
+      $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
+
+      if (in_array(
+        $application->getStatus(),
+        [Pratica::FINAL_STATES]
+      )) {
+        return $this->view(["Application is in a final state, can't be updated."], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      $applicationModel = new Application();
+      $form = $this->createForm('App\Form\Rest\ApplicationFormType', $applicationModel);
+      $this->processForm($request, $form);
+
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = FormUtils::getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $result = $this->formServerService->getSchema($application->getServizio());
+      if ($result['status'] != 'success') {
+        return $this->view(["There was an error on retrieve form schema"], Response::HTTP_BAD_REQUEST);
+      }
+      $schema = $result['schema'];
+      $this->praticaManager->setSchema($schema);
+      $flatSchema = $this->praticaManager->arrayFlat($schema, true);
+      $cleanedData = StringUtils::cleanData($applicationModel->getData());
+      $flatData = $this->praticaManager->arrayFlat($cleanedData);
+
+      if (empty($cleanedData)) {
+        return $this->view(["Empty application are not allowed"], Response::HTTP_BAD_REQUEST);
+      }
+
+      $data = [
+        'data' => $cleanedData,
+        'flattened' => $flatData,
+        'schema' => $flatSchema,
+      ];
+
+      $application->setStatus($applicationModel->getStatus());
+      $this->praticaManager->validateDematerializedData($data, $application);
+      $application->setDematerializedForms($data);
+      if ($application->getStatus() == Pratica::STATUS_DRAFT && $applicationModel->getStatus() > Pratica::STATUS_DRAFT) {
+        $application->setSubmissionTime(time());
+      }
+
+      $this->praticaManager->addAttachmentsToApplication($application, $flatData);
+
+      $application->setGeneratedSubject();
+
+      $this->em->persist($application);
+      $this->em->flush();
+    } catch (ValidatorException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during data validation',
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it',
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    return $this->view(["Application Modified Successfully"], Response::HTTP_OK);
+
+  }
+
 
   /**
    * Retrieve backoffice data of an application
@@ -902,6 +1035,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *
    * @param Request $request
    * @return View
+   * @throws Exception
    */
   public function updateApplicationBackofficeDataAction($id, Request $request)
   {
@@ -941,7 +1075,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $flatData = $this->praticaManager->arrayFlat($request->request->get('backoffice_data'));
 
     foreach ($flatData as $k => $v) {
-      if (!isset($flatSchema[$k.'.type']) && !isset($flatSchema[$k])) {
+      if (!isset($flatSchema[$k . '.type']) && !isset($flatSchema[$k])) {
         return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
       }
     }
@@ -1138,7 +1272,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_OK);
     } catch (\Exception $e) {
       $this->logger->error('Errer fetching payment of application: ' . $id . ' - ' . $e->getMessage());
-      return $this->view(['Errer fetching payment of application: ' . $id ], Response::HTTP_BAD_REQUEST);
+      return $this->view(['Errer fetching payment of application: ' . $id], Response::HTTP_BAD_REQUEST);
     }
   }
 
@@ -1338,11 +1472,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     // Todo: Passare alle transition prima possibile
     if ($application->getStatus() == Pratica::STATUS_REQUEST_INTEGRATION) {
-      return $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationRequestAction', [
+      return $this->forward(ApplicationsAPIController::class . '::applicationTransitionRegisterIntegrationRequestAction', [
         'id' => $application->getId(),
       ]);
     } elseif ($application->getStatus() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
-      return $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationAnswerAction', [
+      return $this->forward(ApplicationsAPIController::class . '::applicationTransitionRegisterIntegrationAnswerAction', [
         'id' => $application->getId(),
       ]);
     }
