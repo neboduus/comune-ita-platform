@@ -434,7 +434,7 @@ class FormServerApiAdapterService implements FormIOSchemaProviderInterface
     if ($service->isBuiltIn()) {
       return [
         'status' => 'success',
-        'schema' => file_get_contents('../data/built-in/'. $service->getIdentifier() .'-schema-flat.json'),
+        'schema' => json_decode(file_get_contents('../data/built-in/'. $service->getIdentifier() .'-schema-flat.json'), true),
       ];
     } else {
       return $this->getFormSchema($service->getFormIoId());

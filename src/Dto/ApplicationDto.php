@@ -142,7 +142,7 @@ class ApplicationDto extends AbstractDto
     $application->setServiceGroupName($pratica->getServiceGroup() ? $pratica->getServiceGroup()->getName() : null);
 
     // Form data
-    if ($pratica->getServizio()->getPraticaFCQN() == '\App\Entity\FormIO') {
+    if ($pratica->getServizio()->isFormio() || $pratica->getServizio()->isBuiltIn()) {
       if ($version >= 2) {
         $application->setData($this->decorateDematerializedFormsV2($pratica->getDematerializedForms(), $attachmentEndpointUrl, $version));
       } else {
@@ -153,7 +153,7 @@ class ApplicationDto extends AbstractDto
     }
 
     // Backoffice form data
-    if ($pratica->getServizio()->getPraticaFCQN() == '\App\Entity\FormIO') {
+    if ($pratica->getServizio()->isFormio() || $pratica->getServizio()->isBuiltIn()) {
       if ($version >= 2) {
         $application->setBackofficeData($this->decorateDematerializedFormsV2($pratica->getBackofficeFormData(), $attachmentEndpointUrl, $version));
       } else {
