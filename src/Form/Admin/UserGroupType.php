@@ -197,6 +197,16 @@ class UserGroupType extends AbstractI18nType
 
       $this->entityManager->persist($newCalendar);
       $this->entityManager->flush();
+
+      $queryBuilder = $this->entityManager->createQueryBuilder();
+      $query = $queryBuilder->update('App:UserGroup', 'u')
+        ->set('u.calendar', ':calendar')
+        ->where('u.id = :id')
+        ->setParameter('calendar', $newCalendar)
+        ->setParameter('id', $event->getForm()->getData()->getId() )
+        ->getQuery();
+      $query->execute();
+
       $data['calendar'] = $newCalendar;
     }
 
