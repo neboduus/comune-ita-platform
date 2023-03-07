@@ -2,7 +2,7 @@
   {% if servizio.isSharedWithGroup and servizio.serviceGroup %}
     <div class="col-lg-12 px-lg-4">
       {% if servizio.ExternalCardUrl %}
-      {{ include('Admin/servizio/parts/_externalCardUrlEnabled.html.twig') }}
+        {{ include('Admin/servizio/parts/_externalCardUrlEnabled.html.twig') }}
       {% else %}
         <div class="alert alert-info">
           <p>{{ 'servizio.shared_with_group_message'|trans }}
@@ -302,14 +302,13 @@
             <div class="collapse-body">
               <fieldset class="form-group">
                 <div class="row choices-auto-height">
-                {% for child in form.business_events %}
-                  <div class="col-12 col-lg-6">
-                    {{ form_widget(child) }}
-                  </div>
-                {% endfor %}
+                  {% for child in form.business_events %}
+                    <div class="col-12 col-lg-6">
+                      {{ form_widget(child) }}
+                    </div>
+                  {% endfor %}
                 </div>
               </fieldset>
-              </div>
             </div>
           </div>
         </div>

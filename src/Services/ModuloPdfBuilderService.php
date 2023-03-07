@@ -591,7 +591,7 @@ class ModuloPdfBuilderService implements ScheduledActionHandlerInterface
    * @param $fileName
    * @return string
    */
-  private function generateFileName($fileName)
+  public function generateFileName($fileName)
   {
     $now = new DateTime();
     $now->setTimestamp(time());

@@ -93,6 +93,7 @@ class MailerService
    * @var AllegatoFileService
    */
   private $fileService;
+  private ModuloPdfBuilderService $moduloPdfBuilderService;
 
   /**
    * MailerService constructor.
@@ -104,6 +105,7 @@ class MailerService
    * @param IOService $ioService
    * @param PraticaPlaceholderService $praticaPlaceholderService
    * @param AllegatoFileService $fileService
+   * @param ModuloPdfBuilderService $moduloPdfBuilderService
    */
   public function __construct(
     Swift_Mailer $mailer,
@@ -113,7 +115,8 @@ class MailerService
     LoggerInterface $logger,
     IOService $ioService,
     PraticaPlaceholderService $praticaPlaceholderService,
-    AllegatoFileService $fileService
+    AllegatoFileService $fileService,
+    ModuloPdfBuilderService $moduloPdfBuilderService
   ){
     $this->mailer = $mailer;
     $this->translator = $translator;
@@ -123,6 +126,7 @@ class MailerService
     $this->ioService = $ioService;
     $this->praticaPlaceholderService = $praticaPlaceholderService;
     $this->fileService = $fileService;
+    $this->moduloPdfBuilderService = $moduloPdfBuilderService;
   }
 
   /**
@@ -682,6 +686,17 @@ class MailerService
           $message->attach($attachment);
         }
       }
+    }
+
+    // Send attachment to user if status is registered
+    if ($pratica->getStatus() == Pratica::STATUS_REGISTERED) {
+      $fileContent = $this->moduloPdfBuilderService->renderForPratica($pratica, true);
+      $attachment = new \Swift_Attachment(
+        $fileContent,
+        $this->moduloPdfBuilderService->generateFileName("Modulo protocollato {$pratica->getServizio()->getName()}"),
+        'application/pdf'
+      );
+      $message->attach($attachment);
     }
 
     // Send operator attachment to user if status is complete
