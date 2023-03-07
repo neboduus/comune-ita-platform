@@ -30,22 +30,13 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
 
   const FORMAT_JWT = 'jwt';
 
-  /**
-   * @var UrlGeneratorInterface
-   */
-  protected $urlGenerator;
+  protected UrlGeneratorInterface $urlGenerator;
 
   protected $loginRoute;
 
-  /**
-   * @var UserSessionService
-   */
-  protected $userSessionService;
+  protected UserSessionService $userSessionService;
 
-  /**
-   * @var JWTTokenManagerInterface
-   */
-  protected $JWTTokenManager;
+  protected JWTTokenManagerInterface $JWTTokenManager;
 
   /**
    * @return string[]
@@ -153,6 +144,11 @@ abstract class AbstractAuthenticator extends AbstractGuardAuthenticator
     $format = $request->query->get('format', false);
     if ($format === self::FORMAT_JWT) {
       return new RedirectResponse($this->urlGenerator->generate('login_success', ['token' => $this->JWTTokenManager->create($user)]));
+    }
+
+    $returnUrl = $request->query->get('return-url', false);
+    if (filter_var($returnUrl, FILTER_VALIDATE_URL) !== false) {
+      return new RedirectResponse($returnUrl);
     }
 
     if ($targetPath = $this->getTargetPath($request->getSession(), $providerKey)) {
