@@ -167,20 +167,21 @@ class ApplicationsAPIController extends AbstractFOSRestController
    * @param EventDispatcherInterface $dispatcher
    */
   public function __construct(
-    EntityManagerInterface $em,
-    InstanceService $is,
-    PraticaStatusService $statusService,
-    ModuloPdfBuilderService $pdfBuilder,
-    UrlGeneratorInterface $router,
-    LoggerInterface $logger,
-    PraticaManager $praticaManager,
-    FormServerApiAdapterService $formServerService,
-    AllegatoFileService $fileService,
-    ApplicationDto $applicationDto,
-    PaymentService $paymentService,
+    EntityManagerInterface           $em,
+    InstanceService                  $is,
+    PraticaStatusService             $statusService,
+    ModuloPdfBuilderService          $pdfBuilder,
+    UrlGeneratorInterface            $router,
+    LoggerInterface                  $logger,
+    PraticaManager                   $praticaManager,
+    FormServerApiAdapterService      $formServerService,
+    AllegatoFileService              $fileService,
+    ApplicationDto                   $applicationDto,
+    PaymentService                   $paymentService,
     GiscomAPIAdapterServiceInterface $giscomAPIAdapterService,
-    EventDispatcherInterface $dispatcher
-  ) {
+    EventDispatcherInterface         $dispatcher
+  )
+  {
     $this->em = $em;
     $this->is = $is;
     $this->statusService = $statusService;
@@ -419,7 +420,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $applicationStatuses = array_keys(Pratica::getStatuses());
       if (!in_array($statusParameter, $applicationStatuses)) {
         return $this->view(
-          ["Status code not present, chose one between: ".implode(',', $applicationStatuses)],
+          ["Status code not present, chose one between: " . implode(',', $applicationStatuses)],
           Response::HTTP_BAD_REQUEST
         );
       }
@@ -624,7 +625,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
   public function postApplicationAction(Request $request)
   {
     $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_OPERATORE', 'ROLE_ADMIN']);
-
     $applicationModel = new Application();
     $form = $this->createForm('App\Form\Rest\ApplicationFormType', $applicationModel);
     $this->processForm($request, $form);
@@ -682,23 +682,18 @@ class ApplicationsAPIController extends AbstractFOSRestController
     }*/
 
     $data = [
-      'data' => [],
-      'flattened' => [],
+      'data' => $cleanedData,
+      'flattened' => $flatData,
       'schema' => $flatSchema,
     ];
-
-    if (!empty($cleanedData)) {
-      $data['data'] = $cleanedData;
-      $data['flattened'] = $flatData;
-    }
 
     if ($this->getUser() instanceof CPSUser) {
       $user = $this->getUser();
       try {
-        // se l'utente non è anaonimo verifico la coerenza dei dati
+        // se l'utente non è anonimo verifico la coerenza dei dati
         if (!$user->isAnonymous()) {
           $this->praticaManager->validateUserData($flatData, $user);
-        }else{
+        } else {
           // @see FormIORenderType::updateUser
           // altrimenti decoro l'utente anonimo
           //@todo check recaptcha
@@ -711,6 +706,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
             ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ?? '')
             ->setCellulareContatto($data['flattened']['applicant.data.cell_number'] ?? '')
             ->setCpsTelefono($data['flattened']['applicant.data.phone_number'] ?? '');
+
           $this->em->persist($user);
           $this->em->flush();
         }
@@ -795,7 +791,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     return $this->view($this->applicationDto->fromEntity($pratica), Response::HTTP_CREATED);
   }
-
+  
   /**
    * Retrieve backoffice data of an application
    * @Rest\Get("/{id}/backoffice", name="application_backoffice_api_get")
@@ -902,6 +898,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
    *
    * @param Request $request
    * @return View
+   * @throws Exception
    */
   public function updateApplicationBackofficeDataAction($id, Request $request)
   {
@@ -941,7 +938,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $flatData = $this->praticaManager->arrayFlat($request->request->get('backoffice_data'));
 
     foreach ($flatData as $k => $v) {
-      if (!isset($flatSchema[$k.'.type']) && !isset($flatSchema[$k])) {
+      if (!isset($flatSchema[$k . '.type']) && !isset($flatSchema[$k])) {
         return $this->view(["Service's schema does not match data sent"], Response::HTTP_BAD_REQUEST);
       }
     }
@@ -1138,7 +1135,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view($data, Response::HTTP_OK);
     } catch (\Exception $e) {
       $this->logger->error('Errer fetching payment of application: ' . $id . ' - ' . $e->getMessage());
-      return $this->view(['Errer fetching payment of application: ' . $id ], Response::HTTP_BAD_REQUEST);
+      return $this->view(['Errer fetching payment of application: ' . $id], Response::HTTP_BAD_REQUEST);
     }
   }
 
@@ -1338,11 +1335,11 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     // Todo: Passare alle transition prima possibile
     if ($application->getStatus() == Pratica::STATUS_REQUEST_INTEGRATION) {
-      return $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationRequestAction', [
+      return $this->forward(ApplicationsAPIController::class . '::applicationTransitionRegisterIntegrationRequestAction', [
         'id' => $application->getId(),
       ]);
     } elseif ($application->getStatus() == Pratica::STATUS_SUBMITTED_AFTER_INTEGRATION) {
-      return $this->forward(ApplicationsAPIController::class.'::applicationTransitionRegisterIntegrationAnswerAction', [
+      return $this->forward(ApplicationsAPIController::class . '::applicationTransitionRegisterIntegrationAnswerAction', [
         'id' => $application->getId(),
       ]);
     }

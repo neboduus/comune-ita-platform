@@ -85,6 +85,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
     Pratica::STATUS_COMPLETE,
     Pratica::STATUS_CANCELLED,
     Pratica::STATUS_WITHDRAW,
+    Pratica::STATUS_REVOKED,
   ];
 
   const ACCEPTED = true;
