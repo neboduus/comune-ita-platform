@@ -120,15 +120,6 @@ class CasAuthenticator extends AbstractAuthenticator
         </cas:authenticationSuccess>
       </cas:serviceResponse>
       ";
-      /*$string = "
-      <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
-        <cas:authenticationSuccess>
-          <cas:user>LCCRFL83S12A345M</cas:user>
-          <cas:attributes>
-          </cas:attributes>
-        </cas:authenticationSuccess>
-      </cas:serviceResponse>
-      ";*/
     } else {
 
       $url = $this->casValidationUrl . '?' . self::QUERY_TICKET_PARAMETER . '=' .
