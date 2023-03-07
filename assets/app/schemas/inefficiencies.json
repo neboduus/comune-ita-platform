@@ -109,7 +109,7 @@
           "tableView": false,
           "components": [
             {
-              "label": "Tip di disservizio",
+              "label": "Tipo di disservizio",
               "widget": "choicesjs",
               "tableView": true,
               "dataSrc": "custom",
