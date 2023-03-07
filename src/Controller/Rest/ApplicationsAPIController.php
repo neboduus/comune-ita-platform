@@ -793,6 +793,143 @@ class ApplicationsAPIController extends AbstractFOSRestController
   }
   
   /**
+   * Edit full Application
+   * @Rest\Put("/{id}", name="applications_api_put")
+   *
+   * @Security(name="Bearer")
+   *
+   * @OA\RequestBody(
+   *     description="The application to edit",
+   *     required=true,
+   *     @OA\MediaType(
+   *         mediaType="application/json",
+   *         @OA\Schema(
+   *             type="object",
+   *             ref=@Model(type=Application::class, groups={"write"})
+   *         )
+   *     )
+   * )
+   *
+   * @OA\Response(
+   *     response=200,
+   *     description="Edit full Application"
+   * )
+   *
+   * @OA\Response(
+   *     response=400,
+   *     description="Bad request"
+   * )
+   *
+   * @OA\Response(
+   *     response=403,
+   *     description="Access denied"
+   * )
+   *
+   * @OA\Response(
+   *     response=404,
+   *     description="Not found"
+   * )
+   *
+   * @OA\Tag(name="applications")
+   *
+   * @param $id
+   * @param Request $request
+   * @return View
+   */
+  public function putApplicationAction($id, Request $request): View
+  {
+    try {
+      $repository = $this->em->getRepository('App\Entity\Pratica');
+      /** @var Pratica $application */
+      $application = $repository->find($id);
+
+      if (!$application) {
+        return $this->view(["Application not found"], Response::HTTP_NOT_FOUND);
+      }
+
+      $this->denyAccessUnlessGranted(ApplicationVoter::EDIT, $application);
+
+      if (in_array(
+        $application->getStatus(),
+        [Pratica::FINAL_STATES]
+      )) {
+        return $this->view(["Application is in a final state, can't be updated."], Response::HTTP_UNPROCESSABLE_ENTITY);
+      }
+
+      $applicationModel = new Application();
+      $form = $this->createForm('App\Form\Rest\ApplicationFormType', $applicationModel);
+      $this->processForm($request, $form);
+
+      if ($form->isSubmitted() && !$form->isValid()) {
+        $errors = FormUtils::getErrorsFromForm($form);
+        $data = [
+          'type' => 'validation_error',
+          'title' => 'There was a validation error',
+          'errors' => $errors,
+        ];
+
+        return $this->view($data, Response::HTTP_BAD_REQUEST);
+      }
+
+      $result = $this->formServerService->getSchema($application->getServizio());
+      if ($result['status'] != 'success') {
+        return $this->view(["There was an error on retrieve form schema"], Response::HTTP_BAD_REQUEST);
+      }
+      $schema = $result['schema'];
+      $this->praticaManager->setSchema($schema);
+      $flatSchema = $this->praticaManager->arrayFlat($schema, true);
+      $cleanedData = StringUtils::cleanData($applicationModel->getData());
+      $flatData = $this->praticaManager->arrayFlat($cleanedData);
+
+      if (empty($cleanedData)) {
+        return $this->view(["Empty application are not allowed"], Response::HTTP_BAD_REQUEST);
+      }
+
+      $data = [
+        'data' => $cleanedData,
+        'flattened' => $flatData,
+        'schema' => $flatSchema,
+      ];
+
+      $application->setStatus($applicationModel->getStatus());
+      $this->praticaManager->validateDematerializedData($data, $application);
+      $application->setDematerializedForms($data);
+      if ($application->getStatus() == Pratica::STATUS_DRAFT && $applicationModel->getStatus() > Pratica::STATUS_DRAFT) {
+        $application->setSubmissionTime(time());
+      }
+
+      $this->praticaManager->addAttachmentsToApplication($application, $flatData);
+
+      $application->setGeneratedSubject();
+
+      $this->em->persist($application);
+      $this->em->flush();
+    } catch (ValidatorException $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during data validation',
+        'description' => $e->getMessage(),
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_BAD_REQUEST);
+    } catch (\Exception $e) {
+      $data = [
+        'type' => 'error',
+        'title' => 'There was an error during save process',
+        'description' => 'Contact technical support at support@opencontent.it',
+      ];
+      $this->logger->error($e->getMessage(), ['request' => $request]);
+
+      return $this->view($data, Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    return $this->view(["Application Modified Successfully"], Response::HTTP_OK);
+
+  }
+
+
+  /**
    * Retrieve backoffice data of an application
    * @Rest\Get("/{id}/backoffice", name="application_backoffice_api_get")
    *
