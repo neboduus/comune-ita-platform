@@ -40,7 +40,6 @@
               "label": "Email",
               "description": " Inserisci la tua email ",
               "tableView": true,
-              "calculateValue": "console.log(data)",
               "key": "email",
               "type": "email",
               "input": true
@@ -62,7 +61,7 @@
               "tableView": true,
               "dataSrc": "custom",
               "data": {
-                "custom": "async function get_data() {\n    window.FormioHelper.authenticatedCall(\"categories\")\n    .then(function(promise) {\n      const items = promise.map(elem => (\n  {\n    id: elem.id,\n    name: elem.name\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n    get_data()\n}\n"
+                "custom": "async function get_data() {\n    window.FormioHelper.authenticatedCall(\"categories\")\n    .then(function(promise) {\n        let cat = [...promise, { id: 'c9ead24d-bfe0-4d6c-939d-01c23cf34e73', name: 'Relazioni con il pubblico' }];\n      const items = cat.map(elem => (\n  {\n    id: elem.id,\n    name: elem.name\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n    get_data()\n}\n"
               },
               "dataType": "object",
               "idPath": "",
@@ -78,12 +77,15 @@
               "tableView": true,
               "dataSrc": "custom",
               "data": {
-                "custom": "async function get_data() {\n    window.FormioHelper.authenticatedCall(\"services\")\n    .then(function(promise) {\n      const items = promise.map(elem => (\n  {\n    id: elem.id,\n    name: elem.name\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n    get_data()\n}\n"
+                "custom": "async function get_data(category_id) {\n  let url = 'services';\n  if (category_id) {\n    url = url + '?topics_id=' + category_id;\n  }\n  window.FormioHelper.authenticatedCall(url)\n    .then(function(promise) {\n      const items = promise.map(elem => (\n        {\n          id: elem.id,\n          name: elem.name\n        } ))\n      instance.setItems(items)\n    })\n}\nif (values.length === 0) {\n  let category_id = data.category && data.category.id ? data.category.id : null;\n  get_data(category_id)\n}\n"
               },
               "dataType": "object",
               "idPath": "",
               "template": "<span>{{ item.name }}</span>",
+              "refreshOn": "category",
+              "clearOnRefresh": true,
               "key": "service",
+              "customConditional": "show = data.category.id === 'c9ead24d-bfe0-4d6c-939d-01c23cf34e73' ? false : true",
               "type": "select",
               "input": true
             },
