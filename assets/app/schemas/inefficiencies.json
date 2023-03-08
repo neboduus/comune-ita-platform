@@ -109,15 +109,81 @@
           "tableView": false,
           "components": [
             {
-              "label": "Tip di disservizio",
+              "label": "Tipo di disservizio",
               "widget": "choicesjs",
               "tableView": true,
-              "dataSrc": "custom",
               "data": {
-                "custom": "async function get_data() {\n    window.FormioHelper.authenticatedCall(\"services\")\n    .then(function(promise) {\n      const items = promise.map(elem => (\n  {\n    id: elem.id,\n    name: elem.name\n  } ))\n        instance.setItems(items)\n})}\nif (values.length === 0) {\n    get_data()\n}"
+                "values": [
+                  {
+                    "label":"Animali vaganti",
+                    "value":"435dfa72-932b-44f9-87d8-7ef8924fa59f"
+                  },
+                  {
+                    "label":"Aree di parcheggio",
+                    "value":"ded2e0b4-eb4e-4314-ab3e-c742d5642796"
+                  },
+                  {
+                    "label":"Attività commerciali",
+                    "value":"211464b5-4c73-4626-86c7-b13902b32831"
+                  },
+                  {
+                    "label":"Barriere architettoniche",
+                    "value":"d63b7880-56b5-4dd6-9425-8a6221e940d7"
+                  },
+                  {
+                    "label":"Cantieri",
+                    "value":"8daddf74-adb1-4237-81da-993b3f70b8b1"
+                  },
+                  {
+                    "label":"Degrado urbano",
+                    "value":"6bc289a9-e945-477b-b427-41e8686e4e30"
+                  },
+                  {
+                    "label":"Igiene pubblica",
+                    "value":"d07b3c82-2e4e-4f71-8fbe-dd3300d6ec82"
+                  },
+                  {
+                    "label":"Illuminazione pubblica",
+                    "value":"70cbba61-47e4-4d85-98bf-03e4817cf272"
+                  },
+                  {
+                    "label":"Impianto idrico e fognario",
+                    "value":"71cf4444-9493-4d4e-b8f0-d35fea15ce81"
+                  },
+                  {
+                    "label":"Inquinamento acustico",
+                    "value":"4e232629-0cb5-4211-b7ac-198294735008"
+                  },
+                  {
+                    "label":"Manutenzione stradale",
+                    "value":"97722683-b117-4dc0-b0c8-bd2611de10bd"
+                  },
+                  {
+                    "label":"Raccolta dei rifiuti",
+                    "value":"e00c76c5-a590-418d-8725-3a33192ac03c"
+                  },
+                  {
+                    "label":"Segnaletica stradale",
+                    "value":"ae18dfb7-819b-452a-b5e5-9606c6b90df9"
+                  },
+                  {
+                    "label":"Sito web e servizi digitali",
+                    "value":"8052808f-ac9c-4e48-a6eb-d29984bfa0a4"
+                  },
+                  {
+                    "label":"Veicoli abbandonati",
+                    "value":"bf63e178-6e56-4952-99f0-23893857340f"
+                  },
+                  {
+                    "label":"Verde pubblico",
+                    "value":"e441060f-0a98-4ac7-abd2-779bf3813440"
+                  },
+                  {
+                    "label":"Viabilità",
+                    "value":"47ce50c4-886e-448d-868c-7f9d32c83546"
+                  }
+                ]
               },
-              "dataType": "object",
-              "template": "<span>{{ item.name }}</span>",
               "validate": {
                 "required": true
               },
