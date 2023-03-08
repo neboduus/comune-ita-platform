@@ -47,6 +47,11 @@ class SecurityController extends AbstractController
       $parameters['format'] = $format;
     }
 
+    $returnUrl = $request->query->get('return-url', false);
+    if ($returnUrl) {
+      $parameters['return-url'] = $returnUrl;
+    }
+
     // Redirect in base a configurazione di istanza
     return $this->redirectToRoute($this->getAuthRedirect(), $parameters);
   }
