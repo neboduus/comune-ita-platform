@@ -1207,6 +1207,10 @@ class Servizio implements Translatable
    */
   public function getBookingCallToAction(): ?string
   {
+    if (!$this->bookingCallToAction) {
+      $appointmentBookingUrl = $this->getEnte()->getAppointmentBookingUrl();
+      return $appointmentBookingUrl ? $appointmentBookingUrl . '?service_id=' . $this->getId() : null;
+    }
     return $this->bookingCallToAction;
   }
 

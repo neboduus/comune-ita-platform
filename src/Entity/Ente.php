@@ -540,7 +540,7 @@ class Ente implements Translatable
     $meta = $this->getMetaAsArray();
     $bookingUrlExists = isset($meta['builtin_services']['appointment_booking']) && !empty($meta['builtin_services']['appointment_booking']);
     if ($bookingUrlExists) {
-      return $meta['built-in_services']['appointment_booking'];
+      return $meta['builtin_services']['appointment_booking'];
     }
     return null;
   }

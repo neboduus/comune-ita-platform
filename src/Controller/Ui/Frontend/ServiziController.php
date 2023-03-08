@@ -146,12 +146,6 @@ class ServiziController extends AbstractController
       return $this->redirect($servizio->getExternalCardUrl());
     }
 
-    if (!$servizio->getBookingCallToAction()) {
-      $servizio->setBookingCallToAction(FormUtils::getBookingCallToActionUrl(
-        $servizio->getId(), $this->instanceService->getCurrentInstance()->getAppointmentBookingUrl()
-      ));
-    }
-
     $this->breadcrumbsService->generateServiceBreadcrumbs($servizio);
 
     $serviziArea = $serviziRepository->createQueryBuilder('servizio')
