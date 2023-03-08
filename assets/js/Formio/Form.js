@@ -773,8 +773,8 @@ class Form {
     } else {
       // Simple component
       // Disable select populated via API
-      if (disabledForm.type === 'select' && disabledForm['dataSrc'] === 'url') {
-        disabledForm.type = "textfield"
+      if (disabledForm.type === 'select' && ['url', 'custom'].includes(disabledForm['dataSrc'])) {
+        disabledForm.type = "textfield";
       }
       // Disable JS custom default values
       if (disabledForm.customDefaultValue) {
@@ -783,6 +783,10 @@ class Form {
       // Disable JS custom calculated values
       if (disabledForm.calculateValue) {
         disabledForm.calculateValue = '';
+      }
+      // Disable JS custom select
+      if (disabledForm.data.custom) {
+        disabledForm.data.custom = '';
       }
       // Disable JS validation
       if (disabledForm.validate) {
