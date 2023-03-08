@@ -122,7 +122,7 @@ class ApplicationDto extends AbstractDto
    * @param int $version
    * @return Application
    */
-  public function fromEntity(Pratica $pratica, bool $loadFileCollection = true, $version = 1): Application
+  public function fromEntity(Pratica $pratica, bool $loadFileCollection = true, int $version = 1): Application
   {
 
     $attachmentEndpointUrl = $this->router->generate('application_api_get', ['id' => $pratica->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
