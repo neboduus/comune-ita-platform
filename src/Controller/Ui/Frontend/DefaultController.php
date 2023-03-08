@@ -135,8 +135,19 @@ class DefaultController extends AbstractController
 
     if ($form->isSubmitted()) {
       $redirectRoute = $request->query->has('r') ? $request->query->get('r') : 'home';
-      $redirectRouteParams = $request->query->has('p') ? unserialize($request->query->get('p')) : array();
-      $redirectRouteQuery = $request->query->has('q') ? unserialize($request->query->get('q')) : array();
+      $redirectRouteParams = $redirectRouteQuery = [];
+
+      try {
+        if ($request->query->has('p')) {
+          $redirectRouteParams = unserialize($request->query->get('p'));
+        }
+        if ($request->query->has('q')) {
+          $redirectRouteQuery = unserialize($request->query->get('q'));
+        }
+      } catch (\Exception $e) {
+        $this->logger->error($e->getMessage());
+      }
+
 
       return $this->markTermsAcceptedForUser(
         $user,
