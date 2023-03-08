@@ -785,7 +785,7 @@ class Form {
         disabledForm.calculateValue = '';
       }
       // Disable JS custom select
-      if (disabledForm.data.custom) {
+      if (disabledForm.data && disabledForm.data.custom) {
         disabledForm.data.custom = '';
       }
       // Disable JS validation

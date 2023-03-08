@@ -25,7 +25,7 @@ class FormIoI18n {
         "Descrizione": "Description",
         "Immagini": "Image",
         "Documenti": "Documents",
-        "Tipo di disservizio": "Disruption type",
+        "Tipo di disservizio": "Inefficiency type",
         "Zip Code": "Zip code",
         "Address 1": "Address 1",
         "Address 2": "Address 2",
@@ -35,12 +35,12 @@ class FormIoI18n {
         "Aggiungi ulteriori dettagli": "Add more details",
         "Aggiungi il motivo dell'appuntamento": "Add the reason for the appointment",
         "Data e ora": "Date and time",
-        "Indica il luogo del disservizio": "Indicate the location of the outage",
+        "Indica il luogo del disservizio": "Indicate the location of the inefficiency",
         "Informazione su di te\n\n": "Information about you\\n\\n",
         "Inserire al massimo 200 caratteri": "Enter up to 200 characters",
         "Seleziona una o più immagini da allegare alla segnalazione": "Select one or more images to attach to the report",
         "Seleziona uno o più documenti da allegare alla segnalazione": "Select one or more documents to attach to the report",
-        "inefficiencies": "Disruptions",
+        "inefficiencies": "Inefficiencies",
         " Inserisci la tua email ": "Insert your email",
         " Seleziona la categoria del servizio per cui vuoi richiedere assistenza ": "Select the category of service you want to request assistance for",
         "Seleziona il servizio per cui vuoi richiedere assistenza": "Select the service you want to request assistance for",
@@ -68,7 +68,11 @@ class FormIoI18n {
         "Nome": "Name",
         "Cognome": "Surname",
         "Codice Fiscale": "Fiscal code",
-        "Recapito telefonico": "Phone number"
+        "Recapito telefonico": "Phone number",
+        "Luogo":"Place",
+        "Disservizio":"Inefficiency",
+        "Informazione su di te ":"Information about you",
+        "Autore della segnalazione":"Report author"
       },
       de: {},
       it: {
@@ -211,7 +215,11 @@ class FormIoI18n {
         "Nome": "Nome",
         "Cognome": "Cognome",
         "Codice Fiscale": "Codice Fiscale",
-        "Recapito telefonico": "Recapito telefonico"
+        "Recapito telefonico": "Recapito telefonico",
+        "Luogo":"Luogo",
+        "Disservizio":"Disservizio",
+        "Informazione su di te ":"Informazione su di te ",
+        "Autore della segnalazione":"Autore della segnalazione"
       }
     }
   }
