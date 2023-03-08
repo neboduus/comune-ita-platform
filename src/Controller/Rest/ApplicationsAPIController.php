@@ -515,7 +515,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $applications = $repoApplications->getApplications($parameters, false, $order, $sort, $offset, $limit);
 
       foreach ($applications as $s) {
-        $result ['data'][] = $this->applicationDto->fromEntity($s);
+        $result ['data'][] = $this->applicationDto->fromEntity($s, true, $version);
       }
 
       return $this->view($result, Response::HTTP_OK);
@@ -791,7 +791,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     return $this->view($this->applicationDto->fromEntity($pratica), Response::HTTP_CREATED);
   }
-  
+
   /**
    * Edit full Application
    * @Rest\Put("/{id}", name="applications_api_put")
