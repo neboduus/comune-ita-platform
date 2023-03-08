@@ -74,7 +74,8 @@ class FormIoI18n {
         "Informazione su di te ":"Information about you",
         "Autore della segnalazione":"Report author",
         "Richiedente":"Applicant",
-        "Per i dettagli sul trattamento dei dati personali consulta l’informativa sulla privacy del sito":"For details on the processing of personal data, consult the site's privacy policy"
+        "Per i dettagli sul trattamento dei dati personali consulta l’informativa sulla privacy del sito":"For details on the processing of personal data, consult the site's privacy policy",
+        "Richiesta":"Request"
       },
       de: {},
       it: {
@@ -223,7 +224,8 @@ class FormIoI18n {
         "Informazione su di te ":"Informazione su di te ",
         "Autore della segnalazione":"Autore della segnalazione",
         "Richiedente":"Richiedente",
-        "Per i dettagli sul trattamento dei dati personali consulta l’informativa sulla privacy del sito.":"Per i dettagli sul trattamento dei dati personali consulta l’informativa sulla privacy del sito."
+        "Per i dettagli sul trattamento dei dati personali consulta l’informativa sulla privacy del sito.":"Per i dettagli sul trattamento dei dati personali consulta l’informativa sulla privacy del sito.",
+        "Richiesta":"Richiesta"
       }
     }
   }
