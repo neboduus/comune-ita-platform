@@ -339,16 +339,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
   public function getApplicationsAction(Request $request)
   {
-
-    if ($request->headers->get('accept') === 'application/geojson') {
-      $features []= new Feature(new Point([1, 1]));
-      $featuresCollection = new FeatureCollection($features);
-      //$json = json_encode($point);
-      $view = new View();
-      $view->
-      return $this->view($featuresCollection);
-    }
-
     $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $offset = intval($request->get('offset', 0));
@@ -361,7 +351,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $createdAtParameter = $request->get('createdAt', false);
     $updatedAtParameter = $request->get('updatedAt', false);
     $submittedAtParameter = $request->get('submittedAt', false);
-
     $orderParameter = $request->get('order', false);
     $sortParameter = $request->get('sort', false);
 
@@ -369,7 +358,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       return $this->view(["Limit parameter is too high"], Response::HTTP_BAD_REQUEST);
     }
 
-    $queryParameters = ['offset' => $offset, 'limit' => $limit];
+    $queryParameters = ['offset' => $offset, 'limit' => $limit, 'version' => $version];
     if ($serviceParameter) {
       $queryParameters['service'] = $serviceParameter;
     }
@@ -386,15 +375,12 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $queryParameters['sort'] = $sortParameter;
     }
 
-    $queryParameters['version'] = $version;
-
     $dateFormat = 'Y-m-d';
-    $datetimeFormat = DATE_ATOM;
 
     if ($createdAtParameter) {
       foreach ($createdAtParameter as $v) {
-        $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat($datetimeFormat, $v);
-        if (!$date || ($date->format($dateFormat) !== $v && $date->format($datetimeFormat) !== $v)) {
+        $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat(DATE_ATOM, $v);
+        if (!$date || ($date->format($dateFormat) !== $v && $date->format(DATE_ATOM) !== $v)) {
           return $this->view(
             ["Parameter createdAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"],
             Response::HTTP_BAD_REQUEST
@@ -406,9 +392,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     if ($updatedAtParameter) {
       foreach ($updatedAtParameter as $v) {
-        $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat($datetimeFormat, $v);
-
-        if (!$date || ($date->format($dateFormat) !== $v && $date->format($datetimeFormat) !== $v)) {
+        $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat(DATE_ATOM, $v);
+        if (!$date || ($date->format($dateFormat) !== $v && $date->format(DATE_ATOM) !== $v)) {
           return $this->view(
             ["Parameter updatedAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"],
             Response::HTTP_BAD_REQUEST
@@ -420,8 +405,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     if ($submittedAtParameter) {
       foreach ($submittedAtParameter as $v) {
-        $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat($datetimeFormat, $v);
-        if (!$date || ($date->format($dateFormat) !== $v && $date->format($datetimeFormat) !== $v)) {
+        $date = DateTime::createFromFormat($dateFormat, $v) ?: DateTime::createFromFormat(DATE_ATOM, $v);
+        if (!$date || ($date->format($dateFormat) !== $v && $date->format(DATE_ATOM) !== $v)) {
           return $this->view(
             ["Parameter submittedAt must be in on of these formats: yyyy-mm-dd or yyyy-mm-ddTHH:ii:ssP"],
             Response::HTTP_BAD_REQUEST
@@ -459,10 +444,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
       if (!empty($servicesByOperatore) && !in_array($service->getId(), $servicesByOperatore)) {
         return $this->view(["You are not allowed to view applications of passed service"], Response::HTTP_FORBIDDEN);
       }
-      /*
-        se il servizio passato non è uno a cui l'operatore è abilitato è uno nel quale ha almeno
-        una pratica assegnata allora mi predispongo in modo tale da ottenere SOLO le pratiche a lui assegnate
-      */
+      /* Se il servizio passato non è uno a cui l'operatore è abilitato è uno nel quale ha almeno
+         una pratica assegnata allora mi predispongo in modo tale da ottenere SOLO le pratiche a lui assegnate */
       if ($user instanceof OperatoreUser && !in_array($service->getId(), $allowedServices) && in_array($service->getId(), $servicesByOperatore)) {
         $getOnlyAssignedApplications = true;
       }
@@ -527,13 +510,26 @@ class ApplicationsAPIController extends AbstractFOSRestController
     $sort = $sortParameter ?: "ASC";
 
     try {
-      $applications = $repoApplications->getApplications($parameters, false, $order, $sort, $offset, $limit);
-
-      foreach ($applications as $s) {
-        $result ['data'][] = $this->applicationDto->fromEntity($s, true, $version);
+      if ($request->headers->get('accept') === 'application/geojson') {
+        $parameters['geojson'] = true;
+        $applications = $repoApplications->getApplications($parameters, false);
+        $features = [];
+        /** @var Pratica $a */
+        foreach ($applications as $a) {
+          $formData = $a->getDematerializedForms();
+          $features []= new Feature(new Point([$formData['data']['address']['lon'], $formData['data']['address']['lat']]));
+        }
+        $featuresCollection = new FeatureCollection($features);
+        $view = new View($featuresCollection);
+        $view->setContext($view->getContext()->setSerializeNull(false));
+        return $view;
+      } else {
+        $applications = $repoApplications->getApplications($parameters, false, $order, $sort, $offset, $limit);
+        foreach ($applications as $s) {
+          $result ['data'][] = $this->applicationDto->fromEntity($s, true, $version);
+        }
+        return $this->view($result, Response::HTTP_OK);
       }
-
-      return $this->view($result, Response::HTTP_OK);
     } catch (\Exception $exception) {
       return $this->view($exception->getMessage(), Response::HTTP_BAD_REQUEST);
     }
