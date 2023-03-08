@@ -64,7 +64,11 @@ class FormIoI18n {
         "Sito web e servizi digitali":"Website and digital services",
         "Veicoli abbandonati":"Abandoned vehicles",
         "Verde pubblico":"Public green",
-        "Viabilità":"Road network"
+        "Viabilità":"Road network",
+        "Nome": "Name",
+        "Cognome": "Surname",
+        "Codice Fiscale": "Fiscal code",
+        "Recapito telefonico": "Phone number"
       },
       de: {},
       it: {
@@ -203,7 +207,11 @@ class FormIoI18n {
         "Sito web e servizi digitali":"Sito web e servizi digitali",
         "Veicoli abbandonati":"Veicoli abbandonati",
         "Verde pubblico":"Verde pubblico",
-        "Viabilità":"Viabilità"
+        "Viabilità":"Viabilità",
+        "Nome": "Nome",
+        "Cognome": "Cognome",
+        "Codice Fiscale": "Codice Fiscale",
+        "Recapito telefonico": "Recapito telefonico"
       }
     }
   }
