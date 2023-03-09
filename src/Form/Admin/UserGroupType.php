@@ -62,6 +62,13 @@ class UserGroupType extends AbstractI18nType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
+
+    $calendarsRepo = $this->entityManager->getRepository('App\Entity\Calendar');
+    $calendars = $calendarsRepo->findAll();
+    $newCalendar = (new Calendar())->setTitle($this->translator->trans('user_group.new_calendar'));
+    $this->entityManager->persist($newCalendar);
+    $calendars []= $newCalendar;
+
     $this->createTranslatableMapper($builder, $options)
       ->add('name', I18nTextType::class, [
         'label' => 'general.nome',
@@ -127,6 +134,7 @@ class UserGroupType extends AbstractI18nType
       ])
       ->add('calendar', EntityType::class, [
         'class' => Calendar::class,
+        'choices' => $calendars,
         'label' => 'user_group.calendar',
         'required' => false,
         'placeholder' => 'user_group.no_calendar'

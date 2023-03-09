@@ -46,10 +46,10 @@ userGroupCalendar.on('change', function () {
   }
 });
 
-let opt = document.createElement('option');
+/*let opt = document.createElement('option');
 opt.value = 'crete_new_calendar';
 opt.innerHTML = Translator.trans('user_group.new_calendar', {}, 'messages', $language);
-userGroupCalendar.prepend(opt);
+userGroupCalendar.prepend(opt);*/
 
 console.log(userGroupCalendar.value);
 if (!userGroupCalendar.value){
