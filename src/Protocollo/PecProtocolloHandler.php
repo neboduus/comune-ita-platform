@@ -195,7 +195,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $this->checkParameters($parameters);
     $message = $this->setupMessage($pratica, $this->sender, $parameters['receiver'], self::TYPE_SEND_INTEGRATION);
 
-    $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFilename(), $this->fileService->getMimeType($allegato));
+    $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFilename(), $this->fileService->getAttachmentMimeType($allegato));
     $message->attach($attachment);
     $result = $this->mailer->send($message);
 
@@ -216,7 +216,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
 
     $risposta = $pratica->getRispostaOperatore();
     if ($risposta instanceof RispostaOperatore) {
-      $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($risposta), $risposta->getFilename(), $this->fileService->getMimeType($risposta));
+      $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($risposta), $risposta->getFilename(), $this->fileService->getAttachmentMimeType($risposta));
       $message->attach($attachment);
     }
     $result = $this->mailer->send($message);
@@ -254,7 +254,7 @@ class PecProtocolloHandler implements ProtocolloHandlerInterface
     $this->checkParameters($parameters);
     $message = $this->setupMessage($pratica, $this->sender, $parameters['receiver'], self::TYPE_SEND_ATTACHMENT);
 
-    $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFilename(), $this->fileService->getMimeType($allegato));
+    $attachment = new \Swift_Attachment($this->fileService->getAttachmentContent($allegato), $allegato->getFilename(), $this->fileService->getAttachmentMimeType($allegato));
     $message->attach($attachment);
     $result = $this->mailer->send($message);
 
