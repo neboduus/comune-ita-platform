@@ -29,6 +29,7 @@ class ConfigureInstanceCommand extends Command
   private $symfonyStyle;
 
   private $name;
+
   private $codeAdm;
   private $siteUrl;
   private $adminName;
@@ -37,18 +38,11 @@ class ConfigureInstanceCommand extends Command
   private $adminUsername;
   private $adminPassword;
 
-  private $isInteractive = true;
+  private bool $isInteractive = true;
 
-  private $data = null;
+  private EntityManagerInterface $entityManager;
 
-  private $entityManager = null;
-
-  private $output;
-
-  /**
-   * @var UserPasswordEncoderInterface
-   */
-  private $passwordEncoder;
+  private UserPasswordEncoderInterface $passwordEncoder;
 
   /**
    * @param EntityManagerInterface $entityManager
@@ -73,7 +67,6 @@ class ConfigureInstanceCommand extends Command
       ->addOption('admin_email', null, InputOption::VALUE_OPTIONAL, 'Email of the admin')
       ->addOption('admin_username', null, InputOption::VALUE_OPTIONAL, 'Username of the admin')
       ->addOption('admin_password', null, InputOption::VALUE_OPTIONAL, 'Username of the admin')
-      ->addOption('write_file', null, InputOption::VALUE_NONE, 'Write results file')
       ->setDescription("Initial settings of an instance");
   }
 
@@ -108,19 +101,6 @@ class ConfigureInstanceCommand extends Command
       }
     }
 
-    // Scrivo il csv risultante solo se ho dato il file come parametro
-    if ($input->getOption('write_file')) {
-      $filesystem = new Filesystem();
-      $file = $this->getContainer()->get('kernel')->getProjectDir() . '/var/uploads/instances-' . date('Ymd') . '.csv';
-      if (!is_file($file)) {
-        $filesystem->touch($file);
-      }
-      $fp = fopen($file, 'a');
-      foreach ($this->output as $item) {
-        fputcsv($fp, $item);
-      }
-      fclose($fp);
-    }
 
     $this->symfonyStyle->success("Istanza configurata con successo: " . $instance);
 
@@ -143,7 +123,6 @@ class ConfigureInstanceCommand extends Command
 
     if (!$this->isInteractive) {
       $name = $this->name;
-      $codeMec = $this->codeAdm ?? '';
       $codeAdm = $this->codeAdm ?? '';
       $url = $this->siteUrl;
     } else {
@@ -153,10 +132,7 @@ class ConfigureInstanceCommand extends Command
       $name = $this->symfonyStyle->ask("Inserisci il nome dell'ente: ", $suggestion);
 
       $suggestion = $instanceExists ? $ente->getCodiceMeccanografico() : '';
-      $codeMec = $this->symfonyStyle->ask("Inserisci il codice Meccanografico: ", $suggestion);
-
-      $suggestion = $instanceExists ? $ente->getCodiceAmministrativo() : '';
-      $codeAdm = $this->symfonyStyle->ask("Inserisci il codice Amministrativo: ", $suggestion);
+      $codeAdm = $this->symfonyStyle->ask("Inserisci il codice Meccanografico/Amministrativo: ", $suggestion);
 
       $suggestion = $instanceExists ? $ente->getSiteUrl() : '';
       $url = $this->symfonyStyle->ask("Inserisci url del sito comunale: ", $suggestion);
@@ -169,7 +145,7 @@ class ConfigureInstanceCommand extends Command
     $ente
       ->setName($name)
       //->setSlug($identifier)
-      ->setCodiceMeccanografico($codeMec)
+      ->setCodiceMeccanografico($codeAdm)
       ->setCodiceAmministrativo($codeAdm)
       ->setSiteUrl($url);
 
@@ -186,9 +162,10 @@ class ConfigureInstanceCommand extends Command
   }
 
   /**
-   * @return AdminUser|\FOS\UserBundle\Model\UserInterface|null
+   * @return AdminUser
    */
-  private function createAdmin(Ente $ente) {
+  private function createAdmin(Ente $ente)
+  {
 
     if (!$this->isInteractive) {
       $nome = $this->adminName ?? '';

@@ -85,6 +85,11 @@ services:
       $apiUrl: "%satisfy_api_url%"
       $secret: "%satisfy_secret%"
 
+  App\Services\Satisfy\SatisfyTenant:
+    arguments:
+      $apiUrl: "%satisfy_api_url%"
+      $secret: "%satisfy_secret%"
+
   App\EventListener\MeetingLifeCycleListener:
     tags:
       - { name: doctrine.event_listener, event: prePersist, connection: default }
