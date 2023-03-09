@@ -412,8 +412,7 @@ class Form {
         // Recupero i dati della pratica se presenti
         if ($("#formio_render_dematerialized_forms").val() != "") {
           form.submission = {
-            data: JSON.parse($("#formio_render_dematerialized_forms").val())
-              .data,
+            data: JSON.parse($("#formio_render_dematerialized_forms").val()).data,
           };
         }
 
@@ -739,12 +738,10 @@ class Form {
 
   static wizardConverter(form) {
     if (form.display === 'wizard') {
-      let converted = JSON.parse(JSON.stringify(form));
       // Metodo 1: conversione semplice: espansione delle pagine in verticale
-      converted.display = 'form';
-
-      return Form.disable(converted);
-    } else return Form.disable(form);
+      form.display = 'form';
+    }
+    return Form.disable(form);
   }
 
   static disable(form) {
@@ -752,29 +749,23 @@ class Form {
 
     if (disabledForm.components) {
       // Disable form components
-      disabledForm.components.forEach(function (component) {
-        if (component.components) {
-          component.components.forEach(function (nested_component, index) {
-            component.components[index] = Form.disable(nested_component);
-          })
-        } else {
-          component = Form.disable(component);
-        }
+      disabledForm.components.forEach(function (component, index) {
+        disabledForm.components[index] = Form.disable(component);
       })
     } else if (disabledForm.columns) {
       // Disable columns components
-      disabledForm.columns.forEach(function (column) {
-        if (column.components) {
-          column.components.forEach(function (nested_component, index) {
-            column.components[index] = Form.disable(nested_component);
-          })
-        }
+      disabledForm.columns.forEach(function (column, index) {
+        disabledForm.columns[index] = Form.disable(column);
       })
     } else {
       // Simple component
-      // Disable select populated via API
-      if (disabledForm.type === 'select' && ['url', 'custom'].includes(disabledForm['dataSrc'])) {
-        disabledForm.type = "textfield";
+      // Disable JS custom calculated values
+      if (disabledForm.type === 'select' && ['custom', 'url'].includes(disabledForm['dataSrc'])) {
+        disabledForm.dataSrc = 'custom';
+        if (disabledForm.data && disabledForm.data.custom) {
+          // Disable custom js
+          disabledForm.data.custom = '';
+        }
       }
       // Disable JS custom default values
       if (disabledForm.customDefaultValue) {
@@ -783,10 +774,6 @@ class Form {
       // Disable JS custom calculated values
       if (disabledForm.calculateValue) {
         disabledForm.calculateValue = '';
-      }
-      // Disable JS custom select
-      if (disabledForm.data && disabledForm.data.custom) {
-        disabledForm.data.custom = '';
       }
       // Disable JS validation
       if (disabledForm.validate) {

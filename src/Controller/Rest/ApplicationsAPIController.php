@@ -344,8 +344,6 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $features []= new Feature(new Point([1, 1]));
       $featuresCollection = new FeatureCollection($features);
       //$json = json_encode($point);
-      $view = new View();
-      $view->
       return $this->view($featuresCollection);
     }
 
