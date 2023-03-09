@@ -35,6 +35,23 @@ class SessionAuthAPIController extends AbstractFOSRestController
     $this->cpsUserProvider = $cpsUserProvider;
   }
 
+  /**
+   * Retrieve a session auth token
+   * @Rest\Options("/session-auth", name="user_session_auth_token_options")
+   *
+   * @OA\Response(
+   *     response=200,
+   *     description="No response"
+   * )
+   *
+   * @OA\Tag(name="SessionAuth")
+   *
+   * @return View
+   */
+  public function optionsSessionAuthToken(): View
+  {
+    return $this->view([]);
+  }
 
   /**
    * Retrieve a session auth token

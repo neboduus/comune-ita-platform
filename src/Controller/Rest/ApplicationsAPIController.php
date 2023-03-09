@@ -43,6 +43,9 @@ use Doctrine\ORM\ORMException;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
+use GeoJson\Feature\Feature;
+use GeoJson\Feature\FeatureCollection;
+use GeoJson\Geometry\Point;
 use JMS\Serializer\SerializerBuilder;
 use League\Csv\Exception;
 use League\Flysystem\FileNotFoundException;
@@ -336,6 +339,16 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
   public function getApplicationsAction(Request $request)
   {
+
+    if ($request->headers->get('accept') === 'application/geojson') {
+      $features []= new Feature(new Point([1, 1]));
+      $featuresCollection = new FeatureCollection($features);
+      //$json = json_encode($point);
+      $view = new View();
+      $view->
+      return $this->view($featuresCollection);
+    }
+
     $this->denyAccessUnlessGranted(['ROLE_CPS_USER', 'ROLE_OPERATORE', 'ROLE_ADMIN']);
 
     $offset = intval($request->get('offset', 0));
@@ -372,6 +385,8 @@ class ApplicationsAPIController extends AbstractFOSRestController
     if ($sortParameter) {
       $queryParameters['sort'] = $sortParameter;
     }
+
+    $queryParameters['version'] = $version;
 
     $dateFormat = 'Y-m-d';
     $datetimeFormat = DATE_ATOM;
@@ -515,7 +530,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
       $applications = $repoApplications->getApplications($parameters, false, $order, $sort, $offset, $limit);
 
       foreach ($applications as $s) {
-        $result ['data'][] = $this->applicationDto->fromEntity($s);
+        $result ['data'][] = $this->applicationDto->fromEntity($s, true, $version);
       }
 
       return $this->view($result, Response::HTTP_OK);
@@ -791,7 +806,7 @@ class ApplicationsAPIController extends AbstractFOSRestController
 
     return $this->view($this->applicationDto->fromEntity($pratica), Response::HTTP_CREATED);
   }
-  
+
   /**
    * Edit full Application
    * @Rest\Put("/{id}", name="applications_api_put")
