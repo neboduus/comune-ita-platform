@@ -1139,10 +1139,12 @@ class Servizio implements Translatable
 
   /**
    * @param string $specialCases
+   * @return Servizio
    */
-  public function setSpecialCases( $specialCases )
+  public function setSpecialCases( $specialCases ): Servizio
   {
     $this->specialCases = $specialCases;
+    return $this;
   }
 
   /**
@@ -1158,10 +1160,12 @@ class Servizio implements Translatable
 
   /**
    * @param string $moreInfo
+   * @return Servizio
    */
-  public function setMoreInfo( $moreInfo )
+  public function setMoreInfo( $moreInfo ): Servizio
   {
     $this->moreInfo = $moreInfo;
+    return $this;
   }
 
   /**
@@ -1177,10 +1181,12 @@ class Servizio implements Translatable
 
   /**
    * @param string|null $constraints
+   * @return Servizio
    */
-  public function setConstraints(?string $constraints)
+  public function setConstraints(?string $constraints): Servizio
   {
     $this->constraints = $constraints;
+    return $this;
   }
 
   /**
@@ -1196,10 +1202,12 @@ class Servizio implements Translatable
 
   /**
    * @param string|null $timesAndDeadlines
+   * @return Servizio
    */
-  public function setTimesAndDeadlines(?string $timesAndDeadlines)
+  public function setTimesAndDeadlines(?string $timesAndDeadlines): Servizio
   {
     $this->timesAndDeadlines = $timesAndDeadlines;
+    return $this;
   }
 
   /**
@@ -1332,10 +1340,12 @@ class Servizio implements Translatable
 
   /**
    * @param string $finalIndications
+   * @return Servizio
    */
-  public function setFinalIndications($finalIndications )
+  public function setFinalIndications($finalIndications ): Servizio
   {
     $this->finalIndications = $finalIndications;
+    return $this;
   }
 
   /**
