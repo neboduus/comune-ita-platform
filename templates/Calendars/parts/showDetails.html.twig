@@ -52,7 +52,7 @@
           </h5>
           <div class="card-text">
             <p>{{ calendar.location | raw }}</p>
-            <p>{{ 'meetings.contact' | trans }}: <a href="mailto:asili@comune.it">{{ calendar.contactEmail }}</a></p>
+            <p>{{ 'meetings.contact' | trans }}: <a href="mailto:{{ calendar.contactEmail }}">{{ calendar.contactEmail }}</a></p>
           </div>
         </div>
       </div>

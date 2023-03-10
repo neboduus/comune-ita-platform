@@ -9,145 +9,183 @@
 {% endblock %}
 
 {% block main_content %}
-<section id="intro" class="container px-4 my-4">
-  <div class="row">
-    <div class="col-lg-12 px-lg-4 py-lg-2">
-      {% if item.name %}
-        <h2> {{ 'gruppo_di_servizi.modifica' | trans() }} - {{ item.name }}</h2>
-      {% else %}
-        <h2>{{ 'user_group.new' | trans() }}</h2>
-      {% endif %}
-    </div>
-
-    <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
-      {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
-      {{ form_errors(form) }}
-      <ul class="nav nav-tabs" id="userGroupTab" role="tablist">
-        <li class="nav-item">
-          <a class="nav-link active" id="default-settings-tab" data-toggle="tab"
-                                href="#default-settings" role="tab" aria-controls="default-settings-tab"
-                                aria-selected="true">{{ 'operatori.scheda'|trans }}</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="core-contact-point-tab" data-toggle="tab" href="#core-contact-point" role="tab"
-                                aria-controls="core-contact-point-tab"
-                                aria-selected="false">{{ 'contact_point.name'|trans }}</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="place-tab" data-toggle="tab" href="#place" role="tab"
-             aria-controls="service-tab"
-             aria-selected="false">{{ 'place.address'|trans }}</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="operator-tab" data-toggle="tab" href="#operator" role="tab"
-                                aria-controls="operator-tab"
-                                aria-selected="false">{{ 'user_group.users'|trans }}</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="service-tab" data-toggle="tab" href="#service" role="tab"
-                                aria-controls="service-tab"
-                                aria-selected="false">{{ 'user_group.services'|trans }}</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab"
-             aria-controls="calendar-tab"
-             aria-selected="false">{{ 'user_group.calendar'|trans }}</a>
-        </li>
-      </ul>
-      <div class="tab-content" id="userGroupTabContent">
-        <div class="tab-pane p-3 fade show active" id="default-settings" role="tabpanel"
-             aria-labelledby="default-settings-tab">
-          {{ form_row(form.name) }}
-          {{ form_row(form.shortDescription) }}
-          {{ form_row(form.topic) }}
-          {{ form_row(form.mainFunction) }}
-          {{ form_row(form.moreInfo) }}
-        </div>
-
-        <div class="tab-pane p-3 fade" id="core-contact-point" role="tabpanel" aria-labelledby="core-contact-point-tab">
-
-          <fieldset>
-            {{ form_label(form.coreContactPoint) }}
-            <div class="d-none">
-              {{ form_row(form.coreContactPoint.name) }}
-            </div>
-            <div class="row">
-              <div class="col-md-6">{{ form_row(form.coreContactPoint.email) }}</div>
-              <div class="col-md-6">{{ form_row(form.coreContactPoint.pec) }}</div>
-            </div>
-            <div class="form-group">
-              <div class="row">
-                <div class="col-md-6">{{ form_row(form.coreContactPoint.phoneNumber) }}</div>
-                <div class="col-md-6">{{ form_row(form.coreContactPoint.url) }}</div>
-              </div>
-            </div>
-          </fieldset>
-        </div>
-
-        <div class="tab-pane p-3 fade" id="place" role="tabpanel" aria-labelledby="place-tab">
-          <fieldset>
-            <div class="form-group">
-              <div class="row">
-                <div class="col-md-4">{{ form_row(form.coreLocation.address.address_country) }}</div>
-                <div class="col-md-4">{{ form_row(form.coreLocation.address.address_region) }}</div>
-                <div class="col-md-4">{{ form_row(form.coreLocation.address.address_locality) }}</div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="row">
-                <div class="col-md-6">{{ form_row(form.coreLocation.address.street_address) }}</div>
-                <div class="col-md-2">{{ form_row(form.coreLocation.address.post_office_box_number) }}</div>
-                <div class="col-md-4">{{ form_row(form.coreLocation.address.postal_code) }}</div>
-              </div>
-            </div>
-            <div class="form-group d-none">
-              <div class="row">
-                <div class="col-md-6">{{ form_row(form.coreLocation.latitude) }}</div>
-                <div class="col-md-6">{{ form_row(form.coreLocation.longitude) }}</div>
-              </div>
-            </div>
-          </fieldset>
-          <div class="d-none">
-            {{ form_row(form.coreLocation.name) }}
-            {{ form_row(form.coreLocation.other_name) }}
-            {{ form_row(form.coreLocation.short_description) }}
-            {{ form_row(form.coreLocation.description) }}
-            {{ form_row(form.coreLocation.more_info) }}
-            {{ form_row(form.coreLocation.identifier) }}
-            {{ form_row(form.coreLocation.topic_id) }}
-            {{ form_row(form.coreLocation.geographic_areas_ids) }}
-            {{ form_row(form.coreLocation.core_contact_point) }}
-          </div>
-        </div>
-
-
-        <div class="tab-pane p-3 fade" id="operator" role="tabpanel" aria-labelledby="operator-tab">
-          {{ form_row(form.manager) }}
-          {{ form_row(form.users) }}
-        </div>
-
-        <div class="tab-pane p-3 fade" id="service" role="tabpanel" aria-labelledby="service-tab">
-          {{ form_row(form.services) }}
-        </div>
-
-        <div class="tab-pane p-3 fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
-          <div class="d-none">{{ form_row(form.calendar.location) }}</div>
-          <p>{{ 'user_group.opening_hours_alert'|trans }}</p>
-
-          {% for opening_hour in form.calendar.opening_hours %}
-            {{ include('Calendars/parts/minimalCalendarOpeningHours.html.twig') }}
-          {% endfor %}
-        </div>
-
+  <section id="intro" class="container px-4 my-4">
+    <div class="row">
+      <div class="col-lg-12 px-lg-4 py-lg-2">
+        {% if item.name %}
+          <h2> {{ 'gruppo_di_servizi.modifica' | trans() }} - {{ item.name }}</h2>
+        {% else %}
+          <h2>{{ 'user_group.new' | trans() }}</h2>
+        {% endif %}
       </div>
 
-      <input class="btn btn-primary mr-1" id="submit_or_confirm_user_group" type="button" value="{{ 'salva' | trans() }}" style="float: left"/>
+      <div class="col-lg-12 px-lg-4 py-lg-2 mt-4">
+        {{ form_start(form, {attr: {'novalidate': 'novalidate'}}) }}
+        {{ form_errors(form) }}
+        <ul class="nav nav-tabs" id="userGroupTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="default-settings-tab" data-toggle="tab"
+               href="#default-settings" role="tab" aria-controls="default-settings-tab"
+               aria-selected="true">{{ 'operatori.scheda'|trans }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="core-contact-point-tab" data-toggle="tab" href="#core-contact-point" role="tab"
+               aria-controls="core-contact-point-tab"
+               aria-selected="false">{{ 'contact_point.name'|trans }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="place-tab" data-toggle="tab" href="#place" role="tab"
+               aria-controls="service-tab"
+               aria-selected="false">{{ 'place.address'|trans }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="operator-tab" data-toggle="tab" href="#operator" role="tab"
+               aria-controls="operator-tab"
+               aria-selected="false">{{ 'user_group.users'|trans }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="service-tab" data-toggle="tab" href="#service" role="tab"
+               aria-controls="service-tab"
+               aria-selected="false">{{ 'user_group.services'|trans }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="calendar-tab" data-toggle="tab" href="#calendar" role="tab"
+               aria-controls="calendar-tab"
+               aria-selected="false">{{ 'user_group.opening_hours'|trans }}</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="userGroupTabContent">
+          <div class="tab-pane p-3 fade show active" id="default-settings" role="tabpanel"
+               aria-labelledby="default-settings-tab">
+            {{ form_row(form.name) }}
+            {{ form_row(form.shortDescription) }}
+            {{ form_row(form.topic) }}
+            {{ form_row(form.mainFunction) }}
+            {{ form_row(form.moreInfo) }}
+          </div>
 
-      <a class="btn btn-100 mr-1" href="{{ path('admin_user_group_index') }}"
-         style="float: left">{{ 'gruppo_di_servizi.torna_alla_lista' | trans() }}</a>
+          <div class="tab-pane p-3 fade" id="core-contact-point" role="tabpanel"
+               aria-labelledby="core-contact-point-tab">
 
-      {{ form_end(form) }}
+            <fieldset>
+              {{ form_label(form.coreContactPoint) }}
+              <div class="d-none">
+                {{ form_row(form.coreContactPoint.name) }}
+              </div>
+              <div class="row">
+                <div class="col-md-6">{{ form_row(form.coreContactPoint.email) }}</div>
+                <div class="col-md-6">{{ form_row(form.coreContactPoint.pec) }}</div>
+              </div>
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-6">{{ form_row(form.coreContactPoint.phoneNumber) }}</div>
+                  <div class="col-md-6">{{ form_row(form.coreContactPoint.url) }}</div>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="tab-pane p-3 fade" id="place" role="tabpanel" aria-labelledby="place-tab">
+            <fieldset>
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-4">{{ form_row(form.coreLocation.address.address_country) }}</div>
+                  <div class="col-md-4">{{ form_row(form.coreLocation.address.address_region) }}</div>
+                  <div class="col-md-4">{{ form_row(form.coreLocation.address.address_locality) }}</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="row">
+                  <div class="col-md-6">{{ form_row(form.coreLocation.address.street_address) }}</div>
+                  <div class="col-md-2">{{ form_row(form.coreLocation.address.post_office_box_number) }}</div>
+                  <div class="col-md-4">{{ form_row(form.coreLocation.address.postal_code) }}</div>
+                </div>
+              </div>
+              <div class="form-group d-none">
+                <div class="row">
+                  <div class="col-md-6">{{ form_row(form.coreLocation.latitude) }}</div>
+                  <div class="col-md-6">{{ form_row(form.coreLocation.longitude) }}</div>
+                </div>
+              </div>
+            </fieldset>
+            <div class="d-none">
+              {{ form_row(form.coreLocation.name) }}
+              {{ form_row(form.coreLocation.other_name) }}
+              {{ form_row(form.coreLocation.short_description) }}
+              {{ form_row(form.coreLocation.description) }}
+              {{ form_row(form.coreLocation.more_info) }}
+              {{ form_row(form.coreLocation.identifier) }}
+              {{ form_row(form.coreLocation.topic_id) }}
+              {{ form_row(form.coreLocation.geographic_areas_ids) }}
+              {{ form_row(form.coreLocation.core_contact_point) }}
+            </div>
+          </div>
+
+          <div class="tab-pane p-3 fade" id="operator" role="tabpanel" aria-labelledby="operator-tab">
+            {{ form_row(form.manager) }}
+            {{ form_row(form.users) }}
+          </div>
+
+          <div class="tab-pane p-3 fade" id="service" role="tabpanel" aria-labelledby="service-tab">
+            {{ form_row(form.services) }}
+          </div>
+
+          <div class="tab-pane p-3 fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
+            {{ form_row(form.calendar) }}
+
+            <div class="d-none" id="calendar-cards">
+
+              <div class="card card-teaser shadow rounded">
+                <svg class="icon icon-sm">
+                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
+                </svg>
+                <div class="card-body">
+                  <h5 class="card-title" id="calendar-title"></h5>
+                  <div class="card-text mt-2">
+
+                    <div id="opening-hours"></div>
+
+                    <div id="location-container" class="d-none">
+                      <strong>{{ 'meetings.meeting_place' | trans }}</strong>
+                      <p></p>
+                    </div>
+
+                    <div id="contact-container" class="d-none">
+                      <strong>{{ 'meetings.contact' | trans }}</strong>
+                      <p></p>
+                    </div>
+                  </div>
+
+
+
+                </div>
+              </div>
+            </div>
+
+            <div class="d-none" id="new-calendar">
+              <p>{{ 'user_group.opening_hours_alert'|trans }}</p>
+              <div class="row bg-light mb-4 js-opening_hour-item">
+                {{ form_row(form.days_of_week) }}
+                <div class="col-6">
+                  {{ form_row(form.begin_hour) }}
+                </div>
+                <div class="col-6">
+                  {{ form_row(form.end_hour) }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <input class="btn btn-primary mr-1" id="submit_or_confirm_user_group" type="button"
+               value="{{ 'salva' | trans() }}" style="float: left"/>
+
+        <a class="btn btn-100 mr-1" href="{{ path('admin_user_group_index') }}"
+           style="float: left">{{ 'gruppo_di_servizi.torna_alla_lista' | trans() }}</a>
+
+        {{ form_end(form) }}
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 {% endblock %}
