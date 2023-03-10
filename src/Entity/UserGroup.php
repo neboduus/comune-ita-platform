@@ -152,7 +152,7 @@ class UserGroup implements Translatable
 
   /**
    * @var Calendar
-   * @ORM\ManyToOne(targetEntity=Calendar::class, cascade={"persist"})
+   * @ORM\ManyToOne(targetEntity=Calendar::class)
    * @OA\Property(property="calendar", description="User Group's Calendar")
    * @Serializer\Exclude()
    */
