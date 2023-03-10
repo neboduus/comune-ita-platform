@@ -80,7 +80,12 @@ class BuiltInCreateCommand extends Command
     $whatYouGet = $parsed['what_you_get'];
     $costs = $parsed['costs'];
     $who = $parsed['who'];
+    $special_cases = $parsed['special_cases'];
+    $more_info = $parsed['more_info'];
+    $constraints = $parsed['constraints'];
+    $times_and_deadlines = $parsed['times_and_deadlines'];
     $conditions = $parsed['conditions'];
+    $final_indications = $parsed['final_indications'];
     $accessLevel = $parsed['access_level'];
     $workflow = $parsed['workflow'];
     $handler = "";
@@ -119,7 +124,12 @@ class BuiltInCreateCommand extends Command
       ->setWhatYouGet($whatYouGet)
       ->setCosts($costs)
       ->setWho($who)
+      ->setSpecialCases($special_cases)
+      ->setMoreInfo($more_info)
+      ->setConstraints($constraints)
+      ->setTimesAndDeadlines($times_and_deadlines)
       ->setConditions($conditions)
+      ->setFinalIndications($final_indications)
       ->setAccessLevel($accessLevel)
       ->setStatus($status)
       ->setHandler($handler)
