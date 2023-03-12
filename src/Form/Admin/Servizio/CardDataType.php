@@ -70,6 +70,11 @@ class CardDataType extends AbstractI18nType
     /** @var Servizio $servizio */
     $servizio = $builder->getData();
 
+    // se c'è un url di prenotazione nell'aspetto grafico dell'ente controllo che l'url ottenuto
+    // dall'entità servizio sia equivalente in modo tale da sapere se è un url generato o personalizzato
+    $appointmentBookingUrl = $servizio->getBookingCallToAction();
+    $isGenerated = $appointmentBookingUrl && $appointmentBookingUrl == $servizio->getEnte()->getAppointmentBookingUrl() . '?service_id=' . $servizio->getId();
+
     // you can add the translatable fields
     $this->createTranslatableMapper($builder, $options)
       ->add("shortDescription", I18nTextareaType::class, [
@@ -134,7 +139,12 @@ class CardDataType extends AbstractI18nType
       ->add('bookingCallToAction', UrlType::class, [
         "label" => 'servizio.booking_call_to_action',
         'required' => false,
-        'help' => 'servizio.booking_cta_help'
+        'data' => $isGenerated ? null : $appointmentBookingUrl,
+        'help' => $isGenerated ? $this->translator->trans('servizio.booking_cta_help') . '<br>' . $this->translator->trans('servizio.booking_cta_help_generated_link', ['%link%' => $appointmentBookingUrl]) : 'servizio.booking_cta_help',
+        'help_html' => true,
+        'attr' => [
+          'placeholder' => $isGenerated ? $appointmentBookingUrl : null,
+        ]
       ])
       ->add(
         'conditionsAttachments',
