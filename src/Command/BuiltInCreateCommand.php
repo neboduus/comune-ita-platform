@@ -103,10 +103,27 @@ class BuiltInCreateCommand extends Command
     if (!$servizio instanceof Servizio) {
       $symfonyStyle->writeln('Service ' . $identifier . ' not found, create built-in service');
       $servizio = new Servizio();
-    } else if (!$servizio->isBuiltIn()){
-      $symfonyStyle->error('Service ' . $identifier . ' already exists but is not built-in, no action will be performed');
-      return 1;
     } else {
+
+      // Verifico che il servizio esistente sia di tipo builtin, se non interrompo l'esecuzione
+      if (!$servizio->isBuiltIn()){
+        $symfonyStyle->error('Service ' . $identifier . ' already exists but is not built-in, no action will be performed');
+        return 1;
+      }
+
+      try {
+        $updatedAt = new \DateTime($parsed['updated_at']);
+      } catch (\Exception $e) {
+        $symfonyStyle->error('Error parsing passed update_at datetime: ' . $parsed['updated_at']);
+        return 1;
+      }
+
+      // Todo: questo controllo non ci mette totalmente al sicuro da aggiornamenti non richiesti, da verificare
+      if ($servizio->getUpdatedAt() > $updatedAt) {
+        $symfonyStyle->note('Service has an update date greater than the one on json file, update will not be executed!');
+        return 0;
+      }
+
       // Update built-in service with json data
       $symfonyStyle->writeln('Service ' . $identifier . ' already exists, update service data');
     }
