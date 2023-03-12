@@ -8,11 +8,13 @@ use App\Entity\Ente;
 use App\Entity\OperatoreUser;
 use App\Entity\User;
 use App\Model\Gateway;
+use App\Services\Satisfy\SatisfyTenant;
 use App\Utils\Csv;
 use App\Utils\StringUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -25,10 +27,10 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class ConfigureInstanceCommand extends Command
 {
 
-  /** @var */
-  private $symfonyStyle;
+  private SymfonyStyle $symfonyStyle;
 
   private $name;
+
   private $codeAdm;
   private $siteUrl;
   private $adminName;
@@ -37,28 +39,24 @@ class ConfigureInstanceCommand extends Command
   private $adminUsername;
   private $adminPassword;
 
-  private $isInteractive = true;
+  private bool $isInteractive = true;
 
-  private $data = null;
+  private EntityManagerInterface $entityManager;
 
-  private $entityManager = null;
-
-  private $output;
-
-  /**
-   * @var UserPasswordEncoderInterface
-   */
-  private $passwordEncoder;
+  private UserPasswordEncoderInterface $passwordEncoder;
+  private SatisfyTenant $satisfyTenant;
 
   /**
    * @param EntityManagerInterface $entityManager
    * @param UserPasswordEncoderInterface $passwordEncoder
    */
-  public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder)
+  public function __construct(EntityManagerInterface $entityManager, UserPasswordEncoderInterface $passwordEncoder, SatisfyTenant $satisfyTenant)
   {
     $this->entityManager = $entityManager;
     $this->passwordEncoder = $passwordEncoder;
+    $this->satisfyTenant = $satisfyTenant;
     parent::__construct();
+
   }
 
   protected function configure()
@@ -73,7 +71,6 @@ class ConfigureInstanceCommand extends Command
       ->addOption('admin_email', null, InputOption::VALUE_OPTIONAL, 'Email of the admin')
       ->addOption('admin_username', null, InputOption::VALUE_OPTIONAL, 'Username of the admin')
       ->addOption('admin_password', null, InputOption::VALUE_OPTIONAL, 'Username of the admin')
-      ->addOption('write_file', null, InputOption::VALUE_NONE, 'Write results file')
       ->setDescription("Initial settings of an instance");
   }
 
@@ -106,20 +103,12 @@ class ConfigureInstanceCommand extends Command
       if ($admin instanceof User) {
         $this->symfonyStyle->note("Admin creato correttamente: " . $admin->getUsername());
       }
-    }
 
-    // Scrivo il csv risultante solo se ho dato il file come parametro
-    if ($input->getOption('write_file')) {
-      $filesystem = new Filesystem();
-      $file = $this->getContainer()->get('kernel')->getProjectDir() . '/var/uploads/instances-' . date('Ymd') . '.csv';
-      if (!is_file($file)) {
-        $filesystem->touch($file);
+      if ($this->createSatisfyTenant($ente)) {
+        $this->symfonyStyle->note("Satisfy creato correttamente: ");
       }
-      $fp = fopen($file, 'a');
-      foreach ($this->output as $item) {
-        fputcsv($fp, $item);
-      }
-      fclose($fp);
+
+      $this->createBuiltinServices($instance, $output);
     }
 
     $this->symfonyStyle->success("Istanza configurata con successo: " . $instance);
@@ -143,7 +132,6 @@ class ConfigureInstanceCommand extends Command
 
     if (!$this->isInteractive) {
       $name = $this->name;
-      $codeMec = $this->codeAdm ?? '';
       $codeAdm = $this->codeAdm ?? '';
       $url = $this->siteUrl;
     } else {
@@ -153,10 +141,7 @@ class ConfigureInstanceCommand extends Command
       $name = $this->symfonyStyle->ask("Inserisci il nome dell'ente: ", $suggestion);
 
       $suggestion = $instanceExists ? $ente->getCodiceMeccanografico() : '';
-      $codeMec = $this->symfonyStyle->ask("Inserisci il codice Meccanografico: ", $suggestion);
-
-      $suggestion = $instanceExists ? $ente->getCodiceAmministrativo() : '';
-      $codeAdm = $this->symfonyStyle->ask("Inserisci il codice Amministrativo: ", $suggestion);
+      $codeAdm = $this->symfonyStyle->ask("Inserisci il codice Meccanografico/Amministrativo: ", $suggestion);
 
       $suggestion = $instanceExists ? $ente->getSiteUrl() : '';
       $url = $this->symfonyStyle->ask("Inserisci url del sito comunale: ", $suggestion);
@@ -169,7 +154,7 @@ class ConfigureInstanceCommand extends Command
     $ente
       ->setName($name)
       //->setSlug($identifier)
-      ->setCodiceMeccanografico($codeMec)
+      ->setCodiceMeccanografico($codeAdm)
       ->setCodiceAmministrativo($codeAdm)
       ->setSiteUrl($url);
 
@@ -186,9 +171,10 @@ class ConfigureInstanceCommand extends Command
   }
 
   /**
-   * @return AdminUser|\FOS\UserBundle\Model\UserInterface|null
+   * @return AdminUser
    */
-  private function createAdmin(Ente $ente) {
+  private function createAdmin(Ente $ente)
+  {
 
     if (!$this->isInteractive) {
       $nome = $this->adminName ?? '';
@@ -201,8 +187,10 @@ class ConfigureInstanceCommand extends Command
       $nome = $this->symfonyStyle->ask("Inserisci il nome: ", 'Opencontent');
       $cognome = $this->symfonyStyle->ask('Inserisci il cognome: ', 'Scarl');
       $email = $this->symfonyStyle->ask('Inserisci l\'indirizzo email: ', 'support@opencontent.it');
+      $this->adminEmail = $email;
       $username = $this->symfonyStyle->ask('Inserisci lo username: ', 'admin');
-      $password = $this->symfonyStyle->ask('Inserisci la password: ', '');
+      $password = $this->symfonyStyle->ask('Inserisci la password: ', StringUtils::randomPassword());
+      $this->adminPassword = $password;
     }
 
     $repo = $this->entityManager->getRepository('App\Entity\AdminUser');
@@ -239,6 +227,44 @@ class ConfigureInstanceCommand extends Command
     } catch (\Exception $e) {
       $this->symfonyStyle->text('Errore: ' . $e->getMessage());
       return null;
+    }
+  }
+
+  private function createSatisfyTenant(Ente $ente)
+  {
+    $createSatisfyTenant = $this->symfonyStyle->confirm("Vuoi procedere con la configurazione di satisfy per il tenant corrente?");
+    if ($createSatisfyTenant) {
+
+      if (!empty($ente->getSatisfyEntrypointId())) {
+        $this->symfonyStyle->warning("Su l'ente corrente è già presente un id di configurazione di Satisfy, verificare!");
+        return false;
+      }
+
+      try {
+        return $this->satisfyTenant->createEntryPoint($ente, $this->adminEmail, $this->adminPassword);
+      } catch (\Exception $e) {
+        $this->symfonyStyle->error($e->getMessage());
+      }
+    }
+    return false;
+  }
+
+  private function createBuiltinServices($instance, $output)
+  {
+
+    $createBuiltinServices = $this->symfonyStyle->confirm("Vuoi procedere con la creazione dei servizi Buitin?");
+    if ($createBuiltinServices) {
+      $command = $this->getApplication()->find('ocsdc:built-in-services-import');
+
+      foreach (['bookings', 'helpdesk', 'inefficiencies'] as $s) {
+        $arguments = [
+          '-i'    => $instance,
+          '-f'  => './data/built-in/'. $s .'.json',
+        ];
+
+        $greetInput = new ArrayInput($arguments);
+        $command->run($greetInput, $output);
+      }
     }
   }
 }
