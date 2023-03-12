@@ -92,7 +92,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
   /**
    * @param mixed $credentials
    * @param UserProviderInterface $userProvider
-   * @param UserProviderInterface $userProvider
    *
    * @return User|object|UserInterface|null
    */
@@ -103,12 +102,19 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
       throw new InvalidCsrfTokenException();
     }
 
-    $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
+    $userRepo = $this->entityManager->getRepository(User::class);
+    $qb = $userRepo->createQueryBuilder('u');
+    $qb->select('u')
+      ->where('LOWER(u.username) = :username')
+      ->setParameter(':username', strtolower($credentials['username']))
+      ->setMaxResults(1);
 
-    if (!$user) {
-      // fail authentication with a custom error
+    try {
+      $user = $qb->getQuery()->getSingleResult();
+    } catch (\Exception $e) {
       throw new CustomUserMessageAuthenticationException('Username non trovata.');
     }
+
     return $user;
   }
 
