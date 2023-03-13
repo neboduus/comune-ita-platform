@@ -23,7 +23,7 @@
           </div>
           <p
             class="subtitle-small">{{ 'pratica.thanks_message'|trans({'%name%':pratica.servizio.name,'%id%':pratica.id,'%ente%':pratica.ente.name})|raw }}</p>
-          {% if pratica.servizio.paymentRequired %}
+          {% if pratica.servizio.paymentRequired == 1 %}
             <p class="mt-4 mb-0">{{ 'payment.type' | trans }}: <strong>{{ pratica.getPaymentType }}</strong></p>
             <p class="m-0">{{ 'payment.amount' | trans }}:
               <strong>{{ pratica.paymentData is not null and pratica.paymentData.payment_amount is defined
