@@ -156,7 +156,7 @@ class ExternalProtocolService
           'description' => $currentInstance->getName(),
           'slug' => $currentInstance->getSlug(),
           'sdc_id' => $currentInstance->getId(),
-          'sdc_base_url' => $this->router->generate('api_base', [], UrlGeneratorInterface::ABSOLUTE_URL),
+          'sdc_base_url' => rtrim($this->router->generate('api_base', [], UrlGeneratorInterface::ABSOLUTE_URL), '/'),
           'sdc_username' => $operatoreUser->getUsername(),
           'sdc_password' => $password ?? self::OPERATOR_TMP_PASSWORD,
           'sdc_institution_code' => $currentInstance->getCodiceMeccanografico(),
