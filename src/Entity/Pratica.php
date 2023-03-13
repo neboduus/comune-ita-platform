@@ -483,6 +483,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $backofficeFormData;
 
   /**
+   * @ORM\Column(type="json", options={"jsonb":true})
+   * @var array
+   */
+  protected $dematerializedForms;
+
+  /**
    * @ORM\Column(type="string", nullable=true)
    * @var string
    */
@@ -1130,6 +1136,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
 
     $subject = $this->generateSubject();
     $this->setOggetto($subject);
+
     return $this;
   }
 
@@ -1139,9 +1146,9 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function generateSubject(): string
   {
     return StringUtils::shortenString($this->getServizio()->getName())
-    . ' ' . $this->getUser()->getNome()
-    . ' ' . $this->getUser()->getCognome()
-    . ' ' . $this->getUser()->getCodiceFiscale() ?? $this->getUser()->getId();
+    .' '.$this->getUser()->getNome()
+    .' '.$this->getUser()->getCognome()
+    .' '.$this->getUser()->getCodiceFiscale() ?? $this->getUser()->getId();
   }
 
   /**
@@ -2144,6 +2151,25 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   }
 
   /**
+   * @return array
+   */
+  public function getDematerializedForms()
+  {
+    return $this->dematerializedForms;
+  }
+
+  /**
+   * @param $dematerializedForms
+   * @return $this
+   */
+  public function setDematerializedForms($dematerializedForms)
+  {
+    $this->dematerializedForms = $dematerializedForms;
+
+    return $this;
+  }
+
+  /**
    * @return string
    */
   public function getLocale(): ?string
@@ -2207,7 +2233,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function getRemainingResponseTime(): int
   {
     $now = new \DateTime();
-    if($this->servizio->getStatus() === Servizio::STATUS_SCHEDULED){
+    if ($this->servizio->getStatus() === Servizio::STATUS_SCHEDULED) {
       // get days passed from the scheduled final date
       $daysFromSubmission = $now->diff($this->servizio->getScheduledTo())->days;
     } else {
@@ -2215,6 +2241,7 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
       $submissionDate = (new \DateTime())->setTimestamp($this->submissionTime);
       $daysFromSubmission = $now->diff($submissionDate)->days;
     }
+
     return $this->servizio->getMaxResponseTime() - $daysFromSubmission;
   }
 

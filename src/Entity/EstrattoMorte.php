@@ -17,7 +17,7 @@ class EstrattoMorte extends Pratica implements DematerializedFormPratica
      * @ORM\Column(type="json", options={"jsonb":true})
      * @var array
      */
-    private $dematerializedForms;
+    protected $dematerializedForms;
 
     /**
      * @var string
