@@ -26,8 +26,8 @@
           {% if pratica.servizio.paymentRequired == 1 %}
             <p class="mt-4 mb-0">{{ 'payment.type' | trans }}: <strong>{{ pratica.getPaymentType }}</strong></p>
             <p class="m-0">{{ 'payment.amount' | trans }}:
-              <strong>{{ pratica.paymentData is not null and pratica.paymentData.payment_amount is defined
-                ? pratica.paymentData.payment_amount : pratica.servizio.paymentParameters['total_amounts'] }}€</strong>
+              <strong>{{ pratica.paymentData is not null and pratica.paymentData['amount'] is defined
+                ? pratica.paymentData['amount'] : pratica.servizio.paymentParameters['total_amounts'] }}€</strong>
             </p>
           {% endif %}
           <p class="m-0">{{ 'pratica.sent_to' | trans }}:
