@@ -17,6 +17,7 @@ use App\Entity\RispostaIntegrazioneRepository;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
 use App\Entity\User;
+use App\Entity\UserGroup;
 use App\FormIO\ExpressionValidator;
 use App\FormIO\Schema;
 use App\FormIO\SchemaComponent;
@@ -129,20 +130,20 @@ class PraticaManager
    * @param LoggerInterface $logger
    * @param SchemaFactoryInterface $schemaFactory
    * @param MessageManager $messageManager ,
-   * @param PaymentService $paymentService,
+   * @param PaymentService $paymentService ,
    * @param ExpressionValidator $expressionValidator
    */
   public function __construct(
-    EntityManagerInterface $entityManager,
-    InstanceService $instanceService,
+    EntityManagerInterface  $entityManager,
+    InstanceService         $instanceService,
     ModuloPdfBuilderService $moduloPdfBuilderService,
-    PraticaStatusService $praticaStatusService,
-    TranslatorInterface $translator,
-    LoggerInterface $logger,
-    SchemaFactoryInterface $schemaFactory,
-    MessageManager $messageManager,
-    PaymentService $paymentService,
-    ExpressionValidator $expressionValidator
+    PraticaStatusService    $praticaStatusService,
+    TranslatorInterface     $translator,
+    LoggerInterface         $logger,
+    SchemaFactoryInterface  $schemaFactory,
+    MessageManager          $messageManager,
+    PaymentService          $paymentService,
+    ExpressionValidator     $expressionValidator
   )
   {
     $this->moduloPdfBuilderService = $moduloPdfBuilderService;
@@ -227,13 +228,13 @@ class PraticaManager
 
   /**
    * @param Pratica $pratica
-   * @param User $user
+   * @param User|null $user
+   * @param UserGroup|null $userGroup
    * @throws Exception
    */
-  public function assign(Pratica $pratica, User $user)
+  public function assign(Pratica $pratica, User $user = null, UserGroup $userGroup = null)
   {
-
-    if ($pratica->getOperatore() && $pratica->getOperatore()->getFullName() === $user->getFullName()) {
+    if ($user && $pratica->getOperatore() && $pratica->getOperatore()->getFullName() === $user->getFullName() && $pratica->getUserGroup() === $userGroup) {
       throw new BadRequestHttpException(
         $this->translator->trans('pratica.already_assigned', ['%operator_fullname%' => $pratica->getOperatore()->getFullName()])
       );
@@ -243,10 +244,64 @@ class PraticaManager
       throw new BadRequestHttpException($this->translator->trans('pratica.no_protocol_number'));
     }
 
+    if (!$user && !$userGroup) {
+      throw new BadRequestHttpException($this->translator->trans('pratica.user_or_user_group_required_for_assignment'));
+    }
+
+
+    if ($user && $userGroup && !$user->getUserGroups()->contains($userGroup)) {
+      throw new BadRequestHttpException($this->translator->trans('operatori.user_not_in_user_group', [
+        '%fullname%' => $user->getFullName(),
+        '%user_group%' => $userGroup->getName()
+      ]));
+    }
+
+    // Assegnazioni automatiche del gruppo
+    if ($user && !$userGroup) {
+      if ($pratica->getUserGroup()->getUsers()->contains($user)) {
+        // Se non è specificato il gruppo tra i parametri, ma l'operatore appartiena al gruppo a cui è assegnata
+        // la pratica mantengo l'assegnazione del gruppo
+        $userGroup = $pratica->getUserGroup();
+      } else {
+        // Ricerco tutti gli uffici a cui appartiene l'operatore
+        $qb = $this->entityManager->createQueryBuilder();
+
+        $qb->select('user_group')
+          ->from('App:UserGroup', 'user_group')
+          ->andWhere(':user MEMBER OF user_group.users')
+          ->setParameter('user', $user)
+          ->orderBy('user_group.name', 'ASC');
+
+        $userGroups = $qb->getQuery()->getResult();
+        $preferredUserGroup = null;
+
+        // Fixme: inserire nell'ordinamento della query precendente: attenzione però perche la pratica può essere
+        // associata ad un ufficio che non è incaricato del servizio
+        foreach ($userGroups as $userGroup) {
+          if (!$preferredUserGroup && $userGroup->getServices()->contains($pratica->getServizio())) {
+            // Utilizzo il primo uffico in ordine alfabetico che sia associato al servizio della pratica
+            $preferredUserGroup = $userGroup;
+          }
+        }
+
+        // Se nessun ufficio gestisce il servizio allora prendo il primo in ordine alfabetico
+        $userGroup = $preferredUserGroup ?? reset($userGroups);
+      }
+    }
+
     $pratica->setOperatore($user);
+    $pratica->setUserGroup($userGroup);
+
     $statusChange = new StatusChange();
     $statusChange->setEvento('Presa in carico');
-    $statusChange->setOperatore($user->getFullName());
+
+    if ($user) {
+      $statusChange->setOperatore($user->getFullName());
+    }
+
+    if ($userGroup) {
+      $statusChange->setUserGroup($userGroup->getName());
+    }
 
     try {
       $this->praticaStatusService->validateChangeStatus($pratica, Pratica::STATUS_PENDING);
@@ -428,8 +483,8 @@ class PraticaManager
       //$allegato->setIdRichiestaIntegrazione($integration->getId());
       $this->entityManager->persist($allegato);
       $message->addAttachment($allegato);
-      $requestAttachments[]= $allegato;
-      $requestAttachmentsIds[]= $allegato->getId();
+      $requestAttachments[] = $allegato;
+      $requestAttachmentsIds[] = $allegato->getId();
     }
     $this->messageManager->save($message);
 
@@ -587,11 +642,12 @@ class PraticaManager
    */
   public function generateStatusMessage(
     Pratica $pratica,
-    string $text,
-    string $subject,
-    array $callToActions = [],
-    $visibility = Message::VISIBILITY_APPLICANT
-  ): Message {
+    string  $text,
+    string  $subject,
+    array   $callToActions = [],
+            $visibility = Message::VISIBILITY_APPLICANT
+  ): Message
+  {
     $message = new Message();
     $message->setApplication($pratica);
     $message->setProtocolRequired(false);
@@ -694,7 +750,7 @@ class PraticaManager
         ($this->schema[$key]['type'] == 'file' || $this->schema[$key]['type'] == 'sdcfile' || $this->schema[$key]['type'] == 'financial_report')) {
         $isFile = true;
       }
-      $new_key = $prefix.(empty($prefix) ? '' : '.').$key;
+      $new_key = $prefix . (empty($prefix) ? '' : '.') . $key;
 
       if (is_array($value) && !$isFile) {
         $result = array_merge($result, $this->arrayFlat($value, $isSchema, $new_key));
@@ -739,9 +795,9 @@ class PraticaManager
         ->setSessoAsString($data['flattened']['applicant.gender.gender'] ?? '')
         ->setCellulareContatto($data['flattened']['applicant.data.cell_number'] ?? '')
         ->setCpsTelefono($data['flattened']['applicant.data.phone_number'] ?? '')
-        ->setEmail($data['flattened']['applicant.data.email_address'] ?? $user->getId().'@'.CPSUser::FAKE_EMAIL_DOMAIN)
+        ->setEmail($data['flattened']['applicant.data.email_address'] ?? $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN)
         ->setEmailContatto(
-          $data['flattened']['applicant.data.email_address'] ?? $user->getId().'@'.CPSUser::FAKE_EMAIL_DOMAIN
+          $data['flattened']['applicant.data.email_address'] ?? $user->getId() . '@' . CPSUser::FAKE_EMAIL_DOMAIN
         )
         ->setNome($data['flattened']['applicant.data.completename.data.name'] ?? '')
         ->setCognome($data['flattened']['applicant.data.completename.data.surname'] ?? '')
@@ -824,7 +880,7 @@ class PraticaManager
     }
 
     $errors = $this->expressionValidator->validateData($pratica->getServizio(), json_encode($data['data']));
-    if (!empty($errors)){
+    if (!empty($errors)) {
       $this->logger->error("Received duplcated unique_id");
       throw new ValidatorException($this->translator->trans('steps.formio.duplicated_unique_id'));
     }

@@ -15,6 +15,7 @@ use App\Entity\Pratica;
 use App\Entity\PraticaRepository;
 use App\Entity\Servizio;
 use App\Entity\StatusChange;
+use App\Entity\UserGroup;
 use App\Form\Extension\TestiAccompagnatoriProcedura;
 use App\Form\Operatore\Base\ApplicationOutcomeType;
 use App\FormIO\Schema;
@@ -591,6 +592,7 @@ class OperatoriController extends AbstractController
   {
     /** @var OperatoreUser $user */
     $user = $this->getUser();
+
     try {
       $this->praticaManager->assign($pratica, $user);
     } catch (\Exception $e) {
@@ -638,36 +640,56 @@ class OperatoriController extends AbstractController
     $this->denyAccessUnlessGranted(ApplicationVoter::VIEW, $pratica);
 
     try {
+      $userGroupId = $request->request->get('user_group', false);
       $operatorId = $request->request->get('operator', false);
-      if (!$operatorId) {
-        throw new BadRequestHttpException($this->translator->trans('operatori.operator_not_found'));
+
+      if (!$userGroupId) {
+        throw new BadRequestHttpException($this->translator->trans('operatori.user_group_is_required'));
       }
-      $operator = $this->entityManager->getRepository(OperatoreUser::class)->find($operatorId);
-      if (!$operator) {
-        throw new BadRequestHttpException($this->translator->trans('operatori.operator_not_found'));
+      $userGroup = $this->entityManager->getRepository(UserGroup::class)->find($userGroupId);
+      if (!$userGroup) {
+        throw new BadRequestHttpException($this->translator->trans('operatori.user_group_not_found'));
       }
-      $this->reassignPratica($pratica, $operator);
+
+      $operator = null;
+      if ($operatorId) {
+        $operator = $this->entityManager->getRepository(OperatoreUser::class)->find($operatorId);
+        if (!$operator) {
+          throw new BadRequestHttpException($this->translator->trans('operatori.operator_not_found'));
+        }
+      }
+
+      $this->reassignPratica($pratica, $operator, $userGroup);
+
     } catch (\Exception $e) {
       $this->addFlash('error', $e->getMessage());
     }
 
+    if (!$this->isGranted(ApplicationVoter::VIEW, $pratica)) {
+      // User can no longer access application -> redirect to applications index
+      return $this->redirectToRoute('operatori_index');
+    }
     return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
   }
 
   /**
    * @throws \Exception
    */
-  private function reassignPratica(Pratica $pratica, OperatoreUser $operatoreUser)
+  private function reassignPratica(Pratica $pratica, OperatoreUser $operatoreUser=null, UserGroup $userGroup=null)
   {
-    $oldUser = $pratica->getOperatore();
-    $this->praticaManager->assign($pratica, $operatoreUser);
+    $oldUser = $pratica->getOperatore() ?? $pratica->getUserGroup();
+    $this->praticaManager->assign($pratica, $operatoreUser, $userGroup);
     $this->entityManager->flush($pratica);
+
+    if (!$userGroup) {
+      $this->addFlash('warning', $this->translator->trans('operatori.check_user_group'));
+    }
 
     $this->logger->info(
       LogConstants::PRATICA_REASSIGNED,
       [
         'pratica' => $pratica->getId(),
-        'user' => $pratica->getUser()->getId(),
+        'user' => $pratica->getOperatore() ? $pratica->getOperatore()->getId() : $pratica->getUserGroup()->getId(),
         'old_user' => $oldUser->getId(),
       ]
     );

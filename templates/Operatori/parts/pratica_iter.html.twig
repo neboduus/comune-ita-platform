@@ -7,15 +7,24 @@
         <div class="point-list-content">
           <div class="card card-teaser rounded p-2">
             <div class="card-body">
-            <b>{{ ('pratica.dettaglio.stato_'~change[0])| trans }}</b>
-              <small class="d-block">{{ 'pratica.dettaglio.il' | trans}} {{ timestamp|date('d/m/Y') }} {{ 'pratica.dettaglio.alle' | trans}} {{ timestamp|date('H:i') }}</small>
-              {% if change[1] is defined and change[1].operatore is defined %}
-              <small>
-                <svg class="icon icon-xs icon-secondary">
-                  <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
-                </svg>
+              <b>{{ ('pratica.dettaglio.stato_'~change[0])| trans }}</b>
+              <small
+                class="d-block">{{ 'pratica.dettaglio.il' | trans }} {{ timestamp|date('d/m/Y') }} {{ 'pratica.dettaglio.alle' | trans }} {{ timestamp|date('H:i') }}</small>
+              {% if change[1] is defined and change[1].operatore is defined and change[1].operatore %}
+                <small class="d-block">
+                  <svg class="icon icon-xs icon-secondary">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-user"></use>
+                  </svg>
                   {{ change[1].operatore }}
-              </small>
+                </small>
+              {% endif %}
+              {% if change[1] is defined and change[1].user_group is defined and change[1].user_group %}
+                <small class="d-block">
+                  <svg class="icon icon-xs icon-secondary">
+                    <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-pa"></use>
+                  </svg>
+                  {{ change[1].user_group }}
+                </small>
               {% endif %}
               {% if change[1] is defined and change[1].message is defined %}
                 <br><small>{{ change[1].message }}</small>

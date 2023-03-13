@@ -129,7 +129,8 @@ class ApplicationVoter extends Voter
     if ($this->security->isGranted('ROLE_OPERATORE')) {
       /** @var OperatoreUser $user */
       $isAssigned = $pratica->getOperatore() && $pratica->getOperatore() === $user;
-      if ($user->isSystemUser() || in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray()) || $isAssigned) {
+      $isUserGroupAssigned = $pratica->getUserGroup() && $user->getUserGroups()->contains($pratica->getUserGroup());
+      if ($user->isSystemUser() || in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray()) || $isAssigned || $isUserGroupAssigned) {
         return true;
       }
     }

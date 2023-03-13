@@ -511,6 +511,7 @@ pratica:
   error_signature_validation: "Il file %filename% non presenta una firma valida."
   already_processed: 'La pratica è già stata elaborata'
   already_assigned: 'La pratica è già assegnata a %operator_fullname%'
+  user_or_user_group_required_for_assignment: "È obblogatorio assegnare la pratica ad un ufficio o ad un'operatore"
   no_protocol_number: 'La pratica non ha ancora un numero di protocollo'
   in_attesa_protocollo: 'In attesa di protocollazione'
   protocollo_non_richiesto: '(non necessario)'
@@ -523,6 +524,7 @@ pratica:
   presentante: 'Presentante'
   stato: 'Stato'
   operatore: 'Operatore'
+  user_group: 'Ufficio incaricato'
   nessun_allegato: 'Non sono presenti allegati.'
   aggiungi_allegato: 'Aggiungi allegato'
   aggiungi_componente_nucleo_familiare: 'Aggiungi componente nucleo familiare'
@@ -1161,7 +1163,11 @@ admin:
   show_service_access: "Clicca per copiare l'url di accesso alla compilazione della pratica"
   payment_amount_description: "(L'importo è determinato dal modulo tramite il valore del campo 'payment_amount')"
 operatori:
+  user_group_is_required: 'È obbligatorio selezionare un ufficio per riassegnare la pratica'
+  user_group_not_found: 'Ufficio non trovato'
   operator_not_found: 'Operatore non trovato'
+  check_user_group: "Non è stato specificato un ufficio associato questa pratica, verifica che l'assegnazione automatica sia corretta"
+  user_not_in_user_group: "L'operatore %fullname% non appartiene al gruppo %user_group%"
   error_compile_built-in: 'Per questo servizio non è possibile inviare una pratica per conto del cittadino'
   error_pratice_state: 'La pratica non si trova nello stato corretto'
   integration_accepted_success: 'Integrazione accettata correttamente'

@@ -165,8 +165,7 @@
                                 </select>
                               </div>
                               <div class="select-wrapper mt-4">
-                                <select id="operator" class="d-none" title="{{ 'operatori.select_operator' | trans }}" name="operator"
-                                        required="required" disabled>
+                                <select id="operator" class="d-none" title="{{ 'operatori.select_operator' | trans }}" name="operator" disabled>
                                 </select>
                               </div>
                             </div>
@@ -254,6 +253,13 @@
                         <div class="col-12 pb-3">
                           <h6>{{ 'pratica.operatore' | trans }}:</h6>
                           <p class="m-0">{{ pratica.operatore.fullName }}</p>
+                        </div>
+                      {% endif %}
+
+                      {% if  pratica.userGroup %}
+                        <div class="col-12 pb-3">
+                          <h6>{{ 'pratica.user_group' | trans }}:</h6>
+                          <p class="m-0">{{ pratica.userGroup.name }}</p>
                         </div>
                       {% endif %}
                     </div>

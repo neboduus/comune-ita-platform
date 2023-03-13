@@ -111,7 +111,7 @@ class AttachmentVoter extends Voter
     if ($this->security->isGranted('ROLE_OPERATORE')) {
       foreach ($attachment->getPratiche() as $pratica) {
         $isOperatoreEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
-        if ($pratica->getOperatore() === $user || $isOperatoreEnabled) {
+        if ($pratica->getOperatore() === $user || $isOperatoreEnabled || $user->getUserGroups()->contains($pratica->getUserGroup())) {
           return true;
         }
       }
@@ -119,7 +119,7 @@ class AttachmentVoter extends Voter
       if ($attachment instanceof RichiestaIntegrazione) {
         $pratica = $attachment->getPratica();
         $isOperatoreEnabled = in_array($pratica->getServizio()->getId(), $user->getServiziAbilitati()->toArray());
-        if ($pratica->getOperatore() === $user || $isOperatoreEnabled) {
+        if ($pratica->getOperatore() === $user || $isOperatoreEnabled || $user->getUserGroups()->contains($pratica->getUserGroup())) {
           return true;
         }
       }

@@ -463,22 +463,28 @@ class PraticaRepository extends EntityRepository
       ->from($entity, 'pratica')
       ->leftJoin('pratica.servizio', 'servizio');
 
-    // Rimosso per issue #177
-    /*$qb->andWhere('pratica.erogatore IN (:erogatore)')
-      ->setParameter('erogatore', $user->getEnte()->getErogatori()->toArray());*/
+    $orStatements = $qb->expr()->orX();
+    $orStatements->add(
+      $qb->expr()->eq('pratica.operatore', $qb->expr()->literal($user->getId()))
+    );
 
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    if (!empty($user->getServiziAbilitati()->toArray())) {
+      $orStatements->add(
+        $qb->expr()->in('pratica.servizio',   $user->getServiziAbilitati())
+      );
+    }
 
-    $qb->andWhere('pratica.servizio IN (:servizio)')
-      ->setParameter('servizio', $serviziAbilitati);
+    if (!empty($user->getUserGroups())) {
+      $orStatements->add(
+        $qb->expr()->in('pratica.userGroup', $user->getUserGroups())
+      );
+    }
+
+    $qb->andWhere($orStatements);
 
     if (!empty($filters['servizio'])) {
       $qb->andWhere('pratica.servizio = :servizio')
         ->setParameter('servizio', $filters['servizio']);
-      if (!in_array($filters['servizio'], $serviziAbilitati)) {
-        $qb->andWhere('pratica.operatore = :operatore')
-          ->setParameter('operatore', $user);
-      }
     } else {
       $qb->orWhere('pratica.operatore = :operatore')
         ->setParameter('operatore', $user);
@@ -749,26 +755,36 @@ class PraticaRepository extends EntityRepository
    * @param int|null $minStatus
    * @return array
    */
-  public function getServizioIdListByOperatore(OperatoreUser $user, $minStatus = null)
+  public function getServizioIdListByOperatore(OperatoreUser $user, $minStatus = null): array
   {
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    $qb = $this->createQueryBuilder('pratica')
+      ->select('distinct identity(pratica.servizio)');
 
-    $qb = $this->createQueryBuilder('pratica');
-    $qb->select('DISTINCT IDENTITY(pratica.servizio)');
+    $orStatements = $qb->expr()->orX();
+    $orStatements->add(
+      $qb->expr()->eq('pratica.operatore', $qb->expr()->literal($user->getId()))
+    );
 
-    if (!empty($serviziAbilitati)) {
-      $qb->where('pratica.servizio IN (:services)')
-        ->setParameter('services', $serviziAbilitati)
-        ->orWhere('pratica.operatore  = :operatore')
-        ->setParameter('operatore', $user);
-    } else {
-      $qb->where('pratica.operatore  = :operatore')->setParameter('operatore', $user);
+    if (!empty($user->getServiziAbilitati()->toArray())) {
+      $orStatements->add(
+        $qb->expr()->in('pratica.servizio',   $user->getServiziAbilitati())
+      );
     }
+
+    if (!empty($user->getUserGroups())) {
+      $orStatements->add(
+        $qb->expr()->in('pratica.userGroup', $user->getUserGroups())
+      );
+    }
+
+    $qb->andWhere($orStatements);
 
     if ($minStatus) {
-      $qb->andWhere('pratica.status >= :status')->setParameter('status', $minStatus);
+      $qb->andWhere('pratica.status >= :minStatus')
+        ->setParameter('minStatus', (int)$minStatus);
     }
 
+    $qb->orderBy('pratica.servizio', 'ASC');
     return $qb->getQuery()->getSingleColumnResult();
   }
 
@@ -781,25 +797,36 @@ class PraticaRepository extends EntityRepository
    */
   public function getStateListByOperatore(OperatoreUser $user, $minStatus = null)
   {
-    $serviziAbilitati = $user->getServiziAbilitati()->toArray();
+    $qb = $this->createQueryBuilder('pratica')
+      ->select('pratica.status');
 
-    $qb = $this->createQueryBuilder('pratica');
-    $qb->select('DISTINCT pratica.status');
+    $orStatements = $qb->expr()->orX();
+    $orStatements->add(
+      $qb->expr()->eq('pratica.operatore', $qb->expr()->literal($user->getId()))
+    );
 
-    if (!empty($serviziAbilitati)) {
-      $qb->where('pratica.servizio IN (:services)')
-        ->setParameter('services', $serviziAbilitati)
-        ->orWhere('pratica.operatore  = :operatore')
-        ->setParameter('operatore', $user);
-    } else {
-      $qb->where('pratica.operatore  = :operatore')->setParameter('operatore', $user);
+    if (!empty($user->getServiziAbilitati()->toArray())) {
+      $orStatements->add(
+        $qb->expr()->in('pratica.servizio',   $user->getServiziAbilitati())
+      );
     }
+
+    if (!empty($user->getUserGroups())) {
+      $orStatements->add(
+        $qb->expr()->in('pratica.userGroup', $user->getUserGroups())
+      );
+    }
+
+    $qb->andWhere($orStatements);
 
     if ($minStatus) {
-      $qb->andWhere('pratica.status >= :status')->setParameter('status', $minStatus);
+      $qb->andWhere('pratica.status >= :minStatus')
+        ->setParameter('minStatus', (int)$minStatus);
     }
 
+    $qb->orderBy('pratica.servizio', 'ASC');
     $stateIdList = $qb->getQuery()->getSingleColumnResult();
+
     $states = [];
     foreach ($stateIdList as $id) {
       foreach ($this->getClassConstants() as $name => $value) {
