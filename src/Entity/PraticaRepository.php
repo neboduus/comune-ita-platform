@@ -629,7 +629,7 @@ class PraticaRepository extends EntityRepository
     if (isset($parameters['service'])) {
       $qb->andWhere('pratica.servizio IN (:services)')->setParameter('services', $parameters['service']);
     }
-    
+
     if (isset($parameters['operatore'])) {
       if (isset($parameters['get_only_assigned_applications'])) {
         if ($parameters['get_only_assigned_applications']) {
@@ -698,10 +698,15 @@ class PraticaRepository extends EntityRepository
       $qb->select('COUNT(pratica.id)');
       return $qb->getQuery()->getSingleScalarResult();
     } else {
-      $qb
-        ->orderBy('pratica.' . $order, $sort)
-        ->setFirstResult($offset)
-        ->setMaxResults($limit);
+      if (isset($parameters['geojson']) && $parameters['geojson']) {
+        $qb
+          ->andWhere("FORMIO_JSON_FIELD(pratica.dematerializedForms 'address') IS NOT NULL");
+      } else {
+        $qb
+          ->orderBy('pratica.' . $order, $sort)
+          ->setFirstResult($offset)
+          ->setMaxResults($limit);
+      }
     }
 
     return $qb->getQuery()->execute();
@@ -777,10 +782,10 @@ class PraticaRepository extends EntityRepository
   public function getStateListByOperatore(OperatoreUser $user, $minStatus = null)
   {
     $serviziAbilitati = $user->getServiziAbilitati()->toArray();
-    
+
     $qb = $this->createQueryBuilder('pratica');
     $qb->select('DISTINCT pratica.status');
-    
+
     if (!empty($serviziAbilitati)) {
       $qb->where('pratica.servizio IN (:services)')
         ->setParameter('services', $serviziAbilitati)

@@ -17,7 +17,7 @@ class EstrattoMatrimonio extends Pratica
      * @ORM\Column(type="json", options={"jsonb":true})
      * @var array
      */
-    private $dematerializedForms;
+    protected $dematerializedForms;
 
     /**
      * @var string
