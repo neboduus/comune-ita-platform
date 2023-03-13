@@ -14,6 +14,7 @@ class StatusChange
   private $timestamp;
   private $evento;
   private $operatore;
+  private $userGroup;
   private $responsabile;
   private $struttura;
   private $message;
@@ -28,6 +29,7 @@ class StatusChange
 
     $this->evento = $data['evento'] ?? null;
     $this->operatore = $data['operatore'] ?? null;
+    $this->userGroup = $data['user_group'] ?? null;
     $this->responsabile = $data['responsabile'] ?? null;
     $this->struttura = $data['struttura'] ?? null;
     $this->timestamp = $data['timestamp'] ?? $data['time'] ?? null;
@@ -91,6 +93,22 @@ class StatusChange
   public function setOperatore($operatore)
   {
     $this->operatore = $operatore;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getUserGroup()
+  {
+    return $this->userGroup;
+  }
+
+  /**
+   * @param mixed $userGroup
+   */
+  public function setUserGroup($userGroup)
+  {
+    $this->userGroup = $userGroup;
   }
 
   /**
@@ -176,6 +194,7 @@ class StatusChange
     return [
       'evento' => $this->evento,
       'operatore' => $this->operatore,
+      'user_group' => $this->userGroup,
       'responsabile' => $this->responsabile,
       'struttura' => $this->struttura,
       'timestamp' => $this->timestamp,

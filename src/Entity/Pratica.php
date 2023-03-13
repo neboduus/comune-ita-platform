@@ -177,6 +177,12 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   private $operatore;
 
   /**
+   * @ORM\ManyToOne(targetEntity="App\Entity\UserGroup")
+   * @ORM\JoinColumn(name="user_group_id", referencedColumnName="id", nullable=true)
+   */
+  private $userGroup;
+
+  /**
    * @ORM\Column(type="text", nullable=true)
    * @var string
    */
@@ -792,6 +798,26 @@ class Pratica implements IntegrabileInterface, PaymentPracticeInterface
   public function setOperatore(?OperatoreUser $operatore)
   {
     $this->operatore = $operatore;
+
+    return $this;
+  }
+
+  /**
+   * @return UserGroup|null
+   */
+  public function getUserGroup()
+  {
+    return $this->userGroup;
+  }
+
+  /**
+   * @param UserGroup|null $userGroup
+   *
+   * @return Pratica
+   */
+  public function setUserGroup(?UserGroup $userGroup)
+  {
+    $this->userGroup = $userGroup;
 
     return $this;
   }

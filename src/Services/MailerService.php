@@ -12,6 +12,7 @@ use App\Entity\OperatoreUser;
 use App\Entity\Pratica;
 use App\Entity\Subscriber;
 use App\Entity\User;
+use App\Entity\UserGroup;
 use App\Exception\MessageDisabledException;
 use App\Model\FeedbackMessage;
 use App\Model\FeedbackMessagesSettings;
@@ -188,38 +189,67 @@ class MailerService
      */
 
     if ($pratica->getStatus() == Pratica::STATUS_SUBMITTED || $pratica->getStatus() == Pratica::STATUS_REGISTERED) {
+      // Recupero gli operatori abilitati al servizio
+      $qb = $this->doctrine->getManager()->createQueryBuilder()
+        ->select('operator')
+        ->from('App:OperatoreUser', 'operator')
+        ->where('operator.serviziAbilitati LIKE :serviceId')
+        ->setParameter('serviceId', '%' . $pratica->getServizio()->getId() . '%');
 
-      $sql = "SELECT id from utente where servizi_abilitati like '%" . $pratica->getServizio()->getId() . "%'";
-      $stmt = $this->doctrine->getManager()->getConnection()->prepare($sql);
-      $result = $stmt->executeQuery()->fetchAllAssociative();
+      $operatorsToNotify = $qb->getQuery()->getResult();
 
-      $ids = [];
-      foreach ($result as $id) {
-        $ids[] = $id['id'];
+      // Repupero tutti gli operatori appartenenti agli uffici associati al servizio
+      foreach ($pratica->getServizio()->getUserGroups() as $userGroup) {
+        /** @var UserGroup $userGroup */
+        foreach ($userGroup->getUsers() as $user) {
+          if (!in_array($user, $operatorsToNotify, true)) {
+            $operatorsToNotify[] = $user;
+          }
+        }
       }
 
-      $repo = $this->doctrine->getRepository('App\Entity\OperatoreUser');
-      $operatori = $repo->findById($ids);
-      if ($operatori != null && !empty($operatori)) {
-        foreach ($operatori as $operatore) {
-          try {
-            $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $operatore);
-            $sentAmount += $this->send($operatoreUserMessage);
-          } catch (\Exception $e) {
-            $this->logger->error('Error in dispatchMailForPratica (All operators): Email: ' . $operatore->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
-          }
+      // Recupero gli operatori degli uffici abilitati al servizio
+      if (!empty($operatorsToNotify)) {
+        // Imposto destinatario principale e cc
+        $receiver = array_shift($operatorsToNotify);
+        $ccReceivers = $operatorsToNotify;
+
+        try {
+          $this->logger->debug('Sending email to operator ' . $receiver->getEmail() . ' - Pratica: ' . $pratica->getId());
+          $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $receiver, $ccReceivers);
+          $sentAmount += $this->send($operatoreUserMessage);
+        } catch (\Exception $e) {
+          $this->logger->error('Error in dispatchMailForPratica (All operators): Email: ' . $receiver->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
         }
       }
     }
 
     if ($pratica->getStatus() != Pratica::STATUS_PRE_SUBMIT) {
+      /** @var OperatoreUser[] $usersToNotify */
+      $operatorsToNotify = [];
       if ($pratica->getOperatore() != null && ($resend || !$this->operatoreUserHasAlreadyBeenWarned($pratica))) {
-        try {
-          $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress);
-          $sentAmount += $this->send($operatoreUserMessage);
-          $pratica->setLatestOperatoreCommunicationTimestamp(time());
-        } catch (\Exception $e) {
+        // Invio email all'operatore che ha in carico la pratica
+        $operatorsToNotify[] = $pratica->getOperatore();
+      } elseif ($pratica->getUserGroup()) {
+        // Invio email a tutti gli operatori appartenenti al gruppo che ha in carico la pratica
+        $operatorsToNotify = $pratica->getUserGroup()->getUsers();
+      }
+
+      // Imposto destinatario principale e cc.
+      // NB: se la pratica è un carico ad un operatore non vengono notificati gli operatori dell'ufficio
+      $receiver = array_shift($operatorsToNotify);
+      $ccReceivers = $operatorsToNotify;
+
+      try {
+        $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $receiver, $ccReceivers);
+        $this->logger->debug('Sending email to operator ' . $receiver->getEmail() . ' - Pratica: ' . $pratica->getId());
+        $sentAmount += $this->send($operatoreUserMessage);
+        $pratica->setLatestOperatoreCommunicationTimestamp(time());
+      } catch (\Exception $e) {
+        if ($receiver == $pratica->getOperatore()) {
           $this->logger->error('Error in dispatchMailForPratica (Assigned operator): Email: ' . $pratica->getOperatore()->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+        } else {
+          $this->logger->error('Error in dispatchMailForPratica (Assigned user group): Email: ' . $receiver->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
         }
       }
     }
@@ -404,13 +434,21 @@ class MailerService
    * @param Pratica $pratica
    * @param $fromAddress
    * @param OperatoreUser|null $operatore
+   * @param OperatoreUser[] $ccOperators
    * @return Swift_Message
-   * @throws \Twig\Error\Error
+   * @throws LoaderError
+   * @throws RuntimeError
+   * @throws SyntaxError
    */
-  private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress, OperatoreUser $operatore = null)
+  private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress, OperatoreUser $operatore = null, array $ccOperators = []): Swift_Message
   {
     if ($operatore == null) {
       $operatore = $pratica->getOperatore();
+    }
+
+    $addesses = [];
+    foreach ($ccOperators as $ccOperators) {
+      $addesses[] = $ccOperators->getEmail();
     }
 
     $toEmail = $operatore->getEmail();
@@ -422,6 +460,7 @@ class MailerService
     $message = (new Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
       ->setFrom($fromAddress, $fromName)
+      ->setCC($addesses)
       ->setTo($toEmail, $toName)
       ->setBody(
         $this->templating->render(

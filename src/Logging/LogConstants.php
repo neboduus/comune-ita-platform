@@ -36,7 +36,7 @@ class LogConstants
   const PRATICA_CHANGED_STATUS_FAILED = "Failed changing pratica {pratica} from {before_status} to {after_status}, error: {error}";
 
   const PRATICA_ASSIGNED = "Pratica {pratica} assigned to user {user}";
-  const PRATICA_REASSIGNED = "Pratica {pratica} assigned from user {old_user} to user {user}";
+  const PRATICA_REASSIGNED = "Pratica {pratica} assigned from user/user-group {old_user} to user/user-group {user}";
   const PRATICA_COMMENTED = "Pratica {pratica} commented by user {user}";
   const PRATICA_APPROVED = "Pratica {pratica} approved by user {user}";
   const PRATICA_CANCELLED = "Pratica {pratica} cancelled by user {user}";

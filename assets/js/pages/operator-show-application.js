@@ -127,7 +127,6 @@ $(document).ready(function () {
   initUserGroupsSelect();
   function initFilteredOperatorsSelect() {
     operatorInput.attr("disabled", "disabled");
-    assignBtn.attr("disabled", "disabled");
     operatorInput.empty();
 
     if (userGroupInput.val()) {
@@ -154,13 +153,10 @@ $(document).ready(function () {
   }
 
   userGroupInput.on('change', () => {
-    initFilteredOperatorsSelect();
-  });
-
-  operatorInput.on('change', () => {
-    if (operatorInput.val()) {
+    if (userGroupInput.val()) {
       assignBtn.removeAttr("disabled");
     }
+    initFilteredOperatorsSelect();
   });
 
   $('.edit-meeting').on('click', function editMeeting(e) {
