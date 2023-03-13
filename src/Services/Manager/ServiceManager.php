@@ -158,7 +158,7 @@ class ServiceManager
           throw new NotFoundHttpException("User group {$id} not found");
         }
       }
-      $criteria['user_groups'] = $userGroupIds;
+      $criteria['user_groups'] = $userGroups;
     }
 
     if ($limit) {
