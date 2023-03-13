@@ -20,9 +20,9 @@
       "components": [
         {
           "legend": "Richiedente",
-          "key": "fieldSet",
+          "key": "applicant_fieldset",
           "type": "fieldset",
-          "label": "Field Set",
+          "label": "Applicant",
           "input": false,
           "tableView": false,
           "components": [
@@ -48,9 +48,9 @@
         },
         {
           "legend": "Richiesta",
-          "key": "fieldSet1",
+          "key": "request_fieldset",
           "type": "fieldset",
-          "label": "Field Set",
+          "label": "Request",
           "input": false,
           "tableView": false,
           "components": [

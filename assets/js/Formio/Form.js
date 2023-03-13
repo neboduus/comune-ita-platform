@@ -7,6 +7,7 @@ import "formiojs";
 import "formiojs/dist/formio.form.min.css";
 import "../../styles/components/cmp/all.scss";
 import axios from "axios";
+import FormioI18n from "../utils/FormioI18n";
 
 Formio.registerComponent("calendar", Calendar);
 Formio.registerComponent("dynamic_calendar", DynamicCalendar);
@@ -400,7 +401,7 @@ class Form {
       Formio.createForm(document.getElementById(containerId), formSchema, {
         noAlerts: true,
         language: $container.data("locale"),
-        i18n: {},
+        i18n: FormioI18n.languages(),
         readOnly: true,
         buttonSettings: {showCancel: false},
         hooks: {
@@ -531,7 +532,7 @@ class Form {
           readOnly: true,
           noAlerts: true,
           language: $container.data("locale"),
-          i18n: {},
+          i18n: FormioI18n.languages(),
           sanitizeConfig: {
             allowedAttrs: ["ref", "src", "url", "data-oembed-url", "svg"],
             allowedTags: ["oembed", "svg"],

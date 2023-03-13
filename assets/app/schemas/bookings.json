@@ -16,13 +16,13 @@
       "collapsible": false,
       "key": "page1",
       "type": "panel",
-      "label": "Page 3",
+      "label": "Page 1",
       "components": [
         {
           "legend": "Ufficio",
-          "key": "fieldSet",
+          "key": "office_fieldset",
           "type": "fieldset",
-          "label": "Field Set",
+          "label": "Ufficio",
           "input": false,
           "tableView": false,
           "components": [
@@ -63,17 +63,17 @@
       "saveOnEnter": false,
       "scrollToTop": false,
       "collapsible": false,
-      "key": "page4",
+      "key": "page2",
       "type": "panel",
-      "label": "Page 4",
+      "label": "Page 2",
       "input": false,
       "tableView": false,
       "components": [
         {
           "legend": "Appuntamenti disponibili",
-          "key": "fieldSet3",
+          "key": "appointments_fieldset",
           "type": "fieldset",
-          "label": "Field Set",
+          "label": "Appointments",
           "input": false,
           "tableView": false,
           "components": [
@@ -143,15 +143,15 @@
       "saveOnEnter": false,
       "scrollToTop": false,
       "collapsible": false,
-      "key": "page5",
+      "key": "page3",
       "type": "panel",
-      "label": "Page 5",
+      "label": "Page 3",
       "components": [
         {
           "legend": "Motivo",
-          "key": "fieldSet1",
+          "key": "reason_fieldset",
           "type": "fieldset",
-          "label": "Field Set",
+          "label": "Reason",
           "input": false,
           "tableView": false,
           "components": [
@@ -175,9 +175,9 @@
         },
         {
           "legend": "Dettagli",
-          "key": "fieldSet2",
+          "key": "details_fieldset",
           "type": "fieldset",
-          "label": "Field Set",
+          "label": "Details",
           "input": false,
           "tableView": false,
           "components": [
@@ -210,15 +210,15 @@
       "saveOnEnter": false,
       "scrollToTop": false,
       "collapsible": false,
-      "key": "page1",
+      "key": "page4",
       "type": "panel",
-      "label": "Page 1",
+      "label": "Page 4",
       "components": [
         {
           "legend": "Richiedente",
-          "key": "fieldSet",
+          "key": "applicant_fieldset",
           "type": "fieldset",
-          "label": "Field Set",
+          "label": "Applicant",
           "input": false,
           "tableView": false,
           "components": [
