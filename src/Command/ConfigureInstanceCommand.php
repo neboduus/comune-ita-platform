@@ -76,7 +76,6 @@ class ConfigureInstanceCommand extends Command
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-
     $this->symfonyStyle = new SymfonyStyle($input, $output);
     $instance = $input->getOption('instance');
     if (empty($instance)) {
@@ -241,7 +240,8 @@ class ConfigureInstanceCommand extends Command
       }
 
       try {
-        return $this->satisfyTenant->createEntryPoint($ente, $this->adminEmail, $this->adminPassword);
+        $password = hash('sha256', $this->adminPassword);
+        return $this->satisfyTenant->createEntryPoint($ente, $this->adminEmail, $password);
       } catch (\Exception $e) {
         $this->symfonyStyle->error($e->getMessage());
       }
