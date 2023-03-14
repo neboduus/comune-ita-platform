@@ -208,7 +208,6 @@ class MailerService
         }
       }
 
-      // Recupero gli operatori degli uffici abilitati al servizio
       if (!empty($operatorsToNotify)) {
         // Imposto destinatario principale e cc
         $receiver = array_shift($operatorsToNotify);
@@ -235,21 +234,23 @@ class MailerService
         $operatorsToNotify = $pratica->getUserGroup()->getUsers();
       }
 
-      // Imposto destinatario principale e cc.
-      // NB: se la pratica è un carico ad un operatore non vengono notificati gli operatori dell'ufficio
-      $receiver = array_shift($operatorsToNotify);
-      $ccReceivers = $operatorsToNotify;
+      if (!empty($operatorsToNotify)) {
+        // Imposto destinatario principale e cc.
+        // NB: se la pratica è un carico ad un operatore non vengono notificati gli operatori dell'ufficio
+        $receiver = array_shift($operatorsToNotify);
+        $ccReceivers = $operatorsToNotify;
 
-      try {
-        $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $receiver, $ccReceivers);
-        $this->logger->debug('Sending email to operator ' . $receiver->getEmail() . ' - Pratica: ' . $pratica->getId());
-        $sentAmount += $this->send($operatoreUserMessage);
-        $pratica->setLatestOperatoreCommunicationTimestamp(time());
-      } catch (\Exception $e) {
-        if ($receiver == $pratica->getOperatore()) {
-          $this->logger->error('Error in dispatchMailForPratica (Assigned operator): Email: ' . $pratica->getOperatore()->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
-        } else {
-          $this->logger->error('Error in dispatchMailForPratica (Assigned user group): Email: ' . $receiver->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+        try {
+          $operatoreUserMessage = $this->setupOperatoreUserMessage($pratica, $fromAddress, $receiver, $ccReceivers);
+          $this->logger->debug('Sending email to operator ' . $receiver->getEmail() . ' - Pratica: ' . $pratica->getId());
+          $sentAmount += $this->send($operatoreUserMessage);
+          $pratica->setLatestOperatoreCommunicationTimestamp(time());
+        } catch (\Exception $e) {
+          if ($receiver == $pratica->getOperatore()) {
+            $this->logger->error('Error in dispatchMailForPratica (Assigned operator): Email: ' . $pratica->getOperatore()->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+          } else {
+            $this->logger->error('Error in dispatchMailForPratica (Assigned user group): Email: ' . $receiver->getEmail() . ' - Pratica: ' . $pratica->getId() . ' ' . $e->getMessage());
+          }
         }
       }
     }

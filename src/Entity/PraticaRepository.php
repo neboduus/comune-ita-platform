@@ -765,13 +765,13 @@ class PraticaRepository extends EntityRepository
       $qb->expr()->eq('pratica.operatore', $qb->expr()->literal($user->getId()))
     );
 
-    if (!empty($user->getServiziAbilitati()->toArray())) {
+    if (!$user->getServiziAbilitati()->isEmpty()) {
       $orStatements->add(
         $qb->expr()->in('pratica.servizio',   $user->getServiziAbilitati())
       );
     }
 
-    if (!empty($user->getUserGroups())) {
+    if (!$user->getUserGroups()->isEmpty()) {
       $orStatements->add(
         $qb->expr()->in('pratica.userGroup', $user->getUserGroups())
       );
@@ -805,13 +805,13 @@ class PraticaRepository extends EntityRepository
       $qb->expr()->eq('pratica.operatore', $qb->expr()->literal($user->getId()))
     );
 
-    if (!empty($user->getServiziAbilitati()->toArray())) {
+    if (!$user->getServiziAbilitati()->isEmpty()) {
       $orStatements->add(
         $qb->expr()->in('pratica.servizio',   $user->getServiziAbilitati())
       );
     }
 
-    if (!empty($user->getUserGroups())) {
+    if (!$user->getUserGroups()->isEmpty()) {
       $orStatements->add(
         $qb->expr()->in('pratica.userGroup', $user->getUserGroups())
       );
