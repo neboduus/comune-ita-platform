@@ -144,18 +144,20 @@ class MailerService
       return $sentAmount;
     }
 
+    $sendCPSUserMessage = true;
+
     if (in_array($pratica->getStatus(), $this->blacklistedSDuplicatetates)) {
       // Check if current status exists in application history more than once
       foreach ($pratica->getHistory() as $item) {
         /** @var Transition $item */
         if ($item->getStatusCode() == $pratica->getStatus() && $item->getDate()->getTimestamp() !== $pratica->getLatestStatusChangeTimestamp()) {
-          return $sentAmount;
+          $sendCPSUserMessage = false;
         }
       }
     }
 
     $CPSUsermessage = null;
-    if ($this->CPSUserHasValidContactEmail($pratica->getUser()) && ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica))) {
+    if ($this->CPSUserHasValidContactEmail($pratica->getUser()) && ($resend || !$this->CPSUserHasAlreadyBeenWarned($pratica)) && $sendCPSUserMessage) {
       try {
         if ($pratica->getServizio()->isIOEnabled()) {
           $CPSUsermessage = $this->setupCPSUserMessage($pratica, $fromAddress, true);
@@ -231,7 +233,7 @@ class MailerService
         $operatorsToNotify[] = $pratica->getOperatore();
       } elseif ($pratica->getUserGroup()) {
         // Invio email a tutti gli operatori appartenenti al gruppo che ha in carico la pratica
-        $operatorsToNotify = $pratica->getUserGroup()->getUsers();
+        $operatorsToNotify = $pratica->getUserGroup()->getUsers()->toArray();
       }
 
       if (!empty($operatorsToNotify)) {
@@ -468,7 +470,7 @@ class MailerService
           'Emails/Operatore/pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
-            'user_name' => $operatore->getFullName(),
+            'user_name' => $pratica->getOperatore() ? $operatore->getFullName() : $pratica->getUserGroup()->getName(),
           )
         ),
         'text/html'
@@ -478,7 +480,7 @@ class MailerService
           'Emails/Operatore/pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
-            'user_name' => $operatore->getFullName(),
+            'user_name' => $pratica->getOperatore() ? $operatore->getFullName() : $pratica->getUserGroup()->getName(),
           )
         ),
         'text/plain'
