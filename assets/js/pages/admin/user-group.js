@@ -2,7 +2,7 @@ import '../../core';
 import Swal from 'sweetalert2/src/sweetalert2.js';
 import "@sweetalert2/theme-bootstrap-4/bootstrap-4.min.css";
 import BasePath from "../../utils/BasePath";
-const $language = document.documentElement.lang.toString();
+const language = document.documentElement.lang.toString();
 
 $('#submit_or_confirm_user_group').on('click', function (e) {
   let form = $(this).closest('form');
@@ -12,10 +12,10 @@ $('#submit_or_confirm_user_group').on('click', function (e) {
   if(!email && !pec && !phoneNumber) {
     Swal.fire({
       icon: 'warning',
-      text: Translator.trans('user_group.confirm', {}, 'messages', $language),
+      text: Translator.trans('user_group.confirm', {}, 'messages', language),
       showCancelButton: true,
-      confirmButtonText: Translator.trans('steps.common.conferma.si', {}, 'messages', $language),
-      cancelButtonText: Translator.trans('steps.common.conferma.no', {}, 'messages', $language),
+      confirmButtonText: Translator.trans('steps.common.conferma.si', {}, 'messages', language),
+      cancelButtonText: Translator.trans('steps.common.conferma.no', {}, 'messages', language),
       reverseButtons: true
     }).then((result) => {
       if (result.value) {
@@ -41,6 +41,7 @@ userGroupCalendar.on('change', function () {
     $('#new-calendar').addClass('d-none');
 
     const basePath = new BasePath().getBasePath()
+    $('#show-calendar').attr("href", basePath + '/' + language + "/operatori/calendars/" + this.value);
     $.ajax( basePath + '/api/calendars/' + this.value,
       {
         method: "GET",

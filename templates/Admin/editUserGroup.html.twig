@@ -140,7 +140,7 @@
                   <use xlink:href="/bootstrap-italia/dist/svg/sprite.svg#it-calendar"></use>
                 </svg>
                 <div class="card-body">
-                  <h5 class="card-title" id="calendar-title"></h5>
+                  <div class="card-title" id="calendar-title"></div>
                   <div class="card-text mt-2">
 
                     <div id="opening-hours"></div>
@@ -156,7 +156,9 @@
                     </div>
                   </div>
 
-
+                  <a href="#" class="btn btn-outline-primary btn-xs" role="button" id="show-calendar" target="_blank">
+                    {{ 'user_group.edit_calendar' | trans }}
+                  </a>
 
                 </div>
               </div>
