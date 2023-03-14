@@ -38,7 +38,7 @@
             },
             {
               "label": "Email",
-              "description": " Inserisci la tua email ",
+              "description": "Inserisci la tua email",
               "tableView": true,
               "key": "email",
               "type": "email",
@@ -57,7 +57,7 @@
             {
               "label": "Categoria di servizio",
               "widget": "choicesjs",
-              "description": " Seleziona la categoria del servizio per cui vuoi richiedere assistenza ",
+              "description": "Seleziona la categoria del servizio per cui vuoi richiedere assistenza",
               "tableView": true,
               "dataSrc": "custom",
               "data": {
@@ -110,7 +110,7 @@
               "value": ""
             }
           ],
-          "content": "Per i dettagli sul trattamento \ndei dati personali consulta \nl’informativa sulla privacy del sito.",
+          "content": "Per i dettagli sul trattamento dei dati personali consulta l’informativa sulla privacy del sito.",
           "refreshOnChange": false,
           "key": "privacy_text",
           "type": "htmlelement",
@@ -120,10 +120,10 @@
         {
           "label": "Ho letto e compreso l'informativa sulla privacy",
           "tableView": false,
+          "defaultValue": false,
           "key": "privacy",
           "type": "checkbox",
-          "input": true,
-          "defaultValue": false
+          "input": true
         }
       ],
       "input": false,

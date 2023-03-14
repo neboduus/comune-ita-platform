@@ -231,7 +231,6 @@
               "key": "images",
               "type": "sdcfile",
               "storage": "url",
-              "url": "",
               "input": true
             },
             {
@@ -252,14 +251,13 @@
               "key": "docs",
               "type": "sdcfile",
               "storage": "url",
-              "url": "",
               "input": true
             }
           ]
         },
         {
           "legend": "Autore della segnalazione",
-          "tooltip": "Informazione su di te\n\n",
+          "tooltip": "Informazione su di te",
           "key": "author_fieldset",
           "type": "fieldset",
           "label": "Author",
