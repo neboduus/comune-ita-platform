@@ -1,7 +1,7 @@
 {
   "name": "stanzadelcittadino",
   "author": "Opencity Labs S.r.l.",
-  "version": "2.13.0-rc.4",
+  "version": "2.13.0-rc.5",
   "license": "AGPL-3.0-only",
   "devDependencies": {
     "@babel/core": "7.20.12",
