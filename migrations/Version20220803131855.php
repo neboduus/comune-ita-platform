@@ -23,7 +23,8 @@ final class Version20220803131855 extends AbstractMigration
     $this->addSql('ALTER TABLE ext_translations ALTER object_class TYPE VARCHAR(191)');
     $this->addSql('CREATE INDEX general_translations_lookup_idx ON ext_translations (object_class, foreign_key)');
     $this->addSql('ALTER TABLE failure_login_attempt ADD username VARCHAR(255) DEFAULT NULL');
-    $this->addSql("UPDATE utente set created_at = updated_at WHERE created_at IS NULL");
+    $this->addSql("UPDATE utente set created_at = now() WHERE created_at IS NULL");
+    $this->addSql("UPDATE utente set updated_at = now() WHERE updated_at IS NULL");
     $this->addSql('ALTER TABLE utente ALTER created_at SET NOT NULL');
     $this->addSql('ALTER TABLE utente ALTER updated_at SET NOT NULL');
     $this->addSql('CREATE UNIQUE INDEX UNIQ_DE45B3E0F85E0677 ON utente (username)');

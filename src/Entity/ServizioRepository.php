@@ -23,6 +23,10 @@ class ServizioRepository extends EntityRepository
         $results[$item->getSlug()]= $item;
       }
 
+      if (isset($criteria['user_groups'])) {
+        return $results;
+      }
+
       $shared = $this->findSharedByCriteria($criteria);
       foreach ($shared as $item) {
         $results[$item->getSlug()]= $item;
