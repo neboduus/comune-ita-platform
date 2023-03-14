@@ -464,6 +464,7 @@ class OperatoriController extends AbstractController
         $filters['states'][] = $state;
       }
     } catch (\Throwable $e) {
+      $this->logger->error('An error occurred while retrieving filtered applications by operator: ' . $e->getMessage());
       $count = 0;
       $data = [];
       $result['meta']['error'] = true; //$e->getMessage();
