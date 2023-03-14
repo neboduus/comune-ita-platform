@@ -2567,8 +2567,8 @@ ente:
 buttons:
   draft: 'Save draft'
   last_save: 'Last saved:'
-  save_pratice: ''
-  submit: ''
+  save_pratice: 'Save application'
+  submit: 'Submit'
 aggiungi: 'Add'
 annulla: 'cancel'
 modifica: 'edit'
@@ -2973,8 +2973,8 @@ taxonomies:
     bankruptcy: 'Bankruptcy'
     participating_in_public_procurement_national_and_cross_border: 'Participation in national and cross-border public tenders'
 accessibility: "Accessibility"
-back: ''
-reset: ''
+back: 'Back'
+reset: 'Reset'
 save_processing: ''
 add_note: ''
 user_group:
