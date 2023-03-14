@@ -22,6 +22,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {
@@ -33,6 +34,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
   private $passwordEncoder;
   private $refreshTokenManager;
   private $authorizationChecker;
+  private TranslatorInterface $translator;
 
   /**
    * LoginFormAuthenticator constructor.
@@ -48,13 +50,16 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     UrlGeneratorInterface $urlGenerator,
     CsrfTokenManagerInterface $csrfTokenManager,
     UserPasswordEncoderInterface $passwordEncoder,
-    AuthorizationCheckerInterface $authorizationChecker)
+    AuthorizationCheckerInterface $authorizationChecker,
+    TranslatorInterface $translator
+  )
   {
     $this->entityManager = $entityManager;
     $this->urlGenerator = $urlGenerator;
     $this->csrfTokenManager = $csrfTokenManager;
     $this->passwordEncoder = $passwordEncoder;
     $this->authorizationChecker = $authorizationChecker;
+    $this->translator = $translator;
   }
 
   /**
@@ -102,18 +107,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
       throw new InvalidCsrfTokenException();
     }
 
-    $userRepo = $this->entityManager->getRepository(User::class);
-    $qb = $userRepo->createQueryBuilder('u');
-    $qb->select('u')
-      ->where('LOWER(u.username) = :username')
-      ->setParameter(':username', strtolower($credentials['username']))
-      ->setMaxResults(1);
+    $user = $this->entityManager->getRepository(User::class)->findOneBy(['username' => $credentials['username']]);
 
-    try {
-      $user = $qb->getQuery()->getSingleResult();
-    } catch (\Exception $e) {
-      throw new CustomUserMessageAuthenticationException('Username non trovata.');
+    if (!$user) {
+      // fail authentication with a custom error
+      throw new CustomUserMessageAuthenticationException($this->translator->trans('user.bad_credentials'));
     }
+
 
     return $user;
   }
