@@ -258,7 +258,7 @@ class PraticaManager
 
     // Assegnazioni automatiche del gruppo
     if ($user && !$userGroup) {
-      if ($pratica->getUserGroup()->getUsers()->contains($user)) {
+      if ($pratica->getUserGroup() && $pratica->getUserGroup()->getUsers()->contains($user)) {
         // Se non è specificato il gruppo tra i parametri, ma l'operatore appartiena al gruppo a cui è assegnata
         // la pratica mantengo l'assegnazione del gruppo
         $userGroup = $pratica->getUserGroup();
