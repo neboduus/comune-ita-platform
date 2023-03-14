@@ -275,17 +275,19 @@ class PraticaManager
         $userGroups = $qb->getQuery()->getResult();
         $preferredUserGroup = null;
 
-        // Fixme: inserire nell'ordinamento della query precendente: attenzione però perche la pratica può essere
-        // associata ad un ufficio che non è incaricato del servizio
-        foreach ($userGroups as $userGroup) {
-          if (!$preferredUserGroup && $userGroup->getServices()->contains($pratica->getServizio())) {
-            // Utilizzo il primo uffico in ordine alfabetico che sia associato al servizio della pratica
-            $preferredUserGroup = $userGroup;
+        if (!empty($userGroups)) {
+          // Fixme: inserire nell'ordinamento della query precendente: attenzione però perche la pratica può essere
+          // associata ad un ufficio che non è incaricato del servizio
+          foreach ($userGroups as $userGroup) {
+            if (!$preferredUserGroup && $userGroup->getServices()->contains($pratica->getServizio())) {
+              // Utilizzo il primo uffico in ordine alfabetico che sia associato al servizio della pratica
+              $preferredUserGroup = $userGroup;
+            }
           }
-        }
 
-        // Se nessun ufficio gestisce il servizio allora prendo il primo in ordine alfabetico
-        $userGroup = $preferredUserGroup ?? reset($userGroups);
+          // Se nessun ufficio gestisce il servizio allora prendo il primo in ordine alfabetico
+          $userGroup = $preferredUserGroup ?? reset($userGroups);
+        }
       }
     }
 

@@ -226,6 +226,7 @@ class MailerService
     }
 
     if ($pratica->getStatus() != Pratica::STATUS_PRE_SUBMIT) {
+
       /** @var OperatoreUser[] $usersToNotify */
       $operatorsToNotify = [];
       if ($pratica->getOperatore() != null && ($resend || !$this->operatoreUserHasAlreadyBeenWarned($pratica))) {
@@ -237,6 +238,7 @@ class MailerService
       }
 
       if (!empty($operatorsToNotify)) {
+
         // Imposto destinatario principale e cc.
         // NB: se la pratica è un carico ad un operatore non vengono notificati gli operatori dell'ufficio
         $receiver = array_shift($operatorsToNotify);
@@ -449,9 +451,11 @@ class MailerService
       $operatore = $pratica->getOperatore();
     }
 
-    $addesses = [];
+    $addresses = [];
     foreach ($ccOperators as $ccOperators) {
-      $addesses[] = $ccOperators->getEmail();
+      if (!empty($ccOperators->getEmail())) {
+        $addresses[] = $ccOperators->getEmail();
+      }
     }
 
     $toEmail = $operatore->getEmail();
@@ -463,7 +467,7 @@ class MailerService
     $message = (new Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
       ->setFrom($fromAddress, $fromName)
-      ->setCC($addesses)
+      ->setCC($addresses)
       ->setTo($toEmail, $toName)
       ->setBody(
         $this->templating->render(

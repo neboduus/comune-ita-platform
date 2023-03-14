@@ -666,8 +666,8 @@ class OperatoriController extends AbstractController
       $this->addFlash('error', $e->getMessage());
     }
 
+    // User can no longer access application -> redirect to applications index
     if (!$this->isGranted(ApplicationVoter::VIEW, $pratica)) {
-      // User can no longer access application -> redirect to applications index
       return $this->redirectToRoute('operatori_index');
     }
     return $this->redirectToRoute('operatori_show_pratica', ['pratica' => $pratica]);
