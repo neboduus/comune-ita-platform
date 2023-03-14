@@ -444,11 +444,17 @@ class MailerService
    * @throws LoaderError
    * @throws RuntimeError
    * @throws SyntaxError
+   * @throws \Exception
    */
   private function setupOperatoreUserMessage(Pratica $pratica, $fromAddress, OperatoreUser $operatore = null, array $ccOperators = []): Swift_Message
   {
-    if ($operatore == null) {
-      $operatore = $pratica->getOperatore();
+
+    if (empty($operatore) && empty($ccOperators)) {
+      throw new \Exception('Both operator and ccOperators are empty in setupOperatoreUserMessage');
+    }
+
+    if (empty($operatore)) {
+      $operatore = array_shift($ccOperators);
     }
 
     $addresses = [];
@@ -458,23 +464,25 @@ class MailerService
       }
     }
 
-    $toEmail = $operatore->getEmail();
-    $toName = $operatore->getFullName();
-
     $ente = $pratica->getEnte();
     $fromName = $ente instanceof Ente ? $ente->getName() : null;
+
+    $userName = $operatore->getFullName();
+    if (!$pratica->getOperatore() && $pratica->getUserGroup()) {
+      $userName = $pratica->getUserGroup()->getName();
+    }
 
     $message = (new Swift_Message())
       ->setSubject($this->translator->trans('pratica.email.status_change.subject', ['%id%' => $pratica->getId()]))
       ->setFrom($fromAddress, $fromName)
       ->setCC($addresses)
-      ->setTo($toEmail, $toName)
+      ->setTo($operatore->getEmail(), $operatore->getFullName())
       ->setBody(
         $this->templating->render(
           'Emails/Operatore/pratica_status_change.html.twig',
           array(
             'pratica' => $pratica,
-            'user_name' => $pratica->getOperatore() ? $operatore->getFullName() : $pratica->getUserGroup()->getName(),
+            'user_name' => $userName,
           )
         ),
         'text/html'
@@ -484,7 +492,7 @@ class MailerService
           'Emails/Operatore/pratica_status_change.txt.twig',
           array(
             'pratica' => $pratica,
-            'user_name' => $pratica->getOperatore() ? $operatore->getFullName() : $pratica->getUserGroup()->getName(),
+            'user_name' => $userName,
           )
         ),
         'text/plain'
