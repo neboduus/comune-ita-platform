@@ -7,24 +7,24 @@ export default function fieldset(ctx) {
     ctx.component.legend
       ? `
   <div ref="header" class="${
-    ctx.component.collapsible
-      ? "formio-clickable card-header border-0 p-0 mb-lg-30"
-      : "card-header border-0 p-0 mb-lg-30"
-  }">
+        ctx.component.collapsible
+          ? "formio-clickable card-header border-0 p-0 mb-lg-30"
+          : "card-header border-0 p-0 mb-lg-30"
+      }">
   <div class="d-flex"><h2 class="title-xxlarge mb-1"> ${ctx.t(
-    ctx.component.legend,
-    {
-      _userInput: true,
-    }
-  )}
+        ctx.component.legend,
+        {
+          _userInput: true,
+        }
+      )}
                  </h2>
           </div>
   ${
-    ctx.component.tooltip
-      ? `
-<p class="subtitle-small mb-0">${ctx.component.tooltip}</p>`
-      : ""
-  }
+        ctx.component.tooltip
+          ? `
+<p class="subtitle-small mb-0">${ctx.t(ctx.component.tooltip)}</p>`
+          : ""
+      }
 
   </div>`
       : ""

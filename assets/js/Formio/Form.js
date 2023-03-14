@@ -104,7 +104,7 @@ class Form {
             Form.createStepsMobile();
             Form.submissionForm = form;
             Form.initDraftButton();
-            Form.createCustomNavItem(form.component)
+            Form.createCustomNavItem(form.component, false, data)
           });
 
           if (form.hasOwnProperty("wizard")) {
@@ -126,7 +126,7 @@ class Form {
             Form.createStepsMobile();
             Form.saveDraft(form);
             Form.initDraftButton();
-            Form.createCustomNavItem(form.component)
+            Form.createCustomNavItem(form.component, false, data)
           });
 
           form.on("prevPage", function () {
@@ -134,7 +134,7 @@ class Form {
             setTimeout(Form.checkWizardNavCancelButton, 500);
             Form.createStepsMobile();
             Form.initDraftButton();
-            Form.createCustomNavItem(form.component)
+            Form.createCustomNavItem(form.component, false, data)
           });
 
           form.on("pagesChanged", function () {
@@ -229,7 +229,7 @@ class Form {
             Form.createStepsMobile();
             Form.submissionForm = form;
             Form.initDraftButton();
-            Form.createCustomNavItem(form.component)
+            Form.createCustomNavItem(form.component, false, data)
           });
 
           if (form.hasOwnProperty("wizard")) {
@@ -252,7 +252,7 @@ class Form {
             Form.createStepsMobile();
             Form.saveDraft();
             Form.initDraftButton();
-            Form.createCustomNavItem(form.component)
+            Form.createCustomNavItem(form.component, false, data)
           });
 
           form.on("prevPage", function () {
@@ -261,7 +261,7 @@ class Form {
             setTimeout(Form.checkWizardNavCancelButton, 500);
             Form.createStepsMobile();
             Form.initDraftButton();
-            Form.createCustomNavItem(form.component)
+            Form.createCustomNavItem(form.component, false, data)
           });
 
           form.on("pagesChanged", function () {
@@ -450,21 +450,21 @@ class Form {
           form.formReady.then(() => {
             Form.customBreadcrumbButton(form);
             setTimeout(Form.checkWizardNavCancelButton, 500);
-            Form.createCustomNavItem(form.component)
+            Form.createCustomNavItem(form.component, false, data)
           });
 
           form.on("nextPage", function (e) {
             Form.customBreadcrumbButton(form);
             setTimeout(Form.checkWizardNavCancelButton, 500);
             Form.createStepsMobile();
-            Form.createCustomNavItem(form.component)
+            Form.createCustomNavItem(form.component, false, data)
           });
 
           form.on("prevPage", function () {
             Form.customBreadcrumbButton(form);
             setTimeout(Form.checkWizardNavCancelButton, 500);
             Form.createStepsMobile();
-            Form.createCustomNavItem(form.component)
+            Form.createCustomNavItem(form.component, false, data)
           });
         });
       }
@@ -504,7 +504,7 @@ class Form {
 
           Form.getStoredSteps();
           Form.createStepsMobile();
-          Form.createCustomNavItem(form.component, true)
+          Form.createCustomNavItem(form.component, true, data)
 
           form.ready.then(() => {
             $('.formio-component-file a,.formio-component-sdcfile a').each(function () {
@@ -547,7 +547,7 @@ class Form {
 
         Form.getStoredSteps();
         Form.createStepsMobile();
-        Form.createCustomNavItem(form.component, true)
+        Form.createCustomNavItem(form.component, true, FormioI18n.languages())
 
         form.ready.then(() => {
           $('.formio-component-file a,.formio-component-sdcfile a').each(function () {
@@ -695,7 +695,7 @@ class Form {
     }
   }
 
-  static createCustomNavItem(data, isSummary) {
+  static createCustomNavItem(data, isSummary, translations) {
     // Filter only fieldset components
     let navItem = []
     if (isSummary) {
@@ -713,7 +713,9 @@ class Form {
     $('#navItems').empty();
     navItem.forEach((el, idx) => {
       // Write item
-      $('#navItems').append(`<li class="nav-item"><a class="nav-link ${idx === 0 ? 'active' : ''}" href="#${el.key}"><span class="title-medium">${el.legend}</span></a></li>`);
+      $('#navItems').append(`<li class="nav-item"><a class="nav-link ${idx === 0 ? 'active' : ''}" href="#${el.key}">
+        <span class="title-medium">${translations[language] && translations[language][el.legend] ? translations[language][el.legend] : el.legend}
+        </span></a></li>`);
     })
   }
 
