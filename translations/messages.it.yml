@@ -1138,6 +1138,7 @@ user:
     salva_informazioni_contatto: 'Salva informazioni contatto'
     salva_informazioni_profilo: 'Salva informazioni profilo'
     salva: 'Salva'
+  bad_credentials: 'I dati che hai inserito non sono corretti, prova ad inserirli nuovamente facendo attenzione alle lettere maiuscole e minuscole.'
   forgot_password: 'Hai dimenticato la password?'
   forgot_password_description: 'Se hai dimenticato la tua password, inserisci il tuo username o il tuo indirizzo email.'
   error_birth_place: 'Compilare il luogo di nascita con un valore valido prima di salvare.'

@@ -942,6 +942,7 @@ user:
     change_password: 'Change Password'
   welcome: 'welcome'
   welcome_msg: 'welcome_msg'
+  bad_credentials: 'The data you entered are incorrect, try entering it again taking care of uppercase and lowercase letters.'
   forgot_password: 'Did you forget your password?'
   forgot_password_description: 'If you have forgotten your password, please enter your username or email address.'
   error_birth_place: 'Select a valid birth place before saving, please.'

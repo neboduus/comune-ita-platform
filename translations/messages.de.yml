@@ -989,6 +989,7 @@ user:
     change_password: 'Passwort ändern'
   welcome: 'Willkommen'
   welcome_msg: 'Die Anmeldung wurde erfolgreich durchgeführt'
+  bad_credentials: 'Die von Ihnen eingegebenen Daten sind falsch. Versuchen Sie, die Daten erneut einzugeben und achten Sie dabei auf Groß- und Kleinschreibung.'
   forgot_password: 'Passwort vergessen?'
   forgot_password_description: 'Wenn Sie Ihr Passwort vergessen haben, geben Sie bitte Ihren Benutzernamen oder Ihre E-Mail-Adresse ein.'
   error_birth_place: ''
