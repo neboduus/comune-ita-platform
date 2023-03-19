@@ -51,3 +51,6 @@ npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
+### comune-platform
+comune_platform/env/secrets/*
+!comune_platform/env/secrets/comune-template
