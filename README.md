@@ -1,5 +1,14 @@
 # La Stanza Del Cittadino
 
+> This repository is a fork from the Gitlab repository
+> [Core](https://gitlab.com/opencontent/stanza-del-cittadino/core).
+> It moreover tries to build over that project, an entire platform for an
+> italian website composed of the Landing Website and the Stanza del
+> Cittadino section, where the citizen can interact with public services.
+>
+> To understand how this repository has been forked, and how to fetch latest
+> updates from the original, see the [HOW TO UPDATE FORK guide](HOW_TO_UPDATE_FORK.md)
+
 La Stanza del Cittadino è una piattaforma per creare e gestire i servizi digitali e l'area personale del cittadino, progettati secondo i KIT di [Designers Italia](https://designers.italia.it/kit/), il modello di [sito e servizi digitali dei Comuni italiani](https://designers.italia.it/modello/comuni/) e pubblicata su [Developers Italia](https://developers.italia.it/it/software/opencontent-stanzadelcittadino-cf016d).
 
 Supporta il *multilinguismo*, per favorire l'effettivo accesso ai servizi digitali da parte dei cittadini europei, ed altre raccomandazioni indicate nell'[eGovernment Benchmark Method Paper 2020-2023](https://op.europa.eu/it/publication-detail/-/publication/333fe21f-4372-11ec-89db-01aa75ed71a1).
