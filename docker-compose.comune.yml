@@ -1,0 +1,335 @@
+version: "3.3"
+
+networks:
+  default:
+    driver: bridge
+
+volumes:
+  pgdata:
+  uploads:
+  mongo:
+  wordpress-data:
+  mysql-data:
+
+services:
+
+  postgres:
+    image: wodby/postgres:${POSTGRES_TAG:-11}
+    stop_grace_period: 30s
+    environment:
+      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD:-sdc}
+      POSTGRES_DB: sdc_bugliano
+      POSTGRES_USER: ${DB_USER:-sdc}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --user sdc --dbname sdc_bugliano"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      - default
+
+  php:
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
+    #entrypoint: /bin/sleep 3600
+    networks:
+      default:
+        aliases:
+          - stanzadelcittadino.localtest.me
+    build: .
+    volumes:
+      - "uploads:/var/www/html/var/uploads"
+    stop_grace_period: 90s
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://stanzadelcittadino.localtest.me/health-check"]
+      interval: 30s
+      timeout: 3s
+      retries: 2
+      start_period: 5s
+
+
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: 'default'
+      traefik.http.services.sdc-http.loadbalancer.server.port: 80
+
+      traefik.http.routers.sdc-http.entrypoints: web
+      traefik.http.routers.sdc-http.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+
+      #per aggiungere un openlogin
+      #traefik.http.routers.caddy-auth.entrypoints: web
+      #traefik.http.routers.caddy-auth.rule: "Host(`stanzadelcittadino.localtest.me`) && Path(`/{tenant:[^/]+}/auth/login-open`)"
+      #traefik.http.routers.caddy-auth.middlewares: "spid-auth"
+
+    environment:
+      INSTANCE_OVERRIDE: 'true'
+      INSTANCE_address: StanzaDelCittadino.localtest.me/comune-di-bugliano
+      INSTANCE_identifier: comune-di-bugliano
+      INSTANCE_database: sdc_bugliano
+      INSTANCE_codice_meccanografico: c_cbug
+      INSTANCE_app_locales: it|en
+      OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
+      OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
+      PHP_FPM_LOG_LEVEL: error
+      ENV: ${ENV:-DEV}
+      APP_ENV: ${APP_ENV:-dev}
+      ENABLE_MIGRATIONS: 'true'
+      ENABLE_INSTANCE_CONFIG: 'true'
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-sdc}
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      MAILER_URL: ${MAILER_URL:-smtp://mailserver:1025}
+      PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
+      PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
+      PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
+      PEC_MAILER_USER: ${PEC_MAILER_USER:-null}
+      PEC_MAILER_PASSWORD: ${PEC_MAILER_PASSWORD:-null}
+      PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-stanzadelcittadino@pec.net}
+      SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
+      DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-php@stanzadelcittadino.localtest.me}
+      WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-http://gotenberg:3000}
+      #EZ_PASSWORD: ${EZ_PASSWORD:-ez}
+      #PITRE_ADAPTER_URL: ${PITRE_ADAPTER_URL:-http://pitre-soap:8080/}
+      PHP_APCU_ENABLED: 0
+      PHP_OPCACHE_ENABLE: 0
+      FORMSERVER_PRIVATE_URL: ${FORMSERVER_PRIVATE_URL:-http://formserver:80}
+      FORMSERVER_PUBLIC_URL: ${FORMSERVER_PUBLIC_URL:-http://formserver.localtest.me}
+      FORMSERVER_ADMIN_URL: ${FORMSERVER_ADMIN_URL:-http://formserver.localtest.me}
+      RECAPTCHA_KEY: ${RECAPTCHA_KEY:-key}
+      RECAPTCHA_SECRET: ${RECAPTCHA_SECRET:-secret}
+      PASSWORD_LIFE_TIME: ${PASSWORD_LIFE_TIME:-999999}
+      HASH_VALIDITY: ${HASH_VALIDITY:-3}
+      TOKEN_TTL: ${TOKEN_TTL:-3600}
+      CACHE_MAX_AGE: ${CACHE_MAX_AGE:-60}
+      UPLOAD_DESTINATION: ${UPLOAD_DESTINATION:-local_filesystem}
+      API_VERSION: ${API_VERSION:-1}
+      KAFKA_URL: ${KAFKA_URL:-}
+      KAFKA_REQUEST_TIMEOUT: ${KAFKA_REQUEST_TIMEOUT:-2}
+      KSQLDB_URL: ${KSQLDB_URL:-}
+      ANALYTICS_PLAN: ${ANALYTICS_PLAN:-free}
+      # In assenza di una vera autenticazione basata su SPID si può simulare
+      # un login di un utente con le seguenti variabili d'ambiente:
+      LOGIN_ROUTE: ${LOGIN_ROUTE:-login_pat}
+      shibb_pat_attribute_codicefiscale: CLNVTR76P01G822Q
+      shibb_pat_attribute_cognome: Coliandro
+      shibb_pat_attribute_nome: Vittorino
+      shibb_pat_attribute_sesso: M
+      shibb_pat_attribute_emailaddress: info@comune.bugliano.pi.it
+      shibb_pat_attribute_datanascita: 1/9/1976
+      shibb_pat_attribute_luogonascita: Ponsacco
+      shibb_pat_attribute_provincianascita: PI
+      shibb_pat_attribute_telefono: 003912378945
+      shibb_pat_attribute_cellulare: 333 444 666 99
+      shibb_pat_attribute_indirizzoresidenza: Via Gramsci, 1
+      shibb_pat_attribute_capresidenza: 56056
+      shibb_pat_attribute_cittaresidenza: Bugliano
+      shibb_pat_attribute_provinciaresidenza: PI
+      shibb_pat_attribute_statoresidenza: Italia
+      shibb_pat_attribute_spidcode: 123456789
+      shibb_pat_attribute_x509certificate_issuerdn: FAKE_issuerdn
+      shibb_pat_attribute_x509certificate_subjectdn: FAKE_subjectdn
+      shibb_pat_attribute_x509certificate_base64: "DQpSZXN1bHQgZ29lcyBoZXJlLi4uDQpCYXNlNjQNCg0KQmFzZTY0IGlzIGEgZ2VuZXJpYyB0ZXJtIGZvciBhIG51bWJlciBvZiBzaW1pbGFyIGVuY29kaW5nIHNjaGVtZXMgdGhhdCBlbmNvZGUgYmluYXJ5IGRhdGEgYnkgdHJlYXRpbmcgaXQgbnVtZXJpY2FsbHkgYW5kIHRyYW5zbGF0aW5nIGl0IGludG8gYSBiYXNlIDY0IHJlcHJlc2VudGF0aW9uLiBUaGUgQmFzZTY0IHRlcm0gb3JpZ2luYXRlcyBmcm9tIGEgc3BlY2lmaWMgTUlNRSBjb250ZW50IHRyYW5zZmVyIGVuY29kaW5nLg=="
+      shibb_Shib-Session-ID: abc123abc123abc123abc123abc123abc123abc123
+      shibb_Shib-Session-Index: abc123abc123abc123abc123abc123abc123abc123
+      shibb_Shib-Authentication-Instant: 2000-01-01T00-00Z
+      #shibb_Shib-AuthnContext-Class: urn:oasis:names:tc:SAML:2.0:ac:classes:Smartcard
+      GOOGLE_TAG_MANAGER_KEY: ${GOOGLE_TAG_MANAGER_KEY:-}
+      DEFAULT_CACHE_REDIS_PROVIDER: ${DEFAULT_CACHE_REDIS_PROVIDER:-redis://redis:6379}
+      SATISFY_WIDGET_URL: ${SATISFY_WIDGET_URL:-https://satisfy.opencontent.it/widget.js}
+      REGISTRY_API_URL: ${REGISTRY_API_URL:-http://registry.localtest.me}
+      REGISTRY_API_KEY: ${REGISTRY_API_KEY:-abc123abc123abc123abc123abc123abc123abc123}
+
+  cron:
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/core/app:latest
+    build: .
+    command: bash -c "while /bin/true; do ./bin/scheduled-actions.sh && sleep 60; done"
+    volumes:
+      - "uploads:/var/www/html/var/uploads"
+    stop_grace_period: 90s
+    healthcheck:
+      test: [ "NONE" ]
+    environment:
+      OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
+      OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
+      ENV: ${ENV:-DEV}
+      APP_ENV: ${APP_ENV:-dev}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_PASSWORD:-sdc}
+      DB_USER: ${DB_USER:-sdc}
+      DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      MAILER_URL: ${MAILER_URL:-smtp://mailserver:1025}
+      PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
+      PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
+      PEC_MAILER_PORT: ${PEC_MAILER_PORT:-1025}
+      PEC_MAILER_USER: ${PEC_MAILER_USER:-null}
+      PEC_MAILER_PASSWORD: ${PEC_MAILER_PASSWORD:-null}
+      PEC_DELIVERY_ADDRESS: ${PEC_DELIVERY_ADDRESS-stanzadelcittadino@pec.net}
+      SECRET: ${SECRET:-ThisTokenIsNotSoSecretChangeIt}
+      DEFAULT_FROM_EMAIL_ADDRESS: ${DEFAULT_FROM_EMAIL_ADDRESS:-php@stanzadelcittadino.localtest.me}
+      WKHTMLTOPDF_SERVICE: ${WKHTMLTOPDF_SERVICE:-http://gotenberg:3000}
+      FORMSERVER_PRIVATE_URL: ${FORMSERVER_PRIVATE_URL:-http://formserver:80}
+      PASSWORD_LIFE_TIME: ${PASSWORD_LIFE_TIME:-999999}
+      HASH_VALIDITY: ${HASH_VALIDITY:-3}
+      TOKEN_TTL: ${TOKEN_TTL:-3600}
+      UPLOAD_DESTINATION: ${UPLOAD_DESTINATION:-local_filesystem}
+      API_VERSION: ${API_VERSION:-1}
+      KAFKA_URL: ${KAFKA_URL:-}
+    networks:
+      - default
+
+  traefik:
+    image: traefik:2.8
+    command:
+      #- '--log.level=DEBUG'
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
+      - '--entryPoints.websecure.address=:443'
+      - '--entryPoints.web.forwardedHeaders.insecure'
+      - '--serversTransport.insecureSkipVerify=true'
+      - '--accesslog=true'
+      - '--accesslog.filters.statuscodes=300-999'
+      - '--accesslog.filters.retryattempts'
+      - '--accesslog.filters.minduration=10ms'
+    labels:
+      traefik.http.routers.traefik.rule: 'Host(`localtest.me`)'
+    expose:
+      - '80'
+      - '443'
+      - '8080' # Dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - default
+
+  mongo:
+    image: mongo:4.2.2
+    volumes:
+      - 'mongo:/data/db'
+    expose:
+      - 27017
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongo mongo:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - default
+
+  formserver:
+    image: registry.gitlab.com/opencontent/stanza-del-cittadino/form-server:1.2.3
+    healthcheck:
+      test: ["NONE"]
+    networks:
+      default:
+        aliases:
+          - formserver.localtest.me
+    environment:
+      PORT: 80
+      DB_URL: mongodb://mongo:27017/formmanager
+    expose:
+      - 80
+    depends_on:
+      - mongo
+    labels:
+      traefik.enable: 'true'
+      traefik.http.services.formserver.loadbalancer.server.port: 80
+      traefik.http.routers.formserver.rule: 'Host(`formserver.localtest.me`) && METHOD(`GET`, `HEAD`, `OPTIONS`)'
+
+  formserver-init:
+    image: lorello/alpine-bash:1.2.0
+    volumes: [ './compose_conf/formserver/init.d:/data:ro' ]
+    command:
+      - bash
+      - -c
+      - |
+        wait-for-it formserver:80
+        http --check-status formserver:80/form/5d5a66b7669977001b5b617b || (http post formserver:80/form < /data/address.json)
+        http --check-status formserver:80/form/5d5a45a8669977001b5b6179 || (http post formserver:80/form < /data/birth-info.json)
+        http --check-status formserver:80/form/5d7aa1b318fecd734051ae80 || (http post formserver:80/form < /data/fiscal-code.json)
+        http --check-status formserver:80/form/5d4d26ff9410f50010f30068 || (http post formserver:80/form < /data/full-name.json)
+        http --check-status formserver:80/form/5d5a41a4669977001b5b6177 || (http post formserver:80/form < /data/gender.json)
+        http --check-status formserver:80/form/5d7aa15b18fecd734051ae7f || (http post formserver:80/form < /data/personal-data.json)
+        http --check-status formserver:80/form/5e5e26ede170600020175850 || (http post formserver:80/form < /data/personal-data-light.json)
+        http --check-status formserver:80/form/605dd397a406c00020e9eef6 || (http post formserver:80/form < /data/personal-data-minimal.json)
+    networks:
+      - default
+
+  gotenberg:
+    image: gotenberg/gotenberg:7
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - default
+
+  mailserver:
+    image: mailhog/mailhog
+    labels:
+      traefik.enable: 'true'
+      traefik.http.services.mailserver.loadbalancer.server.port: 8025
+      traefik.http.routers.mailserver.rule: 'Host(`mail.localtest.me`)'
+    networks:
+      - default
+
+  redis:
+    image: redis:5-alpine
+    networks:
+      - default
+
+  nginx:
+    image: nginx:1.15.12-alpine
+    restart: unless-stopped
+    ports:
+      - '${NGINX_PORT}:80'
+    volumes:
+      - wordpress-data:/var/www/html
+      - ./nginx-conf/${ENV}:/etc/nginx/conf.d
+    networks:
+      - default
+    depends_on:
+      - wordpress
+
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    expose:
+      - 3306
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_ALLOW_EMPTY_PASSWORD=false
+      - MYSQL_RANDOM_ROOT_PASSWORD=false
+      - MYSQL_DATABASE=wordpress
+    volumes:
+      - mysql-data:/var/lib/mysql
+    command: '--default-authentication-plugin=mysql_native_password'
+    networks:
+      - default
+
+  wordpress:
+    depends_on:
+      - db
+    image: wordpress:6.1.1-fpm-alpine
+    restart: unless-stopped
+    environment:
+      - WORDPRESS_DB_HOST=db:3306
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+      - WORDPRESS_DB_NAME=wordpress
+    volumes:
+      - wordpress-data:/var/www/html
+    networks:
+      - default
