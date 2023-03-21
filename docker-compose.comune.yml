@@ -291,8 +291,8 @@ services:
   nginx:
     image: nginx:1.15.12-alpine
     restart: unless-stopped
-    ports:
-      - '${NGINX_PORT}:80'
+    expose:
+      - '80'
     volumes:
       - wordpress-data:/var/www/html
       - ./nginx-conf/${ENV}:/etc/nginx/conf.d:rw
