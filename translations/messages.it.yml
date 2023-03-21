@@ -3013,6 +3013,7 @@ security:
   password_reset: 'Password reset'
 contacts:
   title: "Contatta il comune"
+  other_title: "Contattaci"
   faq_url_label: "Leggi le domande frequenti"
   support_url_label: "Richiedi assistenza"
   phone_label: "Chiama il numero"
