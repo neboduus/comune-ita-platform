@@ -302,6 +302,12 @@ services:
           - wordpress.localtest.me
     depends_on:
       - wordpress
+    labels:
+      traefik.enable: 'true'
+      traefik.docker.network: 'default'
+      traefik.http.services.wordpress.loadbalancer.server.port: 80
+      traefik.http.routers.wordpress.entrypoints: web
+      traefik.http.routers.wordpress.rule: 'Host(`wordpress.localtest.me`)'
 
   db:
     image: mysql:8.0
@@ -333,5 +339,7 @@ services:
       - WORDPRESS_DB_NAME=wordpress
     volumes:
       - wordpress-data:/var/www/html
+    expose:
+      - '9000'
     networks:
       - default
