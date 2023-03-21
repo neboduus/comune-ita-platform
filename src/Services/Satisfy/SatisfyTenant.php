@@ -50,7 +50,11 @@ class SatisfyTenant
       $results = $this->client->runQuery($mutation, true, $variables);
     } catch (QueryError $exception) {
       // Catch query error and display error details
-      throw new \Exception("Errore durante la creazione dell' entrypoint satisfy con id: " . $ente->getId(), $exception->getErrorDetails());
+//       throw new \Exception("Errore durante la creazione dell' entrypoint satisfy con id: " . $ente->getId(), $exception->getErrorDetails());
+
+      throw new \Exception("Errore durante la creazione dell' entrypoint satisfy con id: " . $ente->getId() . ' ' . $exception->getErrorDetails());
+
+
     }
 
     // Reformat the results to an array and get the results of part of the array
