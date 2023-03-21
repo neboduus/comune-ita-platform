@@ -295,7 +295,7 @@ services:
       - '80'
     volumes:
       - wordpress-data:/var/www/html
-      - ./nginx-conf/${ENV}:/etc/nginx/conf.d:rw
+      - ./comune_platform/nginx-conf/${ENV}:/etc/nginx/conf.d:rw
     networks:
       default:
         aliases:
