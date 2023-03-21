@@ -295,7 +295,7 @@ services:
       - '${NGINX_PORT}:80'
     volumes:
       - wordpress-data:/var/www/html
-      - ./nginx-conf/${ENV}:/etc/nginx/conf.d
+      - ./nginx-conf/${ENV}:/etc/nginx/conf.d:rw
     networks:
       - default
     depends_on:
