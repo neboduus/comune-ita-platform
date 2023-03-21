@@ -297,7 +297,9 @@ services:
       - wordpress-data:/var/www/html
       - ./nginx-conf/${ENV}:/etc/nginx/conf.d:rw
     networks:
-      - default
+      default:
+        aliases:
+          - wordpress.localtest.me
     depends_on:
       - wordpress
 
