@@ -13,6 +13,7 @@
 /node_modules
 /coverage
 .idea/
+.vscode/
 .env
 .docker-sync/
 .unison*
