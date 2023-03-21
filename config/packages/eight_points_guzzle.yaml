@@ -20,7 +20,7 @@ eight_points_guzzle:
     mypay:
       base_url: '%env(MYPAY_ADAPTER_URL)%'
     giscom:
-      base_url: '%env(GISCOM_ADAPTER_URL)%'
+      base_url: '%giscom_adapter_url%'
       options:
         timeout: 120
         verify: false
