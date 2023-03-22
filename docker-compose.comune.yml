@@ -37,14 +37,14 @@ services:
     networks:
       default:
         aliases:
-          - stanzadelcittadino.localtest.me
+          - ${SUB_DOMAIN:-stanzadelcittadino}.${DOMAIN:-localtest.me}
     build: .
     volumes:
       - "uploads:/var/www/html/var/uploads"
     stop_grace_period: 90s
 
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://stanzadelcittadino.localtest.me/health-check"]
+      test: ["CMD", "curl", "-f", "http://${SUB_DOMAIN:-stanzadelcittadino}.${DOMAIN:-localtest.me}/health-check"]
       interval: 30s
       timeout: 3s
       retries: 2
@@ -57,7 +57,7 @@ services:
       traefik.http.services.sdc-http.loadbalancer.server.port: 80
 
       traefik.http.routers.sdc-http.entrypoints: web
-      traefik.http.routers.sdc-http.rule: 'Host(`stanzadelcittadino.localtest.me`)'
+      traefik.http.routers.sdc-http.rule: 'Host(`${SUB_DOMAIN:-stanzadelcittadino}.${DOMAIN:-localtest.me}`)'
 
       #per aggiungere un openlogin
       #traefik.http.routers.caddy-auth.entrypoints: web
@@ -66,7 +66,7 @@ services:
 
     environment:
       INSTANCE_OVERRIDE: 'true'
-      INSTANCE_address: StanzaDelCittadino.localtest.me/comune-di-bugliano
+      INSTANCE_address: ${SUB_DOMAIN:-stanzadelcittadino}.${DOMAIN:-localtest.me}/comune-di-bugliano
       INSTANCE_identifier: comune-di-bugliano
       INSTANCE_database: sdc_bugliano
       INSTANCE_codice_meccanografico: c_cbug
@@ -199,7 +199,7 @@ services:
       - '--accesslog.filters.retryattempts'
       - '--accesslog.filters.minduration=10ms'
     labels:
-      traefik.http.routers.traefik.rule: 'Host(`localtest.me`)'
+      traefik.http.routers.traefik.rule: 'Host(`${DOMAIN:-localtest.me}`)'
     ports:
       - '80:80'
       - '443:443'
@@ -231,7 +231,7 @@ services:
     networks:
       default:
         aliases:
-          - formserver.localtest.me
+          - formserver.${DOMAIN:-localtest.me}
     environment:
       PORT: 80
       DB_URL: mongodb://mongo:27017/formmanager
@@ -242,7 +242,7 @@ services:
     labels:
       traefik.enable: 'true'
       traefik.http.services.formserver.loadbalancer.server.port: 80
-      traefik.http.routers.formserver.rule: 'Host(`formserver.localtest.me`) && METHOD(`GET`, `HEAD`, `OPTIONS`)'
+      traefik.http.routers.formserver.rule: 'Host(`formserver.${DOMAIN:-localtest.me}`) && METHOD(`GET`, `HEAD`, `OPTIONS`)'
 
   formserver-init:
     image: lorello/alpine-bash:1.2.0
@@ -279,7 +279,7 @@ services:
     labels:
       traefik.enable: 'true'
       traefik.http.services.mailserver.loadbalancer.server.port: 8025
-      traefik.http.routers.mailserver.rule: 'Host(`mail.localtest.me`)'
+      traefik.http.routers.mailserver.rule: 'Host(`mail.${DOMAIN:-localtest.me}`)'
     networks:
       - default
 
@@ -307,7 +307,7 @@ services:
       traefik.docker.network: 'default'
       traefik.http.services.wordpress.loadbalancer.server.port: 80
       traefik.http.routers.wordpress.entrypoints: web
-      traefik.http.routers.wordpress.rule: 'Host(`wordpress.localtest.me`)'
+      traefik.http.routers.wordpress.rule: 'Host(`wordpress.${DOMAIN:-localtest.me}`)'
 
   db:
     image: mysql:8.0
