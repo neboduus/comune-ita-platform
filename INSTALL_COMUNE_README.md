@@ -40,18 +40,7 @@ make build-core-comune ENV=comune-1
 7. Start the deployment:
 
 ```
-make deploy-comune ENV=comune-1
-```
-
-> If the Make commands do not work, it may be that the Compose Version does not
-  allow the Make commands to perform correctly. Then just deploy manually,
-  with following code:
-
-```shell
-export ENV=comune-1
-export PUBLIC_ENV_VARS=$(cat comune_platform/env/public/$ENV)
-export SECRET_ENV_VARS=$(cat comune_platform/env/secrets/$ENV)
-env $PUBLIC_ENV_VARS $SECRET_ENV_VARS ENV=comune-1 docker compose up -d
+make deploy-comune ENV=comune-1 OPTION="--build"
 ```
 
 8. Access the deployment at following URLs:
