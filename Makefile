@@ -1,14 +1,14 @@
 #VERSION := $(shell cat version.txt)
-ENV ?=
-PUBLIC_ENV_VARS := $(shell cat comune_platform/env/public/${ENV})
-SECRET_ENV_VARS := $(shell cat comune_platform/env/secrets/${ENV})
+COMUNE ?=
+PUBLIC_ENV_VARS := $(shell cat comune_platform/env/public/${COMUNE})
+SECRET_ENV_VARS := $(shell cat comune_platform/env/secrets/${COMUNE})
 OPTIONS ?=
 
 require-defined-env:
-	$(if $(ENV),,$(error Must set ENV. E.g. `make some-command ENV=local`))
+	$(if $(COMUNE),,$(error Must set COMUNE. E.g. `make some-command COMUNE=comune-1`))
 
 show-env: require-defined-env
-	cat comune_platform/env/public/$(ENV) && cat comune_platform/env/secrets/$(ENV)
+	cat comune_platform/env/public/$(COMUNE) && cat comune_platform/env/secrets/$(COMUNE)
 
 require-i-am-sure:
 	$(if $(I_AM_SURE),,$(error Must set I_AM_SURE=yes. E.g. `make delete-all-data I_AM_SURE=yes`))
@@ -41,23 +41,6 @@ docker-compose-plugin-deploy-comune:
 
 deploy-comune: require-defined-env
 	${MAKE} docker-compose-plugin-deploy-comune || ${MAKE} docker-compose-cli-deploy-comune
-
-docker-compose-cli-build-core:
-	env $(PUBLIC_ENV_VARS) $(SECRET_ENV_VARS) \
-	    docker-compose \
-	        -f docker-compose.comune.yml \
-	        build \
-	        $(OPTIONS)
-
-docker-compose-plugin-build-core:
-	env $(PUBLIC_ENV_VARS) $(SECRET_ENV_VARS) \
-	    docker compose \
-	        -f docker-compose.comune.yml \
-	        build \
-	        $(OPTIONS)
-
-build-core-comune: require-defined-env
-	${MAKE} docker-compose-plugin-build-core || ${MAKE} docker-compose-cli-build-core
 
 stop-deployment-comune: require-defined-env
 	env $(PUBLIC_ENV_VARS) $(SECRET_ENV_VARS) \
