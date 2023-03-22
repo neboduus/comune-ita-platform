@@ -1,0 +1,7 @@
+instances:
+  stanzadelcittadino.localtest.me/comune-di-bugliano:
+    codice_meccanografico: c_cbug
+    identifier: comune-di-bugliano
+    app_locales: it|en
+    login_route: login_pat
+    protocollo: dummy
