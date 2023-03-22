@@ -1,5 +1,5 @@
 instances:
-  stanzadelcittadino.localtest.me/comune-di-bugliano:
+  comune1.bexo.it/comune-di-bugliano:
     codice_meccanografico: c_cbug
     identifier: comune-di-bugliano
     app_locales: it|en
