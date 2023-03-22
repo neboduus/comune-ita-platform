@@ -17,9 +17,9 @@ services:
     image: wodby/postgres:${POSTGRES_TAG:-11}
     stop_grace_period: 30s
     environment:
-      POSTGRES_PASSWORD: ${DB_ROOT_PASSWORD:-sdc}
+      POSTGRES_PASSWORD: ${POSTGRES_DB_ROOT_PASSWORD:-sdc}
       POSTGRES_DB: sdc_bugliano
-      POSTGRES_USER: ${DB_USER:-sdc}
+      POSTGRES_USER: ${POSTGRES_DB_USER:-sdc}
       PGDATA: /var/lib/postgresql/data/pgdata
     healthcheck:
       test: ["CMD-SHELL", "pg_isready --user sdc --dbname sdc_bugliano"]
@@ -75,14 +75,14 @@ services:
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       PHP_FPM_LOG_LEVEL: error
       ENV: ${ENV:-DEV}
-      APP_ENV: ${APP_ENV:-dev}
+      APP_ENV: ${CORE_APP_ENV:-dev}
       ENABLE_MIGRATIONS: 'true'
       ENABLE_INSTANCE_CONFIG: 'true'
-      DB_HOST: ${DB_HOST:-postgres}
-      DB_PORT: ${DB_PORT:-5432}
-      DB_NAME: ${DB_NAME:-sdc}
-      DB_USER: ${DB_USER:-sdc}
-      DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      DB_HOST: ${POSTGRES_DB_HOST:-postgres}
+      DB_PORT: ${POSTGRES_DB_PORT:-5432}
+      DB_NAME: ${POSTGRES_DB_NAME:-sdc}
+      DB_USER: ${POSTGRES_DB_USER:-sdc}
+      DB_PASSWORD: ${POSTGRES_DB_PASSWORD:-sdc}
       MAILER_URL: ${MAILER_URL:-smtp://mailserver:1025}
       PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
       PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
@@ -157,12 +157,12 @@ services:
       OCSDC_SCHEME: ${OCSDC_SCHEME:-http}
       OCSDC_HOST: ${OCSDC_HOST:-stanzadelcittadino.localtest.me}
       ENV: ${ENV:-DEV}
-      APP_ENV: ${APP_ENV:-dev}
-      DB_HOST: ${DB_HOST:-postgres}
-      DB_PORT: ${DB_PORT:-5432}
-      DB_NAME: ${DB_PASSWORD:-sdc}
-      DB_USER: ${DB_USER:-sdc}
-      DB_PASSWORD: ${DB_PASSWORD:-sdc}
+      APP_ENV: ${CORE_APP_ENV:-dev}
+      DB_HOST: ${POSTGRES_DB_HOST:-postgres}
+      DB_PORT: ${POSTGRES_DB_PORT:-5432}
+      DB_NAME: ${POSTGRES_DB_PASSWORD:-sdc}
+      DB_USER: ${POSTGRES_POSTGRES_DB_USER:-sdc}
+      DB_PASSWORD: ${POSTGRES_DB_PASSWORD:-sdc}
       MAILER_URL: ${MAILER_URL:-smtp://mailserver:1025}
       PEC_MAILER_TRANSPORT: ${PEC_MAILER_TRANSPORT:-smtp}
       PEC_MAILER_HOST: ${PEC_MAILER_HOST:-mailserver}
@@ -295,7 +295,7 @@ services:
       - '80'
     volumes:
       - wordpress-data:/var/www/html
-      - ./comune_platform/nginx-conf/${ENV}:/etc/nginx/conf.d:rw
+      - ./comune_platform/nginx-conf/${COMUNE}:/etc/nginx/conf.d:rw
     networks:
       default:
         aliases:
